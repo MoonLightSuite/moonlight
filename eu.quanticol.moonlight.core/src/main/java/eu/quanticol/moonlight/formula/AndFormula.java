@@ -19,27 +19,29 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-import java.util.function.BiFunction;
-
-import eu.quanticol.moonlight.signal.Signal;
-
-public class BinaryFormula<T,R> implements Formula<T,R> {
+public class AndFormula implements Formula {
 	
-	private final Formula<T,R> left;
-	private final Formula<T,R> right;
-	private final BiFunction<R, R, R> op;
+	private final Formula left;
+	private final Formula right;
 
-	public BinaryFormula(Formula<T,R> left, BiFunction<R, R, R> op ,Formula<T,R> right) {
+	public AndFormula(Formula left, Formula right) {
 		this.left = left;
 		this.right = right;
-		this.op = op;
+	}
+
+	public Formula getFirstArgument() {
+		return left;
+	}
+	
+	public Formula getSecondArgument() {
+		return right;
 	}
 	
 	@Override
-	public Signal<R> check(Parameters p, Signal<T> s) {
-		return Signal.apply(left.check(p, s), op, right.check(p, s));
+	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+		return visitor.visit(this, parameters);
 	}
-	
+		
 
 
 }

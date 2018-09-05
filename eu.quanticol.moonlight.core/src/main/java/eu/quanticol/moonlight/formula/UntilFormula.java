@@ -19,19 +19,24 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-/**
- *
- */
-public class AtomicFormula implements Formula {
+import java.util.function.Function;
 
-	private final String atomicId;
+public class UntilFormula implements Formula {
 	
-	public AtomicFormula( String atomicId ) {
-		this.atomicId = atomicId;
+	private final Formula left;
+	
+	private final Formula right;
+	
+	private final Function<Parameters,Interval> interval;
+	
+	public UntilFormula( Formula left , Formula right ) {
+		this(left,right,null);
 	}
-	
-	public String getAtomicId() {
-		return atomicId;
+
+	public UntilFormula(Formula left, Formula right, Function<Parameters,Interval> interval) {
+		this.left = left;
+		this.right = right;
+		this.interval = interval;
 	}
 
 	@Override
@@ -39,4 +44,37 @@ public class AtomicFormula implements Formula {
 		return visitor.visit(this, parameters);
 	}
 
+	/**
+	 * @return the left
+	 */
+	public Formula getLeft() {
+		return left;
+	}
+
+	/**
+	 * @return the right
+	 */
+	public Formula getRight() {
+		return right;
+	}
+
+	/**
+	 * @return the interval
+	 */
+	public Function<Parameters, Interval> getInterval() {
+		return interval;
+	}
+
+	
+	public Interval getInterval( Parameters p ) {
+		if (interval != null) {
+			return interval.apply(p);
+		}
+		return null;
+	}
+	
+	public boolean isUnbounded() {
+		return (interval != null);
+	}
+	
 }

@@ -20,32 +20,45 @@
 package eu.quanticol.moonlight.formula;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
  *
  */
-public class TemporalFormula<T,R> implements Formula<T,R> {
+public class GloballyFormula implements Formula {
 
-	private final Formula<T,R> argument;
-	private final BiFunction<R,R,R> aggregator;
-	private double a;
-	private double b;
+	private final Formula argument;
+	private Function<Parameters,Interval> interval;
 	
-	public TemporalFormula(double a, double b, BiFunction<R,R,R> aggregator, Formula<T, R> argument) {
-		super();
-		this.a = a;
-		this.b = b;
-		this.aggregator = aggregator;
+	public GloballyFormula(Formula argument, Function<Parameters, Interval> interval) {
 		this.argument = argument;
+		this.interval = interval;
 	}
 
 	@Override
-	public Signal<R> check(Parameters p, Signal<T> s) {
-		Signal<R> s1 = argument.check(p, s);
-		SlidingWindow<R> w = new SlidingWindow<R>(a,b,aggregator); 
-		return w.apply( s1 );
+	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+		return visitor.visit(this, parameters);
+	}
+
+	/**
+	 * @return the argument
+	 */
+	public Formula getArgument() {
+		return argument;
+	}
+
+	/**
+	 * @return the interval
+	 */
+	public Function<Parameters, Interval> getInterval() {
+		return interval;
+	}
+
+	
+	public Interval getInterval( Parameters p ) {
+		return this.interval.apply(p);
 	}
 
 }

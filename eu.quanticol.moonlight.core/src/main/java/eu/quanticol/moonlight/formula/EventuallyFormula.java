@@ -19,36 +19,43 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+import java.util.function.Function;
+
 /**
  *
  */
-public class FormulaFactory<R> {
+public class EventuallyFormula implements Formula {
+
+	private final Formula argument;
+	private Function<Parameters,Interval> interval;
 	
-	private final DomainModule<R> module;
-	
-	public FormulaFactory( DomainModule<R> module ) {
-		this.module = module;
-	}
-	
-	public <T> Formula<T,R> conjunction( Formula<T,R> left , Formula<T,R> right ) {
-		return new BinaryFormula<T,R>(left, module::conjunction, right);
+	public EventuallyFormula(Formula argument, Function<Parameters, Interval> interval) {
+		this.argument = argument;
+		this.interval = interval;
 	}
 
-	public <T> Formula<T,R> disjunction( Formula<T,R> left , Formula<T,R> right ) {
-		return new BinaryFormula<T,R>(left, module::disjunction, right);
+	@Override
+	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+		return visitor.visit(this, parameters);
 	}
 
-	public <T> Formula<T,R> negation( Formula<T,R> arg) {
-		return new UnaryFormula<>(module::negation, arg);
+	/**
+	 * @return the argument
+	 */
+	public Formula getArgument() {
+		return argument;
 	}
-	
-	public <T> Formula<T,R> eventually( double a, double b, Formula<T,R> f ) {
-		return new TemporalFormula<>(a, b, module::disjunction, f);
+
+	/**
+	 * @return the interval
+	 */
+	public Function<Parameters, Interval> getInterval() {
+		return interval;
 	}
+
 	
-	public <T> Formula<T,R> globally( double a, double b, Formula<T,R> f ) {
-		return new TemporalFormula<>(a, b, module::conjunction, f);
+	public Interval getInterval( Parameters p ) {
+		return this.interval.apply(p);
 	}
-	
 
 }

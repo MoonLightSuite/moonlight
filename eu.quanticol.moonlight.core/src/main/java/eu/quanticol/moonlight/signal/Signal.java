@@ -25,7 +25,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * @author loreti
  *
  */
 public class Signal<T> {
@@ -93,13 +92,11 @@ public class Signal<T> {
 			if (last.time>t) {
 				throw new IllegalArgumentException();
 			} 
-			if (last.value.equals(value)) {
-				interval = last.time;
-			} else {
+			if (!last.value.equals(value)) {
 				data.add(newSample);
-				last = newSample;
-				interval = newSample.time;
 			}
+			last = newSample;
+			interval = newSample.time;
 		}
 		return interval;
 	}
@@ -142,7 +139,7 @@ public class Signal<T> {
 				T v1 = si1.next(time);
 				T v2 = si2.next(time);
 				newSignal.add(time, f.apply(v1, v2));
-				time = Math.min(si1.next(), si2.next());
+				time = Math.min(si1.nextTime(), si2.nextTime());
 			}
 			newSignal.complete(end);
 		} 
@@ -154,7 +151,7 @@ public class Signal<T> {
 	 * @param end
 	 */
 	public void complete(double end) {
-		if (!this.end.isNaN()||(this.last==null)||(this.last.time>=end)) {
+		if (!this.end.isNaN()||(this.last==null)||(this.last.time>end)) {
 			throw new IllegalArgumentException();
 		}
 		this.data.add(new Sample<T>(end,this.last.value));
@@ -165,7 +162,7 @@ public class Signal<T> {
 	 * if not end time, put as and time last time
 	 */
 	public void complete() {
-		if (!this.end.isNaN()||(this.data.size()<2)) {
+		if (!this.end.isNaN()||(this.last==null)||(this.last.getTime()==this.start())) {
 			throw new IllegalArgumentException();
 		}
 		this.end = this.last.time;
@@ -179,16 +176,20 @@ public class Signal<T> {
 		return new SignalIterator<T>() {
 			
 			private Iterator<Sample<T>> iterator = data.iterator();
+			private Sample<T> previous;
 			private Sample<T> current;
 			private Sample<T> next;
 
 			@Override
 			public boolean hasNext() {
-				return (next != null)||iterator.hasNext();
+				return (current!=null)||(next != null)||iterator.hasNext();
 			}
 
 			@Override
-			public double next() {
+			public double nextTime() {
+				if (current != null) {
+					return current.time;
+				}
 				if (next == null) {
 					if (iterator.hasNext()) {
 						next = iterator.next();
@@ -201,39 +202,58 @@ public class Signal<T> {
 
 			@Override
 			public T next(double t) {
-				if (t==next()) {
-					current = next;
-					next = null;
-				} else {
-					if ((current != null)&&(t>=current.time)&&(t<next.time)) {
-						current = new Sample<T>(t,current.value);
-					} else {
-						throw new IllegalArgumentException();
-					}
-				}
-				return current.value;
+				jump(t);
+				return next().getValue();
 			}
 
 			@Override
 			public void jump(double t) {
-				if (t<start()) {
+				if ((previous != null)&&(previous.getTime()>t)) {
 					throw new IllegalArgumentException();
 				}
-				if (t<end()) {
-					double nextTime = next();
-					while (t > nextTime) {
-						next(nextTime);
-						nextTime = next();
-					} 
-				} else {
-					throw new IllegalArgumentException();
+				while (((previous==null)||((next==null)||(t>=next.getTime())))&&(iterator.hasNext())) {
+					previous = next;
+					next = iterator.next();
 				}
+				if (previous != null) {
+					current = new Sample<T>(t, previous.getValue());
+				}
+			}
+
+			@Override
+			public Sample<T> next() {
+				shift();
+				Sample<T> toReturn = this.current;
+				this.previous = this.current;
+				this.current = null;
+				return toReturn;
+			}
+
+			private void shift() {
+				if (current == null) {
+					if (next == null) {
+						current = iterator.next();
+					} else {
+						current = next;
+					}					
+					next = (iterator.hasNext()?iterator.next():null);
+				}
+				
 			}
 		};
 	}
 
 	public int size() {
 		return data.size();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Signal [data=" + data + ", end=" + end + "]";
 	}
 	
 }

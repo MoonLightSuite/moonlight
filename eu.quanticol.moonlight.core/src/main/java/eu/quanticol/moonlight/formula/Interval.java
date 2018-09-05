@@ -19,17 +19,43 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+public class Interval {
+	
+	private final double start;
+	
+	private final double end;
+	
+	private final boolean openOnRight;
+	
+	public Interval( double start , double end ) {
+		this(start,end,false);
+	}
 
-import eu.quanticol.moonlight.signal.Signal;
+	public Interval(double start, double end, boolean openOnRight) {
+		this.start = start;
+		this.end = end;
+		this.openOnRight = openOnRight;
+	}
 
-/**
- *
- */
-public interface Formula {
-	
-	public <T,R> R accept(FormulaVisitor<T,R> visitor, T parameters); 
-	
+	/**
+	 * @return the start
+	 */
+	public double getStart() {
+		return start;
+	}
 
-	
-	
+	/**
+	 * @return the end
+	 */
+	public double getEnd() {
+		return end;
+	}
+
+	/**
+	 * @return the openOnRight
+	 */
+	public boolean isOpenOnRight() {
+		return openOnRight;
+	}
+
 }

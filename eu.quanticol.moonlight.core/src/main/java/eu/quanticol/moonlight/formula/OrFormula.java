@@ -19,26 +19,29 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-import java.util.function.Function;
-
-import eu.quanticol.moonlight.signal.Signal;
-
-/**
- *
- */
-public class UnaryFormula<R,T> implements Formula<T, R> {
-
-	private final Function<R,R> op;
-	private final Formula<T, R> argument;
+public class OrFormula implements Formula {
 	
-	public UnaryFormula(Function<R, R> op, Formula<T,R> argument) {
-		this.argument = argument;
-		this.op = op;
+	private final Formula left;
+	private final Formula right;
+
+	public OrFormula(Formula left, Formula right) {
+		this.left = left;
+		this.right = right;
 	}
 
-	@Override
-	public Signal<R> check(Parameters p, Signal<T> s) {
-		return argument.check(p, s).apply(op);
+	public Formula getFirstArgument() {
+		return left;
 	}
+	
+	public Formula getSecondArgument() {
+		return right;
+	}
+	
+	@Override
+	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+		return visitor.visit(this, parameters);
+	}
+		
+
 
 }

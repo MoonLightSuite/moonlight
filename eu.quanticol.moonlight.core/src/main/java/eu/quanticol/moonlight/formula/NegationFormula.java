@@ -19,17 +19,25 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-
-import eu.quanticol.moonlight.signal.Signal;
-
 /**
  *
  */
-public interface Formula {
-	
-	public <T,R> R accept(FormulaVisitor<T,R> visitor, T parameters); 
-	
+public class NegationFormula implements Formula {
 
+	private final Formula argument;
 	
+	public NegationFormula(Formula argument) {
+		this.argument = argument;
+	}
 	
+	public Formula getArgument() {
+		return this.argument;
+	}
+
+	@Override
+	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+		return visitor.visit(this, parameters);
+	}
+
+
 }

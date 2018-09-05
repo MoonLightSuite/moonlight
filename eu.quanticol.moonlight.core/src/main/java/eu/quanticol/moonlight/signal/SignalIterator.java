@@ -26,9 +26,11 @@ public interface SignalIterator<T> {
 	
 	public boolean hasNext();
 	
-	public double next();
+	public double nextTime();
 	
 	public T next( double t );
+	
+	public Sample<T> next( );
 	
 	public void jump( double t );
 

@@ -32,38 +32,50 @@ import eu.quanticol.moonlight.signal.SignalIterator;
 public class SlidingWindow<R> {
 
 	private final double a;
-	private final double b;
 	private final double size;
 	private BiFunction<R, R, R> aggregator;
 
 	public SlidingWindow(double a, double b, BiFunction<R, R, R> aggregator) {
 		this.a = a;
-		this.b = b;
 		this.size = b-a;
 		this.aggregator = aggregator;
-	}
-
+	}	
 
 	public Signal<R> apply(Signal<R> s) {
 		Signal<R> result = new Signal<>();
 		SignalIterator<R> iterator = s.getIterator();
 		LinkedList<Sample<R>> window = new LinkedList<>();
-		double wStart = s.start()+a;
-		iterator.jump(wStart);
-		window.add(new Sample<R>(wStart,iterator.next(wStart)));
+		iterator.jump(s.start()+a);
+		double windowEnd = 0.0;
 		while (iterator.hasNext()) {
-			double next = iterator.next();
-			if (next<wStart+size) {
-				addElement(window,next,iterator.next(next));
-			} else {
-				Sample<R> first = window.removeFirst();
-				result.add(first.getTime()-a, first.getValue());
-				
+			Sample<R> next = iterator.next();
+			while (!window.isEmpty()&&(next.getTime()>window.getFirst().getTime()+size)) {
+				Sample<R> created = removeFirstAndAddToSignal( result, window);
+				if (!window.isEmpty()) {
+					Sample<R> second = window.getFirst();
+					if (second.getTime()+size>=next.getTime()) {
+						window.addFirst(new Sample<R>(next.getTime()-size, created.getValue()));
+					}
+				} else {
+					window.addFirst(new Sample<R>(next.getTime()-size, created.getValue()));
+				}
 			}
+			addElement(window,next.getTime(),next.getValue());
+			windowEnd = next.getTime();
 		}
+		if ((window.size()>0)&&(window.getFirst().getTime()+size)<=windowEnd) {
+			removeFirstAndAddToSignal( result, window);
+		}
+		result.complete();
 		return result;
 	}
 
+
+	private Sample<R> removeFirstAndAddToSignal(Signal<R> result, LinkedList<Sample<R>> window) {
+		Sample<R> first = window.removeFirst();
+		result.add(first.getTime()-a, first.getValue());
+		return first;
+	}
 
 	private void addElement(LinkedList<Sample<R>> window, double t,R v) {
 		R currentValue = v;
@@ -82,6 +94,10 @@ public class SlidingWindow<R> {
 			}
 		}
 		window.add(new Sample<R>(currentTime,currentValue));
+	}
+
+	public double size() {
+		return size;
 	}
 
 
