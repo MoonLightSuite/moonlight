@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.uanticol.moonlight.io;
+package eu.quanticol.moonlight.io;
 
 import java.io.File;
 import java.lang.reflect.Type;
