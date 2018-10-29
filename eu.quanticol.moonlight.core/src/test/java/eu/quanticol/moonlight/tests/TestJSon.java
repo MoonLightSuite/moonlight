@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Sample;
 import eu.quanticol.moonlight.signal.SignalIterator;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import eu.uanticol.moonlight.io.JSonSignalReader;
 
 
 public class TestJSon {
