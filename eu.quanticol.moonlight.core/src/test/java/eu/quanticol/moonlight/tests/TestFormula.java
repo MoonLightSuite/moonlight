@@ -23,11 +23,9 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import org.junit.Test;
-import sun.misc.ClassLoaderUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -41,20 +39,25 @@ public class TestFormula {
         //formula
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
-        Formula aeb= new AndFormula(a,b);
+        Formula aeb = new AndFormula(a, b);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("trace.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
-            System.out.println(contents);
+            HashMap<String, Function<Parameters, Function<Double, Boolean>>> mappa = new HashMap<>();
+            mappa.put("a", y -> x -> x > 2);
+            mappa.put("b", y -> x -> x < 2);
+            TemporalMonitoring<Double, Boolean> monitoring = new TemporalMonitoring(mappa, new DoubleDomain());
+            // monitoring.visit(aeb);
+            //System.out.println(contents);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //
-            System.out.println();
+        System.out.println();
 //            HashMap<String,Function<Parameters,Function<Double,Boolean>>> mappa = new HashMap<>();
 //            mappa.put("a", y-> x->x>2);
 //            mappa.put("b", y-> x->x<2);
