@@ -79,5 +79,11 @@ public class TemporalMonitoring<T,R> implements
 		return sw.apply(signal);
 	}
 
+	@Override
+	public Function<Signal<T>, Signal<R>> monitor(Formula f, Parameters parameters) {
+		return f.accept(this, parameters);
+	}
+
+	
 
 }

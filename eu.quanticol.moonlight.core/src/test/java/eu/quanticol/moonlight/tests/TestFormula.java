@@ -21,6 +21,8 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import org.junit.Test;
 
@@ -46,11 +48,16 @@ public class TestFormula {
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
-            HashMap<String, Function<Parameters, Function<Double, Boolean>>> mappa = new HashMap<>();
-            mappa.put("a", y -> x -> x > 2);
-            mappa.put("b", y -> x -> x < 2);
-            TemporalMonitoring<Double, Boolean> monitoring = new TemporalMonitoring(mappa, new DoubleDomain());
-            // monitoring.visit(aeb);
+            HashMap<String, Function<Parameters, Function<Assignment, Boolean>>> mappa = new HashMap<>();
+            int index_of_x = 0;
+            //a is the atomic proposition: x>2
+            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) > 2);
+            //a is the atomic proposition: x<2
+            mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class) < 2);
+            //TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<Assignment, Double>(mappa, new DoubleDomain());
+            TemporalMonitoring<Assignment, Boolean> monitoring = new TemporalMonitoring<Assignment, Boolean>(mappa, new BooleanDomain());
+            Function<Signal<Assignment>, Signal<Boolean>> m = monitoring.monitor(aeb, null);
+            System.out.println(m.apply(signal));
             //System.out.println(contents);
         } catch (IOException e) {
             e.printStackTrace();
