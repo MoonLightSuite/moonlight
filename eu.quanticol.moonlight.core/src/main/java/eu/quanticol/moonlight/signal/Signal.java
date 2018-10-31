@@ -215,6 +215,10 @@ public class Signal<T> {
 					previous = next;
 					next = iterator.next();
 				}
+				if ((next!=null)&&(next.getTime()==t)) {
+					previous = next;
+					next = null;
+				}
 				if (previous != null) {
 					current = new Sample<T>(t, previous.getValue());
 				}
