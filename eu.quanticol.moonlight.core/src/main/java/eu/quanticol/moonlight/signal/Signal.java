@@ -225,7 +225,7 @@ public class Signal<T> {
 			}
 
 			@Override
-			public Sample<T> next() {
+			public Sample<T>  next() {
 				shift();
 				Sample<T> toReturn = this.current;
 				this.previous = this.current;
