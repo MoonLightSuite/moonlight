@@ -101,7 +101,7 @@ public class TestFormula {
     public void testRobustnessEzio2() {
         //FORMULA: <>_[926,934]((y<=30)/\(y>=-30))
         //TALIRO: (0,27)
-        //BREACH: (0,30)
+        //BREACH: (0,27)
         //formula
         double expectedRobustnessInZero = 27;
         Formula a = new AtomicFormula("a");
