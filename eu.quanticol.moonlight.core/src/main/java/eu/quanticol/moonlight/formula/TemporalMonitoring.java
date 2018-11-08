@@ -42,7 +42,7 @@ public class TemporalMonitoring<T,R> implements
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(NegationFormula negationFormula, Parameters parameters) {
-		Function<Signal<T>,Signal<R>> argumentMonitoring = negationFormula.accept(this, parameters);
+		Function<Signal<T>,Signal<R>> argumentMonitoring = negationFormula.getArgument().accept(this, parameters);
 		return s -> argumentMonitoring.apply(s).apply(module::negation);
 	}
 
@@ -63,8 +63,8 @@ public class TemporalMonitoring<T,R> implements
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(GloballyFormula globallyFormula, Parameters parameters) {
 		Interval interval = globallyFormula.getInterval(parameters);
-		Function<Signal<T>,Signal<R>> argumentMonitoring = globallyFormula.accept(this, parameters);
-		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval);
+		Function<Signal<T>,Signal<R>> argumentMonitoring = globallyFormula.getArgument().accept(this, parameters);
+		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval);
 	}
 
 	@Override

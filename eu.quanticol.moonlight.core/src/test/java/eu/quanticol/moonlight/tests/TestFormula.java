@@ -21,9 +21,8 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
-import eu.quanticol.moonlight.signal.Assignment;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.signal.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -33,9 +32,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class TestFormula {
 
@@ -124,6 +121,77 @@ public class TestFormula {
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.apply(signal);
             assertEquals(expectedRobustnessInZero,outputSignal.getIterator().next(0),1E-15);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Ignore
+    @Test
+    public void testRobustnessLaura() {
+        //FORMULA: []_[0,500](a>=0)
+        //TALIRO: //
+        //BREACH: //
+        //formula
+        //double expectedRobustnessInZero = 0;
+        Formula a = new AtomicFormula("a");
+        Formula globallyFormula = new GloballyFormula(a,y->new Interval(0,500));
+        //signal
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File file = new File(classLoader.getResource("traceLaura.json").getFile());
+        try {
+            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
+            int index_of_x = 0;
+            //a is the atomic proposition: a>=0
+            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
+            TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(globallyFormula, null);
+            Signal<Double> outputSignal = m.apply(signal);
+            SignalIterator<Assignment> expected = signal.getIterator();
+            SignalIterator<Double> actual = outputSignal.getIterator();
+            while(actual.hasNext()){
+                Sample<Double> nextActual = actual.next();
+                Sample<Assignment> nextExpected = expected.next();
+                assertEquals(nextExpected.getValue().get(0,Double.class),nextActual.getValue());
+            }
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRobustnessLaura2() {
+        //FORMULA: !<>_[0,500]!(a>=0)
+        //TALIRO: //
+        //BREACH: //
+        //formula
+        //double expectedRobustnessInZero = 0;
+        Formula a = new AtomicFormula("a");
+        Formula notA = new NegationFormula(a);
+        Formula eventually = new EventuallyFormula(notA,y->new Interval(0,500));
+        Formula notEventuallyNotA = new NegationFormula(eventually);
+        //signal
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File file = new File(classLoader.getResource("traceLaura.json").getFile());
+        try {
+            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
+            int index_of_x = 0;
+            //a is the atomic proposition: a>=0
+            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
+            TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notEventuallyNotA, null);
+            Signal<Double> outputSignal = m.apply(signal);
+            SignalIterator<Assignment> expected = signal.getIterator();
+            SignalIterator<Double> actual = outputSignal.getIterator();
+            while(actual.hasNext()){
+                Sample<Double> nextActual = actual.next();
+                Sample<Assignment> nextExpected = expected.next();
+                assertEquals(nextExpected.getValue().get(0,Double.class),nextActual.getValue());
+            }
         } catch (IOException e) {
             fail(e.getMessage());
         }
