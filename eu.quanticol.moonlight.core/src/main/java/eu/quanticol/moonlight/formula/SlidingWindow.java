@@ -53,7 +53,7 @@ public class SlidingWindow<R> {
 				Sample<R> created = removeFirstAndAddToSignal( result, window);
 				if (!window.isEmpty()) {
 					Sample<R> second = window.getFirst();
-					if (second.getTime()+size>=next.getTime()) {
+					if (second.getTime()+size>next.getTime()) {
 						window.addFirst(new Sample<R>(next.getTime()-size, created.getValue()));
 					}
 				} else {
