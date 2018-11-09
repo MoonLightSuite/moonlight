@@ -190,7 +190,7 @@ public class TestFormula {
             while(actual.hasNext()){
                 Sample<Double> nextActual = actual.next();
                 Sample<Assignment> nextExpected = expected.next();
-                assertEquals(nextExpected.getValue().get(0,Double.class),nextActual.getValue());
+                assertEquals("Time: "+nextExpected.getTime(),nextExpected.getValue().get(0,Double.class),nextActual.getValue());
             }
         } catch (IOException e) {
             fail(e.getMessage());
