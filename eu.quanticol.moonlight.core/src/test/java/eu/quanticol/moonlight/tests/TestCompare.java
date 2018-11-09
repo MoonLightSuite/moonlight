@@ -33,17 +33,17 @@ import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
-public class TestFormula {
+public class TestCompare {
 
     @Test
-    public void testFormula() {
+    public void traceGeneric() {
         //formula
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
         Formula aeb = new AndFormula(a, b);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("trace.json").getFile());
+        File file = new File(classLoader.getResource("traceGeneric/trace.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
@@ -64,7 +64,7 @@ public class TestFormula {
     }
 
     @Test
-    public void testRobustnessEzio1() {
+    public void testTraceEzio1() {
         //FORMULA: (y<=30)/\(y>=-30)
         //TALIRO: (0,30)
         //BREACH: (0,30)
@@ -74,7 +74,7 @@ public class TestFormula {
         Formula aeb = new AndFormula(a, b);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("traceEzio.json").getFile());
+        File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
@@ -94,7 +94,7 @@ public class TestFormula {
     }
 
     @Test
-    public void testRobustnessEzio2() {
+    public void testTraceEzio2() {
         //FORMULA: <>_[926,934]((y<=30)/\(y>=-30))
         //TALIRO: (0,27)
         //BREACH: (0,27)
@@ -106,10 +106,11 @@ public class TestFormula {
         Formula eventually = new EventuallyFormula(conjunction, y -> new Interval(926, 934));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("traceEzio.json").getFile());
+        File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
@@ -119,14 +120,16 @@ public class TestFormula {
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.apply(signal);
+            long timeEnd = System.currentTimeMillis();
             assertEquals(expectedRobustnessInZero, outputSignal.getIterator().next(0), 1E-15);
+            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
 
     @Test
-    public void testRobustnessLaura() {
+    public void testIdentity() {
         //FORMULA: []_[0,500](a>=0)
         //TALIRO: //
         //BREACH: //
@@ -136,10 +139,11 @@ public class TestFormula {
         Formula globallyFormula = new GloballyFormula(a, y -> new Interval(0, 500));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("traceLaura.json").getFile());
+        File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
@@ -147,6 +151,7 @@ public class TestFormula {
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(globallyFormula, null);
             Signal<Double> outputSignal = m.apply(signal);
+            long timeEnd = System.currentTimeMillis();
             SignalIterator<Assignment> expected = signal.getIterator();
             SignalIterator<Double> actual = outputSignal.getIterator();
             while (actual.hasNext()) {
@@ -154,6 +159,7 @@ public class TestFormula {
                 Sample<Assignment> nextExpected = expected.next();
                 assertEquals(nextExpected.getValue().get(0, Double.class), nextActual.getValue());
             }
+            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -164,15 +170,13 @@ public class TestFormula {
         //FORMULA: !<>_[0,500]!(a>=0)
         //TALIRO: //
         //BREACH: //
-        //formula
-        //double expectedRobustnessInZero = 0;
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
         Formula eventually = new EventuallyFormula(notA, y -> new Interval(0, 500));
         Formula notEventuallyNotA = new NegationFormula(eventually);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("traceLaura.json").getFile());
+        File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
