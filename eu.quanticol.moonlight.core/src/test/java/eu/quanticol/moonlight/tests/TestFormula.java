@@ -22,7 +22,6 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.signal.*;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -82,13 +81,13 @@ public class TestFormula {
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
-            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class)+30);
+            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) + 30);
             //b is the atomic proposition: y<=30
-            mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class)+30);
+            mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(aeb, null);
             Signal<Double> outputSignal = m.apply(signal);
-            assertEquals(expectedRobustnessInZero,outputSignal.getIterator().next(0),1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.getIterator().next(0), 1E-15);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -104,7 +103,7 @@ public class TestFormula {
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
         Formula conjunction = new AndFormula(a, b);
-        Formula eventually = new EventuallyFormula(conjunction,y->new Interval(926,934));
+        Formula eventually = new EventuallyFormula(conjunction, y -> new Interval(926, 934));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceEzio.json").getFile());
@@ -114,19 +113,18 @@ public class TestFormula {
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
-            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class)+30);
+            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) + 30);
             //b is the atomic proposition: y<=30
-            mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class)+30);
+            mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.apply(signal);
-            assertEquals(expectedRobustnessInZero,outputSignal.getIterator().next(0),1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.getIterator().next(0), 1E-15);
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
 
-    @Ignore
     @Test
     public void testRobustnessLaura() {
         //FORMULA: []_[0,500](a>=0)
@@ -135,7 +133,7 @@ public class TestFormula {
         //formula
         //double expectedRobustnessInZero = 0;
         Formula a = new AtomicFormula("a");
-        Formula globallyFormula = new GloballyFormula(a,y->new Interval(0,500));
+        Formula globallyFormula = new GloballyFormula(a, y -> new Interval(0, 500));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceLaura.json").getFile());
@@ -151,10 +149,10 @@ public class TestFormula {
             Signal<Double> outputSignal = m.apply(signal);
             SignalIterator<Assignment> expected = signal.getIterator();
             SignalIterator<Double> actual = outputSignal.getIterator();
-            while(actual.hasNext()){
+            while (actual.hasNext()) {
                 Sample<Double> nextActual = actual.next();
                 Sample<Assignment> nextExpected = expected.next();
-                assertEquals(nextExpected.getValue().get(0,Double.class),nextActual.getValue());
+                assertEquals(nextExpected.getValue().get(0, Double.class), nextActual.getValue());
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -170,7 +168,7 @@ public class TestFormula {
         //double expectedRobustnessInZero = 0;
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
-        Formula eventually = new EventuallyFormula(notA,y->new Interval(0,500));
+        Formula eventually = new EventuallyFormula(notA, y -> new Interval(0, 500));
         Formula notEventuallyNotA = new NegationFormula(eventually);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -187,16 +185,19 @@ public class TestFormula {
             Signal<Double> outputSignal = m.apply(signal);
             SignalIterator<Assignment> expected = signal.getIterator();
             SignalIterator<Double> actual = outputSignal.getIterator();
-            while(actual.hasNext()){
+            while (actual.hasNext()) {
                 Sample<Double> nextActual = actual.next();
                 Sample<Assignment> nextExpected = expected.next();
-                assertEquals("Time: "+nextExpected.getTime(),nextExpected.getValue().get(0,Double.class),nextActual.getValue());
+                double time = nextExpected.getTime();
+                if (time > 500) {
+                    break;
+                }
+                assertEquals("Time: " + time, nextExpected.getValue().get(0, Double.class), nextActual.getValue());
             }
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
-
 
 
 }
