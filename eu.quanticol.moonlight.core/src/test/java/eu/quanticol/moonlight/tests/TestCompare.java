@@ -189,13 +189,14 @@ public class TestCompare {
             Signal<Double> outputSignal = m.apply(signal);
             SignalIterator<Assignment> expected = signal.getIterator();
             SignalIterator<Double> actual = outputSignal.getIterator();
+            assertTrue(outputSignal.end()==500.0);
             while (actual.hasNext()) {
                 Sample<Double> nextActual = actual.next();
                 Sample<Assignment> nextExpected = expected.next();
                 double time = nextExpected.getTime();
-                if (time > 500) {
-                    break;
-                }
+//                if (time > 500) {
+//                    break;
+//                }
                 assertEquals("Time: " + time, nextExpected.getValue().get(0, Double.class), nextActual.getValue());
             }
         } catch (IOException e) {

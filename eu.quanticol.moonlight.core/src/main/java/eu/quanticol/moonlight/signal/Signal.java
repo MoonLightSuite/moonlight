@@ -154,7 +154,9 @@ public class Signal<T> {
 		if (!this.end.isNaN()||(this.last==null)||(this.last.time>end)) {
 			throw new IllegalArgumentException();
 		}
-		this.data.add(new Sample<T>(end,this.last.value));
+		if (this.last.getTime() != end) {
+			this.data.add(new Sample<T>(end,this.last.value));
+		}
 		this.end = end;
 	}
 	
