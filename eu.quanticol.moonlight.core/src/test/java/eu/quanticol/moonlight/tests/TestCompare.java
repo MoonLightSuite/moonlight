@@ -103,7 +103,7 @@ public class TestCompare {
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
         Formula conjunction = new AndFormula(a, b);
-        Formula eventually = new EventuallyFormula(conjunction, y -> new Interval(926, 934));
+        Formula eventually = new EventuallyFormula(conjunction, new Interval(926, 934));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
@@ -136,7 +136,7 @@ public class TestCompare {
         //formula
         //double expectedRobustnessInZero = 0;
         Formula a = new AtomicFormula("a");
-        Formula globallyFormula = new GloballyFormula(a, y -> new Interval(0, 500));
+        Formula globallyFormula = new GloballyFormula(a, new Interval(0, 500));
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
@@ -172,7 +172,7 @@ public class TestCompare {
         //BREACH: //
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
-        Formula eventually = new EventuallyFormula(notA, y -> new Interval(0, 500));
+        Formula eventually = new EventuallyFormula(notA, new Interval(0, 500));
         Formula notEventuallyNotA = new NegationFormula(eventually);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();

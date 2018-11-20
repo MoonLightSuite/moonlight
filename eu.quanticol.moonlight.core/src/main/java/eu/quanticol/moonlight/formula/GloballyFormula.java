@@ -19,10 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import eu.quanticol.moonlight.signal.Signal;
 
 /**
  *
@@ -30,9 +27,9 @@ import eu.quanticol.moonlight.signal.Signal;
 public class GloballyFormula implements Formula {
 
 	private final Formula argument;
-	private Function<Parameters,Interval> interval;
+	private Interval interval;
 	
-	public GloballyFormula(Formula argument, Function<Parameters, Interval> interval) {
+	public GloballyFormula(Formula argument, Interval interval) {
 		this.argument = argument;
 		this.interval = interval;
 	}
@@ -52,13 +49,13 @@ public class GloballyFormula implements Formula {
 	/**
 	 * @return the interval
 	 */
-	public Function<Parameters, Interval> getInterval() {
+	public Interval getInterval() {
 		return interval;
 	}
 
 	
-	public Interval getInterval( Parameters p ) {
-		return this.interval.apply(p);
-	}
+//	public Interval getInterval( Parameters p ) {
+//		return this.interval.apply(p);
+//	}
 
 }

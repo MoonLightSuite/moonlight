@@ -21,20 +21,20 @@ package eu.quanticol.moonlight.formula;
 
 public class AndFormula implements Formula {
 	
-	private final Formula left;
-	private final Formula right;
+	private final Formula firstArgument;
+	private final Formula secondArgument;
 
-	public AndFormula(Formula left, Formula right) {
-		this.left = left;
-		this.right = right;
+	public AndFormula(Formula firstArgument, Formula secondArgument) {
+		this.firstArgument = firstArgument;
+		this.secondArgument = secondArgument;
 	}
 
 	public Formula getFirstArgument() {
-		return left;
+		return firstArgument;
 	}
 	
 	public Formula getSecondArgument() {
-		return right;
+		return secondArgument;
 	}
 	
 	@Override

@@ -55,14 +55,14 @@ public class TemporalMonitoring<T,R> implements
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(EventuallyFormula eventuallyFormula, Parameters parameters) {
-		Interval interval = eventuallyFormula.getInterval(parameters);
+		Interval interval = eventuallyFormula.getInterval();
 		Function<Signal<T>,Signal<R>> argumentMonitoring = eventuallyFormula.getArgument().accept(this, parameters);
 		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval);
 	}
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(GloballyFormula globallyFormula, Parameters parameters) {
-		Interval interval = globallyFormula.getInterval(parameters);
+		Interval interval = globallyFormula.getInterval();
 		Function<Signal<T>,Signal<R>> argumentMonitoring = globallyFormula.getArgument().accept(this, parameters);
 		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval);
 	}
@@ -79,7 +79,6 @@ public class TemporalMonitoring<T,R> implements
 		return sw.apply(signal);
 	}
 
-	@Override
 	public Function<Signal<T>, Signal<R>> monitor(Formula f, Parameters parameters) {
 		return f.accept(this, parameters);
 	}

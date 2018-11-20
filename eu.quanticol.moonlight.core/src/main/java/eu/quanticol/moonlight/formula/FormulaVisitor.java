@@ -23,6 +23,4 @@ public interface FormulaVisitor<T,R> {
 
 	public R visit(UntilFormula untilFormula, T parameters);
 	
-	public R monitor(Formula f, T parameters);
-	
 }

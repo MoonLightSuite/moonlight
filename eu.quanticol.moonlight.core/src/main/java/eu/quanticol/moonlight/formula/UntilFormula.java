@@ -23,19 +23,19 @@ import java.util.function.Function;
 
 public class UntilFormula implements Formula {
 	
-	private final Formula left;
+	private final Formula firstArgument;
 	
-	private final Formula right;
+	private final Formula secondArgument;
 	
-	private final Function<Parameters,Interval> interval;
+	private final Interval interval;
 	
-	public UntilFormula( Formula left , Formula right ) {
-		this(left,right,null);
+	public UntilFormula( Formula firstArgument , Formula secondArgument ) {
+		this(firstArgument,secondArgument,null);
 	}
 
-	public UntilFormula(Formula left, Formula right, Function<Parameters,Interval> interval) {
-		this.left = left;
-		this.right = right;
+	public UntilFormula(Formula firstArgument, Formula secondArgument, Interval interval) {
+		this.firstArgument = firstArgument;
+		this.secondArgument = secondArgument;
 		this.interval = interval;
 	}
 
@@ -47,31 +47,25 @@ public class UntilFormula implements Formula {
 	/**
 	 * @return the left
 	 */
-	public Formula getLeft() {
-		return left;
+	public Formula getFirstArgument() {
+		return firstArgument;
 	}
 
 	/**
 	 * @return the right
 	 */
-	public Formula getRight() {
-		return right;
+	public Formula getSecondArgument() {
+		return secondArgument;
 	}
 
 	/**
 	 * @return the interval
 	 */
-	public Function<Parameters, Interval> getInterval() {
+	public Interval getInterval() {
 		return interval;
 	}
 
 	
-	public Interval getInterval( Parameters p ) {
-		if (interval != null) {
-			return interval.apply(p);
-		}
-		return null;
-	}
 	
 	public boolean isUnbounded() {
 		return (interval != null);

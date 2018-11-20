@@ -27,9 +27,9 @@ import java.util.function.Function;
 public class EventuallyFormula implements Formula {
 
 	private final Formula argument;
-	private Function<Parameters,Interval> interval;
+	private Interval interval;
 	
-	public EventuallyFormula(Formula argument, Function<Parameters, Interval> interval) {
+	public EventuallyFormula(Formula argument, Interval interval) {
 		this.argument = argument;
 		this.interval = interval;
 	}
@@ -49,13 +49,13 @@ public class EventuallyFormula implements Formula {
 	/**
 	 * @return the interval
 	 */
-	public Function<Parameters, Interval> getInterval() {
+	public Interval getInterval() {
 		return interval;
 	}
 
 	
-	public Interval getInterval( Parameters p ) {
-		return this.interval.apply(p);
-	}
+//	public Interval getInterval( ) {
+//		return this.interval.apply(p);
+//	}
 
 }
