@@ -21,9 +21,12 @@ import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
+import eu.quanticol.moonlight.formula.HystoricallyFormula;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
+import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;
+import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.UntilFormula;
 
 /**
@@ -130,6 +133,53 @@ public class FormulaJSonIO {
 			return o;
 		}
 
+		@Override
+		public JsonElement visit(SinceFormula sinceFormula, JsonSerializationContext parameters) {
+			JsonObject o = new JsonObject();
+			o.addProperty(TYPE_KEY, FormulaType.SINCE.name());
+			if (sinceFormula.isUnbounded()) {
+				o.addProperty(UNBOUNDED_KEY, true);
+			} else {
+				Interval i = sinceFormula.getInterval();
+				o.addProperty(LOWER_KEY, i.getStart());
+				o.addProperty(UPPER_KEY, i.getEnd());
+			}
+			o.add(FIRST_ARGUMENT, sinceFormula.getFirstArgument().accept(this, parameters));
+			o.add(SECOND_ARGUMENT, sinceFormula.getFirstArgument().accept(this, parameters));
+			return o;
+		}
+
+		@Override
+		public JsonElement visit(HystoricallyFormula hystoricallyFormula, JsonSerializationContext parameters) {
+			JsonObject o = new JsonObject();
+			o.addProperty(TYPE_KEY, FormulaType.HYSTORICALLY.name());
+			if (hystoricallyFormula.isUnbounded()) {
+				o.addProperty(UNBOUNDED_KEY, true);
+			} else {
+				Interval i = hystoricallyFormula.getInterval();
+				o.addProperty(LOWER_KEY, i.getStart());
+				o.addProperty(UPPER_KEY, i.getEnd());
+			}
+			o.add(ARGUMENT, hystoricallyFormula.getArgument().accept(this, parameters));
+			return o;
+		}
+
+		@Override
+		public JsonElement visit(OnceFormula onceFormula, JsonSerializationContext parameters) {
+			JsonObject o = new JsonObject();
+			o.addProperty(TYPE_KEY, FormulaType.ONCE.name());
+			
+			if (onceFormula.isUnbounded()) {
+				o.addProperty(UNBOUNDED_KEY, true);
+			} else {
+				Interval i = onceFormula.getInterval();
+				o.addProperty(LOWER_KEY, i.getStart());
+				o.addProperty(UPPER_KEY, i.getEnd());
+			}
+			o.add(ARGUMENT, onceFormula.getArgument().accept(this, parameters));
+			return o;
+		}
+
 	}
 	
 	public class FormulaSerialiserDeserialiser implements JsonDeserializer<Formula> {
@@ -145,6 +195,8 @@ public class FormulaJSonIO {
 		}
 
 		private Formula deserializeFormula(JsonObject json, JsonDeserializationContext context) {
+			Formula first;
+			Formula second;
 			switch (FormulaType.valueOf(json.get(TYPE_KEY).getAsString())) {
 			case AND:
 				return new AndFormula(
@@ -173,12 +225,38 @@ public class FormulaJSonIO {
 						deserializeFormula(json.get(SECOND_ARGUMENT).getAsJsonObject(),context) 
 					);
 			case UNTIL:
-				Formula first = deserializeFormula(json.get(FIRST_ARGUMENT).getAsJsonObject(),context);
-				Formula second = deserializeFormula(json.get(SECOND_ARGUMENT).getAsJsonObject(),context);
+				first = deserializeFormula(json.get(FIRST_ARGUMENT).getAsJsonObject(),context);
+				second = deserializeFormula(json.get(SECOND_ARGUMENT).getAsJsonObject(),context);
 				if (json.has(UNBOUNDED_KEY)) {
 					return new UntilFormula(first, second);
 				} else {
 					return new UntilFormula(first, second, new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble()));
+				}
+			case SINCE:
+				first = deserializeFormula(json.get(FIRST_ARGUMENT).getAsJsonObject(),context);
+				second = deserializeFormula(json.get(SECOND_ARGUMENT).getAsJsonObject(),context);
+				if (json.has(UNBOUNDED_KEY)) {
+					return new UntilFormula(first, second);
+				} else {
+					return new UntilFormula(first, second, new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble()));
+				}
+			case HYSTORICALLY:
+				if (json.has(UNBOUNDED_KEY)) {
+					return new HystoricallyFormula(deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context));					
+				} else {
+					return new HystoricallyFormula(
+							deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context), 
+							new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble())
+						);					
+				}
+			case ONCE:
+				if (json.has(UNBOUNDED_KEY)) {
+					return new OnceFormula(deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context));					
+				} else {
+					return new OnceFormula(
+							deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context), 
+							new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble())
+						);					
 				}
 			default:
 				return null;

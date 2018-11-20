@@ -83,6 +83,24 @@ public class TemporalMonitoring<T,R> implements
 		return f.accept(this, parameters);
 	}
 
+	@Override
+	public Function<Signal<T>, Signal<R>> visit(SinceFormula sinceFormula, Parameters parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Function<Signal<T>, Signal<R>> visit(HystoricallyFormula hystoricallyFormula, Parameters parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Function<Signal<T>, Signal<R>> visit(OnceFormula onceFormula, Parameters parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 }

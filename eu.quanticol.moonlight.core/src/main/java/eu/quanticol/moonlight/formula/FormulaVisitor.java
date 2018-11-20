@@ -22,5 +22,11 @@ public interface FormulaVisitor<T,R> {
 	public R visit(GloballyFormula globallyFormula, T parameters);
 
 	public R visit(UntilFormula untilFormula, T parameters);
+
+	public R visit(SinceFormula sinceFormula, T parameters);
+
+	public R visit(HystoricallyFormula hystoricallyFormula, T parameters);
+
+	public R visit(OnceFormula onceFormula, T parameters);
 	
 }

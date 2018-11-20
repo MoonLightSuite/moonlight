@@ -8,6 +8,6 @@ package eu.quanticol.moonlight.io;
  *
  */
 public enum FormulaType {
-	ATOMIC, AND, NOT, OR, EVENTUALLY, GLOBALLY, UNTIL
+	ATOMIC, AND, NOT, OR, EVENTUALLY, GLOBALLY, UNTIL, SINCE, HYSTORICALLY, ONCE
 
 }
