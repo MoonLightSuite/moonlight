@@ -25,14 +25,32 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import eu.quanticol.moonlight.formula.AndFormula;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.EventuallyFormula;
+import eu.quanticol.moonlight.formula.Formula;
+import eu.quanticol.moonlight.formula.GloballyFormula;
+import eu.quanticol.moonlight.formula.HystoricallyFormula;
+import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.formula.NegationFormula;
+import eu.quanticol.moonlight.formula.OnceFormula;
+import eu.quanticol.moonlight.formula.OrFormula;
+import eu.quanticol.moonlight.formula.SinceFormula;
+import eu.quanticol.moonlight.formula.UntilFormula;
+import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Sample;
 import eu.quanticol.moonlight.signal.SignalIterator;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.util.FormulaGenerator;
 
 
 public class TestJSon {
+	
+	private FormulaGenerator generator = new FormulaGenerator("a","b","c");
+	private FormulaJSonIO fJSonIO = FormulaJSonIO.getInstance();
+
 
 	@Test
 	public void readSignal() {
@@ -76,7 +94,62 @@ public class TestJSon {
 		}
 	}
 	
+	@Test
+	public void testFormulaGenerator( ) {
+		for( int i=0 ; i<10; i++ ) {
+			Formula f1 = generator.getFormula();
+			assertNotNull(f1);
+		}
+	}
+
 	
+	@Test
+	public void testFormulaSimple( ) {
+		AtomicFormula a1 = new AtomicFormula("a");
+		testSerializeDeserialize(a1);
+		AtomicFormula a1b = new AtomicFormula("b");
+		testSerializeDeserialize(a1b);
+		AndFormula a2 = new AndFormula(a1, a1);
+		testSerializeDeserialize(a2);
+		OrFormula a3 = new OrFormula(a2, a2);
+		testSerializeDeserialize(a3);
+		EventuallyFormula a4 = new EventuallyFormula(a3, new Interval(0,100));
+		testSerializeDeserialize(a4);
+		GloballyFormula a5 = new GloballyFormula(a4, new Interval(0,100));
+		testSerializeDeserialize(a5);
+		UntilFormula a6 = new UntilFormula(a5,a5, new Interval(0,100));
+		testSerializeDeserialize(a6);
+		UntilFormula a7 = new UntilFormula(a5,a5);
+		testSerializeDeserialize(a7);
+		SinceFormula a8 = new SinceFormula(a1,a1b, new Interval(0,100));
+		testSerializeDeserialize(a8);
+		HystoricallyFormula a9 = new HystoricallyFormula(a1);
+		testSerializeDeserialize(a9);
+		HystoricallyFormula a10 = new HystoricallyFormula(a1,new Interval(0,100));
+		testSerializeDeserialize(a10);
+		OnceFormula a11 = new OnceFormula(a1,new Interval(0,100));
+		testSerializeDeserialize(a11);
+		OnceFormula a12 = new OnceFormula(a1);
+		testSerializeDeserialize(a12);
+		NegationFormula a13 = new NegationFormula(a1);
+		testSerializeDeserialize(a13);
+	}
+	
+	
+	
+	private void testSerializeDeserialize(Formula f1) {
+		String code = fJSonIO.toJson( f1 );
+		Formula f2 = fJSonIO.fromJson( code );
+		assertEquals(f1,f2);
+	}
+
+	@Test
+	public void testFormulaJson( ) {
+		for( int i=0 ; i<1000; i++ ) {
+			Formula f1 = generator.getFormula();
+			testSerializeDeserialize(f1);
+		}
+	}
 	
 }
 

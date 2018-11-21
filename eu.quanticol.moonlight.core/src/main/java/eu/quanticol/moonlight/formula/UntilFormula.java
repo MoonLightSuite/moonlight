@@ -68,7 +68,59 @@ public class UntilFormula implements Formula {
 	
 	
 	public boolean isUnbounded() {
-		return (interval != null);
+		return (interval == null);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((firstArgument == null) ? 0 : firstArgument.hashCode());
+		result = prime * result + ((interval == null) ? 0 : interval.hashCode());
+		result = prime * result + ((secondArgument == null) ? 0 : secondArgument.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UntilFormula other = (UntilFormula) obj;
+		if (firstArgument == null) {
+			if (other.firstArgument != null)
+				return false;
+		} else if (!firstArgument.equals(other.firstArgument))
+			return false;
+		if (interval == null) {
+			if (other.interval != null)
+				return false;
+		} else if (!interval.equals(other.interval))
+			return false;
+		if (secondArgument == null) {
+			if (other.secondArgument != null)
+				return false;
+		} else if (!secondArgument.equals(other.secondArgument))
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UntilFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + ", interval="
+				+ interval + "]";
 	}
 	
 }
