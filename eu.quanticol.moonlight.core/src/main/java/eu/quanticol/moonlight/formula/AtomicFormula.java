@@ -39,4 +39,45 @@ public class AtomicFormula implements Formula {
 		return visitor.visit(this, parameters);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((atomicId == null) ? 0 : atomicId.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AtomicFormula other = (AtomicFormula) obj;
+		if (atomicId == null) {
+			if (other.atomicId != null)
+				return false;
+		} else if (!atomicId.equals(other.atomicId))
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AtomicFormula [atomicId=" + atomicId + "]";
+	}
+	
+	
+
 }

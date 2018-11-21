@@ -41,7 +41,7 @@ public class FormulaJSonIO {
 	private static final String SECOND_ARGUMENT = "second";
 	private static final String ARGUMENT = "arg";
 	private static final String LOWER_KEY = "lower";
-	private static final String UPPER_KEY = "lower";
+	private static final String UPPER_KEY = "upper";
 	private static final String UNBOUNDED_KEY = "unbound";
 		
 	
@@ -50,7 +50,8 @@ public class FormulaJSonIO {
 	
 	private FormulaJSonIO() {
 		this.gson = new GsonBuilder();
-		this.gson.registerTypeHierarchyAdapter(Formula.class, new FormulaSerialiserDeserialiser());
+		this.gson.registerTypeHierarchyAdapter(Formula.class, new FormulaDeserialiser());
+		this.gson.registerTypeHierarchyAdapter(Formula.class, new FormulaSerialiser());
 	}
 	
 	
@@ -82,7 +83,7 @@ public class FormulaJSonIO {
 		public JsonElement visit(NegationFormula negationFormula, JsonSerializationContext parameters) {
 			JsonObject o = new JsonObject();
 			o.addProperty(TYPE_KEY, FormulaType.NOT.name());
-			o.add(ARGUMENT, negationFormula.accept(this, parameters));
+			o.add(ARGUMENT, negationFormula.getArgument().accept(this, parameters));
 			return o;
 		}
 
@@ -129,7 +130,7 @@ public class FormulaJSonIO {
 				o.addProperty(UPPER_KEY, i.getEnd());
 			}
 			o.add(FIRST_ARGUMENT, untilFormula.getFirstArgument().accept(this, parameters));
-			o.add(SECOND_ARGUMENT, untilFormula.getFirstArgument().accept(this, parameters));
+			o.add(SECOND_ARGUMENT, untilFormula.getSecondArgument().accept(this, parameters));
 			return o;
 		}
 
@@ -145,7 +146,7 @@ public class FormulaJSonIO {
 				o.addProperty(UPPER_KEY, i.getEnd());
 			}
 			o.add(FIRST_ARGUMENT, sinceFormula.getFirstArgument().accept(this, parameters));
-			o.add(SECOND_ARGUMENT, sinceFormula.getFirstArgument().accept(this, parameters));
+			o.add(SECOND_ARGUMENT, sinceFormula.getSecondArgument().accept(this, parameters));
 			return o;
 		}
 
@@ -182,7 +183,7 @@ public class FormulaJSonIO {
 
 	}
 	
-	public class FormulaSerialiserDeserialiser implements JsonDeserializer<Formula> {
+	public class FormulaDeserialiser implements JsonDeserializer<Formula> {
 
 		@Override
 		public Formula deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -236,9 +237,9 @@ public class FormulaJSonIO {
 				first = deserializeFormula(json.get(FIRST_ARGUMENT).getAsJsonObject(),context);
 				second = deserializeFormula(json.get(SECOND_ARGUMENT).getAsJsonObject(),context);
 				if (json.has(UNBOUNDED_KEY)) {
-					return new UntilFormula(first, second);
+					return new SinceFormula(first, second);
 				} else {
-					return new UntilFormula(first, second, new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble()));
+					return new SinceFormula(first, second, new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble()));
 				}
 			case HYSTORICALLY:
 				if (json.has(UNBOUNDED_KEY)) {
@@ -264,6 +265,21 @@ public class FormulaJSonIO {
 		}
 
 		
+	}
+
+	public static FormulaJSonIO getInstance() {
+		if (jsonIo == null) {
+			jsonIo = new FormulaJSonIO();
+		}
+		return jsonIo;
+	}
+
+	public String toJson(Formula f1) {
+		return gson.create().toJson(f1);
+	}
+
+	public Formula fromJson(String code) {
+		return gson.create().fromJson(code, Formula.class);
 	}
 
 }
