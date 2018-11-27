@@ -42,6 +42,10 @@ public class SlidingWindow<R> {
 	}	
 
 	public Signal<R> apply(Signal<R> s) {
+		return this.apply(s,true);
+	}
+	
+	public Signal<R> apply(Signal<R> s, boolean future) {
 		Signal<R> result = new Signal<>();
 		SignalIterator<R> iterator = s.getIterator();
 		LinkedList<Sample<R>> window = new LinkedList<>();
@@ -50,7 +54,7 @@ public class SlidingWindow<R> {
 		while (iterator.hasNext()) {
 			Sample<R> next = iterator.next();
 			while (!window.isEmpty()&&(next.getTime()>window.getFirst().getTime()+size)) {
-				Sample<R> created = removeFirstAndAddToSignal( result, window);
+				Sample<R> created = removeFirstAndAddToSignal( result, window,future);
 				if (!window.isEmpty()) {
 					Sample<R> second = window.getFirst();
 					if (second.getTime()+size>next.getTime()) {
@@ -64,16 +68,20 @@ public class SlidingWindow<R> {
 			windowEnd = next.getTime();
 		}
 		if ((window.size()>0)&&(window.getFirst().getTime()+size)<=windowEnd) {
-			removeFirstAndAddToSignal( result, window);
+			removeFirstAndAddToSignal( result, window,future);
 		}
 		result.complete();
 		return result;
 	}
 
 
-	private Sample<R> removeFirstAndAddToSignal(Signal<R> result, LinkedList<Sample<R>> window) {
+	private Sample<R> removeFirstAndAddToSignal(Signal<R> result, LinkedList<Sample<R>> window,boolean future) {
 		Sample<R> first = window.removeFirst();
-		result.add(first.getTime()-a, first.getValue());
+		if (future) {
+			result.add(first.getTime()-a, first.getValue());
+		} else {
+			result.add(first.getTime()+size,first.getValue());
+		}
 		return first;
 	}
 

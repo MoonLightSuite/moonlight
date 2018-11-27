@@ -21,6 +21,7 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
 import org.junit.Test;
 

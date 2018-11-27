@@ -34,10 +34,13 @@ public class Signal<T> {
 	private Double end;
 	
 	public Signal() {
-		this.data = new LinkedList<>();
-		this.end = Double.NaN;
+		this(new LinkedList<>(),Double.NaN);
 	}
 	
+	private Signal( LinkedList<Sample<T>> data, double end) {
+		this.data = data;
+		this.end = end;
+	}
 	
 	/**
 	 * 
@@ -144,6 +147,43 @@ public class Signal<T> {
 			newSignal.complete(end);
 		} 
 		return newSignal;
+	}
+
+	/**
+	 * 
+	 * @param f
+	 * @param init
+	 * @return
+	 */
+	//TODO: Add comments!
+	public <R> Signal<R> iterate( BiFunction<T, R, R> f , R init) {
+		Signal<R> newSignal = new Signal<>();
+		R current = init;
+		for (Sample<T> sample : data) {
+			current = f.apply(sample.value, current);
+			newSignal.add(sample.time,current);
+		}
+		newSignal.complete(end);
+		return newSignal;
+	}
+
+	/**
+	 * 
+	 * @param f
+	 * @param init
+	 * @return
+	 */
+	//TODO: Add comments!
+	public <R> Signal<R> iterateBackward( BiFunction<T, R, R> f , R init) {
+		LinkedList<Sample<R>> newSignal = new LinkedList<>();
+		R current = init;
+		Iterator<Sample<T>> iterator = data.descendingIterator();
+		while (iterator.hasNext()) {
+			Sample<T> next = iterator.next();
+			current = f.apply(next.value,current);
+			newSignal.addFirst(new Sample<>(next.time,current));
+		}
+		return new Signal<>(newSignal,this.end);
 	}
 	
 	/**
@@ -261,5 +301,7 @@ public class Signal<T> {
 	public String toString() {
 		return "Signal [data=" + data + ", end=" + end + "]";
 	}
+	
+	
 	
 }
