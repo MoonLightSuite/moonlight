@@ -20,18 +20,28 @@
 package eu.quanticol.moonlight.signal;
 
 /**
- *
+ * A <code>SignalCursor</code> is used to scan values in a signal. 
  */
-public interface SignalIterator<T> {
+public interface SignalCursor<T> {
+		
+	public double time();
 	
-	public boolean hasNext();
+	public T value();
+	
+	public void forward();
+
+	public void backward();
+
+	public void move( double t );
 	
 	public double nextTime();
-	
-	public T next( double t );
-	
-	public Sample<T> next( );
-	
-	public void jump( double t );
 
+	public double previousTime();
+
+	public boolean hasNext();
+	
+	public boolean hasPrevious();
+
+	public boolean completed();
+	
 }

@@ -41,7 +41,7 @@ import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Sample;
-import eu.quanticol.moonlight.signal.SignalIterator;
+import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 
@@ -83,14 +83,15 @@ public class TestJSon {
 		assertEquals(0,signal.getVariableIndex("x"));
 		assertEquals(1,signal.getVariableIndex("y"));
 		assertEquals(2,signal.getVariableIndex("z"));
-		SignalIterator<Assignment> iterator = signal.getIterator();
+		SignalCursor<Assignment> iterator = signal.getIterator(true);
 		for( int i=0 ; i<times.length ; i++ ) {
-			assertTrue( iterator.hasNext() );
-			Sample<Assignment> next = iterator.next();
-			assertEquals(times[i],next.getTime(),0.0);
+			assertTrue( !iterator.completed() );
+			Assignment next = iterator.value();
+			assertEquals(times[i],iterator.time(),0.0);
 			for (int j=0 ; j<3 ; j++ ) {
-				assertEquals(values[i][j],next.getValue().get(j, types[j]));
+				assertEquals(values[i][j],next.get(j, types[j]));
 			}
+			iterator.forward();
 		}
 	}
 	

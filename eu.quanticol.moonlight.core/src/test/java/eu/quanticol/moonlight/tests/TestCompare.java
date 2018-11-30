@@ -58,7 +58,7 @@ public class TestCompare {
             TemporalMonitoring<Assignment, Boolean> monitoring = new TemporalMonitoring<Assignment, Boolean>(mappa, new BooleanDomain());
             Function<Signal<Assignment>, Signal<Boolean>> m = monitoring.monitor(aeb, null);
             Signal<Boolean> outputSignal = m.apply(signal);
-            assertFalse(outputSignal.getIterator().next(0));
+            assertFalse(outputSignal.valueAt(0.0));
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class TestCompare {
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(aeb, null);
             Signal<Double> outputSignal = m.apply(signal);
-            assertEquals(expectedRobustnessInZero, outputSignal.getIterator().next(0), 1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -122,7 +122,7 @@ public class TestCompare {
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.apply(signal);
             long timeEnd = System.currentTimeMillis();
-            assertEquals(expectedRobustnessInZero, outputSignal.getIterator().next(0), 1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
             System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
         } catch (IOException e) {
             fail(e.getMessage());
@@ -153,12 +153,15 @@ public class TestCompare {
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(globallyFormula, null);
             Signal<Double> outputSignal = m.apply(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalIterator<Assignment> expected = signal.getIterator();
-            SignalIterator<Double> actual = outputSignal.getIterator();
-            while (actual.hasNext()) {
-                Sample<Double> nextActual = actual.next();
-                Sample<Assignment> nextExpected = expected.next();
-                assertEquals(nextExpected.getValue().get(0, Double.class), nextActual.getValue());
+            SignalCursor<Assignment> expected = signal.getIterator(true);
+            SignalCursor<Double> actual = outputSignal.getIterator(true);
+            while (!actual.completed()) {
+            	assertFalse(expected.completed());
+                Double valueActual = actual.value();
+                Assignment valueExpected = expected.value();
+                assertEquals(valueExpected.get(0, Double.class), valueActual);
+                expected.forward();
+                actual.forward();
             }
             System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
         } catch (IOException e) {
@@ -188,17 +191,20 @@ public class TestCompare {
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notEventuallyNotA, null);
             Signal<Double> outputSignal = m.apply(signal);
-            SignalIterator<Assignment> expected = signal.getIterator();
-            SignalIterator<Double> actual = outputSignal.getIterator();
+            SignalCursor<Assignment> expected = signal.getIterator(true);
+            SignalCursor<Double> actual = outputSignal.getIterator(true);
             assertTrue(outputSignal.end()==500.0);
-            while (actual.hasNext()) {
-                Sample<Double> nextActual = actual.next();
-                Sample<Assignment> nextExpected = expected.next();
-                double time = nextExpected.getTime();
+            while (!actual.completed()) {
+            	assertFalse(expected.completed());
+                Double nextActual = actual.value();
+                Assignment nextExpected = expected.value();
+                double time = expected.time();
 //                if (time > 500) {
 //                    break;
 //                }
-                assertEquals("Time: " + time, nextExpected.getValue().get(0, Double.class), nextActual.getValue());
+                assertEquals("Time: " + time, nextExpected.get(0, Double.class), nextActual);
+                actual.forward();
+                expected.forward();
             }
         } catch (IOException e) {
             fail(e.getMessage());

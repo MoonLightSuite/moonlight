@@ -23,8 +23,9 @@ import java.util.LinkedList;
 import java.util.function.BiFunction;
 
 import eu.quanticol.moonlight.signal.Sample;
+import eu.quanticol.moonlight.signal.Segment;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalIterator;
+import eu.quanticol.moonlight.signal.SignalCursor;
 
 /**
  *
@@ -33,6 +34,12 @@ public class SlidingWindow<R> {
 
 	private final double a;
 	private final double size;
+	
+	/**
+	 * A valid aggregator must be a function 'f' that is:
+	 * - commutative: f(a,b)=f(b,a)
+	 * - idempotent in one of the two arguments: for any a,b, f(a,b)=a || f(a,b)=b
+	 */
 	private BiFunction<R, R, R> aggregator;
 
 	public SlidingWindow(double a, double b, BiFunction<R, R, R> aggregator) {
@@ -45,67 +52,103 @@ public class SlidingWindow<R> {
 		return this.apply(s,true);
 	}
 	
-	public Signal<R> apply(Signal<R> s, boolean future) {
+	public Signal<R> apply(Signal<R> s, boolean forward) {
 		Signal<R> result = new Signal<>();
-		SignalIterator<R> iterator = s.getIterator();
-		LinkedList<Sample<R>> window = new LinkedList<>();
-		iterator.jump(s.start()+a);
-		double windowEnd = 0.0;
-		while (iterator.hasNext()) {
-			Sample<R> next = iterator.next();
-			while (!window.isEmpty()&&(next.getTime()>window.getFirst().getTime()+size)) {
-				Sample<R> created = removeFirstAndAddToSignal( result, window,future);
-				if (!window.isEmpty()) {
-					Sample<R> second = window.getFirst();
-					if (second.getTime()+size>next.getTime()) {
-						window.addFirst(new Sample<R>(next.getTime()-size, created.getValue()));
-					}
-				} else {
-					window.addFirst(new Sample<R>(next.getTime()-size, created.getValue()));
-				}
+		SignalCursor<R> iterator = s.getIterator(forward);
+		InnerWindow window = new InnerWindow();
+		iterator.move(s.start()+a);
+		while (!iterator.completed()) {
+			double time = iterator.time();
+			R value = iterator.value();
+			while (!window.add(time, value)) {
+				result.add(window.firstTime()-a, window.firstValue());	
+				window.shift( time );
 			}
-			addElement(window,next.getTime(),next.getValue());
-			windowEnd = next.getTime();
+			iterator.forward();
 		}
-		if ((window.size()>0)&&(window.getFirst().getTime()+size)<=windowEnd) {
-			removeFirstAndAddToSignal( result, window,future);
-		}
-		result.complete();
+		result.endAt(s.end()-(a+size));
 		return result;
-	}
-
-
-	private Sample<R> removeFirstAndAddToSignal(Signal<R> result, LinkedList<Sample<R>> window,boolean future) {
-		Sample<R> first = window.removeFirst();
-		if (future) {
-			result.add(first.getTime()-a, first.getValue());
-		} else {
-			result.add(first.getTime()+size,first.getValue());
-		}
-		return first;
-	}
-
-	private void addElement(LinkedList<Sample<R>> window, double t,R v) {
-		R currentValue = v;
-		double currentTime = t;
-		while (!window.isEmpty()) {
-			Sample<R> sample = window.peekLast();
-			R lastValue = sample.getValue();
-			R newValue = this.aggregator.apply(lastValue,currentValue);
-			if (newValue.equals(lastValue)) {
-				window.add(new Sample<R>(currentTime,currentValue));
-				return ;
-			} else {
-				currentValue = newValue;
-				currentTime = sample.getTime();
-				window.pollLast();
-			}
-		}
-		window.add(new Sample<R>(currentTime,currentValue));
 	}
 
 	public double size() {
 		return size;
+	}
+	
+	public class InnerWindow {
+		
+		private Segment<R> first;
+		
+		private Segment<R> last;
+		
+		private double end;
+		
+		public InnerWindow() {			
+		}
+		
+		public void shift(double time) {
+			double nextTime = first.getSegmentEnd();
+			if (Double.isNaN(nextTime)) {//Window contains a single element!
+				init( time-size , first.getValue() );
+			} else {
+				if (nextTime+size>time) {
+					first = first.getNext().addBefore(time-size, first.getValue());
+				} else {
+					first = first.getNext();
+				}
+			}
+		}
+
+		public double firstTime() {
+			return first.getTime();
+		}
+		
+		public R firstValue() {
+			return first.getValue();
+		}
+
+		public double size( ) {
+			return (first == null?0.0:end-first.getTime());
+		}
+		
+		public boolean add( double time , R value ) {
+			if (first==null) {
+				init( time, value );
+			} else {
+				if (first.getTime()+size<time) {
+					return false;
+				} else {
+					update(time, value);
+					this.end = time;
+				}
+			}
+			return true;
+		}
+
+		private void update(double time, R value) {
+			Segment<R> current = last;
+			double insertTime = time;
+			R aggregatedValue = value;
+			while (current != null) {
+				R currentValue = current.getValue();
+				R newValue = aggregator.apply(currentValue,aggregatedValue);
+				if (currentValue.equals(newValue)) {
+					current.addAfter(insertTime, aggregatedValue);
+					return ;
+				} else {
+					insertTime =  current.getTime();
+					aggregatedValue = newValue;
+					current = current.getPrevious();
+				}
+			}
+			init(insertTime, aggregatedValue);
+			end = time;
+		}
+
+		private void init(double time, R value) {
+			first = new Segment<R>(time,value);
+			last = first;
+		}
+		
 	}
 
 

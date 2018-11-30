@@ -29,28 +29,25 @@ import java.util.function.Function;
  */
 public class Signal<T> {
 
-	private LinkedList<Sample<T>> data;
-	private Sample<T> last;
-	private Double end;
+	private Segment<T> first;
+	private Segment<T> last;
+	private int size = 0;
+	private double end = 0.0;
 	
 	public Signal() {
-		this(new LinkedList<>(),Double.NaN);
+		this.first = null;
+		this.last = null;
+		this.size = 0;
+		this.end = Double.NaN;
 	}
-	
-	private Signal( LinkedList<Sample<T>> data, double end) {
-		this.data = data;
-		this.end = end;
-	}
-	
+
+
 	/**
 	 * 
 	 * @return the start time of the signal
 	 */
 	public double start() {
-		if (data.isEmpty()) {
-			return Double.NaN;
-		}
-		return data.getFirst().time;
+		return Segment.getTime( first );
 	}
 	 
 	/**
@@ -58,13 +55,7 @@ public class Signal<T> {
 	 * @return the end time of the signal
 	 */
 	public double end() {
-		if (!end.isNaN()) {
-			return end;
-		}
-		if (last == null) {
-			return Double.NaN;
-		}
-		return last.time;
+		return end;
 	}
 	
 	/**
@@ -72,7 +63,7 @@ public class Signal<T> {
 	 * @returns true if the signal is empty
 	 */
 	public boolean isEmpty() {
-		return data.isEmpty();
+		return (size==0);
 	}
 	
 	/**
@@ -81,43 +72,58 @@ public class Signal<T> {
 	 * @param value
 	 * @return last time step
 	 */
-	public double add( double t , T value ) {
-		if (!end.isNaN()) {
-			throw new IllegalArgumentException();
-		}
-		Sample<T> newSample = new Sample<T>(t, value);
-		double interval = 0.0;
-		if (last == null) {
-			last = newSample;			
-			data.add(newSample);
-			interval = t;
+	public void add( double t , T value ) {
+		Segment<T> oldLast = last;
+		if (first == null) {
+			startWith(t,value);
 		} else {
-			if (last.time>t) {
-				throw new IllegalArgumentException();
-			} 
-			if (!last.value.equals(value)) {
-				data.add(newSample);
+			if (this.end > t) {
+				throw new IllegalArgumentException();//TODO: Add Message!
 			}
-			last = newSample;
-			interval = newSample.time;
+			last = last.addAfter(t, value);
+			end = t;
 		}
-		return interval;
+		if (oldLast!=last) {
+			size++;			
+		}
 	}
-	
+
+	private void startWith(double t, T value) {
+		first = new Segment<>(t, value);
+		last = first;
+		end = t;
+	}
+
+
+	/**
+	 * Add (t,value) to the sample set
+	 * @param t
+	 * @param value
+	 * @return last time step
+	 */
+	public void addBefore( double t , T value ) {
+		if (first == null) {
+			startWith(t,value);
+		} else {
+			first = first.addBefore(t, value);
+		}
+		size++;
+	}
+
 	/**
 	 * return a signal, given a signal and a function 
 	 */
 	public <R> Signal<R> apply( Function<T, R> f ) {
-		Signal<R> newSignal = new Signal<>();
-		for (Sample<T> sample : data) {
-			newSignal.add(sample.time, f.apply(sample.value));
+		Signal<R> newSignal = new Signal<R>();
+		SignalCursor<T> cursor = getIterator(true);
+		while (!cursor.completed()) {
+			newSignal.add(cursor.time(), f.apply(cursor.value()));
+			cursor.forward();
 		}
-		if (!end.isNaN()) {
-			newSignal.complete( end );
-		}
+		newSignal.end = end;
 		return newSignal;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -130,22 +136,18 @@ public class Signal<T> {
 	 */
 	public static <T,R> Signal<R> apply( Signal<T> s1 , BiFunction<T, T, R> f , Signal<T> s2 ) {
 		Signal<R> newSignal = new Signal<>();
-		SignalIterator<T> si1 = s1.getIterator();
-		SignalIterator<T> si2 = s2.getIterator();
-		
+		SignalCursor<T> c1 = s1.getIterator(true);
+		SignalCursor<T> c2 = s2.getIterator(true);
 		double time = Math.max(s1.start(), s2.start());
-		double end = Math.min(s1.end(), s2.end());
-		if (time<end) {
-			si1.jump(time);
-			si2.jump(time);
-			while ((time < end)) {
-				T v1 = si1.next(time);
-				T v2 = si2.next(time);
-				newSignal.add(time, f.apply(v1, v2));
-				time = Math.min(si1.nextTime(), si2.nextTime());
-			}
-			newSignal.complete(end);
-		} 
+		c1.move(time);
+		c2.move(time);
+		while (!c1.completed()&&!c2.completed()) {
+			newSignal.add(time, f.apply(c1.value(), c2.value()));
+			time = Math.min(c1.nextTime(), c2.nextTime());
+			c1.move(time);
+			c2.move(time);
+		}
+		newSignal.end = Math.min(s1.end, s2.end);
 		return newSignal;
 	}
 
@@ -156,14 +158,15 @@ public class Signal<T> {
 	 * @return
 	 */
 	//TODO: Add comments!
-	public <R> Signal<R> iterate( BiFunction<T, R, R> f , R init) {
+	public <R> Signal<R> iterateForward( BiFunction<T, R, R> f , R init) {
 		Signal<R> newSignal = new Signal<>();
-		R current = init;
-		for (Sample<T> sample : data) {
-			current = f.apply(sample.value, current);
-			newSignal.add(sample.time,current);
+		SignalCursor<T> cursor = getIterator(true); 
+		R value = init;
+		while (!cursor.completed()) {
+			value = f.apply(cursor.value(),value);
+			newSignal.add(cursor.time(), value);
 		}
-		newSignal.complete(end);
+		newSignal.end = end;
 		return newSignal;
 	}
 
@@ -175,122 +178,102 @@ public class Signal<T> {
 	 */
 	//TODO: Add comments!
 	public <R> Signal<R> iterateBackward( BiFunction<T, R, R> f , R init) {
-		LinkedList<Sample<R>> newSignal = new LinkedList<>();
-		R current = init;
-		Iterator<Sample<T>> iterator = data.descendingIterator();
-		while (iterator.hasNext()) {
-			Sample<T> next = iterator.next();
-			current = f.apply(next.value,current);
-			newSignal.addFirst(new Sample<>(next.time,current));
+		Signal<R> newSignal = new Signal<>();
+		SignalCursor<T> cursor = getIterator(false); 
+		R value = init;
+		while (!cursor.completed()) {
+			value = f.apply(cursor.value(),value);
+			newSignal.addBefore(cursor.time(), value);
 		}
-		return new Signal<>(newSignal,this.end);
+		newSignal.end = end;
+		return newSignal;
 	}
 	
-	/**
-	 * add to the signal the final time step and value
-	 * @param end
-	 */
-	public void complete(double end) {
-		if (!this.end.isNaN()||(this.last==null)||(this.last.time>end)) {
-			throw new IllegalArgumentException();
-		}
-		if (this.last.getTime() != end) {
-			this.data.add(new Sample<T>(end,this.last.value));
-		}
-		this.end = end;
-	}
-	
-	/**
-	 * if not end time, put as and time last time
-	 */
-	public void complete() {
-		if (!this.end.isNaN()||(this.last==null)||(this.last.getTime()==this.start())) {
-			throw new IllegalArgumentException();
-		}
-		this.end = this.last.time;
-	}
-
 	/**
 	 * 
 	 * @return
 	 */
-	public SignalIterator<T> getIterator() {
-		return new SignalIterator<T>() {
+	public SignalCursor<T> getIterator(boolean forward) {
+		return new SignalCursor<T>() {
 			
-			private Iterator<Sample<T>> iterator = data.iterator();
-			private Sample<T> previous;
-			private Sample<T> current;
-			private Sample<T> next;
+			private Segment<T> current = (forward?first:last);
+			private double time = (current!=null?current.getTime():Double.NaN);
 
 			@Override
-			public boolean hasNext() {
-				return (current!=null)||(next != null)||iterator.hasNext();
+			public double time() {
+				return time;
+			}
+
+			@Override
+			public T value() {
+				return (current!=null?current.getValue():null);
+			}
+
+			@Override
+			public void forward() {
+				if (current != null) {
+					current = current.getNext();
+					time = (current!=null?current.getTime():Double.NaN);
+				}
+			}
+
+			@Override
+			public void backward() {
+				if (current != null) {
+					current = current.getPrevious();
+					time = (current!=null?current.getTime():Double.NaN);
+				}
+			}
+
+			@Override
+			public void move(double t) {
+				if (current != null) {
+					current = current.jump(t);
+					time = t;
+				}
 			}
 
 			@Override
 			public double nextTime() {
 				if (current != null) {
-					return current.time;
+					double t = current.getSegmentEnd();
+					return (Double.isNaN(t)&&current.getTime()!=end?end:t); 
 				}
-				if (next == null) {
-					if (iterator.hasNext()) {
-						next = iterator.next();
+				return Double.NaN;
+			}
+
+			@Override
+			public double previousTime() {
+				if (current != null) {
+					if (current.getTime()<time) {
+						return current.getTime();
 					} else {
-						return Double.NaN;
+						return current.getPreviousTime();
 					}
-				} 
-				return next.time;
+				}
+				return Double.NaN;
 			}
 
 			@Override
-			public T next(double t) {
-				jump(t);
-				return next().getValue();
+			public boolean hasNext() {
+				return (current != null)&&(current.getNext()!=null);
 			}
 
 			@Override
-			public void jump(double t) {
-				if ((previous != null)&&(previous.getTime()>t)) {
-					throw new IllegalArgumentException();
-				}
-				while (((previous==null)||((next==null)||(t>=next.getTime())))&&(iterator.hasNext())) {
-					previous = next;
-					next = iterator.next();
-				}
-				if ((next!=null)&&(next.getTime()==t)) {
-					previous = next;
-					next = null;
-				}
-				if (previous != null) {
-					current = new Sample<T>(t, previous.getValue());
-				}
+			public boolean hasPrevious() {
+				return (current != null)&&(current.getPrevious()!=null);
 			}
 
 			@Override
-			public Sample<T>  next() {
-				shift();
-				Sample<T> toReturn = this.current;
-				this.previous = this.current;
-				this.current = null;
-				return toReturn;
-			}
+			public boolean completed() {
+				return (current == null);
+			}			
 
-			private void shift() {
-				if (current == null) {
-					if (next == null) {
-						current = iterator.next();
-					} else {
-						current = next;
-					}					
-					next = (iterator.hasNext()?iterator.next():null);
-				}
-				
-			}
 		};
 	}
 
 	public int size() {
-		return data.size();
+		return size;
 	}
 
 
@@ -299,9 +282,25 @@ public class Signal<T> {
 	 */
 	@Override
 	public String toString() {
-		return "Signal [data=" + data + ", end=" + end + "]";
+		if (isEmpty()) {
+			return "Signal [ ]";
+		} else {
+			return "Signal [start=" + start() + ", end=" + end() + ", size="+size()+"]";
+		}
 	}
-	
+
+	public void endAt( double end ) {
+		if (this.end>end) {
+			throw new IllegalArgumentException();//TODO: Add message!
+		}
+		this.end = end;
+	}
+
+
+	public T valueAt(double t) {
+		return (first==null?null:first.getValueAt(t));
+	}
+
 	
 	
 }

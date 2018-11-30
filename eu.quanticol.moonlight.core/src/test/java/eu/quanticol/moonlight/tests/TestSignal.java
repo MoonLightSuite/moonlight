@@ -31,7 +31,7 @@ import org.junit.Test;
 import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.signal.Sample;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalIterator;
+import eu.quanticol.moonlight.signal.SignalCursor;
 
 
 public class TestSignal {
@@ -44,7 +44,7 @@ public class TestSignal {
 			signal.add(time, f.apply(time));
 			time += dt;
 		}
-		signal.complete(end);
+		signal.endAt(end);
 		return signal;
 	}
 	
@@ -52,17 +52,17 @@ public class TestSignal {
 		assertEquals(size,s.size());
 		assertEquals("START",start,s.start(),0.0);
 		assertEquals("END",end,s.end(),0.0);
-		SignalIterator<T> si = s.getIterator();
+		SignalCursor<T> si = s.getIterator(true);
 		double previous = start;
-		while (si.hasNext()) {
-			Sample<T> sample = si.next();
-			double t = sample.getTime();
-			T v = sample.getValue();
+		while (!si.completed()) {
+			double t = si.time();
+			T v = si.value();
 			assertTrue("Time: "+t+" Value: "+v,p.apply(t, v));
 			if (t!=start) {
 				assertTrue("Step: "+previous+"->"+t,step.apply(previous, t));
 			}
 			previous = t;
+			si.forward();
 		}
 	}
 	
@@ -72,11 +72,11 @@ public class TestSignal {
 		for( int i=0 ; i<100 ; i++ ) {
 			s.add(i, i%2==0);
 		}
-		s.complete(100);
+		s.endAt(100);
 		System.out.println(s);
 		assertEquals("start:",0.0,s.start(),0.0);
 		assertEquals("end:",100,s.end(),0.0);
-		assertEquals(101,s.size());
+		assertEquals(100,s.size());
 	}
 
 	@Test
@@ -84,21 +84,20 @@ public class TestSignal {
 		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> true);
 		assertEquals("start:",0.0,s.start(),0.0);
 		assertEquals("end:",100.0,s.end(),0.0);
-		assertEquals(2,s.size());
+		assertEquals(1,s.size());
 	}
 	
 	@Test
 	public void testIterator() {
 		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0);
-		SignalIterator<Boolean> si = s.getIterator();
+		SignalCursor<Boolean> si = s.getIterator(true);
 		double time = 0.0;
 		while (time<100) {
-			assertEquals("Time",time,si.nextTime(),0.0);
-			assertEquals("Value ("+time+")",((int) time)%2==0,si.next(time));
+			assertEquals("Time",time,si.time(),0.0);
+			assertEquals("Value ("+time+")",((int) time)%2==0,si.value());
 			time += 1.0;
+			si.forward();
 		}
-		assertEquals("Time",time,si.nextTime(),0.0);
-		assertEquals("Value ("+time+")",false,si.next(time));
 	}
 
 	@Test
@@ -106,14 +105,14 @@ public class TestSignal {
 		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
 		assertEquals("start:",0.0,s.start(),0.0);
 		assertEquals("end:",100.0,s.end(),0.0);
-		assertEquals(101,s.size());
+		assertEquals(100,s.size());
 	}
 
 
 	@Test
 	public void testUnaryApply2() {
 		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
-		checkSignal(s, 0.0, 100, 101, (x,y) -> (x<100?y==(!(x.intValue()%2==0)):y==true), (x,y) -> (y-x)==1.0 );
+		checkSignal(s, 0.0, 100, 100, (x,y) -> (x<100?y==(!(x.intValue()%2==0)):y==true), (x,y) -> (y-x)==1.0 );
 	}
 	
 	@Test
@@ -121,7 +120,7 @@ public class TestSignal {
 		Signal<Boolean> s1 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
 		Signal<Boolean> s2 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
 		Signal<Boolean> s3 = Signal.apply(s1, (x, y)->x||y,s2);
-		checkSignal(s3,0.0,100,2, (x,y) -> true, (x,y) -> (x==0.0)&&(y==100.0));
+		checkSignal(s3,0.0,100,1, (x,y) -> true, (x,y) -> (x==0.0)&&(y==100.0));
 	}
 
 	@Test
@@ -130,7 +129,7 @@ public class TestSignal {
 		for( int i=0 ; i<100 ; i++ ) {
 			s.add(i, i%2==0);
 		}
-		s.complete(100);
+		s.endAt(100);
 		assertTrue(true);
 	}
 	
@@ -139,7 +138,7 @@ public class TestSignal {
 		Signal<Boolean> s1 = createSignal(50.0, 150, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
 		Signal<Boolean> s2 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
 		Signal<Boolean> s3 = Signal.apply(s1, (x, y)->x||y,s2);
-		checkSignal(s3,50.0,100,2, (x,y) -> true, (x,y) -> (x==50.0)&&(y==100.0));
+		checkSignal(s3,50.0,100,1, (x,y) -> true, (x,y) -> (x==50.0)&&(y==100.0));
 	}
 
 

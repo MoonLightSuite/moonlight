@@ -25,7 +25,7 @@ import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.formula.UntilFormula;
 import eu.quanticol.moonlight.signal.Sample;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalIterator;
+import eu.quanticol.moonlight.signal.SignalCursor;
 
 /**
  *
@@ -120,13 +120,13 @@ public class TemporalMonitoring<T,R> implements
 
 	private static <R> Signal<R>  pastMonitoring(Signal<R> s, BiFunction<R, R, R> aggregator ) {
 		Signal<R> result = new Signal<R>();
-		SignalIterator<R> iterator = s.getIterator();
-		R current = null;
-		while (iterator.hasNext()) {
-			Sample<R> next = iterator.next();
-			current = (current==null?next.getValue():aggregator.apply(current,next.getValue()));
-			result.add(next.getTime(), current);
-		}
+//		SignalCursor<R> iterator = s.getIterator();
+//		R current = null;
+//		while (iterator.hasNext()) {
+//			Sample<R> next = iterator.next();
+//			current = (current==null?next.getValue():aggregator.apply(current,next.getValue()));
+//			result.add(next.getTime(), current);
+//		}
 		return result;
 	}
 
