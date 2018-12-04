@@ -165,10 +165,12 @@ public class Signal<T> {
 		while (!cursor.completed()) {
 			value = f.apply(cursor.value(),value);
 			newSignal.add(cursor.time(), value);
+			cursor.forward();
 		}
 		newSignal.end = end;
 		return newSignal;
 	}
+
 
 	/**
 	 * 
@@ -184,6 +186,7 @@ public class Signal<T> {
 		while (!cursor.completed()) {
 			value = f.apply(cursor.value(),value);
 			newSignal.addBefore(cursor.time(), value);
+			cursor.backward();
 		}
 		newSignal.end = end;
 		return newSignal;

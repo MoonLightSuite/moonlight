@@ -23,7 +23,6 @@ import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.formula.UntilFormula;
-import eu.quanticol.moonlight.signal.Sample;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
@@ -73,28 +72,80 @@ public class TemporalMonitoring<T,R> implements
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(EventuallyFormula eventuallyFormula, Parameters parameters) {
-		Interval interval = eventuallyFormula.getInterval();
 		Function<Signal<T>,Signal<R>> argumentMonitoring = eventuallyFormula.getArgument().accept(this, parameters);
-		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval,true);
+		if (eventuallyFormula.isUnbounded()) {
+			return s -> argumentMonitoring.apply(s).iterateBackward( module::disjunction , module.min() ); 
+		} else {
+			Interval interval = eventuallyFormula.getInterval();
+			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval,true);
+		}
 	}
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(GloballyFormula globallyFormula, Parameters parameters) {
-		Interval interval = globallyFormula.getInterval();
 		Function<Signal<T>,Signal<R>> argumentMonitoring = globallyFormula.getArgument().accept(this, parameters);
-		return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval,true);
+		if (globallyFormula.isUnbounded()) {
+			return s -> argumentMonitoring.apply(s).iterateBackward( module::conjunction , module.max() ); 
+		} else {
+			Interval interval = globallyFormula.getInterval();
+			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval,true);
+		}
 	}
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(UntilFormula untilFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		Function<Signal<T>,Signal<R>> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
+		Function<Signal<T>,Signal<R>> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
+		Function<Signal<T>,Signal<R>> unboundedMonitoring = s -> TemporalMonitoring.unboundedUntilMonitoring( firstMonitoring.apply(s) , secondMonitoring.apply(s) , module);
+		if (untilFormula.isUnbounded()) {
+			return unboundedMonitoring;
+		} else {
+			return s -> Signal.apply(unboundedMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, untilFormula.getInterval(), true));
+		}
 	}
 
 
+	public static <R> Signal<R>  unboundedUntilMonitoring(Signal<R> s1, Signal<R> s2, DomainModule<R> module) {
+		Signal<R> result = new Signal<R>();
+		SignalCursor<R> c1 = s1.getIterator(false);
+		SignalCursor<R> c2 = s2.getIterator(false);
+		double end = Math.min( c1.time() , c2.time() );
+		double time = end;
+		R current = module.min();
+		c1.move(time);
+		c2.move(time);
+		while (!c1.completed()&&!c2.completed()) {
+			result.add(time, module.disjunction(c2.value(), module.conjunction(c1.value(), current)));
+			time = Math.max(c1.previousTime(), c2.previousTime());
+			c1.move(time);
+			c2.move(time);
+		} 
+		result.endAt(end);
+		return result;
+	}
+
+	public static <R> Signal<R>  unboundedSinceMonitoring(Signal<R> s1, Signal<R> s2, DomainModule<R> module) {
+		Signal<R> result = new Signal<R>();
+		SignalCursor<R> c1 = s1.getIterator(true);
+		SignalCursor<R> c2 = s2.getIterator(true);
+		double end = Math.max( c1.time() , c2.time() );
+		double time = end;
+		R current = module.min();
+		c1.move(time);
+		c2.move(time);
+		while (!c1.completed()&&!c2.completed()) {
+			result.add(time, module.disjunction(c2.value(), module.conjunction(c1.value(), current)));
+			time = Math.min(c1.nextTime(), c2.nextTime());
+			c1.move(time);
+			c2.move(time);
+		} 
+		result.endAt(end);
+		return result;
+	}
+
 	public static <R> Signal<R> temporalMonitoring( Signal<R> signal , BiFunction<R, R, R> aggregator , Interval i , boolean future) {
-		SlidingWindow<R> sw = new SlidingWindow<>(i.getStart(), i.getEnd(), aggregator);
-		return sw.apply(signal,future);
+		SlidingWindow<R> sw = new SlidingWindow<>(i.getStart(), i.getEnd(), aggregator,future);
+		return sw.apply(signal);
 	}
 
 	public Function<Signal<T>, Signal<R>> monitor(Formula f, Parameters parameters) {
@@ -103,41 +154,35 @@ public class TemporalMonitoring<T,R> implements
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(SinceFormula sinceFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		Function<Signal<T>,Signal<R>> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
+		Function<Signal<T>,Signal<R>> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
+		Function<Signal<T>,Signal<R>> unboundedSinceMonitoring = s -> TemporalMonitoring.unboundedSinceMonitoring( firstMonitoring.apply(s) , secondMonitoring.apply(s) , module);
+		if (sinceFormula.isUnbounded()) {
+			return unboundedSinceMonitoring;
+		} else {
+			return s -> Signal.apply(unboundedSinceMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, sinceFormula.getInterval(), true));
+		}
 	}
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(HystoricallyFormula hystoricallyFormula, Parameters parameters) {
 		Function<Signal<T>,Signal<R>> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
 		if (hystoricallyFormula.isUnbounded()) {
-			return s -> TemporalMonitoring.pastMonitoring( argumentMonitoring.apply(s) , module::disjunction ); 
+			return s -> argumentMonitoring.apply(s).iterateForward( module::conjunction , module.min() ); 
 		} else {
 			Interval interval = hystoricallyFormula.getInterval();
-			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval,false);
+			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval,false);
 		}
-	}
-
-	private static <R> Signal<R>  pastMonitoring(Signal<R> s, BiFunction<R, R, R> aggregator ) {
-		Signal<R> result = new Signal<R>();
-//		SignalCursor<R> iterator = s.getIterator();
-//		R current = null;
-//		while (iterator.hasNext()) {
-//			Sample<R> next = iterator.next();
-//			current = (current==null?next.getValue():aggregator.apply(current,next.getValue()));
-//			result.add(next.getTime(), current);
-//		}
-		return result;
 	}
 
 	@Override
 	public Function<Signal<T>, Signal<R>> visit(OnceFormula onceFormula, Parameters parameters) {
 		Function<Signal<T>,Signal<R>> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
 		if (onceFormula.isUnbounded()) {
-			return s -> TemporalMonitoring.pastMonitoring( argumentMonitoring.apply(s) , module::conjunction ); 
+			return s -> argumentMonitoring.apply(s).iterateForward( module::disjunction , module.min() ); 
 		} else {
 			Interval interval = onceFormula.getInterval();
-			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval,false);
+			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval,false);
 		}
 	}
 

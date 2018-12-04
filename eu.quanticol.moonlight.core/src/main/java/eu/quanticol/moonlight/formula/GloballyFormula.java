@@ -29,6 +29,10 @@ public class GloballyFormula implements Formula {
 	private final Formula argument;
 	private Interval interval;
 	
+	public GloballyFormula(Formula argument) {
+		this(argument,null);
+	}
+
 	public GloballyFormula(Formula argument, Interval interval) {
 		this.argument = argument;
 		this.interval = interval;
@@ -96,6 +100,10 @@ public class GloballyFormula implements Formula {
 	@Override
 	public String toString() {
 		return "GloballyFormula [argument=" + argument + ", interval=" + interval + "]";
+	}
+
+	public boolean isUnbounded() {
+		return interval==null;
 	}
 
 	

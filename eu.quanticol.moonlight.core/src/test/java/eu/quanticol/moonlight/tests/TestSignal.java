@@ -145,7 +145,7 @@ public class TestSignal {
 	@Test
 	public void testSlidingWindow1() {
 		Signal<Double> s1 = createSignal(0.0, 20.0, 0.4, x -> Math.sin(x) );
-		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.33, Math::min);
+		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.33, Math::min,true);
 		Signal<Double> s2 = w.apply(s1);
 		assertNotNull(s2);
 		assertEquals(s1.end()-5.33, s2.end(),0.0);
@@ -154,7 +154,7 @@ public class TestSignal {
 	@Test
 	public void testSlidingWindow2() {
 		Signal<Double> s1 = createSignal(0.0, 10, 0.45, x -> ( (((int) (x*2))%2==0)?-1.0:1.0) );
-		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.75, Math::min);
+		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.75, Math::min,true);
 		Signal<Double> s2 = w.apply(s1);
 		assertNotNull(s2);
 		assertEquals(s1.end()-5.75, s2.end(),0.0);

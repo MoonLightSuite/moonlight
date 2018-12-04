@@ -41,33 +41,43 @@ public class SlidingWindow<R> {
 	 * - idempotent in one of the two arguments: for any a,b, f(a,b)=a || f(a,b)=b
 	 */
 	private BiFunction<R, R, R> aggregator;
+	private boolean isFuture;
 
-	public SlidingWindow(double a, double b, BiFunction<R, R, R> aggregator) {
+	public SlidingWindow(double a, double b, BiFunction<R, R, R> aggregator, boolean isFuture) {
 		this.a = a;
 		this.size = b-a;
 		this.aggregator = aggregator;
+		this.isFuture = isFuture;
 	}	
 
 	public Signal<R> apply(Signal<R> s) {
-		return this.apply(s,true);
-	}
-	
-	public Signal<R> apply(Signal<R> s, boolean forward) {
 		Signal<R> result = new Signal<>();
-		SignalCursor<R> iterator = s.getIterator(forward);
+		SignalCursor<R> iterator = s.getIterator(true);
 		InnerWindow window = new InnerWindow();
-		iterator.move(s.start()+a);
+		iterator.move(initTime(s.start()));
 		while (!iterator.completed()) {
 			double time = iterator.time();
 			R value = iterator.value();
 			while (!window.add(time, value)) {
-				result.add(window.firstTime()-a, window.firstValue());	
+				result.add(timeOf(window.firstTime()), window.firstValue());	
 				window.shift( time );
 			}
 			iterator.forward();
 		}
 		result.endAt(s.end()-(a+size));
 		return result;
+	}
+
+	private double initTime(double start) {
+		return start+a;
+	}
+
+	private double timeOf(double t) {
+		if (isFuture) {
+			return t-a;
+		} else {
+			return t+a;
+		}
 	}
 
 	public double size() {

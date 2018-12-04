@@ -25,7 +25,11 @@ package eu.quanticol.moonlight.formula;
 public class EventuallyFormula implements Formula {
 
 	private final Formula argument;
-	private Interval interval;
+	private final Interval interval;
+	
+	public EventuallyFormula(Formula argument) {
+		this(argument,null);
+	}
 	
 	public EventuallyFormula(Formula argument, Interval interval) {
 		this.argument = argument;
@@ -96,9 +100,8 @@ public class EventuallyFormula implements Formula {
 		return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
 	}
 
-	
-//	public Interval getInterval( ) {
-//		return this.interval.apply(p);
-//	}
+	public boolean isUnbounded() {
+		return interval==null;
+	}
 
 }
