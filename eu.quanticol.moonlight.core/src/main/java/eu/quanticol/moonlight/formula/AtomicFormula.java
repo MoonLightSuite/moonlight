@@ -24,60 +24,69 @@ package eu.quanticol.moonlight.formula;
  */
 public class AtomicFormula implements Formula {
 
-	private final String atomicId;
-	
-	public AtomicFormula( String atomicId ) {
-		this.atomicId = atomicId;
-	}
-	
-	public String getAtomicId() {
-		return atomicId;
-	}
+    private final String atomicId;
 
-	@Override
-	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
-		return visitor.visit(this, parameters);
-	}
+    public AtomicFormula(String atomicId) {
+        this.atomicId = atomicId;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((atomicId == null) ? 0 : atomicId.hashCode());
-		return result;
-	}
+    public String getAtomicId() {
+        return atomicId;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AtomicFormula other = (AtomicFormula) obj;
-		if (atomicId == null) {
-			if (other.atomicId != null)
-				return false;
-		} else if (!atomicId.equals(other.atomicId))
-			return false;
-		return true;
-	}
+    @Override
+    public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+        return visitor.visit(this, parameters);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "AtomicFormula [atomicId=" + atomicId + "]";
-	}
-	
-	
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((atomicId == null) ? 0 : atomicId.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AtomicFormula other = (AtomicFormula) obj;
+        if (atomicId == null) {
+            if (other.atomicId != null)
+                return false;
+        } else if (!atomicId.equals(other.atomicId))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "AtomicFormula [atomicId=" + atomicId + "]";
+    }
+
+    @Override
+    public String toTaliro() {
+        return atomicId;
+    }
+
+    @Override
+    public String toBreach() {
+        return null;
+    }
+
 
 }

@@ -19,8 +19,6 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -29,281 +27,281 @@ import java.util.function.Function;
  */
 public class Signal<T> {
 
-	private Segment<T> first;
-	private Segment<T> last;
-	private int size = 0;
-	private double end = 0.0;
-	
-	public Signal() {
-		this.first = null;
-		this.last = null;
-		this.size = 0;
-		this.end = Double.NaN;
-	}
+    private Segment<T> first;
+    private Segment<T> last;
+    private int size = 0;
 
 
-	/**
-	 * 
-	 * @return the start time of the signal
-	 */
-	public double start() {
-		return Segment.getTime( first );
-	}
-	 
-	/**
-	 * 
-	 * @return the end time of the signal
-	 */
-	public double end() {
-		return end;
-	}
-	
-	/**
-	 * 
-	 * @returns true if the signal is empty
-	 */
-	public boolean isEmpty() {
-		return (size==0);
-	}
-	
-	/**
-	 * Add (t,value) to the sample set
-	 * @param t
-	 * @param value
-	 * @return last time step
-	 */
-	public void add( double t , T value ) {
-		Segment<T> oldLast = last;
-		if (first == null) {
-			startWith(t,value);
-		} else {
-			if (this.end > t) {
-				throw new IllegalArgumentException();//TODO: Add Message!
-			}
-			last = last.addAfter(t, value);
-			end = t;
-		}
-		if (oldLast!=last) {
-			size++;			
-		}
-	}
+    private double end = 0.0;
 
-	private void startWith(double t, T value) {
-		first = new Segment<>(t, value);
-		last = first;
-		end = t;
-	}
+    public Signal() {
+        this.first = null;
+        this.last = null;
+        this.size = 0;
+        this.end = Double.NaN;
+    }
 
+    public double getEnd() {
+        return end;
+    }
 
-	/**
-	 * Add (t,value) to the sample set
-	 * @param t
-	 * @param value
-	 * @return last time step
-	 */
-	public void addBefore( double t , T value ) {
-		if (first == null) {
-			startWith(t,value);
-		} else {
-			first = first.addBefore(t, value);
-		}
-		size++;
-	}
+    /**
+     * @return the start time of the signal
+     */
+    public double start() {
+        return Segment.getTime(first);
+    }
 
-	/**
-	 * return a signal, given a signal and a function 
-	 */
-	public <R> Signal<R> apply( Function<T, R> f ) {
-		Signal<R> newSignal = new Signal<R>();
-		SignalCursor<T> cursor = getIterator(true);
-		while (!cursor.completed()) {
-			newSignal.add(cursor.time(), f.apply(cursor.value()));
-			cursor.forward();
-		}
-		newSignal.end = end;
-		return newSignal;
-	}
+    /**
+     * @return the end time of the signal
+     */
+    public double end() {
+        return end;
+    }
 
-	/**
-	 * 
-	 */
-	public static <T,R> Signal<R> apply( Signal<T> s , Function<T,R> f ) {
-		return s.apply(f);
-	}
-	
-	/**
-	 * return a signal, given two signals and a bifunction 
-	 */
-	public static <T,R> Signal<R> apply( Signal<T> s1 , BiFunction<T, T, R> f , Signal<T> s2 ) {
-		Signal<R> newSignal = new Signal<>();
-		SignalCursor<T> c1 = s1.getIterator(true);
-		SignalCursor<T> c2 = s2.getIterator(true);
-		double time = Math.max(s1.start(), s2.start());
-		c1.move(time);
-		c2.move(time);
-		while (!c1.completed()&&!c2.completed()) {
-			newSignal.add(time, f.apply(c1.value(), c2.value()));
-			time = Math.min(c1.nextTime(), c2.nextTime());
-			c1.move(time);
-			c2.move(time);
-		}
-		newSignal.end = Math.min(s1.end, s2.end);
-		return newSignal;
-	}
+    /**
+     * @returns true if the signal is empty
+     */
+    public boolean isEmpty() {
+        return (size == 0);
+    }
 
-	/**
-	 * 
-	 * @param f
-	 * @param init
-	 * @return
-	 */
-	//TODO: Add comments!
-	public <R> Signal<R> iterateForward( BiFunction<T, R, R> f , R init) {
-		Signal<R> newSignal = new Signal<>();
-		SignalCursor<T> cursor = getIterator(true); 
-		R value = init;
-		while (!cursor.completed()) {
-			value = f.apply(cursor.value(),value);
-			newSignal.add(cursor.time(), value);
-			cursor.forward();
-		}
-		newSignal.end = end;
-		return newSignal;
-	}
+    /**
+     * Add (t,value) to the sample set
+     *
+     * @param t
+     * @param value
+     * @return last time step
+     */
+    public void add(double t, T value) {
+        Segment<T> oldLast = last;
+        if (first == null) {
+            startWith(t, value);
+        } else {
+            if (this.end > t) {
+                throw new IllegalArgumentException();//TODO: Add Message!
+            }
+            last = last.addAfter(t, value);
+            end = t;
+        }
+        if (oldLast != last) {
+            size++;
+        }
+    }
+
+    private void startWith(double t, T value) {
+        first = new Segment<>(t, value);
+        last = first;
+        end = t;
+    }
 
 
-	/**
-	 * 
-	 * @param f
-	 * @param init
-	 * @return
-	 */
-	//TODO: Add comments!
-	public <R> Signal<R> iterateBackward( BiFunction<T, R, R> f , R init) {
-		Signal<R> newSignal = new Signal<>();
-		SignalCursor<T> cursor = getIterator(false); 
-		R value = init;
-		while (!cursor.completed()) {
-			value = f.apply(cursor.value(),value);
-			newSignal.addBefore(cursor.time(), value);
-			cursor.backward();
-		}
-		newSignal.end = end;
-		return newSignal;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public SignalCursor<T> getIterator(boolean forward) {
-		return new SignalCursor<T>() {
-			
-			private Segment<T> current = (forward?first:last);
-			private double time = (current!=null?current.getTime():Double.NaN);
+    /**
+     * Add (t,value) to the sample set
+     *
+     * @param t
+     * @param value
+     * @return last time step
+     */
+    public void addBefore(double t, T value) {
+        if (first == null) {
+            startWith(t, value);
+        } else {
+            first = first.addBefore(t, value);
+        }
+        size++;
+    }
 
-			@Override
-			public double time() {
-				return time;
-			}
+    /**
+     * return a signal, given a signal and a function
+     */
+    public <R> Signal<R> apply(Function<T, R> f) {
+        Signal<R> newSignal = new Signal<R>();
+        SignalCursor<T> cursor = getIterator(true);
+        while (!cursor.completed()) {
+            newSignal.add(cursor.time(), f.apply(cursor.value()));
+            cursor.forward();
+        }
+        newSignal.end = end;
+        return newSignal;
+    }
 
-			@Override
-			public T value() {
-				return (current!=null?current.getValue():null);
-			}
+    /**
+     *
+     */
+    public static <T, R> Signal<R> apply(Signal<T> s, Function<T, R> f) {
+        return s.apply(f);
+    }
 
-			@Override
-			public void forward() {
-				if (current != null) {
-					current = current.getNext();
-					time = (current!=null?current.getTime():Double.NaN);
-				}
-			}
+    /**
+     * return a signal, given two signals and a bifunction
+     */
+    public static <T, R> Signal<R> apply(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
+        Signal<R> newSignal = new Signal<>();
+        SignalCursor<T> c1 = s1.getIterator(true);
+        SignalCursor<T> c2 = s2.getIterator(true);
+        double time = Math.max(s1.start(), s2.start());
+        c1.move(time);
+        c2.move(time);
+        while (!c1.completed() && !c2.completed()) {
+            newSignal.add(time, f.apply(c1.value(), c2.value()));
+            time = Math.min(c1.nextTime(), c2.nextTime());
+            c1.move(time);
+            c2.move(time);
+        }
+        newSignal.end = Math.min(s1.end, s2.end);
+        return newSignal;
+    }
 
-			@Override
-			public void backward() {
-				if (current != null) {
-					current = current.getPrevious();
-					time = (current!=null?current.getTime():Double.NaN);
-				}
-			}
-
-			@Override
-			public void move(double t) {
-				if (current != null) {
-					current = current.jump(t);
-					time = t;
-				}
-			}
-
-			@Override
-			public double nextTime() {
-				if (current != null) {
-					double t = current.getSegmentEnd();
-					return (Double.isNaN(t)&&current.getTime()!=end?end:t); 
-				}
-				return Double.NaN;
-			}
-
-			@Override
-			public double previousTime() {
-				if (current != null) {
-					if (current.getTime()<time) {
-						return current.getTime();
-					} else {
-						return current.getPreviousTime();
-					}
-				}
-				return Double.NaN;
-			}
-
-			@Override
-			public boolean hasNext() {
-				return (current != null)&&(current.getNext()!=null);
-			}
-
-			@Override
-			public boolean hasPrevious() {
-				return (current != null)&&(current.getPrevious()!=null);
-			}
-
-			@Override
-			public boolean completed() {
-				return (current == null);
-			}			
-
-		};
-	}
-
-	public int size() {
-		return size;
-	}
+    /**
+     * @param f
+     * @param init
+     * @return
+     */
+    //TODO: Add comments!
+    public <R> Signal<R> iterateForward(BiFunction<T, R, R> f, R init) {
+        Signal<R> newSignal = new Signal<>();
+        SignalCursor<T> cursor = getIterator(true);
+        R value = init;
+        while (!cursor.completed()) {
+            value = f.apply(cursor.value(), value);
+            newSignal.add(cursor.time(), value);
+            cursor.forward();
+        }
+        newSignal.end = end;
+        return newSignal;
+    }
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		if (isEmpty()) {
-			return "Signal [ ]";
-		} else {
-			return "Signal [start=" + start() + ", end=" + end() + ", size="+size()+"]";
-		}
-	}
+    /**
+     * @param f
+     * @param init
+     * @return
+     */
+    //TODO: Add comments!
+    public <R> Signal<R> iterateBackward(BiFunction<T, R, R> f, R init) {
+        Signal<R> newSignal = new Signal<>();
+        SignalCursor<T> cursor = getIterator(false);
+        R value = init;
+        while (!cursor.completed()) {
+            value = f.apply(cursor.value(), value);
+            newSignal.addBefore(cursor.time(), value);
+            cursor.backward();
+        }
+        newSignal.end = end;
+        return newSignal;
+    }
 
-	public void endAt( double end ) {
-		if (this.end>end) {
-			throw new IllegalArgumentException();//TODO: Add message!
-		}
-		this.end = end;
-	}
+    /**
+     * @return
+     */
+    public SignalCursor<T> getIterator(boolean forward) {
+        return new SignalCursor<T>() {
+
+            private Segment<T> current = (forward ? first : last);
+            private double time = (current != null ? current.getTime() : Double.NaN);
+
+            @Override
+            public double time() {
+                return time;
+            }
+
+            @Override
+            public T value() {
+                return (current != null ? current.getValue() : null);
+            }
+
+            @Override
+            public void forward() {
+                if (current != null) {
+                    current = current.getNext();
+                    time = (current != null ? current.getTime() : Double.NaN);
+                }
+            }
+
+            @Override
+            public void backward() {
+                if (current != null) {
+                    current = current.getPrevious();
+                    time = (current != null ? current.getTime() : Double.NaN);
+                }
+            }
+
+            @Override
+            public void move(double t) {
+                if (current != null) {
+                    current = current.jump(t);
+                    time = t;
+                }
+            }
+
+            @Override
+            public double nextTime() {
+                if (current != null) {
+                    double t = current.getSegmentEnd();
+                    return (Double.isNaN(t) && current.getTime() != end ? end : t);
+                }
+                return Double.NaN;
+            }
+
+            @Override
+            public double previousTime() {
+                if (current != null) {
+                    if (current.getTime() < time) {
+                        return current.getTime();
+                    } else {
+                        return current.getPreviousTime();
+                    }
+                }
+                return Double.NaN;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return (current != null) && (current.getNext() != null);
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return (current != null) && (current.getPrevious() != null);
+            }
+
+            @Override
+            public boolean completed() {
+                return (current == null);
+            }
+
+        };
+    }
+
+    public int size() {
+        return size;
+    }
 
 
-	public T valueAt(double t) {
-		return (first==null?null:first.getValueAt(t));
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        if (isEmpty()) {
+            return "Signal [ ]";
+        } else {
+            return "Signal [start=" + start() + ", end=" + end() + ", size=" + size() + "]";
+        }
+    }
 
-	
-	
+    public void endAt(double end) {
+        if (this.end > end) {
+            throw new IllegalArgumentException();//TODO: Add message!
+        }
+        this.end = end;
+    }
+
+
+    public T valueAt(double t) {
+        return (first == null ? null : first.getValueAt(t));
+    }
+
+
 }

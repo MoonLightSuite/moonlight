@@ -19,88 +19,97 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-public class Interval {
-	
-	private final double start;
-	
-	private final double end;
-	
-	private final boolean openOnRight;
-	
-	public Interval( double start , double end ) {
-		this(start,end,false);
-	}
+public class Interval implements Export {
 
-	public Interval(double start, double end, boolean openOnRight) {
-		this.start = start;
-		this.end = end;
-		this.openOnRight = openOnRight;
-	}
+    private final double start;
 
-	/**
-	 * @return the start
-	 */
-	public double getStart() {
-		return start;
-	}
+    private final double end;
 
-	/**
-	 * @return the end
-	 */
-	public double getEnd() {
-		return end;
-	}
+    private final boolean openOnRight;
 
-	/**
-	 * @return the openOnRight
-	 */
-	public boolean isOpenOnRight() {
-		return openOnRight;
-	}
+    public Interval(double start, double end) {
+        this(start, end, false);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(end);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (openOnRight ? 1231 : 1237);
-		temp = Double.doubleToLongBits(start);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
+    public Interval(double start, double end, boolean openOnRight) {
+        this.start = start;
+        this.end = end;
+        this.openOnRight = openOnRight;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Interval other = (Interval) obj;
-		if (Double.doubleToLongBits(end) != Double.doubleToLongBits(other.end))
-			return false;
-		if (openOnRight != other.openOnRight)
-			return false;
-		if (Double.doubleToLongBits(start) != Double.doubleToLongBits(other.start))
-			return false;
-		return true;
-	}
+    /**
+     * @return the start
+     */
+    public double getStart() {
+        return start;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Interval [start=" + start + ", end=" + end + ", openOnRight=" + openOnRight + "]";
-	}
+    /**
+     * @return the end
+     */
+    public double getEnd() {
+        return end;
+    }
 
+    /**
+     * @return the openOnRight
+     */
+    public boolean isOpenOnRight() {
+        return openOnRight;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(end);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (openOnRight ? 1231 : 1237);
+        temp = Double.doubleToLongBits(start);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Interval other = (Interval) obj;
+        if (Double.doubleToLongBits(end) != Double.doubleToLongBits(other.end))
+            return false;
+        if (openOnRight != other.openOnRight)
+            return false;
+        if (Double.doubleToLongBits(start) != Double.doubleToLongBits(other.start))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Interval [start=" + start + ", end=" + end + ", openOnRight=" + openOnRight + "]";
+    }
+
+    @Override
+    public String toTaliro() {
+        return "{" + start + "," + end + "}";
+    }
+
+    @Override
+    public String toBreach() {
+        return null;
+    }
 }

@@ -20,16 +20,14 @@
 package eu.quanticol.moonlight.formula;
 
 
-import eu.quanticol.moonlight.signal.Signal;
-
 /**
  *
  */
 public interface Formula {
-	
-	public <T,R> R accept(FormulaVisitor<T,R> visitor, T parameters); 
-	
 
-	
-	
+    <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters);
+
+    String toTaliro();
+
+    String toBreach();
 }

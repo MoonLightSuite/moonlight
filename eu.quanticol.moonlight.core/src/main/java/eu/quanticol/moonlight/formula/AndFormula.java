@@ -20,75 +20,82 @@
 package eu.quanticol.moonlight.formula;
 
 public class AndFormula implements Formula {
-	
-	private final Formula firstArgument;
-	private final Formula secondArgument;
 
-	public AndFormula(Formula firstArgument, Formula secondArgument) {
-		this.firstArgument = firstArgument;
-		this.secondArgument = secondArgument;
-	}
+    private final Formula firstArgument;
+    private final Formula secondArgument;
 
-	public Formula getFirstArgument() {
-		return firstArgument;
-	}
-	
-	public Formula getSecondArgument() {
-		return secondArgument;
-	}
-	
-	@Override
-	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
-		return visitor.visit(this, parameters);
-	}
+    public AndFormula(Formula firstArgument, Formula secondArgument) {
+        this.firstArgument = firstArgument;
+        this.secondArgument = secondArgument;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((firstArgument == null) ? 0 : firstArgument.hashCode());
-		result = prime * result + ((secondArgument == null) ? 0 : secondArgument.hashCode());
-		return result;
-	}
+    public Formula getFirstArgument() {
+        return firstArgument;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AndFormula other = (AndFormula) obj;
-		if (firstArgument == null) {
-			if (other.firstArgument != null)
-				return false;
-		} else if (!firstArgument.equals(other.firstArgument))
-			return false;
-		if (secondArgument == null) {
-			if (other.secondArgument != null)
-				return false;
-		} else if (!secondArgument.equals(other.secondArgument))
-			return false;
-		return true;
-	}
+    public Formula getSecondArgument() {
+        return secondArgument;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "AndFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
-	}
+    @Override
+    public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+        return visitor.visit(this, parameters);
+    }
 
-	
-		
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((firstArgument == null) ? 0 : firstArgument.hashCode());
+        result = prime * result + ((secondArgument == null) ? 0 : secondArgument.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AndFormula other = (AndFormula) obj;
+        if (firstArgument == null) {
+            if (other.firstArgument != null)
+                return false;
+        } else if (!firstArgument.equals(other.firstArgument))
+            return false;
+        if (secondArgument == null) {
+            if (other.secondArgument != null)
+                return false;
+        } else if (!secondArgument.equals(other.secondArgument))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "AndFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
+    }
+
+    @Override
+    public String toTaliro() {
+        return "( " + firstArgument.toTaliro() + " /\\ " + secondArgument.toTaliro() + " )";
+    }
+
+    @Override
+    public String toBreach() {
+        return null;
+    }
 
 
 }

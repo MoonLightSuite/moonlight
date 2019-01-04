@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.TypeAdapterFactory;
 
 import eu.quanticol.moonlight.formula.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;

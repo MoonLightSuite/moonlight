@@ -24,84 +24,94 @@ package eu.quanticol.moonlight.formula;
  */
 public class EventuallyFormula implements Formula {
 
-	private final Formula argument;
-	private final Interval interval;
-	
-	public EventuallyFormula(Formula argument) {
-		this(argument,null);
-	}
-	
-	public EventuallyFormula(Formula argument, Interval interval) {
-		this.argument = argument;
-		this.interval = interval;
-	}
+    private final Formula argument;
+    private final Interval interval;
 
-	@Override
-	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
-		return visitor.visit(this, parameters);
-	}
+    public EventuallyFormula(Formula argument) {
+        this(argument, null);
+    }
 
-	/**
-	 * @return the argument
-	 */
-	public Formula getArgument() {
-		return argument;
-	}
+    public EventuallyFormula(Formula argument, Interval interval) {
+        this.argument = argument;
+        this.interval = interval;
+    }
 
-	/**
-	 * @return the interval
-	 */
-	public Interval getInterval() {
-		return interval;
-	}
+    @Override
+    public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
+        return visitor.visit(this, parameters);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((argument == null) ? 0 : argument.hashCode());
-		result = prime * result + ((interval == null) ? 0 : interval.hashCode());
-		return result;
-	}
+    /**
+     * @return the argument
+     */
+    public Formula getArgument() {
+        return argument;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EventuallyFormula other = (EventuallyFormula) obj;
-		if (argument == null) {
-			if (other.argument != null)
-				return false;
-		} else if (!argument.equals(other.argument))
-			return false;
-		if (interval == null) {
-			if (other.interval != null)
-				return false;
-		} else if (!interval.equals(other.interval))
-			return false;
-		return true;
-	}
+    /**
+     * @return the interval
+     */
+    public Interval getInterval() {
+        return interval;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((argument == null) ? 0 : argument.hashCode());
+        result = prime * result + ((interval == null) ? 0 : interval.hashCode());
+        return result;
+    }
 
-	public boolean isUnbounded() {
-		return interval==null;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventuallyFormula other = (EventuallyFormula) obj;
+        if (argument == null) {
+            if (other.argument != null)
+                return false;
+        } else if (!argument.equals(other.argument))
+            return false;
+        if (interval == null) {
+            if (other.interval != null)
+                return false;
+        } else if (!interval.equals(other.interval))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
+    }
+
+    @Override
+    public String toTaliro() {
+        return " <>_" + interval.toTaliro() + " " + argument.toTaliro();
+    }
+
+    @Override
+    public String toBreach() {
+        return null;
+    }
+
+    public boolean isUnbounded() {
+        return interval == null;
+    }
 
 }
