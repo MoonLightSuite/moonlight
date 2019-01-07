@@ -57,6 +57,7 @@ public class SlidingWindow<R> {
 		iterator.move(initTime(s.start()));
 		while (!iterator.completed()) {
 			double time = iterator.time();
+			System.out.println(time);
 			R value = iterator.value();
 			while (!window.add(time, value)) {
 				result.add(timeOf(window.firstTime()), window.firstValue());	
