@@ -55,9 +55,11 @@ public class TestPast {
     }
     @Test
     public void testOnce() {
+    	double onceStart = 0.0;
+    	double onceEnd = 500.0;
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
-        Formula once = new OnceFormula(notA, new Interval(0, 500));
+        Formula once = new OnceFormula(notA, new Interval(onceStart, onceEnd));
         Formula notOnceNotA = new NegationFormula(once);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -74,7 +76,8 @@ public class TestPast {
             Signal<Double> outputSignal = m.apply(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
-            assertTrue(outputSignal.end()==500.0);
+            assertEquals(signal.start()+onceEnd,outputSignal.start(),0.0);
+            assertEquals(signal.end(),outputSignal.end(),0.0);
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double nextActual = actual.value();

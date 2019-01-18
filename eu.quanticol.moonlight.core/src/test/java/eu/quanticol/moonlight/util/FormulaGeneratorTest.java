@@ -99,9 +99,9 @@ public class FormulaGeneratorTest {
         //TALIRO: //
         //BREACH: //
         Formula a = new AtomicFormula("a");
-        Formula notA = new NegationFormula(a);
-        Formula eventually = new EventuallyFormula(notA, new Interval(0, 1500));
-        Formula notEventuallyNotA = new NegationFormula(eventually);
+//        Formula notA = new NegationFormula(a);
+        Formula eventually = new EventuallyFormula(a, new Interval(0, 1500));
+//        Formula notEventuallyNotA = new NegationFormula(eventually);
         //signal
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
@@ -113,7 +113,7 @@ public class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notEventuallyNotA, null);
+            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.apply(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);

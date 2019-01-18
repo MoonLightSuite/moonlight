@@ -57,7 +57,6 @@ public class SlidingWindow<R> {
 		iterator.move(initTime(s.start()));
 		while (!iterator.completed()) {
 			double time = iterator.time();
-			System.out.println(time);
 			R value = iterator.value();
 			while (!window.add(time, value)) {
 				result.add(timeOf(window.firstTime()), window.firstValue());	
@@ -65,7 +64,12 @@ public class SlidingWindow<R> {
 			}
 			iterator.forward();
 		}
-		result.endAt(s.end()-(a+size));
+		if (isFuture&&(!result.isEmpty())) {
+			result.endAt(s.end()-(a+size));			
+		}
+		if ((!isFuture)&&(s.end()==window.end)&&(window.size()==size)) {
+			result.add(timeOf(window.firstTime()), window.firstValue());	
+		}
 		return result;
 	}
 
@@ -77,7 +81,7 @@ public class SlidingWindow<R> {
 		if (isFuture) {
 			return t-a;
 		} else {
-			return t+a;
+			return t+a+size;
 		}
 	}
 
@@ -87,6 +91,8 @@ public class SlidingWindow<R> {
 	
 	public class InnerWindow {
 		
+		private static final double EPSILON = 0.000001;
+
 		private Segment<R> first;
 		
 		private Segment<R> last;
@@ -125,7 +131,9 @@ public class SlidingWindow<R> {
 			if (first==null) {
 				init( time, value );
 			} else {
-				if (first.getTime()+size<time) {
+//				if (Math.abs(first.getTime()+size-time)<EPSILON) {
+//				if (first.getTime()+size<time) {
+				if ((first.getTime()<time-size)&&(first.getTime()+size<time)) {
 					return false;
 				} else {
 					update(time, value);
@@ -158,6 +166,15 @@ public class SlidingWindow<R> {
 		private void init(double time, R value) {
 			first = new Segment<R>(time,value);
 			last = first;
+		}
+		
+		@Override
+		public String toString() {
+			if (first == null) {
+				return "<>";
+			} else {
+				return "< "+first.toString()+"-"+last.toString()+":"+end+">";
+			}
 		}
 		
 	}
