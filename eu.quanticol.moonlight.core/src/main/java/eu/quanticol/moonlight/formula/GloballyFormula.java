@@ -101,11 +101,6 @@ public class GloballyFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return "( []_" + interval.toTaliro() + " " + argument.toTaliro() + " )";
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }

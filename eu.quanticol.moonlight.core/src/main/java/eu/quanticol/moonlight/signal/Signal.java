@@ -122,7 +122,7 @@ public class Signal<T> {
             newSignal.add(cursor.time(), f.apply(cursor.value()));
             cursor.forward();
         }
-        newSignal.end = end;
+        newSignal.endAt(end);
         return newSignal;
     }
 
@@ -270,6 +270,11 @@ public class Signal<T> {
             public boolean completed() {
                 return (current == null);
             }
+            
+            @Override
+            public String toString() {
+            	return Signal.this.toString()+(current==null?"!":("@("+current.getTime()+")"));
+            }
 
         };
     }
@@ -292,10 +297,11 @@ public class Signal<T> {
     }
 
     public void endAt(double end) {
-        if (this.end > end) {
+        if ((this.end > end)||(last == null)) {
             throw new IllegalArgumentException();//TODO: Add message!
         }
         this.end = end;
+        this.last.endAt(end);
     }
 
 

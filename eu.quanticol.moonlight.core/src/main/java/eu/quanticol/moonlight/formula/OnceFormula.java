@@ -105,11 +105,6 @@ public class OnceFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return null;
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }

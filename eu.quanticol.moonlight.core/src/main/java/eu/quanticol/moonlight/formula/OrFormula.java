@@ -89,11 +89,6 @@ public class OrFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return "( " + firstArgument.toTaliro() + " \\/ " + secondArgument.toTaliro() + " )";
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }

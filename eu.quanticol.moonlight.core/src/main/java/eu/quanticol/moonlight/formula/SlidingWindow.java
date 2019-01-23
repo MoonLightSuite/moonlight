@@ -108,7 +108,7 @@ public class SlidingWindow<R> {
 				init( time-size , first.getValue() );
 			} else {
 				if (nextTime+size>time) {
-					first = first.getNext().addBefore(time-size, first.getValue());
+					first = first.splitAt(time-size);
 				} else {
 					first = first.getNext();
 				}

@@ -79,11 +79,6 @@ public class NegationFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return "!" + argument.toTaliro();
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }

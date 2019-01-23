@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Assignment;
@@ -20,6 +21,9 @@ import java.util.function.Function;
 import static org.junit.Assert.*;
 
 public class FormulaGeneratorTest {
+	
+	private FormulaToTaliro toTaliro = new FormulaToTaliro();
+
 
     @Test
     public void getFutureFormulaLoop() {
@@ -31,7 +35,7 @@ public class FormulaGeneratorTest {
             FormulaGenerator formulaGenerator =new FutureFormulaGenerator(new Random(1),signal.getEnd(),"a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
-            System.out.println(generatedFormula.toTaliro());
+            System.out.println(toTaliro.toTaliro(generatedFormula));
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -67,7 +71,7 @@ public class FormulaGeneratorTest {
             FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1),signal.getEnd(),"a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
-            System.out.println(generatedFormula.toTaliro());
+            System.out.println(toTaliro.toTaliro( generatedFormula ));
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;

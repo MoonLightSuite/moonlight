@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-public class Interval implements Export {
+public class Interval {
 
     private final double start;
 
@@ -103,13 +103,4 @@ public class Interval implements Export {
         return "Interval [start=" + start + ", end=" + end + ", openOnRight=" + openOnRight + "]";
     }
 
-    @Override
-    public String toTaliro() {
-        return "{" + start + "," + end + "}";
-    }
-
-    @Override
-    public String toBreach() {
-        return null;
-    }
 }

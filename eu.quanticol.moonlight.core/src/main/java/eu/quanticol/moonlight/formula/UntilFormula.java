@@ -122,11 +122,6 @@ public class UntilFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return "( " + firstArgument.toTaliro() + " U_" + interval.toTaliro() + " " + secondArgument.toTaliro() + " )";
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }

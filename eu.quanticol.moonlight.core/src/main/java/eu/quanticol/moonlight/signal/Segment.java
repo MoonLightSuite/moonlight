@@ -13,6 +13,7 @@ public class Segment<T> {
 	private final T value;
 	private Segment<T> next;
 	private Segment<T> previous;
+	private double end = Double.NaN;
 	
 	public Segment( double time , T value ) {
 		this.time = time;
@@ -82,7 +83,7 @@ public class Segment<T> {
 	}
 
 	public boolean contains(double t) {
-		return (time==t)||((time<t)&&(next!=null)&&(t<next.time));
+		return (time==t)||((time<t)&&((Double.isFinite(end)&&(t<end))||(next!=null)&&(t<next.time)));
 	}
 
 	public static double getTime(Segment<?> s) {
@@ -95,8 +96,10 @@ public class Segment<T> {
 		}
 		if (!this.value.equals(value)) {
 			this.next = new Segment<T>(this, time, value);
+			this.end = Double.NaN;
 			return this.next;
 		} else {
+			this.end = time;
 			return this;
 		}
 	}
@@ -106,8 +109,8 @@ public class Segment<T> {
 			throw new IllegalArgumentException(); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
-			this.next = new Segment<T>(this, time, value);
-			return this.next;
+			this.previous = new Segment<T>(this, time, value);
+			return this.previous;
 		} else {
 			this.time = time;
 			return this;
@@ -116,7 +119,7 @@ public class Segment<T> {
 
 	public double getSegmentEnd() {
 		if (next == null) {
-			return Double.NaN;
+			return this.end;
 		}
 		return next.getTime();
 	}
@@ -131,6 +134,21 @@ public class Segment<T> {
 	@Override
 	public String toString() {
 		return (previous!=null?"<":"[")+time+":"+value+(next!=null?">":"]");
+	}
+
+	public void endAt(double end) {
+		if (end<this.time) {
+			throw new IllegalArgumentException(); //TODO: Add message!
+		}
+		this.end = end;
+	}
+
+	public Segment<T> splitAt(double time) {
+		if (this.time>=time) {
+			throw new IllegalArgumentException();
+		}
+		this.time = time;
+		return this;
 	}
 	
 }

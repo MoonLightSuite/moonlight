@@ -79,11 +79,6 @@ public class AtomicFormula implements Formula {
     }
 
     @Override
-    public String toTaliro() {
-        return atomicId;
-    }
-
-    @Override
     public String toBreach() {
         return null;
     }
