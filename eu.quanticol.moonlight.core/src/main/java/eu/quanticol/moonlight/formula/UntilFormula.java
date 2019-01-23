@@ -121,10 +121,4 @@ public class UntilFormula implements Formula {
                 + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
-
 }

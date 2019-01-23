@@ -78,10 +78,4 @@ public class AtomicFormula implements Formula {
         return "AtomicFormula [atomicId=" + atomicId + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
-
 }

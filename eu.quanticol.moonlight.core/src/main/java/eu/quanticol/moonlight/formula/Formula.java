@@ -27,7 +27,4 @@ public interface Formula {
 
     <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters);
 
-    //String toTaliro();
-
-    String toBreach();
-}
+ }

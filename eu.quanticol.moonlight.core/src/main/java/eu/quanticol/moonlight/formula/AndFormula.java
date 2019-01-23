@@ -87,11 +87,4 @@ public class AndFormula implements Formula {
         return "AndFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
     }
 
-
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
-
 }

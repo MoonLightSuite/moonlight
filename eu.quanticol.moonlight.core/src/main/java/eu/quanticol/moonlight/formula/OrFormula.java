@@ -88,10 +88,4 @@ public class OrFormula implements Formula {
         return "OrFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
-
 }

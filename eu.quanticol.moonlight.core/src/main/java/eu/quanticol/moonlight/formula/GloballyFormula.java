@@ -100,12 +100,6 @@ public class GloballyFormula implements Formula {
         return "GloballyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
-
     public boolean isUnbounded() {
         return interval == null;
     }

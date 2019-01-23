@@ -104,12 +104,5 @@ public class OnceFormula implements Formula {
         return "OnceFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-//	public Interval getInterval( ) {
-//		return this.interval.apply(p);
-//	}
 
 }

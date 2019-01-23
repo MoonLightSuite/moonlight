@@ -120,9 +120,4 @@ public class SinceFormula implements Formula {
                 + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
 }

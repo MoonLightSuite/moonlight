@@ -78,9 +78,4 @@ public class NegationFormula implements Formula {
         return "NegationFormula [argument=" + argument + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
 }

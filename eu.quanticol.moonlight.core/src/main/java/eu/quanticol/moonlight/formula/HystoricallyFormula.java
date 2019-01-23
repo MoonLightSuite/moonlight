@@ -108,8 +108,4 @@ public class HystoricallyFormula implements Formula {
         return "HystoricallyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
 }

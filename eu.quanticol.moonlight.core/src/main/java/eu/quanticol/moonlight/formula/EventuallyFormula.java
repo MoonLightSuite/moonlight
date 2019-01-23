@@ -100,11 +100,6 @@ public class EventuallyFormula implements Formula {
         return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
-    @Override
-    public String toBreach() {
-        return null;
-    }
-
     public boolean isUnbounded() {
         return interval == null;
     }
