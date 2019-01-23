@@ -59,7 +59,14 @@ public class SpatialSignal<T> {
 		}
 		return new SpatialSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
 	}
-	
+
+	public static <T,R> SpatialSignal<R> applyToSignal( SpatialSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatialSignal<T> s2 ) {
+		if (s1.size != s2.size) {
+			throw new IllegalArgumentException();//TODO: Add message here!
+		}
+		return new SpatialSignal<R>( s1.size , (i -> f.apply( s1.signals.get(i), s2.signals.get(i)) ));
+	}
+
 	public <R> SpatialSignal<R> applyToSignal( Function<Signal<T>,Signal<R>> f ) {
 		return new SpatialSignal<R>(this.size, (i -> f.apply(signals.get(i))));
 	}

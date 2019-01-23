@@ -8,25 +8,66 @@ package eu.quanticol.moonlight.formula;
  *
  */
 public interface FormulaVisitor<T,R> {
+	
+	public static IllegalArgumentException generateException( Class<?> c ) {
+		return new IllegalArgumentException(c.getName()+" is not supported by this visitor!");
+	}
 
-	public R visit(AtomicFormula atomicFormula, T parameters);
+	default R visit(AtomicFormula atomicFormula, T parameters) {
+		throw generateException(atomicFormula.getClass());
+	}
 
-	public R visit(AndFormula andFormula, T parameters);
+	default R visit(AndFormula andFormula, T parameters) {
+		throw generateException(andFormula.getClass());
+	}
 
-	public R visit(NegationFormula negationFormula, T parameters);
+	default R visit(NegationFormula negationFormula, T parameters) {
+		throw generateException(negationFormula.getClass());
+	}
 
-	public R visit(OrFormula orFormula, T parameters);
+	default R visit(OrFormula orFormula, T parameters) {
+		throw generateException(orFormula.getClass());
+	}
 
-	public R visit(EventuallyFormula eventuallyFormula, T parameters);
+	default R visit(EventuallyFormula eventuallyFormula, T parameters) {
+		throw generateException(eventuallyFormula.getClass());
+	}
 
-	public R visit(GloballyFormula globallyFormula, T parameters);
+	default R visit(GloballyFormula globallyFormula, T parameters) {
+		throw generateException(globallyFormula.getClass());
+	}
 
-	public R visit(UntilFormula untilFormula, T parameters);
+	default R visit(UntilFormula untilFormula, T parameters) {
+		throw generateException(untilFormula.getClass());
+	}
 
-	public R visit(SinceFormula sinceFormula, T parameters);
+	default R visit(SinceFormula sinceFormula, T parameters) {
+		throw generateException(sinceFormula.getClass());
+	}
 
-	public R visit(HystoricallyFormula hystoricallyFormula, T parameters);
+	default R visit(HystoricallyFormula hystoricallyFormula, T parameters) {
+		throw generateException(hystoricallyFormula.getClass());
+	}
 
-	public R visit(OnceFormula onceFormula, T parameters);
+	default R visit(OnceFormula onceFormula, T parameters) {
+		throw generateException(onceFormula.getClass());
+	}
+	
+	default R visit(SomewhereFormula somewhereFormula, T parameters ) {
+		throw generateException(somewhereFormula.getClass());
+	}
+
+	default R visit(EverywhereFormula everywhereFormula, T parameters) {
+		throw generateException(everywhereFormula.getClass());		
+	}
+	
+	default R visit(ReachFormula reachFormula, T parameters) {
+		throw generateException(reachFormula.getClass());		
+	}
+
+	default R visit(EscapeFormula escapeFormula, T parameters) {
+		throw generateException(escapeFormula.getClass());		
+	}
+	
 	
 }

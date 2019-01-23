@@ -71,7 +71,7 @@ public class FormulaGeneratorTest {
             FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1),signal.getEnd(),"a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
-            System.out.println(toTaliro.toTaliro( generatedFormula ));
+            //System.out.println(toTaliro.toTaliro( generatedFormula ));
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;

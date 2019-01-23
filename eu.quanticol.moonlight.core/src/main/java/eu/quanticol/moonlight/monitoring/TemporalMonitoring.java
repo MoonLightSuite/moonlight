@@ -100,7 +100,8 @@ public class TemporalMonitoring<T,R> implements
 		if (untilFormula.isUnbounded()) {
 			return unboundedMonitoring;
 		} else {
-			return s -> Signal.apply(unboundedMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, untilFormula.getInterval(), true));
+//			return s -> Signal.apply(unboundedMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, untilFormula.getInterval(), true));
+			return s -> boundedSinceMonitoring(firstMonitoring.apply(s), untilFormula.getInterval(), secondMonitoring.apply(s), module);
 		}
 	}
 
@@ -124,6 +125,13 @@ public class TemporalMonitoring<T,R> implements
 		return result;
 	}
 
+	public static <R> Signal<R>  boundedUntilMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
+		Signal<R> unboundedMonitoring = unboundedSinceMonitoring(s1, s2, module);
+		Signal<R> eventuallyMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, true);
+		return Signal.apply(unboundedMonitoring,module::conjunction,eventuallyMonitoring);
+	}
+
+
 	public static <R> Signal<R>  unboundedSinceMonitoring(Signal<R> s1, Signal<R> s2, DomainModule<R> module) {
 		Signal<R> result = new Signal<R>();
 		SignalCursor<R> c1 = s1.getIterator(true);
@@ -143,6 +151,14 @@ public class TemporalMonitoring<T,R> implements
 		return result;
 	}
 
+	public static <R> Signal<R>  boundedSinceMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
+		Signal<R> unboundedResult = boundedSinceMonitoring(s1, i, s2, module);
+		Signal<R> onceMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, false);
+		return Signal.apply(unboundedResult, module::conjunction, s2);
+	}
+
+	
+
 	public static <R> Signal<R> temporalMonitoring( Signal<R> signal , BiFunction<R, R, R> aggregator , Interval i , boolean future) {
 		SlidingWindow<R> sw = new SlidingWindow<>(i.getStart(), i.getEnd(), aggregator,future);
 		return sw.apply(signal);
@@ -160,7 +176,8 @@ public class TemporalMonitoring<T,R> implements
 		if (sinceFormula.isUnbounded()) {
 			return unboundedSinceMonitoring;
 		} else {
-			return s -> Signal.apply(unboundedSinceMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, sinceFormula.getInterval(), true));
+			return s -> boundedSinceMonitoring(firstMonitoring.apply(s), sinceFormula.getInterval(), secondMonitoring.apply(s), module);
+//			return s -> Signal.apply(unboundedSinceMonitoring.apply(s), module::conjunction, TemporalMonitoring.temporalMonitoring(secondMonitoring.apply(s), module::disjunction, sinceFormula.getInterval(), true));
 		}
 	}
 
