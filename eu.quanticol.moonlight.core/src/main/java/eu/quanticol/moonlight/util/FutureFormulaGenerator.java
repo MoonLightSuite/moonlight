@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.io.FormulaTypeSelector;
 import java.util.Random;
 
 public class FutureFormulaGenerator extends FormulaGenerator {
-    FutureFormulaGenerator(Random random, double maxTime, String... ids) {
+    public FutureFormulaGenerator(Random random, double maxTime, String... ids) {
         super(random, maxTime, ids);
     }
 

@@ -16,6 +16,12 @@ import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;
 import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.UntilFormula;
+import eu.quanticol.moonlight.signal.SignalCreator;
+import eu.quanticol.moonlight.signal.SignalCreatorDouble;
+
+import java.io.BufferedReader;
+import java.util.Arrays;
+import java.util.function.BiFunction;
 
 /**
  * @author loreti
@@ -43,7 +49,7 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 
 	@Override
 	public String visit(OrFormula orFormula, String parameters) {
-        return "( " + orFormula.accept(this, parameters) + " \\/ " + orFormula.accept(this, parameters) + " )";
+        return "( " + orFormula.getFirstArgument().accept(this, parameters) + " \\/ " + orFormula.getSecondArgument().accept(this, parameters) + " )";
 	}
 
 	@Override
@@ -52,7 +58,7 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 	}
 
 	private String intervalToTaliro(Interval interval) {
-        return "{" + interval.getStart() + "," + interval.getEnd() + "}";
+        return "[" + interval.getStart() + "," + interval.getEnd() + "]";
 	}
 
 	@Override
@@ -82,8 +88,27 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 	}
 
 	public String toTaliro(Formula formula) {
-		return formula.accept(this, null);
+		return "psi ='"+formula.accept(this, null)+"';";
 	}
 
+	public String createPrefix(SignalCreatorDouble creator){
+		BiFunction<String, Integer, String> prefix = (name,index) -> "pred("+index+").str = \'"+name+"\';\npred("+index+").A   =  "+ createPredicateMAtrix(creator.getVariableNames().length, index-1)+";\npred("+index+").b   =  0;\n";
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("pred = struct();\n");
+		String[] names = creator.getVariableNames();
+		for (int i = 0; i < names.length; i++) {
+			buffer.append(prefix.apply(names[i],i+1));
+		}
+		buffer.append("taliro=@(X,T) fw_taliro(psi,pred,X,T);\n");
+		return buffer.toString();
+	}
+
+	private String createPredicateMAtrix(int n, int index){
+		if (n==1){
+			return "1";}
+		int[] array = new int[n];
+		array[index]=1;
+		return Arrays.toString(array);
+	}
 
 }

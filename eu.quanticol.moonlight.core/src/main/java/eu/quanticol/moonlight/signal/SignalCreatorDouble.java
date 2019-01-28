@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class SignalCreator<T, P> {
+public class SignalCreatorDouble {
 
-    private Map<String, Function<T, P>> functionalMap;
+    private Map<String, Function<Double, Double>> functionalMap;
 
-    public SignalCreator(Map<String, Function<T, P>> functionalMap) {
+    public SignalCreatorDouble(Map<String, Function<Double, Double>> functionalMap) {
         this.functionalMap = functionalMap;
     }
 
     public VariableArraySignal generate(double timeInit, double timeEnd, double timeStep) {
         List<Class<?>> varTypes = new ArrayList<>();
         List<String> varName = new ArrayList<>();
-        for (Map.Entry<String, Function<T, P>> stringFunctionEntry : functionalMap.entrySet()) {
+        for (Map.Entry<String, Function<Double, Double>> stringFunctionEntry : functionalMap.entrySet()) {
             Function value = stringFunctionEntry.getValue();
             varTypes.add(value.apply(timeInit).getClass());
             varName.add(stringFunctionEntry.getKey());
@@ -41,12 +41,12 @@ public class SignalCreator<T, P> {
         return time;
     }
 
-    public Object[][] generateValues(double[] time) {
-        Object[][] values = new Object[functionalMap.keySet().size()][time.length];
+    public double[][] generateValues(double[] time) {
+        double[][] values = new double[functionalMap.keySet().size()][time.length];
         for (int i = 0; i < time.length; i++) {
-            Iterator<Function<T, P>> iterator = functionalMap.values().iterator();
+            Iterator<Function<Double, Double>> iterator = functionalMap.values().iterator();
             for (int j = 0; j < functionalMap.keySet().size(); j++) {
-                Function next = iterator.next();
+                Function<Double, Double> next = iterator.next();
                 values[j][i] = next.apply(time[i]);
             }
         }
@@ -54,11 +54,11 @@ public class SignalCreator<T, P> {
     }
 
 
-    private Assignment applyFunctions(Iterator<Map.Entry<String, Function<T, P>>> iterator, Class<?>[] classes, double t) {
+    private Assignment applyFunctions(Iterator<Map.Entry<String, Function<Double,Double>>> iterator, Class<?>[] classes, double t) {
         Object[] values = new Object[classes.length];
 
         for (int i = 0; i < classes.length; i++) {
-            Map.Entry<String, Function<T, P>> next = iterator.next();
+            Map.Entry<String, Function<Double,Double>> next = iterator.next();
             Function value = next.getValue();
             values[i] = value.apply(t);
         }

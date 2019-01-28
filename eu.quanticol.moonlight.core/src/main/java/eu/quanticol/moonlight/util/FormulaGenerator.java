@@ -44,7 +44,7 @@ public abstract class FormulaGenerator {
         return getFormula(random.nextInt(maxSize));
     }
 
-    Formula getFormula(int size) {
+    public Formula getFormula(int size) {
         if (size == 0) {
             return getAtomicFormula();
         } else {
@@ -78,7 +78,7 @@ public abstract class FormulaGenerator {
             case SINCE:
                 return new SinceFormula(getFormula(size - 1), getFormula(size - 1), getInterval(true));
             case UNTIL:
-                return new UntilFormula(getFormula(size - 1), getFormula(size - 1), getInterval(true));
+                return new UntilFormula(getFormula(size - 1), getFormula(size - 1), getInterval(false));
         }
         return null;
     }
