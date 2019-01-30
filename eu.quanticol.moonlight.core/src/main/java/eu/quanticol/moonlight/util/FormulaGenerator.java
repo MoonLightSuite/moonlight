@@ -18,7 +18,6 @@ public abstract class FormulaGenerator {
     private static final double DEFAULT_MAXTIME = 100.0;
 
     private final Random random;
-    private int maxSize = DEFAULT_MAXSIZE;
     private String[] atomidId;
     private double maxTime;
 
@@ -28,27 +27,23 @@ public abstract class FormulaGenerator {
         this.maxTime = maxTime;
     }
 
-    public FormulaGenerator(double maxTime, String... ids) {
-        this(new Random(), maxTime, ids);
-    }
-
-    public FormulaGenerator(String... ids) {
+    FormulaGenerator(String... ids) {
         this(new Random(), DEFAULT_MAXTIME, ids);
     }
 
-    public int getMaxSize() {
-        return maxSize;
-    }
-
     public Formula getFormula() {
-        return getFormula(random.nextInt(maxSize));
+        return getFormula(random.nextInt(DEFAULT_MAXSIZE), DEFAULT_MAXTIME);
     }
 
     public Formula getFormula(int size) {
-        if (size == 0) {
+        return getFormula(size, maxTime);
+    }
+
+    private Formula getFormula(int size, double time) {
+        if (size == 0 || time <= 0) {
             return getAtomicFormula();
         } else {
-            return generateFormula(size);
+            return generateFormula(size, time);
         }
     }
 
@@ -56,45 +51,47 @@ public abstract class FormulaGenerator {
         return new AtomicFormula(atomidId[random.nextInt(atomidId.length)]);
     }
 
-    private Formula generateFormula(int size, String... ids) {
+    private Formula generateFormula(int size, double time) {
         FormulaType[] types = getFormulaType();
+        Interval interval = getInterval(false, time);
+        double newTime = Math.max(0, time - interval.getEnd());
         switch (types[getRandom().nextInt(types.length)]) {
             case AND:
-                return new AndFormula(getFormula(size - 1), getFormula(size - 1));
+                return new AndFormula(getFormula(size - 1, time), getFormula(size - 1, time));
             case ATOMIC:
                 return getAtomicFormula();
             case EVENTUALLY:
-                return new EventuallyFormula(getFormula(size - 1), getInterval(false));
+                return new EventuallyFormula(getFormula(size - 1, newTime), interval);
             case GLOBALLY:
-                return new GloballyFormula(getFormula(size - 1), getInterval(false));
+                return new GloballyFormula(getFormula(size - 1, newTime), interval);
             case HYSTORICALLY:
-                return new HystoricallyFormula(getFormula(size - 1), getInterval(true));
+                return new HystoricallyFormula(getFormula(size - 1, newTime), interval);
             case NOT:
-                return new NegationFormula(getFormula(size - 1));
+                return new NegationFormula(getFormula(size - 1, time));
             case ONCE:
-                return new OnceFormula(getFormula(size - 1), getInterval(true));
+                return new OnceFormula(getFormula(size - 1, newTime), interval);
             case OR:
-                return new OrFormula(getFormula(size - 1), getFormula(size - 1));
+                return new OrFormula(getFormula(size - 1, time), getFormula(size - 1, time));
             case SINCE:
-                return new SinceFormula(getFormula(size - 1), getFormula(size - 1), getInterval(true));
+                return new SinceFormula(getFormula(size - 1, newTime), getFormula(size - 1, newTime), interval);
             case UNTIL:
-                return new UntilFormula(getFormula(size - 1), getFormula(size - 1), getInterval(false));
+                return new UntilFormula(getFormula(size - 1, newTime), getFormula(size - 1, newTime), interval);
         }
         return null;
     }
 
     public abstract FormulaType[] getFormulaType();
 
-    protected Interval getInterval(boolean isNullable) {
+    protected Interval getInterval(boolean isNullable, double time) {
         if (isNullable && random.nextBoolean()) {
             return null;
         }
-        double start = random.nextDouble() * maxTime;
-        double end = start + random.nextDouble() * maxTime + EPS;
+        double start = random.nextDouble() * time;
+        double end = start + random.nextDouble() * (time-start) + EPS;
         return new Interval(start, end);
     }
 
-    public Random getRandom() {
+    private Random getRandom() {
         return random;
     }
 }

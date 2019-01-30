@@ -44,7 +44,7 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 	
 	@Override
 	public String visit(NegationFormula negationFormula, String parameters) {
-        return "!" + negationFormula.accept(this, parameters);
+        return "! (" + negationFormula.getArgument().accept(this, parameters) +")";
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 
 	@Override
 	public String visit(EventuallyFormula eventuallyFormula, String parameters) {
-        return " <>_" + intervalToTaliro(eventuallyFormula.getInterval()) + " " + eventuallyFormula.getArgument().accept(this, parameters);
+        return "( <>_" + intervalToTaliro(eventuallyFormula.getInterval()) + " " + eventuallyFormula.getArgument().accept(this, parameters)+ " )";
 	}
 
 	private String intervalToTaliro(Interval interval) {
@@ -107,7 +107,7 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 		if (n==1){
 			return "1";}
 		int[] array = new int[n];
-		array[index]=1;
+		array[index]=-1;
 		return Arrays.toString(array);
 	}
 

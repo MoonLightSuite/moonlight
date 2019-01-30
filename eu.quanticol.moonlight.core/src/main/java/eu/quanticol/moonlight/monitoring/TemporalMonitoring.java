@@ -152,9 +152,9 @@ public class TemporalMonitoring<T,R> implements
 	}
 
 	public static <R> Signal<R>  boundedSinceMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
-		Signal<R> unboundedResult = boundedSinceMonitoring(s1, i, s2, module);
+		Signal<R> unboundedResult = unboundedSinceMonitoring(s1, s2, module);
 		Signal<R> onceMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, false);
-		return Signal.apply(unboundedResult, module::conjunction, s2);
+		return Signal.apply(unboundedResult, module::conjunction, onceMonitoring);
 	}
 
 	

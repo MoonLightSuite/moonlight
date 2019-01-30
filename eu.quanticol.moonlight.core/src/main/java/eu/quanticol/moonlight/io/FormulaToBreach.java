@@ -25,44 +25,44 @@ public class FormulaToBreach implements FormulaVisitor<String,String> {
 
 	@Override
 	public String visit(AtomicFormula atomicFormula, String parameters) {
-		return atomicFormula.getAtomicId();
+		return "("+atomicFormula.getAtomicId()+"[t]>=0)";
 	}
 
 	@Override
 	public String visit(AndFormula andFormula, String parameters) {
         return "( " + andFormula.getFirstArgument().accept(this, parameters) + 
-        		" /\\ " + andFormula.getSecondArgument().accept(this, parameters) + " )";
+        		" and " + andFormula.getSecondArgument().accept(this, parameters) + " )";
 	}
 
 	
 	
 	@Override
 	public String visit(NegationFormula negationFormula, String parameters) {
-        return "!" + negationFormula.accept(this, parameters);
+        return "!" + negationFormula.getArgument().accept(this, parameters);
 	}
 
 	@Override
 	public String visit(OrFormula orFormula, String parameters) {
-        return "( " + orFormula.accept(this, parameters) + " \\/ " + orFormula.accept(this, parameters) + " )";
+        return "( " + orFormula.getFirstArgument().accept(this, parameters) + " or " + orFormula.getSecondArgument().accept(this, parameters) + " )";
 	}
 
 	@Override
 	public String visit(EventuallyFormula eventuallyFormula, String parameters) {
-        return " <>_" + intervalToTaliro(eventuallyFormula.getInterval()) + " " + eventuallyFormula.getArgument().accept(this, parameters);
+        return " ( ev_" + intervalToTaliro(eventuallyFormula.getInterval()) + " " + eventuallyFormula.getArgument().accept(this, parameters)+")";
 	}
 
 	private String intervalToTaliro(Interval interval) {
-        return "{" + interval.getStart() + "," + interval.getEnd() + "}";
+        return "[" + interval.getStart() + "," + interval.getEnd() + "]";
 	}
 
 	@Override
 	public String visit(GloballyFormula globallyFormula, String parameters) {
-        return "( []_" + intervalToTaliro(globallyFormula.getInterval()) + " " + globallyFormula.getArgument().accept(this, parameters) + " )";
+        return "( alw_" + intervalToTaliro(globallyFormula.getInterval()) + " " + globallyFormula.getArgument().accept(this, parameters) + " )";
 	}
 
 	@Override
 	public String visit(UntilFormula untilFormula, String parameters) {
-        return "( " + untilFormula.getFirstArgument().accept(this, parameters) + " U_" + intervalToTaliro(untilFormula.getInterval()) + " " + untilFormula.getSecondArgument().accept(this, parameters) + " )";
+        return "( " + untilFormula.getFirstArgument().accept(this, parameters) + " until_" + intervalToTaliro(untilFormula.getInterval()) + " " + untilFormula.getSecondArgument().accept(this, parameters) + " )";
 	}
 
 
