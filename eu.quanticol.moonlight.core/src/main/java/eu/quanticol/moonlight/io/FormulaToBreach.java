@@ -38,7 +38,7 @@ public class FormulaToBreach implements FormulaVisitor<String,String> {
 	
 	@Override
 	public String visit(NegationFormula negationFormula, String parameters) {
-        return "!" + negationFormula.getArgument().accept(this, parameters);
+        return "not" + negationFormula.getArgument().accept(this, parameters);
 	}
 
 	@Override
