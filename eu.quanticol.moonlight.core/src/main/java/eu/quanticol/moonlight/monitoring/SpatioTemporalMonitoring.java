@@ -25,7 +25,8 @@ import eu.quanticol.moonlight.formula.ReachFormula;
 import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.formula.UntilFormula;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.DistanceStructure;
+import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialSignal;
 
@@ -40,17 +41,26 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 
 	private final HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions;
 
+	private final HashMap<String,Function<SpatialModel<V>,DistanceStructure<V, ? extends Object>>> distanceFunctions;
+	
 	private final DomainModule<R> module;
 	
+	private final boolean staticSpace;
+		
 	/**
 	 * @param atomicPropositions
 	 * @param module
 	 */
-	public SpatioTemporalMonitoring(HashMap<String, Function<Parameters, Function<T, R>>> atomicPropositions,
-			DomainModule<R> module) {
+	public SpatioTemporalMonitoring(
+			HashMap<String, Function<Parameters, Function<T, R>>> atomicPropositions,
+			HashMap<String,Function<SpatialModel<V>,DistanceStructure<V, ? extends Object>>> distanceFunctions,
+			DomainModule<R> module,
+			boolean staticSpace) {
 		super();
 		this.atomicPropositions = atomicPropositions;
 		this.module = module;
+		this.distanceFunctions = distanceFunctions;
+		this.staticSpace = staticSpace;
 	}	
 
 	/* (non-Javadoc)
@@ -209,7 +219,53 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 	public BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> visit(
 			SomewhereFormula somewhereFormula, Parameters parameters) {
 		// TODO Auto-generated method stub
-		return FormulaVisitor.super.visit(somewhereFormula, parameters);
+		Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
+		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
+		return (l,s) -> computeSomewhere( l, distanceFunction , argumentMonitor.apply(l, s));
+	}
+
+	public SpatialSignal<R> computeSomewhere(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s) {
+		if (staticSpace) {
+			return computeSomewhereStatic( l, distanceFunction, s );
+		} else {
+			return computeSomewhereDynamic( l, distanceFunction, s );
+		}
+	}
+
+	private SpatialSignal<R> computeSomewhereDynamic(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction, SpatialSignal<R> s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private SpatialSignal<R> computeSomewhereStatic(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction, SpatialSignal<R> s) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		SpatialModel<V> sm = l.apply(time);
+		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+		while (!cursor.completed()) {
+			toReturn.add(time, somewhere( s.getNumberOfLocations(), f , cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
+	}
+
+	private R[] somewhere(int size, DistanceStructure<V, ? extends Object> f, Function<Integer, R> value) {
+//		R[] values = module.createArray(size);
+//		for( int i=0 ; i<size ; i++ ) {
+//			for( int j=0 ; j<size; j++ ) {
+//				R value = module.min();
+//				if (f.checkDistance(i, j))) {
+//					
+//				}
+//			}
+//		}
+		return null;
 	}
 
 	/* (non-Javadoc)

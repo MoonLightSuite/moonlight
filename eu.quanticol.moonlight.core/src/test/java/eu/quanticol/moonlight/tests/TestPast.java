@@ -19,6 +19,16 @@ import java.util.function.Function;
 import static org.junit.Assert.*;
 
 public class TestPast {
+	
+	
+	private VariableArraySignal load( String name ) throws IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File file = new File(classLoader.getResource(name).getFile());
+        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+        VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+        return signal;
+	}
+	
     @Test
     public void testHistorically() {
         //FORMULA: !H_[0,500]!(a>=0)
@@ -53,46 +63,80 @@ public class TestPast {
             fail(e.getMessage());
         }
     }
+    
     @Test
-    public void testOnce() {
+    public void testOnce() throws IOException {
     	double onceStart = 0.0;
     	double onceEnd = 500.0;
+    	VariableArraySignal signal = load( "traceIdentity/traceLaura.json" );
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
         Formula once = new OnceFormula(notA, new Interval(onceStart, onceEnd));
         Formula notOnceNotA = new NegationFormula(once);
         //signal
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
-        try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
-            HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
-            int index_of_x = 0;
-            //a is the atomic proposition: a>=0
-            mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
-            TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notOnceNotA, null);
-            Signal<Double> outputSignal = m.apply(signal);
-            SignalCursor<Assignment> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
-            assertEquals(signal.start()+onceEnd,outputSignal.start(),0.0);
-            assertEquals(signal.end(),outputSignal.end(),0.0);
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double nextActual = actual.value();
-                Assignment nextExpected = expected.value();
-                double time = expected.time();
+        HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
+        int index_of_x = 0;
+        //a is the atomic proposition: a>=0
+        mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
+        TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+        Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notOnceNotA, null);
+        Signal<Double> outputSignal = m.apply(signal);
+        SignalCursor<Assignment> expected = signal.getIterator(true);
+        SignalCursor<Double> actual = outputSignal.getIterator(true);
+        assertEquals(signal.start()+onceEnd,outputSignal.start(),0.0);
+        assertEquals(signal.end(),outputSignal.end(),0.0);
+        while (!actual.completed()) {
+            assertFalse(expected.completed());
+            Double nextActual = actual.value();
+            Assignment nextExpected = expected.value();
+            double time = expected.time();
 //                if (time > 500) {
 //                    break;
 //                }
-                assertEquals("Time: " + time, nextExpected.get(0, Double.class), nextActual);
-                actual.forward();
-                expected.forward();
-            }
-        } catch (IOException e) {
-            fail(e.getMessage());
+            assertEquals("Time: " + time, nextExpected.get(0, Double.class), nextActual);
+            actual.forward();
+            expected.forward();
         }
     }
+    
+    @Test
+    public void testOnce2() {
+    	Signal<Double> signal = TestUtils.createSignal(0.0, 100.0, 0.1, x -> x);
+    	Formula once = new OnceFormula(new AtomicFormula("test"), new Interval(0, 5.0));
+    	TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+    	monitoring.addProperty("test", p -> (x -> x));
+    	Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(once, null);
+    	Signal<Double> result = m.apply(signal);
+    	assertEquals( signal.end(), result.end(), 0.0);
+    	assertEquals( 5.0 , result.start(), 0.0);
+    	SignalCursor<Double> c = result.getIterator(true);
+    	double time = 5.0;
+    	while (!c.completed()) {
+    		assertEquals(c.time(),c.value(),0.0000001);
+    		c.forward();
+    		time += 0.1;
+    	}
+    	assertTrue(time>100.0);
+    }
 
+    @Test
+    public void testHistorically2() {
+    	Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+    	Formula once = new HystoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
+    	TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+    	monitoring.addProperty("test", p -> (x -> x));
+    	Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(once, null);
+    	Signal<Double> result = m.apply(signal);
+    	assertEquals( signal.end(), result.end(), 0.0);
+    	assertEquals( 5.0 , result.start(), 0.0);
+    	SignalCursor<Double> c = result.getIterator(true);
+    	double time = 5.0;
+    	while (!c.completed()) {
+    		assertEquals("Time: "+c.time(),c.time()-5.0,c.value(),0.0);
+    		c.forward();
+    		time += 0.25;
+    	}
+    	assertEquals(10.25,time,0.0);
+    }    
+    
 }

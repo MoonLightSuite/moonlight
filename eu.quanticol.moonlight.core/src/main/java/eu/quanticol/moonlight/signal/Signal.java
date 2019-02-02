@@ -79,7 +79,7 @@ public class Signal<T> {
             startWith(t, value);
         } else {
             if (this.end > t) {
-                throw new IllegalArgumentException();//TODO: Add Message!
+                throw new IllegalArgumentException("Time: "+t+" Expected: >"+this.end);//TODO: Add Message!
             }
             last = last.addAfter(t, value);
             end = t;
@@ -214,8 +214,12 @@ public class Signal<T> {
             @Override
             public void forward() {
                 if (current != null) {
-                    current = current.getNext();
-                    time = (current != null ? current.getTime() : Double.NaN);
+                	if ((!current.isRightClosed())||(current.doEndAt(time))) {
+                        current = current.getNext();
+                        time = (current != null ? current.getTime() : Double.NaN);                		
+                	} else {
+                		time = current.getSegmentEnd();
+                	}
                 }
             }
 
@@ -238,8 +242,7 @@ public class Signal<T> {
             @Override
             public double nextTime() {
                 if (current != null) {
-                    double t = current.getSegmentEnd();
-                    return (Double.isNaN(t) && current.getTime() != end ? end : t);
+                    return current.nextTimeAfter(time);
                 }
                 return Double.NaN;
             }
@@ -268,7 +271,8 @@ public class Signal<T> {
 
             @Override
             public boolean completed() {
-                return (current == null);
+                return (current == null);//||(current.isTheEnd(time)));
+                //return ((current == null));//||(current.isTheEnd(time)));
             }
             
             @Override

@@ -64,8 +64,9 @@ public class SlidingWindow<R> {
 			}
 			iterator.forward();
 		}
-		if (isFuture&&(!result.isEmpty())) {
-			result.endAt(s.end()-(a+size));			
+//		if (isFuture&&(!result.isEmpty())) {
+		if (isFuture&&(window.size()==size)) {
+			result.add(timeOf(window.firstTime()), window.firstValue());	
 		}
 		if ((!isFuture)&&(s.end()==window.end)&&(window.size()==size)) {
 			result.add(timeOf(window.firstTime()), window.firstValue());	
@@ -111,6 +112,9 @@ public class SlidingWindow<R> {
 					first = first.splitAt(time-size);
 				} else {
 					first = first.getNext();
+					if (first != null) {
+						first.isFirst();
+					}
 				}
 			}
 		}
@@ -151,7 +155,7 @@ public class SlidingWindow<R> {
 				R currentValue = current.getValue();
 				R newValue = aggregator.apply(currentValue,aggregatedValue);
 				if (currentValue.equals(newValue)) {
-					current.addAfter(insertTime, aggregatedValue);
+					last = current.addAfter(insertTime, aggregatedValue);
 					return ;
 				} else {
 					insertTime =  current.getTime();

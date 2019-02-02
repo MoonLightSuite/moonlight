@@ -112,4 +112,28 @@ public class ParallelSignalCursor<T> {
 	public boolean areSynchronized() {
 		return !Double.isNaN(getTime());
 	}
+
+	public double syncCursors() {
+		double time = cursors.get(0).time();
+		boolean flag = false;
+		for (SignalCursor<T> c : cursors) {
+			if (time != c.time()) {
+				flag = true;
+			}
+			time = Math.max(time, c.time());
+		}
+		if (flag) {
+			move(time);
+		}
+		return time;
+	}
+
+	public boolean completed() {
+		for (SignalCursor<T> signalCursor : cursors) {
+			if (signalCursor.completed()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

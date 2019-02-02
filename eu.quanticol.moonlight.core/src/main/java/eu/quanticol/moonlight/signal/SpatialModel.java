@@ -10,5 +10,7 @@ package eu.quanticol.moonlight.signal;
 public interface SpatialModel<T> {
 	
 	public T get( int src , int trg );
+	
+	public int size();
 
 }

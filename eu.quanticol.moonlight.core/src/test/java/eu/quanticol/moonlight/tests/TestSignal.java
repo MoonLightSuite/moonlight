@@ -37,16 +37,7 @@ import eu.quanticol.moonlight.signal.SignalCursor;
 public class TestSignal {
 
 	
-	public <T> Signal<T> createSignal( double start, double end, double dt, Function<Double,T> f ) {
-		Signal<T> signal = new Signal<>();
-		double time = start;
-		while (time<end) {
-			signal.add(time, f.apply(time));
-			time += dt;
-		}
-		signal.endAt(end);
-		return signal;
-	}
+	
 	
 	public <T> void checkSignal( Signal<T> s, double start, double end, int size, BiFunction<Double,T,Boolean> p, BiFunction<Double,Double,Boolean> step) {
 		assertEquals(size,s.size());
@@ -81,7 +72,7 @@ public class TestSignal {
 
 	@Test
 	public void testCreations2() {
-		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> true);
+		Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> true);
 		assertEquals("start:",0.0,s.start(),0.0);
 		assertEquals("end:",100.0,s.end(),0.0);
 		assertEquals(1,s.size());
@@ -89,7 +80,7 @@ public class TestSignal {
 	
 	@Test
 	public void testIterator() {
-		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0);
+		Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0);
 		SignalCursor<Boolean> si = s.getIterator(true);
 		double time = 0.0;
 		while (time<100) {
@@ -102,23 +93,23 @@ public class TestSignal {
 
 	@Test
 	public void testUnaryApply() {
-		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
+		Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
 		assertEquals("start:",0.0,s.start(),0.0);
 		assertEquals("end:",100.0,s.end(),0.0);
-		assertEquals(100,s.size());
+		assertEquals(101,s.size());
 	}
 
 
 	@Test
 	public void testUnaryApply2() {
-		Signal<Boolean> s = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
-		checkSignal(s, 0.0, 100, 100, (x,y) -> (x<100?y==(!(x.intValue()%2==0)):y==true), (x,y) -> (y-x)==1.0 );
+		Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
+		checkSignal(s, 0.0, 100, 101, (x,y) -> (x<=100?y==(!(x.intValue()%2==0)):y==true), (x,y) -> (y-x)==1.0 );
 	}
 	
 	@Test
 	public void testBinaryApply() {
-		Signal<Boolean> s1 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
-		Signal<Boolean> s2 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
+		Signal<Boolean> s1 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
+		Signal<Boolean> s2 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
 		Signal<Boolean> s3 = Signal.apply(s1, (x, y)->x||y,s2);
 		checkSignal(s3,0.0,100,1, (x,y) -> true, (x,y) -> (x==0.0)&&(y==100.0));
 	}
@@ -135,8 +126,8 @@ public class TestSignal {
 	
 	@Test
 	public void testBinaryApply2() {
-		Signal<Boolean> s1 = createSignal(50.0, 150, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
-		Signal<Boolean> s2 = createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
+		Signal<Boolean> s1 = TestUtils.createSignal(50.0, 150, 1.0, x -> x.intValue()%2==0).apply(x -> !x);
+		Signal<Boolean> s2 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue()%2!=0).apply(x -> !x);
 		Signal<Boolean> s3 = Signal.apply(s1, (x, y)->x||y,s2);
 		checkSignal(s3,50.0,100,1, (x,y) -> true, (x,y) -> (x==50.0)&&(y==100.0));
 	}
@@ -144,7 +135,7 @@ public class TestSignal {
 
 	@Test
 	public void testSlidingWindow1() {
-		Signal<Double> s1 = createSignal(0.0, 20.0, 0.4, x -> Math.sin(x) );
+		Signal<Double> s1 = TestUtils.createSignal(0.0, 20.0, 0.4, x -> Math.sin(x) );
 		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.33, Math::min,true);
 		Signal<Double> s2 = w.apply(s1);
 		assertNotNull(s2);
@@ -153,7 +144,7 @@ public class TestSignal {
 	
 	@Test
 	public void testSlidingWindow2() {
-		Signal<Double> s1 = createSignal(0.0, 10, 0.45, x -> ( (((int) (x*2))%2==0)?-1.0:1.0) );
+		Signal<Double> s1 = TestUtils.createSignal(0.0, 10, 0.45, x -> ( (((int) (x*2))%2==0)?-1.0:1.0) );
 		SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.75, Math::min,true);
 		Signal<Double> s2 = w.apply(s1);
 		assertNotNull(s2);

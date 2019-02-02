@@ -49,4 +49,9 @@ public class BooleanDomain implements DomainModule<Boolean> {
 		return true;
 	}
 
+	@Override
+	public Boolean[] createArray(int size) {
+		return new Boolean[size];
+	}
+
 }

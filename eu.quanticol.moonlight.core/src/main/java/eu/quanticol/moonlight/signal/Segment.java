@@ -83,7 +83,7 @@ public class Segment<T> {
 	}
 
 	public boolean contains(double t) {
-		return (time==t)||((time<t)&&((Double.isFinite(end)&&(t<end))||(next!=null)&&(t<next.time)));
+		return (time<=t)&&((Double.isFinite(end)&&(t<=end))||(next!=null)&&(t<next.time));
 	}
 
 	public static double getTime(Segment<?> s) {
@@ -92,7 +92,7 @@ public class Segment<T> {
 
 	public Segment<T> addAfter(double time, T value) {
 		if (this.time>=time) {
-			throw new IllegalArgumentException(); //TODO: Add error message!
+			throw new IllegalArgumentException("Time: "+time+" Expexted: >="+this.time); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
 			this.next = new Segment<T>(this, time, value);
@@ -149,6 +149,34 @@ public class Segment<T> {
 		}
 		this.time = time;
 		return this;
+	}
+
+	public boolean isTheEnd(double time) {
+		return (this.end == time);
+	}
+
+	public boolean doEndAt(double t) {
+		return (this.end==t);
+	}
+
+	public boolean isRightClosed() {
+		return !Double.isNaN(this.end);
+	}
+
+	public double nextTimeAfter(double time) {
+		if (this.next!=null) {
+			return next.getTime();
+		} else {
+			if (time<end) {
+				return end;
+			} else {
+				return Double.NaN;
+			}
+		}
+	}
+
+	public void isFirst() {
+		this.previous = null;
 	}
 	
 }

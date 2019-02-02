@@ -35,6 +35,10 @@ public class TemporalMonitoring<T,R> implements
 	private final HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions;
 	private final DomainModule<R> module;
 	
+	public TemporalMonitoring( DomainModule<R> module ) {
+		this( new HashMap<>(), module );
+	}
+	
 	public TemporalMonitoring( HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions  , DomainModule<R> module ) {
 		this.atomicPropositions = atomicPropositions;
 		this.module = module;
@@ -126,7 +130,7 @@ public class TemporalMonitoring<T,R> implements
 	}
 
 	public static <R> Signal<R>  boundedUntilMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
-		Signal<R> unboundedMonitoring = unboundedSinceMonitoring(s1, s2, module);
+		Signal<R> unboundedMonitoring = unboundedUntilMonitoring(s1, s2, module);
 		Signal<R> eventuallyMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, true);
 		return Signal.apply(unboundedMonitoring,module::conjunction,eventuallyMonitoring);
 	}
@@ -136,8 +140,9 @@ public class TemporalMonitoring<T,R> implements
 		Signal<R> result = new Signal<R>();
 		SignalCursor<R> c1 = s1.getIterator(true);
 		SignalCursor<R> c2 = s2.getIterator(true);
-		double end = Math.max( c1.time() , c2.time() );
-		double time = end;
+		double start = Math.max( c1.time() , c2.time() );
+		double end = Math.min(s1.end(), s2.end());
+		double time = start;
 		R current = module.min();
 		c1.move(time);
 		c2.move(time);
@@ -201,6 +206,10 @@ public class TemporalMonitoring<T,R> implements
 			Interval interval = onceFormula.getInterval();
 			return s -> TemporalMonitoring.temporalMonitoring(argumentMonitoring.apply(s), module::disjunction, interval,false);
 		}
+	}
+
+	public void addProperty(String name, Function<Parameters,Function<T,R>> atomic ) {
+		atomicPropositions.put(name, atomic);
 	}
 
 	

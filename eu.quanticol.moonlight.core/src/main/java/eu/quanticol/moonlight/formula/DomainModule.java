@@ -31,5 +31,7 @@ public interface DomainModule<R> {
 	public R min();
 	
 	public R max();
+	
+	public R[] createArray( int size );
 
 }

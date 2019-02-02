@@ -49,4 +49,9 @@ public class DoubleDomain implements DomainModule<Double> {
 		return Double.POSITIVE_INFINITY;
 	}
 
+	@Override
+	public Double[] createArray(int size) {
+		return new Double[size];
+	}
+
 }
