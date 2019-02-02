@@ -29,6 +29,8 @@ public class SignalCreatorDouble {
         for (double t = timeInit; t < timeEnd; t += timeStep) {
             result.add(t, applyFunctions(functionalMap.entrySet().iterator(), classes, t));
         }
+        result.add(timeEnd, applyFunctions(functionalMap.entrySet().iterator(), classes, timeEnd));
+
         return result;
     }
 
