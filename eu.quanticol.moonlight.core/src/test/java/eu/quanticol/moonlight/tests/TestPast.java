@@ -101,7 +101,7 @@ public class TestPast {
     
     @Test
     public void testOnce2() {
-    	Signal<Double> signal = TestUtils.createSignal(0.0, 100.0, 0.1, x -> x);
+    	Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
     	Formula once = new OnceFormula(new AtomicFormula("test"), new Interval(0, 5.0));
     	TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
     	monitoring.addProperty("test", p -> (x -> x));
@@ -122,10 +122,10 @@ public class TestPast {
     @Test
     public void testHistorically2() {
     	Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
-    	Formula once = new HystoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
+    	Formula historically = new HystoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
     	TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
     	monitoring.addProperty("test", p -> (x -> x));
-    	Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(once, null);
+    	Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(historically, null);
     	Signal<Double> result = m.apply(signal);
     	assertEquals( signal.end(), result.end(), 0.0);
     	assertEquals( 5.0 , result.start(), 0.0);
@@ -157,7 +157,7 @@ public class TestPast {
             c.forward();
             time += 0.25;
         }
-        //assertEquals(10.25,time,0.0);
+        assertEquals(10.25,time,0.0);
     }
 
 }
