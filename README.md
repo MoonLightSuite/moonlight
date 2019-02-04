@@ -1,7 +1,7 @@
 # MoonLight
 MoonLigh is a light-weight Java-tool for monitoring temporal, spatial and spatio-temporal properties of distributed complex systems, as *Cyber-Physical Systems* and *Collective Adaptive Systems*.
 
-It supports the specification of properties written with the *Reach and Escape Logic* (STREL), introduced in [this paper](https://dl.acm.org/citation.cfm?id=3127050). STREL is a linear time temporal logic, in particular, it extends the *Signal Temporal Logic*
+It supports the specification of properties written with the *Reach and Escape Logic* ([STREL](https://dl.acm.org/citation.cfm?id=3127050)). STREL is a linear time temporal logic, in particular, it extends the *Signal Temporal Logic*
  ([STL](https://link.springer.com/chapter/10.1007/978-3-642-15297-9_9)) with a number of spatial operators that permit to described complex spatial behaviors as beeing surround, reaching  target locations and escaping from specific regions. 
 
 The monitoring procedure is done with respect a single spatio-temporal trajecotry. Given a spatial configuration, a trajectory and a property the tool returns a spatio-temporal signal that describes the satisfaction of the property in each location and at each time.
