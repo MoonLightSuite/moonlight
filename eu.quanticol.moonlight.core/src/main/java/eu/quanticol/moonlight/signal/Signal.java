@@ -149,7 +149,7 @@ public class Signal<T> {
             c1.move(time);
             c2.move(time);
         }
-        newSignal.end = Math.min(s1.end, s2.end);
+        newSignal.endAt(Math.min(s1.end, s2.end));
         return newSignal;
     }
 

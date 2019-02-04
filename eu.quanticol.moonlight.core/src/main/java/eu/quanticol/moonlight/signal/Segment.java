@@ -25,6 +25,7 @@ public class Segment<T> {
 		this.previous = previous;
 		this.time = time;
 		this.value = value;
+		this.end = time;
 	}
 
 	public double getTime() {

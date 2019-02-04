@@ -139,4 +139,46 @@ public class TestPast {
     	assertEquals(10.25,time,0.0);
     }    
     
+    @Test
+    public void testSince() {
+       Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+       Formula since = new SinceFormula(new AtomicFormula("test1"),new AtomicFormula("test2"),new Interval(0, 5.0));
+       TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+       monitoring.addProperty("test1", p -> (x -> x));
+       monitoring.addProperty("test2", p -> (x -> x - 9));
+       Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(since, null);
+       Signal<Double> result = m.apply(signal);
+       assertEquals( signal.end(), result.end(), 0.0);
+       assertEquals( 5.0 , result.start(), 0.0);
+       SignalCursor<Double> c = result.getIterator(true);
+       double time = 5.0;
+       while (!c.completed()) {
+           assertEquals("Time: "+c.time(),c.time()-9.0,c.value(),0.0);
+           c.forward();
+           time += 0.25;
+       }
+       assertEquals(10.25,time,0.0);
+    }
+    
+    @Test
+    public void testUnboundedSince() {
+       Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+       Formula since = new SinceFormula(new AtomicFormula("test1"),new AtomicFormula("test2"));
+       TemporalMonitoring<Double,Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+       monitoring.addProperty("test1", p -> (x -> x));
+       monitoring.addProperty("test2", p -> (x -> x - 9));
+       Function<Signal<Double>,Signal<Double>> m = monitoring.monitor(since, null);
+       Signal<Double> result = m.apply(signal);
+       assertEquals( signal.end(), result.end(), 0.0);
+       assertEquals( 0.0 , result.start(), 0.0);
+       SignalCursor<Double> c = result.getIterator(true);
+       double time = 0.0;
+       while (!c.completed()) {
+           assertEquals("Time: "+c.time(),c.time()-9.0,c.value(),0.0);
+           c.forward();
+           time += 0.25;
+       }
+       assertEquals(10.25,time,0.0);
+    }
+    
 }
