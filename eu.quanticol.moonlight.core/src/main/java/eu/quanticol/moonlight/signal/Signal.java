@@ -150,7 +150,9 @@ public class Signal<T> {
 	            c1.move(time);
 	            c2.move(time);
 	        }
-	        newSignal.endAt(Math.min(s1.end, s2.end));
+	        if (!newSignal.isEmpty()) {
+		        newSignal.endAt(Math.min(s1.end, s2.end));
+	        }
         }
         return newSignal;
     }
