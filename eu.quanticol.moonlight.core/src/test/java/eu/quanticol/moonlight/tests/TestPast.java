@@ -116,7 +116,7 @@ public class TestPast {
     		c.forward();
     		time += 0.1;
     	}
-    	assertTrue(time>100.0);
+    	assertTrue(time>10.0);
     }
 
     @Test

@@ -138,18 +138,20 @@ public class Signal<T> {
      */
     public static <T, R> Signal<R> apply(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
         Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> c1 = s1.getIterator(true);
-        SignalCursor<T> c2 = s2.getIterator(true);
-        double time = Math.max(s1.start(), s2.start());
-        c1.move(time);
-        c2.move(time);
-        while (!c1.completed() && !c2.completed()) {
-            newSignal.add(time, f.apply(c1.value(), c2.value()));
-            time = Math.min(c1.nextTime(), c2.nextTime());
-            c1.move(time);
-            c2.move(time);
+        if (!s1.isEmpty()&&!s2.isEmpty()) {
+	        SignalCursor<T> c1 = s1.getIterator(true);
+	        SignalCursor<T> c2 = s2.getIterator(true);
+	        double time = Math.max(s1.start(), s2.start());
+	        c1.move(time);
+	        c2.move(time);
+	        while (!c1.completed() && !c2.completed()) {
+	            newSignal.add(time, f.apply(c1.value(), c2.value()));
+	            time = Math.min(c1.nextTime(), c2.nextTime());
+	            c1.move(time);
+	            c2.move(time);
+	        }
+	        newSignal.endAt(Math.min(s1.end, s2.end));
         }
-        newSignal.endAt(Math.min(s1.end, s2.end));
         return newSignal;
     }
 
