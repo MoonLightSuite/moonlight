@@ -37,7 +37,7 @@ public class TestSpatialSignal {
 	
 	@Test
 	public void testSignalCretion() {
-		SpatialSignal<Double> as = createSpatialSignal( 100 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
+		SpatialSignal<Double> as = TestUtils.createSpatialSignal( 100 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
 		assertNotNull(as);
 		assertEquals(0.0,as.start(),0.0);
 		assertEquals(100.0,as.end(),EPSILON);
@@ -45,7 +45,7 @@ public class TestSpatialSignal {
 
 	@Test
 	public void testSignalCursor() {
-		SpatialSignal<Double> as = createSpatialSignal( 5 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
+		SpatialSignal<Double> as = TestUtils.createSpatialSignal( 5 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
 		ParallelSignalCursor<Double> cursor = as.getSignalCursor(true);
 		assertEquals(0.0,as.start(),0.0);
 		assertEquals(100.0,as.end(),EPSILON);
@@ -60,16 +60,6 @@ public class TestSpatialSignal {
 	}
 
 
-	private <T> SpatialSignal<T> createSpatialSignal(int size, double start, double dt, double end, BiFunction<Double,Integer,T> f ) {
-		SpatialSignal<T> s = new SpatialSignal<>(size);
-		double time = start;
-		while ( time<end ) {
-			double current = time;
-			s.add(time, (i -> f.apply(current,i)));
-			time += dt;
-		}		
-		return s;
-	}
 	
 
 }

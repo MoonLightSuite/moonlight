@@ -218,7 +218,6 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 	@Override
 	public BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> visit(
 			SomewhereFormula somewhereFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
 		Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
 		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
 		return (l,s) -> computeSomewhere( l, distanceFunction , argumentMonitor.apply(l, s));
@@ -236,8 +235,17 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 
 	private SpatialSignal<R> computeSomewhereDynamic(
 			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction, SpatialSignal<R> s) {
-		// TODO Auto-generated method stub
-		return null;
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		while (!cursor.completed()) {
+			SpatialModel<V> sm = l.apply(time);
+			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+			toReturn.add(time, f.somewhere( module, cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
 	}
 
 	private SpatialSignal<R> computeSomewhereStatic(
@@ -248,24 +256,11 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		SpatialModel<V> sm = l.apply(time);
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 		while (!cursor.completed()) {
-			toReturn.add(time, somewhere( s.getNumberOfLocations(), f , cursor.getValue() ));
+			toReturn.add(time, f.somewhere( module, cursor.getValue() ));
 			time = cursor.forward();
 		}
 		//TODO: Manage end of signal!
 		return toReturn;
-	}
-
-	private R[] somewhere(int size, DistanceStructure<V, ? extends Object> f, Function<Integer, R> value) {
-//		R[] values = module.createArray(size);
-//		for( int i=0 ; i<size ; i++ ) {
-//			for( int j=0 ; j<size; j++ ) {
-//				R value = module.min();
-//				if (f.checkDistance(i, j))) {
-//					
-//				}
-//			}
-//		}
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -274,18 +269,107 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 	@Override
 	public BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> visit(
 			EverywhereFormula everywhereFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
-		return FormulaVisitor.super.visit(everywhereFormula, parameters);
+		Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
+		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
+		return (l,s) -> computeEverywhere( l, distanceFunction , argumentMonitor.apply(l, s));
 	}
 
+	public SpatialSignal<R> computeEverywhere(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s) {
+		if (staticSpace) {
+			return computeEverywhereStatic( l, distanceFunction, s );
+		} else {
+			return computeEverywhereDynamic( l, distanceFunction, s );
+		}
+	}
+
+	private SpatialSignal<R> computeEverywhereDynamic(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction, SpatialSignal<R> s) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		while (!cursor.completed()) {
+			SpatialModel<V> sm = l.apply(time);
+			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+			toReturn.add(time, f.everywhere( module, cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
+	}
+
+	private SpatialSignal<R> computeEverywhereStatic(
+			Function<Double, SpatialModel<V>> l, Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction, SpatialSignal<R> s) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		SpatialModel<V> sm = l.apply(time);
+		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+		while (!cursor.completed()) {
+			toReturn.add(time, f.everywhere( module, cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.ReachFormula, java.lang.Object)
 	 */
 	@Override
 	public BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> visit(
 			ReachFormula reachFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
-		return FormulaVisitor.super.visit(reachFormula, parameters);
+		Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
+		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> m1 = reachFormula.getFirstArgument().accept(this, parameters);
+		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> m2 = reachFormula.getSecondArgument().accept(this, parameters);
+		if (staticSpace) {
+			return (l,s) -> computeReachStatic( l, m1.apply(l, s), distanceFunction , m2.apply(l, s));			
+		} else {
+			return (l,s) -> computeReachDynamic( l, m1.apply(l, s), distanceFunction , m2.apply(l, s));						
+		}
+	}
+
+	private  SpatialSignal<R> computeReachDynamic(Function<Double, SpatialModel<V>> l, SpatialSignal<R> s1,
+			Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s2) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s1.getNumberOfLocations());
+		ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
+		ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
+		double time = Math.max(s1.start(),s2.start());
+		c1.move(time);
+		c2.move(time);
+		while (!c1.completed()&&!c2.completed()) {
+			SpatialModel<V> sm = l.apply(c1.getTime());
+			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+			R[] values = f.reach(module, c1.getValue(), c2.getValue());
+			toReturn.add(time, (i -> values[i]));
+			time = Math.min(c1.nextTime(), c2.nextTime());
+			c1.move(time);
+			c2.move(time);
+		}
+		return toReturn;
+	}
+
+	private  SpatialSignal<R> computeReachStatic(Function<Double, SpatialModel<V>> l, SpatialSignal<R> s1,
+			Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s2) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s1.getNumberOfLocations());
+		ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
+		ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
+		double time = Math.max(s1.start(),s2.start());
+		c1.move(time);
+		c2.move(time);
+		SpatialModel<V> sm = l.apply(c1.getTime());
+		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+		while (!c1.completed()&&!c2.completed()) {
+			R[] values = f.reach(module, c1.getValue(), c2.getValue());
+			toReturn.add(time, (i -> values[i]));
+			time = Math.min(c1.nextTime(), c2.nextTime());
+			c1.move(time);
+			c2.move(time);
+		}
+		return toReturn;
 	}
 
 	/* (non-Javadoc)
@@ -294,10 +378,46 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 	@Override
 	public BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> visit(
 			EscapeFormula escapeFormula, Parameters parameters) {
-		// TODO Auto-generated method stub
-		return FormulaVisitor.super.visit(escapeFormula, parameters);
+		Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
+		BiFunction<Function<Double, SpatialModel<V>>, SpatialSignal<T>, SpatialSignal<R>> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
+		if (staticSpace) {
+			return (l,s) -> computeEscapeStatic( l, distanceFunction , argumentMonitor.apply(l, s));			
+		} else {
+			return (l,s) -> computeEscapeDynamic( l, distanceFunction , argumentMonitor.apply(l, s));						
+		}
+	}
+
+	private SpatialSignal<R> computeEscapeStatic(Function<Double, SpatialModel<V>> l,
+			Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		SpatialModel<V> sm = l.apply(time);
+		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+		while (!cursor.completed()) {
+			toReturn.add(time, f.escape(module, cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
 	}
 	
+	private SpatialSignal<R> computeEscapeDynamic(Function<Double, SpatialModel<V>> l,
+			Function<SpatialModel<V>, DistanceStructure<V, ? extends Object>> distanceFunction,
+			SpatialSignal<R> s) {
+		SpatialSignal<R> toReturn = new SpatialSignal<R>(s.getNumberOfLocations());
+		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+		double time = cursor.getTime();
+		while (!cursor.completed()) {
+			SpatialModel<V> sm = l.apply(time);
+			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
+			toReturn.add(time, f.everywhere( module, cursor.getValue() ));
+			time = cursor.forward();
+		}
+		//TODO: Manage end of signal!
+		return toReturn;
+	}
 	
 
 }
