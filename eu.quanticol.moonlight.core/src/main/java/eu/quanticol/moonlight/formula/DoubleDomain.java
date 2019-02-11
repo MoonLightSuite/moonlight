@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.formula;
 /**
  *
  */
-public class DoubleDomain implements DomainModule<Double> {
+public class DoubleDomain implements SignalDomain<Double> {
 
 	@Override
 	public Double conjunction(Double x, Double y) {
@@ -47,11 +47,6 @@ public class DoubleDomain implements DomainModule<Double> {
 	@Override
 	public Double max() {
 		return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
-	public Double[] createArray(int size) {
-		return new Double[size];
 	}
 
 }

@@ -42,6 +42,14 @@ public class SpatialSignal<T> {
 		}
 		add(t,(i -> values[i]));
 	}
+
+	public void add(double time, ArrayList<T> values) {
+		if (values.size()!=this.size) {
+			throw new IllegalArgumentException();//TODO: Add message here!
+		}
+		add(time,i -> values.get(i));
+	}
+
 	
 	public void add( double t, Function<Integer,T> f ) {
 		for( int i=0 ; i<size ; i++ ) {
@@ -90,4 +98,5 @@ public class SpatialSignal<T> {
 		}
 		return end;
 	}
+
 }

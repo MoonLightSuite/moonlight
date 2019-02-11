@@ -19,19 +19,8 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-public interface DomainModule<R> {
-	
-	
-	public R conjunction(R x, R y);
-
-	public R disjunction(R x, R y);
+public interface SignalDomain<R> extends Semiring<R> {
 	
 	public R negation(R x);
-	
-	public R min();
-	
-	public R max();
-	
-	public R[] createArray( int size );
 
 }

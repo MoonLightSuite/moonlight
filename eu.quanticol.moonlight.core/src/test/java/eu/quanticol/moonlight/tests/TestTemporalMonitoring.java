@@ -19,25 +19,23 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.io.JSonSignalReader;
-import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.util.FormulaGenerator;
-import eu.quanticol.moonlight.util.FutureFormulaGenerator;
-
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.formula.Formula;
+import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SignalCreatorDouble;
+import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.util.FormulaGenerator;
+import eu.quanticol.moonlight.util.FutureFormulaGenerator;
 
 public class TestTemporalMonitoring {
 

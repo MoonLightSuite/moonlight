@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.formula;
 /**
  *
  */
-public class BooleanDomain implements DomainModule<Boolean> {
+public class BooleanDomain implements SignalDomain<Boolean> {
 
 	@Override
 	public Boolean conjunction(Boolean x, Boolean y) {
@@ -47,11 +47,6 @@ public class BooleanDomain implements DomainModule<Boolean> {
 	@Override
 	public Boolean max() {
 		return true;
-	}
-
-	@Override
-	public Boolean[] createArray(int size) {
-		return new Boolean[size];
 	}
 
 }

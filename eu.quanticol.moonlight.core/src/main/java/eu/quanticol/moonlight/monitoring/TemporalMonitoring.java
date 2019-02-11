@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.DomainModule;
+import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
@@ -33,13 +33,13 @@ public class TemporalMonitoring<T,R> implements
 		FormulaVisitor<Parameters, Function<Signal<T>,Signal<R>>> {
 	
 	private final HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions;
-	private final DomainModule<R> module;
+	private final SignalDomain<R> module;
 	
-	public TemporalMonitoring( DomainModule<R> module ) {
+	public TemporalMonitoring( SignalDomain<R> module ) {
 		this( new HashMap<>(), module );
 	}
 	
-	public TemporalMonitoring( HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions  , DomainModule<R> module ) {
+	public TemporalMonitoring( HashMap<String,Function<Parameters,Function<T,R>>> atomicPropositions  , SignalDomain<R> module ) {
 		this.atomicPropositions = atomicPropositions;
 		this.module = module;
 	}
@@ -110,7 +110,7 @@ public class TemporalMonitoring<T,R> implements
 	}
 
 
-	public static <R> Signal<R>  unboundedUntilMonitoring(Signal<R> s1, Signal<R> s2, DomainModule<R> module) {
+	public static <R> Signal<R>  unboundedUntilMonitoring(Signal<R> s1, Signal<R> s2, SignalDomain<R> module) {
 		Signal<R> result = new Signal<R>();
 		SignalCursor<R> c1 = s1.getIterator(false);
 		SignalCursor<R> c2 = s2.getIterator(false);
@@ -129,14 +129,14 @@ public class TemporalMonitoring<T,R> implements
 		return result;
 	}
 
-	public static <R> Signal<R>  boundedUntilMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
+	public static <R> Signal<R>  boundedUntilMonitoring(Signal<R> s1, Interval i, Signal<R> s2, SignalDomain<R> module) {
 		Signal<R> unboundedMonitoring = unboundedUntilMonitoring(s1, s2, module);
 		Signal<R> eventuallyMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, true);
 		return Signal.apply(unboundedMonitoring,module::conjunction,eventuallyMonitoring);
 	}
 
 
-	public static <R> Signal<R>  unboundedSinceMonitoring(Signal<R> s1, Signal<R> s2, DomainModule<R> module) {
+	public static <R> Signal<R>  unboundedSinceMonitoring(Signal<R> s1, Signal<R> s2, SignalDomain<R> module) {
 		Signal<R> result = new Signal<R>();
 		SignalCursor<R> c1 = s1.getIterator(true);
 		SignalCursor<R> c2 = s2.getIterator(true);
@@ -156,7 +156,7 @@ public class TemporalMonitoring<T,R> implements
 		return result;
 	}
 
-	public static <R> Signal<R>  boundedSinceMonitoring(Signal<R> s1, Interval i, Signal<R> s2, DomainModule<R> module) {
+	public static <R> Signal<R>  boundedSinceMonitoring(Signal<R> s1, Interval i, Signal<R> s2, SignalDomain<R> module) {
 		Signal<R> unboundedResult = unboundedSinceMonitoring(s1, s2, module);
 		Signal<R> onceMonitoring = TemporalMonitoring.temporalMonitoring(s2, module::disjunction, i, false);
 		return Signal.apply(unboundedResult, module::conjunction, onceMonitoring);

@@ -3,13 +3,14 @@
  */
 package eu.quanticol.moonlight.monitoring;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.DomainModule;
+import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.formula.EscapeFormula;
 import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.EverywhereFormula;
@@ -43,7 +44,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 
 	private final HashMap<String,Function<SpatialModel<V>,DistanceStructure<V, ? extends Object>>> distanceFunctions;
 	
-	private final DomainModule<R> module;
+	private final SignalDomain<R> module;
 	
 	private final boolean staticSpace;
 		
@@ -54,7 +55,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 	public SpatioTemporalMonitoring(
 			HashMap<String, Function<Parameters, Function<T, R>>> atomicPropositions,
 			HashMap<String,Function<SpatialModel<V>,DistanceStructure<V, ? extends Object>>> distanceFunctions,
-			DomainModule<R> module,
+			SignalDomain<R> module,
 			boolean staticSpace) {
 		super();
 		this.atomicPropositions = atomicPropositions;
@@ -342,8 +343,8 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		while (!c1.completed()&&!c2.completed()) {
 			SpatialModel<V> sm = l.apply(c1.getTime());
 			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
-			R[] values = f.reach(module, c1.getValue(), c2.getValue());
-			toReturn.add(time, (i -> values[i]));
+			ArrayList<R> values = f.reach(module, c1.getValue(), c2.getValue());
+			toReturn.add(time, (i -> values.get(i)));
 			time = Math.min(c1.nextTime(), c2.nextTime());
 			c1.move(time);
 			c2.move(time);
@@ -363,8 +364,8 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		SpatialModel<V> sm = l.apply(c1.getTime());
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 		while (!c1.completed()&&!c2.completed()) {
-			R[] values = f.reach(module, c1.getValue(), c2.getValue());
-			toReturn.add(time, (i -> values[i]));
+			ArrayList<R> values = f.reach(module, c1.getValue(), c2.getValue());
+			toReturn.add(time, (i -> values.get(i)));
 			time = Math.min(c1.nextTime(), c2.nextTime());
 			c1.move(time);
 			c2.move(time);
