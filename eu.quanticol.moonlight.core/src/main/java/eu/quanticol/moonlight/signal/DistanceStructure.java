@@ -117,7 +117,7 @@ public class DistanceStructure<T,A> {
 						} else {
 							Pair<R,A> newP = new Pair<>(
 									mDomain.disjunction(newR,oldP.getFirst()),
-									semiring.disjunction(newB, oldP.getSecond())
+									newB
 							);
 							if (!newP.equals(oldP)) {
 								rL1.put(ke.getKey(), newP);
@@ -127,7 +127,7 @@ public class DistanceStructure<T,A> {
 					}
 				}
 			}
-			
+			activeLocations = newActive;			
 		}
 		return extractEscapeValues(mDomain,r);
 	}	
