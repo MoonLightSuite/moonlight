@@ -53,7 +53,7 @@ public class GraphModel<T> implements SpatialModel<T> {
 		}
 		this.edges.get(src).put(trg,value);
 		this.outEdges.get(src).add(new Pair<Integer,T>(trg,value));
-		this.inEdges.get(src).add(new Pair<Integer,T>(src,value));
+		this.inEdges.get(trg).add(new Pair<Integer,T>(src,value));
 	}
 
 
