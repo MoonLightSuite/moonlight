@@ -152,7 +152,7 @@ public class TestSpatialProperties {
 		}
 	}	
 	
-	@Test 
+/*	@Test
 	public void testEscapeOnGrid() {
 		int rows = 4;
 		int columns = 4;
@@ -174,6 +174,6 @@ public class TestSpatialProperties {
 				assertEquals( "<"+i+","+j+">:", (i>wallR)||(j>wallC), result.get(TestUtils.gridIndexOf(i, j, columns)));
 			}
 		}
-	}		
+	}	*/
 	
 }
