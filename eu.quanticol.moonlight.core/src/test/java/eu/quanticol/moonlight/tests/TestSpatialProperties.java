@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.formula.TropicalSemiring;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
