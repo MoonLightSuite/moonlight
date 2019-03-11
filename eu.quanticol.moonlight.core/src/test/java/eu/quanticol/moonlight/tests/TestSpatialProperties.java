@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
+import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.TropicalSemiring;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
@@ -52,7 +53,7 @@ public class TestSpatialProperties {
 	public void testDistanceStructure() {
 		int size = 3;
 		SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x,y) -> (y==(((x+1)%size))?1.0:null ));
-		DistanceStructure<Double, Double> ds = new DistanceStructure<Double,Double>((x, y) -> x+y, new TropicalSemiring() , x -> (x<10), model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<Double,Double>(x -> x, new DoubleDistance() , x -> (x<10), model);
 		
 		for( int i=0 ; i<size ; i++ ) {
 			for( int j=0 ; j<size; j++ ) {
@@ -66,7 +67,7 @@ public class TestSpatialProperties {
 	public void testDistanceStructure2() {
 		int size = 3;
 		SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x,y) -> (((y==((x+1)%size))||(x==((y+1)%size)))?1.0:null ));
-		DistanceStructure<Double, Double> ds = new DistanceStructure<Double,Double>((x, y) -> x+y, new TropicalSemiring() , x -> (x<10), model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<Double,Double>(x -> x , new DoubleDistance() , x -> (x<10), model);
 		
 		for( int i=0 ; i<size ; i++ ) {
 			for( int j=0 ; j<size; j++ ) {
@@ -93,10 +94,10 @@ public class TestSpatialProperties {
 	
 	@Test 
 	public void testDistanceOnGrid() {
-		int rows = 9;
-		int columns = 12;
+		int rows = 40;
+		int columns = 40;
 		SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
-		DistanceStructure<Double, Double> ds = new DistanceStructure<>((x,y) -> x+y, new TropicalSemiring(), x -> x<20, model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), x -> x<20, model);
 		for( int i1=0 ; i1<rows; i1++ ) {
 			for( int j1=0 ; j1<columns ; j1++ ) {
 				for( int i2=0 ; i2<rows; i2++ ) {
@@ -120,7 +121,7 @@ public class TestSpatialProperties {
 		int relevantC = 5;
 		int relevantR = 5;
 		SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
-		DistanceStructure<Double, Double> ds = new DistanceStructure<>((x,y) -> x+y, new TropicalSemiring(), x -> x<range, model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), x -> x<range, model);
 		ArrayList<Boolean> result = ds.somewhere(
 				new BooleanDomain(), 
 				(i) -> i==TestUtils.gridIndexOf(relevantR, relevantC, columns)
@@ -140,7 +141,7 @@ public class TestSpatialProperties {
 		int relevantC = 5;
 		int relevantR = 5;
 		SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
-		DistanceStructure<Double, Double> ds = new DistanceStructure<>((x,y) -> x+y, new TropicalSemiring(), x -> x<range, model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), x -> x<range, model);
 		ArrayList<Boolean> result = ds.everywhere(
 				new BooleanDomain(), 
 				(i) -> i!=TestUtils.gridIndexOf(relevantR, relevantC, columns)
@@ -152,15 +153,15 @@ public class TestSpatialProperties {
 		}
 	}	
 	
-/*	@Test
+	@Test
 	public void testEscapeOnGrid() {
-		int rows = 4;
-		int columns = 4;
-		double range = 5.0;
+		int rows = 5;
+		int columns = 5;
+		double range = 2.0;
 		int wallC = 2;
 		int wallR = 2;
 		SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
-		DistanceStructure<Double, Double> ds = new DistanceStructure<>((x,y) -> x+y, new TropicalSemiring(), x -> x<range, model);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), x -> x>range, model);
 		ArrayList<Boolean> result = ds.escape(
 				new BooleanDomain(), 
 				(i) -> {
@@ -174,6 +175,6 @@ public class TestSpatialProperties {
 				assertEquals( "<"+i+","+j+">:", (i>wallR)||(j>wallC), result.get(TestUtils.gridIndexOf(i, j, columns)));
 			}
 		}
-	}	*/
+	}
 	
 }
