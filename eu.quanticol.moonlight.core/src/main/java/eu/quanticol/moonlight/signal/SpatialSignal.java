@@ -56,7 +56,12 @@ public class SpatialSignal<T> {
 			signals.get(i).add(t, f.apply(i));
 		}
 	}
-	
+
+
+	public ArrayList<Signal<T>> getSignals(){return signals;}
+
+	//public <T> values(int i, double t){return signals.get(i).;}
+
 	public <R> SpatialSignal<R> apply( Function<T,R> f ) {
 		return new SpatialSignal<R>(this.size, (i -> signals.get(i).apply(f)));
 	}
