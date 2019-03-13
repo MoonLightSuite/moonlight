@@ -8,7 +8,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import eu.quanticol.moonlight.signal.GraphModel;
 import org.junit.Test;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
@@ -175,5 +177,43 @@ public class TestSpatialProperties {
 			}
 		}
 	}
-	
+
+
+
+
+
+
+
+	@Test
+	public void testReachOnGrid() {
+		int rows = 5;
+		int columns = 5;
+		double range = 2.0;
+		int wallC = 2;
+		int wallR = 2;
+		SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+		DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), x -> x>range, model);
+		ArrayList<Boolean> result = ds.reach(
+				new BooleanDomain(),
+				(i) -> {
+					Pair<Integer,Integer> p = TestUtils.gridLocationOf(i, rows, columns);
+					return !(((p.getFirst().equals(wallC))&&(p.getSecond()<=wallR))
+							||((p.getFirst()<=wallC)&&(p.getSecond().equals(wallR))));
+				}, i-> false
+		);
+	}
+
+	//@Test void testReachOnSpModel(){
+		//Integer size = 2;
+		//GraphModel<Double> city = new GraphModel<Double>(size);
+		//city.add(0, 2.0, 1);
+		//city.add(1, 2.0, 0);
+		//ArrayList<Boolean> s1=new ArrayList<>(Arrays.asList(false,false));
+		//ArrayList<Boolean> s2=new ArrayList<>(Arrays.asList(true,false));
+		//double range = 10;
+		//DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), d -> d < range, city);
+		//ArrayList<Boolean> reacmainsquare = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+	//}
+
+
 }
