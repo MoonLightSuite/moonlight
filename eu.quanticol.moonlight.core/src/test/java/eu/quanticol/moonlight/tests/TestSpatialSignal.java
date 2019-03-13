@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.signal.SpatialSignal;
+import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
 
 /**
  * @author loreti
@@ -28,7 +28,7 @@ public class TestSpatialSignal {
 	@Test
 	public void testSignalInit() {
 		int size = 100;
-		SpatialSignal<Integer> s = new SpatialSignal<>(size);
+		SpatioTemporalSignal<Integer> s = new SpatioTemporalSignal<>(size);
 		assertEquals(size,s.getNumberOfLocations());
 		assertNotNull(s);
 		assertTrue(Double.isNaN(s.start()));
@@ -37,7 +37,7 @@ public class TestSpatialSignal {
 	
 	@Test
 	public void testSignalCretion() {
-		SpatialSignal<Double> as = TestUtils.createSpatialSignal( 100 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
+		SpatioTemporalSignal<Double> as = TestUtils.createSpatialSignal( 100 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
 		assertNotNull(as);
 		assertEquals(0.0,as.start(),0.0);
 		assertEquals(100.0,as.end(),EPSILON);
@@ -45,7 +45,7 @@ public class TestSpatialSignal {
 
 	@Test
 	public void testSignalCursor() {
-		SpatialSignal<Double> as = TestUtils.createSpatialSignal( 5 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
+		SpatioTemporalSignal<Double> as = TestUtils.createSpatialSignal( 5 , 0.0, 0.1, 100.0, (t,i) -> Math.pow(t,i));
 		ParallelSignalCursor<Double> cursor = as.getSignalCursor(true);
 		assertEquals(0.0,as.start(),0.0);
 		assertEquals(100.0,as.end(),EPSILON);

@@ -9,7 +9,7 @@ import java.util.function.Function;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatialSignal;
+import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
@@ -30,8 +30,8 @@ public class TestUtils {
 	}
 	
 	
-	public static <T> SpatialSignal<T> createSpatialSignal(int size, double start, double dt, double end, BiFunction<Double,Integer,T> f ) {
-		SpatialSignal<T> s = new SpatialSignal<>(size);
+	public static <T> SpatioTemporalSignal<T> createSpatialSignal(int size, double start, double dt, double end, BiFunction<Double,Integer,T> f ) {
+		SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(size);
 		double time = start;
 		while ( time<end ) {
 			double current = time;

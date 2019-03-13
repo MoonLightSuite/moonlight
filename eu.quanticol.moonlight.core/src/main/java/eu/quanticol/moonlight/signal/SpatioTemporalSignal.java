@@ -11,19 +11,34 @@ import java.util.function.Function;
  * @author loreti
  *
  */
-public class SpatialSignal<T> {
+public class SpatioTemporalSignal<T> {
 	
 	private ArrayList<Signal<T>> signals;
 	private int size; 
 
-	public SpatialSignal( int size ) {
+	public SpatioTemporalSignal( int size ) {
 		this( size, i -> new Signal<T>() );
 	}
 	
-	public SpatialSignal( int size , Function<Integer,Signal<T>> f ) {
+	public SpatioTemporalSignal( int size , Function<Integer,Signal<T>> f ) {
 		this.signals = new ArrayList<Signal<T>>(size);
 		this.size = size;
 		init( f );
+	}
+	
+	public SpatioTemporalSignal( int size, double[] t, Function<Double,T[]> f ) {
+		this( size );
+		for( int i=0 ; i<t.length ; i++ ) {
+			add( t[i], f.apply(t[i]) );
+		}
+	}
+
+	public SpatioTemporalSignal( int size, double[] t, T[][] m ) {
+		this.signals = new ArrayList<Signal<T>>(size);
+		this.size = size;
+		for( int i=0 ; i<t.length ; i++ ) {
+			add( t[i], m[i]);
+		}
 	}
 
 	private void init(Function<Integer,Signal<T>> initFunction) {
@@ -62,26 +77,26 @@ public class SpatialSignal<T> {
 
 	//public <T> values(int i, double t){return signals.get(i).;}
 
-	public <R> SpatialSignal<R> apply( Function<T,R> f ) {
-		return new SpatialSignal<R>(this.size, (i -> signals.get(i).apply(f)));
+	public <R> SpatioTemporalSignal<R> apply( Function<T,R> f ) {
+		return new SpatioTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
 	}
 	
-	public static <T,R> SpatialSignal<R> apply( SpatialSignal<T> s1, BiFunction<T,T,R> f , SpatialSignal<T> s2 ) {
+	public static <T,R> SpatioTemporalSignal<R> apply( SpatioTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatioTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatialSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
+		return new SpatioTemporalSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
 	}
 
-	public static <T,R> SpatialSignal<R> applyToSignal( SpatialSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatialSignal<T> s2 ) {
+	public static <T,R> SpatioTemporalSignal<R> applyToSignal( SpatioTemporalSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatioTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatialSignal<R>( s1.size , (i -> f.apply( s1.signals.get(i), s2.signals.get(i)) ));
+		return new SpatioTemporalSignal<R>( s1.size , (i -> f.apply( s1.signals.get(i), s2.signals.get(i)) ));
 	}
 
-	public <R> SpatialSignal<R> applyToSignal( Function<Signal<T>,Signal<R>> f ) {
-		return new SpatialSignal<R>(this.size, (i -> f.apply(signals.get(i))));
+	public <R> SpatioTemporalSignal<R> applyToSignal( Function<Signal<T>,Signal<R>> f ) {
+		return new SpatioTemporalSignal<R>(this.size, (i -> f.apply(signals.get(i))));
 	}
 	
 	public ParallelSignalCursor<T> getSignalCursor( boolean forward ) {
