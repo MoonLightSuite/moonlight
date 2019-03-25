@@ -75,7 +75,13 @@ public class SpatioTemporalSignal<T> {
 
 	public ArrayList<Signal<T>> getSignals(){return signals;}
 
-	//public <T> values(int i, double t){return signals.get(i).;}
+	public ArrayList<T> valuesatT(double t){
+		ArrayList<T> spSignal = new ArrayList<T>(size);
+		for( int i=0 ; i<size ; i++ ) {
+			spSignal.add(signals.get(i).valueAt(t));
+		}
+		return spSignal;
+	}
 
 	public <R> SpatioTemporalSignal<R> apply( Function<T,R> f ) {
 		return new SpatioTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
