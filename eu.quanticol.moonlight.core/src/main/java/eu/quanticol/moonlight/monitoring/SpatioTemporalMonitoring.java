@@ -245,7 +245,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
 		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
 		double time = cursor.getTime();
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			SpatialModel<V> sm = l.apply(time);
 			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 			toReturn.add(time, f.somewhere( module, cursor.getValue() ));
@@ -262,7 +262,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		double time = cursor.getTime();
 		SpatialModel<V> sm = l.apply(time);
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			toReturn.add(time, f.somewhere( module, cursor.getValue() ));
 			time = cursor.forward();
 		}
@@ -296,7 +296,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
 		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
 		double time = cursor.getTime();
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			SpatialModel<V> sm = l.apply(time);
 			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 			toReturn.add(time, f.everywhere( module, cursor.getValue() ));
@@ -313,7 +313,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		double time = cursor.getTime();
 		SpatialModel<V> sm = l.apply(time);
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			toReturn.add(time, f.everywhere( module, cursor.getValue() ));
 			time = cursor.forward();
 		}
@@ -346,7 +346,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		double time = Math.max(s1.start(),s2.start());
 		c1.move(time);
 		c2.move(time);
-		while (!c1.completed()&&!c2.completed()) {
+		while (!c1.completed()&&!c2.completed()&&!Double.isNaN(time)) {
 			SpatialModel<V> sm = l.apply(c1.getTime());
 			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 			ArrayList<R> values = f.reach(module, c1.getValue(), c2.getValue());
@@ -369,7 +369,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		c2.move(time);
 		SpatialModel<V> sm = l.apply(c1.getTime());
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
-		while (!c1.completed()&&!c2.completed()) {
+		while (!c1.completed()&&!c2.completed()&&!Double.isNaN(time)) {
 			ArrayList<R> values = f.reach(module, c1.getValue(), c2.getValue());
 			toReturn.add(time, (i -> values.get(i)));
 			time = Math.min(c1.nextTime(), c2.nextTime());
@@ -402,7 +402,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		double time = cursor.getTime();
 		SpatialModel<V> sm = l.apply(time);
 		DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			toReturn.add(time, f.escape(module, cursor.getValue() ));
 			time = cursor.forward();
 		}
@@ -416,7 +416,7 @@ public class SpatioTemporalMonitoring<V,T,R> implements
 		SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
 		ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
 		double time = cursor.getTime();
-		while (!cursor.completed()) {
+		while (!cursor.completed()&&!Double.isNaN(time)) {
 			SpatialModel<V> sm = l.apply(time);
 			DistanceStructure<V,? extends Object> f = distanceFunction.apply(sm);
 			toReturn.add(time, f.everywhere( module, cursor.getValue() ));

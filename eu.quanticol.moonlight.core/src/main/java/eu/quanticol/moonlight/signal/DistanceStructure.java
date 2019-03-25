@@ -6,6 +6,7 @@ package eu.quanticol.moonlight.signal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -171,37 +172,54 @@ public class DistanceStructure<T,A> {
 //	}	
 	
 	public <R> ArrayList<R> reach(SignalDomain<R> mDomain, Function<Integer, R> s1, Function<Integer, R> s2) {
-		HashMap<Integer,HashMap<Pair<Integer,R>,A>> r = initReachMap( mDomain , s2 );		
-		Set<Integer> activeLocations = model.getLocations();
-		while (!activeLocations.isEmpty()) {
-			Set<Integer> newActive = new HashSet<>();
-			for (Integer l : activeLocations) {
-				HashMap<Pair<Integer, R>, A> lR = r.get(l);
-				for (Pair<Integer,T> p: model.previous(l)) {
-					HashMap<Pair<Integer, R>, A> rL1 = r.get(p.getFirst());
-					for (Entry<Pair<Integer, R>, A> ke : lR.entrySet()) {
-						A newB = domain.sum(distance.apply(p.getSecond()), ke.getValue());
-						if (bound.test(newB)) {
-							R newR = mDomain.conjunction(s1.apply(p.getFirst()), ke.getKey().getSecond());
-							Pair<Integer,R> newP = new Pair<>(ke.getKey().getFirst(),newR);
-							A d = rL1.get(newP);
-							if (d == null) {
-								rL1.put(newP, newB);
-								newActive.add(p.getFirst());
-							} else {
-//								if (semiring.equals(d,newB)) {
-//									rL1.put(newP, semiring.disjunction(d, newB));									
-//									newActive.add(p.getFirst());
-//								}
-								throw new NullPointerException();
-							}
-						}
-					}
-				}
-			}
-			activeLocations = newActive;
+//		ArrayList<List<Pair<A,R>>> reachFunction = 			
+//				IntStream
+//					.range(0, model.size()).boxed()
+//					.map(i -> new Pair<>(domain.zero(),s2.apply(i)))
+//					.map(i -> { LinkedList<Pair<A,R>> l = new LinkedList<>(); l.add(i); return l; })
+//					.collect(Collectors.toCollection(ArrayList::new));
+//		LinkedList<Integer> queue = 
+//				IntStream
+//					.range(0, model.size()).boxed()
+//					.collect(Collectors.toCollection(LinkedList::new));
+//		HashSet<Integer> pending =
+//				IntStream
+//					.range(0, model.size()).boxed()
+//					.collect(Collectors.toCollection(HashSet::new));
+//		while (!pending.isEmpty()) {
+//			int l1 = queue.poll();
+//			pending.remove(l1);
+//			for (Pair<Integer, T> pre: model.previous(l1)) {
+//				int l2 = pre.getFirst();
+//				T d = pre.getSecond();
+//				
+//			}
+//			
+//		}
+//				
+//
+		return null;		
+	}
+	
+	private <R> List<Pair<A,R>> shift(A v, List<Pair<A,R>> l) {
+		LinkedList<Pair<A,R>> toReturn = new LinkedList<>();
+		for (Pair<A, R> p : l) {
+			toReturn.add(new Pair<>(domain.sum( v , p.getFirst()),p.getSecond()));
 		}
-		return extractReachValues(mDomain,r);
+		return toReturn;
+	}
+	
+	private <R> List<Pair<A,R>> combine( List<Pair<A,R>> l1 , List<Pair<A,R>> l2 ) {
+		LinkedList<Pair<A,R>> toReturn = new LinkedList<>();
+		Iterator<Pair<A, R>> i1 = l1.iterator();
+		Iterator<Pair<A, R>> i2 = l2.iterator();
+		
+		boolean flag = true;
+		while (flag) {
+			
+		}
+		
+		return toReturn;
 	}
 
 	private <R> ArrayList<R> extractReachValues(SignalDomain<R> mDomain, HashMap<Integer, HashMap<Pair<Integer, R>, A>> r) {
