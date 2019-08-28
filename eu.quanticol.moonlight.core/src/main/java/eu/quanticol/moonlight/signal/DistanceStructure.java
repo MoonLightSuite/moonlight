@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -16,10 +17,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import eu.quanticol.moonlight.formula.DistanceDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.Triple;
 
 /**
  * @author loreti
@@ -31,7 +34,9 @@ public class DistanceStructure<T,A> {
 	
 	private final DistanceDomain<A> domain;
 	
-	private final Predicate<A> bound;
+	private final A lowerBound;
+	
+	private final A upperBound;
 	
 	private final SpatialModel<T> model;
 	
@@ -43,19 +48,25 @@ public class DistanceStructure<T,A> {
 	 * @param guard
 	 * @param model
 	 */
-	public DistanceStructure(Function<T, A> distance, DistanceDomain<A> domain, Predicate<A> bound,
+	public DistanceStructure(Function<T, A> distance, DistanceDomain<A> domain, A lowerBound,
+			A upperBound,
 			SpatialModel<T> model) {
 		super();
 		this.distance = distance;
 		this.domain = domain;
-		this.bound = bound;
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
 		this.model = model;
 	}
 	
-	public Predicate<A> getBound( ) {
-		return bound;
+	public A getLowerBound( ) {
+		return lowerBound;
 	}
-	
+
+	public A getUpperBound( ) {
+		return upperBound;
+	}
+
 	public A getDistance( int i , int j ) {
 		if (distanceMatrix==null) {
 			computeDistanceMatrix();
@@ -107,7 +118,7 @@ public class DistanceStructure<T,A> {
 	}
 
 	public boolean checkDistance(int i, int j) {
-		return bound.test(getDistance(i, j));
+		return checkDistance(getDistance(i, j));
 	}
 	
 	public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
@@ -137,116 +148,88 @@ public class DistanceStructure<T,A> {
 		return extractEscapeValues(mDomain,map);		
 	}
 	
-//	public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
-//		HashMap<Integer, HashMap<Integer, Pair<R, A>>> r = initEscapeMap( mDomain , s );		
-//		Set<Integer> activeLocations = model.getLocations();
-//		while (!activeLocations.isEmpty()) {
-//			Set<Integer> newActive = new HashSet<>();
-//			for (Integer l : activeLocations) {
-//				HashMap<Integer, Pair<R, A>> lR = r.get(l);
-//				for (Pair<Integer,T> p: model.previous(l)) {
-//					HashMap<Integer, Pair<R, A>> rL1 = r.get(p.getFirst());
-//					for (Entry<Integer, Pair<R, A>> ke : lR.entrySet()) {
-//						A newB = domain.sum(distance.apply(p.getSecond()), ke.getValue().getSecond());
-//						R newR = mDomain.conjunction(s.apply(ke.getKey()), ke.getValue().getFirst());
-//						Pair<R,A> oldP = rL1.get(ke.getKey());
-//						if (oldP == null) {
-//							rL1.put(ke.getKey(), new Pair<>(newR,newB) );
-//							newActive.add(ke.getKey());
-//						} else {
-//							Pair<R,A> newP = new Pair<>(
-//									mDomain.disjunction(newR,oldP.getFirst()),
-//									newB
-//							);
-//							if (!newP.equals(oldP)) {
-//								rL1.put(ke.getKey(), newP);
-//								newActive.add(ke.getKey());
-//							}
-//						}
-//					}
-//				}
-//			}
-//			activeLocations = newActive;			
-//		}
-//		return extractEscapeValues(mDomain,r);
-//	}	
-	
 	public <R> ArrayList<R> reach(SignalDomain<R> mDomain, Function<Integer, R> s1, Function<Integer, R> s2) {
-//		ArrayList<List<Pair<A,R>>> reachFunction = 			
-//				IntStream
-//					.range(0, model.size()).boxed()
-//					.map(i -> new Pair<>(domain.zero(),s2.apply(i)))
-//					.map(i -> { LinkedList<Pair<A,R>> l = new LinkedList<>(); l.add(i); return l; })
-//					.collect(Collectors.toCollection(ArrayList::new));
-//		LinkedList<Integer> queue = 
-//				IntStream
-//					.range(0, model.size()).boxed()
-//					.collect(Collectors.toCollection(LinkedList::new));
-//		HashSet<Integer> pending =
-//				IntStream
-//					.range(0, model.size()).boxed()
-//					.collect(Collectors.toCollection(HashSet::new));
-//		while (!pending.isEmpty()) {
-//			int l1 = queue.poll();
-//			pending.remove(l1);
-//			for (Pair<Integer, T> pre: model.previous(l1)) {
-//				int l2 = pre.getFirst();
-//				T d = pre.getSecond();
-//				
-//			}
-//			
-//		}
-//				
-//
-		return null;		
-	}
-	
-	private <R> List<Pair<A,R>> shift(A v, List<Pair<A,R>> l) {
-		LinkedList<Pair<A,R>> toReturn = new LinkedList<>();
-		for (Pair<A, R> p : l) {
-			toReturn.add(new Pair<>(domain.sum( v , p.getFirst()),p.getSecond()));
-		}
-		return toReturn;
-	}
-	
-	private <R> List<Pair<A,R>> combine( List<Pair<A,R>> l1 , List<Pair<A,R>> l2 ) {
-		LinkedList<Pair<A,R>> toReturn = new LinkedList<>();
-		Iterator<Pair<A, R>> i1 = l1.iterator();
-		Iterator<Pair<A, R>> i2 = l2.iterator();
-		
-		boolean flag = true;
-		while (flag) {
+		ArrayList<Map<A,R>> reachFunction = 			
+				IntStream
+					.range(0, model.size()).boxed()
+					.map(i -> new HashMap<A,R>())
+					.collect(Collectors.toCollection(ArrayList::new));
+		LinkedList<Triple<Integer,A,R>> queue = 
+				IntStream
+					.range(0, model.size()).boxed()
+					.map(i -> new Triple<Integer,A,R>(i,domain.zero(),s2.apply(i)))
+					.collect(Collectors.toCollection(LinkedList::new));
+		queue.forEach(t -> reachFunction.get(t.getFirst()).put(t.getSecond(), t.getThird()));
+		while (!queue.isEmpty()) {
+			Triple<Integer,A,R> t1 = queue.poll();
+			int l1 = t1.getFirst();
+			A d1= t1.getSecond();
+			R v1 = t1.getThird(); 
+			for (Pair<Integer, T> pre: model.previous(l1)) {
+				int l2 = pre.getFirst();
+				A d2 = domain.sum(distance.apply(pre.getSecond()), d1);
+				if (domain.lessOrEqual(d2, upperBound)) {
+					Triple<Integer,A,R> t2 = combine(mDomain,l2,d2,mDomain.conjunction(v1, s1.apply(l2)),reachFunction.get(l2));
+					if (t2 != null) {
+						queue.add(t2);
+					}
+				}
+			}
 			
 		}
-		
-		return toReturn;
+		return collectReachValue(mDomain,reachFunction);	
 	}
-
-	private <R> ArrayList<R> extractReachValues(SignalDomain<R> mDomain, HashMap<Integer, HashMap<Pair<Integer, R>, A>> r) {
-		ArrayList<R> toReturn = mDomain.createArray(model.size());
-		for( int i=0 ; i<model.size() ; i++ ) {
-			toReturn.set(i, mDomain.min());
-			HashMap<Pair<Integer,R>,A> rI = r.get(i);
-			for (Pair<Integer,R> k : rI.keySet()) {
-				toReturn.set(i, mDomain.disjunction(toReturn.get(i), k.getSecond()));
+	
+	private <R> Triple<Integer, A, R> combine(SignalDomain<R> mDomain, int l, A d, R v,
+			Map<A, R> fr) {
+		R v1 = fr.get(d);
+		if (v1 != null) {
+			R v2 = mDomain.disjunction(v, v1);
+			if (!v1.equals(v2)) {
+				fr.put(d, v2);
+				return new Triple<>(l,d,v2);
 			}
-		}		
-		return toReturn;
+		} else {
+			Triple<Integer,A,R> t = new Triple<>(l,d,v);
+			fr.put(d, v);
+			return t;
+		}
+		return null;
 	}
 
+	private <R> ArrayList<R> collectReachValue(SignalDomain<R> mDomain, ArrayList<Map<A, R>> reachFunction) {
+		return IntStream
+				.range(0, model.size()).boxed()
+				.map(i -> reachFunction.get(i))
+				.map(rf -> computeReachValue(mDomain, rf))
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	private <R> R computeReachValue(SignalDomain<R> mDomain, Map<A,R> rf) {
+		return rf.entrySet()
+				.stream()
+				.filter(e -> checkDistance(e.getKey()))
+				.map(e -> e.getValue())
+				.reduce(mDomain.min(), mDomain::disjunction);
+	}
+ 
 	private <R> ArrayList<R> extractEscapeValues(SignalDomain<R> mDomain, HashMap<Integer, HashMap<Integer, R>> map) {
 		ArrayList<R> toReturn = mDomain.createArray(model.size());
 		for( int i=0 ; i<model.size() ; i++ ) {
 			R value = mDomain.min();
 			HashMap<Integer, R> mI = map.get(i);
 			for (Entry<Integer, R> k : mI.entrySet()) {
-				if (bound.test(getDistance(i, k.getKey()))) {
+				if (checkDistance(getDistance(i, k.getKey()))) {
 					value = mDomain.disjunction(value, k.getValue());
 				}
 			}
 			toReturn.set(i,value);
 		}		
 		return toReturn;
+	}
+
+	private boolean checkDistance(A d) {
+		return domain.lessOrEqual(lowerBound, d)&&domain.lessOrEqual(d, upperBound);
 	}
 
 	private <R> HashMap<Integer, HashMap<Pair<Integer, R>, A>> initReachMap(SignalDomain<R> mDomain,
