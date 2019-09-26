@@ -32,7 +32,7 @@ public class TestUtils {
 	}
 	
 	
-	public static <T> SpatioTemporalSignal<T> createSpatialSignal(int size, double start, double dt, double end, BiFunction<Double,Integer,T> f ) {
+	public static <T> SpatioTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double,Integer,T> f ) {
 		SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(size);
 		double time = start;
 		while ( time<end ) {
