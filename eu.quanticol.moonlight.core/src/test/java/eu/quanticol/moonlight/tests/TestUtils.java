@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight.tests;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -39,6 +41,10 @@ public class TestUtils {
 			time += dt;
 		}		
 		return s;
+	}
+	
+	public static <T> SpatialModel<T> createSpatialModel( int size, Map<Pair<Integer, Integer>,T> edges ) {
+		return createSpatialModel(size, (i,j) -> edges.get(new Pair<>(i,j)));
 	}
 	
 	public static <T> SpatialModel<T> createSpatialModel( int size, BiFunction<Integer,Integer,T> edges) {

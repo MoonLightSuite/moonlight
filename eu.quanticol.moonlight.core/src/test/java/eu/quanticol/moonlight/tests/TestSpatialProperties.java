@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -48,6 +49,26 @@ public class TestSpatialProperties {
         }
     }
 
+    @Test
+    public void testGraphBuildWithMaps() {
+        int size = 10;
+        HashMap<Pair<Integer,Integer>,Double> map = new HashMap<>();
+        map.put(new Pair<>(0,2), 1.0);
+        map.put(new Pair<>(0,1), 1.0);
+        map.put(new Pair<>(2,3), 1.0);
+        map.put(new Pair<>(1,3), 5.0);
+        
+        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        DistanceStructure<Double, Double> ds = new DistanceStructure<Double, Double>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        
+        assertNotNull(model);
+        assertEquals("d(0,1)",1.0,ds.getDistance(0, 1),1.0);
+        assertEquals("d(0,2)",1.0,ds.getDistance(0, 2),1.0);
+        assertEquals("d(0,3)",2.0,ds.getDistance(0, 3),2.0);
+        
+    }
+
+    
     @Test
     public void testDistanceStructure() {
         int size = 3;
