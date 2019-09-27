@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class TestSpatialTemporalProperties {
 
     @Test
-    public void testGraphBuild() {
+    public void testSPTsignalGraphBuild() {
         int size = 10;
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x-2)));
@@ -56,7 +56,7 @@ public class TestSpatialTemporalProperties {
     }
 
     @Test
-    public void testGraphBuild2() {
+    public void testSPTsignalGraphBuild2() {
         int size = 10;
         HashMap<String, Function<Parameters, Function<Pair<Double,Double>, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x.getFirst()+x.getSecond()-2)));
@@ -75,6 +75,16 @@ public class TestSpatialTemporalProperties {
         	assertEquals( i*5.0-2 , signals.get(i).valueAt(5.0) , 0.0001 );
         }
         assertNotNull(model);
+    }
+
+    @Test
+    public void testGraphSPTsignalBuildWithMaps() {
+        int size = 10;
+        HashMap<Pair<Integer,Integer>,Double> map = new HashMap<>();
+        map.put(new Pair<>(0,2), 1.0);
+        map.put(new Pair<>(0,1), 1.0);
+        map.put(new Pair<>(2,3), 1.0);
+        map.put(new Pair<>(1,3), 5.0);
     }
 
 }
