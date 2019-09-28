@@ -22,8 +22,11 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.JSonSignalReader;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.signal.*;
-import org.junit.Test;
+import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.signal.VariableArraySignal;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +35,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCompare {
 
@@ -123,7 +126,7 @@ public class TestCompare {
             Signal<Double> outputSignal = m.apply(signal);
             long timeEnd = System.currentTimeMillis();
             assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
-            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
+            System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -156,14 +159,14 @@ public class TestCompare {
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             while (!actual.completed()) {
-            	assertFalse(expected.completed());
+                assertFalse(expected.completed());
                 Double valueActual = actual.value();
                 Assignment valueExpected = expected.value();
                 assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
             }
-            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
+            System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -193,16 +196,16 @@ public class TestCompare {
             Signal<Double> outputSignal = m.apply(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
-            assertTrue(outputSignal.end()==500.0);
+            assertTrue(outputSignal.end() == 500.0);
             while (!actual.completed()) {
-            	assertFalse(expected.completed());
+                assertFalse(expected.completed());
                 Double nextActual = actual.value();
                 Assignment nextExpected = expected.value();
                 double time = expected.time();
 //                if (time > 500) {
 //                    break;
 //                }
-                assertEquals("Time: " + time, nextExpected.get(0, Double.class), nextActual);
+                assertEquals(nextExpected.get(0, Double.class), nextActual, "Time: " + time);
                 actual.forward();
                 expected.forward();
             }
@@ -210,8 +213,6 @@ public class TestCompare {
             fail(e.getMessage());
         }
     }
-
-
 
 
 }

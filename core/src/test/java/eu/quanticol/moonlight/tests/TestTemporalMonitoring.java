@@ -1,30 +1,28 @@
-/*******************************************************************************
- * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
- *
- * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+/*
+ MoonLight: a light-weight framework for runtime monitoring
+ Copyright (C) 2018
+
+ See the NOTICE file distributed with this work for additional information
+ regarding copyright ownership.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package eu.quanticol.moonlight.tests;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
-
-import org.junit.Test;
 
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
@@ -36,16 +34,17 @@ import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
+import org.junit.jupiter.api.Test;
 
-public class TestTemporalMonitoring {
+class TestTemporalMonitoring {
 
     @Test
-    public void testFormula1() {
+    void testFormula1() {
         test(1, 3);
     }
     
     @Test
-    public void testFormula2() {
+    void testFormula2() {
         test(5,3);
 
         //IllegalArgument
@@ -61,22 +60,22 @@ public class TestTemporalMonitoring {
     }
 
     @Test
-    public void testFormula3() {
+    void testFormula3() {
     	test(6,3);
     }
 
     @Test
-    public void testFormula4() {
+    void testFormula4() {
         test(8,3);
     }
     
     @Test
-    public void testFormula5() {
+    void testFormula5() {
         test(12,3);
     }
     
     @Test
-    public void testFormula6() {
+    void testFormula6() {
     	test(1,4); 
     }   	
 

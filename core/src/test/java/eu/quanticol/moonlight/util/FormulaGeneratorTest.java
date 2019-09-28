@@ -8,7 +8,7 @@ import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,21 +18,21 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class FormulaGeneratorTest {
-	
-	private FormulaToTaliro toTaliro = new FormulaToTaliro();
+class FormulaGeneratorTest {
+
+    private final FormulaToTaliro toTaliro = new FormulaToTaliro();
 
 
     @Test
-    public void getFutureFormulaLoop() {
+    void getFutureFormulaLoop() {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
-            FormulaGenerator formulaGenerator =new FutureFormulaGenerator(new Random(1),signal.getEnd(),"a");
+            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
             System.out.println(toTaliro.toTaliro(generatedFormula));
@@ -51,24 +51,24 @@ public class FormulaGeneratorTest {
                 assertFalse(expected.completed());
                 Double valueActual = actual.value();
                 Assignment valueExpected = expected.value();
-               // assertEquals(valueExpected.get(0, Double.class), valueActual);
+                // assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
             }
-            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
+            System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
 
     @Test
-    public void getBothFormulaLoop() {
+    void getBothFormulaLoop() {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             VariableArraySignal signal = JSonSignalReader.readSignal(contents);
-            FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1),signal.getEnd(),"a");
+            FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1), signal.getEnd(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
             //System.out.println(toTaliro.toTaliro( generatedFormula ));
@@ -91,14 +91,14 @@ public class FormulaGeneratorTest {
                 expected.forward();
                 actual.forward();
             }
-            System.out.println("TIME MoonLight: " +(timeEnd-timeInit)/1000.);
+            System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
 
     @Test
-    public void testRobustnessLaura3() {
+    void testRobustnessLaura3() {
         //FORMULA: !<>_[0,500]!(a>=0)
         //TALIRO: //
         //BREACH: //
@@ -131,7 +131,7 @@ public class FormulaGeneratorTest {
 //                if (time > 500) {
 //                    break;
 //                }
-                assertEquals("Time: " + time, nextExpected.get(0, Double.class), nextActual);
+                assertEquals(nextExpected.get(0, Double.class), nextActual, "Time: " + time);
                 actual.forward();
                 expected.forward();
             }

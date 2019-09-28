@@ -1,22 +1,22 @@
-/*******************************************************************************
- * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
- *
- * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+/*
+ MoonLight: a light-weight framework for runtime monitoring
+ Copyright (C) 2018
+
+ See the NOTICE file distributed with this work for additional information
+ regarding copyright ownership.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
@@ -27,19 +27,19 @@ import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TestJSon {
+class TestJSon {
 
-    private FormulaGenerator generator = new BothFormulaGenerator("a", "b", "c");
-    private FormulaJSonIO fJSonIO = FormulaJSonIO.getInstance();
+    private final FormulaGenerator generator = new BothFormulaGenerator("a", "b", "c");
+    private final FormulaJSonIO fJSonIO = FormulaJSonIO.getInstance();
 
 
     @Test
-    public void readSignal() {
+    void readSignal() {
         String code = "{\n" +
                 " 	\"trace_type\"  : \"temporal\",\n" +
                 " 	\"t\"       	: [0, 0.5, 0.7, 0.8, 15],\n" +
@@ -71,7 +71,7 @@ public class TestJSon {
         assertEquals(2, signal.getVariableIndex("z"));
         SignalCursor<Assignment> iterator = signal.getIterator(true);
         for (int i = 0; i < times.length; i++) {
-            assertTrue(!iterator.completed());
+            assertFalse(iterator.completed());
             Assignment next = iterator.value();
             assertEquals(times[i], iterator.time(), 0.0);
             for (int j = 0; j < 3; j++) {
@@ -82,7 +82,7 @@ public class TestJSon {
     }
 
     @Test
-    public void testFormulaGenerator() {
+    void testFormulaGenerator() {
         for (int i = 0; i < 10; i++) {
             Formula f1 = generator.getFormula();
             assertNotNull(f1);
@@ -91,7 +91,7 @@ public class TestJSon {
 
 
     @Test
-    public void testFormulaSimple() {
+    void testFormulaSimple() {
         AtomicFormula a1 = new AtomicFormula("a");
         testSerializeDeserialize(a1);
         AtomicFormula a1b = new AtomicFormula("b");
@@ -130,7 +130,7 @@ public class TestJSon {
     }
 
     @Test
-    public void testFormulaJson() {
+    void testFormulaJson() {
         for (int i = 0; i < 1000; i++) {
             Formula f1 = generator.getFormula();
             testSerializeDeserialize(f1);

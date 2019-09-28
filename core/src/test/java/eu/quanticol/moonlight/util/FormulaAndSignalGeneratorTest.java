@@ -5,19 +5,20 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class FormulaAndSignalGeneratorTest {
+
+class FormulaAndSignalGeneratorTest {
 
     @Test
-    public void test() {
+    void test() {
         Map<String, Function<Double, Number>> functionalMap = new HashMap<>();
         functionalMap.put("a", t -> Math.pow(t, 2.));
         functionalMap.put("b", Math::cos);

@@ -1,6 +1,3 @@
-/**
- *
- */
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
@@ -9,23 +6,22 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author loreti
- *
  */
-public class TestSpatialProperties {
+class TestSpatialProperties {
 
     @Test
-    public void testGraphBuild() {
+    void testGraphBuild() {
         int size = 10;
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
@@ -33,7 +29,7 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testGraphBuildEdges() {
+    void testGraphBuildEdges() {
         int size = 10;
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
@@ -50,55 +46,55 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testGraphBuildWithMaps() {
+    void testGraphBuildWithMaps() {
         int size = 10;
-        HashMap<Pair<Integer,Integer>,Double> map = new HashMap<>();
-        map.put(new Pair<>(0,2), 1.0);
-        map.put(new Pair<>(0,1), 1.0);
-        map.put(new Pair<>(2,3), 1.0);
-        map.put(new Pair<>(1,3), 5.0);
-        
+        HashMap<Pair<Integer, Integer>, Double> map = new HashMap<>();
+        map.put(new Pair<>(0, 2), 1.0);
+        map.put(new Pair<>(0, 1), 1.0);
+        map.put(new Pair<>(2, 3), 1.0);
+        map.put(new Pair<>(1, 3), 5.0);
+
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
-        DistanceStructure<Double, Double> ds = new DistanceStructure<Double, Double>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
-        
+        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+
         assertNotNull(model);
-        assertEquals("d(0,1)",1.0,ds.getDistance(0, 1),1.0);
-        assertEquals("d(0,2)",1.0,ds.getDistance(0, 2),1.0);
-        assertEquals("d(0,3)",2.0,ds.getDistance(0, 3),2.0);
-        
+        assertEquals(1.0, ds.getDistance(0, 1), 1.0, "d(0,1)");
+        assertEquals(1.0, ds.getDistance(0, 2), 1.0, "d(0,2)");
+        assertEquals(2.0, ds.getDistance(0, 3), 2.0, "d(0,3)");
+
     }
 
-    
+
     @Test
-    public void testDistanceStructure() {
+    void testDistanceStructure() {
         int size = 3;
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
-        DistanceStructure<Double, Double> ds = new DistanceStructure<Double, Double>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                assertEquals("d(" + i + "," + j + "): ", (j >= i ? j - i : size - i + j), ds.getDistance(i, j), 0.0);
+                assertEquals((j >= i ? j - i : size - i + j), ds.getDistance(i, j), 0.0, "d(" + i + "," + j + "): ");
             }
         }
 
     }
 
     @Test
-    public void testDistanceStructure2() {
+    void testDistanceStructure2() {
         int size = 3;
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (((y == ((x + 1) % size)) || (x == ((y + 1) % size))) ? 1.0 : null));
-        DistanceStructure<Double, Double> ds = new DistanceStructure<Double, Double>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                assertEquals("d(" + i + "," + j + "): ", Math.min(Math.abs(j - i), size - Math.abs(i - j)), ds.getDistance(i, j), 0.0);
+                assertEquals(Math.min(Math.abs(j - i), size - Math.abs(i - j)), ds.getDistance(i, j), 0.0, "d(" + i + "," + j + "): ");
             }
         }
 
     }
 
     @Test
-    public void testGridGenerationNodeIndexes() {
+    void testGridGenerationNodeIndexes() {
         int rows = 100;
         int columns = 1000;
         for (int i = 0; i < rows; i++) {
@@ -113,7 +109,7 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testDistanceOnGrid() {
+    void testDistanceOnGrid() {
         int rows = 40;
         int columns = 40;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
@@ -123,9 +119,9 @@ public class TestSpatialProperties {
                 for (int i2 = 0; i2 < rows; i2++) {
                     for (int j2 = 0; j2 < columns; j2++) {
                         assertEquals(
-                                "d(<" + i1 + "," + j1 + ">,<" + i2 + "," + j2 + ">): ",
                                 Math.abs(i1 - i2) + Math.abs(j1 - j2),
-                                ds.getDistance(TestUtils.gridIndexOf(i1, j1, columns), TestUtils.gridIndexOf(i2, j2, columns)), 0.0);
+                                ds.getDistance(TestUtils.gridIndexOf(i1, j1, columns), TestUtils.gridIndexOf(i2, j2, columns)), 0.0,
+                                "d(<" + i1 + "," + j1 + ">,<" + i2 + "," + j2 + ">): ");
                     }
                 }
 
@@ -134,7 +130,7 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testSomewhereOnGrid() {
+    void testSomewhereOnGrid() {
         int rows = 9;
         int columns = 12;
         double range = 10.0;
@@ -148,13 +144,13 @@ public class TestSpatialProperties {
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals("<" + i + "," + j + ">:", Math.abs(i - 5) + Math.abs(j - 5) <= range, result.get(TestUtils.gridIndexOf(i, j, columns)));
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) <= range, result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
 
     @Test
-    public void testEverywhereOnGrid() {
+    void testEverywhereOnGrid() {
         int rows = 9;
         int columns = 12;
         double range = 10.0;
@@ -168,13 +164,13 @@ public class TestSpatialProperties {
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals("<" + i + "," + j + ">:", Math.abs(i - 5) + Math.abs(j - 5) > range, result.get(TestUtils.gridIndexOf(i, j, columns)));
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range, result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
 
     @Test
-    public void testEscapeOnGrid() {
+    void testEscapeOnGrid() {
         int rows = 5;
         int columns = 5;
         double range = 2.1;
@@ -192,14 +188,14 @@ public class TestSpatialProperties {
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals("<" + i + "," + j + ">:", (i > wallR) || (j > wallC), result.get(TestUtils.gridIndexOf(i, j, columns)));
+                assertEquals((i > wallR) || (j > wallC), result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
 
 
     @Test
-    public void testReachOnGrid() {
+    void testReachOnGrid() {
         int rows = 5;
         int columns = 5;
         double range = 10.0;
@@ -217,14 +213,14 @@ public class TestSpatialProperties {
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals("<" + i + "," + j + ">:", (i % 2 == 0) || (j % 2 == 0), result.get(TestUtils.gridIndexOf(i, j, columns)));
+                assertEquals((i % 2 == 0) || (j % 2 == 0), result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
 
     @Test
-    public void testSpatial2Nodes() {
-        Integer size = 2;
+    void testSpatial2Nodes() {
+        int size = 2;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, 2.0, 1);
         city.add(1, 2.0, 0);
@@ -240,8 +236,8 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testReachOnSpatial2NodesInsufficientDistance() {
-        Integer size = 2;
+    void testReachOnSpatial2NodesInsufficientDistance() {
+        int size = 2;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, 17.0, 1);
         city.add(1, 17.0, 0);
@@ -257,9 +253,9 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testEscapeAndViolationOfLowerBound() {
+    void testEscapeAndViolationOfLowerBound() {
         //T -10 -> T
-        Integer size = 2;
+        int size = 2;
         double distance = 10;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
@@ -273,9 +269,9 @@ public class TestSpatialProperties {
 
 
     @Test
-    public void testEscapeAndViolationOfUpperBound() {
+    void testEscapeAndViolationOfUpperBound() {
         //T -10 -> T   Distance:(0,9)
-        Integer size = 2;
+        int size = 2;
         double distance = 10;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
@@ -288,7 +284,7 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testEscapeAndViolationOfUpperBound2() {
+    void testEscapeAndViolationOfUpperBound2() {
         //T -10 -> F  Distance:(0,10)
         Integer size = 2;
         double distance = 10;
@@ -305,9 +301,9 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testEscapeAndViolationOfUpperBound3() {
+    void testEscapeAndViolationOfUpperBound3() {
         //T -10 -> F
-        Integer size = 2;
+        int size = 2;
         double distance = 10;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
@@ -320,21 +316,21 @@ public class TestSpatialProperties {
     }
 
     @Test
-    public void testPropGraphBuildWithMaps() {
+    void testPropGraphBuildWithMaps() {
         int size = 10;
-        HashMap<Pair<Integer,Integer>,Double> map = new HashMap<>();
-        map.put(new Pair<>(0,2), 1.0);
-        map.put(new Pair<>(0,1), 1.0);
-        map.put(new Pair<>(2,3), 1.0);
-        map.put(new Pair<>(1,3), 5.0);
+        HashMap<Pair<Integer, Integer>, Double> map = new HashMap<>();
+        map.put(new Pair<>(0, 2), 1.0);
+        map.put(new Pair<>(0, 1), 1.0);
+        map.put(new Pair<>(2, 3), 1.0);
+        map.put(new Pair<>(1, 3), 5.0);
 
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
-        DistanceStructure<Double, Double> ds = new DistanceStructure<Double, Double>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         assertNotNull(model);
-        assertEquals("d(0,1)",1.0,ds.getDistance(0, 1),0.0);
-        assertEquals("d(0,2)",1.0,ds.getDistance(0, 2),0.0);
-        assertEquals("d(0,3)",2.0,ds.getDistance(0, 3),0.0);
+        assertEquals(1.0, ds.getDistance(0, 1), 0.0, "d(0,1)");
+        assertEquals(1.0, ds.getDistance(0, 2), 0.0, "d(0,2)");
+        assertEquals(2.0, ds.getDistance(0, 3), 0.0, "d(0,3)");
 
     }
 }
