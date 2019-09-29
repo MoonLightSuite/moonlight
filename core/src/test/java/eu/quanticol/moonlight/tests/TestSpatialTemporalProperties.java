@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ class TestSpatialTemporalProperties {
                 new DoubleDomain(),
                 true);
 
-        BiFunction<Function<Double, SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> model, signal);
         ArrayList<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
@@ -59,7 +60,7 @@ class TestSpatialTemporalProperties {
                 new DoubleDomain(),
                 true);
 
-        BiFunction<Function<Double, SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> model, signal);
         ArrayList<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
