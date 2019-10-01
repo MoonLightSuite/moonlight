@@ -39,6 +39,7 @@ class TestUtils {
             s.add(time, (i -> f.apply(current, i)));
             time += dt;
         }
+        s.add(end, (i -> f.apply(end, i)));
         return s;
     }
 

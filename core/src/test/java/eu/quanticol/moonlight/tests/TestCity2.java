@@ -49,9 +49,9 @@ class TestCity2 {
     void testPropCity() {
         List<String> places = Arrays.asList("BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop");
         List<Boolean> taxiAvailability = Arrays.asList(false, false, true, false, false, true, false);
-        List<Integer> peopleAtPlaces =Arrays.asList(3, 145, 67, 243, 22, 103, 6);
-        SpatioTemporalSignal<Triple<String, Boolean, Integer>> signal = TestUtils.createSpatioTemporalSignal(SIZE, 0,0.5,1,
-                (t,l) -> new Triple<>(places.get(l),taxiAvailability.get(l),peopleAtPlaces.get(l)));
+        List<Integer> peopleAtPlaces = Arrays.asList(3, 145, 67, 243, 22, 103, 6);
+        SpatioTemporalSignal<Triple<String, Boolean, Integer>> signal = TestUtils.createSpatioTemporalSignal(SIZE, 0, 0.1, 1.0,
+                (t, l) -> new Triple<>(places.get(l), taxiAvailability.get(l), peopleAtPlaces.get(l)));
 
         HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Boolean>>> atomicFormulas = new HashMap<>();
         atomicFormulas.put("isThereATaxi", p -> (Triple::getSecond));
@@ -59,23 +59,23 @@ class TestCity2 {
         atomicFormulas.put("isHospital", p -> (x -> "Hospital".equals(x.getFirst())));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x + 1, new DoubleDistance(), 0.0, range, city);
+        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
         distanceFunctions.put("distX", x -> predist);
 
 
         SpatioTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Boolean> monitor =
                 new SpatioTemporalMonitoring<>(
-                atomicFormulas,
-                distanceFunctions,
-                new BooleanDomain(),
-                true);
+                        atomicFormulas,
+                        distanceFunctions,
+                        new BooleanDomain(),
+                        true);
 
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m = monitor.monitor(
                 new AtomicFormula("isThereATaxi"), null);
         SpatioTemporalSignal<Boolean> sout = m.apply(t -> city, signal);
         ArrayList<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals.get(i).valueAt(9));
+            assertEquals(taxiAvailability.get(i), signals.get(i).valueAt(1));
         }
 
 
@@ -95,7 +95,7 @@ class TestCity2 {
         SpatioTemporalSignal<Boolean> sout3 = m3.apply(t -> city, signal);
         ArrayList<Signal<Boolean>> signals3 = sout3.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals2.get(i).valueAt(1));
+            assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(1));
         }
 
     }
