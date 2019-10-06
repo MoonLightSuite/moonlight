@@ -2,7 +2,8 @@ package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
-import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.io.json.Deserializer;
+import eu.quanticol.moonlight.io.json.JSonSignalReader;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
@@ -31,7 +32,7 @@ class FormulaGeneratorTest {
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
@@ -67,7 +68,7 @@ class FormulaGeneratorTest {
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1), signal.getEnd(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
@@ -111,7 +112,7 @@ class FormulaGeneratorTest {
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0

@@ -21,7 +21,8 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
-import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.io.json.Deserializer;
+import eu.quanticol.moonlight.io.json.DeserializerFunction;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
@@ -64,7 +65,7 @@ class TestJSon {
         Class<?>[] types = new Class<?>[]{Boolean.class, Double.class, Integer.class};
 
         System.out.println(code);
-        VariableArraySignal signal = JSonSignalReader.readSignal(code);
+        VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(code);
         assertNotNull(signal);
         assertEquals(0, signal.getVariableIndex("x"));
         assertEquals(1, signal.getVariableIndex("y"));

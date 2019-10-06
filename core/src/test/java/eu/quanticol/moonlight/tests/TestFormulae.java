@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
@@ -24,12 +24,12 @@ class TestFormulae {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource(name).getFile());
         String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-        return JSonSignalReader.readSignal(contents);
+        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
     }
 
 
     @Test
-	void testEventually() {
+    void testEventually() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
@@ -49,7 +49,7 @@ class TestFormulae {
     }
 
     @Test
-	void testAlways() {
+    void testAlways() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula globally = new GloballyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
@@ -69,7 +69,7 @@ class TestFormulae {
     }
 
     @Test
-	void testUntil() {
+    void testUntil() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula until = new UntilFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());

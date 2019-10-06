@@ -20,7 +20,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.io.JSonSignalReader;
+import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
@@ -37,10 +37,10 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCompare {
+class TestCompare {
 
     @Test
-    public void traceGeneric() {
+    void traceGeneric() {
         //formula
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
@@ -50,7 +50,7 @@ public class TestCompare {
         File file = new File(classLoader.getResource("traceGeneric/trace.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Boolean>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: G>2
@@ -58,7 +58,7 @@ public class TestCompare {
             //a is the atomic proposition: G<5
             mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class) < 5);
             //TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<Assignment, Double>(mappa, new DoubleDomain());
-            TemporalMonitoring<Assignment, Boolean> monitoring = new TemporalMonitoring<Assignment, Boolean>(mappa, new BooleanDomain());
+            TemporalMonitoring<Assignment, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
             Function<Signal<Assignment>, Signal<Boolean>> m = monitoring.monitor(aeb, null);
             Signal<Boolean> outputSignal = m.apply(signal);
             assertFalse(outputSignal.valueAt(0.0));
@@ -68,7 +68,7 @@ public class TestCompare {
     }
 
     @Test
-    public void testTraceEzio1() {
+    void testTraceEzio1() {
         //FORMULA: (y<=30)/\(y>=-30)
         //TALIRO: (0,30)
         //BREACH: (0,30)
@@ -81,7 +81,7 @@ public class TestCompare {
         File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
@@ -98,7 +98,7 @@ public class TestCompare {
     }
 
     @Test
-    public void testTraceEzio2() {
+    void testTraceEzio2() {
         //FORMULA: <>_[926,934]((y<=30)/\(y>=-30))
         //TALIRO: (0,27)
         //BREACH: (0,27)
@@ -113,7 +113,7 @@ public class TestCompare {
         File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -133,7 +133,7 @@ public class TestCompare {
     }
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         //FORMULA: []_[0,500](a>=0)
         //TALIRO: //
         //BREACH: //
@@ -146,7 +146,7 @@ public class TestCompare {
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -173,7 +173,7 @@ public class TestCompare {
     }
 
     @Test
-    public void testRobustnessLaura2() {
+    void testRobustnessLaura2() {
         //FORMULA: !<>_[0,500]!(a>=0)
         //TALIRO: //
         //BREACH: //
@@ -186,7 +186,7 @@ public class TestCompare {
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = JSonSignalReader.readSignal(contents);
+            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
@@ -196,7 +196,7 @@ public class TestCompare {
             Signal<Double> outputSignal = m.apply(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
-            assertTrue(outputSignal.end() == 500.0);
+            assertEquals(500.0, outputSignal.end());
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double nextActual = actual.value();
