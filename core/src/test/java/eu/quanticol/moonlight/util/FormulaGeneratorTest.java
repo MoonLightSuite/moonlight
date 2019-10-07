@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.util;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.io.json.Deserializer;
-import eu.quanticol.moonlight.io.json.JSonSignalReader;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
