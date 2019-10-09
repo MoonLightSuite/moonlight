@@ -50,4 +50,13 @@ class JSONUtils {
         }
         throw new IllegalArgumentException("Unknown signal type "+str);
     }
+
+    private Class<?>[] getSignalsType(JsonArray jsa) {
+        Class<?>[] types = new Class<?>[jsa.size()];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = JSONUtils.getVariableType(jsa.get(i).getAsJsonObject().get("type").getAsString());
+        }
+        return types;
+    }
+
 }
