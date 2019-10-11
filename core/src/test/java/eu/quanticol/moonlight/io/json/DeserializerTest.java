@@ -19,7 +19,7 @@ class DeserializerTest {
                 "  \t\t\t\"l1\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"taxi\"},\n" +
                 "  \t\t\t\"l2\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"house\"},\n" +
                 "  \t\t\t\"l3\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"museum\"},\n" +
-                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23}, \"name\":\"stop\",\n" +
+                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"stop\"},\n" +
                 "  \t\t\t\"l5\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"start\"}\n" +
                 "\t\t  },\n" +
                 "\t\t\t\"edges\": {\n" +
@@ -65,7 +65,7 @@ class DeserializerTest {
                 "  \t\t\t\"l1\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"taxi\"},\n" +
                 "  \t\t\t\"l2\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"house\"},\n" +
                 "  \t\t\t\"l3\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"museum\"},\n" +
-                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23}, \"name\":\"stop\",\n" +
+                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"stop\"},\n" +
                 "  \t\t\t\"l5\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"start\"}\n" +
                 "\t\t  },\n" +
                 "\t\t\t\"edges\": {\n" +
@@ -111,7 +111,7 @@ class DeserializerTest {
                 "  \t\t\t\"l1\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"taxi\"},\n" +
                 "  \t\t\t\"l2\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"house\"},\n" +
                 "  \t\t\t\"l3\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"museum\"},\n" +
-                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23}, \"name\":\"stop\",\n" +
+                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"stop\"},\n" +
                 "  \t\t\t\"l5\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"start\"}\n" +
                 "\t\t  },\n" +
                 "\t\t\t\"edges\": {\n" +
@@ -157,7 +157,7 @@ class DeserializerTest {
                 "  \t\t\t\"l1\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"taxi\"},\n" +
                 "  \t\t\t\"l2\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"house\"},\n" +
                 "  \t\t\t\"l3\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"museum\"},\n" +
-                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23}, \"name\":\"stop\",\n" +
+                "  \t\t\t\"l4\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"stop\"},\n" +
                 "  \t\t\t\"l5\":  {\"x\": true, \"y\":0.25, \"z\":23, \"name\":\"start\"}\n" +
                 "\t\t  },\n" +
                 "\t\t\t\"edges\": {\n" +
