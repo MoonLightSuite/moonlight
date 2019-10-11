@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evaluationConfiguration>
+    <xstlPath>stabilization-plain.stl</xstlPath>
+    <aliasPath>stabilization.alias</aliasPath>
+    <tracePath>stabilization-extended.vcd</tracePath>
+    <numberType>REAL</numberType>
+    <interpolationType>LINEAR</interpolationType>
+    <diagnosticsType>SINGLE</diagnosticsType>
+    <traceType>VCD</traceType>
+</evaluationConfiguration>

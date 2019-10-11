@@ -1,0 +1,13 @@
+bool clock;
+bool nclock = not clock;
+
+
+measurement jitter_clock_period {
+	pattern clock_period = start(clock):clock:nclock:start(clock);
+	measure duration(clock_period);
+}
+
+measurement jitter_clock_period_c {
+	pattern clock_period_c = start(clock):{clock:nclock}[19000:21000]:start(clock);
+	measure duration(clock_period_c);
+}
