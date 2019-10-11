@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.BiFunction;
