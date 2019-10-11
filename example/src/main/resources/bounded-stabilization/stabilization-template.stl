@@ -1,0 +1,29 @@
+bool trigger;
+real vara;
+real varb;
+real varc;
+real vard;
+real vare;
+const real vh = 5;
+const real vl = 0.2;
+
+template bool stabilization (bool tg, real x, real vhigh, real vlow) {
+	bool result = ((x <= vhigh) and (rise(tg) -> (eventually[0:600] always[0:300] x <= vlow)));
+	return result;
+}
+
+assertion one: 
+	always(stabilization(trigger, vara, vh, vl)); 
+
+assertion two: 
+	always(stabilization(trigger, varb, vh, vl));
+
+assertion three:
+	always(stabilization(trigger, varc, vh, vl));
+
+assertion four: 
+	always(stabilization(trigger, vard, vh, vl));
+
+assertion five: 
+	always(stabilization(trigger, vare, vh, vl)); 
+ 

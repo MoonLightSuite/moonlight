@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evaluationConfiguration>
+    <xstlPath>clock-jitter.stl</xstlPath>
+    <aliasPath>clock-jitter.alias</aliasPath>
+    <tracePath>clock.vcd</tracePath>
+    <numberType>REAL</numberType>
+    <interpolationType>LINEAR</interpolationType>
+    <diagnosticsType>NONE</diagnosticsType>
+    <traceType>VCD</traceType>
+</evaluationConfiguration>
