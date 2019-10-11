@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

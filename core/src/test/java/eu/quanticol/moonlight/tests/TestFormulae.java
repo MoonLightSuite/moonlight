@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
