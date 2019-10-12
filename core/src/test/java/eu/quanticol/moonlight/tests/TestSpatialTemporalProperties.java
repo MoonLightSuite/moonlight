@@ -12,8 +12,8 @@ import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
@@ -35,7 +35,7 @@ class TestSpatialTemporalProperties {
 
 
         BiFunction<Double, Pair<Integer, Integer>, Double> gridFunction = (t, pair) -> trajectory[(int) Math.round(t)][pair.getFirst()][pair.getSecond()];
-  //      SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(trajectory[0].length, trajectory[0][0].length, 0, 1, trajectory.length - 1, gridFunction);
+        //      SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(trajectory[0].length, trajectory[0][0].length, 0, 1, trajectory.length - 1, gridFunction);
 
 
         SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
@@ -64,7 +64,7 @@ class TestSpatialTemporalProperties {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
                 escape, null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> grid, signal);
-        ArrayList<Signal<Double>> signals = sout.getSignals();
+        List<Signal<Double>> signals = sout.getSignals();
         assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
 
 
@@ -100,7 +100,7 @@ class TestSpatialTemporalProperties {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
                 new AtomicFormula("simpleAtomic"), null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> model, signal);
-        ArrayList<Signal<Double>> signals = sout.getSignals();
+        List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
         }
@@ -108,7 +108,7 @@ class TestSpatialTemporalProperties {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m2 = monitor.monitor(
                 somewhere, null);
         SpatioTemporalSignal<Double> sout2 = m2.apply(t -> model, signal);
-        ArrayList<Signal<Double>> signals2 = sout2.getSignals();
+        List<Signal<Double>> signals2 = sout2.getSignals();
         assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
 
         assertNotNull(model);
@@ -129,7 +129,7 @@ class TestSpatialTemporalProperties {
 
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> model, signal);
-        ArrayList<Signal<Double>> signals = sout.getSignals();
+        List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
         }

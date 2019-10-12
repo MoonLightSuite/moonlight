@@ -101,7 +101,7 @@ class TestCity {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<String, Boolean>>, SpatioTemporalSignal<Boolean>> m = monitor.monitor(
                 new AtomicFormula("isThereATaxi"), null);
         SpatioTemporalSignal<Boolean> sout = m.apply(t -> city, signal);
-        ArrayList<Signal<Boolean>> signals = sout.getSignals();
+        List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < this.size; i++) {
             assertEquals(taxiAvailability.get(i), signals.get(i).valueAt(9));
         }
@@ -110,7 +110,7 @@ class TestCity {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<String, Boolean>>, SpatioTemporalSignal<Boolean>> m2 = monitor.monitor(
                 new AtomicFormula("isThereAStop"), null);
         SpatioTemporalSignal<Boolean> sout2 = m2.apply(t -> city, signal);
-        ArrayList<Signal<Boolean>> signals2 = sout2.getSignals();
+        List<Signal<Boolean>> signals2 = sout2.getSignals();
         ArrayList<Boolean> soluz = new ArrayList<>(Arrays.asList(true, false, true, false, true, false, true));
         for (int i = 0; i < this.size; i++) {
             assertEquals(soluz.get(i), signals2.get(i).valueAt(1));
@@ -121,7 +121,7 @@ class TestCity {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<String, Boolean>>, SpatioTemporalSignal<Boolean>> m3 = monitor.monitor(
                 somewhereTaxi, null);
         SpatioTemporalSignal<Boolean> sout3 = m3.apply(t -> city, signal);
-        ArrayList<Signal<Boolean>> signals3 = sout3.getSignals();
+        List<Signal<Boolean>> signals3 = sout3.getSignals();
         for (int i = 0; i < this.size; i++) {
             assertEquals(true, signals3.get(i).valueAt(0));
         }
