@@ -81,16 +81,13 @@ public class Pattern {
         Formula or12 = new OrFormula(lValue,hValue);
         Formula notOr12 = new NegationFormula(or12);
 
-        ///////////////
-        Formula reach = new ReachFormula(lValue,"ciccia", "distEscape", hValue);
-        //////////////
-
         Formula reachF = new ReachFormula(
                 new AtomicFormula("LowValues"),"ciccia", "distReach", notOr12);
         Formula negReach = new NegationFormula(reachF);
 
         ///////////////
         Formula escapeLow = new EscapeFormula("ciccia", "distEscape", new AtomicFormula("LowValues"));
+        //Formula reach = new ReachFormula(lValue,"ciccia", "distEscape", hValue);
         ///////////////
 
         Formula negEsc = new NegationFormula(escapeLow);
