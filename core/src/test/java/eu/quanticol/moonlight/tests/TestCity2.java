@@ -65,6 +65,11 @@ class TestCity2 {
         atomicFormulas.put("isHospital", p -> (x -> "Hospital".equals(x.getFirst())));
         atomicFormulas.put("isMainSquare", p -> (x -> "MainSquare".equals(x.getFirst())));
 
+        HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Double>>> atomicFormulasQuant = new HashMap<>();
+        atomicFormulasQuant.put("FewPeople", p -> (x -> 10.0 - x.getThird()));
+        atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 20.0));
+
+
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
         DistanceStructure<Double, Double> predist3 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
@@ -85,12 +90,23 @@ class TestCity2 {
         Formula evTaxi = new EventuallyFormula( new AtomicFormula("isThereATaxi"), new Interval(0,20));
         Formula escpCroud = new EscapeFormula("ciccia", "dist10", new AtomicFormula("isMainSquare"));
 
+        Formula reachQuant = new ReachFormula(
+                new AtomicFormula("FewPeople"),"ciccia", "dist10", new AtomicFormula("ManyPeople") );
+
         //// MONITOR /////
         SpatioTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Boolean> monitor =
                 new SpatioTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
                         new BooleanDomain(),
+                        true);
+
+        //// MONITOR QUANT/////
+        SpatioTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Double> monitorQuant =
+                new SpatioTemporalMonitoring<>(
+                        atomicFormulasQuant,
+                        distanceFunctions,
+                        new DoubleDomain(),
                         true);
 
         ////  1 ////
@@ -169,6 +185,13 @@ class TestCity2 {
         for (int i = 0; i < SIZE; i++) {
             assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(0));
         }
+
+        ////  8 Quant ////
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Double>> m8 =
+                monitorQuant.monitor(reachQuant, null);
+        SpatioTemporalSignal<Double> sout8 = m8.apply(t -> city, signal);
+        ArrayList<Signal<Double>> signals8 = sout8.getSignals();
+        assertEquals(7, signals8.get(0).valueAt(1));
 
     }
 
