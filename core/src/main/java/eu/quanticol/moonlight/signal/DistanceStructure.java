@@ -117,6 +117,7 @@ public class DistanceStructure<T, A> {
                         .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
                         .collect(Collectors.toCollection(LinkedList::new));
         while (!queue.isEmpty()) {
+            System.out.println(queue.size());
             Pair<Integer, Pair<Integer, R>> p = queue.poll();
             int l1 = p.getFirst();
             int l2 = p.getSecond().getFirst();
@@ -173,7 +174,7 @@ public class DistanceStructure<T, A> {
         R v1 = fr.get(d);
         if (v1 != null) {
             R v2 = mDomain.disjunction(v, v1);
-            if (!v1.equals(v2)) {
+            if (!mDomain.equalTo(v1,v2)) {
                 fr.put(d, v2);
                 return new Triple<>(l, d, v2);
             }
