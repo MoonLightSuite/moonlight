@@ -126,7 +126,7 @@ public class DistanceStructure<T, A> {
                 HashMap<Integer, R> m1 = map.get(l);
                 R v1 = m1.getOrDefault(l2, mDomain.min());
                 R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
-                if (!v1.equals(newV)) {
+                if (!mDomain.equalTo(v1, newV)) {
                     m1.put(l2, newV);
                     queue.add(new Pair<>(l, new Pair<>(l2, newV)));
                 }

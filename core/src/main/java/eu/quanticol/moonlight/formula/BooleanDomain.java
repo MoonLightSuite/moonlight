@@ -24,29 +24,34 @@ package eu.quanticol.moonlight.formula;
  */
 public class BooleanDomain implements SignalDomain<Boolean> {
 
-	@Override
-	public Boolean conjunction(Boolean x, Boolean y) {
-		return x&&y;
-	}
+    @Override
+    public Boolean conjunction(Boolean x, Boolean y) {
+        return x && y;
+    }
 
-	@Override
-	public Boolean disjunction(Boolean x, Boolean y) {
-		return x||y;
-	}
+    @Override
+    public Boolean disjunction(Boolean x, Boolean y) {
+        return x || y;
+    }
 
-	@Override
-	public Boolean negation(Boolean x) {
-		return !x;
-	}
+    @Override
+    public Boolean negation(Boolean x) {
+        return !x;
+    }
 
-	@Override
-	public Boolean min() {
-		return false;
-	}
+    @Override
+    public boolean equalTo(Boolean x, Boolean y) {
+        return Boolean.compare(x, y) == 0;
+    }
 
-	@Override
-	public Boolean max() {
-		return true;
-	}
+    @Override
+    public Boolean min() {
+        return false;
+    }
+
+    @Override
+    public Boolean max() {
+        return true;
+    }
 
 }

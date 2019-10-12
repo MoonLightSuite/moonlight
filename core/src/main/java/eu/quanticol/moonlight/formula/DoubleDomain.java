@@ -23,6 +23,8 @@ package eu.quanticol.moonlight.formula;
  *
  */
 public class DoubleDomain implements SignalDomain<Double> {
+	private static final double TOLERANCE = 1E-12;
+
 
 	@Override
 	public Double conjunction(Double x, Double y) {
@@ -37,6 +39,11 @@ public class DoubleDomain implements SignalDomain<Double> {
 	@Override
 	public Double negation(Double x) {
 		return -x;
+	}
+
+	@Override
+	public boolean equalTo(Double x, Double y) {
+		return Math.abs(x - y) < TOLERANCE;
 	}
 
 	@Override

@@ -21,6 +21,8 @@ package eu.quanticol.moonlight.formula;
 
 public interface SignalDomain<R> extends Semiring<R> {
 	
-	public R negation(R x);
+	R negation(R x);
+
+	boolean equalTo(R x, R y);
 
 }
