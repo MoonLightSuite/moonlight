@@ -1,0 +1,193 @@
+grammar eu.quanticol.moonlight.xtext.MoonLightScript with org.eclipse.xtext.common.Terminals
+
+generate moonLightScript "http://www.quanticol.eu/moonlight/xtext/MoonLightScript"
+
+Model:
+	elements += Element;
+
+Element:
+	Monitor	|
+	TypeDefinition | 
+	FunctionDefinition
+;
+
+FunctionDefinition:
+	'function' name=ID '(' ')' body=FunctionCommandBlock
+;
+
+FunctionCommand:
+	IfThenElseCommand
+	| VariableDeclaration
+	| VariableAssignment
+	| ReturnStatement
+	| MatchCommand
+;
+
+MatchCommand:
+	'match' value=Expression 'with' cases += MatchCase ('|' cases += MatchCase)*
+;
+
+MatchCase:
+	'case' value=Expression caseBlock=FunctionCommandBlock
+;
+
+ReturnStatement:
+	'return' value=Expression ';'
+;
+
+VariableAssignment:
+	variable=[VariableDeclaration] '=' value=Expression ';'
+;
+
+VariableDeclaration:
+	type=BasicType name=ID ('=' value=Expression) ';'
+;
+
+IfThenElseCommand:
+	'if' '(' guard=Expression ')' thenBlock=FunctionCommandBlock elseBlock=FunctionCommandBlock
+;
+
+FunctionCommandBlock: {FunctionCommandBlock}
+	'{'
+		(commands += FunctionCommand)*
+	'}'
+;
+
+TypeDefinition:
+	'type' name=ID '=' body=TypeDefinitionBody ';'  
+
+;
+
+TypeDefinitionBody:
+	RecordType | EnumerationElements 
+;
+
+EnumerationElements:
+	elements += TypeElement ('|' elements += TypeElement )* ';'
+;
+
+TypeElement:
+	name=ID
+;
+
+Monitor:
+	'monitor' name=ID '{'
+		'signal' signalType=BasicType ';'
+		('space' '(' (locationType=BasicType ',')? edgeType=BasicType ')'';')?
+		'domain' semiring=SemiringExpression ';'
+		'formula' formula=StrelFormula ';'
+	'}'
+;
+
+SemiringExpression:
+	{TropicalSemiring} 'tropical'
+	| {MinMaxSemiring} 'minmax'
+	| {BooleanSemiring} 'boolean'
+	| {PairSemiring} '<' left=SemiringExpression ',' right=SemiringExpression '>'
+;
+
+Expression:
+	OrExpression
+;
+
+OrExpression returns Expression:
+	AndExpression ({OrExpression.left=current} '|' right=AndExpression)*
+;
+
+AndExpression returns Expression:
+	RelationExpression ({AndExpression.left=current} '&' right=RelationExpression)*
+;
+
+RelationExpression returns Expression:
+	PlusOrMinusExpression ({RelationExpression.left=current}  op=('<'|'>'|'<='|'>='|'==') right=PlusOrMinusExpression)?
+;
+
+PlusOrMinusExpression returns Expression:
+	ModuloExpression (
+		({PlusExpression.left=current} '+'|{MinusExpression.left=current} '-') 
+		right=ModuloExpression
+	)*
+;
+
+ModuloExpression returns Expression:
+	MulOrDivExpression ({ModuloExpression.left=current} '%' right=MulOrDivExpression)?
+;
+
+MulOrDivExpression returns Expression:
+	BasicExpression (
+		{MulOrDivExpression.left=current} op=('*'|'/') 
+		right=BasicExpression
+	)*
+;
+
+ReferenceableElement:
+	SignalVariable|TypeElement
+;
+
+BasicExpression returns Expression:
+	{TrueLiteral} 'true'
+	| {FalseLiteral} 'false'
+	| {NotExpression} '!' argument=BasicExpression
+	| {UnaryPlusExpression} '+' argument=BasicExpression
+	| {UnaryMinusExpression} '-' argument=BasicExpression
+	| {InfiniteLiteral} 'INF'
+	| '(' Expression ({IfThenElseExpression.guard=current} '?' thenCase=BasicExpression ':' elseCase=BasicExpression)? ')'
+	| {ReferencedValue} reference=[ReferenceableElement]
+;
+
+StrelFormula:
+	StrelOrFormula
+;
+
+StrelOrFormula returns StrelFormula:
+	StrelAndFormula ({StrelOrFormula.left=current} '|' right=StrelAndFormula)*	
+;
+
+StrelAndFormula returns StrelFormula:
+	StrelBinarySpatioTemporalFormula ({StrelAndFormula.left=current} '&' right=StrelBinarySpatioTemporalFormula)*
+;
+
+StrelBinarySpatioTemporalFormula returns StrelFormula:
+	StrelBasicFormula (
+		{StrelUntilFormula.left=current} 'U' internal=Interval right=StrelBasicFormula
+		| {StrelSinceFormula.left=current} 'S' internal=Interval right=StrelBasicFormula
+		| {StrelReachFormula.left=current} 'R' '(' distanceExpression=Expression ')' internal=Interval right=StrelBasicFormula
+	)?
+;
+
+Interval:
+	'[' from=Expression ',' to=Expression ']'
+;
+
+StrelBasicFormula returns StrelFormula:
+	{AtomicFormula} '{' atomic=Expression '}'
+	| {EscapeFormula} 'E' '(' distanceExpression=Expression ')' interval=Interval argument=StrelBasicFormula
+	| {EventuallyFormula} '<>' interval=Interval argument=StrelBasicFormula
+	| {AlwaysFormula} '[]' interval=Interval argument=StrelBasicFormula
+	| {NotFormula} '!' argument=StrelBasicFormula
+	| {SomewhereFormula} '<<>>' interval=Interval argument=StrelBasicFormula
+	| {EverywhereFormula} '[[]]' interval=Interval argument=StrelBasicFormula	
+	| '(' StrelFormula ')'
+;
+
+
+
+SignalType:
+	RecordType
+;
+
+RecordType:
+	'[' vars += SignalVariable (',' vars += SignalVariable ) ']'
+;
+
+SignalVariable:
+	name=ID ':' type=BasicType
+;
+
+BasicType:
+	{IntegerType} 'int'
+	| {RealType} 'real'
+	| {BooleanType} 'bool'
+	| {TypeReference} type=[TypeDefinition]
+;
+	

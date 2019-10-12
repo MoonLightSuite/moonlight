@@ -1,5 +1,6 @@
 *.iml
 .idea/
+.launch
 dependency-reduced-pom.xml
 .project
 .classpath
@@ -9,3 +10,5 @@ build/
 .settings
 out/
 bin/
+xtend-gen
+xtext-gen
