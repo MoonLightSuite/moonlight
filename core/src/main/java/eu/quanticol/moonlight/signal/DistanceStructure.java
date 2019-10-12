@@ -59,7 +59,11 @@ public class DistanceStructure<T, A> {
         if (distanceMatrix == null) {
             computeDistanceMatrix();
         }
-        return distanceMatrix.get(i).get(j);
+        HashMap<Integer, A> m = distanceMatrix.get(i);
+        if (m != null) {
+        	return m.getOrDefault(j, domain.infinity());
+        }
+        return domain.infinity();
     }
 
     public A get(int i, int j) {
