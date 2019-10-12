@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
@@ -62,7 +63,7 @@ public class Pattern {
 
 
 
-/*        // %%%%%%%%% PROPERTY %%%%%%% //
+        // %%%%%%%%% PROPERTY %%%%%%% //
         double h_CONST_ = 0.5;
         double d1_CONST_ = 1;
         double d2_CONST_ = 6;
@@ -126,9 +127,9 @@ public class Pattern {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
                 monitor.monitor(escapeLow, null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> gridModel, signal);
-        ArrayList<Signal<Double>> signals = sout.getSignals();
+        List<Signal<Double>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0));*/
+        System.out.println(signals.get(0));
     }
 
 

@@ -3,15 +3,20 @@ package eu.quanticol.moonlight.examples.bikes;
 
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
-import eu.quanticol.moonlight.signal.GraphModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.DoubleFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,6 +26,48 @@ public class Bikes {
         GraphModel<Double> graphModel = getDoubleGraphModel("bssSpatialModel.tra");
         String trajectoryPat = Bikes.class.getResource("trajectory.tra").getPath();
         SpatioTemporalSignal<Pair<Double, Double>> spatioTemporalSignal = readTrajectory(graphModel, trajectoryPat);
+
+        // %%%%%%%%% PROPERTY %%%%%%% //
+        double Tf = 40;
+        double k = 0;
+        double dmax = 11;
+        HashMap<String, Function<Parameters, Function<Pair<Double, Double>, Double>>> atomicFormulas = new HashMap<>();
+        atomicFormulas.put("B", p -> (x -> x.getFirst() - k));
+        atomicFormulas.put("S", p -> (x -> x.getSecond()- k));
+
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DistanceStructure<Double, Double> dist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, dmax, graphModel);
+        distanceFunctions.put("dist", x -> dist);
+
+        Formula Batom = new AtomicFormula("B");
+        Formula Satom = new AtomicFormula("S");
+
+        Formula somewhereB = new SomewhereFormula("dist", Batom);
+        Formula somewhereS = new SomewhereFormula("dist", Satom);
+        Formula phid0 = new AndFormula(somewhereB,somewhereS);
+
+        Formula phi1 = new GloballyFormula(phid0,new Interval(0,30));
+
+
+        //// MONITOR /////
+        SpatioTemporalMonitoring<Double, Pair<Double,Double>, Double> monitor =
+                new SpatioTemporalMonitoring<>(
+                        atomicFormulas,
+                        distanceFunctions,
+                        new DoubleDomain(),
+                        true);
+
+
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m =
+                monitor.monitor(somewhereB, null);
+        SpatioTemporalSignal<Double> sout = m.apply(t -> graphModel, spatioTemporalSignal);
+        List<Signal<Double>> signals = sout.getSignals();
+        System.out.println(signals.get(0));
+
+
+
+
     }
 
     private static GraphModel<Double> getDoubleGraphModel(String path) throws IOException, SyntaxErrorExpection {
