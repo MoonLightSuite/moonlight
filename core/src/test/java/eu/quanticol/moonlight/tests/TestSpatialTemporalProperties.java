@@ -38,11 +38,11 @@ class TestSpatialTemporalProperties {
         try (ObjectInputStream iis = new ObjectInputStream(new FileInputStream("/Users/lauretta/Desktop/aTraj.storage"))) {
             double[][][] Atraj = (double[][][]) iis.readObject();
 
-            //BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
-            //SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
+            BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
+            SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
 
 
-            SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, Atraj.length-1, (t, l) -> t * l);
+            //SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, Atraj.length-1, (t, l) -> t * l);
 
 
             HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
@@ -66,7 +66,7 @@ class TestSpatialTemporalProperties {
                     true);
 
             BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
-                    escape, null);
+                    reach, null);
             SpatioTemporalSignal<Double> sout = m.apply(t -> grid, signal);
             ArrayList<Signal<Double>> signals = sout.getSignals();
             assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
