@@ -12,6 +12,7 @@ import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -44,12 +45,24 @@ public class Pattern {
         double[][][] Atraj = eng.getVariable("Atraj");
         //double[][][] Btraj = eng.getVariable("Btraj");
 
+
+
         BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
         SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
 
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
+            oos.writeObject(Atraj);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
-        // %%%%%%%%% PROPERTY %%%%%%% //
+
+
+
+/*        // %%%%%%%%% PROPERTY %%%%%%% //
         double h_CONST_ = 0.5;
         double d1_CONST_ = 1;
         double d2_CONST_ = 6;
@@ -115,7 +128,7 @@ public class Pattern {
         SpatioTemporalSignal<Double> sout = m.apply(t -> gridModel, signal);
         ArrayList<Signal<Double>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0));
+        System.out.println(signals.get(0));*/
     }
 
 
