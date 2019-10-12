@@ -1,0 +1,9 @@
+def buildCommonDir = buildscript.sourceFile.getParent()
+subprojects {
+    dependencies {
+        compile project(":core")
+        compile project(":utility")
+        //compile group: 'org.n52.matlab', name: 'matlab-control', version: '5.0.0'
+        //compile fileTree(dir: buildCommonDir+'/lib', include: ['*.jar'])
+    }
+}

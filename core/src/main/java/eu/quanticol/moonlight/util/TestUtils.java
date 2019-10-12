@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.tests;
+package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.Signal;
@@ -13,13 +13,13 @@ import java.util.function.Function;
 /**
  * @author loreti
  */
-class TestUtils {
+public class TestUtils {
 
     private TestUtils() {
         //utility class
     }
 
-    static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
+    public static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
         Signal<T> signal = new Signal<>();
         double time = start;
         while (time <= end) {
@@ -31,7 +31,7 @@ class TestUtils {
     }
 
 
-    static <T> SpatioTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
+    public static <T> SpatioTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
         SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(size);
         double time = start;
         while (time < end) {
@@ -43,11 +43,11 @@ class TestUtils {
         return s;
     }
 
-    static <T> SpatialModel<T> createSpatialModel(int size, Map<Pair<Integer, Integer>, T> edges) {
+    public static <T> SpatialModel<T> createSpatialModel(int size, Map<Pair<Integer, Integer>, T> edges) {
         return createSpatialModel(size, (i, j) -> edges.get(new Pair<>(i, j)));
     }
 
-    static <T> SpatialModel<T> createSpatialModel(int size, BiFunction<Integer, Integer, T> edges) {
+    public static <T> SpatialModel<T> createSpatialModel(int size, BiFunction<Integer, Integer, T> edges) {
         GraphModel<T> model = new GraphModel<>(size);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -60,7 +60,7 @@ class TestUtils {
         return model;
     }
 
-    static <T> SpatialModel<T> createGridModel(int rows, int columns, boolean directed, T w) {
+    public static <T> SpatialModel<T> createGridModel(int rows, int columns, boolean directed, T w) {
         int size = rows * columns;
         GraphModel<T> model = new GraphModel<>(size);
         for (int i = 0; i < rows; i++) {
@@ -83,12 +83,12 @@ class TestUtils {
     }
 
 
-    static int gridIndexOf(int r, int c, int columns) {
+    public static int gridIndexOf(int r, int c, int columns) {
         return r * columns + c;
     }
 
 
-    static Pair<Integer, Integer> gridLocationOf(int i, int rows, int columns) {
+    public static Pair<Integer, Integer> gridLocationOf(int i, int rows, int columns) {
         int r = i / columns;
         int c = i % columns;
         if ((r >= rows) || (c >= columns)) {

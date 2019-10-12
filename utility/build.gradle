@@ -1,0 +1,6 @@
+dependencies {
+    compile project(":core")
+    compile fileTree(dir: "lib", include: "engine.jar")
+    compile group: 'org.n52.matlab', name: 'matlab-control', version: '5.0.0'
+
+}
