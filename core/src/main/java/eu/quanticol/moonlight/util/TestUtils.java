@@ -43,6 +43,19 @@ public class TestUtils {
         return s;
     }
 
+    public static <T> SpatioTemporalSignal<T> createSpatioTemporalSignalFromGrid(int rowLength, int columnLength, double start, double dt, double end, BiFunction<Double, Pair<Integer,Integer>, T> f) {
+        SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(rowLength*columnLength);
+        double time = start;
+        while (time < end) {
+            double current = time;
+            s.add(time, (i -> f.apply(current, gridLocationOf(i,rowLength,columnLength))));
+            time += dt;
+        }
+        s.add(end, (i -> f.apply(end, gridLocationOf(i,rowLength,columnLength))));
+        return s;
+    }
+
+
     public static <T> SpatialModel<T> createSpatialModel(int size, Map<Pair<Integer, Integer>, T> edges) {
         return createSpatialModel(size, (i, j) -> edges.get(new Pair<>(i, j)));
     }
