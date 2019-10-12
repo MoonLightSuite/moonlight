@@ -8,3 +8,4 @@ build/
 .gradle
 .settings
 out/
+bin/
