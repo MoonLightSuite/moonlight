@@ -82,8 +82,8 @@ class TestCity2 {
         Formula taxiReachStop = new ReachFormula(
                 new AtomicFormula("isThereATaxi"),"ciccia", "dist3", stopReacMainsquare );
         Formula iftaxiReachStop = new OrFormula(new NegationFormula(new AtomicFormula("isThereATaxi")), taxiReachStop);
-
         Formula evTaxi = new EventuallyFormula( new AtomicFormula("isThereATaxi"), new Interval(0,20));
+        Formula escpCroud = new EscapeFormula("ciccia", "dist10", new AtomicFormula("isMainSquare"));
 
         //// MONITOR /////
         SpatioTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Boolean> monitor =
