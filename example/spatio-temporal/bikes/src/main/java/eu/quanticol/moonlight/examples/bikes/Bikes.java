@@ -30,14 +30,16 @@ public class Bikes {
         // %%%%%%%%% PROPERTY %%%%%%% //
         double Tf = 40;
         double k = 0;
+        double twait = 5;
+        double d = 0.3;
         double dmax = 11;
-        HashMap<String, Function<Parameters, Function<Pair<Double, Double>, Double>>> atomicFormulas = new HashMap<>();
-        atomicFormulas.put("B", p -> (x -> x.getFirst() - k));
-        atomicFormulas.put("S", p -> (x -> x.getSecond()- k));
+        HashMap<String, Function<Parameters, Function<Pair<Double, Double>, Boolean>>> atomicFormulas = new HashMap<>();
+        atomicFormulas.put("B", p -> (x -> x.getFirst() > k));
+        atomicFormulas.put("S", p -> (x -> x.getSecond()> k));
 
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> dist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, dmax, graphModel);
+        DistanceStructure<Double, Double> dist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, d, graphModel);
         distanceFunctions.put("dist", x -> dist);
 
         Formula Batom = new AtomicFormula("B");
@@ -47,23 +49,23 @@ public class Bikes {
         Formula somewhereS = new SomewhereFormula("dist", Satom);
         Formula phid0 = new AndFormula(somewhereB,somewhereS);
 
-        Formula phi1 = new GloballyFormula(phid0,new Interval(0,30));
+        Formula phi1 = new GloballyFormula(phid0,new Interval(0,Tf));
 
 
         //// MONITOR /////
-        SpatioTemporalMonitoring<Double, Pair<Double,Double>, Double> monitor =
+        SpatioTemporalMonitoring<Double, Pair<Double,Double>, Boolean> monitor =
                 new SpatioTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new DoubleDomain(),
+                        new BooleanDomain(),
                         true);
 
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m =
-                monitor.monitor(somewhereB, null);
-        SpatioTemporalSignal<Double> sout = m.apply(t -> graphModel, spatioTemporalSignal);
-        List<Signal<Double>> signals = sout.getSignals();
-        System.out.println(signals.get(0));
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Boolean>> m =
+                monitor.monitor(phi1, null);
+        SpatioTemporalSignal<Boolean> sout = m.apply(t -> graphModel, spatioTemporalSignal);
+        List<Signal<Boolean>> signals = sout.getSignals();
+        System.out.println(signals.get(0).valueAt(0));
 
 
 
