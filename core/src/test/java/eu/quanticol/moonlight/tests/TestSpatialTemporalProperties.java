@@ -1,9 +1,8 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
@@ -27,24 +26,79 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class TestSpatialTemporalProperties {
 
     @Test
-    void testSPTsignalGraphBuild() {
-        int size = 10;
+    void testSPTGridBuild(){
+        int size = 32;
+        SpatialModel<Double> grid = TestUtils.createGridModel(size, size,false,1.0);
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, grid);
+        distanceFunctions.put("dist6", x -> predist);
+
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
-        atomic.put("simpleAtomic", p -> (x -> (x - 2)));
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
-        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> t * l);
+        atomic.put("simpleAtomic", p -> (x -> (x - 2.0)));
+        atomic.put("simpleAtomicl", p -> (x -> (0.5 -x)));
+        atomic.put("simpleAtomich", p -> (x -> (x - 0.5)));
+
+        Formula somewhere = new SomewhereFormula( "dist6", new AtomicFormula("simpleAtomicl"));
+        Formula reach = new ReachFormula( new AtomicFormula("simpleAtomicl"),"ciccia", "dist6", new AtomicFormula("simpleAtomich"));
+        Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
+
+        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size*size, 0, 1, 5, (t, l) -> t * l);
         SpatioTemporalMonitoring<Double, Double, Double> monitor = new SpatioTemporalMonitoring<>(
                 atomic,
-                new HashMap<>(),
+                distanceFunctions,
                 new DoubleDomain(),
                 true);
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
+                escape, null);
+        SpatioTemporalSignal<Double> sout = m.apply(t -> grid, signal);
+        ArrayList<Signal<Double>> signals = sout.getSignals();
+        assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
+
+
+        assertNotNull(grid);
+    }
+
+    @Test
+    void testSPTsignalGraphBuild() {
+        int size = 5;
+        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.5, 3.0, model);
+        distanceFunctions.put("dist6", x -> predist);
+
+        HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
+        atomic.put("simpleAtomic", p -> (x -> (x - 2.0)));
+        atomic.put("simpleAtomicl", p -> (x -> (0.5 -x)));
+        atomic.put("simpleAtomich", p -> (x -> (x - 0.5)));
+
+        Formula somewhere = new SomewhereFormula( "dist6", new AtomicFormula("simpleAtomicl"));
+        Formula reach = new ReachFormula( new AtomicFormula("simpleAtomicl"),"ciccia", "dist6", new AtomicFormula("simpleAtomich"));
+        Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
+
+        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
+        SpatioTemporalMonitoring<Double, Double, Double> monitor = new SpatioTemporalMonitoring<>(
+                atomic,
+                distanceFunctions,
+                new DoubleDomain(),
+                true);
+
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
+                new AtomicFormula("simpleAtomic"), null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> model, signal);
         ArrayList<Signal<Double>> signals = sout.getSignals();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < size; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
         }
+
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m2 = monitor.monitor(
+                somewhere, null);
+        SpatioTemporalSignal<Double> sout2 = m2.apply(t -> model, signal);
+        ArrayList<Signal<Double>> signals2 = sout2.getSignals();
+        assertEquals(0.5, signals2.get(0).valueAt(5.0), 0.0001);
+
         assertNotNull(model);
     }
 

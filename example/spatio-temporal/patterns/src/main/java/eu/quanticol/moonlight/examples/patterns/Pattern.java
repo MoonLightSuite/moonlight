@@ -63,6 +63,11 @@ public class Pattern {
         atomicFormulas.put("LowValues", p -> (x -> h_CONST_ - x));
         atomicFormulas.put("HighValues", p -> (x -> x - h_CONST_));
 
+
+        HashMap<String, Function<Parameters, Function<Double, Boolean>>> atomicFormulasB = new HashMap<>();
+        atomicFormulasB.put("LowValues", p -> (x -> x <= h_CONST_));
+        atomicFormulasB.put("HighValues", p -> (x -> h_CONST_ >= x));
+
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> readD = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, gridModel);
         DistanceStructure<Double, Double> escapeD = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, gridModel);
@@ -76,12 +81,18 @@ public class Pattern {
         Formula or12 = new OrFormula(lValue,hValue);
         Formula notOr12 = new NegationFormula(or12);
 
-        Formula someL = new SomewhereFormula("distReach", lValue);
+        ///////////////
+        Formula reach = new ReachFormula(lValue,"ciccia", "distEscape", hValue);
+        //////////////
+
         Formula reachF = new ReachFormula(
-                new AtomicFormula("LowValues"),"ciccia", "distEscape", notOr12);
+                new AtomicFormula("LowValues"),"ciccia", "distReach", notOr12);
         Formula negReach = new NegationFormula(reachF);
 
+        ///////////////
         Formula escapeLow = new EscapeFormula("ciccia", "distEscape", new AtomicFormula("LowValues"));
+        ///////////////
+
         Formula negEsc = new NegationFormula(escapeLow);
 
         Formula surr = new AndFormula(new AndFormula(new AtomicFormula("LowValues"), negReach), negEsc);
@@ -94,8 +105,16 @@ public class Pattern {
                         new DoubleDomain(),
                         true);
 
+        SpatioTemporalMonitoring<Double, Double, Boolean> monitorB =
+                new SpatioTemporalMonitoring<>(
+                        atomicFormulasB,
+                        distanceFunctions,
+                        new BooleanDomain(),
+                        true);
+
+
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
-                monitor.monitor(someL, null);
+                monitor.monitor(escapeLow, null);
         SpatioTemporalSignal<Double> sout = m.apply(t -> gridModel, signal);
         ArrayList<Signal<Double>> signals = sout.getSignals();
 

@@ -66,18 +66,22 @@ class TestCity2 {
         atomicFormulas.put("isMainSquare", p -> (x -> "MainSquare".equals(x.getFirst())));
 
         HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Double>>> atomicFormulasQuant = new HashMap<>();
-        atomicFormulasQuant.put("FewPeople", p -> (x -> 10.0 - x.getThird()));
-        atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 20.0));
+        atomicFormulasQuant.put("FewPeople", p -> (x -> 0.5 - x.getThird()));
+        atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 0.5));
 
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
         DistanceStructure<Double, Double> predist3 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
+        DistanceStructure<Double, Double> predist6 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, city);
         DistanceStructure<Double, Double> predist10 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 10.0, city);
+        DistanceStructure<Double, Double> predistX = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, city);
 
         distanceFunctions.put("distX", x -> predist);
         distanceFunctions.put("dist3", x -> predist3);
+        distanceFunctions.put("dist6", x -> predist6);
         distanceFunctions.put("dist10", x -> predist10);
+        distanceFunctions.put("distH", x -> predistX);
 
 
 
@@ -91,7 +95,7 @@ class TestCity2 {
         Formula escpCroud = new EscapeFormula("ciccia", "dist10", new AtomicFormula("isMainSquare"));
 
         Formula reachQuant = new ReachFormula(
-                new AtomicFormula("FewPeople"),"ciccia", "dist10", new AtomicFormula("ManyPeople") );
+                new AtomicFormula("FewPeople"),"ciccia", "distH", new AtomicFormula("ManyPeople") );
 
         //// MONITOR /////
         SpatioTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Boolean> monitor =
@@ -191,7 +195,7 @@ class TestCity2 {
                 monitorQuant.monitor(reachQuant, null);
         SpatioTemporalSignal<Double> sout8 = m8.apply(t -> city, signal);
         ArrayList<Signal<Double>> signals8 = sout8.getSignals();
-        assertEquals(7, signals8.get(0).valueAt(1));
+        assertEquals(-102.5, signals8.get(0).valueAt(1));
 
     }
 
