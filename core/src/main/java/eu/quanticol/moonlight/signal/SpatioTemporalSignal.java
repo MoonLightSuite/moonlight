@@ -4,6 +4,7 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -21,7 +22,7 @@ public class SpatioTemporalSignal<T> {
 	}
 	
 	public SpatioTemporalSignal( int size , Function<Integer,Signal<T>> f ) {
-		this.signals = new ArrayList<Signal<T>>(size);
+		this.signals = new ArrayList<>(size);
 		this.size = size;
 		init( f );
 	}
@@ -34,7 +35,7 @@ public class SpatioTemporalSignal<T> {
 	}
 
 	public SpatioTemporalSignal( int size, double[] t, T[][] m ) {
-		this.signals = new ArrayList<Signal<T>>(size);
+		this.signals = new ArrayList<>(size);
 		this.size = size;
 		for( int i=0 ; i<t.length ; i++ ) {
 			add( t[i], m[i]);
@@ -58,11 +59,11 @@ public class SpatioTemporalSignal<T> {
 		add(t,(i -> values[i]));
 	}
 
-	public void add(double time, ArrayList<T> values) {
+	public void add(double time, List<T> values) {
 		if (values.size()!=this.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		add(time,i -> values.get(i));
+		add(time, values::get);
 	}
 
 	
@@ -73,10 +74,10 @@ public class SpatioTemporalSignal<T> {
 	}
 
 
-	public ArrayList<Signal<T>> getSignals(){return signals;}
+	public List<Signal<T>> getSignals(){return signals;}
 
-	public ArrayList<T> valuesatT(double t){
-		ArrayList<T> spSignal = new ArrayList<T>(size);
+	public List<T> valuesatT(double t){
+		List<T> spSignal = new ArrayList<T>(size);
 		for( int i=0 ; i<size ; i++ ) {
 			spSignal.add(signals.get(i).valueAt(t));
 		}

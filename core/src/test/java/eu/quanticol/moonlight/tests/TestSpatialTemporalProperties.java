@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class TestSpatialTemporalProperties {
 
-    @Test
+
     void testSPTGridBuild() throws ClassNotFoundException, IOException {
         int size = 32;
         SpatialModel<Double> grid = TestUtils.createGridModel(size, size, false, 1.0);

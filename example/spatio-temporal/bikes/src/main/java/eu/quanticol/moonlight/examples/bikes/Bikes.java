@@ -1,4 +1,81 @@
 package eu.quanticol.moonlight.examples.bikes;
 
+
+import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
+import eu.quanticol.jsstl.core.io.TraGraphModelReader;
+import eu.quanticol.moonlight.signal.GraphModel;
+import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.util.Pair;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class Bikes {
+
+    public static void main(String[] args) throws IOException, SyntaxErrorExpection {
+        GraphModel<Double> graphModel = getDoubleGraphModel("bssSpatialModel.tra");
+        String trajectoryPat = Bikes.class.getResource("trajectory.tra").getPath();
+        SpatioTemporalSignal<Pair<Double, Double>> spatioTemporalSignal = readTrajectory(graphModel, trajectoryPat);
+    }
+
+    private static GraphModel<Double> getDoubleGraphModel(String path) throws IOException, SyntaxErrorExpection {
+        String graphPath = Bikes.class.getResource(path).getPath();
+        eu.quanticol.jsstl.core.space.GraphModel graph = new TraGraphModelReader().read(graphPath);
+        graph.dMcomputation();
+        GraphModel<Double> newGraphModel = new GraphModel<>(graph.getNumberOfLocations());
+        graph.getEdges().forEach(s -> newGraphModel.add(s.lStart.getPosition(), s.weight, s.lEnd.getPosition()));
+        return newGraphModel;
+    }
+
+    private static SpatioTemporalSignal<Pair<Double, Double>> readTrajectory(GraphModel<Double> graph, String filename) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            List<String> strings = new ArrayList<>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                strings.add(line);
+            }
+            int timeSize = strings.size() - 2;
+            int locSize = (strings.get(0).split("\t\t").length - 1) / 2;
+            double[][][] data = new double[locSize][timeSize][2];
+            double[] time = new double[strings.size()];
+            for (int t = 0; t < strings.size() - 1; t++) {
+                String[] splitted = strings.get(t + 1).split("\t\t");
+                time[t] = Double.parseDouble(splitted[0]);
+            }
+
+            int timeLength = time.length;
+            for (int i = 1; i < timeLength; i++) {
+                if (time[i] == 0) {
+                    timeLength = i;
+                }
+            }
+            final double[] times = new double[timeLength];
+            for (int t = 0; t < timeLength; t++) {
+                times[t] = time[t];
+            }
+
+            for (int t = 0; t < timeLength; t++) {
+                String[] splitted = strings.get(t + 1).split("\t\t");
+                for (int i = 0; i < locSize; i++) {
+                    data[i][t][0] = Double.parseDouble(splitted[i + 1]);
+                    data[i][t][1] = Double.parseDouble(splitted[i + 1 + locSize]);
+                }
+            }
+
+            SpatioTemporalSignal<Pair<Double, Double>> pairSpatioTemporalSignal = new SpatioTemporalSignal<>(graph.size());
+            for (int i = 0; i < times.length; i++) {
+                Integer index = i;
+                double t = times[i];
+                List<Pair<Double, Double>> collect = IntStream.range(0, graph.size()).mapToObj(s -> new Pair<>(data[s][index][0], data[s][index][1])).collect(Collectors.toList());
+                pairSpatioTemporalSignal.add(t, collect);
+            }
+            return pairSpatioTemporalSignal;
+        }
+    }
+
 }
