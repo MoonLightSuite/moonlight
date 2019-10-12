@@ -97,7 +97,7 @@ class TestSpatialTemporalProperties {
                 somewhere, null);
         SpatioTemporalSignal<Double> sout2 = m2.apply(t -> model, signal);
         ArrayList<Signal<Double>> signals2 = sout2.getSignals();
-        assertEquals(0.5, signals2.get(0).valueAt(5.0), 0.0001);
+        assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
 
         assertNotNull(model);
     }

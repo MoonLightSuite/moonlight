@@ -8,7 +8,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply from: rootDir.absolutePath + '/module.gradle'
 
-    sourceCompatibility = 11
+    sourceCompatibility = 8
 
     repositories {
         jcenter()

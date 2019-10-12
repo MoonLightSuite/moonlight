@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package eu.quanticol.moonlight.formula;
 
@@ -9,14 +9,17 @@ package eu.quanticol.moonlight.formula;
  */
 public interface DistanceDomain<R> {
 
-	public R zero();
-	
-	public R infinity();
-	
-	public boolean lessOrEqual( R x , R y );
+    R zero();
 
-	public boolean less( R x , R y );
+    R infinity();
 
-	public R sum( R x , R y );
-	
+    boolean lessOrEqual(R x, R y);
+
+    boolean less(R x, R y);
+
+    R sum(R x, R y);
+
+    boolean equalTo(R x, R y);
+
+
 }
