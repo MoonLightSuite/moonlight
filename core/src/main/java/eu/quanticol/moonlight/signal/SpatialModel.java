@@ -1,27 +1,20 @@
-/**
- * 
- */
 package eu.quanticol.moonlight.signal;
+
+import eu.quanticol.moonlight.util.Pair;
 
 import java.util.List;
 import java.util.Set;
 
-import eu.quanticol.moonlight.util.Pair;
-
-/**
- * @author loreti
- *
- */
 public interface SpatialModel<T> {
-	
-	public T get( int src , int trg );
-	
-	public int size();
-	
-	public List<Pair<Integer,T>> next( int l );
 
-	public List<Pair<Integer,T>> previous( int l );
+    T get(int src, int trg);
 
-	public Set<Integer> getLocations();
+    int size();
+
+    List<Pair<Integer, T>> next(int l);
+
+    List<Pair<Integer, T>> previous(int l);
+
+    Set<Integer> getLocations();
 
 }

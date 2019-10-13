@@ -15,6 +15,7 @@ import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,7 @@ public class Pattern {
 
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException {
-        URI resource = new URI(Pattern.class.getResource("TuringDataGenerator.m").getPath()).resolve(".");
-        String path = resource.getPath();
+        String path = Paths.get(Pattern.class.getResource("TuringDataGenerator.m").toURI()).getParent().toAbsolutePath().toString();
 
         // %%%%%%%%%%  GRAPH  %%%%%%%%% //
 

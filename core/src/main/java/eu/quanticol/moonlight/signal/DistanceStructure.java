@@ -121,7 +121,7 @@ public class DistanceStructure<T, A> {
                         .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
                         .collect(Collectors.toCollection(LinkedList::new));
         while (!queue.isEmpty()) {
-            System.out.println(queue.size());
+//            System.out.println(queue.size()); //TODO //FIXME
             Pair<Integer, Pair<Integer, R>> p = queue.poll();
             int l1 = p.getFirst();
             int l2 = p.getSecond().getFirst();

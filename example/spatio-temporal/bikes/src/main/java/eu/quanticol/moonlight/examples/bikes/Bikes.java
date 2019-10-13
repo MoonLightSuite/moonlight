@@ -66,10 +66,6 @@ public class Bikes {
         SpatioTemporalSignal<Boolean> sout = m.apply(t -> graphModel, spatioTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0).valueAt(0));
-
-
-
-
     }
 
     private static GraphModel<Double> getDoubleGraphModel(String path) throws IOException, SyntaxErrorExpection {
