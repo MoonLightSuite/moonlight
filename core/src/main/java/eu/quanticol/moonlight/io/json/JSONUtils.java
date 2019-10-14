@@ -48,6 +48,9 @@ class JSONUtils {
         if ("integer".equals(str)) {
             return Integer.class;
         }
+        if ("string".equals(str)) {
+            return String.class;
+        }
         throw new IllegalArgumentException("Unknown signal type "+str);
     }
 
