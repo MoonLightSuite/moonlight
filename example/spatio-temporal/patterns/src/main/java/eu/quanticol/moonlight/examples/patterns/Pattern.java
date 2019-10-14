@@ -99,10 +99,8 @@ public class Pattern {
                 new AtomicFormula("LowValues"),"ciccia", "distReach", notOr12);
         Formula negReach = new NegationFormula(reachF);
 
-        ///////////////
         Formula escapeLow = new EscapeFormula("ciccia", "distEscape", new AtomicFormula("LowValues"));
-        //Formula reach = new ReachFormula(lValue,"ciccia", "distEscape", hValue);
-        ///////////////
+
 
         Formula negEsc = new NegationFormula(escapeLow);
 
@@ -125,11 +123,14 @@ public class Pattern {
 
 
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
-                monitor.monitor(escapeLow, null);
+                monitor.monitor(surr, null);
+        long start = System.currentTimeMillis();
         SpatioTemporalSignal<Double> sout = m.apply(t -> gridModel, signal);
+        float elapsedTime = (System.nanoTime() - start)/1000F;
         List<Signal<Double>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0));
+        System.out.println(elapsedTime);
+        System.out.println(signals.get(0).valueAt(0));
     }
 
 
