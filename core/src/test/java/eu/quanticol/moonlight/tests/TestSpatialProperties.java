@@ -172,8 +172,8 @@ class TestSpatialProperties {
 
     @Test
     void testEscapeOnGrid() {
-        int rows = 5;
-        int columns = 5;
+        int rows = 35;
+        int columns = 35;
         double range = 2.1;
         int wallC = 2;
         int wallR = 2;
