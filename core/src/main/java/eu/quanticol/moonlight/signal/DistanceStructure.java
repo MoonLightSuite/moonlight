@@ -115,32 +115,70 @@ public class DistanceStructure<T, A> {
 
     public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
         HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
-        LinkedList<Pair<Integer, Pair<Integer, R>>> queue =
-                IntStream
-                        .range(0, model.size()).boxed()
-                        .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
-                        .collect(Collectors.toCollection(LinkedList::new));
-        while (!queue.isEmpty()) {
-            System.out.println(queue.size());
-            Pair<Integer, Pair<Integer, R>> p = queue.poll();
-            int l1 = p.getFirst();
-            int l2 = p.getSecond().getFirst();
-            R v = p.getSecond().getSecond();
-            for (Pair<Integer, T> pre : model.previous(l1)) {
-                int l = pre.getFirst();
-                HashMap<Integer, R> m1 = map.get(l);
-                R v1 = m1.getOrDefault(l2, mDomain.min());
-                R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
-                if (!mDomain.equalTo(v1, newV)) {
-                    m1.put(l2, newV);
-                    queue.add(new Pair<>(l, new Pair<>(l2, newV)));
-                }
-            }
-
+        ArrayList<HashMap<Integer,R>> pending = IntStream
+              .range(0, model.size()).boxed()
+              .map((Integer i) -> {
+            	  HashMap<Integer,R> m = new HashMap<>();
+            	  m.put(i, s.apply(i));
+            	  return m;
+              }).collect(Collectors.toCollection(ArrayList::new));
+        boolean flag = true;
+        
+        while (flag) {
+        	flag = false;
+        	ArrayList<HashMap<Integer,R>> newPending = IntStream
+        			.range(0, model.size()).boxed().map(i -> new HashMap<Integer,R>())
+        			.collect(Collectors.toCollection(ArrayList::new));
+        	for( int l1=0 ; l1<model.size() ; l1++ ) {
+        		for( Entry<Integer, R> e : pending.get(l1).entrySet()) {
+        			int l2 = e.getKey();
+        			R v = e.getValue();
+                    for (Pair<Integer, T> pre : model.previous(l1)) {
+                        int l = pre.getFirst();
+                        HashMap<Integer, R> m1 = map.get(l);
+                        R v1 = m1.getOrDefault(l2, mDomain.min());
+                        R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
+                        if (!mDomain.equalTo(v1, newV)) {
+                            m1.put(l2, newV);
+                            newPending.get(l).put(l2, newV);
+                            flag = true;
+                        }
+                    }
+        		};
+        	}
+        	pending = newPending;	
         }
         return extractEscapeValues(mDomain, map);
     }
 
+//    public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
+//        HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
+//        LinkedList<Pair<Integer, Pair<Integer, R>>> queue =
+//                IntStream
+//                        .range(0, model.size()).boxed()
+//                        .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
+//                        .collect(Collectors.toCollection(LinkedList::new));
+//        while (!queue.isEmpty()) {
+//            System.out.println(queue.size());
+//            Pair<Integer, Pair<Integer, R>> p = queue.poll();
+//            int l1 = p.getFirst();
+//            int l2 = p.getSecond().getFirst();
+//            R v = p.getSecond().getSecond();
+//            for (Pair<Integer, T> pre : model.previous(l1)) {
+//                int l = pre.getFirst();
+//                HashMap<Integer, R> m1 = map.get(l);
+//                R v1 = m1.getOrDefault(l2, mDomain.min());
+//                R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
+//                if (!mDomain.equalTo(v1, newV)) {
+//                    m1.put(l2, newV);
+//                    queue.add(new Pair<>(l, new Pair<>(l2, newV)));
+//                }
+//            }
+//
+//        }
+//        return extractEscapeValues(mDomain, map);
+//    }
+    
     public <R> ArrayList<R> reach(SignalDomain<R> mDomain, Function<Integer, R> s1, Function<Integer, R> s2) {
         ArrayList<Map<A, R>> reachFunction =
                 IntStream
