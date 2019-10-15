@@ -44,8 +44,8 @@ public class Sensors {
         atomicFormulas.put("type3", p -> (x -> x == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, tConsumer.apply(0.0));
-        distanceFunctions.put("dist", x -> predist);
+        //DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, tConsumer.apply(0.0));
+        distanceFunctions.put("dist", m -> new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
 
         Formula isType1 =new AtomicFormula("type1");
         Formula somewhere = new SomewhereFormula("dist",isType1);
