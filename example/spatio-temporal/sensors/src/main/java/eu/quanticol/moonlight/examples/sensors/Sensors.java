@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.GraphModelUtility;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
@@ -35,22 +36,21 @@ public class Sensors {
         Object[] cgraph2 = eng.getVariable("cgraph2");
         MatlabExecutor.close();
         DoubleFunction<SpatialModel<Double>> tConsumer = t -> GraphModelUtility.fromMatrix((double[][]) cgraph1[(int) Math.floor(t)]);
-        SpatioTemporalSignal<Integer> spatioTemporalSignal = new SpatioTemporalSignal<>(nodesType.length);
-        IntStream.range(0, trajectory.length-1).forEach(i -> spatioTemporalSignal.add(i, location -> nodesType[location].intValue()));
+        SpatioTemporalSignal<Pair<Integer, Integer>> spatioTemporalSignal = new SpatioTemporalSignal<>(nodesType.length);
+        IntStream.range(0, trajectory.length-1).forEach(i -> spatioTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
 
-        HashMap<String, Function<Parameters, Function<Integer, Boolean>>> atomicFormulas = new HashMap<>();
-        atomicFormulas.put("type1", p -> (x -> x == 1));
-        atomicFormulas.put("type2", p -> (x -> x == 2));
-        atomicFormulas.put("type3", p -> (x -> x == 3));
+        HashMap<String, Function<Parameters, Function<Pair<Integer,Integer>, Boolean>>> atomicFormulas = new HashMap<>();
+        atomicFormulas.put("type1", p -> (x -> x.getFirst() == 1));
+        atomicFormulas.put("type2", p -> (x -> x.getFirst() == 2));
+        atomicFormulas.put("type3", p -> (x -> x.getFirst() == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        //DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, tConsumer.apply(0.0));
         distanceFunctions.put("dist", m -> new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
 
         Formula isType1 =new AtomicFormula("type1");
         Formula somewhere = new SomewhereFormula("dist",isType1);
 
-        SpatioTemporalMonitoring<Double, Integer, Boolean> monitor =
+        SpatioTemporalMonitoring<Double, Pair<Integer, Integer>, Boolean> monitor =
                 new SpatioTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
@@ -58,7 +58,7 @@ public class Sensors {
                         false);
 
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Integer>, SpatioTemporalSignal<Boolean>> m =
+        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Integer, Integer>>, SpatioTemporalSignal<Boolean>> m =
                 monitor.monitor(somewhere, null);
         SpatioTemporalSignal<Boolean> sout = m.apply(tConsumer, spatioTemporalSignal);
         System.out.println(sout.getSignals().toArray());
