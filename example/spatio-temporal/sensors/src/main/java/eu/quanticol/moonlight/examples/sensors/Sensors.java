@@ -1,10 +1,9 @@
 package eu.quanticol.moonlight.examples.sensors;
 
 import com.mathworks.engine.MatlabEngine;
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.GraphModelUtility;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
@@ -44,16 +43,23 @@ public class Sensors {
         atomicFormulas.put("type2", p -> (x -> x == 2));
         atomicFormulas.put("type3", p -> (x -> x == 3));
 
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, tConsumer.apply(0.0));
+        distanceFunctions.put("dist", x -> predist);
+
+        Formula isType1 =new AtomicFormula("type1");
+        Formula somewhere = new SomewhereFormula("dist",isType1);
+
         SpatioTemporalMonitoring<Double, Integer, Boolean> monitor =
                 new SpatioTemporalMonitoring<>(
                         atomicFormulas,
-                        null,
+                        distanceFunctions,
                         new BooleanDomain(),
                         false);
 
 
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Integer>, SpatioTemporalSignal<Boolean>> m =
-                monitor.monitor(new AtomicFormula("type1"), null);
+                monitor.monitor(somewhere, null);
         SpatioTemporalSignal<Boolean> sout = m.apply(tConsumer, spatioTemporalSignal);
         System.out.println();
     }
