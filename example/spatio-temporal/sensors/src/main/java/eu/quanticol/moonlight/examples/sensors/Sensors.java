@@ -36,7 +36,7 @@ public class Sensors {
         MatlabExecutor.close();
         DoubleFunction<SpatialModel<Double>> tConsumer = t -> GraphModelUtility.fromMatrix((double[][]) cgraph1[(int) Math.floor(t)]);
         SpatioTemporalSignal<Integer> spatioTemporalSignal = new SpatioTemporalSignal<>(nodesType.length);
-        IntStream.range(0, trajectory.length).forEach(i -> spatioTemporalSignal.add(i, location -> nodesType[location].intValue()));
+        IntStream.range(0, trajectory.length-1).forEach(i -> spatioTemporalSignal.add(i, location -> nodesType[location].intValue()));
 
         HashMap<String, Function<Parameters, Function<Integer, Boolean>>> atomicFormulas = new HashMap<>();
         atomicFormulas.put("type1", p -> (x -> x == 1));
@@ -61,6 +61,6 @@ public class Sensors {
         BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Integer>, SpatioTemporalSignal<Boolean>> m =
                 monitor.monitor(somewhere, null);
         SpatioTemporalSignal<Boolean> sout = m.apply(tConsumer, spatioTemporalSignal);
-        System.out.println();
+        System.out.println(sout.getSignals().toArray());
     }
 }
