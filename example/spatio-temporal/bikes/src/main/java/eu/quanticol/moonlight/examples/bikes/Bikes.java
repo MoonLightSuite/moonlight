@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.TestUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,6 +27,10 @@ public class Bikes {
         GraphModel<Double> graphModel = getDoubleGraphModel("bssSpatialModel.tra");
         String trajectoryPat = Bikes.class.getResource("trajectory.tra").getPath();
         SpatioTemporalSignal<Pair<Double, Double>> spatioTemporalSignal = readTrajectory(graphModel, trajectoryPat);
+
+        //// Loc Service Static ///
+        LocationService<Double> locService = TestUtils.createLocServiceStaticFromTimeTraj(readTime(trajectoryPat),graphModel);
+
 
         // %%%%%%%%% PROPERTY %%%%%%% //
         double Tf = 40;
@@ -61,9 +66,9 @@ public class Bikes {
                         true);
 
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Boolean>> m =
+        BiFunction<LocationService<Double>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Boolean>> m =
                 monitor.monitor(phi1, null);
-        SpatioTemporalSignal<Boolean> sout = m.apply(t -> graphModel, spatioTemporalSignal);
+        SpatioTemporalSignal<Boolean> sout = m.apply(locService, spatioTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0).valueAt(0));
     }
@@ -76,6 +81,38 @@ public class Bikes {
         graph.getEdges().forEach(s -> newGraphModel.add(s.lStart.getPosition(), s.weight, s.lEnd.getPosition()));
         return newGraphModel;
     }
+
+    private static double[] readTime(String filename) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            List<String> strings = new ArrayList<>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                strings.add(line);
+            }
+            int timeSize = strings.size() - 2;
+            int locSize = (strings.get(0).split("\t\t").length - 1) / 2;
+            double[][][] data = new double[locSize][timeSize][2];
+            double[] time = new double[strings.size()];
+            for (int t = 0; t < strings.size() - 1; t++) {
+                String[] splitted = strings.get(t + 1).split("\t\t");
+                time[t] = Double.parseDouble(splitted[0]);
+            }
+
+            int timeLength = time.length;
+            for (int i = 1; i < timeLength; i++) {
+                if (time[i] == 0) {
+                    timeLength = i;
+                }
+            }
+            final double[] times = new double[timeLength];
+            for (int t = 0; t < timeLength; t++) {
+                times[t] = time[t];
+            }
+
+             return times;
+        }
+    }
+
 
     private static SpatioTemporalSignal<Pair<Double, Double>> readTrajectory(GraphModel<Double> graph, String filename) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {

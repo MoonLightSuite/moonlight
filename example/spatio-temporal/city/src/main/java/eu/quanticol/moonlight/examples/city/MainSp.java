@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.examples.city;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,8 @@ public class MainSp {
         citySignal.add(1, signalSP);
         citySignal.add(3, signalSP);
 
+        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 3,city);
+
         HashMap<String, Function<Parameters, Function<Assignment, Boolean>>> atomicPropositions = new HashMap<>();
         atomicPropositions.put("thereIsATaxi", par -> a -> a.get(1, Boolean.class));
         atomicPropositions.put("thereIsAStop", par -> a -> a.get(0, String.class).equals("BusStop") || a.get(0, String.class).equals("MetroStop"));
@@ -71,9 +74,9 @@ public class MainSp {
 
         SignalDomain<Boolean> module = new BooleanDomain();
         SpatioTemporalMonitoring<Double, Assignment, Boolean> monitorFactory = new SpatioTemporalMonitoring<Double, Assignment, Boolean>(atomicPropositions, distanceFunctions, module, true);
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Assignment>, SpatioTemporalSignal<Boolean>> m = monitorFactory.monitor(someT, null);
+        BiFunction<LocationService<Double>, SpatioTemporalSignal<Assignment>, SpatioTemporalSignal<Boolean>> m = monitorFactory.monitor(someT, null);
 
-        SpatioTemporalSignal<Boolean> out = m.apply(t -> city, citySignal);
+        SpatioTemporalSignal<Boolean> out = m.apply(locService, citySignal);
 
         System.out.println(out.getSignals().get(0));
 

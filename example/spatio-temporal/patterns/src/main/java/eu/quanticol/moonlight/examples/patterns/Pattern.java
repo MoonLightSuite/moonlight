@@ -3,10 +3,7 @@ package eu.quanticol.moonlight.examples.patterns;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
@@ -50,6 +47,7 @@ public class Pattern {
 
         BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
         SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
+        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, Atraj.length-1,gridModel);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
             oos.writeObject(Atraj);
@@ -122,10 +120,10 @@ public class Pattern {
                         true);
 
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
+        BiFunction<LocationService<Double>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
                 monitor.monitor(surr, null);
         long start = System.currentTimeMillis();
-        SpatioTemporalSignal<Double> sout = m.apply(t -> gridModel, signal);
+        SpatioTemporalSignal<Double> sout = m.apply(locService, signal);
         float elapsedTime = (System.nanoTime() - start)/1000F;
         List<Signal<Double>> signals = sout.getSignals();
 
