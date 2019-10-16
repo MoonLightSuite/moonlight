@@ -1,9 +1,6 @@
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.signal.GraphModel;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Map;
@@ -108,6 +105,45 @@ public class TestUtils {
             throw new IllegalArgumentException();
         }
         return new Pair<>(r, c);
+    }
+
+    public static LocationService<Double> createLocServiceFromSetMatrix(Object[] cgraph1) {
+        double[][] matrix;
+        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        for (int k = 0; k < cgraph1.length; k++) {
+            double t = ((float) k);
+            matrix = (double[][]) cgraph1[(int) Math.floor(t)];
+            int size = matrix.length;
+            GraphModel<Double> graphModel = new GraphModel<>(size);
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = i + 1; j < matrix[i].length; j++) {
+                    graphModel.add(i, matrix[i][j], j);
+                    graphModel.add(j, matrix[j][i], i);
+                }
+            }
+            locService.add(t, graphModel);
+        }
+        return locService;
+    }
+
+    public static LocationService<Double> createLocServiceStatic(double start, double dt, double end,SpatialModel<Double> graph) {
+        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        double time = start;
+        while (time < end) {
+            double current = time;
+            locService.add(time, graph);
+            time += dt;
+        }
+        locService.add(end,graph);
+        return locService;
+    }
+
+    public static LocationService<Double> createLocServiceStaticFromTimeTraj(double [] time ,SpatialModel<Double> graph) {
+        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        for (int i = 0; i < time.length; i++) {
+            locService.add(time[i], graph);
+        }
+        return locService;
     }
 
 }

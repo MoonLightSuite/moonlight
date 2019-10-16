@@ -3,20 +3,18 @@ package eu.quanticol.moonlight.examples.sensors;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.GraphModelUtility;
-import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -35,7 +33,7 @@ public class Sensors {
         Object[] cgraph1 = eng.getVariable("cgraph1");
         Object[] cgraph2 = eng.getVariable("cgraph2");
         MatlabExecutor.close();
-        DoubleFunction<SpatialModel<Double>> tConsumer = t -> GraphModelUtility.fromMatrix((double[][]) cgraph1[(int) Math.floor(t)]);
+        LocationService<Double> tConsumer = TestUtils.createLocServiceFromSetMatrix(cgraph1);
         SpatioTemporalSignal<Pair<Integer, Integer>> spatioTemporalSignal = new SpatioTemporalSignal<>(nodesType.length);
         IntStream.range(0, trajectory.length-1).forEach(i -> spatioTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
 
@@ -58,9 +56,10 @@ public class Sensors {
                         false);
 
 
-        BiFunction<DoubleFunction<SpatialModel<Double>>, SpatioTemporalSignal<Pair<Integer, Integer>>, SpatioTemporalSignal<Boolean>> m =
+        BiFunction<LocationService<Double>, SpatioTemporalSignal<Pair<Integer, Integer>>, SpatioTemporalSignal<Boolean>> m =
                 monitor.monitor(somewhere, null);
         SpatioTemporalSignal<Boolean> sout = m.apply(tConsumer, spatioTemporalSignal);
-        System.out.println(sout.getSignals().toArray());
+        List<Signal<Boolean>> signals = sout.getSignals();
+        System.out.println(signals.get(0));
     }
 }
