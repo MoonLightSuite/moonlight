@@ -13,7 +13,7 @@ subprojects {
 		mavenCentral()
 	}
 	
-	apply plugin: 'java'
+
 	dependencies {
 		compile platform("org.eclipse.xtext:xtext-dev-bom:${xtextVersion}")
 	}
