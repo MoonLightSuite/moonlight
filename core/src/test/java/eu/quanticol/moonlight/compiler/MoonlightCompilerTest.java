@@ -1,9 +1,10 @@
 package eu.quanticol.moonlight.compiler;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MoonlightCompilerTest {
 
@@ -15,6 +16,6 @@ class MoonlightCompilerTest {
 
         TestLocal istance = MoonlightCompiler.getIstance(source, TestLocal.class);
 
-        Assertions.assertEquals(3, istance.test());
+        assertEquals(3, istance.test());
     }
 }
