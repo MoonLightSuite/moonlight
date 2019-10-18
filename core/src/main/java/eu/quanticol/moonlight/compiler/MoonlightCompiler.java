@@ -20,7 +20,7 @@ public class MoonlightCompiler {
     }
 
     public static <T> T getIstance(String source, Class<T> object) throws IOException, ReflectiveOperationException {
-        String replace = object.getPackageName().replace(".", File.separator);
+        String replace = object.getPackage().getName().replace(".", File.separator);
         String tempDirWithPrefix = Files.createTempDirectory(UUID.randomUUID().toString()).toString();
         Path tmp = Paths.get(tempDirWithPrefix, replace);
         File root = new File(tmp.toUri()); // On Windows running on C:\, this is C:\java.
