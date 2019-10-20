@@ -3,7 +3,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.xtext:xtext-gradle-plugin:2.0.4'
+		classpath 'org.xtext:xtext-gradle-plugin:2.0.8'
 	}
 }
 
@@ -25,8 +25,8 @@ subprojects {
 	group = 'eu.quanticol.moonlight.xtext.MoonLightScript'
 	version = '1.0.0-SNAPSHOT'
 	
-	sourceCompatibility = '11'
-	targetCompatibility = '11'
+	sourceCompatibility = '8'
+	targetCompatibility = '8'
 	
 	configurations.all {
 		exclude group: 'asm'
