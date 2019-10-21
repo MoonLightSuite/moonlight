@@ -1,11 +1,8 @@
 package eu.quanticol.moonlight.compiler;
 
-public class TestLocal {
-    public TestLocal() {
-    }
+public interface TestLocal {
+	
+	public int test();
 
-    public int test() {
-        return 3;
-    }
 }
 
