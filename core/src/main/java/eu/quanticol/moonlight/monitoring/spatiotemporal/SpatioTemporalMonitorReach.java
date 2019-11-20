@@ -66,8 +66,8 @@ public class SpatioTemporalMonitorReach<E,S,T> implements SpatioTemporalMonitor<
             ArrayList<T> values =  f.reach(domain, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
-            c1.move(time);
-            c2.move(time);
+            c1.move(nextTime);
+            c2.move(nextTime);
             while ((next != null)&&(next.getFirst()<nextTime)) {
                 current = next;
                 time = current.getFirst();
