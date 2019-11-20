@@ -1,24 +1,41 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
-import eu.quanticol.moonlight.util.Triple;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.BooleanDomain;
+import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.formula.EscapeFormula;
+import eu.quanticol.moonlight.formula.EventuallyFormula;
+import eu.quanticol.moonlight.formula.Formula;
+import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.formula.NegationFormula;
+import eu.quanticol.moonlight.formula.OrFormula;
+import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.formula.ReachFormula;
+import eu.quanticol.moonlight.formula.SomewhereFormula;
+import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.signal.DistanceStructure;
+import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Triple;
 
 class TestCity2 {
 
@@ -114,9 +131,9 @@ class TestCity2 {
                         true);
 
         ////  1 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m =
                 monitor.monitor(new AtomicFormula("isThereATaxi"), null);
-        SpatioTemporalSignal<Boolean> sout = m.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < SIZE; i++) {
             assertEquals(taxiAvailability.get(i), signals.get(i).valueAt(1));
@@ -124,9 +141,9 @@ class TestCity2 {
 
 
         ////  2 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m2 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m2 =
                 monitor.monitor(new AtomicFormula("isThereAStop"), null);
-        SpatioTemporalSignal<Boolean> sout2 = m2.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout2 = m2.monitor(locService, signal);
         List<Signal<Boolean>> signals2 = sout2.getSignals();
         ArrayList<Boolean> soluz = new ArrayList<>(Arrays.asList(true, false, true, false, true, false, true));
         for (int i = 0; i < SIZE; i++) {
@@ -135,9 +152,9 @@ class TestCity2 {
 
 
         ////  3 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m3 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m3 =
                 monitor.monitor(somewhereTaxi, null);
-        SpatioTemporalSignal<Boolean> sout3 = m3.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout3 = m3.monitor(locService, signal);
         List<Signal<Boolean>> signals3 = sout3.getSignals();
         for (int i = 0; i < SIZE; i++) {
             assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(1));
@@ -145,9 +162,9 @@ class TestCity2 {
 
 
         ////  4 ///
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m4 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m4 =
                 monitor.monitor(stopReacMainsquare, null);
-        SpatioTemporalSignal<Boolean> sout4 = m4.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout4 = m4.monitor(locService, signal);
         List<Signal<Boolean>> signals4 = sout4.getSignals();
 
         assertEquals(true, signals4.get(3).valueAt(1));
@@ -155,9 +172,9 @@ class TestCity2 {
 
 
         ////  5 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m5 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m5 =
                 monitor.monitor(taxiReachStop, null);
-        SpatioTemporalSignal<Boolean> sout5 = m5.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout5 = m5.monitor(locService, signal);
         List<Signal<Boolean>> signals5 = sout5.getSignals();
 
         assertEquals(true, signals5.get(3).valueAt(1));
@@ -165,9 +182,9 @@ class TestCity2 {
 
 
         ////  6 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m6 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m6 =
                 monitor.monitor(iftaxiReachStop, null);
-        SpatioTemporalSignal<Boolean> sout6 = m6.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout6 = m6.monitor(locService, signal);
         List<Signal<Boolean>> signals6 = sout6.getSignals();
 
 
@@ -182,18 +199,18 @@ class TestCity2 {
 
 
        ////  7 ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Boolean>> m7 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m7 =
             monitor.monitor(evTaxi, null);
-        SpatioTemporalSignal<Boolean> sout7 = m7.apply(locService, signal);
+        SpatioTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
         for (int i = 0; i < SIZE; i++) {
             assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(0));
         }
 
         ////  8 Quant ////
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Triple<String, Boolean, Integer>>, SpatioTemporalSignal<Double>> m8 =
+        SpatioTemporalMonitor<Double,Triple<String, Boolean, Integer>,Double>  m8 =
                 monitorQuant.monitor(reachQuant, null);
-        SpatioTemporalSignal<Double> sout8 = m8.apply(locService, signal);
+        SpatioTemporalSignal<Double> sout8 = m8.monitor(locService, signal);
         List<Signal<Double>> signals8 = sout8.getSignals();
         assertEquals(-102.5, signals8.get(0).valueAt(1));
 

@@ -309,7 +309,7 @@ public class DistanceStructure<T, A> {
         }
         return values;
     }
-
+    
     public <R> ArrayList<R> somewhere(SignalDomain<R> dModule, Function<Integer, R> s) {
         ArrayList<R> values = dModule.createArray(model.size());
         for (int i = 0; i < model.size(); i++) {

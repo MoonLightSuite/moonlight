@@ -2,6 +2,8 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoringOld;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.ObjectSerializer;
 import eu.quanticol.moonlight.util.Pair;
@@ -58,9 +60,9 @@ class TestSpatialTemporalProperties {
                 new DoubleDomain(),
                 true);
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
+        SpatioTemporalMonitor<Double,Double,Double> m = monitor.monitor(
                 escape, null);
-        SpatioTemporalSignal<Double> sout = m.apply(locService, signal);
+        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
 
@@ -95,22 +97,23 @@ class TestSpatialTemporalProperties {
                 new DoubleDomain(),
                 true);
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m = monitor.monitor(
+        SpatioTemporalMonitor<Double,Double,Double> m = monitor.monitor(
                 new AtomicFormula("simpleAtomic"), null);
-        SpatioTemporalSignal<Double> sout = m.apply(locService, signal);
+        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
         }
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m2 = monitor.monitor(
+        SpatioTemporalMonitor<Double,Double,Double> m2 = monitor.monitor(
                 somewhere, null);
-        SpatioTemporalSignal<Double> sout2 = m2.apply(locService, signal);
+        SpatioTemporalSignal<Double> sout2 = m2.monitor(locService, signal);
         List<Signal<Double>> signals2 = sout2.getSignals();
         assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
 
         assertNotNull(model);
     }
+
 
     @Test
     void testSPTsignalGraphBuild2() {
@@ -126,8 +129,8 @@ class TestSpatialTemporalProperties {
                 new DoubleDomain(),
                 true);
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Double>> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
-        SpatioTemporalSignal<Double> sout = m.apply(locService, signal);
+        SpatioTemporalMonitor<Double,Pair<Double,Double>,Double> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);

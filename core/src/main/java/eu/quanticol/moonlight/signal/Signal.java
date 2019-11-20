@@ -203,7 +203,7 @@ public class Signal<T> {
         return new SignalCursor<T>() {
 
             private Segment<T> current = (forward ? first : last);
-            private double time = (current != null ? current.getTime() : Double.NaN);
+            private double time = (current != null ? (forward?current.getTime():current.getSegmentEnd()) : Double.NaN);
 
             @Override
             public double time() {

@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +37,8 @@ class FormulaAndSignalGeneratorTest {
         mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(index_of_x, Double.class));
         TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(generatedFormula, null);
-        Signal<Double> outputSignal = m.apply(signal);
+        TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+        Signal<Double> outputSignal = m.monitor(signal);
         long timeEnd = System.currentTimeMillis();
         SignalCursor<Assignment> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);

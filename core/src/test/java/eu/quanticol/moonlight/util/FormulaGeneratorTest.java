@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
@@ -42,8 +43,8 @@ class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(generatedFormula, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
@@ -78,8 +79,8 @@ class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(generatedFormula, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
@@ -117,8 +118,8 @@ class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(eventually, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             //assertTrue(outputSignal.end()==500.0);

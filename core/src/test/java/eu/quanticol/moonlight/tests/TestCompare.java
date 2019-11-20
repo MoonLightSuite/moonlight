@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
@@ -59,8 +60,8 @@ class TestCompare {
             mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class) < 5);
             //TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<Assignment, Double>(mappa, new DoubleDomain());
             TemporalMonitoring<Assignment, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
-            Function<Signal<Assignment>, Signal<Boolean>> m = monitoring.monitor(aeb, null);
-            Signal<Boolean> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment,Boolean> m = monitoring.monitor(aeb, null);
+            Signal<Boolean> outputSignal = m.monitor(signal);
             assertFalse(outputSignal.valueAt(0.0));
         } catch (IOException e) {
             fail(e.getMessage());
@@ -89,8 +90,8 @@ class TestCompare {
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(aeb, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment,Double> m = monitoring.monitor(aeb, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
         } catch (IOException e) {
             fail(e.getMessage());
@@ -122,8 +123,8 @@ class TestCompare {
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(eventually, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(eventually, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
             System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
@@ -153,8 +154,8 @@ class TestCompare {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(globallyFormula, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(globallyFormula, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
@@ -192,8 +193,8 @@ class TestCompare {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notEventuallyNotA, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(notEventuallyNotA, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             assertEquals(500.0, outputSignal.end());

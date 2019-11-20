@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.examples.sensors;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -56,9 +57,9 @@ public class Sensors {
                         false);
 
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Pair<Integer, Integer>>, SpatioTemporalSignal<Boolean>> m =
+        SpatioTemporalMonitor<Double, Pair<Integer, Integer>, Boolean> m =
                 monitor.monitor(somewhere, null);
-        SpatioTemporalSignal<Boolean> sout = m.apply(tConsumer, spatioTemporalSignal);
+        SpatioTemporalSignal<Boolean> sout = m.monitor(tConsumer, spatioTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0));
     }

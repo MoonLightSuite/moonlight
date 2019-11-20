@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.TestUtils;
 
@@ -74,9 +75,9 @@ public class MainSp {
 
         SignalDomain<Boolean> module = new BooleanDomain();
         SpatioTemporalMonitoring<Double, Assignment, Boolean> monitorFactory = new SpatioTemporalMonitoring<Double, Assignment, Boolean>(atomicPropositions, distanceFunctions, module, true);
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Assignment>, SpatioTemporalSignal<Boolean>> m = monitorFactory.monitor(someT, null);
+        SpatioTemporalMonitor<Double, Assignment, Boolean> m = monitorFactory.monitor(someT, null);
 
-        SpatioTemporalSignal<Boolean> out = m.apply(locService, citySignal);
+        SpatioTemporalSignal<Boolean> out = m.monitor(locService, citySignal);
 
         System.out.println(out.getSignals().get(0));
 

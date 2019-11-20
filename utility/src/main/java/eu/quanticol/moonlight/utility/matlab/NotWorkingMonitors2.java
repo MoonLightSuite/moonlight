@@ -5,6 +5,7 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
@@ -58,8 +59,8 @@ public class NotWorkingMonitors2 {
         mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
         TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(generatedFormula, null);
-        Signal<Double> outputSignal = m.apply(signal);
+        TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+        Signal<Double> outputSignal = m.monitor(signal);
         outputSignal.getIterator(true).value();
     }
 }

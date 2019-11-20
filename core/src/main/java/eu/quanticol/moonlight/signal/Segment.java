@@ -111,6 +111,7 @@ public class Segment<T> {
 		}
 		if (!this.value.equals(value)) {
 			this.previous = new Segment<T>(this, time, value);
+			this.previous.next = this;
 			return this.previous;
 		} else {
 			this.time = time;

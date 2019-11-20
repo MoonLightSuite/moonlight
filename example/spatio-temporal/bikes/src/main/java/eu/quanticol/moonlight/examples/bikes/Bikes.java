@@ -5,6 +5,7 @@ import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -66,9 +67,9 @@ public class Bikes {
                         true);
 
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Pair<Double, Double>>, SpatioTemporalSignal<Boolean>> m =
+        SpatioTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
                 monitor.monitor(phi1, null);
-        SpatioTemporalSignal<Boolean> sout = m.apply(locService, spatioTemporalSignal);
+        SpatioTemporalSignal<Boolean> sout = m.monitor(locService, spatioTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0).valueAt(0));
     }

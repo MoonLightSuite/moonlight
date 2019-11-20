@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.examples.patterns;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -120,10 +121,10 @@ public class Pattern {
                         true);
 
 
-        BiFunction<LocationService<Double>, SpatioTemporalSignal<Double>, SpatioTemporalSignal<Double>> m =
+        SpatioTemporalMonitor<Double, Double, Double> m =
                 monitor.monitor(surr, null);
         long start = System.currentTimeMillis();
-        SpatioTemporalSignal<Double> sout = m.apply(locService, signal);
+        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
         float elapsedTime = (System.nanoTime() - start)/1000F;
         List<Signal<Double>> signals = sout.getSignals();
 

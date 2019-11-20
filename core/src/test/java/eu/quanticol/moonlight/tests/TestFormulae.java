@@ -3,6 +3,8 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.TemporalMonitoringOld;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
@@ -35,8 +37,8 @@ class TestFormulae {
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(eventually, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end() - 5.0, result.end(), 0.0);
         assertEquals(signal.start(), result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
@@ -55,8 +57,8 @@ class TestFormulae {
         Formula globally = new GloballyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(globally, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(globally, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end() - 5.0, result.end(), 0.0);
         assertEquals(signal.start(), result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
@@ -73,7 +75,7 @@ class TestFormulae {
     void testUntil() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula until = new UntilFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
-        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        TemporalMonitoringOld<Double, Double> monitoring = new TemporalMonitoringOld<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> 1.0));
         monitoring.addProperty("test2", p -> (x -> x - 9));
         Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(until, null);
@@ -84,6 +86,27 @@ class TestFormulae {
         double time = 5.0;
         while (!c.completed()) {
             assertEquals(c.time() - 9, c.value(), 0.0, "Time: " + c.time());
+            c.forward();
+            time += 0.25;
+        }
+        assertEquals(10.25, time, 0.0);
+    }
+    
+    @Test
+    void testUntilNew() {
+        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Formula until = new UntilFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test1", p -> (x -> 1.0));
+        monitoring.addProperty("test2", p -> (x -> x - 9));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(until, null);
+        Signal<Double> result = m.monitor(signal);
+        assertEquals(5.0, result.end(), 0.0);
+        assertEquals(0.0, result.start(), 0.0);
+        SignalCursor<Double> c = result.getIterator(true);
+        double time = 5.0;
+        while (!c.completed()) {
+            assertEquals(c.time() - 4, c.value(), 0.0, "Time: " + c.time());
             c.forward();
             time += 0.25;
         }

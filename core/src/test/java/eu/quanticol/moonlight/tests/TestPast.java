@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
@@ -45,8 +46,8 @@ class TestPast {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(hystoricallyFormula, null);
-            Signal<Double> outputSignal = m.apply(signal);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(hystoricallyFormula, null);
+            Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Assignment> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
@@ -79,8 +80,8 @@ class TestPast {
         //a is the atomic proposition: a>=0
         mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
         TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        Function<Signal<Assignment>, Signal<Double>> m = monitoring.monitor(notOnceNotA, null);
-        Signal<Double> outputSignal = m.apply(signal);
+        TemporalMonitor<Assignment, Double> m = monitoring.monitor(notOnceNotA, null);
+        Signal<Double> outputSignal = m.monitor(signal);
         SignalCursor<Assignment> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);
         assertEquals(signal.start() + onceEnd, outputSignal.start(), 0.0);
@@ -105,8 +106,8 @@ class TestPast {
         Formula once = new OnceFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(once, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(once, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
@@ -125,8 +126,8 @@ class TestPast {
         Formula historically = new HystoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(historically, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
@@ -146,8 +147,8 @@ class TestPast {
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
         monitoring.addProperty("test2", p -> (x -> x - 9));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(since, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(since, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
@@ -167,8 +168,8 @@ class TestPast {
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
         monitoring.addProperty("test2", p -> (x -> x - 9));
-        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(since, null);
-        Signal<Double> result = m.apply(signal);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(since, null);
+        Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(0.0, result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
