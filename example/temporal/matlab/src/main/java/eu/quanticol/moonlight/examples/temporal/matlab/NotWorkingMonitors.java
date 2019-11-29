@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.examples.temporal.matlab;
 
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;

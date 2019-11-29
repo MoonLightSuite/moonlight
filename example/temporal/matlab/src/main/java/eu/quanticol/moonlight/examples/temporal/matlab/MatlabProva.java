@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.examples.temporal.matlab;
 
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
@@ -35,6 +35,7 @@ public class MatlabProva {
         //test(14,3);
         //test(15,3);
         test(14, 3);
+        eng.disconnect();
     }
 
     public static void mainLoop(String[] args) throws Exception {
