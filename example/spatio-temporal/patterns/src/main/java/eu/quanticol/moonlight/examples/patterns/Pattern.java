@@ -50,14 +50,14 @@ public class Pattern {
         SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, Atraj.length-1,gridModel);
 
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
+    /*    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
             oos.writeObject(Atraj);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+*/
 
 
 
