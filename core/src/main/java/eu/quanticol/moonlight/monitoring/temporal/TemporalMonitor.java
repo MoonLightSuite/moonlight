@@ -3,21 +3,51 @@
  */
 package eu.quanticol.moonlight.monitoring.temporal;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.io.SignalLoader;
+import eu.quanticol.moonlight.io.SignalWriter;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
  * @author loreti
  *
  */
-public interface TemporalMonitor<S,T> {
+public abstract class TemporalMonitor<S,T> {
 	
-	Signal<T> monitor( Signal<S> signal ); 
+	private SignalLoader<S> loader;
+	private SignalWriter<T> writer;
+	
+	public abstract Signal<T> monitor( Signal<S> signal ); 
+	
+	public void setLoader(SignalLoader<S> loader) {
+		this.loader = loader;
+	}
 
+	public void setWriter(SignalWriter<T> writer) {
+		this.writer = writer;
+	}
+
+	public Signal<T> monitor( InputStream input ) throws IOException {
+		if (loader == null) {
+			throw new IllegalStateException("Signal loader is not configured!");
+		}
+		return monitor( loader.load(input) );
+	}
+	
+	public void monitor( InputStream input, OutputStream output ) throws IOException {
+		if (writer == null) {
+			throw new IllegalStateException("Signal writer is not configured!");
+		}
+		writer.write( monitor( loader.load(input) ) , output );
+	}
+	
 	public static <S,T> TemporalMonitor<S,T> atomicMonitor( Function<S,T> atomic ) {
 		return new TemporalMonitorAtomic<S,T>( atomic );
 	}

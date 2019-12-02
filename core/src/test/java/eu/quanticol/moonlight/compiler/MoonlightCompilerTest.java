@@ -49,18 +49,6 @@ class MoonlightCompilerTest {
                 "	}\n" + 
                 "\n" + 
                 "	@Override\n" + 
-                "	public void monitor(String label, Signal<?> signal, String outputFile) {\n" + 
-                "		// TODO Auto-generated method stub\n" + 
-                "		\n" + 
-                "	}\n" + 
-                "\n" + 
-                "	@Override\n" + 
-                "	public void monitor(String label, LocationService<?> service, SpatioTemporalSignal<?> signal, String outputFile) {\n" + 
-                "		// TODO Auto-generated method stub\n" + 
-                "		\n" + 
-                "	}\n" + 
-                "\n" + 
-                "	@Override\n" + 
                 "	public String[] getMonitors() {\n" + 
                 "		// TODO Auto-generated method stub\n" + 
                 "		return null;\n" + 

@@ -13,7 +13,7 @@ import eu.quanticol.moonlight.signal.SignalCursor;
  * @author loreti
  *
  */
-public class TemporalMonitorSince<S, T> implements TemporalMonitor<S, T> {
+public class TemporalMonitorSince<S, T> extends TemporalMonitor<S, T> {
 
 	private TemporalMonitor<S, T> m1;
 	private Interval interval;

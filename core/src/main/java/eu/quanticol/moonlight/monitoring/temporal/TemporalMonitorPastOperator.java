@@ -13,7 +13,7 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public class TemporalMonitorPastOperator<S, T> implements TemporalMonitor<S, T> {
+public class TemporalMonitorPastOperator<S, T> extends TemporalMonitor<S, T> {
 
 	private TemporalMonitor<S, T> m;
 	private BiFunction<T, T, T> op;

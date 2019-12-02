@@ -11,7 +11,7 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public class TemporalMonitorBinary<S, T> implements TemporalMonitor<S, T> {
+public class TemporalMonitorBinary<S, T> extends TemporalMonitor<S, T> {
 
 	private final TemporalMonitor<S, T> m1;
 	private final BiFunction<T, T, T> op;

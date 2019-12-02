@@ -101,16 +101,7 @@ FunctionCommandBlock: {FunctionCommandBlock}
 ;
 
 TypeDefinition:
-	'type' name=ID '=' body=TypeDefinitionBody ';'  
-
-;
-
-TypeDefinitionBody:
-	RecordType | EnumerationElements 
-;
-
-EnumerationElements:
-	elements += TypeElement ('|' elements += TypeElement )*
+	'type' name=ID '=' elements += TypeElement ('|' elements += TypeElement )* ';'
 ;
 
 TypeElement:
@@ -119,12 +110,19 @@ TypeElement:
 
 Monitor:
 	'monitor' name=ID '{'
-		'signal' signalType=BasicType ';'
-		('space' '(' (locationType=BasicType ',')? edgeType=BasicType ')'';')?
+		'signal' '{' 
+			(signalVariables += VariableDeclaration ';')+
+		'}'
+		
+		(isSpatial ?= 'space' '{' 
+			('locations' '{' (locationVariables += VariableDeclaration ';')+ '}')?
+			('edges' '{' (edgeVariables += VariableDeclaration ';')+ '}')
+		 '}'
+		)?
 		'domain' semiring=SemiringExpression ';'
 		'formula' formula=StrelFormula ';'
-		('where' ';'  
-			(subformulas += FormulaDeclaration)*
+		('where'   
+			(subformulas += FormulaDeclaration ';')*
 		)?
 	'}'
 ;

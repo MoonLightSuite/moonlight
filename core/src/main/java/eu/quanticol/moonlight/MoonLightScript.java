@@ -14,10 +14,6 @@ import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
 public interface MoonLightScript {
 	
 	public void monitor( String label, String inputFile , String outputFile );
-	
-	public void monitor( String label, Signal<?> signal , String outputFile );
-
-	public void monitor( String label, LocationService<?> service , SpatioTemporalSignal<?> signal , String outputFile );
 
 	public String[] getMonitors();
 	
