@@ -10,7 +10,12 @@ Element:
 	TypeDefinition | 
 	FunctionDefinition | 
 	SemiringDefinition |
-	DistanceDomainDefinition 
+	DistanceDomainDefinition |
+	ParamDefinition 
+;
+
+ParamDefinition:
+	'param' type=BasicType name=ID ';'
 ;
 
 DistanceDomainDefinition:
