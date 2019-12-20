@@ -1,8 +1,6 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
@@ -24,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-public class TestTimescale {
+public class BenchmarkFormula {
     private static FormulaToTaliro toTaliro = new FormulaToTaliro();
     private static FormulaToBreach toBreach = new FormulaToBreach();
     private static final MatlabProxy eng = Matlab.startMatlab();
@@ -54,11 +52,13 @@ public class TestTimescale {
             functionalMap.put("c", Math::sin);
             double timeStep = 0.0001;
             SignalCreatorDouble signalCreator = new SignalCreatorDouble(functionalMap);
-            double[] time = signalCreator.generateTime(0, 100, timeStep);
+            double[] time = signalCreator.generateTime(0, 500, timeStep);
             double[][] values = signalCreator.generateValues(time);
             VariableArraySignal signal = signalCreator.generate(0, 100, timeStep);
-            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
-            Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
+            //name : "AbsentAQ10"
+            //pattern : "historically((once[:10](q)) -> ((not p) since q))"
+            Formula a = new AtomicFormula("a");
+            Formula phi = new GloballyFormula(a, new Interval(0, 500));
             //System.out.println(generatedFormula.toString());
             //System.out.println(toTaliro.toTaliro(generatedFormula));
             //System.out.println(toTaliro.createPrefix(signalCreator));
@@ -67,7 +67,7 @@ public class TestTimescale {
             processor.setNumericArray("M", new MatlabNumericArray(values, null));
             eng.eval("M = transpose(M);");
             eng.eval("T = transpose(T);");
-            String taliroFormula = toTaliro.toTaliro(generatedFormula);
+            String taliroFormula = toTaliro.toTaliro(phi);
             System.out.println(taliroFormula);
             eng.eval(taliroFormula);
             eng.eval(toTaliro.createPrefix(signalCreator));
@@ -87,7 +87,7 @@ public class TestTimescale {
             eng.eval("trace = @(X,T)[T M]");
             eng.eval("stringTrace = {'a','b','c'}");
             eng.eval("stringFormulaName = 'phi'");
-            String breachFormula = toBreach.toBreach(generatedFormula);
+            String breachFormula = toBreach.toBreach(phi);
             System.out.println(breachFormula);
             eng.eval("stringFormula ='" + breachFormula + "'");
             eng.eval("robBreach = @(X,T) robEval(stringTrace, trace(X,T),stringFormulaName,stringFormula);");
@@ -106,7 +106,7 @@ public class TestTimescale {
             mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
             mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
             TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+            TemporalMonitor<Assignment, Double> m = monitoring.monitor(phi, null);
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);

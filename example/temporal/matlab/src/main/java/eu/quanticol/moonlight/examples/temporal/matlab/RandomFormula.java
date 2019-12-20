@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-public class MatlabProva {
+public class RandomFormula {
     private static FormulaToTaliro toTaliro = new FormulaToTaliro();
     private static FormulaToBreach toBreach = new FormulaToBreach();
     private static final MatlabProxy eng = Matlab.startMatlab();
