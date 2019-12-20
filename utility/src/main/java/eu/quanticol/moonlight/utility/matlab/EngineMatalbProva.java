@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 public class EngineMatalbProva {
 
     public static void main(String args[]) {
+        System.loadLibrary("nativemvm");
             try {
         MatlabEngine eng = MatlabEngine.startMatlab();
 
@@ -17,4 +18,3 @@ public class EngineMatalbProva {
         }
     }
 }
-

@@ -1,24 +1,14 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
+import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,11 +35,6 @@ class TestCity {
         assertEquals(Double.POSITIVE_INFINITY, ds.getDistance(0, 7), 0.0, "d(0,7)");
 
     }
-
-
-
-
-
 
 
     private static SpatialModel<Double> buildingCity() { //metto alla fine tutti i metodi privati di servizio.
