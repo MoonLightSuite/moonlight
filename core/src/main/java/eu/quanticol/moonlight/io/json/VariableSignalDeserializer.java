@@ -7,6 +7,12 @@ import eu.quanticol.moonlight.signal.VariableArraySignal;
 import java.lang.reflect.Type;
 
 class VariableSignalDeserializer implements JsonDeserializer<VariableArraySignal> {
+	
+	private AssignmentFactory factory;
+	
+	public VariableSignalDeserializer( AssignmentFactory factory ) {
+		this.factory = factory;
+	}
 
     @Override
     public VariableArraySignal deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -14,21 +20,13 @@ class VariableSignalDeserializer implements JsonDeserializer<VariableArraySignal
         JsonArray timeArray = jso.get("t").getAsJsonArray();
         Double[] times = JSONUtils.toArray(timeArray, Double.class, new Double[timeArray.size()], context);
         JsonArray signals = jso.get("signals").getAsJsonArray();
-        String[] variables = JSONUtils.getVariables(signals);
-        Class<?>[] varTypes = getSignalsType(signals);
-        VariableArraySignal result = new VariableArraySignal(variables, new AssignmentFactory(varTypes));
-        Object[][] values = JSONUtils.getValues(times, variables, varTypes, signals, context);
+        JSONUtils.checkVariables(factory, signals);
+        String[] variables = JSONUtils.getVariables(signals);        
+        VariableArraySignal result = new VariableArraySignal(factory);
         for (int i = 0; i < times.length; i++) {
-            result.add(times[i], values[i]);
+            result.addFromString(times[i], JSONUtils.getAssignmentMap(variables, i, signals));
         }
         return result;
     }
 
-    private Class<?>[] getSignalsType(JsonArray jsa) {
-        Class<?>[] types = new Class<?>[jsa.size()];
-        for (int i = 0; i < types.length; i++) {
-            types[i] = JSONUtils.getVariableType(jsa.get(i).getAsJsonObject().get("type").getAsString());
-        }
-        return types;
-    }
 }

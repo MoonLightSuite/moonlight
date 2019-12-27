@@ -35,6 +35,11 @@ class TestCompiler {
 				formula somewhere [0.0, 1.0] #[ taxi ]#;
 			}
 			
+			monitor Temporal( int a, int b) {
+				signal { bool x; real y; int z; }
+				domain boolean;
+				formula eventually [a,b] #[ y>0 ]#;
+			}
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors

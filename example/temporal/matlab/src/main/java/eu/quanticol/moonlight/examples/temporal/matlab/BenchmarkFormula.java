@@ -6,18 +6,24 @@ import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
+import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.utility.matlab.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;
 import org.n52.matlab.control.MatlabProxy;
 import org.n52.matlab.control.extensions.MatlabNumericArray;
 import org.n52.matlab.control.extensions.MatlabTypeConverter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
@@ -44,16 +50,37 @@ public class BenchmarkFormula {
         }
     }
 
+	public static double[][] generateValues(double[] time, ArrayList<Function<Double,Double>> functions) {
+	  double[][] values = new double[functions.size()][time.length];
+	  for (int i = 0; i < time.length; i++) {
+	      for (int j = 0; j < functions.size(); j++) {
+	          Function<Double, Double> f = functions.get(j);
+	          values[j][i] = f.apply(time[i]);
+	      }
+	  }
+	  return values;
+	}    
+    
     private static double test(int seed, int formulaLength) throws MatlabInvocationException {
         try {
-            Map<String, Function<Double, Double>> functionalMap = new HashMap<>();
+            Map<String, Function<Double, ?>> functionalMap = new HashMap<>();
             functionalMap.put("a", t -> Math.pow(t, 2.));
             functionalMap.put("b", Math::cos);
             functionalMap.put("c", Math::sin);
+            ArrayList<Function<Double,Double>> functions = new ArrayList<>();
+            functions.add(t -> Math.pow(t, 2.));
+            functions.add(Math::cos);
+            functions.add(Math::sin);
+            
             double timeStep = 0.0001;
-            SignalCreatorDouble signalCreator = new SignalCreatorDouble(functionalMap);
+            AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<>("a",SignalDataHandler.REAL),
+            		new Pair<>("b",SignalDataHandler.REAL),
+            		new Pair<>("c",SignalDataHandler.REAL)
+            );
+            SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
             double[] time = signalCreator.generateTime(0, 500, timeStep);
-            double[][] values = signalCreator.generateValues(time);
+            double[][] values = generateValues(time,functions);
             VariableArraySignal signal = signalCreator.generate(0, 100, timeStep);
             //name : "AbsentAQ10"
             //pattern : "historically((once[:10](q)) -> ((not p) since q))"
@@ -70,7 +97,7 @@ public class BenchmarkFormula {
             String taliroFormula = toTaliro.toTaliro(phi);
             System.out.println(taliroFormula);
             eng.eval(taliroFormula);
-            eng.eval(toTaliro.createPrefix(signalCreator));
+            eng.eval(toTaliro.createPrefix(factory.getVariableIndex()));
             eng.eval("taliroRes = taliro(M,T);");
             double[] Z = (double[]) eng.getVariable("taliroRes");
             System.out.println("Taliro Robustness: " + Z[0]);

@@ -24,13 +24,20 @@ import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.io.json.DeserializerFunction;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
+import eu.quanticol.moonlight.util.Pair;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 class TestJSon {
@@ -65,7 +72,12 @@ class TestJSon {
         Class<?>[] types = new Class<?>[]{Boolean.class, Double.class, Integer.class};
 
         System.out.println(code);
-        VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(code);
+    	AssignmentFactory factory = AssignmentFactory.createFactory(
+        		new Pair<String,SignalDataHandler<?>>("x",SignalDataHandler.BOOLEAN),
+        		new Pair<String,SignalDataHandler<?>>("y",SignalDataHandler.REAL),
+        		new Pair<String,SignalDataHandler<?>>("z",SignalDataHandler.INTEGER)
+        	);
+        VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(code);
         assertNotNull(signal);
         assertEquals(0, signal.getVariableIndex("x"));
         assertEquals(1, signal.getVariableIndex("y"));

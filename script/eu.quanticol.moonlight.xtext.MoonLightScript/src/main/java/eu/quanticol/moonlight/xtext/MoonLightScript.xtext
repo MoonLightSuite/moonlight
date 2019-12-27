@@ -10,8 +10,7 @@ Element:
 	TypeDefinition | 
 	FunctionDefinition | 
 	SemiringDefinition |
-	DistanceDomainDefinition |
-	ParamDefinition 
+	DistanceDomainDefinition 
 ;
 
 ParamDefinition:
@@ -114,7 +113,7 @@ TypeElement:
 ;
 
 Monitor:
-	'monitor' name=ID '{'
+	'monitor' name=ID ('(' parameters += VariableDeclaration ( ',' parameters += VariableDeclaration)* ')')? '{'
 		'signal' '{' 
 			(signalVariables += VariableDeclaration ';')+
 		'}'

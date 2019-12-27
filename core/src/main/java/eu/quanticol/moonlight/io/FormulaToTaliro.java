@@ -21,6 +21,7 @@ import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 
 import java.io.BufferedReader;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -91,14 +92,17 @@ public class FormulaToTaliro implements FormulaVisitor<String,String> {
 		return "psi ='"+formula.accept(this, null)+"';";
 	}
 
-	public String createPrefix(SignalCreatorDouble creator){
-		BiFunction<String, Integer, String> prefix = (name,index) -> "pred("+index+").str = \'"+name+"\';\npred("+index+").A   =  "+ createPredicateMAtrix(creator.getVariableNames().length, index-1)+";\npred("+index+").b   =  0;\n";
+	public String createPrefix(Map<String,Integer> variables){
+		BiFunction<String, Integer, String> prefix = (name,index) -> "pred("+index+").str = \'"+name+"\';\npred("+index+").A   =  "+ createPredicateMAtrix(variables.size(), index-1)+";\npred("+index+").b   =  0;\n";
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("pred = struct();\n");
-		String[] names = creator.getVariableNames();
-		for (int i = 0; i < names.length; i++) {
-			buffer.append(prefix.apply(names[i],i+1));
-		}
+//		String[] names = variables.getVariableNames();
+//		for (int i = 0; i < names.length; i++) {
+//			buffer.append(prefix.apply(names[i],i+1));
+//		}
+		variables.forEach((v,i) -> {
+			buffer.append(prefix.apply(v,i+1));			
+		});
 		buffer.append("taliro=@(X,T) fw_taliro(psi,pred,X,T);\n");
 		return buffer.toString();
 	}

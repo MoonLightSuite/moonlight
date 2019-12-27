@@ -69,7 +69,7 @@ public class mainSp2 {
 
         //// SpatioTemporalMonitoring
 
-        AssignmentFactory factory = new AssignmentFactory(String.class, Boolean.class, Integer.class);
+        AssignmentFactory factory = new AssignmentFactory(SignalDataHandler.STRING,SignalDataHandler.BOOLEAN,SignalDataHandler.INTEGER);
         HashMap<String, Integer> vTable = new HashMap<>();
         vTable.put("place", 1);
         vTable.put("taxi", 2);
@@ -81,7 +81,7 @@ public class mainSp2 {
 
         ArrayList<Assignment> signalSP = new ArrayList<Assignment>();
         for (int i = 0; i < size; i++) {
-            signalSP.add(factory.get(place.get(i), taxi.get(i), people.get(i)));
+            signalSP.add(factory.fromObject(place.get(i), taxi.get(i), people.get(i)));
         }
 
         SpatioTemporalSignal<Assignment> citySignal = new SpatioTemporalSignal<>(size);

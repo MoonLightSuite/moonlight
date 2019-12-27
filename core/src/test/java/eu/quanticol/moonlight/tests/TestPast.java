@@ -5,9 +5,12 @@ import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestPast {
 
 
-    private VariableArraySignal load(String name) throws IOException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource(name).getFile());
-        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
-    }
+//    private VariableArraySignal load(String name) throws IOException {
+//        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//        File file = new File(classLoader.getResource(name).getFile());
+//        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+//        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+//    }
 
     @Test
     void testHistorically() {
@@ -38,8 +41,12 @@ class TestPast {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("a",SignalDataHandler.REAL),
+            		new Pair<String,SignalDataHandler<?>>("b",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -69,7 +76,14 @@ class TestPast {
     void testOnce() throws IOException {
         double onceStart = 0.0;
         double onceEnd = 500.0;
-        VariableArraySignal signal = load("traceIdentity/traceLaura.json");
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("a",SignalDataHandler.REAL),
+            		new Pair<String,SignalDataHandler<?>>("b",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
         Formula once = new OnceFormula(notA, new Interval(onceStart, onceEnd));

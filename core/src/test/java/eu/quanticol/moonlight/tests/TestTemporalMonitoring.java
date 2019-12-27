@@ -30,11 +30,16 @@ import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
+import eu.quanticol.moonlight.util.Pair;
+
 import org.junit.jupiter.api.Test;
 
 class TestTemporalMonitoring {
@@ -81,19 +86,24 @@ class TestTemporalMonitoring {
     }   	
 
     private void test(int seed, int formulaLength) {
-        Map<String, Function<Double, Double>> functionalMap = new HashMap<>();
+        Map<String, Function<Double, ?>> functionalMap = new HashMap<>();
         functionalMap.put("a", t -> Math.pow(t, 2.));
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
-        SignalCreatorDouble signalCreator = new SignalCreatorDouble(functionalMap);
+        AssignmentFactory factory = AssignmentFactory.createFactory(
+        		new Pair<>("a",SignalDataHandler.REAL),
+        		new Pair<>("b",SignalDataHandler.REAL),
+        		new Pair<>("c",SignalDataHandler.REAL)
+        );
+        SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 1, 0.1);
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
         HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
         //a is the atomic proposition: a>=0
-        mappa.put("a", y -> assignment -> assignment.get(0, Double.class));
-        mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
-        mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
+        mappa.put("a", y -> assignment -> assignment.get(signal.getVariableIndex("a"), Double.class));
+        mappa.put("b", y -> assignment -> assignment.get(signal.getVariableIndex("b"), Double.class));
+        mappa.put("c", y -> assignment -> assignment.get(signal.getVariableIndex("c"), Double.class));
         TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);

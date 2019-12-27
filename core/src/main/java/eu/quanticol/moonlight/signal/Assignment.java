@@ -21,6 +21,7 @@ package eu.quanticol.moonlight.signal;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.Function;
 
 /**
  *
@@ -28,27 +29,23 @@ import java.util.HashMap;
 public class Assignment {
 	
 	private Object[] values;
-	private Class<?>[] varTypes;
+	private Function<Integer,SignalDataHandler<?>> varTypes;
 	
-	public Assignment( Class<?>[] varTypes , Object[] values ) {
-		if (varTypes.length != values.length) {
-			throw new IllegalArgumentException();
-		}
-		
+	public Assignment( Function<Integer,SignalDataHandler<?>> varTypes , Object[] values ) {
 		this.values = values;
 		this.varTypes = varTypes;
 	}
 	
 	public <T> T get( int i , Class<T> varType) {
-		if (varType.isAssignableFrom(varTypes[i])) {
-			return varType.cast(values[i]);
-		}
-		throw new ClassCastException();
+		return varType.cast(values[i]);
 	}
 	
 	public Class<?> getTypeOf( int i ) {
-		return this.varTypes[i];
+		return varTypes.apply(i).getTypeOf();
 	}
 
+	public <T> boolean hasType( int i , Class<T> varType ) {
+		return varType.isAssignableFrom(getTypeOf(i));				
+	}
 	
 }

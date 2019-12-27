@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.io.SignalLoader;
+import eu.quanticol.moonlight.io.SignalReader;
 import eu.quanticol.moonlight.io.SignalWriter;
 import eu.quanticol.moonlight.signal.Signal;
 
@@ -21,12 +21,12 @@ import eu.quanticol.moonlight.signal.Signal;
  */
 public abstract class TemporalMonitor<S,T> {
 	
-	private SignalLoader<S> loader;
+	private SignalReader<S> loader;
 	private SignalWriter<T> writer;
 	
 	public abstract Signal<T> monitor( Signal<S> signal ); 
 	
-	public void setLoader(SignalLoader<S> loader) {
+	public void setLoader(SignalReader<S> loader) {
 		this.loader = loader;
 	}
 

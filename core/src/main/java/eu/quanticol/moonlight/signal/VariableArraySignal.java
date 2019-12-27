@@ -20,6 +20,7 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author loreti
@@ -28,23 +29,25 @@ import java.util.HashMap;
 public class VariableArraySignal extends Signal<Assignment>{
 	
 	private AssignmentFactory factory;
-	private final HashMap<String,Integer> vTable = new HashMap<>();
 	
-	public VariableArraySignal(String[] array, AssignmentFactory factory) {
+	public VariableArraySignal(AssignmentFactory factory) {
 		this.factory = factory;
-		for( int i=0 ; i<array.length; i++ ) {
-			if (vTable.put(array[i], i) != null) {
-				throw new IllegalArgumentException("Duplicated variable "+array[i]);
-			}
-		}
 	}
 	
-	public void add( double t , Object ... values ) {
-		add(t, factory.get(values));
+	public void addFromMap( double t , Map<String,Object> values ) {
+		super.add(t,factory.fromObject(values));
+	}
+
+	public void addFromString( double t , Map<String,String> values ) {
+		super.add(t,factory.fromString(values));
+	}	
+	
+	public void addFromObject( double t , Object ... values ) {
+		super.add(t, factory.fromObject(values));
 	}
 
 	public int getVariableIndex(String name) {
-		return vTable.getOrDefault(name, -1);
+		return factory.getVariableIndex(name);
 	}
 	
 

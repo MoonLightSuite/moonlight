@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public interface SignalLoader<S> {
+public interface SignalReader<S> {
 	
 	public Signal<S> load( InputStream input ) throws IOException ;
 

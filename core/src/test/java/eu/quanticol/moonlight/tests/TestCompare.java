@@ -24,9 +24,13 @@ import eu.quanticol.moonlight.io.json.Deserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.util.Pair;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -50,8 +54,14 @@ class TestCompare {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceGeneric/trace.json").getFile());
         try {
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+        		new Pair<String,SignalDataHandler<?>>("G",SignalDataHandler.REAL),
+        		new Pair<String,SignalDataHandler<?>>("I",SignalDataHandler.REAL),
+        		new Pair<String,SignalDataHandler<?>>("X",SignalDataHandler.REAL)
+        	);
+        	
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Boolean>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: G>2
@@ -81,8 +91,11 @@ class TestCompare {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("y",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
@@ -113,8 +126,11 @@ class TestCompare {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceEzio/traceEzio.json").getFile());
         try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("y",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -133,6 +149,7 @@ class TestCompare {
         }
     }
 
+
     @Test
     void testIdentity() {
         //FORMULA: []_[0,500](a>=0)
@@ -146,8 +163,12 @@ class TestCompare {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("a",SignalDataHandler.REAL),
+            		new Pair<String,SignalDataHandler<?>>("b",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
@@ -186,8 +207,12 @@ class TestCompare {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
-            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            VariableArraySignal signal = Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+        	AssignmentFactory factory = AssignmentFactory.createFactory(
+            		new Pair<String,SignalDataHandler<?>>("a",SignalDataHandler.REAL),
+            		new Pair<String,SignalDataHandler<?>>("b",SignalDataHandler.REAL)
+            	);
+        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(contents);
             HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0

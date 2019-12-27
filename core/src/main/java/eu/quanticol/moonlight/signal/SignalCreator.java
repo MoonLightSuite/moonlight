@@ -1,33 +1,26 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class SignalCreator<T, P> {
+public class SignalCreator {
 
-    private Map<String, Function<T, P>> functionalMap;
+    private Map<String, Function<Double, ?>> functionalMap;
+    private AssignmentFactory factory;
 
-    public SignalCreator(Map<String, Function<T, P>> functionalMap) {
+    public SignalCreator(AssignmentFactory factory, Map<String, Function<Double, ?>> functionalMap) {
         this.functionalMap = functionalMap;
+        this.factory = factory;
     }
 
     public VariableArraySignal generate(double timeInit, double timeEnd, double timeStep) {
-        List<Class<?>> varTypes = new ArrayList<>();
-        List<String> varName = new ArrayList<>();
-        for (Map.Entry<String, Function<T, P>> stringFunctionEntry : functionalMap.entrySet()) {
-            Function value = stringFunctionEntry.getValue();
-            varTypes.add(value.apply(timeInit).getClass());
-            varName.add(stringFunctionEntry.getKey());
-        }
-
-        Class<?>[] classes = varTypes.toArray(new Class<?>[0]);
-        String[] names = varName.toArray(new String[0]);
-        VariableArraySignal result = new VariableArraySignal(names, new AssignmentFactory(classes));
+        VariableArraySignal result = new VariableArraySignal(factory);
         for (double t = timeInit; t < timeEnd; t += timeStep) {
-            result.add(t, applyFunctions(functionalMap.entrySet().iterator(), classes, t));
+            result.addFromMap(t, applyFunctions(t));
         }
         return result;
     }
@@ -41,28 +34,10 @@ public class SignalCreator<T, P> {
         return time;
     }
 
-    public Object[][] generateValues(double[] time) {
-        Object[][] values = new Object[functionalMap.keySet().size()][time.length];
-        for (int i = 0; i < time.length; i++) {
-            Iterator<Function<T, P>> iterator = functionalMap.values().iterator();
-            for (int j = 0; j < functionalMap.keySet().size(); j++) {
-                Function next = iterator.next();
-                values[j][i] = next.apply(time[i]);
-            }
-        }
-        return values;
-    }
-
-
-    private Assignment applyFunctions(Iterator<Map.Entry<String, Function<T, P>>> iterator, Class<?>[] classes, double t) {
-        Object[] values = new Object[classes.length];
-
-        for (int i = 0; i < classes.length; i++) {
-            Map.Entry<String, Function<T, P>> next = iterator.next();
-            Function value = next.getValue();
-            values[i] = value.apply(t);
-        }
-        return new Assignment(classes, values);
+    private Map<String,Object> applyFunctions(double t) {
+    	HashMap<String,Object> toReturn = new HashMap<>();
+    	functionalMap.forEach((v,f) -> toReturn.put(v, f.apply(t)));
+    	return toReturn;
     }
 
     public String[] getVariableNames() {

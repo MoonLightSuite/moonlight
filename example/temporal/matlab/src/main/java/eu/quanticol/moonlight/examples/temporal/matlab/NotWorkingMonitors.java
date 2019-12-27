@@ -7,11 +7,15 @@ import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Assignment;
+import eu.quanticol.moonlight.signal.AssignmentFactory;
 import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
+import eu.quanticol.moonlight.signal.SignalDataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
+import eu.quanticol.moonlight.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +52,16 @@ public class NotWorkingMonitors {
     }
 
     private static void test(int seed, int formulaLength) {
-        Map<String, Function<Double, Double>> functionalMap = new HashMap<>();
+        Map<String, Function<Double, ?>> functionalMap = new HashMap<>();
         functionalMap.put("a", t -> Math.pow(t, 2.));
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
-        SignalCreatorDouble signalCreator = new SignalCreatorDouble(functionalMap);
+        AssignmentFactory factory = AssignmentFactory.createFactory(
+        		new Pair<>("a",SignalDataHandler.REAL),
+        		new Pair<>("b",SignalDataHandler.REAL),
+        		new Pair<>("c",SignalDataHandler.REAL)
+        );
+        SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);

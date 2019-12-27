@@ -20,11 +20,16 @@ class FormulaAndSignalGeneratorTest {
 
     @Test
     void test() {
-        Map<String, Function<Double, Number>> functionalMap = new HashMap<>();
+        Map<String, Function<Double, ?>> functionalMap = new HashMap<>();
         functionalMap.put("a", t -> Math.pow(t, 2.));
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
-        SignalCreator<Double, Number> signalCreator = new SignalCreator<>(functionalMap);
+        AssignmentFactory factory = AssignmentFactory.createFactory(
+        		new Pair<>("a",SignalDataHandler.REAL),
+        		new Pair<>("b",SignalDataHandler.REAL),
+        		new Pair<>("c",SignalDataHandler.REAL)
+        );
+        SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(3);

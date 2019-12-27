@@ -40,10 +40,10 @@ public class MainSp {
         ArrayList<Integer> people = new ArrayList<>(Arrays.asList(3, 145, 67, 243, 22, 103, 6));
 
         //// SpatioTemporalSignal
-        AssignmentFactory factory = new AssignmentFactory(String.class, Boolean.class, Integer.class);
+        AssignmentFactory factory = new AssignmentFactory(SignalDataHandler.STRING,SignalDataHandler.BOOLEAN,SignalDataHandler.INTEGER);
         ArrayList<Assignment> signalSP = new ArrayList<Assignment>();
         for (int i = 0; i < size; i++) {
-            signalSP.add(factory.get(place.get(i), taxi.get(i), people.get(i)));
+            signalSP.add(factory.fromObject(place.get(i), taxi.get(i), people.get(i)));
         }
         SpatioTemporalSignal<Assignment> citySignal = new SpatioTemporalSignal<>(size);
         citySignal.add(0, signalSP);

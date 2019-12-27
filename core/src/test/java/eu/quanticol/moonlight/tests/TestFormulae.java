@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TestFormulae {
 
 
-    VariableArraySignal load(String name) throws IOException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File file = new File(classLoader.getResource(name).getFile());
-        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
-    }
+//    VariableArraySignal load(String name) throws IOException {
+//        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//        File file = new File(classLoader.getResource(name).getFile());
+//        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+//        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
+//    }
 
 
     @Test
