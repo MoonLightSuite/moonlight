@@ -76,9 +76,9 @@ class ScriptToJava {
 	
 	def  generateMonitorDeclaration(Monitor monitor) {
 		if (monitor.isIsSpatial) {
-			'''private SpatioTemporalMonitor<Assignment,Assignment,«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = null;'''
+			'''private SpatioTemporalMonitor<Record,Record,«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = null;'''
 		} else {
-			'''private TemporalMonitor<Assignment,«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = null;'''
+			'''private TemporalMonitor<Record,«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = null;'''
 		}
 	}
 	
