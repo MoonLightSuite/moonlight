@@ -40,19 +40,19 @@ public class MainSp {
         ArrayList<Integer> people = new ArrayList<>(Arrays.asList(3, 145, 67, 243, 22, 103, 6));
 
         //// SpatioTemporalSignal
-        AssignmentFactory factory = new AssignmentFactory(SignalDataHandler.STRING,SignalDataHandler.BOOLEAN,SignalDataHandler.INTEGER);
-        ArrayList<Assignment> signalSP = new ArrayList<Assignment>();
+        RecordHandler factory = new RecordHandler(DataHandler.STRING,DataHandler.BOOLEAN,DataHandler.INTEGER);
+        ArrayList<Record> signalSP = new ArrayList<Record>();
         for (int i = 0; i < size; i++) {
             signalSP.add(factory.fromObject(place.get(i), taxi.get(i), people.get(i)));
         }
-        SpatioTemporalSignal<Assignment> citySignal = new SpatioTemporalSignal<>(size);
+        SpatioTemporalSignal<Record> citySignal = new SpatioTemporalSignal<>(size);
         citySignal.add(0, signalSP);
         citySignal.add(1, signalSP);
         citySignal.add(3, signalSP);
 
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 3,city);
 
-        HashMap<String, Function<Parameters, Function<Assignment, Boolean>>> atomicPropositions = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<Record, Boolean>>> atomicPropositions = new HashMap<>();
         atomicPropositions.put("thereIsATaxi", par -> a -> a.get(1, Boolean.class));
         atomicPropositions.put("thereIsAStop", par -> a -> a.get(0, String.class).equals("BusStop") || a.get(0, String.class).equals("MetroStop"));
         atomicPropositions.put("thereIsaMainSquare", par -> a -> a.get(0, String.class).equals("MainSquare"));
@@ -74,8 +74,8 @@ public class MainSp {
 
 
         SignalDomain<Boolean> module = new BooleanDomain();
-        SpatioTemporalMonitoring<Double, Assignment, Boolean> monitorFactory = new SpatioTemporalMonitoring<Double, Assignment, Boolean>(atomicPropositions, distanceFunctions, module, true);
-        SpatioTemporalMonitor<Double, Assignment, Boolean> m = monitorFactory.monitor(someT, null);
+        SpatioTemporalMonitoring<Double, Record, Boolean> monitorFactory = new SpatioTemporalMonitoring<Double, Record, Boolean>(atomicPropositions, distanceFunctions, module, true);
+        SpatioTemporalMonitor<Double, Record, Boolean> m = monitorFactory.monitor(someT, null);
 
         SpatioTemporalSignal<Boolean> out = m.monitor(locService, citySignal);
 

@@ -6,15 +6,31 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 
-import eu.quanticol.moonlight.signal.AssignmentFactory;
+import eu.quanticol.moonlight.signal.RecordHandler;
 
 class JSONUtils {
 
-    private JSONUtils() {
+    public static final String TRACE_TYPE_TAG = "trace_type";
+	public static final String TRACE_TYPE_TEMPORAL = "temporal";
+	public static final String TRACE_TYPE_SPATIO_TEMPORAL = "spatiotemporal";
+	public static final String SIGNAL_TAG = "signals";
+	public static final String TIME_TAG = "t";
+	public static final String NAME_TAG = "name";
+	public static final String TYPE_TAG = "type";
+	public static final String SIGNAL_TYPE_TAG = "signal_type";
+	public static final String EDGE_TYPE_TAG = "edge_type";
+	public static final String NODES_TAG = "nodes";
+	public static final String VALUES_TAG = "values";
+	public static final String SPACE_TAG = "space";
+	public static final String EDGES_TAG = "edges";
+	public static final String SRC_TAG = "src";	
+	public static final String TRG_TAG = "trg";
+
+	private JSONUtils() {
         //Utility class
     }
     
-    static boolean checkVariables( AssignmentFactory factory , JsonArray signals ) {
+    static boolean checkVariables( RecordHandler factory , JsonArray signals ) {
     	int size = signals.size();
     	factory.checkNumberOfVariables( size );
     	for( int i=0 ; i<size ; i++ ) {

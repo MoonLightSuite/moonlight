@@ -5,12 +5,12 @@ import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Assignment;
-import eu.quanticol.moonlight.signal.AssignmentFactory;
+import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
-import eu.quanticol.moonlight.signal.SignalDataHandler;
+import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
@@ -73,10 +73,10 @@ public class BenchmarkFormula {
             functions.add(Math::sin);
             
             double timeStep = 0.0001;
-            AssignmentFactory factory = AssignmentFactory.createFactory(
-            		new Pair<>("a",SignalDataHandler.REAL),
-            		new Pair<>("b",SignalDataHandler.REAL),
-            		new Pair<>("c",SignalDataHandler.REAL)
+            RecordHandler factory = RecordHandler.createFactory(
+            		new Pair<>("a",DataHandler.REAL),
+            		new Pair<>("b",DataHandler.REAL),
+            		new Pair<>("c",DataHandler.REAL)
             );
             SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
             double[] time = signalCreator.generateTime(0, 500, timeStep);
@@ -127,13 +127,13 @@ public class BenchmarkFormula {
             System.out.println("Breach Robustness: " + Z[0]);
             System.out.println("Breach Avg. Time (msec) (" + nReps + " repetitions): " + (after - before) / 1000.);
 
-            HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(0, Double.class));
             mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
             mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
-            TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Assignment, Double> m = monitoring.monitor(phi, null);
+            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<Record, Double> m = monitoring.monitor(phi, null);
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);

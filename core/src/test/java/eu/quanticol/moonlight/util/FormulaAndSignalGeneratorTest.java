@@ -24,10 +24,10 @@ class FormulaAndSignalGeneratorTest {
         functionalMap.put("a", t -> Math.pow(t, 2.));
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
-        AssignmentFactory factory = AssignmentFactory.createFactory(
-        		new Pair<>("a",SignalDataHandler.REAL),
-        		new Pair<>("b",SignalDataHandler.REAL),
-        		new Pair<>("c",SignalDataHandler.REAL)
+        RecordHandler factory = RecordHandler.createFactory(
+        		new Pair<>("a",DataHandler.REAL),
+        		new Pair<>("b",DataHandler.REAL),
+        		new Pair<>("c",DataHandler.REAL)
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
@@ -35,22 +35,22 @@ class FormulaAndSignalGeneratorTest {
         Formula generatedFormula = formulaGenerator.getFormula(3);
         System.out.println(generatedFormula.toString());
         long timeInit = System.currentTimeMillis();
-        HashMap<String, Function<Parameters, Function<Assignment, Double>>> mappa = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
         int index_of_x = 0;
         //a is the atomic proposition: a>=0
         mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(index_of_x, Double.class));
-        TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<Assignment, Double> m = monitoring.monitor(generatedFormula, null);
+        TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+        TemporalMonitor<Record, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);
         long timeEnd = System.currentTimeMillis();
-        SignalCursor<Assignment> expected = signal.getIterator(true);
+        SignalCursor<Record> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);
         while (!actual.completed()) {
             assertFalse(expected.completed());
             Double valueActual = actual.value();
-            Assignment valueExpected = expected.value();
+            Record valueExpected = expected.value();
             // assertEquals(valueExpected.get(0, Double.class), valueActual);
             expected.forward();
             actual.forward();

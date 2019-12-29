@@ -10,9 +10,9 @@ import java.util.function.Function;
 public class SignalCreator {
 
     private Map<String, Function<Double, ?>> functionalMap;
-    private AssignmentFactory factory;
+    private RecordHandler factory;
 
-    public SignalCreator(AssignmentFactory factory, Map<String, Function<Double, ?>> functionalMap) {
+    public SignalCreator(RecordHandler factory, Map<String, Function<Double, ?>> functionalMap) {
         this.functionalMap = functionalMap;
         this.factory = factory;
     }

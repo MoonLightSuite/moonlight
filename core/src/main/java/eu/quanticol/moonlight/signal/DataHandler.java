@@ -7,7 +7,7 @@ package eu.quanticol.moonlight.signal;
  * @author loreti
  *
  */
-public interface SignalDataHandler<S> {
+public interface DataHandler<S> {
 	
 	public final static String REAL_CODE = "real";
 	public final static String INT_CODE = "integer";
@@ -26,8 +26,10 @@ public interface SignalDataHandler<S> {
 
 	public String getTypeCode();
 	
+	public boolean checkValueFromString(String value);
+
 	
-	public static final SignalDataHandler<Double> REAL = new SignalDataHandler<Double>() {
+	public static final DataHandler<Double> REAL = new DataHandler<Double>() {
 
 		@Override
 		public Class<Double> getTypeOf() {
@@ -58,9 +60,19 @@ public interface SignalDataHandler<S> {
 		public String getTypeCode() {
 			return REAL_CODE;
 		}
+
+		@Override
+		public boolean checkValueFromString(String value) {
+			try {
+				Double.parseDouble(value);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;				
+			}
+		}
 	};
 	
-	public static final SignalDataHandler<Integer> INTEGER = new SignalDataHandler<Integer>() {
+	public static final DataHandler<Integer> INTEGER = new DataHandler<Integer>() {
 
 		@Override
 		public Class<Integer> getTypeOf() {
@@ -92,9 +104,20 @@ public interface SignalDataHandler<S> {
 			return INT_CODE;
 		}
 		
+		@Override
+		public boolean checkValueFromString(String value) {
+			try {
+				Integer.parseInt(value);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;				
+			}
+		}
+		
+		
 	};
 
-	public static final SignalDataHandler<Boolean> BOOLEAN = new SignalDataHandler<Boolean>() {
+	public static final DataHandler<Boolean> BOOLEAN = new DataHandler<Boolean>() {
 
 		@Override
 		public Class<Boolean> getTypeOf() {
@@ -125,10 +148,16 @@ public interface SignalDataHandler<S> {
 		public String getTypeCode() {
 			return BOOLEAN_CODE;
 		}
+
+		@Override
+		public boolean checkValueFromString(String value) {
+			return "true".equals(value)||"false".equals(value);
+		}
+
 		
 	};
 
-	public static final SignalDataHandler<String> STRING = new SignalDataHandler<String> () {
+	public static final DataHandler<String> STRING = new DataHandler<String> () {
 
 		@Override
 		public Class<String> getTypeOf() {
@@ -159,8 +188,14 @@ public interface SignalDataHandler<S> {
 		public String getTypeCode() {
 			return STRING_CODE;
 		}
+
+		@Override
+		public boolean checkValueFromString(String value) {
+			return true;
+		}
 		
 	};
+
 	
 
 }

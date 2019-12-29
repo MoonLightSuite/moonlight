@@ -26,11 +26,11 @@ import java.util.Map;
  * @author loreti
  *
  */
-public class VariableArraySignal extends Signal<Assignment>{
+public class VariableArraySignal extends Signal<Record>{
 	
-	private AssignmentFactory factory;
+	private RecordHandler factory;
 	
-	public VariableArraySignal(AssignmentFactory factory) {
+	public VariableArraySignal(RecordHandler factory) {
 		this.factory = factory;
 	}
 	

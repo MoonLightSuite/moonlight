@@ -26,14 +26,14 @@ import java.util.function.Function;
 /**
  *
  */
-public class Assignment {
+public class Record {
 	
 	private Object[] values;
-	private Function<Integer,SignalDataHandler<?>> varTypes;
+	private Function<Integer,DataHandler<?>> handlers;
 	
-	public Assignment( Function<Integer,SignalDataHandler<?>> varTypes , Object[] values ) {
+	public Record( Function<Integer,DataHandler<?>> handlers , Object[] values ) {
 		this.values = values;
-		this.varTypes = varTypes;
+		this.handlers = handlers;
 	}
 	
 	public <T> T get( int i , Class<T> varType) {
@@ -41,7 +41,7 @@ public class Assignment {
 	}
 	
 	public Class<?> getTypeOf( int i ) {
-		return varTypes.apply(i).getTypeOf();
+		return handlers.apply(i).getTypeOf();
 	}
 
 	public <T> boolean hasType( int i , Class<T> varType ) {

@@ -21,12 +21,13 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
-import eu.quanticol.moonlight.io.json.Deserializer;
-import eu.quanticol.moonlight.io.json.DeserializerFunction;
-import eu.quanticol.moonlight.signal.Assignment;
-import eu.quanticol.moonlight.signal.AssignmentFactory;
+import eu.quanticol.moonlight.io.json.IllegalFileFormat;
+import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
+import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
-import eu.quanticol.moonlight.signal.SignalDataHandler;
+import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
@@ -47,7 +48,7 @@ class TestJSon {
 
 
     @Test
-    void readSignal() {
+    void readSignal() throws IllegalFileFormat {
         String code = "{\n" +
                 " 	\"trace_type\"  : \"temporal\",\n" +
                 " 	\"t\"       	: [0, 0.5, 0.7, 0.8, 15],\n" +
@@ -72,20 +73,20 @@ class TestJSon {
         Class<?>[] types = new Class<?>[]{Boolean.class, Double.class, Integer.class};
 
         System.out.println(code);
-    	AssignmentFactory factory = AssignmentFactory.createFactory(
-        		new Pair<String,SignalDataHandler<?>>("x",SignalDataHandler.BOOLEAN),
-        		new Pair<String,SignalDataHandler<?>>("y",SignalDataHandler.REAL),
-        		new Pair<String,SignalDataHandler<?>>("z",SignalDataHandler.INTEGER)
+    	RecordHandler factory = RecordHandler.createFactory(
+        		new Pair<String,DataHandler<?>>("x",DataHandler.BOOLEAN),
+        		new Pair<String,DataHandler<?>>("y",DataHandler.REAL),
+        		new Pair<String,DataHandler<?>>("z",DataHandler.INTEGER)
         	);
-        VariableArraySignal signal = Deserializer.getVariableArraySignalDeserializer(factory).deserialize(code);
+        Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(code);
         assertNotNull(signal);
-        assertEquals(0, signal.getVariableIndex("x"));
-        assertEquals(1, signal.getVariableIndex("y"));
-        assertEquals(2, signal.getVariableIndex("z"));
-        SignalCursor<Assignment> iterator = signal.getIterator(true);
+        assertEquals(0, factory.getVariableIndex("x"));
+        assertEquals(1, factory.getVariableIndex("y"));
+        assertEquals(2, factory.getVariableIndex("z"));
+        SignalCursor<Record> iterator = signal.getIterator(true);
         for (int i = 0; i < times.length; i++) {
             assertFalse(iterator.completed());
-            Assignment next = iterator.value();
+            Record next = iterator.value();
             assertEquals(times[i], iterator.time(), 0.0);
             for (int j = 0; j < 3; j++) {
                 assertEquals(values[i][j], next.get(j, types[j]));

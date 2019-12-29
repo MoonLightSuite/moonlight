@@ -22,67 +22,68 @@ package eu.quanticol.moonlight.signal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import eu.quanticol.moonlight.util.Pair;
 
-public class AssignmentFactory {
+public class RecordHandler {
 	
+	private DataHandler<?>[] handlers;
 	
-	private SignalDataHandler<?>[] varTypes;
-	private Map<String,Integer> variableIndex;
+	private Map<String,Integer> variables;
 		
 	
-	public AssignmentFactory( SignalDataHandler<?> ... varTypes ) {
+	public RecordHandler( DataHandler<?> ... varTypes ) {
 		this( null , varTypes );
 	}
 
-	public AssignmentFactory( Map<String,Integer> variableIndex, SignalDataHandler<?> ... varTypes ) {
-		this.varTypes = Arrays.copyOf(varTypes, varTypes.length);
-		this.variableIndex = variableIndex;
+	public RecordHandler( Map<String,Integer> variableIndex, DataHandler<?> ... varTypes ) {
+		this.handlers = Arrays.copyOf(varTypes, varTypes.length);
+		this.variables = variableIndex;
 	}
 	
 	@SafeVarargs
-	public static AssignmentFactory createFactory( Pair<String, SignalDataHandler<?>> ... variables ) {
-		SignalDataHandler<?>[] dataHandlers = new SignalDataHandler<?>[variables.length];
+	public static RecordHandler createFactory( Pair<String, DataHandler<?>> ... variables ) {
+		DataHandler<?>[] dataHandlers = new DataHandler<?>[variables.length];
 		Map<String,Integer> variableIndex = new HashMap<>();
 		int counter = 0;
-		for (Pair<String, SignalDataHandler<?>> p : variables) {
+		for (Pair<String, DataHandler<?>> p : variables) {
 			dataHandlers[counter] = p.getSecond();
 			if (variableIndex.put(p.getFirst(), counter++)!=null) {
 				throw new IllegalArgumentException("Duplicated variable "+p.getFirst()+"!");
 			}
 		}
-		return new AssignmentFactory(variableIndex,dataHandlers);
+		return new RecordHandler(variableIndex,dataHandlers);
 	}
 	
-	public Assignment fromObject( Object ... values ) {
-		if (values.length != varTypes.length) {
-			throw new IllegalArgumentException("Wrong data size! (Expected "+varTypes.length+" is "+values.length);
+	public Record fromObject( Object ... values ) {
+		if (values.length != handlers.length) {
+			throw new IllegalArgumentException("Wrong data size! (Expected "+handlers.length+" is "+values.length);
 		}
-		return build(IntStream.range(0, values.length).boxed().map(i -> varTypes[i].fromObject(values[i])).toArray());
+		return build(IntStream.range(0, values.length).boxed().map(i -> handlers[i].fromObject(values[i])).toArray());
 	}
 
-	private Assignment build(Object[] values) {
-		return new Assignment(i -> varTypes[i], values);
+	private Record build(Object[] values) {
+		return new Record(i -> handlers[i], values);
 	}
 
-	public Assignment fromString( String ... strings ) {
-		if (strings.length != varTypes.length) {
-			throw new IllegalArgumentException("Wrong data size! (Expected "+varTypes.length+" is "+strings.length+")");
+	public Record fromString( String ... strings ) {
+		if (strings.length != handlers.length) {
+			throw new IllegalArgumentException("Wrong data size! (Expected "+handlers.length+" is "+strings.length+")");
 		}
-		return build(IntStream.range(0, strings.length).boxed().map(i -> varTypes[i].fromString(strings[i])).toArray());
+		return build(IntStream.range(0, strings.length).boxed().map(i -> handlers[i].fromString(strings[i])).toArray());
 	}
 	
-	public Assignment fromObject( Map<String,Object> values ) {
+	public Record fromObject( Map<String,Object> values ) {
 		checkNumberOfVariables( values.size() );
-		Object[] data = new Object[varTypes.length];
+		Object[] data = new Object[handlers.length];
 		values.forEach((v,o) -> {
 			int variableIndex = getVariableIndex(v);
 			if (variableIndex<0) {
 				throwUnknownVariableException(v);
 			}
-			SignalDataHandler<?> handler = varTypes[variableIndex]; 
+			DataHandler<?> handler = handlers[variableIndex]; 
 			if (!handler.checkType(o)) {
 				throwVariableTypeException(v,handler.getTypeOf().getTypeName(),o.getClass().getTypeName());
 			}
@@ -101,27 +102,26 @@ public class AssignmentFactory {
 	}
 
 	public int getVariableIndex(String v) {
-		Integer index = variableIndex.getOrDefault(v,-1);
-		return index;
+		return variables.getOrDefault(v,-1);
 	}
 	
-	public Assignment fromString( Map<String,String> values ) {
+	public Record fromString( Map<String,String> values ) {
 		checkNumberOfVariables( values.size() );
-		Object[] data = new Object[varTypes.length];
+		Object[] data = new Object[handlers.length];
 		values.forEach((v,o) -> {
 			int variableIndex = getVariableIndex(v);
 			if (variableIndex<0) {
 				throwUnknownVariableException(v);
 			}
-			SignalDataHandler<?> handler = varTypes[variableIndex]; 
+			DataHandler<?> handler = handlers[variableIndex]; 
 			data[variableIndex] = handler.fromString(o);
 		});
 		return build(data);
 	}
 
 	public boolean checkNumberOfVariables(int size) {
-		if (size != variableIndex.size()) {
-			throw new IllegalArgumentException("Wrong number of variables! (Expected "+varTypes.length+" is "+size+")");
+		if (size != variables.size()) {
+			throw new IllegalArgumentException("Wrong number of variables! (Expected "+handlers.length+" is "+size+")");
 		}
 		return true;
 	}
@@ -129,16 +129,37 @@ public class AssignmentFactory {
 	public boolean checkVariableType(String v, String type) {
 		int variableIndex = getVariableIndex(v);
 		if (variableIndex<0) {
-			throwUnknownVariableException(v);
+			return false;
 		}
-		if (!varTypes[variableIndex].checkTypeCode(type)) {
-			throwVariableTypeException(v, varTypes[variableIndex].getTypeCode(), type); 
-		}
-		return true;
+		return handlers[variableIndex].checkTypeCode(type);
 	}
 
 	public Map<String, Integer> getVariableIndex() {
-		return variableIndex;
+		return variables;
+	}
+
+	public int size() {
+		return handlers.length;
+	}
+
+	public String getTypeCode(String name) {
+		int variableIndex = getVariableIndex(name);
+		if (variableIndex<0) {
+			return null;
+		}
+		return handlers[variableIndex].getTypeCode();
+	}
+
+	public String[] getVariables() {
+		return variables.keySet().toArray( new String[variables.size()]);
+	}
+
+	public boolean checkValueFromString(String v, String value) {
+		int variableIndex = getVariableIndex(v);
+		if (variableIndex<0) {
+			return false;
+		}
+		return handlers[variableIndex].checkValueFromString(value);
 	}
 	
 	
