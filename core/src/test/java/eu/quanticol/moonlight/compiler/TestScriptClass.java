@@ -3,33 +3,44 @@
  */
 package eu.quanticol.moonlight.compiler;
 
-import java.util.HashMap;
 
 import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.SpatioTemporalScriptComponent;
+import eu.quanticol.moonlight.TemporalScriptComponent;
 
 /**
  * @author loreti
  *
  */
-public class TestScriptClass implements MoonLightScript {
+public class TestScriptClass extends MoonLightScript {
 
-	@Override
-	public void monitor(String label, String inputFile, String outputFile) {
-		// TODO Auto-generated method stub
-		
-		
+	public TestScriptClass() {
+		super(new String[0], new String[0]);
 	}
 
 	@Override
-	public String[] getMonitors() {
+	protected TemporalScriptComponent<?> selectTemporalComponent(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getInfo(String monitor) {
+	protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected TemporalScriptComponent<?> selectDefaultTemporalComponent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

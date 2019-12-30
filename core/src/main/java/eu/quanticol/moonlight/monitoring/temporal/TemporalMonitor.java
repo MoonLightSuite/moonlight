@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.io.SignalReader;
-import eu.quanticol.moonlight.io.SignalWriter;
+import eu.quanticol.moonlight.io.TemporalSignalReader;
+import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
@@ -21,32 +21,7 @@ import eu.quanticol.moonlight.signal.Signal;
  */
 public abstract class TemporalMonitor<S,T> {
 	
-	private SignalReader<S> loader;
-	private SignalWriter<T> writer;
-	
 	public abstract Signal<T> monitor( Signal<S> signal ); 
-	
-	public void setLoader(SignalReader<S> loader) {
-		this.loader = loader;
-	}
-
-	public void setWriter(SignalWriter<T> writer) {
-		this.writer = writer;
-	}
-
-	public Signal<T> monitor( InputStream input ) throws IOException {
-		if (loader == null) {
-			throw new IllegalStateException("Signal loader is not configured!");
-		}
-		return monitor( loader.load(input) );
-	}
-	
-	public void monitor( InputStream input, OutputStream output ) throws IOException {
-		if (writer == null) {
-			throw new IllegalStateException("Signal writer is not configured!");
-		}
-		writer.write( monitor( loader.load(input) ) , output );
-	}
 	
 	public static <S,T> TemporalMonitor<S,T> atomicMonitor( Function<S,T> atomic ) {
 		return new TemporalMonitorAtomic<S,T>( atomic );

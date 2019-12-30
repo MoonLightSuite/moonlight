@@ -19,6 +19,8 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -317,5 +319,46 @@ public class Signal<T> {
         return (first == null ? null : first.getValueAt(t));
     }
 
+    public Object[][] toObjectArray() {
+    	if (size == 0) {
+    		throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+    	}
+    	int arraySize = size+1;
+    	Object[][] toReturn = new Object[arraySize][2];
+    	Segment<T> current = first;
+    	int counter = 0;
+    	while (current != null) {
+    		toReturn[counter][0] = current.getTime();
+    		toReturn[counter][1] = current.getValue();
+    		current = current.getNext();
+    	}
+    	toReturn[size][0] = end;
+    	toReturn[size][1] = last.getValue();
+    	return toReturn;
+    }
 
+    public Object[][] toObjectArray(Double[] timePoints) {
+    	if (size == 0) {
+    		throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+    	}
+    	Object[][] toReturn = new Object[timePoints.length][2];    	
+    	Segment<T> current = first;
+    	for( int i=0 ; i<timePoints.length ; i++ ) {
+    		current = current.jump(timePoints[i]);
+    		toReturn[i][0] = timePoints[i];
+    		toReturn[i][1] = current.getValue();
+    	}
+    	return toReturn;
+    }
+    
+    public Set<Double> getTimeSet() {
+    	HashSet<Double> timeSet = new HashSet<>();
+    	Segment<T> current = first;
+    	while (current != null) {
+    		timeSet.add(current.getTime());
+    		current = current.getNext();
+    	}
+    	timeSet.add(end);
+    	return timeSet;
+    }
 }

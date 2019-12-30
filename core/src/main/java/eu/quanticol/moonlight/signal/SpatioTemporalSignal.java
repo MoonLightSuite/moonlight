@@ -4,9 +4,12 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  * @author loreti
@@ -125,5 +128,19 @@ public class SpatioTemporalSignal<T> {
 		}
 		return end;
 	}
+	
+	public Object[][][] toObjectArray() {
+		Double[] timePoints = getTimeArray();
+		Object[][][] toReturn = new Object[size][][];
+		IntStream.range(0, size).forEach(i -> toReturn[i] = signals.get(i).toObjectArray(timePoints));
+		return toReturn;
+	}
 
+	private Double[] getTimeArray() {
+		Set<Double> timeSet = new HashSet<>();
+		for (Signal<T> s : this.signals) {
+			timeSet.addAll(s.getTimeSet());
+		}
+		return timeSet.stream().sorted().toArray(i -> new Double[i]);
+	}
 }

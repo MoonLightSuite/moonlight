@@ -30,37 +30,49 @@ class MoonlightCompilerTest {
     @Test
     void testLoadScript() throws ReflectiveOperationException, IOException {
     	MoonlightCompiler comp = new MoonlightCompiler();
-        String source = "package eu.quanticol.moonlight.test;\n" +
-                "import eu.quanticol.moonlight.MoonLightScript;\n" + 
-                "import eu.quanticol.moonlight.signal.LocationService;\n" + 
-                "import eu.quanticol.moonlight.signal.Signal;\n" + 
-                "import eu.quanticol.moonlight.signal.SpatioTemporalSignal;\n" + 
-                "\n" + 
-                "/**\n" + 
-                " * @author loreti\n" + 
-                " *\n" + 
-                " */\n" + 
-                "public class TestScript implements MoonLightScript {\n" + 
-                "\n" + 
-                "	@Override\n" + 
-                "	public void monitor(String label, String inputFile, String outputFile) {\n" + 
-                "		// TODO Auto-generated method stub\n" + 
-                "		\n" + 
-                "	}\n" + 
-                "\n" + 
-                "	@Override\n" + 
-                "	public String[] getMonitors() {\n" + 
-                "		// TODO Auto-generated method stub\n" + 
-                "		return null;\n" + 
-                "	}\n" + 
-                "\n" + 
-                "	@Override\n" + 
-                "	public String getInfo(String monitor) {\n" + 
-                "		// TODO Auto-generated method stub\n" + 
-                "		return null;\n" + 
-                "	}\n" + 
-                "\n" + 
-                "}";
+        String source = "package eu.quanticol.moonlight.test;\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"import eu.quanticol.moonlight.MoonLightScript;\n" + 
+        		"import eu.quanticol.moonlight.SpatioTemporalScriptComponent;\n" + 
+        		"import eu.quanticol.moonlight.TemporalScriptComponent;\n" + 
+        		"\n" + 
+        		"/**\n" + 
+        		" * @author loreti\n" + 
+        		" *\n" + 
+        		" */\n" + 
+        		"public class TestScript extends MoonLightScript {\n" + 
+        		"\n" + 
+        		"	public TestScript() {\n" + 
+        		"		super(new String[0], new String[0]);\n" + 
+        		"	}\n" + 
+        		"\n" + 
+        		"	@Override\n" + 
+        		"	protected TemporalScriptComponent<?> selectTemporalComponent(String name) {\n" + 
+        		"		// TODO Auto-generated method stub\n" + 
+        		"		return null;\n" + 
+        		"	}\n" + 
+        		"\n" + 
+        		"	@Override\n" + 
+        		"	protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {\n" + 
+        		"		// TODO Auto-generated method stub\n" + 
+        		"		return null;\n" + 
+        		"	}\n" + 
+        		"\n" + 
+        		"	@Override\n" + 
+        		"	protected TemporalScriptComponent<?> selectDefaultTemporalComponent() {\n" + 
+        		"		// TODO Auto-generated method stub\n" + 
+        		"		return null;\n" + 
+        		"	}\n" + 
+        		"\n" + 
+        		"	@Override\n" + 
+        		"	protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {\n" + 
+        		"		// TODO Auto-generated method stub\n" + 
+        		"		return null;\n" + 
+        		"	}\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"}";
 
         MoonLightScript instance = comp.getIstance("eu.quanticol.moonlight.test", "TestScript", source, MoonLightScript.class);
 

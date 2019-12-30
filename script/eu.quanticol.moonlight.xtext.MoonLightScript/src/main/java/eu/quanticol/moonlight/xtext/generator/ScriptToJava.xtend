@@ -18,7 +18,7 @@ class ScriptToJava {
 		 */ 
 		package «packageName»;
 		
-		import eu.quanticol.moonlight.MoonLightScript;
+		import eu.quanticol.moonlight.*;
 		import eu.quanticol.moonlight.monitoring.temporal.*;
 		import eu.quanticol.moonlight.monitoring.spatiotemporal.*;
 		import eu.quanticol.moonlight.signal.*;
@@ -27,11 +27,7 @@ class ScriptToJava {
 		import java.util.HashMap;
 		
 		
-		public class «className» implements MoonLightScript {
-			
-			private HashSet<String> temporalMonitors = new HashSet<>();
-			private HashSet<String> spatialMonitors = new HashSet<>();
-			private HashMap<String,String> monitorInfo = new HashMap<>();
+		public class «className» extends MoonLightScript {			
 			
 			«FOR m: model.elements.filter(typeof(Monitor))»
 			«m.generateMonitorDeclaration»
@@ -46,27 +42,35 @@ class ScriptToJava {
 			«ENDFOR»
 			
 			public «className»() {
-					
+				super( new String[] { 
+					«FOR m: model.elements.filter(typeof(Monitor)) SEPARATOR ','»«IF !m.isIsSpatial»
+					"«m.name»"
+					«ENDIF»«ENDFOR»					
+				}, 
+				new String[] {
+					«FOR m: model.elements.filter(typeof(Monitor)) SEPARATOR ","»«IF m.isIsSpatial»
+					"«m.name»"
+					«ENDIF»«ENDFOR»					
+				});	
 			}
 		
 			@Override
-			public void monitor(String label, String inputFile, String outputFile) {
-				// TODO Auto-generated method stub
+			protected TemporalScriptComponent<?> selectTemporalComponent( String name ) {
+				return null;	
+			}				
+
+			protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+				return null;	
+			}
+
+			protected TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
+				return null;	
+			}
 				
+			protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+				return null;	
 			}
 		
-			@Override
-			public String[] getMonitors() {
-				return new String[] {«FOR m: model.elements.filter(typeof(Monitor)).map[it.name].sort SEPARATOR ','»
-					"«m»"
-					«ENDFOR»
-				};
-			}
-		
-			@Override
-			public String getInfo(String monitor) {
-				return "";
-			}
 		
 		}
 		'''

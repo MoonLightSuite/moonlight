@@ -85,7 +85,7 @@ class TestCompiler {
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
-		Assertions.assertEquals(1, script.monitors.length)
+		Assertions.assertEquals(1, script.spatioTemporalMonitors.length)
 	}	
 	
 	@Test
