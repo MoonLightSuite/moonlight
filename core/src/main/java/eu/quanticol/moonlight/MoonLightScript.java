@@ -3,6 +3,10 @@
  */
 package eu.quanticol.moonlight;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+
 /**
  * @author loreti
  *
@@ -68,5 +72,15 @@ public abstract class MoonLightScript {
 			return "There it not any default spatio temporal monitor!";
 		}
 	}
+	
+	public static MoonLightScript parse( String code ) {
+		return null;
+	}
+	
+	public static MoonLightScript forName( String className ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Class<?> scriptClass = MoonLightScript.class.getClassLoader().loadClass(className);
+		return (MoonLightScript) scriptClass.getDeclaredConstructor().newInstance();
+	}
+
 
 }

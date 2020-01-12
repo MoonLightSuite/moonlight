@@ -20,7 +20,7 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public abstract class TemporalScriptComponent<S> {
+public class TemporalScriptComponent<S> {
 	
 	private final String name;
 	private final RecordHandler signalRecordHandler;
@@ -28,7 +28,9 @@ public abstract class TemporalScriptComponent<S> {
 	private final RecordHandler parameters;
 	private final Function<Record,TemporalMonitor<Record,S>> builder;
 	
-	public TemporalScriptComponent(String name, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler, RecordHandler parameters,
+	public TemporalScriptComponent(String name, RecordHandler signalRecordHandler, 
+			DataHandler<S> outputTypeHandler, 
+			RecordHandler parameters,
 			Function<Record, TemporalMonitor<Record, S>> builder) {
 		super();
 		this.name = name;
@@ -38,12 +40,22 @@ public abstract class TemporalScriptComponent<S> {
 		this.builder = builder;
 	}
 
+	public TemporalScriptComponent(String name, RecordHandler signalRecordHandler, 
+			DataHandler<S> outputTypeHandler, 
+			Function<Record, TemporalMonitor<Record, S>> builder) {
+		this(name, signalRecordHandler,outputTypeHandler,null, builder);
+	}
+
 	public String getName() {
 		return name;
 	}
 	
 	public TemporalMonitor<Record,S> getMonitor( Object ... values ) {
-		return builder.apply(parameters.fromObject(values));
+		if (this.parameters != null) {
+			return builder.apply(parameters.fromObject(values));			
+		} else {
+			return builder.apply(null);
+		}
 	}
 
 	public Signal<S> monitor( Signal<Record> input , Object ... values ) {

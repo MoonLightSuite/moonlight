@@ -79,13 +79,22 @@ class TestCompiler {
 				domain boolean;
 				formula somewhere [0.0, 1.0] #[ taxi ]#;
 			}
+
+			monitor City2 {
+				signal { bool taxi; int peole; }
+				space { locations {poiType poi; }
+				edges { real length; }
+				}
+				domain boolean;
+				formula somewhere [0.0, 1.0] #[ taxi ]#;
+			}
 			
 		''')
 		val scriptToJava = new ScriptToJava();		
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
-		Assertions.assertEquals(1, script.spatioTemporalMonitors.length)
+		Assertions.assertEquals(2, script.spatioTemporalMonitors.length)
 	}	
 	
 	@Test

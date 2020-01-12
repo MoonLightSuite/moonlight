@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
  * @author loreti
  *
  */
-public abstract class SpatioTemporalScriptComponent<S> {
+public class SpatioTemporalScriptComponent<S> {
 	
 	private final String name;
 	private final RecordHandler signalRecordHandler;
@@ -46,12 +46,22 @@ public abstract class SpatioTemporalScriptComponent<S> {
 		this.builder = builder;
 	}
 
+	public SpatioTemporalScriptComponent(String name, RecordHandler edgeRecordHandler, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler, 
+			Function<Record, SpatioTemporalMonitor<Record,Record, S>> builder) {
+		this(name,edgeRecordHandler,signalRecordHandler,outputTypeHandler,null,builder);
+	}
+
+	
 	public String getName() {
 		return name;
 	}
 	
 	public SpatioTemporalMonitor<Record, Record, S> getMonitor( Object ... values ) {
-		return builder.apply(parameters.fromObject(values));
+		if (parameters != null) {
+			return builder.apply(parameters.fromObject(values));
+		} else {
+			return builder.apply(null);
+		}
 	}
 
 	public SpatioTemporalSignal<S> monitor( LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... values ) {
