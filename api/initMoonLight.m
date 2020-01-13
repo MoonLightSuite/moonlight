@@ -1,1 +1,0 @@
-javaaddpath("..\core\build\libs\moonlight.jar")

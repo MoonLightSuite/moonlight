@@ -19,25 +19,25 @@ public class TestScriptClass extends MoonLightScript {
 	}
 
 	@Override
-	protected TemporalScriptComponent<?> selectTemporalComponent(String name) {
+	public TemporalScriptComponent<?> selectTemporalComponent(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
+	public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected TemporalScriptComponent<?> selectDefaultTemporalComponent() {
+	public TemporalScriptComponent<?> selectDefaultTemporalComponent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
+	public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
 		// TODO Auto-generated method stub
 		return null;
 	}

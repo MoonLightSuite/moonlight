@@ -1,4 +1,5 @@
 subprojects {
+    ext.xtextVersion = '2.18.0.M3'
     group 'eu.quanticol.moonlight'
     version '1.0-SNAPSHOT'
     description 'MoonLight: a light-weight framework for runtime monitoring'
@@ -22,5 +23,17 @@ subprojects {
     dependencies {
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    }
+
+    task install(type: Copy) {
+        dependsOn build
+        from configurations.runtime
+        from jar
+        into "${rootDir}/output/"
+    }
+
+    clean.doFirst {
+        delete "${rootDir}/output/"
+        println "deleating jars in  ${rootDir}/output/"
     }
 }

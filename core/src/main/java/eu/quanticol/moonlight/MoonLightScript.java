@@ -20,14 +20,14 @@ public abstract class MoonLightScript {
 		this.temporalMonitors = temporalMonitors;
 		this.spatioTemporalMonitors = spatioTemporalMonitors;
 	}
-	
-	protected abstract TemporalScriptComponent<?> selectTemporalComponent( String name );
 
-	protected abstract SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name );
+	public abstract TemporalScriptComponent<?> selectTemporalComponent( String name );
 
-	protected abstract TemporalScriptComponent<?> selectDefaultTemporalComponent( );
-	
-	protected abstract SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( );
+	public abstract SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name );
+
+	public abstract TemporalScriptComponent<?> selectDefaultTemporalComponent( );
+
+	public abstract SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( );
 	
 	public String[] getTemporalMonitors() {
 		return temporalMonitors;

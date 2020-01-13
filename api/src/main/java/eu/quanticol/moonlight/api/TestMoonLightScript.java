@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.tests;
+package eu.quanticol.moonlight.api;
 
 import java.util.function.Function;
 
@@ -14,11 +14,7 @@ import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
-/**
- * @author loreti
- *
- */
-public class TestMoonLightScritp extends MoonLightScript {
+public class TestMoonLightScript extends MoonLightScript {
 	
 	private final static String[] TEMPORAL = new String[]  { "TemporalMonitor" };
 	private final static String[] SPATIAL = new String[]  { };
@@ -35,12 +31,12 @@ public class TestMoonLightScritp extends MoonLightScript {
 			DataHandler.REAL,
 			temporalBuilder);
 	
-	public TestMoonLightScritp() {
+	public TestMoonLightScript() {
 		super(TEMPORAL,SPATIAL);
 	}
 
 	@Override
-	protected TemporalScriptComponent<?> selectTemporalComponent(String name) {
+	public TemporalScriptComponent<?> selectTemporalComponent(String name) {
 		if (TEMPORAL[0].equals(name)) {
 			return selectDefaultTemporalComponent();
 		}
@@ -48,17 +44,17 @@ public class TestMoonLightScritp extends MoonLightScript {
 	}
 
 	@Override
-	protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
+	public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
 		return null;
 	}
 
 	@Override
-	protected TemporalScriptComponent<?> selectDefaultTemporalComponent() {
+	public TemporalScriptComponent<?> selectDefaultTemporalComponent() {
 		return temporalMonitor;
 	}
 
 	@Override
-	protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
+	public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
 		return null;
 	}
 
