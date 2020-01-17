@@ -30,7 +30,11 @@ public class TestMoonLightScript extends MoonLightScript {
 			new RecordHandler(DataHandler.REAL),
 			DataHandler.REAL,
 			temporalBuilder);
-	
+
+	public RecordHandler getRecordHandler(){
+		return new RecordHandler(DataHandler.REAL,DataHandler.REAL);
+
+	}
 	public TestMoonLightScript() {
 		super(TEMPORAL,SPATIAL);
 	}
