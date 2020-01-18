@@ -19,4 +19,13 @@ public interface LocationService<V> {
 
 	public boolean isEmpty();
 
+	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
+			Object[][][][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
+			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph[i]));
+		}
+		return toReturn;
+	}
+
 }

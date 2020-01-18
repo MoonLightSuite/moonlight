@@ -32,17 +32,17 @@ public class SpatioTemporalScriptComponent<S> {
 	private final RecordHandler signalRecordHandler;
 	private final RecordHandler edgeRecordHandler;
 	private final DataHandler<S> outputTypeHandler;
-	private final RecordHandler parameters;
+	private final RecordHandler parametersType;
 	private final Function<Record, SpatioTemporalMonitor<Record,Record, S>>  builder;
 	
-	public SpatioTemporalScriptComponent(String name, RecordHandler edgeRecordHandler, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler, RecordHandler parameters,
+	public SpatioTemporalScriptComponent(String name, RecordHandler edgeRecordHandler, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler, RecordHandler parametersType,
 			Function<Record, SpatioTemporalMonitor<Record,Record, S>> builder) {
 		super();
 		this.name = name;
 		this.signalRecordHandler = signalRecordHandler;
 		this.outputTypeHandler = outputTypeHandler;
 		this.edgeRecordHandler = edgeRecordHandler;
-		this.parameters = parameters;
+		this.parametersType = parametersType;
 		this.builder = builder;
 	}
 
@@ -56,21 +56,28 @@ public class SpatioTemporalScriptComponent<S> {
 		return name;
 	}
 	
-	public SpatioTemporalMonitor<Record, Record, S> getMonitor( Object ... values ) {
+	public SpatioTemporalMonitor<Record, Record, S> getMonitor( Object ... parameters ) {
 		if (parameters != null) {
-			return builder.apply(parameters.fromObject(values));
+			return builder.apply(parametersType.fromObject(parameters));
 		} else {
 			return builder.apply(null);
 		}
 	}
 
-	public SpatioTemporalSignal<S> monitor( LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... values ) {
-		SpatioTemporalMonitor<Record, Record, S> monitor = getMonitor(values);
+	public SpatioTemporalSignal<S> monitor( LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... parameters ) {
+		SpatioTemporalMonitor<Record, Record, S> monitor = getMonitor(parameters);
 		return monitor.monitor(locations,input);
 	}
 	
-	public Object[][][] monitorToObjectArray( LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... values ) {
-		return monitor(locations,input,values).toObjectArray();
+	public Object[][][] monitorToObjectArray( LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... parameters ) {
+		return monitor(locations,input,parameters).toObjectArray();
+	}
+	
+	public Object[][][] monitorToObjectArray( double[] locationTimeArray, Object[][][][] graph, double[] signalTimeArray, Object[][][] signalValues, Object ... parameters ) {
+		int locations = signalValues[0].length;
+		SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
+		LocationService<Record> locationService = LocationService.buildLocationService(locations,edgeRecordHandler,locationTimeArray,graph);
+		return monitor(locationService,signal,parameters).toObjectArray();
 	}
 	
 	public void monitorToFile( SpatioTemporalSignalWriter writer, OutputStream stream, LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... values ) throws IOException {

@@ -17,4 +17,11 @@ public interface SpatialModel<T> {
 
     Set<Integer> getLocations();
 
+	static SpatialModel<Record> buildSpatialModel(int locations, RecordHandler edgeRecordHandler,
+			Object[][][] objects) {
+		GraphModel<Record> toReturn = new GraphModel<>(locations);
+		//TODO: Fill code here!		
+		return toReturn;
+	}
+
 }
