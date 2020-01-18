@@ -28,4 +28,11 @@ public interface LocationService<V> {
 		return toReturn;
 	}
 
+	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double time,
+			Object[][][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		toReturn.add(time, SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph));
+		return toReturn;
+	}
+
 }

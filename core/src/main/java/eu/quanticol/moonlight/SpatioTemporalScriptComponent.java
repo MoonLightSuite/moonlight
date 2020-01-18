@@ -79,7 +79,14 @@ public class SpatioTemporalScriptComponent<S> {
 		LocationService<Record> locationService = LocationService.buildLocationService(locations,edgeRecordHandler,locationTimeArray,graph);
 		return monitor(locationService,signal,parameters).toObjectArray();
 	}
-	
+
+	public Object[][][] monitorToObjectArray( Object[][][] graph, double[] signalTimeArray, Object[][][] signalValues, Object ... parameters ) {
+		int locations = signalValues[0].length;
+		SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
+		LocationService<Record> locationService = LocationService.buildLocationService(locations,edgeRecordHandler,signalTimeArray[0],graph);
+		return monitor(locationService,signal,parameters).toObjectArray();
+	}
+
 	public void monitorToFile( SpatioTemporalSignalWriter writer, OutputStream stream, LocationService<Record> locations, SpatioTemporalSignal<Record> input , Object ... values ) throws IOException {
 		SpatioTemporalSignal<S> signal = monitor(locations,input,values);
 		writer.write(outputTypeHandler, signal, stream);
