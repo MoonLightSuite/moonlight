@@ -1,7 +1,7 @@
 clear
 initMoonLight
 %methodsview('eu.quanticol.moonlight.api.ProvaMatlab')
-import eu.quanticol.moonlight.api.ProvaMatlab
+import eu.quanticol.moonlight.api.*
 aa = ProvaMatlab;
 %class(aa)
 somma = aa.somma(2,2);

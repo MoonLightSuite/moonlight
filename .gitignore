@@ -13,3 +13,4 @@ bin/
 xtend-gen
 xtext-gen
 *.asv
+output/

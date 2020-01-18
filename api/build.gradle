@@ -1,0 +1,9 @@
+dependencies {
+    compile project(":core")
+    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript")
+    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript.ide")
+    implementation "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
+}
+jar {
+    archiveFileName= 'moonlightAPI.jar'
+}
