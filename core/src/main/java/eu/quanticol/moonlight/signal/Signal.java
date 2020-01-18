@@ -81,7 +81,7 @@ public class Signal<T> {
             startWith(t, value);
         } else {
             if (this.end > t) {
-                throw new IllegalArgumentException("Time: "+t+" Expected: >"+this.end);//TODO: Add Message!
+                throw new IllegalArgumentException("Time: " + t + " Expected: >" + this.end);//TODO: Add Message!
             }
             last = last.addAfter(t, value);
             end = t;
@@ -140,21 +140,21 @@ public class Signal<T> {
      */
     public static <T, R> Signal<R> apply(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
         Signal<R> newSignal = new Signal<>();
-        if (!s1.isEmpty()&&!s2.isEmpty()) {
-	        SignalCursor<T> c1 = s1.getIterator(true);
-	        SignalCursor<T> c2 = s2.getIterator(true);
-	        double time = Math.max(s1.start(), s2.start());
-	        c1.move(time);
-	        c2.move(time);
-	        while (!c1.completed() && !c2.completed()) {
-	            newSignal.add(time, f.apply(c1.value(), c2.value()));
-	            time = Math.min(c1.nextTime(), c2.nextTime());
-	            c1.move(time);
-	            c2.move(time);
-	        }
-	        if (!newSignal.isEmpty()) {
-		        newSignal.endAt(Math.min(s1.end, s2.end));
-	        }
+        if (!s1.isEmpty() && !s2.isEmpty()) {
+            SignalCursor<T> c1 = s1.getIterator(true);
+            SignalCursor<T> c2 = s2.getIterator(true);
+            double time = Math.max(s1.start(), s2.start());
+            c1.move(time);
+            c2.move(time);
+            while (!c1.completed() && !c2.completed()) {
+                newSignal.add(time, f.apply(c1.value(), c2.value()));
+                time = Math.min(c1.nextTime(), c2.nextTime());
+                c1.move(time);
+                c2.move(time);
+            }
+            if (!newSignal.isEmpty()) {
+                newSignal.endAt(Math.min(s1.end, s2.end));
+            }
         }
         return newSignal;
     }
@@ -205,7 +205,7 @@ public class Signal<T> {
         return new SignalCursor<T>() {
 
             private Segment<T> current = (forward ? first : last);
-            private double time = (current != null ? (forward?current.getTime():current.getSegmentEnd()) : Double.NaN);
+            private double time = (current != null ? (forward ? current.getTime() : current.getSegmentEnd()) : Double.NaN);
 
             @Override
             public double time() {
@@ -220,12 +220,12 @@ public class Signal<T> {
             @Override
             public void forward() {
                 if (current != null) {
-                	if ((!current.isRightClosed())||(current.doEndAt(time))) {
+                    if ((!current.isRightClosed()) || (current.doEndAt(time))) {
                         current = current.getNext();
-                        time = (current != null ? current.getTime() : Double.NaN);                		
-                	} else {
-                		time = current.getSegmentEnd();
-                	}
+                        time = (current != null ? current.getTime() : Double.NaN);
+                    } else {
+                        time = current.getSegmentEnd();
+                    }
                 }
             }
 
@@ -280,10 +280,10 @@ public class Signal<T> {
                 return (current == null);//||(current.isTheEnd(time)));
                 //return ((current == null));//||(current.isTheEnd(time)));
             }
-            
+
             @Override
             public String toString() {
-            	return Signal.this.toString()+(current==null?"!":("@("+current.getTime()+")"));
+                return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getTime() + ")"));
             }
 
         };
@@ -307,7 +307,7 @@ public class Signal<T> {
     }
 
     public void endAt(double end) {
-        if ((this.end > end)||(last == null)) {
+        if ((this.end > end) || (last == null)) {
             throw new IllegalArgumentException();//TODO: Add message!
         }
         this.end = end;
@@ -320,45 +320,46 @@ public class Signal<T> {
     }
 
     public Object[][] toObjectArray() {
-    	if (size == 0) {
-    		throw new IllegalStateException("No array can be generated from an empty signal is empty!");
-    	}
-    	int arraySize = size+1;
-    	Object[][] toReturn = new Object[arraySize][2];
-    	Segment<T> current = first;
-    	int counter = 0;
-    	while (current != null) {
-    		toReturn[counter][0] = current.getTime();
-    		toReturn[counter][1] = current.getValue();
-    		current = current.getNext();
-    	}
-    	toReturn[size][0] = end;
-    	toReturn[size][1] = last.getValue();
-    	return toReturn;
+        if (size == 0) {
+            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+        }
+        int arraySize = size + 1;
+        Object[][] toReturn = new Object[arraySize][2];
+        Segment<T> current = first;
+        int counter = 0;
+        while (current != null) {
+            toReturn[counter][0] = current.getTime();
+            toReturn[counter][1] = current.getValue();
+            current = current.getNext();
+            counter++;
+        }
+        toReturn[size][0] = end;
+        toReturn[size][1] = last.getValue();
+        return toReturn;
     }
 
     public Object[][] toObjectArray(Double[] timePoints) {
-    	if (size == 0) {
-    		throw new IllegalStateException("No array can be generated from an empty signal is empty!");
-    	}
-    	Object[][] toReturn = new Object[timePoints.length][2];    	
-    	Segment<T> current = first;
-    	for( int i=0 ; i<timePoints.length ; i++ ) {
-    		current = current.jump(timePoints[i]);
-    		toReturn[i][0] = timePoints[i];
-    		toReturn[i][1] = current.getValue();
-    	}
-    	return toReturn;
+        if (size == 0) {
+            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+        }
+        Object[][] toReturn = new Object[timePoints.length][2];
+        Segment<T> current = first;
+        for (int i = 0; i < timePoints.length; i++) {
+            current = current.jump(timePoints[i]);
+            toReturn[i][0] = timePoints[i];
+            toReturn[i][1] = current.getValue();
+        }
+        return toReturn;
     }
-    
+
     public Set<Double> getTimeSet() {
-    	HashSet<Double> timeSet = new HashSet<>();
-    	Segment<T> current = first;
-    	while (current != null) {
-    		timeSet.add(current.getTime());
-    		current = current.getNext();
-    	}
-    	timeSet.add(end);
-    	return timeSet;
+        HashSet<Double> timeSet = new HashSet<>();
+        Segment<T> current = first;
+        while (current != null) {
+            timeSet.add(current.getTime());
+            current = current.getNext();
+        }
+        timeSet.add(end);
+        return timeSet;
     }
 }
