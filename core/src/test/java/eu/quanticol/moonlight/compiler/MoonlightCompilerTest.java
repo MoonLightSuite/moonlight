@@ -48,25 +48,25 @@ class MoonlightCompilerTest {
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	protected TemporalScriptComponent<?> selectTemporalComponent(String name) {\n" + 
+        		"	public TemporalScriptComponent<?> selectTemporalComponent(String name) {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {\n" + 
+        		"	public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	protected TemporalScriptComponent<?> selectDefaultTemporalComponent() {\n" + 
+        		"	public TemporalScriptComponent<?> selectDefaultTemporalComponent() {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {\n" + 
+        		"	public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 

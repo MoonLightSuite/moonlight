@@ -4,10 +4,8 @@ import eu.quanticol.moonlight.xtext.moonLightScript.Model
 import eu.quanticol.moonlight.xtext.moonLightScript.Monitor
 import eu.quanticol.moonlight.xtext.moonLightScript.TypeDefinition
 import eu.quanticol.moonlight.xtext.moonLightScript.SemiringExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.TropicalSemiring
 import eu.quanticol.moonlight.xtext.moonLightScript.MinMaxSemiring
 import eu.quanticol.moonlight.xtext.moonLightScript.BooleanSemiring
-import eu.quanticol.moonlight.xtext.moonLightScript.PairSemiring
 import eu.quanticol.moonlight.xtext.moonLightScript.StrelFormula
 import eu.quanticol.moonlight.xtext.moonLightScript.StrelOrFormula
 
@@ -25,12 +23,19 @@ class ScriptToJava {
 		import eu.quanticol.moonlight.monitoring.spatiotemporal.*;
 		import eu.quanticol.moonlight.signal.*;
 		import eu.quanticol.moonlight.util.*;
+		import eu.quanticol.moonlight.*;
+		import eu.quanticol.moonlight.formula.*;
 		import java.util.function.Function;
 		import java.util.HashSet;
 		import java.util.HashMap;
 		
 		
 		public class «className» extends MoonLightScript {			
+			
+			
+			«FOR m: model.elements.filter(typeof(Monitor))»
+			private final SignalDomain<«m.semiring.javaTypeOf»> «m.name.domainVariable» = new «m.semiring.domainOf»();
+			«ENDFOR»
 			
 			«FOR m: model.elements.filter(typeof(Monitor))»
 			«m.formula.generateGenerateFormulaBuilderDeclaration("MAIN",m)»
@@ -66,19 +71,19 @@ class ScriptToJava {
 			}
 		
 			@Override
-			protected TemporalScriptComponent<?> selectTemporalComponent( String name ) {
+			public TemporalScriptComponent<?> selectTemporalComponent( String name ) {
 				return null;	
 			}				
 
-			protected SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+			public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
 				return null;	
 			}
 
-			protected TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
+			public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
 				return null;	
 			}
 				
-			protected SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+			public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
 				return null;	
 			}
 		
@@ -87,6 +92,10 @@ class ScriptToJava {
 		'''
 		
 		
+	}
+	
+	def getDomainVariable(String name) {
+		'''_domain_«name»'''
 	}
 
 	def  generateGenerateFormulaBuilderDeclaration(StrelFormula f, String name, Monitor monitor) {
@@ -108,19 +117,29 @@ class ScriptToJava {
 	
 	def CharSequence javaTypeOf(SemiringExpression e) {
 		switch e {
-		TropicalSemiring: '''Double'''
+//		TropicalSemiring: '''Double'''
 		MinMaxSemiring: '''Double'''
 		BooleanSemiring: '''Boolean'''
-		PairSemiring: '''Pair<«e.left.javaTypeOf»,«e.right.javaTypeOf»>'''
+//		PairSemiring: '''Pair<«e.left.javaTypeOf»,«e.right.javaTypeOf»>'''
+		default: '''?'''			
+		}
+	}
+
+	def CharSequence domainOf(SemiringExpression e) {
+		switch e {
+//		TropicalSemiring: '''Double'''
+		MinMaxSemiring: '''DoubleDomain'''
+		BooleanSemiring: '''BooleanDomain'''
+//		PairSemiring: '''Pair<«e.left.javaTypeOf»,«e.right.javaTypeOf»>'''
 		default: '''?'''			
 		}
 	}
 	
-	def dispatch CharSequence monitorCode(StrelFormula f, String prefix, String domain) {
+	def dispatch CharSequence temporalMonitorCode(StrelFormula f, String prefix, String domain) {
 		'''null'''
 	} 
 	
-	def dispatch CharSequence monitorCode(StrelOrFormula f, String prefix, String domain) {
+	def dispatch CharSequence temporalMonitorCode(StrelOrFormula f, String prefix, String domain) {
 		'''
 		null
 		'''

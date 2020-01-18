@@ -55,30 +55,30 @@ public class TemporalMonitoring<T,R> implements
 	public TemporalMonitor<T,R> visit(AndFormula andFormula, Parameters parameters) {
 		TemporalMonitor<T,R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
 		TemporalMonitor<T,R>  rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
-		return TemporalMonitor.andMonitor(leftMonitoring, module::conjunction , rightMonitoring);
+		return TemporalMonitor.andMonitor(leftMonitoring, module , rightMonitoring);
 	}
 
 	@Override
 	public TemporalMonitor<T,R> visit(NegationFormula negationFormula, Parameters parameters) {
 		TemporalMonitor<T,R> argumentMonitoring = negationFormula.getArgument().accept(this, parameters);
-		return TemporalMonitor.notMonitor(argumentMonitoring, module::negation);
+		return TemporalMonitor.notMonitor(argumentMonitoring, module );
 	}
 
 	@Override
 	public TemporalMonitor<T,R> visit(OrFormula orFormula, Parameters parameters) {
 		TemporalMonitor<T,R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
 		TemporalMonitor<T,R>  rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
-		return TemporalMonitor.andMonitor(leftMonitoring, module::disjunction , rightMonitoring);
+		return TemporalMonitor.andMonitor(leftMonitoring, module , rightMonitoring);
 	}
 
 	@Override
 	public TemporalMonitor<T,R> visit(EventuallyFormula eventuallyFormula, Parameters parameters) {
 		TemporalMonitor<T,R> argumentMonitoring = eventuallyFormula.getArgument().accept(this, parameters);		
 		if (eventuallyFormula.isUnbounded()) {
-			return TemporalMonitor.eventuallyMonitor(argumentMonitoring, module::disjunction, module.min()); 
+			return TemporalMonitor.eventuallyMonitor(argumentMonitoring, module); 
 		} else {
 			Interval interval = eventuallyFormula.getInterval();
-			return TemporalMonitor.eventuallyMonitor(argumentMonitoring, module::disjunction, module.min(), interval); 
+			return TemporalMonitor.eventuallyMonitor(argumentMonitoring, module, interval); 
 		}
 	}
 
@@ -86,10 +86,10 @@ public class TemporalMonitoring<T,R> implements
 	public TemporalMonitor<T,R> visit(GloballyFormula globallyFormula, Parameters parameters) {
 		TemporalMonitor<T,R> argumentMonitoring = globallyFormula.getArgument().accept(this, parameters);		
 		if (globallyFormula.isUnbounded()) {
-			return TemporalMonitor.globallyMonitor(argumentMonitoring, module::conjunction, module.max()); 
+			return TemporalMonitor.globallyMonitor(argumentMonitoring, module); 
 		} else {
 			Interval interval = globallyFormula.getInterval();
-			return TemporalMonitor.globallyMonitor(argumentMonitoring, module::conjunction, module.max(), interval); 
+			return TemporalMonitor.globallyMonitor(argumentMonitoring, module, interval); 
 		}
 	}
 
@@ -123,10 +123,10 @@ public class TemporalMonitoring<T,R> implements
 	public TemporalMonitor<T,R> visit(HystoricallyFormula hystoricallyFormula, Parameters parameters) {
 		TemporalMonitor<T,R> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
 		if (hystoricallyFormula.isUnbounded()) {
-			return TemporalMonitor.hystoricallyMonitor(argumentMonitoring, module::conjunction, module.max());
+			return TemporalMonitor.hystoricallyMonitor(argumentMonitoring, module);
 		} else {
 			Interval interval = hystoricallyFormula.getInterval();
-			return TemporalMonitor.hystoricallyMonitor(argumentMonitoring, module::conjunction, module.max(), hystoricallyFormula.getInterval());
+			return TemporalMonitor.hystoricallyMonitor(argumentMonitoring, module, hystoricallyFormula.getInterval());
 		}
 	}
 
@@ -134,10 +134,10 @@ public class TemporalMonitoring<T,R> implements
 	public TemporalMonitor<T,R> visit(OnceFormula onceFormula, Parameters parameters) {
 		TemporalMonitor<T,R> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
 		if (onceFormula.isUnbounded()) {
-			return TemporalMonitor.onceMonitor(argumentMonitoring, module::disjunction, module.min());
+			return TemporalMonitor.onceMonitor(argumentMonitoring, module);
 		} else {
 			Interval interval = onceFormula.getInterval();
-			return TemporalMonitor.onceMonitor(argumentMonitoring, module::disjunction, module.min(), interval);
+			return TemporalMonitor.onceMonitor(argumentMonitoring, module, interval);
 		}
 	}
 
