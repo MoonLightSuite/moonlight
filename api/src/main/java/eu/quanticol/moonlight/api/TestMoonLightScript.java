@@ -23,7 +23,7 @@ public class TestMoonLightScript extends MoonLightScript {
     private TemporalMonitor<Record, Double> atomicTemporal = TemporalMonitor.atomicMonitor(r -> r.get(0, Double.class) - 10);
 
     private Function<Record, TemporalMonitor<Record, Double>> temporalBuilder = r ->
-            TemporalMonitor.globallyMonitor(atomicTemporal, domain::conjunction, domain.max());
+            TemporalMonitor.globallyMonitor(atomicTemporal, domain );
 
     private TemporalScriptComponent<?> temporalMonitor = new TemporalScriptComponent<Double>(TEMPORAL[0],
             new RecordHandler(DataHandler.REAL, DataHandler.REAL),
