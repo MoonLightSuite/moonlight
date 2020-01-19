@@ -16,17 +16,14 @@ class MatlabTest {
         TestMoonLightScript testMoonLightScript = new TestMoonLightScript();
         TemporalScriptComponent<?> temporalScriptComponent = testMoonLightScript.selectDefaultTemporalComponent();
         TemporalMonitor<Record, ?> monitor = temporalScriptComponent.getMonitor(new Object());
-        double[] times = IntStream.range(0, 10).mapToDouble(s -> s).toArray();
-        RecordHandler recordHandler = testMoonLightScript.getRecordHandler();
-
-        Signal signal = new Signal();
-        Object[][] traj = new Object[times.length][3];
-        for (int i = 0; i < traj.length; i++) {
-            signal.add(times[i], recordHandler.fromObject(times[i] * 2, times[i] * 2));
+        double[] times = IntStream.range(0, 10).mapToDouble(s ->s).toArray();
+        Object[][] array = new Object[times.length][2];
+        for (int i = 0; i < array.length; i++) {
+            array[i][0]=times[i];
+            array[i][1]=times[i];
         }
-        Signal monitor1 = monitor.monitor(signal);
+        Object[][] objects = temporalScriptComponent.monitorToObjectArray(times, array);
         System.out.println();
-
     }
 
 
