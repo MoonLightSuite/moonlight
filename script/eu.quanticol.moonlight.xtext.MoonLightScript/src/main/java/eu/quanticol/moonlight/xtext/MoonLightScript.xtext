@@ -7,102 +7,99 @@ Model: {Model}
 
 Element:
 	Monitor	|
-	TypeDefinition | 
-	FunctionDefinition | 
-	SemiringDefinition |
-	DistanceDomainDefinition 
+	TypeDefinition //| 
+//	FunctionDefinition | 
+//	SemiringDefinition 
+//	|
+//	DistanceDomainDefinition 
 ;
 
-ParamDefinition:
-	'param' type=BasicType name=ID ';'
-;
+//DistanceDomainDefinition:
+//	'distance' name=ID '{' 
+//		'type' type=BasicType ';' 
+//		'zero' min=Expression ';' 
+//		'sum' sum=DomainOperator ';' 
+//		'order' order=RelationOperator ';'
+//	'}'
+//;
 
-DistanceDomainDefinition:
-	'distance' name=ID '{' 
-		'type' type=BasicType ';' 
-		'zero' min=Expression ';' 
-		'sum' sum=DomainOperator ';' 
-		'order' order=RelationOperator ';'
-	'}'
-;
+//SemiringDefinition:
+//	'semiring' name=ID '{' 
+//		'type' type=BasicType ';' 
+//		'bottom'  bottom=Expression  ';' 
+//		'top' top=Expression ';' 
+//		'choice' choice=[DomainOperator] ';' 
+//		'combine' combine=[FunctionDefinition] ';'
+//		'negation' negation=[FunctionDefinition] 
+//	'}' 
+//;
 
-SemiringDefinition:
-	'semiring' name=ID '{' 
-		'type' type=BasicType ';' 
-		'bottom'  bottom=Expression  ';' 
-		'top' top=Expression ';' 
-		'choice' choice=[DomainOperator] ';' 
-		'combine' combine=[FunctionDefinition] ';'
-		'negation' negation=[FunctionDefinition] 
-	'}' 
-;
+//DomainOperator: 
+//	{PlusOperator} '+'
+//	| {MinusOperator} '-'
+//	| {MultiplicationOperator} '*'
+//	| {MinOpertor} 'min'
+//	| {MaxOperator} 'max'
+//	| {NegationOperator} '!'
+//	| {CongiunctionOperator} '&'
+//	| {DisjunctionOperator} '|'
+//	| {CustomOperator} function=[FunctionDefinition]
+//;
+//
+//RelationOperator: 
+//	{LessRelation} '<'
+//	| {LessOrEqualRelation} '<='
+//	| {EqualRelation} '=='
+//	| {GreaterRelation} '>'
+//	| {GreaterOrEqualRelation} '>='
+//	| {CustomRelation} function=[FunctionDefinition]
+//;
 
-DomainOperator: 
-	{PlusOperator} '+'
-	| {MinusOperator} '-'
-	| {MultiplicationOperator} '*'
-	| {MinOpertor} 'min'
-	| {MaxOperator} 'max'
-	| {NegationOperator} '!'
-	| {CongiunctionOperator} '&'
-	| {DisjunctionOperator} '|'
-	| {CustomOperator} function=[FunctionDefinition]
-;
-
-RelationOperator: 
-	{LessRelation} '<'
-	| {LessOrEqualRelation} '<='
-	| {EqualRelation} '=='
-	| {GreaterRelation} '>'
-	| {GreaterOrEqualRelation} '>='
-	| {CustomRelation} function=[FunctionDefinition]
-;
-
-FunctionDefinition:
-	'function' name=ID '(' (args+=VariableDeclaration (',' args+=VariableDeclaration)*)? ')' body=FunctionCommandBlock
-;
-
-FunctionCommand:
-	IfThenElseCommand
-	| VariableDeclarationStatement
-	| VariableAssignment
-	| ReturnStatement
-	| MatchCommand
-;
-
-MatchCommand:
-	'match' value=Expression 'with' cases += MatchCase ('|' cases += MatchCase)*
-;
-
-MatchCase:
-	'case' value=Expression caseBlock=FunctionCommandBlock
-;
-
-ReturnStatement:
-	'return' value=Expression ';'
-;
-
-VariableAssignment:
-	variable=[VariableDeclaration] '=' value=Expression ';'
-;
-
-VariableDeclarationStatement:
-	VariableDeclaration ('=' value=Expression) ';'
-;
+//FunctionDefinition:
+//	'function' name=ID '(' (args+=VariableDeclaration (',' args+=VariableDeclaration)*)? ')' body=FunctionCommandBlock
+//;
+//
+//FunctionCommand:
+//	IfThenElseCommand
+//	| VariableDeclarationStatement
+//	| VariableAssignment
+//	| ReturnStatement
+//	| MatchCommand
+//;
+//
+//MatchCommand:
+//	'match' value=Expression 'with' cases += MatchCase ('|' cases += MatchCase)*
+//;
+//
+//MatchCase:
+//	'case' value=Expression caseBlock=FunctionCommandBlock
+//;
+//
+//ReturnStatement:
+//	'return' value=Expression ';'
+//;
+//
+//VariableAssignment:
+//	variable=[VariableDeclaration] '=' value=Expression ';'
+//;
+//
+//VariableDeclarationStatement:
+//	VariableDeclaration ('=' value=Expression) ';'
+//;
 
 VariableDeclaration: 
 	type=BasicType name=ID
 ;
 
-IfThenElseCommand:
-	'if' '(' guard=Expression ')' thenBlock=FunctionCommandBlock elseBlock=FunctionCommandBlock
-;
-
-FunctionCommandBlock: {FunctionCommandBlock}
-	'{'
-		(commands += FunctionCommand)*
-	'}'
-;
+//IfThenElseCommand:
+//	'if' '(' guard=Expression ')' thenBlock=FunctionCommandBlock elseBlock=FunctionCommandBlock
+//;
+//
+//FunctionCommandBlock: {FunctionCommandBlock}
+//	'{'
+//		(commands += FunctionCommand)*
+//	'}'
+//;
 
 TypeDefinition:
 	'type' name=ID '=' elements += TypeElement ('|' elements += TypeElement )* ';'
@@ -111,6 +108,7 @@ TypeDefinition:
 TypeElement:
 	name=ID
 ;
+
 
 Monitor:
 	'monitor' name=ID ('(' parameters += VariableDeclaration ( ',' parameters += VariableDeclaration)* ')')? '{'
@@ -178,20 +176,20 @@ MulOrDivExpression returns Expression:
 ;
 
 ReferenceableElement:
-	SignalVariable|TypeElement
+	VariableDeclaration//|TypeElement
 ;
 
 BasicExpression returns Expression:
 	{TrueLiteral} 'true'
 	| {FalseLiteral} 'false'
-	| {NumberLiteral} integerPart=INT ('.' decimalPart=INT)?
+	| {NumberLiteral} integerPart=INT (isDecimal ?= '.' decimalPart=INT)?
 	| {NotExpression} '!' argument=BasicExpression
 	| {UnaryPlusExpression} '+' argument=BasicExpression
 	| {UnaryMinusExpression} '-' argument=BasicExpression
 	| {InfiniteLiteral} 'INF'
 	| '(' Expression ({IfThenElseExpression.guard=current} '?' thenCase=BasicExpression ':' elseCase=BasicExpression)? ')'
-	| {ReferencedValue} reference=[ReferenceableElement]
-	| {TupleExpression} '<' elements += BasicExpression (',' elements += BasicExpression)+ '>'
+	| {ReferencedValue} reference=[VariableDeclaration]
+//	| {TupleExpression} '<' elements += BasicExpression (',' elements += BasicExpression)+ '>'
 ;
 
 StrelFormula:
@@ -208,9 +206,10 @@ StrelAndFormula returns StrelFormula:
 
 StrelBinarySpatioTemporalFormula returns StrelFormula:
 	StrelBasicFormula (
-		{StrelUntilFormula.left=current} 'until' internal=Interval right=StrelBasicFormula
-		| {StrelSinceFormula.left=current} 'since' internal=Interval right=StrelBasicFormula
-		| {StrelReachFormula.left=current} 'reach' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? internal=Interval right=StrelBasicFormula
+		{StrelUntilFormula.left=current} 'until' (interval=Interval)? right=StrelBasicFormula
+		| {StrelSinceFormula.left=current} 'since' (interval=Interval)? right=StrelBasicFormula
+//		| {StrelReachFormula.left=current} 'reach' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? internal=Interval right=StrelBasicFormula
+		| {StrelReachFormula.left=current} 'reach' ('(' distanceExpression=Expression ')')? interval=Interval right=StrelBasicFormula
 	)?
 ;
 
@@ -219,16 +218,22 @@ Interval:
 ;
 
 StrelBasicFormula returns StrelFormula:
-	{AtomicFormula} '#[' atomic=Expression ']#'
-	| {EscapeFormula} 'escape' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
-	| {EventuallyFormula} 'eventually' interval=Interval argument=StrelBasicFormula
-	| {AlwaysFormula} 'globally' interval=Interval argument=StrelBasicFormula
-	| {NotFormula} '!' argument=StrelBasicFormula
-	| {SomewhereFormula} 'somewhere' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
-	| {EverywhereFormula} 'everywhere' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula	
-	| {NextFormula} 'next' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+	{StrelAtomicFormula} '#[' atomic=Expression ']#'
+//	| {StrelEscapeFormula} 'escape' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+	| {StrelEscapeFormula} 'escape' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+	| {StrelEventuallyFormula} 'eventually' (interval=Interval)? argument=StrelBasicFormula
+	| {StrelAlwaysFormula} 'globally' (interval=Interval)? argument=StrelBasicFormula
+	| {StrelOnceFormula} 'once' (interval=Interval)? argument=StrelBasicFormula
+	| {StrelHistoricallyFormula} 'historically' (interval=Interval)? argument=StrelBasicFormula
+	| {StrelNotFormula} '!' argument=StrelBasicFormula
+//	| {StrelSomewhereFormula} 'somewhere' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+	| {StrelSomewhereFormula} 'somewhere' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+//	| {StrelEverywhereFormula} 'everywhere' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula	
+	| {StrelEverywhereFormula} 'everywhere' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula	
+//	| {StrelNextFormula} 'next' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
+	| {StrelNextFormula} 'next' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
 	| '{' StrelFormula '}'
-	| {FormulaReference} reference=[FormulaDeclaration]
+	| {StrelFormulaReference} reference=[FormulaDeclaration]
 ;
 
 

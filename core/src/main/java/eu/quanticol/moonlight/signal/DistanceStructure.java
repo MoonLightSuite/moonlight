@@ -4,6 +4,7 @@
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.formula.DistanceDomain;
+import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Triple;
@@ -338,5 +339,7 @@ public class DistanceStructure<T, A> {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-
+    public static <T> DistanceStructure<T, Double> buildDistanceStructure( SpatialModel<T> model , Function<T,Double> distance , double lowerBound, double upperBound) {
+    	return new DistanceStructure<T, Double>(distance, new DoubleDistance(), upperBound, upperBound, model);
+    }
 }
