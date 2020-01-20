@@ -7,7 +7,7 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.xtext.generator.ScriptLoader;
+import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 class TestScriptLoader {
 
