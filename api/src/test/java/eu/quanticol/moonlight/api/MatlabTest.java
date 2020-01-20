@@ -1,12 +1,15 @@
 package eu.quanticol.moonlight.api;
 
+import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.xtext.ScriptLoader;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
 import java.util.stream.IntStream;
 
 class MatlabTest {
@@ -26,5 +29,15 @@ class MatlabTest {
 //        System.out.println();
     }
 
+    @Test
+    void name2() {
+        Matlab.loadFromFile("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\testscript.mls");
+        System.out.println();
+    }
 
+    @Test
+    void name3() throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        MoonLightScript cityMonitor = Matlab.loadJavaClass("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\CityMonitor.java");
+        System.out.println();
+    }
 }

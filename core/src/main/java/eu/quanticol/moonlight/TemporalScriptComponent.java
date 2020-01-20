@@ -51,7 +51,7 @@ public class TemporalScriptComponent<S> {
     }
 
     public TemporalMonitor<Record, S> getMonitor(Object... values) {
-        if (this.parameters != null) {
+        if (this.parameters != null && this.parameters.size() > 0) {
             return builder.apply(parameters.fromObject(values));
         } else {
             return builder.apply(null);

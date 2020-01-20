@@ -45,4 +45,12 @@ class TestScriptLoader {
 		assertNotNull(script);
 	}
 
+	@Test
+	void name() {
+		ScriptLoader loader = new ScriptLoader();
+		MoonLightScript script = loader.loadFile("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\testscript.mls");
+		System.out.println();
+
+
+	}
 }
