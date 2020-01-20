@@ -29,15 +29,15 @@ class MatlabTest {
 //        System.out.println();
     }
 
-    @Test
-    void name2() {
-        Matlab.loadFromFile("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\testscript.mls");
-        System.out.println();
-    }
-
-    @Test
-    void name3() throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        MoonLightScript cityMonitor = Matlab.loadJavaClass("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\CityMonitor.java");
-        System.out.println();
-    }
+//    @Test
+//    void name2() {
+//        Matlab.loadFromFile("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\testscript.mls");
+//        System.out.println();
+//    }
+//
+//    @Test
+//    void name3() throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+//        MoonLightScript cityMonitor = Matlab.loadJavaClass("C:\\Users\\Simone\\Documents\\git\\MoonLight\\api_resources\\CityMonitor.java");
+//        System.out.println();
+//    }
 }
