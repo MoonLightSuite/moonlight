@@ -1,6 +1,7 @@
 classdef MoonlightEngine
     properties
         Script
+        SignalType
     end
     methods
         function result = temporalMonitor(self, time, values, parameters)
@@ -17,9 +18,7 @@ classdef MoonlightEngine
                 parameters = java.lang.Object();
             end
             spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
-            s = size(values);
-            locations =s(2);
-            result=spatioTemporalMonitor.monitorToObjectArray(self.toJavaGraphModel(graph,locations),time,self.toJavaSignal(values),parameters);
+            result=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
         end
         function result = getTemporalMonitors(self)
             result = self.Script.getTemporalMonitors();
@@ -43,10 +42,10 @@ classdef MoonlightEngine
     methods (Access = private)
         function objectVector = toJavaObjectMatrix(~,signal)
             signalSize=size(signal);
-            objectVector = javaArray('java.lang.Object',signalSize);
+            objectVector = javaArray('java.lang.String',signalSize);
             for i = 1:signalSize(1)
                 for j = 1:signalSize(2)
-                    objectVector(i,j)=java.lang.Double(signal(i,j));
+                    objectVector(i,j)=java.lang.String(num2str(signal(i,j)));
                 end
             end
         end
@@ -68,14 +67,15 @@ classdef MoonlightEngine
             end
         end
         function javaSignal = toJavaSignal(~,signal)
-            javaSignalLength = length(signal);
-            locationsLength = length(signal{1});
-            javaSignalWidth =  length(signal{1,1});
-            javaSignal = javaArray('java.lang.Object',javaSignalLength,locationsLength,javaSignalWidth);
-            for i = 1: length(signal)
-                for j = 1:length(locationsLength)
+            javaLocationsLength = length(signal);
+            s = size(signal{1});
+            javaTimeLength= s(1);
+            javaSignalWidth= s(2);
+            javaSignal = javaArray('java.lang.String',javaLocationsLength,javaTimeLength,javaSignalWidth);
+            for i = 1: javaLocationsLength
+                for j = 1:javaTimeLength
                     for k = 1:javaSignalWidth
-                        javaSignal(i,j,k)= java.lang.Double(signal{i,j}(k));
+                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)));
                     end
                 end
             end

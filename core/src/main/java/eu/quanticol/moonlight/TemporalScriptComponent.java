@@ -67,7 +67,7 @@ public class TemporalScriptComponent<S> {
         return monitor(input, values).toObjectArray();
     }
 
-    public Object[][] monitorToObjectArray(double[] time, Object[][] signal, Object... values) {
+    public Object[][] monitorToObjectArray(double[] time, String[][] signal, Object... values) {
         return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
@@ -84,4 +84,9 @@ public class TemporalScriptComponent<S> {
         //TODO: Complete!
         return this.toString();
     }
+
+    public String[] getVariables() {
+        return signalRecordHandler.getVariables();
+    }
+
 }
