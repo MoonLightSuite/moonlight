@@ -1,14 +1,17 @@
 package eu.quanticol.moonlight.api;
 
-import eu.quanticol.moonlight.xtext.moonLightScript.Model;
+import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 public class Matlab {
 
-//    public static Model load(String scriptPath) throws Exception {
-////        MoonLightScript.parse
-////
-////        selectDefaultTemporalComponent( )
-////        ParseHelper<Model> parseHelper = new ParseHelper<>();
-////        return parseHelper.parse(scriptPath);
-//    }
+    public static MoonLightScript loadFromFile(String filePath) {
+        return new ScriptLoader().loadFile(filePath);
+    }
+
+    public static MoonLightScript compileScript(String fileContent) {
+        return new ScriptLoader().compileScript(fileContent);
+    }
+
+
 }
