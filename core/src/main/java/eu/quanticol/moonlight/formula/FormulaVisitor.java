@@ -45,8 +45,8 @@ public interface FormulaVisitor<T,R> {
 		throw generateException(sinceFormula.getClass());
 	}
 
-	default R visit(HistoricallyFormula hystoricallyFormula, T parameters) {
-		throw generateException(hystoricallyFormula.getClass());
+	default R visit(HistoricallyFormula historicallyFormula, T parameters) {
+		throw generateException(historicallyFormula.getClass());
 	}
 
 	default R visit(OnceFormula onceFormula, T parameters) {

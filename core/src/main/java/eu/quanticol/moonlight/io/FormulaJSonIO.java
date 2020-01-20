@@ -150,17 +150,17 @@ public class FormulaJSonIO {
 		}
 
 		@Override
-		public JsonElement visit(HistoricallyFormula hystoricallyFormula, JsonSerializationContext parameters) {
+		public JsonElement visit(HistoricallyFormula historicallyFormula, JsonSerializationContext parameters) {
 			JsonObject o = new JsonObject();
-			o.addProperty(TYPE_KEY, FormulaType.HYSTORICALLY.name());
-			if (hystoricallyFormula.isUnbounded()) {
+			o.addProperty(TYPE_KEY, FormulaType.HISTORICALLY.name());
+			if (historicallyFormula.isUnbounded()) {
 				o.addProperty(UNBOUNDED_KEY, true);
 			} else {
-				Interval i = hystoricallyFormula.getInterval();
+				Interval i = historicallyFormula.getInterval();
 				o.addProperty(LOWER_KEY, i.getStart());
 				o.addProperty(UPPER_KEY, i.getEnd());
 			}
-			o.add(ARGUMENT, hystoricallyFormula.getArgument().accept(this, parameters));
+			o.add(ARGUMENT, historicallyFormula.getArgument().accept(this, parameters));
 			return o;
 		}
 
@@ -240,7 +240,7 @@ public class FormulaJSonIO {
 				} else {
 					return new SinceFormula(first, second, new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble()));
 				}
-			case HYSTORICALLY:
+			case HISTORICALLY:
 				if (json.has(UNBOUNDED_KEY)) {
 					return new HistoricallyFormula(deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context));					
 				} else {

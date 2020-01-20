@@ -176,16 +176,16 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
     }
 
     /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HystoricallyFormula, java.lang.Object)
+     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HistoricallyFormula, java.lang.Object)
      */
     @Override
     public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
-            HistoricallyFormula hystoricallyFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
-        if (hystoricallyFormula.isUnbounded()) {
+            HistoricallyFormula historicallyFormula, Parameters parameters) {
+        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+        if (historicallyFormula.isUnbounded()) {
             return (l, s) -> argumentMonitoring.apply(l, s).applyToSignal(x -> x.iterateForward(module::conjunction, module.min()));
         } else {
-            Interval interval = hystoricallyFormula.getInterval();
+            Interval interval = historicallyFormula.getInterval();
             return (l, s) -> argumentMonitoring.apply(l, s).applyToSignal(x -> TemporalMonitoringOld.temporalMonitoring(x, module::conjunction, interval, false));
         }
     }

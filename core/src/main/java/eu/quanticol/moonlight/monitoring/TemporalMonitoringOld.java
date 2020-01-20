@@ -188,12 +188,12 @@ public class TemporalMonitoringOld<T,R> implements
 	}
 
 	@Override
-	public Function<Signal<T>, Signal<R>> visit(HistoricallyFormula hystoricallyFormula, Parameters parameters) {
-		Function<Signal<T>,Signal<R>> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
-		if (hystoricallyFormula.isUnbounded()) {
+	public Function<Signal<T>, Signal<R>> visit(HistoricallyFormula historicallyFormula, Parameters parameters) {
+		Function<Signal<T>,Signal<R>> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+		if (historicallyFormula.isUnbounded()) {
 			return s -> argumentMonitoring.apply(s).iterateForward( module::conjunction , module.min() ); 
 		} else {
-			Interval interval = hystoricallyFormula.getInterval();
+			Interval interval = historicallyFormula.getInterval();
 			return s -> TemporalMonitoringOld.temporalMonitoring(argumentMonitoring.apply(s), module::conjunction, interval,false);
 		}
 	}

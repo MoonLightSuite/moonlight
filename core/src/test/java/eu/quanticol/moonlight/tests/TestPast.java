@@ -38,7 +38,7 @@ class TestPast {
     void testHistorically() throws IllegalFileFormat {
         //FORMULA: !H_[0,500]!(a>=0)
         Formula a = new AtomicFormula("a");
-        Formula hystoricallyFormula = new HistoricallyFormula(a, new Interval(0, 500));
+        Formula historicallyFormula = new HistoricallyFormula(a, new Interval(0, 500));
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
@@ -54,7 +54,7 @@ class TestPast {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(hystoricallyFormula, null);
+            TemporalMonitor<Record, Double> m = monitoring.monitor(historicallyFormula, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Record> expected = signal.getIterator(true);
