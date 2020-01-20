@@ -1,5 +1,6 @@
 clear
-myFiles = dir(fullfile("..\output\","*.jar"));
+fileLocation = ".."+filesep+"output"+filesep;
+myFiles = dir(fullfile(fileLocation,"*.jar"));
 for k = 1:length(myFiles)
-    javarmpath("..\output\"+ myFiles(k).name)
+    javarmpath(fileLocation+ myFiles(k).name)
 end

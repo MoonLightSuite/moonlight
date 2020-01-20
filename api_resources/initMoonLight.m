@@ -1,5 +1,6 @@
 addpath(genpath("."));
-myFiles = dir(fullfile("..\output\","*.jar"));
+fileLocation = ".."+filesep+"output"+filesep;
+myFiles = dir(fullfile(fileLocation,"*.jar"));
 for k = 1:length(myFiles)
-    javaaddpath("..\output\"+ myFiles(k).name)
+    javaaddpath(fileLocation+ myFiles(k).name)
 end
