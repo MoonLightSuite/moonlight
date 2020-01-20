@@ -38,7 +38,7 @@ class TestPast {
     void testHistorically() throws IllegalFileFormat {
         //FORMULA: !H_[0,500]!(a>=0)
         Formula a = new AtomicFormula("a");
-        Formula hystoricallyFormula = new HystoricallyFormula(a, new Interval(0, 500));
+        Formula hystoricallyFormula = new HistoricallyFormula(a, new Interval(0, 500));
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
@@ -138,7 +138,7 @@ class TestPast {
     @Test
     void testHistorically2() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
-        Formula historically = new HystoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
+        Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);

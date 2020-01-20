@@ -77,12 +77,12 @@ public interface SpatioTemporalMonitor<E,S,T> {
 		return onceMonitor(m,null,domain);
 	}
 
-	public static <E,S,T> SpatioTemporalMonitor<E,S,T> hystoricallyMonitor( SpatioTemporalMonitor<E,S,T> m , Interval interval , SignalDomain<T> domain ) {
+	public static <E,S,T> SpatioTemporalMonitor<E,S,T> historicallyMonitor( SpatioTemporalMonitor<E,S,T> m , Interval interval , SignalDomain<T> domain ) {
 		return new SpatioTemporalMonitorPastOperator<E,S,T>(m,interval,domain::conjunction,domain.max()); 
 	}
 
-	public static <E,S,T> SpatioTemporalMonitor<E,S,T> hystoricallyMonitor( SpatioTemporalMonitor<E,S,T> m , SignalDomain<T> domain ) {
-		return hystoricallyMonitor(m,null,domain);
+	public static <E,S,T> SpatioTemporalMonitor<E,S,T> historicallyMonitor( SpatioTemporalMonitor<E,S,T> m , SignalDomain<T> domain ) {
+		return historicallyMonitor(m,null,domain);
 	}
 	
 	public static <E,S,T> SpatioTemporalMonitor<E,S,T> somewhereMonitor( SpatioTemporalMonitor<E,S,T> m , Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SignalDomain<T> domain ) {

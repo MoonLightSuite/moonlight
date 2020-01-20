@@ -88,6 +88,30 @@ class TestCompiler {
 				domain boolean;
 				formula somewhere [0.0, 1.0] #[ taxi ]#;
 			}
+
+			monitor City3 {
+				signal { bool taxi; int peole; }
+				domain boolean;
+				formula globally [0.0, 1.0] #[ taxi ]#;
+			}
+
+			monitor City4 {
+				signal { bool taxi; int peole; }
+				domain boolean;
+				formula eventually [0.0, 1.0] #[ taxi ]#;
+			}
+			
+			monitor City5 {
+				signal { bool taxi; int peole; }
+				domain boolean;
+				formula historically [0.0, 1.0] #[ taxi ]#;
+			}
+
+			monitor City6 {
+				signal { bool taxi; int peole; }
+				domain boolean;
+				formula once [0.0, 1.0] #[ taxi ]#;
+			}
 			
 		''')
 		val scriptToJava = new ScriptToJava();		

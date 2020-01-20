@@ -371,7 +371,7 @@ class ScriptToJava {
 		TemporalMonitor.eventuallyMonitor( 
 			«f.argument.temporalMonitorCode(prefix,domain)»,
 			«domain»«IF f.interval !== null»
-			new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+			, new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»)
 			«ENDIF»
 		)
 		'''		
@@ -382,7 +382,7 @@ class ScriptToJava {
 		TemporalMonitor.globallyMonitor( 
 			«f.argument.temporalMonitorCode(prefix,domain)»,
 			«domain»«IF f.interval !== null»
-			new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+			, new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»)
 			«ENDIF»
 		)
 		'''		
@@ -393,7 +393,7 @@ class ScriptToJava {
 		TemporalMonitor.historicallyMonitor( 
 			«f.argument.temporalMonitorCode(prefix,domain)»,
 			«domain»«IF f.interval !== null»
-			new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+			, new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»)
 			«ENDIF»
 		)
 		'''		
@@ -404,7 +404,7 @@ class ScriptToJava {
 		TemporalMonitor.onceMonitor( 
 			«f.argument.temporalMonitorCode(prefix,domain)»,
 			«domain»«IF f.interval !== null»
-			new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+			, new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»)
 			«ENDIF»
 		)
 		'''		

@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
-import eu.quanticol.moonlight.formula.HystoricallyFormula;
+import eu.quanticol.moonlight.formula.HistoricallyFormula;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
@@ -72,7 +72,7 @@ public class FormulaToBreach implements FormulaVisitor<String,String> {
 	}
 
 	@Override
-	public String visit(HystoricallyFormula hystoricallyFormula, String parameters) {
+	public String visit(HistoricallyFormula hystoricallyFormula, String parameters) {
 		throw new IllegalArgumentException("Past formulas are not compatible with Breach!");
 	}
 

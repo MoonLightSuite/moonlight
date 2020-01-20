@@ -20,7 +20,7 @@ import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
-import eu.quanticol.moonlight.formula.HystoricallyFormula;
+import eu.quanticol.moonlight.formula.HistoricallyFormula;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
@@ -150,7 +150,7 @@ public class FormulaJSonIO {
 		}
 
 		@Override
-		public JsonElement visit(HystoricallyFormula hystoricallyFormula, JsonSerializationContext parameters) {
+		public JsonElement visit(HistoricallyFormula hystoricallyFormula, JsonSerializationContext parameters) {
 			JsonObject o = new JsonObject();
 			o.addProperty(TYPE_KEY, FormulaType.HYSTORICALLY.name());
 			if (hystoricallyFormula.isUnbounded()) {
@@ -242,9 +242,9 @@ public class FormulaJSonIO {
 				}
 			case HYSTORICALLY:
 				if (json.has(UNBOUNDED_KEY)) {
-					return new HystoricallyFormula(deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context));					
+					return new HistoricallyFormula(deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context));					
 				} else {
-					return new HystoricallyFormula(
+					return new HistoricallyFormula(
 							deserializeFormula(json.get(ARGUMENT).getAsJsonObject(), context), 
 							new Interval(json.get(LOWER_KEY).getAsDouble(), json.get(UPPER_KEY).getAsDouble())
 						);					
