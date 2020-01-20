@@ -63,11 +63,11 @@ public abstract class TemporalMonitor<S,T> {
 		return new TemporalMonitorUntil<S,T>(m1, interval, m2, domain);
 	}
 	
-	public static <S,T> TemporalMonitor<S,T> hystoricallyMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain  ) {
+	public static <S,T> TemporalMonitor<S,T> historicallyMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain  ) {
 		return new TemporalMonitorPastOperator<S,T>( m , domain::conjunction, domain.max());
 	}
 
-	public static <S,T> TemporalMonitor<S,T> hystoricallyMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain  , Interval interval ) {
+	public static <S,T> TemporalMonitor<S,T> historicallyMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain  , Interval interval ) {
 		return new TemporalMonitorPastOperator<S,T>( m , domain::conjunction, domain.max(), interval );
 	}
 

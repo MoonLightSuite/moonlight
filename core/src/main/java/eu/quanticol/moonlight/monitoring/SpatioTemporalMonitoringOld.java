@@ -180,7 +180,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      */
     @Override
     public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
-            HystoricallyFormula hystoricallyFormula, Parameters parameters) {
+            HistoricallyFormula hystoricallyFormula, Parameters parameters) {
         BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
         if (hystoricallyFormula.isUnbounded()) {
             return (l, s) -> argumentMonitoring.apply(l, s).applyToSignal(x -> x.iterateForward(module::conjunction, module.min()));

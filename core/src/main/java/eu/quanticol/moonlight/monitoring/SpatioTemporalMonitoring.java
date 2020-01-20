@@ -147,9 +147,9 @@ public class SpatioTemporalMonitoring<V, T, R> implements
      */
     @Override
     public SpatioTemporalMonitor<V,T,R> visit(
-            HystoricallyFormula hystoricallyFormula, Parameters parameters) {
+            HistoricallyFormula hystoricallyFormula, Parameters parameters) {
         SpatioTemporalMonitor<V,T,R> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
-        return SpatioTemporalMonitor.hystoricallyMonitor(argumentMonitoring, hystoricallyFormula.getInterval(),module);
+        return SpatioTemporalMonitor.historicallyMonitor(argumentMonitoring, hystoricallyFormula.getInterval(),module);
     }
 
     /* (non-Javadoc)

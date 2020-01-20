@@ -14,7 +14,7 @@ import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
-import eu.quanticol.moonlight.formula.HystoricallyFormula;
+import eu.quanticol.moonlight.formula.HistoricallyFormula;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
@@ -188,7 +188,7 @@ public class TemporalMonitoringOld<T,R> implements
 	}
 
 	@Override
-	public Function<Signal<T>, Signal<R>> visit(HystoricallyFormula hystoricallyFormula, Parameters parameters) {
+	public Function<Signal<T>, Signal<R>> visit(HistoricallyFormula hystoricallyFormula, Parameters parameters) {
 		Function<Signal<T>,Signal<R>> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
 		if (hystoricallyFormula.isUnbounded()) {
 			return s -> argumentMonitoring.apply(s).iterateForward( module::conjunction , module.min() ); 

@@ -22,17 +22,17 @@ package eu.quanticol.moonlight.formula;
 /**
  *
  */
-public class HystoricallyFormula implements Formula {
+public class HistoricallyFormula implements Formula {
 
     private final Formula argument;
     private Interval interval;
 
-    public HystoricallyFormula(Formula argument, Interval interval) {
+    public HistoricallyFormula(Formula argument, Interval interval) {
         this.argument = argument;
         this.interval = interval;
     }
 
-    public HystoricallyFormula(Formula argument) {
+    public HistoricallyFormula(Formula argument) {
         this(argument, null);
     }
 
@@ -86,7 +86,7 @@ public class HystoricallyFormula implements Formula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        HystoricallyFormula other = (HystoricallyFormula) obj;
+        HistoricallyFormula other = (HistoricallyFormula) obj;
         if (argument == null) {
             if (other.argument != null)
                 return false;

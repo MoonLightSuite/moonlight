@@ -124,9 +124,9 @@ class TestJSon {
         testSerializeDeserialize(a7);
         SinceFormula a8 = new SinceFormula(a1, a1b, new Interval(0, 100));
         testSerializeDeserialize(a8);
-        HystoricallyFormula a9 = new HystoricallyFormula(a1);
+        HistoricallyFormula a9 = new HistoricallyFormula(a1);
         testSerializeDeserialize(a9);
-        HystoricallyFormula a10 = new HystoricallyFormula(a1, new Interval(0, 100));
+        HistoricallyFormula a10 = new HistoricallyFormula(a1, new Interval(0, 100));
         testSerializeDeserialize(a10);
         OnceFormula a11 = new OnceFormula(a1, new Interval(0, 100));
         testSerializeDeserialize(a11);
