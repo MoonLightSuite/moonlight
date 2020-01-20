@@ -81,7 +81,7 @@ class ScriptLoader {
 		val injector = new MoonLightScriptStandaloneSetup().createInjectorAndDoEMFRegistration
 		val resourceSet = injector.getInstance(typeof(XtextResourceSet))
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
-		val resource = resourceSet.getResource(URI.createURI("file:"+filePath),true);
+		val resource = resourceSet.getResource(URI.createFileURI(filePath),true);
 		val scriptToJava = new ScriptToJava();		
 		val generatedCode = scriptToJava.getJavaCode(resource.contents.get(0) as Model,"moonlight.script","GeneratedScriptClass")
 		val comp = new MoonlightCompiler();
