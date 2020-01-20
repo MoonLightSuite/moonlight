@@ -17,11 +17,17 @@ public interface SpatialModel<T> {
 
     Set<Integer> getLocations();
 
-	static SpatialModel<Record> buildSpatialModel(int locations, RecordHandler edgeRecordHandler,
-			Object[][][] objects) {
-		GraphModel<Record> toReturn = new GraphModel<>(locations);
-		//TODO: Fill code here!		
-		return toReturn;
-	}
+    static SpatialModel<Record> buildSpatialModel(int locations, RecordHandler edgeRecordHandler,
+                                                  Object[][][] objects) {
+        GraphModel<Record> toReturn = new GraphModel<>(locations);
+        for (int i = 0; i < objects.length; i++) {
+            for (int j = 0; j < objects[i].length; j++) {
+                if (i != j) {
+                    toReturn.add(i, edgeRecordHandler.fromObject(objects[i][j]), j);
+                }
+            }
+        }
+        return toReturn;
+    }
 
 }

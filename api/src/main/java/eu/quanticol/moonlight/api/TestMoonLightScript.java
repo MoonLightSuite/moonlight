@@ -31,11 +31,11 @@ public class TestMoonLightScript extends MoonLightScript {
             temporalBuilder);
 
     //SPATIO-TEMPORAL
-    private Function<Record, SpatioTemporalMonitor<Record, Record, Double>> spatialBuilder = r -> SpatioTemporalMonitor.atomicMonitor(s -> 1.0);
+    private Function<Record, SpatioTemporalMonitor<Record, Record, Boolean>> spatialBuilder = r -> SpatioTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
 
     private SpatioTemporalScriptComponent<?> spatioTemporalMonitor = new SpatioTemporalScriptComponent<>(SPATIAL[0],
-            new RecordHandler(DataHandler.REAL, DataHandler.REAL), new RecordHandler(DataHandler.REAL, DataHandler.REAL),
-            DataHandler.REAL,
+            new RecordHandler(DataHandler.REAL), new RecordHandler(DataHandler.BOOLEAN, DataHandler.INTEGER),
+            DataHandler.BOOLEAN,
             spatialBuilder);
 
 
