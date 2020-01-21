@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.api;
+package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.SpatioTemporalScriptComponent;

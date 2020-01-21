@@ -19,27 +19,37 @@ import eu.quanticol.moonlight.MoonLightScript
 
 @ExtendWith(InjectionExtension)
 @InjectWith(MoonLightScriptInjectorProvider)
-class TestCityScript {
+class TestRandomFormulaeScript {
   @Inject
   ParseHelper<Model> parseHelper
 
   @Test
+  def void loadModel() {
+  		val result = parseHelper.parse('''
+   			monitor RandomFormulae {
+      				signal { real x; real y; real z;}
+      				domain boolean;
+      				formula globally [73, 98] #[ x>=0 ]#;
+      			}
+
+  		''')
+    Assertions.assertNotNull(result)
+    val errors = result.eResource.errors
+    Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+  }
+
+  @Test
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
-   			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;
-
-                  			monitor City {
-                  				signal { bool taxi; int peole; }
-                  				space { locations {poiType poi; }
-                  				edges { real length; }
-                  				}
-                  				domain boolean;
-                  				formula somewhere [0.0, 1.0] #[ taxi ]#;
-                  			}
+   			monitor RandomFormulae {
+      				signal { real x; real y; real z;}
+      				domain boolean;
+      				formula globally [73, 98] #[ x>=0 ]#;
+      			}
 
   		''')
   		val scriptToJava = new ScriptToJava();
-  		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","City")
+  		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","RandomFormulae")
   		System.out.println(generatedCode);
   		}
 

@@ -20,11 +20,15 @@ public class Matlab {
         return new ScriptLoader().compileScript(fileContent);
     }
 
+    public static JavaCompiler pippo() {
+        return ToolProvider.getSystemJavaCompiler();
+    }
+
     public static MoonLightScript loadJavaClass(String filePath) throws MalformedURLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        int i = filePath.lastIndexOf(System.getProperty("file.separator"))+1;
+        int i = filePath.lastIndexOf(System.getProperty("file.separator")) + 1;
         int j = filePath.lastIndexOf(".");
-        String className=filePath.substring(i,j);
-        String folderLocation = filePath.substring(0,i);
+        String className = filePath.substring(i, j);
+        String folderLocation = filePath.substring(0, i);
         File file = new File(folderLocation);
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

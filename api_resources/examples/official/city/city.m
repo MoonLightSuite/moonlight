@@ -15,7 +15,7 @@ signal{4}=[[true,123];[true,123];[true,123]];
 signal{5}=[[true,123];[true,123];[true,123]];
 %MONITOR
 monitor = MoonlightEngine;
-monitor.Script = eu.quanticol.moonlight.api.CityMonitor;
+monitor.Script = eu.quanticol.moonlight.api.example.CityMonitor;
 result = monitor.spatioTemporalMonitor(graph,time,signal);
 
 
