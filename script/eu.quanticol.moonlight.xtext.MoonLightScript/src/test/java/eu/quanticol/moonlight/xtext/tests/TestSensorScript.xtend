@@ -32,7 +32,7 @@ class TestSensorScript {
              	edges { int hop; real weight; }
              	}
              	domain minmax;
-             	formula everywhere [0.0, 1.0] #[ (battery - 0.5)  & (temperature > 20)]#;
+             	formula everywhere [0.0, 1.0] #[ (battery - 0.5) & (temperature - 20)]#;
              }
 
   		''')
