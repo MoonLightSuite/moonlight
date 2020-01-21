@@ -53,7 +53,7 @@ class TestCompiler {
 			
 			monitor City {
 				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
+				space { 
 				edges { real length; }
 				}
 				domain boolean;

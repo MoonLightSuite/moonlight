@@ -120,13 +120,13 @@ public class TemporalMonitoring<T,R> implements
 	}
 
 	@Override
-	public TemporalMonitor<T,R> visit(HistoricallyFormula hystoricallyFormula, Parameters parameters) {
-		TemporalMonitor<T,R> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
-		if (hystoricallyFormula.isUnbounded()) {
+	public TemporalMonitor<T,R> visit(HistoricallyFormula historicallyFormula, Parameters parameters) {
+		TemporalMonitor<T,R> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+		if (historicallyFormula.isUnbounded()) {
 			return TemporalMonitor.historicallyMonitor(argumentMonitoring, module);
 		} else {
-			Interval interval = hystoricallyFormula.getInterval();
-			return TemporalMonitor.historicallyMonitor(argumentMonitoring, module, hystoricallyFormula.getInterval());
+			Interval interval = historicallyFormula.getInterval();
+			return TemporalMonitor.historicallyMonitor(argumentMonitoring, module, historicallyFormula.getInterval());
 		}
 	}
 

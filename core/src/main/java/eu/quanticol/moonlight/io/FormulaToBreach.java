@@ -72,7 +72,7 @@ public class FormulaToBreach implements FormulaVisitor<String,String> {
 	}
 
 	@Override
-	public String visit(HistoricallyFormula hystoricallyFormula, String parameters) {
+	public String visit(HistoricallyFormula historicallyFormula, String parameters) {
 		throw new IllegalArgumentException("Past formulas are not compatible with Breach!");
 	}
 

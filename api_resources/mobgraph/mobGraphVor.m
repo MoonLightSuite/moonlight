@@ -137,13 +137,15 @@ for frameNr = 1 : numSteps
     vgraph = get_voronoi_graph(v,c);
     [row,col] = find(vgraph==1);   
     EdgeTable = table([row,col], ones(length(row),1), ones(length(row),1),...
-       'VariableNames',{'EndNodes','hops','Weight'});
+       'VariableNames',{'EndNodes','hop','weight'});
     
    coord = cell2mat(nodes);
    x = coord(1:2:length(coord));
    y = coord(2:2:length(coord));
    battery = rand(length(nodes),1);
-   NodeTable = table(nodes_type',x',y',battery, 'VariableNames',{'Type','x','y','battery'});
+   temperature = rand(length(nodes),1)*20;
+   NodeTable = table(nodes_type',x',y',battery,temperature,...
+       'VariableNames',{'nodeType','x','y','battery','temperature'});
    Gvor = digraph(EdgeTable, NodeTable);
 
    plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)

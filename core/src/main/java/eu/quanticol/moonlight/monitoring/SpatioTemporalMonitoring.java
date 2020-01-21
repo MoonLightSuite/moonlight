@@ -143,13 +143,13 @@ public class SpatioTemporalMonitoring<V, T, R> implements
     }
 
     /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HystoricallyFormula, java.lang.Object)
+     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HistoricallyFormula, java.lang.Object)
      */
     @Override
     public SpatioTemporalMonitor<V,T,R> visit(
-            HistoricallyFormula hystoricallyFormula, Parameters parameters) {
-        SpatioTemporalMonitor<V,T,R> argumentMonitoring = hystoricallyFormula.getArgument().accept(this, parameters);
-        return SpatioTemporalMonitor.historicallyMonitor(argumentMonitoring, hystoricallyFormula.getInterval(),module);
+            HistoricallyFormula historicallyFormula, Parameters parameters) {
+        SpatioTemporalMonitor<V,T,R> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+        return SpatioTemporalMonitor.historicallyMonitor(argumentMonitoring, historicallyFormula.getInterval(),module);
     }
 
     /* (non-Javadoc)

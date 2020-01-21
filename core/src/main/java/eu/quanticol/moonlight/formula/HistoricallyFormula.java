@@ -105,7 +105,7 @@ public class HistoricallyFormula implements Formula {
      */
     @Override
     public String toString() {
-        return "HystoricallyFormula [argument=" + argument + ", interval=" + interval + "]";
+        return "HistoricallyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
 }

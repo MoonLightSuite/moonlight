@@ -64,7 +64,7 @@ public abstract class FormulaGenerator {
                 return new EventuallyFormula(getFormula(size - 1, newTime), interval);
             case GLOBALLY:
                 return new GloballyFormula(getFormula(size - 1, newTime), interval);
-            case HYSTORICALLY:
+            case HISTORICALLY:
                 return new HistoricallyFormula(getFormula(size - 1, newTime), interval);
             case NOT:
                 return new NegationFormula(getFormula(size - 1, time));
