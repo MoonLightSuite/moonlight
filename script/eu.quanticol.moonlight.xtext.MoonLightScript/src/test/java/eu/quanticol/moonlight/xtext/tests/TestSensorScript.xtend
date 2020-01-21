@@ -19,26 +19,25 @@ import eu.quanticol.moonlight.MoonLightScript
 
 @ExtendWith(InjectionExtension)
 @InjectWith(MoonLightScriptInjectorProvider)
-class TestCityScript {
+class TestSensorScript {
   @Inject
   ParseHelper<Model> parseHelper
 
   @Test
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
-   			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;
-            monitor City {
-                signal { bool taxi; int peole; }
-                space { locations {poiType poi; }
-                edges { real length; }
-                }
-                domain boolean;
-                formula somewhere [0.0, 1.0] #[ taxi ]#;
+   			monitor SensorNetwork {
+                signal { int nodeType; real x; real y; real battery; real temperature; }
+             	space {
+             	edges { int hop; real weight; }
+             	}
+             	domain minmax;
+             	formula everywhere [0.0, 1.0] #[ (battery - 0.5)  & (temperature > 20)]#;
              }
 
   		''')
   		val scriptToJava = new ScriptToJava();
-  		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","City")
+  		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","Sensor")
   		System.out.println(generatedCode);
   		}
 
