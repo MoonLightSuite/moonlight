@@ -27,7 +27,7 @@ class TestSensorScript {
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
    			monitor SensorNetwork {
-                signal { int nodeType; real x; real y; real battery; real temperature; }
+                signal { int nodeType; real battery; real temperature; }
              	space {
              	edges { int hop; real weight; }
              	}
