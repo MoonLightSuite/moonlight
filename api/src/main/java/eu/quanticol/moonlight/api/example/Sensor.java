@@ -14,7 +14,7 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 import java.util.HashMap;
 
 
-public class SensorMonitor extends MoonLightScript {
+public class Sensor extends MoonLightScript {
 
 
     private final SignalDomain<Double> _domain_SensorNetwork = new DoubleDomain();
@@ -22,7 +22,7 @@ public class SensorMonitor extends MoonLightScript {
     private SpatioTemporalMonitor<Record, Record, Double> SensorNetwork_main(Record parameters) {
         return SpatioTemporalMonitor.everywhereMonitor(
                 SpatioTemporalMonitor.atomicMonitor(
-                        signal -> (Math.min((((((signal.get(3, Double.class)) - (0.5))))), (((((signal.get(4, Double.class)) - (20)))))))
+                        signal -> Math.min((((signal.get(1, Double.class)) - (0.5))), (((signal.get(2, Double.class)) - (20))))
                 )
                 ,
                 m -> DistanceStructure.buildDistanceStructure(m,
@@ -40,11 +40,9 @@ public class SensorMonitor extends MoonLightScript {
         int counter = 0;
         HashMap<String, Integer> variableIndex = new HashMap<>();
         variableIndex.put("nodeType", counter++);
-        variableIndex.put("x", counter++);
-        variableIndex.put("y", counter++);
         variableIndex.put("battery", counter++);
         variableIndex.put("temperature", counter++);
-        return new RecordHandler(variableIndex, DataHandler.INTEGER, DataHandler.REAL, DataHandler.REAL, DataHandler.REAL, DataHandler.REAL);
+        return new RecordHandler(variableIndex, DataHandler.INTEGER, DataHandler.REAL, DataHandler.REAL);
     }
 
     private RecordHandler SensorNetwork_parameters_handler_ = generateSensorNetworkParametersRecordHandler();
@@ -76,7 +74,7 @@ public class SensorMonitor extends MoonLightScript {
             r -> SensorNetwork_main(r)
     );
 
-    public SensorMonitor() {
+    public Sensor() {
         super(new String[]{
                 },
                 new String[]{

@@ -136,9 +136,15 @@ for frameNr = 1 : numSteps
     %voronoi(nodes_positions(:,1),nodes_positions(:,2));
     [v,c] = voronoin(nodes_positions);   
     vgraph = get_voronoi_graph(v,c);
-    [row,col] = find(vgraph==1);   
-    EdgeTable = table([row,col], ones(length(row),1), ones(length(row),1),...
-       'VariableNames',{'EndNodes','hop','weight'});
+    [row,col] = find(vgraph==1);  
+    
+    distEu = zeros(length(row),1);
+    for i=1:length(row)
+        distEu(i)= pdist([nodes{row(i)};nodes{col(i)}],'euclidean');
+    end
+
+    EdgeTable = table([row,col], [ones(length(row),1), distEu],...
+       'VariableNames',{'EndNodes','Weights'});
     
    coord = cell2mat(nodes);
    x = coord(1:2:length(coord));
@@ -161,11 +167,15 @@ for frameNr = 1 : numSteps
    
 end
     
-save('vorSpTemModel','vorSpTemModel');
+
+
+
 
 
 % SIGNAL 
 time = frameNr;
+
+save('data','vorSpTemModel','time','signal');
 
 
 

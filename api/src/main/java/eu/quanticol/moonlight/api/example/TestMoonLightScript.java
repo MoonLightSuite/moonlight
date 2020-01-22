@@ -43,6 +43,10 @@ public class TestMoonLightScript extends MoonLightScript {
         super(TEMPORAL, SPATIAL);
     }
 
+    public TestMoonLightScript(String[] temporalMonitors, String[] spatioTemporalMonitors) {
+        super(temporalMonitors, spatioTemporalMonitors);
+    }
+
     @Override
     public TemporalScriptComponent<?> selectTemporalComponent(String name) {
         if (TEMPORAL[0].equals(name)) {

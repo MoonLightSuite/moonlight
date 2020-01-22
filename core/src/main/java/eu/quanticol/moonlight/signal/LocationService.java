@@ -20,7 +20,7 @@ public interface LocationService<V> {
 	public boolean isEmpty();
 
 	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-			Object[][][][] graph) {
+			String[][][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph[i]));
@@ -29,7 +29,7 @@ public interface LocationService<V> {
 	}
 
 	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double time,
-			Object[][][] graph) {
+			String[][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
 		toReturn.add(time, SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph));
 		return toReturn;

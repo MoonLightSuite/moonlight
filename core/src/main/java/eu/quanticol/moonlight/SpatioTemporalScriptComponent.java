@@ -65,14 +65,14 @@ public class SpatioTemporalScriptComponent<S> {
         return monitor(locations, input, parameters).toObjectArray();
     }
 
-    public Object[][][] monitorToObjectArray(double[] locationTimeArray, Object[][][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
+    public Object[][][] monitorToObjectArray(double[] locationTimeArray, String[][][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
         int locations = signalValues.length;
         SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationService(locations, edgeRecordHandler, locationTimeArray, graph);
         return monitor(locationService, signal, parameters).toObjectArray();
     }
 
-    public Object[][][] monitorToObjectArray(Object[][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
+    public Object[][][] monitorToObjectArray(String[][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
         int locations = signalValues.length;
         SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationService(locations, edgeRecordHandler, signalTimeArray[0], graph);
