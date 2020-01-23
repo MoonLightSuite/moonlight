@@ -1,5 +1,6 @@
 rootProject.name = 'eu.quanticol.moonlight'
 include 'api'
+include 'console'
 include 'core'
 include 'example'
 include 'utility'

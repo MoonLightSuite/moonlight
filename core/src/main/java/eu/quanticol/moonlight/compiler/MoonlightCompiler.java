@@ -42,8 +42,9 @@ public class MoonlightCompiler {
 		} 
 		this.classLoader = URLClassLoader.newInstance(new URL[]{this.workingDirectory.toURI().toURL()});
 	}
-
-	public <T> T getIstance(String packageName, String className, String source, Class<T> clazz) throws IOException, ReflectiveOperationException {
+	
+	
+	public void compile(String packageName, String className, String source) throws IOException {
         String fileDir = packageName.replace(".", File.separator);
         
         Path tmp = Paths.get(workingDirectory.getAbsolutePath(),fileDir);
@@ -54,6 +55,10 @@ public class MoonlightCompiler {
         Files.write(sourceFile.toPath(), source.getBytes(StandardCharsets.UTF_8));
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         compiler.run(null, null, null, sourceFile.getPath());
+	}
+
+	public <T> T getIstance(String packageName, String className, String source, Class<T> clazz) throws IOException, ReflectiveOperationException {
+		compile(packageName, className, source);
         Class<?> cls = Class.forName(packageName+"."+className, true, classLoader); // Should print "hello".
         return clazz.cast( cls.getDeclaredConstructor().newInstance() ); // Should print "world"
 

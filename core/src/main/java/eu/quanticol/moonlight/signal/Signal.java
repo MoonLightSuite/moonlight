@@ -323,7 +323,10 @@ public class Signal<T> {
         if (size == 0) {
             throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
-        int arraySize = size + 1;
+        int arraySize = size;
+        if (!last.isAPoint()) {
+        	arraySize++;
+        }
         Object[][] toReturn = new Object[arraySize][2];
         Segment<T> current = first;
         int counter = 0;
@@ -333,8 +336,10 @@ public class Signal<T> {
             current = current.getNext();
             counter++;
         }
-        toReturn[size][0] = end;
-        toReturn[size][1] = last.getValue();
+        if (!last.isAPoint()) {
+            toReturn[size][0] = end;
+            toReturn[size][1] = last.getValue();
+        }
         return toReturn;
     }
 

@@ -84,7 +84,7 @@ public class Segment<T> {
 	}
 
 	public boolean contains(double t) {
-		return (time<=t)&&((Double.isFinite(end)&&(t<=end))||(next!=null)&&(t<next.time));
+		return (time==t)||((time<=t)&&((Double.isFinite(end)&&(t<=end))||(next!=null)&&(t<next.time)));
 	}
 
 	public static double getTime(Segment<?> s) {
@@ -179,6 +179,10 @@ public class Segment<T> {
 
 	public void isFirst() {
 		this.previous = null;
+	}
+
+	public boolean isAPoint() {
+		return Double.isNaN(this.end)||(this.time==this.end);
 	}
 	
 }

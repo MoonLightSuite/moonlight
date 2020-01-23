@@ -145,6 +145,39 @@ class TestSignal {
         assertEquals(s1.end() - 5.75, s2.end(), 0.0);
     }
 
+    @Test
+    void testToObjectArrayEmpty() {
+    	Signal<Double> signal = new Signal<>();
+    	assertThrows(IllegalStateException.class, () -> signal.toObjectArray());
+    }
+    
+    @Test
+    void testToObjectArrayOneElement() {
+    	Signal<Double> signal = new Signal<>();
+    	signal.add(0.0, 10.0);
+    	Object[][] res = signal.toObjectArray();
+    	assertEquals(1, res.length);
+    	assertEquals(2, res[0].length);
+    	assertEquals(0.0,res[0][0]);
+    	assertEquals(10.0,res[0][1]);
+    	
+    }
+
+    @Test
+    void testToObjectArray() {
+    	Signal<Double> signal = new Signal<>();
+    	for( double i=0 ; i<10 ; i++ ) {
+        	signal.add(i, i);
+    	}
+    	Object[][] res = signal.toObjectArray();
+    	assertEquals(10, res.length);
+    	assertEquals(2, res[0].length);
+    	for( int i=0 ; i<10 ; i++ ) {
+    		assertEquals(((Double) res[i][0]).doubleValue(), (double) i);
+    		assertEquals(((Double) res[i][1]).doubleValue(), (double) i);
+    	}
+    	
+    }
 
 }
 

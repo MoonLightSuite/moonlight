@@ -24,5 +24,5 @@ public interface SignalDomain<R> extends Semiring<R> {
 	R negation(R x);
 
 	boolean equalTo(R x, R y);
-
+	
 }

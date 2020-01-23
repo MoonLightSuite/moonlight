@@ -19,6 +19,7 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author loreti
@@ -68,7 +69,7 @@ class TestSpatialTemporalProperties {
 
 
         assertNotNull(grid);
-
+        
     }
 
     @Test
@@ -112,6 +113,8 @@ class TestSpatialTemporalProperties {
         assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
 
         assertNotNull(model);
+
+
     }
 
 
@@ -146,6 +149,14 @@ class TestSpatialTemporalProperties {
         map.put(new Pair<>(0, 1), 1.0);
         map.put(new Pair<>(2, 3), 1.0);
         map.put(new Pair<>(1, 3), 5.0);
+    }
+    
+    @Test
+    void testSpatioTemporalSignalWithOneEntry() {
+    	SpatioTemporalSignal<Double> stl = new SpatioTemporalSignal<>(10);
+    	stl.add(0.0, i -> 1.0);
+    	stl.toObjectArray();
+    	assertTrue(true);
     }
 
 }

@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.xtext.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import eu.quanticol.moonlight.xtext.ScriptLoader;
 class TestScriptLoader {
 
 	@Test
-	void testLoadScriptFromCode() {
+	void testLoadScriptFromCode() throws IOException {
 		ScriptLoader loader = new ScriptLoader();
 		MoonLightScript script = loader.compileScript("type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		\n" + 
 				"			\n" + 
@@ -38,7 +39,7 @@ class TestScriptLoader {
 	}
 
 	@Test
-	void testLoadScriptFromFile() {
+	void testLoadScriptFromFile() throws IOException {
 		ScriptLoader loader = new ScriptLoader();
 		File file = new File(getClass().getClassLoader().getResource("testscript.mls").getFile());
 		MoonLightScript script = loader.loadFile(file.getAbsolutePath());

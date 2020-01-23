@@ -7,6 +7,7 @@ import com.google.inject.Inject
 import com.google.inject.Provider
 import eu.quanticol.moonlight.xtext.MoonLightScriptStandaloneSetup
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.generator.GeneratorContext
 import org.eclipse.xtext.generator.GeneratorDelegate
@@ -21,9 +22,20 @@ import eu.quanticol.moonlight.xtext.moonLightScript.Model
 import eu.quanticol.moonlight.compiler.MoonlightCompiler
 import org.eclipse.xtext.resource.XtextResource
 import eu.quanticol.moonlight.xtext.generator.ScriptToJava
+import java.io.IOException
 
 class ScriptLoader {
 	
+	MoonlightCompiler compiler
+	
+	new() throws IOException {
+		this(new MoonlightCompiler());
+	}
+	
+	new( MoonlightCompiler compiler ) {
+		this.compiler = compiler;
+		
+	}
 	
 	def static loadScriptFromCode( String code ) {
 
@@ -64,29 +76,74 @@ class ScriptLoader {
 	}
 	
 	def MoonLightScript compileScript( String code ) {
+		return compileScript("moonlight.script","GeneratedScriptClass",code);
+	}
+
+	def generateCodeFromString( String packageName, String className, String code ) {
 		val injector = new MoonLightScriptStandaloneSetup().createInjectorAndDoEMFRegistration
 		val resourceSet = injector.getInstance(typeof(XtextResourceSet))
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
 		val resource = resourceSet.createResource(URI.createURI("dummy:/example.mls"));
 		val in = new ByteArrayInputStream(code.getBytes());
 		resource.load(in, resourceSet.getLoadOptions());
-		val scriptToJava = new ScriptToJava();		
-		val generatedCode = scriptToJava.getJavaCode(resource.contents.get(0) as Model,"moonlight.script","GeneratedScriptClass")
-		val comp = new MoonlightCompiler();
-		val script = comp.getIstance("moonlight.script","GeneratedScriptClass",generatedCode.toString,typeof(MoonLightScript))		
-		return script;
+		return generateCode(packageName, className, resource)
 	}
-	
-	def MoonLightScript loadFile( String filePath ) {
+
+	def generateCodeFromFile( String packageName, String className, String code ) {
 		val injector = new MoonLightScriptStandaloneSetup().createInjectorAndDoEMFRegistration
 		val resourceSet = injector.getInstance(typeof(XtextResourceSet))
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
-		val resource = resourceSet.getResource(URI.createFileURI(filePath),true);
+		val resource = resourceSet.createResource(URI.createURI("dummy:/example.mls"));
+		val in = new ByteArrayInputStream(code.getBytes());
+		resource.load(in, resourceSet.getLoadOptions());
+		return generateCode(packageName, className, resource)
+	}
+	
+	def generateCode(String packageName, String className, Resource resource) {
 		val scriptToJava = new ScriptToJava();		
-		val generatedCode = scriptToJava.getJavaCode(resource.contents.get(0) as Model,"moonlight.script","GeneratedScriptClass")
-		val comp = new MoonlightCompiler();
-		val script = comp.getIstance("moonlight.script","GeneratedScriptClass",generatedCode.toString,typeof(MoonLightScript))		
-		return script;
+		val generatedCode = scriptToJava.getJavaCode(resource.contents.get(0) as Model,packageName,className)
+		return generatedCode		
+	}
+	
+	def MoonLightScript compileScript( String packageName, String className, String code ) {
+		val generatedCode = generateCodeFromString(packageName,className,code)
+		return compileAndLoad( packageName, className, generatedCode.toString )
+	}
+
+	def compileAndLoad( String packageName, String className, String javaCode ) {
+		return compiler.getIstance(packageName,className,javaCode,typeof(MoonLightScript))		
+	}
+	
+	def compile( String packageName, String className, String javaCode ) {
+		compiler.compile(packageName,className,javaCode)		
+	}
+
+	def MoonLightScript loadFile( String packageName, String className, String filePath ) {
+		val generatedCode = generateCodeFromFile(packageName,className,filePath)
+		return compileAndLoad( packageName, className, generatedCode.toString )
+	}
+
+	
+	def MoonLightScript loadFile( String filePath ) {
+		return loadFile("moonlight.script","GeneratedScriptClass",filePath)
+	}
+
+	def generateJavaClassesFromCode( String code  ) {
+		generateJavaClassesFromCode("moonlight.script","GeneratedScriptClass",code)
+	}	
+	
+	def generateJavaClassesFromCode( String packageName, String className, String code  ) {
+		val generatedCode = generateCodeFromString(packageName,className,code)
+		compile( packageName, className, generatedCode.toString )
+	}
+	
+		def generateJavaClassesFromFile( String filePath  ) {
+		generateJavaClassesFromCode("moonlight.script","GeneratedScriptClass",filePath)
+	}	
+	
+	def generateJavaClassesFromFile( String packageName, String className, String filePath  ) {
+		val generatedCode = generateCodeFromFile(packageName,className,filePath)
+		compile( packageName, className, generatedCode.toString )
 	}
 	
 }
