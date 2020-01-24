@@ -29,10 +29,23 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'eu.quanticol.moonlight.MoonLightCompiler'
+    mainClassName = 'eu.quanticol.moonlight.MoonLightConsole'
 }
 
 test {
     // Use junit platform for unit tests
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": mainClassName
+    }
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+
+}
+
+

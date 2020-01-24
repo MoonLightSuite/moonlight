@@ -2,12 +2,14 @@ package eu.quanticol.moonlight.api;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MatlabTest {
 
     @Test
-    void compileScript() {
+    void compileScript() throws IOException {
         String a = "monitor RandomFormulae {\n" +
                 "      \t\t\t\tsignal { real x; real y; real z;}\n" +
                 "      \t\t\t\tdomain boolean;\n" +
