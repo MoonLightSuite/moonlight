@@ -6,17 +6,18 @@ import eu.quanticol.moonlight.xtext.ScriptLoader;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class Matlab {
 
-    public static MoonLightScript loadFromFile(String filePath) {
+    public static MoonLightScript loadFromFile(String filePath) throws IOException {
         return new ScriptLoader().loadFile(filePath);
     }
 
-    public static MoonLightScript compileScript(String fileContent) {
+    public static MoonLightScript compileScript(String fileContent) throws IOException {
         return new ScriptLoader().compileScript(fileContent);
     }
 
