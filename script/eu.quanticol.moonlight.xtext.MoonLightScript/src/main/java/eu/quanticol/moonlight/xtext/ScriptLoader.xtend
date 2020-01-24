@@ -89,13 +89,11 @@ class ScriptLoader {
 		return generateCode(packageName, className, resource)
 	}
 
-	def generateCodeFromFile( String packageName, String className, String code ) {
+	def generateCodeFromFile( String packageName, String className, String filePath ) {
 		val injector = new MoonLightScriptStandaloneSetup().createInjectorAndDoEMFRegistration
 		val resourceSet = injector.getInstance(typeof(XtextResourceSet))
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
-		val resource = resourceSet.createResource(URI.createURI("dummy:/example.mls"));
-		val in = new ByteArrayInputStream(code.getBytes());
-		resource.load(in, resourceSet.getLoadOptions());
+		val resource = resourceSet.getResource(URI.createFileURI(filePath),true);
 		return generateCode(packageName, className, resource)
 	}
 	
@@ -137,8 +135,8 @@ class ScriptLoader {
 		compile( packageName, className, generatedCode.toString )
 	}
 	
-		def generateJavaClassesFromFile( String filePath  ) {
-		generateJavaClassesFromCode("moonlight.script","GeneratedScriptClass",filePath)
+	def generateJavaClassesFromFile( String filePath  ) {
+		generateJavaClassesFromFile("moonlight.script","GeneratedScriptClass",filePath)
 	}	
 	
 	def generateJavaClassesFromFile( String packageName, String className, String filePath  ) {
