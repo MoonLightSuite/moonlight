@@ -23,6 +23,7 @@ import eu.quanticol.moonlight.compiler.MoonlightCompiler
 import org.eclipse.xtext.resource.XtextResource
 import eu.quanticol.moonlight.xtext.generator.ScriptToJava
 import java.io.IOException
+import java.io.File
 
 class ScriptLoader {
 	
@@ -123,12 +124,23 @@ class ScriptLoader {
 
 	
 	def MoonLightScript loadFile( String filePath ) {
-		return loadFile("moonlight.script","GeneratedScriptClass",filePath)
+		val className = getClassName( filePath )
+		return loadFile("moonlight.script",className,filePath)
 	}
 
 	def generateJavaClassesFromCode( String code  ) {
 		generateJavaClassesFromCode("moonlight.script","GeneratedScriptClass",code)
 	}	
+	
+	def getClassName( String filePath ) {
+		val file = new File(filePath)
+		var name = file.name
+		if (name.contains(".")) {
+			val pos = name.indexOf('.');
+			name = name.substring(0,pos)
+		}		
+		return "Script"+name
+	}
 	
 	def generateJavaClassesFromCode( String packageName, String className, String code  ) {
 		val generatedCode = generateCodeFromString(packageName,className,code)
@@ -136,7 +148,8 @@ class ScriptLoader {
 	}
 	
 	def generateJavaClassesFromFile( String filePath  ) {
-		generateJavaClassesFromFile("moonlight.script","GeneratedScriptClass",filePath)
+		val className = getClassName( filePath )
+		generateJavaClassesFromFile("moonlight.script",className,filePath)
 	}	
 	
 	def generateJavaClassesFromFile( String packageName, String className, String filePath  ) {
