@@ -7,8 +7,8 @@ classdef MoonlightEngine
         function  self = load(filname)
             self = MoonlightEngine;
             system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","console-1.0-SNAPSHOT.jar "+filname+".mls ."));
-            system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname)+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
-            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname));
+            system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar")+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
+            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar"));
             self.Script=moonlight.script.GeneratedScriptClass;
         end
     end
