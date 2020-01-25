@@ -19,7 +19,8 @@ classdef MoonlightEngine
                 parameters = java.lang.Object();
             end
             temporalMonitor = self.Script.selectDefaultTemporalComponent();
-            result=temporalMonitor.monitorToObjectArray(time,self.toJavaObjectMatrix(values),parameters);
+            matrix=temporalMonitor.monitorToObjectArray(time,self.toJavaObjectMatrix(values),parameters);
+            result = self.temporalObjectToMatrix(matrix);
         end
         function result = spatioTemporalMonitor(self,graph, time, values,parameters)
             if ~exist('parameters','var')
@@ -87,6 +88,13 @@ classdef MoonlightEngine
                         javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)));
                     end
                 end
+            end
+        end
+        function result = temporalObjectToMatrix(~,matrix)
+            result= [];
+            for p =  1:length(matrix)
+                a =matrix(p,:);
+                result = [result;[a(1),a(2)]];
             end
         end
     end
