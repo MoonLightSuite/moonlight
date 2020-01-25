@@ -41,5 +41,4 @@ public class MoonLightConsole {
 		MoonLightConsole mlc = new MoonLightConsole(new MoonlightCompiler(args[1]));
 		mlc.generateScriptClassFromFile(args[0]);
 	}
-
 }
