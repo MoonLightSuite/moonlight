@@ -1,0 +1,4 @@
+monitor RandomFormulae {
+signal { real x; real y; real z;}
+domain minmax;
+formula globally [3, 5] #[ x ]#;}

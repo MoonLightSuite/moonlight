@@ -4,12 +4,13 @@ classdef MoonlightEngine
         SignalType
     end
     methods(Static)
-        function  self = load(filname)
+        function  self = load(filename)
             self = MoonlightEngine;
-            system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","console-1.0-SNAPSHOT.jar "+filname+".mls ."));
-            system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar")+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
-            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar"));
-            self.Script=moonlight.script.GeneratedScriptClass;
+            system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","console-1.0-SNAPSHOT.jar "+filename+".mls "+tempdir));
+            %system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar")+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
+            system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
+            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar"));
+            self.Script=eval("moonlight.script.Script"+filename);
         end
     end
     methods
@@ -28,7 +29,8 @@ classdef MoonlightEngine
                 parameters = java.lang.Object();
             end
             spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
-            result=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
+            matrix=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
+            result = self.spatialObjectToMatrix(matrix);
         end
         function result = getTemporalMonitors(self)
             result = self.Script.getTemporalMonitors();
@@ -96,6 +98,13 @@ classdef MoonlightEngine
                 a =matrix(p,:);
                 result = [result;[a(1),a(2)]];
             end
+        end
+        function result = spatialObjectToMatrix(self,matrix)
+            result= [];
+            for i =  1:length(matrix)
+                result{i} = self.temporalObjectToMatrix(matrix(i));
+            end
+            result = result';
         end
     end
 end

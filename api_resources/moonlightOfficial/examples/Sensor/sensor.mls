@@ -3,6 +3,6 @@ monitor SensorNetwork {
              	space {
              	edges { int hop; real weight; }
              	}
-             	domain boolean;
-             	formula everywhere [0.0, 1.0] #[ (battery - 0.5)>0 ]# & #[(temperature - 20)>0]#;
+             	domain minmax;
+             	formula everywhere [0.0, 1.0] #[ (battery - 0.5) ]# & #[(temperature - 20)]#;
              }

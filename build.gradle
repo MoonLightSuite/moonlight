@@ -25,12 +25,6 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     }
 
-    task install(type: Copy) {
-        dependsOn build
-        from configurations.runtime
-        from jar
-        into "${rootDir}/output/"
-    }
 
     clean.doFirst {
         delete "${rootDir}/output/"
