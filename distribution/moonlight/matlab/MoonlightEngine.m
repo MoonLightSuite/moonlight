@@ -7,7 +7,6 @@ classdef MoonlightEngine
         function  self = load(filename)
             self = MoonlightEngine;
             system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","moonlight.jar "+filename+".mls "+tempdir));
-            %system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar")+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
             system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
             javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar"));
             self.Script=eval("moonlight.script.Script"+filename);
@@ -17,7 +16,9 @@ classdef MoonlightEngine
         function result = temporalMonitor(self, time, values, parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
-                parameters = java.lang.Object();
+                parameters = javaArray('java.lang.String',0);
+            else
+                parameters = self.toJavaParameters(parameters);
             end
             temporalMonitor = self.Script.selectDefaultTemporalComponent();
             matrix=temporalMonitor.monitorToObjectArray(time,self.toJavaObjectMatrix(values),parameters);
@@ -26,7 +27,9 @@ classdef MoonlightEngine
         function result = spatioTemporalMonitor(self,graph, time, values,parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
-                parameters = java.lang.Object();
+                parameters = javaArray('java.lang.String',0);
+            else
+                parameters = toJavaParameters(parameters);
             end
             spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
             matrix=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
@@ -76,6 +79,17 @@ classdef MoonlightEngine
                         graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))));
                     end
                 end
+            end
+        end
+        function javaParameters = toJavaParameters(~,parameters)
+            if(isvector(parameters))
+            javaParameters=javaArray('java.lang.String',length(parameters));
+            for i=1:length(parameters)
+                javaParameters(i)=java.lang.String(num2str(parameters(i)));
+            end
+            else
+                javaParameters=javaArray('java.lang.String',1);
+                javaParameters(1)=num2str(parameters);
             end
         end
         function javaSignal = toJavaSignal(~,signal)

@@ -48,38 +48,38 @@ public class SpatioTemporalScriptComponent<S> {
         return name;
     }
 
-    public SpatioTemporalMonitor<Record, Record, S> getMonitor(Object... values) {
-        if (this.parameters != null && this.parameters.size() > 0) {
-            return builder.apply(parameters.fromObject(values));
+    public SpatioTemporalMonitor<Record, Record, S> getMonitor(String... values) {
+        if (this.parameters != null && this.parameters.size()>0 && values.length > 0) {
+            return builder.apply(parameters.fromString(values));
         } else {
             return builder.apply(null);
         }
     }
 
-    public SpatioTemporalSignal<S> monitor(LocationService<Record> locations, SpatioTemporalSignal<Record> input, Object... parameters) {
+    public SpatioTemporalSignal<S> monitor(LocationService<Record> locations, SpatioTemporalSignal<Record> input, String... parameters) {
         SpatioTemporalMonitor<Record, Record, S> monitor = getMonitor(parameters);
         return monitor.monitor(locations, input);
     }
 
-    public Object[][][] monitorToObjectArray(LocationService<Record> locations, SpatioTemporalSignal<Record> input, Object... parameters) {
+    public Object[][][] monitorToObjectArray(LocationService<Record> locations, SpatioTemporalSignal<Record> input, String... parameters) {
         return monitor(locations, input, parameters).toObjectArray();
     }
 
-    public Object[][][] monitorToObjectArray(double[] locationTimeArray, String[][][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
+    public Object[][][] monitorToObjectArray(double[] locationTimeArray, String[][][][] graph, double[] signalTimeArray, String[][][] signalValues, String... parameters) {
         int locations = signalValues.length;
         SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationService(locations, edgeRecordHandler, locationTimeArray, graph);
         return monitor(locationService, signal, parameters).toObjectArray();
     }
 
-    public Object[][][] monitorToObjectArray(String[][][] graph, double[] signalTimeArray, String[][][] signalValues, Object... parameters) {
+    public Object[][][] monitorToObjectArray(String[][][] graph, double[] signalTimeArray, String[][][] signalValues, String... parameters) {
         int locations = signalValues.length;
         SpatioTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationService(locations, edgeRecordHandler, signalTimeArray[0], graph);
         return monitor(locationService, signal, parameters).toObjectArray();
     }
 
-    public void monitorToFile(SpatioTemporalSignalWriter writer, OutputStream stream, LocationService<Record> locations, SpatioTemporalSignal<Record> input, Object... values) throws IOException {
+    public void monitorToFile(SpatioTemporalSignalWriter writer, OutputStream stream, LocationService<Record> locations, SpatioTemporalSignal<Record> input, String... values) throws IOException {
         SpatioTemporalSignal<S> signal = monitor(locations, input, values);
         writer.write(outputTypeHandler, signal, stream);
     }
