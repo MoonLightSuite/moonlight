@@ -1,1 +1,0 @@
-monitor RandomFormulae {signal { real x; real y; real z;}domain boolean;formula globally [73, 98] #[ x>=0 ]#;}

@@ -14,7 +14,6 @@ xtend-gen
 xtext-gen
 *.asv
 output/
-api_resources/moonlightOfficial/examples/**/moonlight/script/*
-api_resources/moonlightOfficial/moonlight/script/*
+api_resources/
 
 distribution/moonlight/script/*

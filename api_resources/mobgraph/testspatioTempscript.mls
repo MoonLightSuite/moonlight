@@ -1,8 +1,0 @@
-			monitor SensorNetwork {
-				signal { int nodeType; real x; real y; real battery; real temperature; }
-				space { 
-				edges { int hop, real weight; }
-				}
-				domain minmax;
-				formula everywhere [0.0, 1.0] #[ (battery - 0.5) & (temperature - 20)  ]#;
-			}	

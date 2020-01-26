@@ -1,8 +1,0 @@
-type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
-			
-monitor City {
-			monitor Temporal( int a, int b) {
-				signal { bool x; real y; int z; }
-				domain boolean;
-				formula eventually [a,b] #[ y>0 ]#;
-			}
