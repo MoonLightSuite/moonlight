@@ -1,12 +1,12 @@
-clear
+function [vorSpTemModel, time, signal] = sensorSystem(num_nodes,numSteps)
 % Simulation of MANETs with ZigBee protocols
 %
 %
 % Parameters
 size            = 2000;
 nodes_positions = [size 2];
-numSteps        = 20;
-num_nodes       = 10;
+%numSteps        = 20;
+%num_nodes       = 50;
 
 %The expected percentage of the nodes that are the routers
 routers_ratio   = 0.3;
@@ -45,31 +45,10 @@ mean_speed  = 1;
 sigma_speed = 10;
 
 
-  
-
-% Make figure with axes.
-figure; 
-subplot(1,3,1);
-axis square; hold on;
-set(gca,'XLim',[0 size], 'YLim', [0 size]);
-title('Voronoi Diagram (Proximity)');
-
-subplot(1,3,2);
-axis square; hold on;
-set(gca,'XLim',[0 size], 'YLim', [0 size]);
-title('General Connectivity Graph');
-
-subplot(1,3,3);
-axis square; hold on;
-set(gca,'XLim',[0 size], 'YLim', [0 size]);
-title('Zigbee Role-based Connectivity Graph');
-
-
 % MANETs nodes initialisation 
 % 
 % Type 1 -- Coordinator, Type 2 -- Routers, Type 3 -- EndDevice
 %
-% 
 types_distribution = rand(num_nodes,1);
 
 for i=1:num_nodes
@@ -98,29 +77,14 @@ for i=1:num_nodes
     nodes_wdest_times {i} = T_p * rand;
     
 end
-
-
- 
-    G = generateG(nodes, nodes_type);     
-    node = nodes{i};
-    subplot(1,3,1);
-    plot( G,'XData',G.Nodes.x,'YData',G.Nodes.y );
-    subplot(1,3,2);
-    plot( G,'XData',G.Nodes.x,'YData',G.Nodes.y );
-    subplot(1,3,3);
-    plot( G,'XData',G.Nodes.x,'YData',G.Nodes.y);
  
 vorSpTemModel = cell(numSteps,1);
-conSpTemModel = cell(numSteps,1);
-conZigSpTemModel = cell(numSteps,1);
-for frameNr = 1 : numSteps
-    
-    %Clear
-    subplot(1,3,1);
-	cla;
-    subplot(1,3,2);
-    cla;
-    subplot(1,3,3);
+
+% SIGNAL 
+signal = cell(num_nodes,1);
+time = 1 : numSteps;
+for frameNr = time
+
     cla;
     
     for i=1:num_nodes
@@ -168,83 +132,42 @@ for frameNr = 1 : numSteps
                 nodes{i} = [x, y];
                 nodes_positions(i,:) = [x  y];
         end
-%         
-%         
-%          G1 = generateG(nodes, nodes_type);     
-%          node = nodes{i};
-%          subplot(1,3,1);
-%          plot( G1, 'o','XData',G.Nodes.x,'YData',G.Nodes.y );
-%          subplot(1,3,2);
-%          plot( G1,'XData',G.Nodes.x,'YData',G.Nodes.y );
-%          subplot(1,3,3);
-%          plot( G1,'XData',G.Nodes.x,'YData',G.Nodes.y);
-        
-        if (nodes_type{i}    == 1)
-                subplot(1,3,1);
-                circle(x,y, node_radius_type(coordinator_radius), 'g');
-                subplot(1,3,2);
-                circle(x,y, node_radius_type(coordinator_radius), 'g');
-                subplot(1,3,3);
-                circle(x,y, node_radius_type(coordinator_radius), 'g');
-                
-        else
-            if (nodes_type{i} == 2)
-                subplot(1,3,1);
-                circle(x,y, node_radius_type(router_radius), 'r');
-                subplot(1,3,2);
-                circle(x,y, node_radius_type(router_radius), 'r');
-                subplot(1,3,3);
-                circle(x,y, node_radius_type(router_radius), 'r');
-            else 
-                subplot(1,3,1);
-                circle(x,y, node_radius_type(enddevice_radus), 'k');
-                subplot(1,3,2);
-                circle(x,y, node_radius_type(enddevice_radus), 'k');
-                subplot(1,3,3);
-                circle(x,y, node_radius_type(enddevice_radus), 'k');
-            end
-        end
+
+
     end
-    G = generateG(nodes, nodes_type);  
-    subplot(1,3,1);
-    voronoi(nodes_positions(:,1),nodes_positions(:,2));
+    %voronoi(nodes_positions(:,1),nodes_positions(:,2));
     [v,c] = voronoin(nodes_positions);   
     vgraph = get_voronoi_graph(v,c);
-    [row,col] = find(vgraph==1);
-    Gvor = addedge(G,row,col,1);
-    plot(Gvor,'r','XData',G.Nodes.x,'YData',G.Nodes.y)
+    [row,col] = find(vgraph==1);  
     
-    subplot(1,3,2);
-    cgraph1 = get_connectivity_graph(nodes, nodes_type, node_radius_type);
-    Gcon = generateG(nodes, nodes_type,cgraph1);
-    plot(Gcon,'r','XData',G.Nodes.x,'YData',G.Nodes.y)
-    
-    
-    subplot(1,3,3);
-    cgraph2 = get_zigbee_connectivity_graph(nodes, nodes_type, node_radius_type);
-    GconZig = generateG(nodes, nodes_type,cgraph2);
-    plot(GconZig,'r','XData',G.Nodes.x,'YData',G.Nodes.y)
-    
-%  p = plot(G,'XData',G.Nodes.x,'YData',G.Nodes.y);
-%  p.Marker = 's';
-%  p.NodeColor = 'r';
-%  p.MarkerSize = 7;
-%     
-  
+    distEu = zeros(length(row),1);
+    for i=1:length(row)
+        distEu(i)= pdist([nodes{row(i)};nodes{col(i)}],'euclidean');
+    end
 
-%   file_name = sprintf('trace/frame%d.mat',frameNr);
-%   save(file_name,'Gvor','Gcon','GconZig');
-
+    EdgeTable = table([row,col], [ones(length(row),1), distEu],...
+       'VariableNames',{'EndNodes','Weights'});
     
+   coord = cell2mat(nodes);
+   x = coord(1:2:length(coord));
+   y = coord(2:2:length(coord));
+   battery = rand(length(nodes),1);
+   temperature = rand(length(nodes),1)*20;
+   NodeTable = table(nodes_type',x',y',battery,temperature,...
+       'VariableNames',{'nodeType','x','y','battery','temperature'});
+   Gvor = digraph(EdgeTable, NodeTable);
+
+   plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)
     % Get the frame for the animation.
-	frames(frameNr) = getframe;
+   frames(frameNr) = getframe;
     
-    vorSpTemModel{frameNr} = Gvor;
-    conSpTemModel{frameNr} =  Gcon;
-    conZigSpTemModel {frameNr} = GconZig;
+   vorSpTemModel{frameNr} = Gvor;
+   
+   for  i=1:num_nodes
+    signal{i}=[signal{i}; nodes_type{i}, battery(i), temperature(i)];
+   end
+   
 end
-    
-save('spTempModels','vorSpTemModel','conSpTemModel','conZigSpTemModel');
-
-
+save('data','vorSpTemModel','time','signal');
+end
 
