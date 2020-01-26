@@ -1,6 +1,6 @@
 clear
 numSteps        = 20;
 num_nodes       = 50;
-[vorSpTemModel,time,signal]= sensorSystem(numSteps,num_nodes);
+[spatialModel,time,signal]= sensorSystem(numSteps,num_nodes);
 monitor = MoonlightEngine.load("sensor");
-result = monitor.spatioTemporalMonitor(vorSpTemModel,time,signal);
+result = monitor.spatioTemporalMonitor(spatialModel,time,signal);

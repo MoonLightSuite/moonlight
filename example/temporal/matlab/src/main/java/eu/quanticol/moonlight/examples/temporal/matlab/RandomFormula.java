@@ -38,8 +38,8 @@ public class RandomFormula {
     public static void main(String[] args) throws Exception {
         //main3(args);
         //test(14,3);
-        //test(15,3);
-        test(14, 3);
+        test(13,3);
+        //test(14, 3);
         eng.disconnect();
     }
 

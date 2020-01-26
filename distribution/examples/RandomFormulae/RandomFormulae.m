@@ -1,5 +1,5 @@
 clear
-monitor = MoonlightEngine.load("randomFormulae");
+monitor = MoonlightEngine.load("randomformulae");
 trajFunction = @(t)[t;t;t]';
 time = 0:1:100;
 values = trajFunction(time);
