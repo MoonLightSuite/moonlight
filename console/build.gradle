@@ -52,5 +52,5 @@ task install(type: Copy) {
     dependsOn jar
     from "${buildDir}/libs/moonlight.jar"
     into "${rootDir}/output/"
-    into "${rootDir}/distribution/moonlight/jar"
+    //into "${rootDir}/distribution/moonlight/jar"
 }
