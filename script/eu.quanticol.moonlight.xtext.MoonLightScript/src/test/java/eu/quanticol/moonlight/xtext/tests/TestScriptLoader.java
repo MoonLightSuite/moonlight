@@ -37,6 +37,34 @@ class TestScriptLoader {
 		assertNotNull(script);
 		
 	}
+	
+	@Test
+	void testLoadScriptFromCodeWithParameters() throws IOException {
+		ScriptLoader loader = new ScriptLoader();
+		MoonLightScript script = loader.compileScript("type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		\n" + 
+				"			\n" + 
+				"			monitor City(real distance) {\n" + 
+				"				signal { bool taxi; int peole; }\n" + 
+				"				space { locations {poiType poi; }\n" + 
+				"				edges { real length; "
+				+ "						int hop; "
+				+ "				}\n" + 
+				"				}\n" + 
+				"				domain boolean;\n" + 
+				"				formula somewhere(hop) [0, distance] #[ taxi ]#;\n" + 
+				"			}\n" + 
+				"\n" + 
+				"			monitor City2 {\n" + 
+				"				signal { bool taxi; int peole; }\n" + 
+				"				space { locations {poiType poi; }\n" + 
+				"				edges { real length; }\n" + 
+				"				}\n" + 
+				"				domain boolean;\n" + 
+				"				formula somewhere [0.0, 1.0] #[ taxi ]#;\n" + 
+				"			}");
+		assertNotNull(script);
+		
+	}
 
 	@Test
 	void testLoadScriptFromFile() throws IOException {

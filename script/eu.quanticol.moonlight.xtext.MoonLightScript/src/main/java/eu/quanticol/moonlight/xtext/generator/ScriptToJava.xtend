@@ -525,9 +525,9 @@ class ScriptToJava {
 	  SpatioTemporalMonitor.escapeMonitor( 
 	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
-	    	«edgeRecord» -> «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
-	    	«f.interval.from.expressionToJava»,
-	    	«f.interval.to.expressionToJava»),
+	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
+	    	(double) «f.interval.from.expressionToJava»,
+	    	(double) «f.interval.to.expressionToJava»),
 	    «domain»
 	  )
 	  '''		
@@ -538,9 +538,9 @@ class ScriptToJava {
 	  SpatioTemporalMonitor.somewhereMonitor( 
 	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
-	    	«edgeRecord» -> «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
-	    	«f.interval.from.expressionToJava»,
-	    	«f.interval.to.expressionToJava»),
+	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
+	    	(double) «f.interval.from.expressionToJava»,
+	    	(double) «f.interval.to.expressionToJava»),
 	    «domain»
 	  )
 	  '''		
@@ -551,9 +551,9 @@ class ScriptToJava {
 	  SpatioTemporalMonitor.everywhereMonitor( 
 	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
-	    	«edgeRecord» -> «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
-	    	«f.interval.from.expressionToJava»,
-	    	«f.interval.to.expressionToJava»),
+	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
+	    	(double) «f.interval.from.expressionToJava»,
+	    	(double) «f.interval.to.expressionToJava»),
 	    «domain»
 	  )
 	  '''		
@@ -564,9 +564,9 @@ class ScriptToJava {
 	  SpatioTemporalMonitor.everywhereMonitor( 
 	    «f.left.spatioTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
-	    	«edgeRecord» -> «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
-	    	«f.interval.from.expressionToJava»,
-	    	«f.interval.to.expressionToJava»),
+	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
+	    	(double) «f.interval.from.expressionToJava»,
+	    	(double) «f.interval.to.expressionToJava»),
 	    «f.right.spatioTemporalMonitorCode(prefix,domain)»,
 	    «domain»
 	  )
@@ -651,10 +651,10 @@ class ScriptToJava {
 			return '''«signalRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
 		}
 		if (monitor.edgeVariables.contains(variable)) {
-			return '''«edgeRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
+			return '''«edgeRecord».get(«monitor.edgeVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
 		}
 		if (monitor.parameters.contains(variable)) {
-			return '''«parameterRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
+			return '''«parameterRecord».get(«monitor.parameters.indexOf(variable)»,«variable.type.toJavaType»)'''
 		}
 	}
 	

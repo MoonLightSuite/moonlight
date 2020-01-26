@@ -47,24 +47,33 @@ class TestCompiler {
 	}
 	
 	@Test
-	def void generateJavaCode() {
+	def void loadModelWithParameters() {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor City {
+			monitor City( real distance ) {
 				signal { bool taxi; int peole; }
-				space { 
-				edges { real length; }
+				space { locations {poiType poi; }
+					edges { 
+						real length; 
+						int hop;
+					}
 				}
 				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
+				formula somewhere(hop) [0.0, distance] #[ taxi ]#;
 			}
 			
+			monitor Temporal( int a, int b) {
+				signal { bool x; real y; int z; }
+				domain boolean;
+				formula eventually [a,b] #[ y>0 ]#;
+			}
 		''')
-		val scriptToJava = new ScriptToJava();		
-		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
-		Assertions.assertNotNull(generatedCode)
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
 	}
+	
 	
 	@Test
 	def void compileAndLoadClass() {
@@ -113,13 +122,25 @@ class TestCompiler {
 				formula once [0.0, 1.0] #[ taxi ]#;
 			}
 			
+			monitor City7( int steps ) {
+							signal { bool taxi; int peole; }
+							space { 
+							edges { real length; 
+								int hop;
+							}
+							}
+							domain boolean;
+							formula somewhere(hop) [0.0, steps] #[ taxi ]#;
+						}
+			
+			
 		''')
 		val scriptToJava = new ScriptToJava();		
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
-		Assertions.assertEquals(2, script.spatioTemporalMonitors.length)
+		Assertions.assertEquals(3, script.spatioTemporalMonitors.length)
 	}	
 	
 	@Test
