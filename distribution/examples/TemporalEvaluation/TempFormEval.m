@@ -8,7 +8,7 @@ values = trajFunction(time);
 
 %%%%% MoonLight  %%%%%%%%
 tStart =tic;
-resultMoonlight = monitor.temporalMonitor(time,values,"RandomFormulae2");
+resultMoonlight = monitor.temporalMonitor("RandomFormulae2",time,values);
 tElapsedMoonLight = toc(tStart);
 result = resultMoonlight(1,2);
 

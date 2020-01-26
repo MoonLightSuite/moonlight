@@ -1,7 +1,7 @@
 classdef MoonlightEngine
     properties
         Script
-        SignalType
+        monitorName
     end
     methods(Static)
         function  self = load(filename)
@@ -13,25 +13,28 @@ classdef MoonlightEngine
         end
     end
     methods
-        function result = temporalMonitor(self, time, values, parameters)
+        function result = temporalMonitor(self,temporalMonitorName, time, values, parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
             else
                 parameters = self.toJavaParameters(parameters);
             end
-            temporalMonitor = self.Script.selectDefaultTemporalComponent();
+            %temporalMonitor = self.Script.selectDefaultTemporalComponent();
+            temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
             matrix=temporalMonitor.monitorToObjectArray(time,self.toJavaObjectMatrix(values),parameters);
             result = self.temporalObjectToMatrix(matrix);
         end
-        function result = spatioTemporalMonitor(self,graph, time, values,parameters)
+        function result = spatioTemporalMonitor(self,spatioTemporalMonitorName,graph, time, values,parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
             else
                 parameters = toJavaParameters(parameters);
             end
-            spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
+            %spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
+            spatioTemporalMonitor = self.Script.selectSpatioTemporalComponent(spatioTemporalMonitorName);
+            
             matrix=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
             result = self.spatialObjectToMatrix(matrix);
         end
@@ -83,10 +86,10 @@ classdef MoonlightEngine
         end
         function javaParameters = toJavaParameters(~,parameters)
             if(isvector(parameters))
-            javaParameters=javaArray('java.lang.String',length(parameters));
-            for i=1:length(parameters)
-                javaParameters(i)=java.lang.String(num2str(parameters(i)));
-            end
+                javaParameters=javaArray('java.lang.String',length(parameters));
+                for i=1:length(parameters)
+                    javaParameters(i)=java.lang.String(num2str(parameters(i)));
+                end
             else
                 javaParameters=javaArray('java.lang.String',1);
                 javaParameters(1)=num2str(parameters);
