@@ -6,7 +6,7 @@ classdef MoonlightEngine
     methods(Static)
         function  self = load(filename)
             self = MoonlightEngine;
-            system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","console-1.0-SNAPSHOT.jar "+filename+".mls "+tempdir));
+            system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","moonlight.jar "+filename+".mls "+tempdir));
             %system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filname+".jar")+" "+fullfile("moonlight","script","GeneratedScriptClass.class"));
             system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
             javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar"));
