@@ -1,0 +1,9 @@
+monitor RandomFormulae{
+signal {real x}
+domain minmax;
+formula eventually [0, 99] #[ x ]#;}
+
+monitor RandomFormulae2{
+signal {real x}
+domain boolean;
+formula eventually [0, 99] #[ x>=0 ]#;}
