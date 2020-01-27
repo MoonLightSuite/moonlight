@@ -22,7 +22,7 @@ classdef MoonlightEngine
             end
             %temporalMonitor = self.Script.selectDefaultTemporalComponent();
             temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
-	    javaObjectMatrix = self.toJavaObjectMatrix(values);
+	        javaObjectMatrix = self.toJavaObjectMatrix(values);
             tic
             matrix=temporalMonitor.monitorToObjectArray(time,javaObjectMatrix,parameters);
             time = toc;
@@ -69,7 +69,7 @@ classdef MoonlightEngine
             objectVector = javaArray('java.lang.String',signalSize);
             for i = 1:signalSize(1)
                 for j = 1:signalSize(2)
-                    objectVector(i,j)=java.lang.String(num2str(signal(i,j),16));
+                    objectVector(i,j)=java.lang.String(num2str(signal(i,j)));
                 end
             end
         end
@@ -94,7 +94,7 @@ classdef MoonlightEngine
             if(isvector(parameters))
                 javaParameters=javaArray('java.lang.String',length(parameters));
                 for i=1:length(parameters)
-                    javaParameters(i)=java.lang.String(num2str(parameters(i)),16);
+                    javaParameters(i)=java.lang.String(num2str(parameters(i)));
                 end
             else
                 javaParameters=javaArray('java.lang.String',1);

@@ -73,7 +73,7 @@ public class RandomFormula {
             functions.add(t -> Math.pow(t, 2.));
             functions.add(Math::cos);
             functions.add(Math::sin);
-            double timeStep = 0.0001;
+            double timeStep = 0.001;
             RecordHandler factory = RecordHandler.createFactory(
             		new Pair<>("a",DataHandler.REAL),
             		new Pair<>("b",DataHandler.REAL),

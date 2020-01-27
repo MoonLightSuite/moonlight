@@ -29,7 +29,7 @@ class TestRandomFormulaeScript {
    			monitor RandomFormulae {
       				signal { real x; real y; real z;}
       				domain boolean;
-      				formula globally [73, 98] #[ x>=0 ]#;
+      				formula globally [73.006,98.272] #[ x>=0 ]#;
       			}
 
   		''')
@@ -44,7 +44,7 @@ class TestRandomFormulaeScript {
    			monitor RandomFormulae {
       				signal { real x; real y; real z;}
       				domain boolean;
-      				formula globally [73, 98] #[ x>=0 ]#;
+      				formula globally [73.006,98.272] #[ x>=0 ]#;
       			}
 
   		''')
