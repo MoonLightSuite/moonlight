@@ -31,7 +31,6 @@ import eu.quanticol.moonlight.xtext.moonLightScript.ModuloExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.MulOrDivExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.TrueLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.FalseLiteral
-import eu.quanticol.moonlight.xtext.moonLightScript.NumberLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.NotExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.UnaryPlusExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMinusExpression
@@ -46,6 +45,8 @@ import eu.quanticol.moonlight.xtext.moonLightScript.BooleanType
 import eu.quanticol.moonlight.xtext.moonLightScript.TypeReference
 import org.eclipse.emf.common.util.EList
 import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
+import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
 
 class ScriptToJava {
 	
@@ -624,8 +625,12 @@ class ScriptToJava {
 		'''false'''	
 	}
 
-	def dispatch CharSequence getExpressionToJava(NumberLiteral expression) {
-		'''«expression.integerPart»«IF expression.isIsDecimal».«expression.decimalPart»«ENDIF»'''	
+	def dispatch CharSequence getExpressionToJava(IntegerLiteral expression) {
+		'''«expression.value»'''	
+	}
+
+	def dispatch CharSequence getExpressionToJava(RealLiteral expression) {
+		'''«expression.value»'''	
 	}
 
 	def dispatch CharSequence getExpressionToJava(NotExpression expression) {

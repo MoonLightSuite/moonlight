@@ -107,7 +107,7 @@ class TestCompiler {
 			monitor City4 {
 				signal { bool taxi; int peole; }
 				domain boolean;
-				formula eventually [0.0, 1.0] #[ taxi ]#;
+				formula eventually [0.0, 1.001] #[ taxi ]#;
 			}
 			
 			monitor City5 {

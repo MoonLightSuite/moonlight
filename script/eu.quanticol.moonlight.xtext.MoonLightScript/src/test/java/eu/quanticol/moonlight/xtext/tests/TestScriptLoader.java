@@ -60,7 +60,7 @@ class TestScriptLoader {
 				"				edges { real length; }\n" + 
 				"				}\n" + 
 				"				domain boolean;\n" + 
-				"				formula somewhere [0.0, 1.0] #[ taxi ]#;\n" + 
+				"				formula somewhere [0.0, 1.001] #[ taxi ]#;\n" + 
 				"			}");
 		assertNotNull(script);
 		
