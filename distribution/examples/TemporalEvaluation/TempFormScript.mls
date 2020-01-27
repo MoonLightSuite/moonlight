@@ -3,6 +3,11 @@ signal {real x;}
 domain minmax;
 formula globally [73.0071,98.272] #[ x ]#;}
 
+monitor nesting{
+signal {real x;}
+domain minmax;
+formula eventually [0,80] #[ x ]{globally [1,10] #[ x ]#};
+
 monitor RandomFormulaeB{
 signal {real x}
 domain boolean;

@@ -85,7 +85,7 @@ classdef MoonlightEngine
                     for l = 1:graphWidth
                         endNodes = elementEdges.EndNodes(j,:);
                         weight = elementEdges.Weights(j,:);
-                        graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))),16);
+                        graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))));
                     end
                 end
             end
@@ -110,7 +110,7 @@ classdef MoonlightEngine
             for i = 1: javaLocationsLength
                 for j = 1:javaTimeLength
                     for k = 1:javaSignalWidth
-                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)),16);
+                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)));
                     end
                 end
             end
