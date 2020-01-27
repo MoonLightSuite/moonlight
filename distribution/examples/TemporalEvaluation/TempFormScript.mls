@@ -1,9 +1,9 @@
-monitor RandomFormulae{
-signal {real x}
+monitor RandomFormulaeQ{
+signal {real x;}
 domain minmax;
-formula eventually [0, 99] #[ x ]#;}
+formula globally [73.0071,98.272] #[ x ]#;}
 
-monitor RandomFormulae2{
+monitor RandomFormulaeB{
 signal {real x}
 domain boolean;
-formula eventually [0, 99] #[ x>=0 ]#;}
+formula globally [73.007,98.272] #[ x>=0 ]#;}

@@ -13,7 +13,7 @@ classdef MoonlightEngine
         end
     end
     methods
-        function result = temporalMonitor(self,temporalMonitorName, time, values, parameters)
+        function [result,time] = temporalMonitor(self,temporalMonitorName, time, values, parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
@@ -22,10 +22,13 @@ classdef MoonlightEngine
             end
             %temporalMonitor = self.Script.selectDefaultTemporalComponent();
             temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
-            matrix=temporalMonitor.monitorToObjectArray(time,self.toJavaObjectMatrix(values),parameters);
-            result = self.temporalObjectToMatrix(matrix);
+	    javaObjectMatrix = self.toJavaObjectMatrix(values);
+            tic
+            matrix=temporalMonitor.monitorToObjectArray(time,javaObjectMatrix,parameters);
+            time = toc;
+            result = self.temporalObjectToMatrix(matrix);          
         end
-        function result = spatioTemporalMonitor(self,spatioTemporalMonitorName,graph, time, values,parameters)
+        function [result,time] = spatioTemporalMonitor(self,spatioTemporalMonitorName,graph, time, values,parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
@@ -34,8 +37,11 @@ classdef MoonlightEngine
             end
             %spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
             spatioTemporalMonitor = self.Script.selectSpatioTemporalComponent(spatioTemporalMonitorName);
-            
-            matrix=spatioTemporalMonitor.monitorToObjectArray(time,self.toJavaGraphModel(graph,length(values)),time,self.toJavaSignal(values),parameters);
+	    javaGraphModel = self.toJavaGraphModel(graph,length(values));
+	    javaSignal = self.toJavaSignal(values);
+            tic
+            matrix=spatioTemporalMonitor.monitorToObjectArray(time,javaGraphModel,time,javaSignal,parameters);
+            time = toc;
             result = self.spatialObjectToMatrix(matrix);
         end
         function result = getTemporalMonitors(self)
@@ -63,7 +69,7 @@ classdef MoonlightEngine
             objectVector = javaArray('java.lang.String',signalSize);
             for i = 1:signalSize(1)
                 for j = 1:signalSize(2)
-                    objectVector(i,j)=java.lang.String(num2str(signal(i,j)));
+                    objectVector(i,j)=java.lang.String(num2str(signal(i,j),16));
                 end
             end
         end
@@ -79,7 +85,7 @@ classdef MoonlightEngine
                     for l = 1:graphWidth
                         endNodes = elementEdges.EndNodes(j,:);
                         weight = elementEdges.Weights(j,:);
-                        graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))));
+                        graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))),16);
                     end
                 end
             end
@@ -88,11 +94,11 @@ classdef MoonlightEngine
             if(isvector(parameters))
                 javaParameters=javaArray('java.lang.String',length(parameters));
                 for i=1:length(parameters)
-                    javaParameters(i)=java.lang.String(num2str(parameters(i)));
+                    javaParameters(i)=java.lang.String(num2str(parameters(i)),16);
                 end
             else
                 javaParameters=javaArray('java.lang.String',1);
-                javaParameters(1)=num2str(parameters);
+                javaParameters(1)=num2str(parameters,16);
             end
         end
         function javaSignal = toJavaSignal(~,signal)
@@ -104,7 +110,7 @@ classdef MoonlightEngine
             for i = 1: javaLocationsLength
                 for j = 1:javaTimeLength
                     for k = 1:javaSignalWidth
-                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)));
+                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)),16);
                     end
                 end
             end

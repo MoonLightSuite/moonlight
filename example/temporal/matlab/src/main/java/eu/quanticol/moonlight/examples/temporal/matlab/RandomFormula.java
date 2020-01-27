@@ -38,14 +38,14 @@ public class RandomFormula {
     public static void main(String[] args) throws Exception {
         //main3(args);
         //test(14,3);
-        test(13,3);
-        //test(14, 3);
+        //test(13,3);
+        test(14, 5);
         eng.disconnect();
     }
 
     public static void mainLoop(String[] args) throws Exception {
-        for (int i = 1; i < 10; i++) {
-            for (int j = 2; j < 10; j++) {
+        for (int i = 1; i < 1; i++) {
+            for (int j = 2; j < 1; j++) {
                 System.out.println(i + "," + j + "-->" + test(i, j));
             }
         }
@@ -80,9 +80,10 @@ public class RandomFormula {
             		new Pair<>("c",DataHandler.REAL)
             );
             SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
-            double[] time = signalCreator.generateTime(0, 100, timeStep);
+            double endTime = 100;
+            double[] time = signalCreator.generateTime(0, endTime, timeStep);
             double[][] values = generateValues(time,functions);
-            VariableArraySignal signal = signalCreator.generate(0, 100, timeStep);
+            VariableArraySignal signal = signalCreator.generate(0, endTime, timeStep);
             FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
             Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
             //System.out.println(generatedFormula.toString());

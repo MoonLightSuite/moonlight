@@ -1,12 +1,10 @@
 clear
 
 monitor = MoonlightEngine.load("TempFormScript");
-trajFunctionV = @(t)[t.^2;cos(t);sin(t)]';
-trajFunction = @(t)cos(t)';
-timeStep = 0.001;
-time = 0:timeStep:100;
+%trajFunction = @(t)[t.^2;cos(t);sin(t)]';
+trajFunction = @(t)t.^2';
+time = 0:1:100;
 values = trajFunction(time);
-valuesV = trajFunctionV(time);
 
 %%%%% MoonLight  %%%%%%%%
 %tStart =tic;
@@ -20,7 +18,7 @@ psi_Pred(1).str = 'a';
 psi_Pred(1).A   =  -1;
 psi_Pred(1).b   =  0;
 
-psi = '[]_[73.007,98.272] a';
+psi = '[]_[73,9899] a';
 
 tStart =tic;
 resultTaliro = fw_taliro(psi,psi_Pred,values,time');
@@ -34,10 +32,9 @@ BrTrace = BreachTraceSystem({'X'}, [time' values]);
 %figure; BrTrace.PlotSignals();
 
 % prop
-phiBreach = 'alw_[73.007,98.272](X[t]>0)';
+phiBreach = 'alw_[73,9899](X[t]>=0)';
 BreachProp= STL_Formula('A',phiBreach);
 tStart =tic;
 [resultBreach, tau] =  STL_Eval(BrTrace.Sys, BreachProp, BrTrace.P, BrTrace.P.traj,'thom');
 tElapsedBreach = toc(tStart);
-resultBreach1 = resultBreach(1);
 
