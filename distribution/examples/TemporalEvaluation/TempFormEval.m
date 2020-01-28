@@ -18,7 +18,7 @@ resultMoonlight1 = resultMoonlight(1,2);
 psi_Pred(1).str = 'a';
 psi_Pred(1).A   =  -1;
 psi_Pred(1).b   =  0;
-psi = '[]_[73.6,98.272] a';
+psi = '[]_[73.007,98.272] a';
 
 tStart =tic;
 resultTaliro = fw_taliro(psi,psi_Pred,values,time');
@@ -28,8 +28,13 @@ tElapsedTaliro = toc(tStart);
 InitBreach
 BrTrace = BreachTraceSystem({'X'}, [time' values]);
 % prop
-phiBreach = 'alw_[73.6,98.272](X[t]>=0)';
-BreachProp= STL_Formula('A',phiBreach);
+phiBreach = 'alw_[73.007,98.272](X[t]>=0)';
+BreachProp= STL_Formula('phi',phiBreach);
+
+tStart =tic;
+resultBreachslow= BrTrace.CheckSpec('phi');
+tElapsedBreachslow = toc(tStart);
+resultBreach1slow = resultBreachfast(1);
 tStart =tic;
 [resultBreach, tau] =  STL_Eval(BrTrace.Sys, BreachProp, BrTrace.P, BrTrace.P.traj,'thom');
 tElapsedBreach = toc(tStart);

@@ -1,0 +1,9 @@
+monitor Prova{
+signal {real x;}
+domain minmax;
+formula globally [73,89] {#[ x ]#};}
+
+monitor Prova2{
+signal {real x;}
+domain minmax;
+formula eventually [73,89]  {#[ -x ]#};}
