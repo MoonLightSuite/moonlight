@@ -4,16 +4,16 @@ clear
 monitor = MoonlightEngine.load("sensorScript");
 
 elapseTimeSeq = [];
-for num_nodes = 15: 15: 15
+for num_nodes = 20: 20: 20
     % The data
-    numSteps        = 1; % number timeStep 
+    numSteps        = 10; % number timeStep 
     %num_nodes       = 20; % number of nodes
     plotFrames = false;
-    [spatialModel,time,signal]= sensorModel(num_nodes,numSteps,plotFrames );
+    [spatialModel,time,signalInput]= sensorModel(num_nodes,numSteps,plotFrames );
 
     % monitor evalutation
     [result, elapseTime] = monitor.spatioTemporalMonitor(...
-        "ReachProp",spatialModel,time,signal);
+        "ReachProp",spatialModel,time,signalInput);
     elapseTimeSeq = [elapseTimeSeq,elapseTime]
     %
 end
@@ -41,7 +41,7 @@ A = adjacency(Gvor)
 G = graph(A);
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)
 p.EdgeColor = 'black';
-p.MarkerSize = 8;
+p.MarkerSize = 10;
 set(gca,'FontSize',18);    
 colorbar('FontSize',18);
 p.NodeCData = cell2mat(Gvor.Nodes.nodeType);
@@ -56,7 +56,7 @@ Gvor.Nodes.Resutls = spatialResult(length(spatialResult(:,1)),:)';
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
 p.NodeCData = Gvor.Nodes.Resutls;
 p.EdgeColor = 'black';
-p.MarkerSize = 8;
+p.MarkerSize = 10;
 set(gca,'FontSize',18);    
 colorbar('FontSize',18);
 caxis([0, 1])
