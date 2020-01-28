@@ -9,10 +9,10 @@ InitBreach
 %trace = [time X]; % trace is in column format, first column is time
 BrTrace = BreachTraceSystem({'X'}, [time values]);
 %figure; BrTrace.PlotSignals();
-BreachProp= STL_Formula('A',phiBreach);
+BreachProp= STL_Formula('phi',phiBreach);
 tStart =tic;
-[resultBreach, tau] =  STL_Eval(BrTrace.Sys, BreachProp, BrTrace.P, BrTrace.P.traj,'thom');
-resultBreach1 = resultBreach(1);
+resultBreach= BrTrace.CheckSpec('phi');
 tElapsedBreach = toc(tStart);
+resultBreach1 = resultBreach(1);
 end
 
