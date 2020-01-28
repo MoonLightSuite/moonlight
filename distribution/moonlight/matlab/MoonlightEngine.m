@@ -6,8 +6,14 @@ classdef MoonlightEngine
     methods(Static)
         function  self = load(filename)
             self = MoonlightEngine;
-            system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","moonlight.jar "+filename+".mls "+tempdir));
-            system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
+            [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","moonlight.jar "+filename+".mls "+tempdir));
+            if(status~=0)
+                throw(MException("","PARSER OF THE SCRIPT FAILED \n"+out))
+            end
+            [status, out] = system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
+            if(status~=0)
+                throw(MException("","CREATION OF THE JAR FAILED \n"+out))
+            end
             javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar"));
             self.Script=eval("moonlight.script.Script"+filename);
         end
@@ -22,11 +28,11 @@ classdef MoonlightEngine
             end
             %temporalMonitor = self.Script.selectDefaultTemporalComponent();
             temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
-	        javaObjectMatrix = self.toJavaObjectMatrix(values);
+            javaObjectMatrix = self.toJavaObjectMatrix(values);
             tic
             matrix=temporalMonitor.monitorToObjectArray(time,javaObjectMatrix,parameters);
             time = toc;
-            result = self.temporalObjectToMatrix(matrix);          
+            result = self.temporalObjectToMatrix(matrix);
         end
         function [result,time] = spatioTemporalMonitor(self,spatioTemporalMonitorName,graph, time, values,parameters)
             if ~exist('parameters','var')
@@ -37,8 +43,8 @@ classdef MoonlightEngine
             end
             %spatioTemporalMonitor = self.Script.selectDefaultSpatioTemporalComponent();
             spatioTemporalMonitor = self.Script.selectSpatioTemporalComponent(spatioTemporalMonitorName);
-	    javaGraphModel = self.toJavaGraphModel(graph,length(values));
-	    javaSignal = self.toJavaSignal(values);
+            javaGraphModel = self.toJavaGraphModel(graph,length(values));
+            javaSignal = self.toJavaSignal(values);
             tic
             matrix=spatioTemporalMonitor.monitorToObjectArray(time,javaGraphModel,time,javaSignal,parameters);
             time = toc;
