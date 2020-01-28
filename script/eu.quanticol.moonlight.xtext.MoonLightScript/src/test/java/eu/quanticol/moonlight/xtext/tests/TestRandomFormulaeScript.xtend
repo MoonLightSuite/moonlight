@@ -29,7 +29,7 @@ class TestRandomFormulaeScript {
    			monitor RandomFormulae {
       				signal { real x; real y; real z;}
       				domain minmax;
-      				formula globally  [73.01,98.272]  {#[ !x ]#};
+      				formula globally  [73.01,98.272]  !#[ x ]#;
       			}
 
   		''')
@@ -44,13 +44,15 @@ class TestRandomFormulaeScript {
    			monitor RandomFormulae {
       				signal { real x; real y; real z;}
       				domain minmax;
-      				formula globally [73.01,98.272] {#[ !x ]#};
+      				formula globally [73.01,98.272] !#[ x ]#;
       			}
 
   		''')
   		val scriptToJava = new ScriptToJava();
   		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","RandomFormulae")
   		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		comp.getIstance("moonlight.test","RandomFormulae",generatedCode.toString,typeof(MoonLightScript))
   		}
 
 }

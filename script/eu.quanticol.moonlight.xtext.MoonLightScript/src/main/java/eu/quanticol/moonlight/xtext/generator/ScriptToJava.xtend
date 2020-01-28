@@ -47,6 +47,7 @@ import org.eclipse.emf.common.util.EList
 import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelNotFormula
 
 class ScriptToJava {
 	
@@ -367,6 +368,15 @@ class ScriptToJava {
 		'''
 	}
 
+	def dispatch CharSequence temporalMonitorCode(StrelNotFormula f, String prefix, String domain) {
+		'''
+		TemporalMonitor.notMonitor( 
+			«f.argument.temporalMonitorCode(prefix,domain)» ,
+			«domain»
+		)
+		'''
+	}
+
 	def dispatch CharSequence temporalMonitorCode(StrelEventuallyFormula f, String prefix, String domain) {
 		'''
 		TemporalMonitor.eventuallyMonitor( 
@@ -432,6 +442,17 @@ class ScriptToJava {
 	  )
 	  '''
 	}
+	
+	def dispatch CharSequence spatioTemporalMonitorCode(StrelNotFormula f, String prefix, String domain) {
+		'''
+		SpatioTemporalMonitor.notMonitor( 
+			«f.argument.spatioTemporalMonitorCode(prefix,domain)» ,
+			«domain»
+		)
+		'''
+	}
+
+	
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelAndFormula f, String prefix, String domain) {
 	  '''
