@@ -144,7 +144,25 @@ class TestCompiler {
 	}	
 	
 	@Test
-	def void testMonitorNameOrdered() {
-		
+	def void testReachMonitor() {
+		val result = parseHelper.parse('''
+		monitor ReachProp {
+		                signal { int nodeType; real battery; real temperature; }
+		               space {
+		               edges { int hop; real weight; }
+		               }
+		               domain boolean;
+		               formula #[ nodeType==3 ]# reach (hop)[0.0, 1.0] #[ nodeType==2 ]# ;
+		             }
+		''')
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		val scriptToJava = new ScriptToJava();		
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
+		Assertions.assertNotNull(script)
 	}	
 }

@@ -291,6 +291,16 @@ class ScriptToJava {
 		}
 	}	
 
+	def CharSequence basicTypeOf( BasicType t ) {
+		switch t {
+			IntegerType: '''int'''
+			RealType: '''double'''
+			BooleanType: '''boolean'''
+			TypeReference: '''«t.type.name»'''
+		}
+	}	
+
+
 	def CharSequence domainOf(SemiringExpression e) {
 		switch e {
 //		TropicalSemiring: '''Double'''
@@ -583,7 +593,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelReachFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.everywhereMonitor( 
+	  SpatioTemporalMonitor.reachMonitor( 
 	    «f.left.spatioTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
 	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
@@ -674,13 +684,13 @@ class ScriptToJava {
 		val variable = expression.reference
 		val monitor = variable.getContainerOfType(typeof(Monitor))
 		if (monitor.signalVariables.contains(variable)) {
-			return '''«signalRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
+			return '''((«variable.type.basicTypeOf») «signalRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
 		}
 		if (monitor.edgeVariables.contains(variable)) {
-			return '''«edgeRecord».get(«monitor.edgeVariables.indexOf(variable)»,«variable.type.toJavaType»)'''
+			return '''((«variable.type.basicTypeOf») «edgeRecord».get(«monitor.edgeVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
 		}
 		if (monitor.parameters.contains(variable)) {
-			return '''«parameterRecord».get(«monitor.parameters.indexOf(variable)»,«variable.type.toJavaType»)'''
+			return '''((«variable.type.basicTypeOf») «parameterRecord».get(«monitor.parameters.indexOf(variable)»,«variable.type.toJavaType»))'''
 		}
 	}
 	

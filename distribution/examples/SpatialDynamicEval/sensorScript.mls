@@ -22,6 +22,5 @@ monitor ReachProp {
              	edges { int hop; real weight; }
              	}
              	domain boolean;
-             	formula  #[ nodeType==3 ]# reach (hop)[0.0, 1.0] #[ nodeType==2 ]# ;
+             	formula somewhere (hop)[0, 1] #[ nodeType==2 ]# ;
              }
-
