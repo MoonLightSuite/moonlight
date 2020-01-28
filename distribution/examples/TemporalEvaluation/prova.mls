@@ -1,7 +1,7 @@
-monitor Prova{
+monitor Prova3{
 signal {real x;}
 domain minmax;
-formula globally [73,89] {#[ x ]#};}
+formula globally [73,89] {!#[ x ]#};}
 
 monitor Prova2{
 signal {real x;}
