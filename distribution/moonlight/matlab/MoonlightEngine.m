@@ -1,25 +1,30 @@
 classdef MoonlightEngine
+    % This is a wrapper class arounf the java core of Moonlight
+    % Use the static constructor load(filename) to build it
+  
     properties
         Script
         monitorName
     end
     methods(Static)
         function  self = load(filename)
+            % class static constructor
             self = MoonlightEngine;
-            [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"jar","moonlight.jar "+filename+".mls "+tempdir));
+            [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));
             if(status~=0)
-                throw(MException("","PARSER OF THE SCRIPT FAILED \n"+out))
+                throw(MException("","PARSER OF THE SCRIPT FAILED "+out))
             end
-            [status, out] = system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
+            [status, out] = system("jar -cvf "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight", "script",filename+".jar")+" -C "+tempdir+" "+fullfile("moonlight","script","Script"+filename+".class"));
             if(status~=0)
                 throw(MException("","CREATION OF THE JAR FAILED \n"+out))
             end
-            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"), "script",filename+".jar"));
+            javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight", "script",filename+".jar"));
             self.Script=eval("moonlight.script.Script"+filename);
         end
     end
     methods
         function [result,time] = temporalMonitor(self,temporalMonitorName, time, values, parameters)
+            %execute temporal monitor
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
@@ -35,6 +40,7 @@ classdef MoonlightEngine
             result = self.temporalObjectToMatrix(matrix);
         end
         function [result,time] = spatioTemporalMonitor(self,spatioTemporalMonitorName,graph, time, values,parameters)
+            %execute spatio-temporal monitor
             if ~exist('parameters','var')
                 % third parameter does not exist, so default it to something
                 parameters = javaArray('java.lang.String',0);
@@ -51,22 +57,12 @@ classdef MoonlightEngine
             result = self.spatialObjectToMatrix(matrix);
         end
         function result = getTemporalMonitors(self)
+            %list all the temporal monitors
             result = self.Script.getTemporalMonitors();
         end
         function result = getSpatioTemporalMonitors(self)
+            %list all the spatio-temporal monitors
             result = self.Script.getSpatioTemporalMonitors();
-        end
-        function result = getInfoTemporalMonitor(self,name)
-            result = self.Script.getInfoTemporalMonitor(name);
-        end
-        function result = getInfoSpatioTemporalMonitor(self,name)
-            result = self.Script.getInfoSpatioTemporalMonitor(name);
-        end
-        function result = getInfoDefaultTemporalMonitor(self)
-            result = self.Script.getInfoDefaultTemporalMonitor();
-        end
-        function result = getInfoDefaultSpatioTemporalMonitor(self)
-            result = self.Script.getInfoDefaultSpatioTemporalMonitor();
         end
     end
     methods (Access = private)
