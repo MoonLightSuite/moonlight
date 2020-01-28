@@ -1,11 +1,16 @@
 clear
-numSteps        = 10;
-num_nodes       = 20;
-[spatialModel,time,signal]= sensorSystem(num_nodes,numSteps);
+
+% The data
+numSteps        = 10; % number timeStep 
+num_nodes       = 20; % number of nodes
+plotFrames = False;
+[spatialModel,time,signal]= sensorSystem(num_nodes,numSteps,plotFram );
+
+% the monitor
 monitor = MoonlightEngine.load("sensor");
 
-tic
-result = monitor.spatioTemporalMonitor("SensNetkQuant",spatialModel,time,signal);
+
+[result, time] = monitor.spatioTemporalMonitor("SensNetkQuant",spatialModel,time,signal);
 toc
 
 time=result{1}(:,1);

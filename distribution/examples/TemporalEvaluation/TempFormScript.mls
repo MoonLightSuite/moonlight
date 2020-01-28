@@ -1,7 +1,7 @@
 monitor RandomFormulaeQ{
 signal {real x;}
 domain minmax;
-formula globally [73,98] #[ x ]#;}
+formula globally #[ x ]#;}
 
 monitor nesting{
 signal {real x;}

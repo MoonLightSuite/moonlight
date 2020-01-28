@@ -1,4 +1,4 @@
-function [vorSpTemModel, time, signal] = sensorSystem(num_nodes,numSteps)
+function [vorSpTemModel, time, signal] = sensorSystem(num_nodes,numSteps,plotFrames)
 % Simulation of MANETs with ZigBee protocols
 %
 %
@@ -85,7 +85,7 @@ signal = cell(num_nodes,1);
 time = 1 : numSteps;
 for frameNr = time
 
-    cla;
+    %cla;
     
     for i=1:num_nodes
         
@@ -156,12 +156,20 @@ for frameNr = time
    NodeTable = table(nodes_type',x',y',battery,temperature,...
        'VariableNames',{'nodeType','x','y','battery','temperature'});
    Gvor = digraph(EdgeTable, NodeTable);
-
-   plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)
-    % Get the frame for the animation.
-   frames(frameNr) = getframe;
-    
    vorSpTemModel{frameNr} = Gvor;
+   
+   if plotFrames
+      Gvor.Nodes.NodeColors = battery;
+      p = plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)
+      p.MarkerSize = 8;
+      %p.NodeCData = Gvor.Nodes.NodeColors;
+      p.NodeCData = cell2mat(Gvor.Nodes.nodeType);
+      colorbar
+      %Get the frame for the animation.
+      frames(frameNr) = getframe;
+   end
+    
+   
    
    for  i=1:num_nodes
     signal{i}=[signal{i}; nodes_type{i}, battery(i), temperature(i)];
