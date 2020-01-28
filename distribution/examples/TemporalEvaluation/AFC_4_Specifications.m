@@ -23,7 +23,7 @@ AF_not_ok = STL_Formula('AF_ok', 'abs(AF[t]- AFref[t]) < 0.01*14.7')
 
 %%
 % For example, we define next a formula stating "some time in the future, AF_ok is true". 
-AF_ev_ok = STL_Formula('AF_ev_ok', 'ev (AF_ok)')
+AF_ev_ok = STL_Formula('AF_ev_ok', 'ev (AF_ok)');
 
 %%
 % ev is a shorthand for 'eventually'. Other temporal operators are 'alw' or 'always' and 'until'.  
@@ -32,7 +32,7 @@ AF_ev_ok = STL_Formula('AF_ev_ok', 'ev (AF_ok)')
 % Temporal operators can specify a time range to operate on. For our
 % system, AF does not need to be checked before 10s, and we simulate until
 % 30s so we check the following formula:
-AF_alw_ok = STL_Formula('AF_alw_ok', 'alw_[10,30] (AF_ok)') % alw shorthand for in 'always'
+AF_alw_ok = STL_Formula('AF_alw_ok', 'alw_[10,30] (AF_ok)'); % alw shorthand for in 'always'
 
 %%
 % Then we check our formula on a simulation with nominal parameters:
@@ -42,10 +42,10 @@ AFC_w_Specs.Sim(Time);
 AFC_w_Specs.PlotSignals({'AF','AFref','controller_mode'}); 
 
 tStart =tic;
-rob1  = AFC_w_Specs.CheckSpec(AF_ev_ok)
+rob1  = AFC_w_Specs.CheckSpec(AF_ev_ok);
 tElapsedBreach1 = toc(tStart);
 tStart =tic;
-rob2  = AFC_w_Specs.CheckSpec(AF_alw_ok)
+rob2  = AFC_w_Specs.CheckSpec(AF_alw_ok);
 tElapsedBreach2 = toc(tStart);
 
 model = AFC_w_Specs.P.traj{1}.X;
@@ -90,7 +90,9 @@ figure; BrTrace.PlotSignals();
 % Checks (plots) some formula on imported trace:
 figure; BrTrace.PlotRobustSat('alw (x[t] > 0) or alw (y[t]>0)');
 BreachProp=STL_Formula('phi','alw (x[t] > 0) or alw (y[t]>0)');
+tStart = tic;
 rob4=BrTrace.CheckSpec('phi');
+tElapsedBreach4 = toc(tStart);
 
 [resultMoonlight, timeMoonLight4] = monitor.temporalMonitor("specBreach",time,values);
 resultMoonlight4 = resultMoonlight(1,2);
