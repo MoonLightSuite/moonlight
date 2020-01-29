@@ -1,0 +1,8 @@
+monitor MyFirstMonitor {
+                signal { int nodeType; }
+             	space {
+             	edges { int hop;}
+             	}
+             	domain boolean;
+             	formula everywhere[0, 1] #[ nodeType==3 ]#;
+             }

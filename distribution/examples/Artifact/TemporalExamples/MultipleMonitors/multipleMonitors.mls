@@ -1,0 +1,10 @@
+monitor BooleanMonitorScript {
+signal { real x; real y;}
+domain boolean;
+formula globally [0, 0.2]  #[ x > y ]#;
+}
+monitor QuantitativeMonitorScript{
+signal { real x; real y;}
+domain minmax;
+formula globally [0, 0.2] #[ x - y ]#;
+}
