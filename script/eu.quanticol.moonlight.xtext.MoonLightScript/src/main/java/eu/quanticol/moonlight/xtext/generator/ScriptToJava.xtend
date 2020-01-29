@@ -511,45 +511,45 @@ class ScriptToJava {
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelEventuallyFormula f, String prefix, String domain) {
 	  '''
 	  SpatioTemporalMonitor.eventuallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
-	    «domain»«IF f.interval !== null»
-	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
-	    «ENDIF»
-	  )
-	  '''		
+	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+	    	    «ENDIF»
+	    	    «domain»
+	    	  )
+	  '''
 	}	
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelAlwaysFormula f, String prefix, String domain) {
 	  '''
 	  SpatioTemporalMonitor.globallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
-	    «domain»«IF f.interval !== null»
-	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
-	    «ENDIF»
-	  )
-	  '''		
-	}	
+	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+	    	    «ENDIF»
+	    	    «domain»
+	    	  )
+	  '''
+	 }	
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelHistoricallyFormula f, String prefix, String domain) {
 	  '''
 	  SpatioTemporalMonitor.historicallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
-	    «domain»«IF f.interval !== null»
-	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
-	    «ENDIF»
-	  )
-	  '''		
+	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+	    	    «ENDIF»
+	    	    «domain»
+	    	  )
+	  '''
 	}	
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelOnceFormula f, String prefix, String domain) {
 	  '''
 	  SpatioTemporalMonitor.onceMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
-	    «domain»«IF f.interval !== null»
-	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
-	    «ENDIF»
-	  )
-	  '''		
+	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
+	    	    «ENDIF»
+	    	    «domain»
+	    	  )
+	  '''
 	}	
 	
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelEscapeFormula f, String prefix, String domain) {

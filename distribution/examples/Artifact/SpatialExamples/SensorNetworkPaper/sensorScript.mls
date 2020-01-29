@@ -25,3 +25,12 @@ monitor SomeWhereMon {
              	domain boolean;
              	formula somewhere(dist)[0,3] #[ battery > 0.5]#;
              }
+
+monitor SensTemp {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{globally [0, 0.2]  #[  battery > 0.5 ]#};
+             }
