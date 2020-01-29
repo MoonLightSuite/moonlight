@@ -3,8 +3,8 @@ clear
 % The script
 monitor = MoonlightEngine.load("sensorScript");
 
-elapseTimeSeq = [];
-num_nodes_seq = 10: 50: 50;
+elapseTimeSeqR = [];
+num_nodes_seq = 10: 50: 1000;
 for num_nodes = num_nodes_seq
     % The data
     numSteps        = 10; % number timeStep 
@@ -14,8 +14,8 @@ for num_nodes = num_nodes_seq
 
     % monitor evalutation
     [result, elapseTime] = monitor.spatioTemporalMonitor(...
-        "Sens",spatialModel,time,signalInput);
-    elapseTimeSeq = [elapseTimeSeq,elapseTime];
+        "ReachPropBool",spatialModel,time,signalInput);
+    elapseTimeSeqR = [elapseTimeSeqR,elapseTime];
     %
 end
 
