@@ -1,24 +1,24 @@
--- Quinck Info --
-All the example provided in the article are contained in the folder examples/. 
+-- Quick Info --
+All the examples provided in the article are contained in the folder examples/. 
 The Virtual Machine has been set up, please run the configuration script init.m
 contained in this folder before using the tool. 
-Consider that the installed version of Matlab will expires on 27/02/2020.
+Consider that the installed version of Matlab will expire on 27/02/2020.
 
 -- Moonlight INSTALLATION --
 Required software: 
 - Matlab (version >=2019b) with Statistics and Machine Learning Toolbox
 - Java JDK 1.8
 There is no installation phase, just execute the init.m each time before using the tool.
-This file configure the MoonLight enviroment. 
+This file configures the MoonLight environment. 
 
 -- VIRTUAL MACHINE --
 This virtual machine contains all the required software. 
-Please consider that the installed Matlab is a trail version which expires on 27/02/2020.
+Please consider that the installed Matlab is a trial version that expires on 27/02/2020.
 If you have Matlab and you want to try MoonLight on your pc just copy/paste
 this folder and execute init.m    
 
 -- Moonlight RUN--
-Remember to run the init.m file to configure the MoonLight enviroment.
+Remember to run the init.m file to configure the MoonLight environment.
 
 -- Folder Structure --
 In this folder you have: 
@@ -31,5 +31,5 @@ moonlight/ which contains the core of the tool.
     |              the communication with the Java Core. 
     |_____ script/ is a utility folder use at runtime to load the moonlight scripts
 
-init.m     is a script which add the moonlight folder to the MATLAB path and set 
-           an enviromental variable 
+init.m     is a script which adds the moonlight folder to the MATLAB path and set 
+           an environmental variable 

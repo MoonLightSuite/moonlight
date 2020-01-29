@@ -1,4 +1,5 @@
 % Multiple Monitor Example
+% We show how to use multiple monitor 
 clear
 
 %generate a monitor object from the script fine multipleMonitors.mls (contained in this folder)
