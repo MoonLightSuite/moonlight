@@ -1,0 +1,55 @@
+monitor ReachPropBool {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+             	formula #[ nodeType==2 ]#reach (hop)[0, 50] #[ nodeType==2 ]# ;
+             }
+
+monitor ReachPropQuant {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula #[temperature - 10]#reach(hop)[0, 10] #[ battery - 0.5 ]# ;
+             }
+
+monitor EscapeMonBool {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+             	formula escape(dist)[3, 500] #[ battery > 0.5]# ;
+             }
+
+monitor EscapeMonQuant {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula escape(dist)[3, 5] #[ battery - 0.5]# ;
+             }
+
+
+monitor SensNetkQuant {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula somewhere[0, 3] #[ battery - 0.5 ]# ;
+             }
+
+monitor SensNetBool {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+             	formula somewhere(hop)[0, 3] #[  battery > 0.5 ]# ;
+             }
+

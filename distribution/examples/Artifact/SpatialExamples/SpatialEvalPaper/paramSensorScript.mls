@@ -31,5 +31,14 @@ monitor ReachProp {
              	edges { int hop; real weight; }
              	}
              	domain boolean;
-             	formula #[ nodeType==2 ]#reach (hop)[0, 1] #[ nodeType==2 ]# ;
+             	formula #[ nodeType==2 ]#reach (hop)[0, 2] #[ nodeType==2 ]# ;
+             }
+
+monitor EscapeMon {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+             	formula escape(hop)[3, 5] #[ battery - 0.5]# ;
              }
