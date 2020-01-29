@@ -138,7 +138,7 @@ class TestSpatialProperties {
         int relevantC = 5;
         int relevantR = 5;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
-        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
+        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> 1.0, new DoubleDistance(), 0.0, range, model);
         ArrayList<Boolean> result = ds.somewhere(
                 new BooleanDomain(),
                 (i) -> i == TestUtils.gridIndexOf(relevantR, relevantC, columns)

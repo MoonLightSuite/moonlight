@@ -146,15 +146,24 @@ class TestCompiler {
 	@Test
 	def void testReachMonitor() {
 		val result = parseHelper.parse('''
-		monitor ReachProp {
-		                signal { int nodeType; real battery; real temperature; }
-		               space {
-		               edges { int hop; real weight; }
-		               }
-		               domain boolean;
-		               formula #[ nodeType==3 ]# reach (hop)[0.0, 1.0] #[ nodeType==2 ]# ;
-		             }
-		''')
+monitor SensNetkBool {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+             	formula everywhere[0.0, 5.0] #[  nodeType==2 ]# ;
+             }
+//Questo è un commento.
+monitor SensNetkQuant {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula everywhere[0.0, 5.0] #[ battery - 0.5 ]# ;
+             }
+            		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
@@ -165,4 +174,56 @@ class TestCompiler {
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
 		Assertions.assertNotNull(script)
 	}	
+	
+	
+	@Test
+	def void testSpatioTemporal() {
+		val result = parseHelper.parse('''
+		monitor SensTemp {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{globally [0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+		monitor SensTemp2 {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{eventually [0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+		monitor SensTemp3 {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{once [0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+		monitor SensTemp3 {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{historically [0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+        ''')
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		val scriptToJava = new ScriptToJava();		
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
+		Assertions.assertNotNull(script)
+	}		
 }
