@@ -206,13 +206,31 @@ monitor SensNetkQuant {
                 formula somewhere(hop)[0, 3]{once [0, 0.2]  #[  battery > 0.5 ]#};
              }
 
-		monitor SensTemp3 {
+		monitor SensTemp4 {
                 signal { int nodeType; real battery; real temperature; }
              	space {
              	edges { int hop; real dist; }
              	}
              	domain boolean;
                 formula somewhere(hop)[0, 3]{historically [0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+		monitor SensTem5 {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{#[  battery > 0.5 ]# until[0, 0.2]  #[  battery > 0.5 ]#};
+             }
+
+		monitor SensTem6 {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula somewhere(hop)[0, 3]{#[  battery > 0.5 ]# since[0, 0.2]  #[  battery > 0.5 ]#};
              }
 
         ''')
