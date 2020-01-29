@@ -101,6 +101,7 @@ public class Segment<T> {
 			return this.next;
 		} else {
 			this.end = time;
+			this.next = null;
 			return this;
 		}
 	}
