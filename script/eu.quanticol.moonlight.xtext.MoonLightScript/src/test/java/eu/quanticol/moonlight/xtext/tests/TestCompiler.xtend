@@ -130,7 +130,7 @@ class TestCompiler {
 							}
 							}
 							domain boolean;
-							formula somewhere(hop) [0.0, steps] #[ taxi ]#;
+							formula  globally [0.0, 1.0]{somewhere(hop) [0.0, steps] #[ taxi ]#};
 						}
 			
 			

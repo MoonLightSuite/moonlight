@@ -41,7 +41,7 @@ monitor SensNetkQuant {
              	edges { int hop; real dist; }
              	}
              	domain minmax;
-             	formula somewhere[0, 3] #[ battery - 0.5 ]# ;
+             	formula {somewhere[0, 3] #[ battery - 0.5 ]#} ;
              }
 
 monitor SensNetBool {
@@ -51,5 +51,15 @@ monitor SensNetBool {
              	}
              	domain boolean;
              	formula somewhere(hop)[0, 3] #[  battery > 0.5 ]# ;
+             }
+
+
+monitor Sens {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain boolean;
+                formula everywhere(hop)[0, 3]{somewhere(hop)[0, 0.2]  #[  battery > 0.5 ]#};
              }
 

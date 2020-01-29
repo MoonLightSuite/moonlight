@@ -7,14 +7,14 @@ elapseTimeSeq = [];
 num_nodes_seq = 10: 50: 1000;
 for num_nodes = num_nodes_seq
     % The data
-    numSteps        = 1; % number timeStep 
+    numSteps        = 10; % number timeStep 
     %num_nodes       = 20; % number of nodes
     plotFrames = false;
     [spatialModel,time,signalInput]= sensorModel(num_nodes,numSteps,plotFrames );
 
     % monitor evalutation
     [result, elapseTime] = monitor.spatioTemporalMonitor(...
-        "SensNetBool",spatialModel,time,signalInput);
+        "Sens",spatialModel,time,signalInput);
     elapseTimeSeq = [elapseTimeSeq,elapseTime];
     %
 end
