@@ -5,8 +5,8 @@ formula globally #[ x ]#;}
 
 monitor nesting{
 signal {real x;}
-domain minmax;
-formula eventually [0,80]{globally [1,10] #[ x ]#};
+domain boolean;
+formula eventually [0,80]{globally [1,10] #[ x>=0 ]#};
 
 monitor RandomFormulaeB{
 signal {real x;}
