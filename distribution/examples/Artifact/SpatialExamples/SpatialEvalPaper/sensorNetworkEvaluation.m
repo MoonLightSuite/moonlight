@@ -4,7 +4,7 @@ clear
 monitor = MoonlightEngine.load("sensorScript");
 
 elapseTimeSeq = [];
-num_nodes_seq = 10: 50: 1000;
+num_nodes_seq = 10: 50: 50;
 for num_nodes = num_nodes_seq
     % The data
     numSteps        = 10; % number timeStep 

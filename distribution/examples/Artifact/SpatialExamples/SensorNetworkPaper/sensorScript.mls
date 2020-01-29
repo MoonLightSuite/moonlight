@@ -26,6 +26,7 @@ monitor SomeWhereMon {
              	formula somewhere(dist)[0,3] #[ battery > 0.5]#;
              }
 
+
 monitor SensTemp {
                 signal { int nodeType; real battery; real temperature; }
              	space {

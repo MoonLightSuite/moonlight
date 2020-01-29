@@ -54,12 +54,12 @@ monitor SensNetBool {
              }
 
 
-monitor Sens {
+monitor SensTemp {
                 signal { int nodeType; real battery; real temperature; }
              	space {
              	edges { int hop; real dist; }
              	}
              	domain boolean;
-                formula everywhere(hop)[0, 3]{somewhere(hop)[0, 0.2]  #[  battery > 0.5 ]#};
+                formula globally[0, 3]{somewhere(hop)[0, 0.2]  #[  battery > 0.5 ]#};
              }
 
