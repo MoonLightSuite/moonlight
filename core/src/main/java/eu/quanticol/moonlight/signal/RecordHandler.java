@@ -170,10 +170,23 @@ public class RecordHandler {
         return toReturn;
     }
 
+    public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
+            Object[][] signal) {
+    	Signal<Record> toReturn = new Signal<>();
+    	for (int i = 0; i < time.length; i++) {
+    		toReturn.add(time[i], handler.fromObject(signal[i]));
+    	}
+    	return toReturn;
+    }
+
     public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
                                                                          String[][][] signal) {
         return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
+    public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+            Object[][][] signal) {
+    	return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
+    }
 
 }

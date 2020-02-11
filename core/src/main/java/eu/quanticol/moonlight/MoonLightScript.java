@@ -77,10 +77,6 @@ public abstract class MoonLightScript {
         }
     }
 
-    public static MoonLightScript parse(String code) {
-        return null;
-    }
-
     public static MoonLightScript forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Class<?> scriptClass = MoonLightScript.class.getClassLoader().loadClass(className);
         return (MoonLightScript) scriptClass.getDeclaredConstructor().newInstance();

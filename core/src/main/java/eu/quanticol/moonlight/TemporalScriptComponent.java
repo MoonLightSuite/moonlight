@@ -50,7 +50,7 @@ public class TemporalScriptComponent<S> {
         return name;
     }
 
-    public TemporalMonitor<Record, S> getMonitor(String... values) {
+    public TemporalMonitor<Record, S> getMonitor(String ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromString(values));
         } else {
@@ -58,16 +58,38 @@ public class TemporalScriptComponent<S> {
         }
     }
 
-    public Signal<S> monitor(Signal<Record> input, String... values) {
+    public TemporalMonitor<Record, S> getMonitor(Object ... values) {
+        if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
+            return builder.apply(parameters.fromObject(values));
+        } else {
+            return builder.apply(null);
+        }
+    }
+
+    public Signal<S> monitor(Signal<Record> input, String ... values) {
         TemporalMonitor<Record, S> monitor = getMonitor(values);
         return monitor.monitor(input);
     }
 
-    public Object[][] monitorToObjectArray(Signal<Record> input, String... values) {
+    public Signal<S> monitor(Signal<Record> input, Object ... values) {
+        TemporalMonitor<Record, S> monitor = getMonitor(values);
+        return monitor.monitor(input);
+    }
+
+
+    public Object[][] monitorToObjectArray(Signal<Record> input, String ... values) {
+        return monitor(input, values).toObjectArray();
+    }
+
+    public Object[][] monitorToObjectArray(Signal<Record> input, Object ... values) {
         return monitor(input, values).toObjectArray();
     }
 
     public Object[][] monitorToObjectArray(double[] time, String[][] signal, String... values) {
+        return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+    }
+
+    public Object[][] monitorToObjectArray(double[] time, Object[][] signal, Object ... values) {
         return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
