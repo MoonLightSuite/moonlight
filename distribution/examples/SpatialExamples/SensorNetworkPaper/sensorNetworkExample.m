@@ -73,7 +73,7 @@ box on;
 
 %%%%% phi 3 %%%%%%
 % monitor
-result3 = monitor.spatioTemporalMonitor("EscapeMon",spatialModel,time,signal);
+result3 = monitor.spatioTemporalMonitor("SomeWhereMon",spatialModel,time,signal);
 
 time=result3{1}(:,1);
 signalResult3= zeros(length(time), num_nodes);

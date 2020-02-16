@@ -1,5 +1,6 @@
 -- Quick Info --
-All the examples provided in the article are contained in the folder examples/. 
+The Sensor Network Example script is  examples/SpatialExamples/SensorNetworkPaper/sensorNetworkExample.m
+Other examples are contained in the folder examples/. 
 The Virtual Machine has been set up, please run the configuration script init.m
 contained in this folder before using the tool. 
 Consider that the installed version of Matlab will expire on 27/02/2020.
@@ -13,9 +14,8 @@ This file configures the MoonLight environment.
 
 -- VIRTUAL MACHINE --
 This virtual machine contains all the required software. 
-Please consider that the installed Matlab is a trial version that expires on 27/02/2020.
 If you have Matlab and you want to try MoonLight on your pc just copy/paste
-this folder and execute init.m    
+this folder and execute init.m
 
 -- Moonlight RUN--
 Remember to run the init.m file to configure the MoonLight environment.
