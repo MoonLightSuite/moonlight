@@ -32,7 +32,25 @@ public interface SpatialModel<T> {
         return toReturn;
     }
 
+    static SpatialModel<Record> buildSpatialModel(int locations, RecordHandler edgeRecordHandler,
+                                                  double[][][] objects) {
+        GraphModel<Record> toReturn = new GraphModel<>(locations);
+        for (int i = 0; i < objects.length; i++) {
+            for (int j = 0; j < objects[i].length; j++) {
+                if (i != j && isFull(objects[i][j])) {
+                    toReturn.add(i, edgeRecordHandler.fromDouble(objects[i][j]), j);
+                }
+            }
+        }
+        return toReturn;
+    }
+
+
     static Boolean isFull(String[] array) {
+        return !Arrays.stream(array).allMatch(Objects::isNull);
+    }
+
+    static Boolean isFull(double[] array) {
         return !Arrays.stream(array).allMatch(Objects::isNull);
     }
 

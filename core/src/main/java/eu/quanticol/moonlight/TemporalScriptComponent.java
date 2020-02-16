@@ -93,6 +93,9 @@ public class TemporalScriptComponent<S> {
         return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
+    public Object[][] monitorToDoubleArray(double[] time, double[][] signal, String ... values) {
+        return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+    }
     public void monitorToFile(TemporalSignalWriter writer, OutputStream stream, Signal<Record> input, String... values) throws IOException {
         Signal<S> signal = monitor(input, values);
         writer.write(outputTypeHandler, signal, stream);

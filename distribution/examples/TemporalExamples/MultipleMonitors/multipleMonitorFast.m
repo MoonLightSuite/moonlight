@@ -4,7 +4,7 @@ clear
 %generate a monitor object from the script fine multipleMonitors.mls (contained in this folder)
 %this object is an implementation of MoonlightEngine class, please refer to the doc of this class
 %for more details (ex. write in console "doc MoonlightEngine" )
-monitor = MoonlightEngine.load("multipleMonitors");
+monitor = MoonlightEngineFast.load("multipleMonitors");
 
 %generate a signal [time, x, y]  where x= sin(t) and y = cos(t)
 trajFunction = @(t)[sin(t);cos(t)]';
@@ -19,6 +19,7 @@ disp(t)
 %Formula: globally [0, 0.2]  #[ x > y ]#
 [quantiativeMonitorResult,t] = monitor.temporalMonitor("QuantitativeMonitorScript",time,values);
 disp(t)
+
 
 %Plotting result...
 

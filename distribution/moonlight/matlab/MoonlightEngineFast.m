@@ -1,4 +1,4 @@
-classdef MoonlightEngine
+classdef MoonlightEngineFast
     % This is a wrapper class arounf the java core of Moonlight
     % Use the static constructor load(filename) to build it
   
@@ -9,7 +9,7 @@ classdef MoonlightEngine
     methods(Static)
         function  self = load(filename)
             % class static constructor
-            self = MoonlightEngine;
+            self = MoonlightEngineFast;
             [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));
             if(status~=0)
                 throw(MException("","PARSER OF THE SCRIPT FAILED "+out))
@@ -33,9 +33,9 @@ classdef MoonlightEngine
             end
             %temporalMonitor = self.Script.selectDefaultTemporalComponent();
             temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
+            %javaObjectMatrix = self.toJavaObjectMatrix(values);
             tic
-            javaObjectMatrix = self.toJavaObjectMatrix(values);
-            matrix=temporalMonitor.monitorToObjectArray(time,javaObjectMatrix,parameters);
+            matrix=temporalMonitor.monitorToDoubleArray(time,values,parameters);
             time = toc;
             result = self.temporalObjectToMatrix(matrix);
         end
@@ -52,7 +52,7 @@ classdef MoonlightEngine
             javaGraphModel = self.toJavaGraphModel(graph,length(values));
             javaSignal = self.toJavaSignal(values);
             tic
-            matrix=spatioTemporalMonitor.monitorToObjectArray(time,javaGraphModel,time,javaSignal,parameters);
+            matrix=spatioTemporalMonitor.monitorToDoubleArray(time,javaGraphModel,time,javaSignal,parameters);
             time = toc;
             result = self.spatialObjectToMatrix(matrix);
         end
@@ -76,10 +76,8 @@ classdef MoonlightEngine
             end
         end
         function graph = toJavaGraphModel(~,diagram,locations)
-            graphLength = length(diagram);
             element = diagram(1);
             graphWidth =  length(element{1}.Edges.Weights(1,:));
-            graph = javaArray('java.lang.String',graphLength,locations,locations,graphWidth);
             for i = 1:length(diagram)
                 element = diagram(i);
                 elementEdges = element{1}.Edges;
@@ -87,7 +85,7 @@ classdef MoonlightEngine
                     for l = 1:graphWidth
                         endNodes = elementEdges.EndNodes(j,:);
                         weight = elementEdges.Weights(j,:);
-                        graph(i,endNodes(1),endNodes(2),l) =java.lang.String(num2str((weight(l))));
+                        graph(i,endNodes(1),endNodes(2),l) =weight(l);
                     end
                 end
             end
@@ -108,11 +106,10 @@ classdef MoonlightEngine
             s = size(signal{1});
             javaTimeLength= s(1);
             javaSignalWidth= s(2);
-            javaSignal = javaArray('java.lang.String',javaLocationsLength,javaTimeLength,javaSignalWidth);
             for i = 1: javaLocationsLength
                 for j = 1:javaTimeLength
                     for k = 1:javaSignalWidth
-                        javaSignal(i,j,k)= java.lang.String(num2str(signal{i}(j,k)));
+                        javaSignal(i,j,k)= signal{i}(j,k);
                     end
                 end
             end

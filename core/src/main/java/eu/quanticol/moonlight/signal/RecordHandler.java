@@ -63,6 +63,13 @@ public class RecordHandler {
         return build(IntStream.range(0, values.length).boxed().map(i -> handlers[i].fromObject(values[i])).toArray());
     }
 
+    public Record fromDouble(double... values) {
+        if (values.length != handlers.length) {
+            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + values.length);
+        }
+        return build(IntStream.range(0, values.length).boxed().map(i -> handlers[i].fromDouble(values[i])).toArray());
+    }
+
     private Record build(Object[] values) {
         return new Record(i -> handlers[i], values);
     }
@@ -179,6 +186,15 @@ public class RecordHandler {
     	return toReturn;
     }
 
+    public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
+                                                     double[][] signal) {
+        Signal<Record> toReturn = new Signal<>();
+        for (int i = 0; i < time.length; i++) {
+            toReturn.add(time[i], handler.fromDouble(signal[i]));
+        }
+        return toReturn;
+    }
+
     public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
                                                                          String[][][] signal) {
         return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
@@ -187,6 +203,11 @@ public class RecordHandler {
     public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
             Object[][][] signal) {
     	return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
+    }
+
+    public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+                                                                         double[][][] signal) {
+        return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
 }
