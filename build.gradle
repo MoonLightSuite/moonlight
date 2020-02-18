@@ -1,6 +1,3 @@
-plugins {
-    id("maven-publish") apply false
-}
 
 subprojects {
     apply plugin: "maven-publish"
