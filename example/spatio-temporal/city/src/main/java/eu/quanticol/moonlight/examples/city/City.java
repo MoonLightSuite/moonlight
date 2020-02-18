@@ -86,7 +86,7 @@ public class City {
 //      Formula somewhereTaxi = new SomewhereFormula("distX", new AtomicFormula("isThereATaxi"));
 //      Formula stopReacMainsquare = new ReachFormula(
 //              new AtomicFormula("isThereAStop"),"no", "dist10", new AtomicFormula("isMainSquare") );
-		return SpatioTemporalMonitor.reachMonitor(isThereAStop(),null,isMainSquare(),booleanDomain);
+		return SpatioTemporalMonitor.reachMonitor(isThereAStop(),distance(0, 10),isMainSquare(),booleanDomain);
 	}
 
 	private static SpatioTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> eventuallyATaxi(double a,

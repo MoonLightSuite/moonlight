@@ -1,9 +1,14 @@
+plugins {
+    id("maven-publish") apply false
+}
+
 subprojects {
+    apply plugin: "maven-publish"
     ext.xtextVersion = '2.18.0.M3'
-    group 'eu.quanticol.moonlight'
-    version '1.0-SNAPSHOT'
-    description 'MoonLight: a light-weight framework for runtime monitoring'
-    status 'status'
+    group = 'eu.quanticol.moonlight'
+    version = '1.0-SNAPSHOT'
+    description = 'MoonLight: a light-weight framework for runtime monitoring'
+    status = 'status'
 
     apply plugin: 'java'
     apply plugin: 'eclipse'
@@ -29,5 +34,19 @@ subprojects {
     clean.doFirst {
         delete "${rootDir}/output/"
         println "deleating jars in  ${rootDir}/output/"
+    }
+
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/Quanticol/MoonLight")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
     }
 }
