@@ -38,15 +38,6 @@ class ScriptLoader {
 		
 	}
 	
-	def static loadScriptFromCode( String code ) {
-
-	}
-	
-	def static loadScriptFromFile( String file ) {
-		
-	}
-	
-
 	@Inject Provider<ResourceSet> resourceSetProvider
 
 	@Inject IResourceValidator validator

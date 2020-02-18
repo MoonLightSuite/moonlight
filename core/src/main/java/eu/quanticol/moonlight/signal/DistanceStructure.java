@@ -340,6 +340,6 @@ public class DistanceStructure<T, A> {
     }
 
     public static <T> DistanceStructure<T, Double> buildDistanceStructure( SpatialModel<T> model , Function<T,Double> distance , double lowerBound, double upperBound) {
-    	return new DistanceStructure<T, Double>(distance, new DoubleDistance(), upperBound, upperBound, model);
+    	return new DistanceStructure<T, Double>(distance, new DoubleDistance(), lowerBound, upperBound, model);
     }
 }
