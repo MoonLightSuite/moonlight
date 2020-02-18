@@ -30,7 +30,7 @@ public class simpleCity {
         //// SpatioTemporalSignal
         List<Integer> typeNode = Arrays.asList(1, 3, 3, 3, 3);
         SpatioTemporalSignal<Integer> signal = createSpatioTemporalSignal(SIZE, 0, 1, 20.0,
-                (t, l) -> new Integer(typeNode.get(l)));
+                (t, l) -> Integer.valueOf(typeNode.get(l)));
 
 
         //// Loc Service Static ///
