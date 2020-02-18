@@ -33,8 +33,8 @@ classdef MoonlightEngine
             end
             %temporalMonitor = self.Script.selectDefaultTemporalComponent();
             temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
+            javaObjectMatrix = self.toJavaObjectMatrix(values);        
             tic
-            javaObjectMatrix = self.toJavaObjectMatrix(values);
             matrix=temporalMonitor.monitorToObjectArray(time,javaObjectMatrix,parameters);
             time = toc;
             result = self.temporalObjectToMatrix(matrix);

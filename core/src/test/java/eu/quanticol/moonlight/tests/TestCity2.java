@@ -204,7 +204,7 @@ class TestCity2 {
         SpatioTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(0));
+            assertEquals(taxiAvailability.get(i), signals7.get(i).valueAt(0));
         }
 
         ////  8 Quant ////

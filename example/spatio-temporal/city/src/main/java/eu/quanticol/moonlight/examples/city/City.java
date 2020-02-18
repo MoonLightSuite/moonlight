@@ -25,10 +25,6 @@ public class City {
     private static final DoubleDomain doubleDomain = new DoubleDomain();
     private static final BooleanDomain booleanDomain = new BooleanDomain();
 
-    static void setUp() { //questo metodo viene eseguito una volta quando viene caricata la classe, visto che la città è la stessa per tutti i test è il posto giusto dove definirla
-        city = buildingCity();
-    }
-
     public static void main(String[] argv) {
 
         //// SpatioTemporalSignal
@@ -99,9 +95,9 @@ public class City {
     	return SpatioTemporalMonitor.eventuallyMonitor(isThereATaxi(), new Interval(a,b),booleanDomain);
 	}
 
-	private static SpatioTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> isThereATaxi() {
-		return SpatioTemporalMonitor.atomicMonitor(p -> p.getSecond());
-	}
+    private static SpatioTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> isThereATaxi() {
+        return SpatioTemporalMonitor.atomicMonitor(p -> p.getSecond());
+    }
 
 	private static SpatioTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> isThereAStop() {
 		return SpatioTemporalMonitor.atomicMonitor((x -> "BusStop".equals(x.getFirst()) || "MetroStop".equals(x.getFirst())));
