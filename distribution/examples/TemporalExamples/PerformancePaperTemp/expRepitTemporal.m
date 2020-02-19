@@ -1,7 +1,7 @@
 clear;
 %%%% PROPERTY %%%
 %%%%%  MOONLIGHT prop %%%%%%%%
-monitor = MoonlightEngine.load("TempFormScript");
+monitor = MoonlightEngineFast.load("TempFormScript");
 phiString = "RandomFormulaeQ";
 %%%%%  TALIRO prop %%%%%%%%
 % x >= 0
@@ -56,7 +56,8 @@ for i = 1:nRuns
     timeMoonLight = toc(start);
     rMoon = resultMoonlight(1,2);
     timeMoonRep = [timeMoonRep,timeMoonLight];
-    [rTal,timeTal, rBreach1, timeBreach] = tempEval(values,time',psi,psi_Pred,phiBreach);
+    a = cell(1);
+    [rTal,timeTal, rBreach1, timeBreach] = tempEval(values,time',psi,psi_Pred,phiBreach,time);
     timeTalRep = [timeTalRep,timeTal ];
     timeBreachRep = [timeBreachRep ,timeBreach];
 %     resultMoonlight1 =resultMoonlight(1,2)
