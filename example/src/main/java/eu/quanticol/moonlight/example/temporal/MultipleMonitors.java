@@ -2,6 +2,15 @@ package eu.quanticol.moonlight.example.temporal;
 
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
+import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorAtomic;
+import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Triple;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.IOException;
@@ -22,6 +31,15 @@ public class MultipleMonitors {
     }
 
     private static void fromJava() {
+        Signal<Pair<Double,Double>> signal = TestUtils.createSignal(0.0, 50, 1.0, x -> new Pair<>( x, 3 * x));
+        TemporalMonitor<Pair<Double,Double>,Double> m = TemporalMonitor.eventuallyMonitor(
+                TemporalMonitor.atomicMonitor(x -> x.getFirst()-x.getSecond()), new DoubleDomain(),new Interval(0,0.2));
+        Signal<Double> sout = m.monitor(signal);
+        Object[][] monitorValues = sout.toObjectArray();
+        // Print results
+        System.out.print("fromJava \n");
+        printResults(monitorValues);
+
     }
 
     private static void fromFileScript() throws URISyntaxException, IOException {
@@ -33,11 +51,12 @@ public class MultipleMonitors {
         TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.selectTemporalComponent("QuantitativeMonitorScript");
 
         // Get signal
-        double[] times = IntStream.range(0, 100).mapToDouble(s -> s).toArray();
+        double[] times = IntStream.range(0, 50).mapToDouble(s -> s).toArray();
         double[][] signals = toSignal(times, x -> x, x -> 3 * x);
         Object[][] monitorValues = quantitativeMonitorScript.monitorToDoubleArray(times, signals);
 
         // Print results
+        System.out.print("fromFileScript \n");
         printResults(monitorValues);
     }
 
@@ -58,14 +77,16 @@ public class MultipleMonitors {
         // Load script
         ScriptLoader scriptLoader = new ScriptLoader();
         MoonLightScript moonLightScript = scriptLoader.compileScript(script);
+        // Choose the monitor
         TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.selectTemporalComponent("QuantitativeMonitorScript");
 
         // Get signal
-        double[] times = IntStream.range(0, 100).mapToDouble(s -> s).toArray();
+        double[] times = IntStream.range(0, 50).mapToDouble(s -> s).toArray();
         double[][] signals = toSignal(times, x -> x, x -> 3 * x);
         Object[][] monitorValues = quantitativeMonitorScript.monitorToDoubleArray(times, signals);
 
         // Print results
+        System.out.print("fromStringScript \n");
         printResults(monitorValues);
     }
 
