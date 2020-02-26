@@ -23,6 +23,7 @@ import java.util.function.Function;
  *  - within a small time after that, the number of people decreases.
  *  We call this property "Peak Management".
  *
+ * TODO: externalize signals
  *
  *  In symbols, let P be the threshold for people, M be the time bound,
  *  let D represent the distance threshold to express the spatial reachability,
@@ -56,17 +57,17 @@ public class Subway {
     /**
      * Signal Dimensions (i.e. signal domain)
      */
-    private static final List<Integer> trainsAvailable = Arrays.asList(1, 0, 1, 2, 0, 0, 0, 0, 1, 0);
+    private static final List<Integer> trainsAvailable = Arrays.asList(1, 0, 1, 2, 0, 0, 0, 0, 1);
     private static final List<Boolean> isStation = Arrays.asList(false, false, true, false, false,
-                                                                 true, false, false, false, true);
-    private static final List<Integer> peopleAtStations = Arrays.asList(3, 145, 67, 243, 22, 103, 6, 24, 54, 333);
+                                                                 true, false, false, false);
+    private static final List<Integer> peopleAtStations = Arrays.asList(3, 145, 67, 243, 22, 103, 6, 24, 54);
 
 
     public static void main(String[] argv) {
 
         //// We initialize our 3-dimensional signal ////
         SpatioTemporalSignal<Triple<Integer, Boolean, Integer>> signal =
-                createSTSignal(SubwayNetwork.getSize(), 0, 1, T, Subway::sCoords);
+                createSTSignal(SubwayNetwork.getSize(), 0, 1, T, Subway::sValues);
 
 
         //// We are considering a static Location Service ///
@@ -151,7 +152,7 @@ public class Subway {
     // --------- ATOMIC PREDICATES --------- //
 
     /**
-     * Atomic predicate describing the "crowdness" of stations
+     * Atomic predicate describing the "crowdedness" of stations
      *
      * In symbols: People >= P
      *
@@ -176,7 +177,8 @@ public class Subway {
 
     /**
      * Atomic predicate describing the stations
-     * TODO: generalize for station i
+     * TODO: distinguish between stations
+     *
      * In symbols: Station = i
      *
      * @return an AtmoicMonitor for the property
@@ -206,7 +208,7 @@ public class Subway {
      * @param l the location of interest
      * @return a triplet corresponding to an element of the co-domain of the signal
      */
-    private static Triple<Integer,Boolean,Integer> sCoords(double t, int l) {
+    private static Triple<Integer,Boolean,Integer> sValues(double t, int l) {
         return new Triple<>(trainsAvailable.get(l), isStation.get(l), peopleAtStations.get(l));
     }
 

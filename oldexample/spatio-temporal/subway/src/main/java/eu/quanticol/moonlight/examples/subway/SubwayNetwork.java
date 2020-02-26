@@ -13,7 +13,7 @@ import java.util.List;
  * where all the edges represent the same distance.
  */
 public class SubwayNetwork {
-    private static final int SIZE = 10;
+    private static final int SIZE = 3;
 
     public static SpatialModel<Double>  getModel() {
         HashMap<Pair<Integer, Integer>, Double> cityMap = new HashMap<>();
