@@ -27,19 +27,17 @@ public class MultipleMonitors {
         fromFileScript();
         fromStringScript();
         fromJava();
-
     }
 
     private static void fromJava() {
         Signal<Pair<Double,Double>> signal = TestUtils.createSignal(0.0, 50, 1.0, x -> new Pair<>( x, 3 * x));
-        TemporalMonitor<Pair<Double,Double>,Double> m = TemporalMonitor.eventuallyMonitor(
+        TemporalMonitor<Pair<Double,Double>,Double> m = TemporalMonitor.globallyMonitor(
                 TemporalMonitor.atomicMonitor(x -> x.getFirst()-x.getSecond()), new DoubleDomain(),new Interval(0,0.2));
         Signal<Double> sout = m.monitor(signal);
         Object[][] monitorValues = sout.toObjectArray();
         // Print results
         System.out.print("fromJava \n");
         printResults(monitorValues);
-
     }
 
     private static void fromFileScript() throws URISyntaxException, IOException {
@@ -51,7 +49,7 @@ public class MultipleMonitors {
         TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.selectTemporalComponent("QuantitativeMonitorScript");
 
         // Get signal
-        double[] times = IntStream.range(0, 50).mapToDouble(s -> s).toArray();
+        double[] times = IntStream.range(0, 51).mapToDouble(s -> s).toArray();
         double[][] signals = toSignal(times, x -> x, x -> 3 * x);
         Object[][] monitorValues = quantitativeMonitorScript.monitorToDoubleArray(times, signals);
 
