@@ -15,3 +15,5 @@ include 'example:spatio-temporal:bikes'
 include 'example:spatio-temporal:city'
 include 'example:spatio-temporal:patterns'
 include 'example:spatio-temporal:sensors'
+include 'example:spatio-temporal:subway'
+
