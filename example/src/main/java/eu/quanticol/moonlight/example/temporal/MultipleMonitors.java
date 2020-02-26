@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.example.temporal;
 
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
+import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
@@ -24,20 +25,37 @@ import java.util.stream.IntStream;
 
 public class MultipleMonitors {
     public static void main(String[] args) throws IOException, URISyntaxException {
+        fromJava();
         fromFileScript();
         fromStringScript();
-        fromJava();
     }
 
     private static void fromJava() {
+        // Get signal
         Signal<Pair<Double,Double>> signal = TestUtils.createSignal(0.0, 50, 1.0, x -> new Pair<>( x, 3 * x));
-        TemporalMonitor<Pair<Double,Double>,Double> m = TemporalMonitor.globallyMonitor(
-                TemporalMonitor.atomicMonitor(x -> x.getFirst()-x.getSecond()), new DoubleDomain(),new Interval(0,0.2));
-        Signal<Double> sout = m.monitor(signal);
-        Object[][] monitorValues = sout.toObjectArray();
+
+
+        // Build the property (Boolean Semantics)
+        TemporalMonitor<Pair<Double,Double>,Boolean> mB = TemporalMonitor.globallyMonitor(
+                TemporalMonitor.atomicMonitor(x -> x.getFirst()>x.getSecond()), new BooleanDomain(),new Interval(0,0.2));
+
+        // Monitoring
+        Signal<Boolean> soutB = mB.monitor(signal);
+        Object[][] monitorValuesB = soutB.toObjectArray();
         // Print results
-        System.out.print("fromJava \n");
-        printResults(monitorValues);
+        System.out.print("fromJava Boolean\n");
+        printResults(monitorValuesB);
+
+        // Build the property (Quantitative Semantics)
+        TemporalMonitor<Pair<Double,Double>,Double> mQ = TemporalMonitor.globallyMonitor(
+                TemporalMonitor.atomicMonitor(x -> x.getFirst()-x.getSecond()), new DoubleDomain(),new Interval(0,0.2));
+        Signal<Double> soutQ = mQ.monitor(signal);
+        Object[][] monitorValuesQ = soutQ.toObjectArray();
+        // Print results
+        System.out.print("fromJava Quantitative \n");
+        printResults(monitorValuesQ);
+
+
     }
 
     private static void fromFileScript() throws URISyntaxException, IOException {
@@ -46,16 +64,20 @@ public class MultipleMonitors {
         String multipleMonitorsPath = Paths.get(multipleMonitorsUri.toURI()).toString();
         ScriptLoader scriptLoader = new ScriptLoader();
         MoonLightScript moonLightScript = scriptLoader.loadFile(multipleMonitorsPath);
-        TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.selectTemporalComponent("QuantitativeMonitorScript");
+        TemporalScriptComponent<?> booleanMonitorScript = moonLightScript.selectTemporalComponent("BooleanMonitorScript");
+
 
         // Get signal
         double[] times = IntStream.range(0, 51).mapToDouble(s -> s).toArray();
         double[][] signals = toSignal(times, x -> x, x -> 3 * x);
-        Object[][] monitorValues = quantitativeMonitorScript.monitorToDoubleArray(times, signals);
+
+        // Monitoring
+        Object[][] monitorValuesB = booleanMonitorScript.monitorToDoubleArray(times, signals);
+
 
         // Print results
-        System.out.print("fromFileScript \n");
-        printResults(monitorValues);
+        System.out.print("fromFileScript Boolean\n");
+        printResults(monitorValuesB);
     }
 
     private static void fromStringScript() throws IOException {
@@ -84,7 +106,7 @@ public class MultipleMonitors {
         Object[][] monitorValues = quantitativeMonitorScript.monitorToDoubleArray(times, signals);
 
         // Print results
-        System.out.print("fromStringScript \n");
+        System.out.print("fromStringScript Quantitative \n");
         printResults(monitorValues);
     }
 
