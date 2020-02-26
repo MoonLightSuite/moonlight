@@ -1,6 +1,9 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.BooleanDomain;
+import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -192,13 +195,13 @@ public class Subway {
      * @param to double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-	private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
+	private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
 		return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
 	}
 
     /**
      * It returns the n-dim value of the ST signal, given a time instant and a location
-     * WARNING: it currently returns the same value for each time instant, i.e. time-constant signal
+     * WARNING: it currently returns the same value for each time instant, i.e. time-invariant signal
      * @param t the time instant of interest
      * @param l the location of interest
      * @return a triplet corresponding to an element of the co-domain of the signal
