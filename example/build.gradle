@@ -1,9 +1,3 @@
-def buildCommonDir = buildscript.sourceFile.getParent()
-subprojects {
-    dependencies {
-        compile project(":core")
-        compile project(":utility")
-        compile fileTree(dir: buildCommonDir + '/lib', include: ['*.jar'])
-        compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'
-    }
+dependencies {
+    compile project(":console")
 }

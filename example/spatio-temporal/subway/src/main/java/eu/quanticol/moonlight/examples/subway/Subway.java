@@ -1,7 +1,5 @@
 package eu.quanticol.moonlight.examples.subway;
 
-
-
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
@@ -55,10 +53,10 @@ public class Subway {
     /**
      * Signal Dimensions (i.e. signal domain)
      */
-    private static final List<Integer> trainsAvailable = Arrays.asList(1, 0, 1, 2, 0, 0, 0);
-    private static final List<Boolean> isStation = Arrays.asList(false, false, true, false, false, true, false);
-    private static final List<Integer> peopleAtStations = Arrays.asList(3, 145, 67, 243, 22, 103, 6);
-
+    private static final List<Integer> trainsAvailable = Arrays.asList(1, 0, 1, 2, 0, 0, 0, 0, 1, 0);
+    private static final List<Boolean> isStation = Arrays.asList(false, false, true, false, false,
+                                                                 true, false, false, false, true);
+    private static final List<Integer> peopleAtStations = Arrays.asList(3, 145, 67, 243, 22, 103, 6, 24, 54, 333);
 
 
     public static void main(String[] argv) {
@@ -197,7 +195,6 @@ public class Subway {
 	private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
 		return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
 	}
-
 
     /**
      * It returns the n-dim value of the ST signal, given a time instant and a location
