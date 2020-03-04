@@ -1,4 +1,3 @@
-
 subprojects {
     apply plugin: "maven-publish"
     ext.xtextVersion = '2.18.0.M3'
@@ -9,6 +8,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'eclipse'
+    apply plugin: 'distribution'
     apply from: rootDir.absolutePath + '/module.gradle'
 
     sourceCompatibility = 8
@@ -27,13 +27,13 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     }
 
-
     clean.doFirst {
         delete "${rootDir}/output/"
         println "deleating jars in  ${rootDir}/output/"
+        delete "${rootDir}/distribution/"
+        println "deleating jars in  ${rootDir}/distribution/"
+
     }
-
-
     publishing {
         repositories {
             maven {

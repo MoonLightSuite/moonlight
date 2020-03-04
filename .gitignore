@@ -16,5 +16,4 @@ xtext-gen
 output/
 api_resources/
 
-distribution/moonlight/script/*
-distribution/moonlight/jar/*
+distribution/**/**

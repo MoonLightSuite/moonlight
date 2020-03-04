@@ -46,11 +46,30 @@ jar {
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-    }
-
-task install(type: Copy) {
-    dependsOn jar
-    from "${buildDir}/libs/moonlight.jar"
-    into "${rootDir}/output/"
-    //into "${rootDir}/distribution/moonlight/jar"
 }
+
+task copyJar(type: Copy, dependsOn: jar) {
+    from "$rootDir/distribution_files/"
+    into "$rootDir/distribution/"
+}
+
+task distribution(type: Copy, dependsOn: copyJar) {
+    copy {
+        from "${buildDir}/libs/moonlight.jar"
+        into "$rootDir/distribution/java"
+    }
+    copy {
+        from "${buildDir}/libs/moonlight.jar"
+        into "$rootDir/distribution/matlab/moonlight/jar"
+    }
+}
+
+//task distributionZip(type: Zip, dependsOn: distribution) {
+//    archiveFileName = "moonlight.zip"
+//    destinationDirectory = file("$rootDir/distribution/")
+//    from "$rootDir/distribution/"
+//}
+
+
+
+
