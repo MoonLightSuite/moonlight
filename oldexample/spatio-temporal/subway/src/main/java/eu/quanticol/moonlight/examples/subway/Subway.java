@@ -29,9 +29,9 @@ import java.util.function.Function;
  *  let D represent the distance threshold to express the spatial reachability,
  *  and let O represent the departure offset, and T the time horizon of interest
  *  We can say that, in a given Station i...
- *  (F_[0,T] ((People >= P) R_D (Station = i)))
+ *  (G_[0,T] ((SW_D (People >= P)) ∧ (Station = i)))
  *                 U_[0,M]
- *         (((Train > 0) R_D (Station = i)) ∧ (F_[0,M+O] (People < P))
+ *         ( (SW_D(Train > 1)) ∧ (Station = i)) ∧ (F_[0,O] (People < P) )
  *
  * @see #peakManagement for the implementation of the formula
  */
@@ -41,7 +41,8 @@ public class Subway {
      * We initialize the numeric constants of the problem
      */
     private static final int P = 100;       // max n. of people
-    private static final double T = 1000;   // time horizon
+    private static final double T = 100;    // time horizon
+    private static final double TH = 10;    // time horizon
     private static final double M = 40;     // waiting time bound
     private static final double D = 40;     // distance threshold
     private static final double O = 40;     // departure offset
@@ -52,7 +53,7 @@ public class Subway {
      */
     private static final DoubleDomain ROBUSTNESS = new DoubleDomain();
     private static final BooleanDomain SATISFACTION = new BooleanDomain();
-    private static SpatialModel<Double> network = SubwayNetwork.getModel();
+    private static SpatialModel<Double> network = SubwayNetwork.simulateModel();
 
     /**
      * Signal Dimensions (i.e. signal domain)
@@ -67,7 +68,7 @@ public class Subway {
 
         //// We initialize our 3-dimensional signal ////
         SpatioTemporalSignal<Triple<Integer, Boolean, Integer>> signal =
-                createSTSignal(SubwayNetwork.getSize(), 0, 1, T, Subway::sValues);
+                createSTSignal(network.size(), 0, 1, T, Subway::sValues);
 
 
         //// We are considering a static Location Service ///
@@ -89,32 +90,35 @@ public class Subway {
      *  The usage peak is managed if, supposing it occurs within time T,
      *  the service adapts in at most M time
      *
-     *  In symbols: F_[0,T] (crowdedStation U_[0,M] properService)
+     *  In symbols: G_[0,T] (crowdedStation U_[0,M] properService)
      *
-     * @return an EventuallyMonitor for the property
+     * @return a GloballyMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peakManagement() {
-        return SpatioTemporalMonitor.eventuallyMonitor(   // Eventually...
+        return SpatioTemporalMonitor.globallyMonitor(   // Eventually...
                 SpatioTemporalMonitor.untilMonitor(
                         crowdedStation(), new Interval(0,M), properService(), // a Until b...
                         SATISFACTION)
-                , new Interval(0,T), SATISFACTION);
+                , new Interval(0,TH), SATISFACTION);
     }
 
     /**
      * A station is crowded if too many people reach it in a give time frame.
      *
-     * In symbols: tooManyPeople R_D rightStation
+     * In symbols: SW_D(tooManyPeople) ∧ rightStation
      *
-     * @return a ReachMonitor for the property
+     * @return an AndMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> crowdedStation() {
-        return SpatioTemporalMonitor.reachMonitor(tooManyPeople(), distance(0, D), rightStation(), SATISFACTION);
+        return SpatioTemporalMonitor.andMonitor(
+                SpatioTemporalMonitor.somewhereMonitor(tooManyPeople(), distance(0, D), SATISFACTION),
+                SATISFACTION,
+                rightStation());
     }
 
     /**
      * We can say that a peak of requests is properly serviced if a train is arriving and,
-     * within M+O time, the number of people decreases.
+     * within O time, the number of people decreases.
      *
      * In symbols: trainArrives ∧ peopleLeave
      *
@@ -125,28 +129,38 @@ public class Subway {
     }
 
     /**
-     * We can say that a train is arriving if a train reaches the Station within distance D
+     * We can say that a train is arriving if a train is somewhere nearby the Station, within distance D
      *
-     * In symbols: ((Train > 1) R_D (Station = i))
+     * In symbols: (SW_D(Train > 1)) ∧ (Station = i)
      *
-     * @return a ReachMonitor for the property
+     * @return an AndMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> trainArrives() {
-        return SpatioTemporalMonitor.reachMonitor(atLeastATrain(), distance(0, D), rightStation(), SATISFACTION);
+        return SpatioTemporalMonitor.andMonitor(
+                SpatioTemporalMonitor.somewhereMonitor(atLeastATrain(), distance(0, D), SATISFACTION),
+                SATISFACTION, rightStation()
+        );
+
+
     }
 
     /**
      * We can say that people are leaving a station is, within a given time frame,
      * the number of people goes under the threshold
      *
-     * In symbols: F_[0,M+O] !tooManyPeople
+     * In symbols: F_[0,O] !tooManyPeople
      *
      * @return an EventuallyMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
         return SpatioTemporalMonitor.eventuallyMonitor(   // Eventually...
+<<<<<<< HEAD
                 SpatioTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
                 , new Interval(0, M + O), SATISFACTION);
+=======
+                SpatioTemporalMonitor.negationMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
+                , new Interval(0, O), SATISFACTION);
+>>>>>>> 8741d2a7329e25c6c671cf2ad12b6acbced6a263
     }
 
     // --------- ATOMIC PREDICATES --------- //
@@ -156,7 +170,7 @@ public class Subway {
      *
      * In symbols: People >= P
      *
-     * @return an AtmoicMonitor for the property
+     * @return an AtomicMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> tooManyPeople() {
         return SpatioTemporalMonitor.atomicMonitor((x -> x.getThird().doubleValue() >= P));
@@ -181,7 +195,7 @@ public class Subway {
      *
      * In symbols: Station = i
      *
-     * @return an AtmoicMonitor for the property
+     * @return an AtomicMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> rightStation() {
         return SpatioTemporalMonitor.atomicMonitor(Triple::getSecond);
@@ -216,9 +230,9 @@ public class Subway {
     createSTSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
         SpatioTemporalSignal<T> s = new SpatioTemporalSignal(size);
 
-        for(double time = start; time < end; time += dt) {
-            double finalTime = time;
-            s.add(time, (i) -> f.apply(finalTime, i));
+        for(double t = start; t < end; t += dt) {
+            double finalTime = t;
+            s.add(t, (i) -> f.apply(finalTime, i));
         }
 
         s.add(end, (i) ->  f.apply(end, i));
