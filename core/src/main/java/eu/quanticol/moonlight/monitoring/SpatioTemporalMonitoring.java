@@ -5,20 +5,10 @@ package eu.quanticol.moonlight.monitoring;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitorAtomic;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitorBinaryOperator;
 import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
-import eu.quanticol.moonlight.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 /**
@@ -87,7 +77,7 @@ public class SpatioTemporalMonitoring<V, T, R> implements
     public SpatioTemporalMonitor<V,T,R> visit(
             NegationFormula negationFormula, Parameters parameters) {
         SpatioTemporalMonitor<V,T,R> m = negationFormula.getArgument().accept(this, parameters);
-        return SpatioTemporalMonitor.negationMonitor(m, module);
+        return SpatioTemporalMonitor.notMonitor(m, module);
     }
 
     /* (non-Javadoc)

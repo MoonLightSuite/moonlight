@@ -7,12 +7,10 @@ import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 
@@ -66,7 +64,7 @@ public class City {
     private static SpatioTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> ifTaxiReachStop(double from, double to) {
 //      Formula iftaxiReachStop = new OrFormula(new NegationFormula(new AtomicFormula("isThereATaxi")), taxiReachStop);
         return SpatioTemporalMonitor.orMonitor(
-                SpatioTemporalMonitor.negationMonitor(isThereATaxi(), booleanDomain), booleanDomain,
+                SpatioTemporalMonitor.notMonitor(isThereATaxi(), booleanDomain), booleanDomain,
                 taxiReachStop(from,to)
         );
     }

@@ -153,9 +153,8 @@ public class Subway {
      * @return an EventuallyMonitor for the property
      */
     private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
-        return SpatioTemporalMonitor.eventuallyMonitor(   // Eventually...
-                SpatioTemporalMonitor.negationMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
-                , new Interval(0, O), SATISFACTION);
+        return SpatioTemporalMonitor.eventuallyMonitor(SpatioTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
+                , new Interval(0, M + O), SATISFACTION);
     }
 
     // --------- ATOMIC PREDICATES --------- //
