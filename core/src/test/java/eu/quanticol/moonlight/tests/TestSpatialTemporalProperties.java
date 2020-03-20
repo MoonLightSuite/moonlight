@@ -155,7 +155,7 @@ class TestSpatialTemporalProperties {
     void testSpatioTemporalSignalWithOneEntry() {
     	SpatioTemporalSignal<Double> stl = new SpatioTemporalSignal<>(10);
     	stl.add(0.0, i -> 1.0);
-    	stl.toObjectArray();
+    	stl.toArray(DataHandler.REAL::toDouble);
     	assertTrue(true);
     }
 

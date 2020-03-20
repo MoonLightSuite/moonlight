@@ -1,51 +1,149 @@
-/**
+/*******************************************************************************
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
  *
- */
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
 /**
+ * A <code>DataHandler</code> is used to manage input/output of a signal value of type <code>S</code>.
+ *
  * @author loreti
  *
  */
 public interface DataHandler<S> {
 
-    public final static String REAL_CODE = "real";
-    public final static String INT_CODE = "integer";
-    public final static String BOOLEAN_CODE = "boolean";
-    public final static String STRING_CODE = "string";
+    /**
+     * Returns the handled data type.
+     *
+     * @return the handled data type.
+     */
+    Class<S> getTypeOf();
 
-    public Class<S> getTypeOf();
+    /**
+     * Cast an object <code>o</code> in the handled data type <code>S</code>.
+     * @param o object to cast
+     * @return result cast of <code>o</code>
+     * @throws IllegalValueException if <code>o</code> is not a valid object.
+     */
+    S fromObject(Object o);
 
-    public S fromObject(Object value);
+    /**
+     * Parse a data item from a String.
+     *
+     * @param str string representation of the data.
+     *
+     * @return the converted data.
+     * @throws IllegalValueException if the value is not a valid value.
+     */
+    S fromString(String str);
 
-    public S fromString(String str);
-
+    /**
+     * Convert a double value into the data item.
+     *
+     * @param value a double value.
+     * @return the converted data item.
+     * @throws IllegalValueException if the value is not a valid value.
+     */
     S fromDouble(double value);
 
-    public boolean checkType(Object o);
+    /**
+     * Return a string representation of a data item <code>s</code>.
+     *
+     * @param s data item to represent.
+     * @return string representation of <code>s</code>.
+     */
+    String toString(S s);
 
-    public boolean checkTypeCode(String type);
+    /**
+     * Return a double representation of a data item <code>s</code>.
+     *
+     * @param s data item to represent.
+     * @return double representation of <code>s</code>.
+     */
+    double toDouble(S s);
 
-    public String getTypeCode();
+    /**
+     * Check if the object <code>o</code> is a valid data type.
+     *
+     * @param o a value.
+     * @return true if <code>o</code> is a valid value for this handler.
+     */
+    boolean checkObjectValue(Object o);
 
-    public boolean checkValueFromString(String value);
+    /**
+     * Check if  <code>value</code> is a valid string representation for
+     * handled data type.
+     *
+     * @param value a string representation.
+     * @return true if <code>value</code> is a valid string for the handled data type.
+     */
+    boolean checkStringValue(String value);
 
+    /**
+     * Check if <code>value</code> is a valid double representation for
+     * handled data type.
+     *
+     * @param value an double representation of data type.
+     * @return true if <code>value</code> is a valid value.
+     */
+    default boolean checkDoubleValue(double value) {
+        return true;
+    }
 
-    public static final DataHandler<Double> REAL = new DataHandler<Double>() {
+    /**
+     * A data handler for doubles.
+     */
+    DataHandler<Double> REAL = new DataHandler<Double>() {
 
         @Override
         public Class<Double> getTypeOf() {
             return Double.class;
         }
 
+        /**
+         * If  <code>value</code> is a Number, the doubleValue is returned.
+         * If <code>value</code> is null, 0.0 is returned. Otherwise a {@link IllegalValueException} is thrown.
+         *
+         * @param value data to convert
+         * @return a Double value
+         * @throws IllegalValueException if <code>value</code> is not a double.
+         */
         @Override
         public Double fromObject(Object value) {
-            return (Double) value;
+            if (value == null) {
+                return 0.0;
+            }
+            if (value instanceof Double) {
+                return (Double) value;
+            }
+            if (value instanceof Number) {
+                return ((Number) value).doubleValue();
+            }
+            throw new IllegalValueException("Expected a double is "+value.toString());
         }
 
         @Override
         public Double fromString(String str) {
-            return Double.parseDouble(str);
+            try {
+                return Double.parseDouble(str);
+            } catch (NumberFormatException e) {
+                throw  new IllegalValueException(e);
+            }
         }
 
         @Override
@@ -54,22 +152,22 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public boolean checkType(Object o) {
+        public String toString(Double aDouble) {
+            return aDouble.toString();
+        }
+
+        @Override
+        public double toDouble(Double aDouble) {
+            return aDouble;
+        }
+
+        @Override
+        public boolean checkObjectValue(Object o) {
             return (o instanceof Double);
         }
 
         @Override
-        public boolean checkTypeCode(String type) {
-            return REAL_CODE.equals(type);
-        }
-
-        @Override
-        public String getTypeCode() {
-            return REAL_CODE;
-        }
-
-        @Override
-        public boolean checkValueFromString(String value) {
+        public boolean checkStringValue(String value) {
             try {
                 Double.parseDouble(value);
                 return true;
@@ -77,47 +175,78 @@ public interface DataHandler<S> {
                 return false;
             }
         }
+
     };
 
-    public static final DataHandler<Integer> INTEGER = new DataHandler<Integer>() {
+    /**
+     * A data handler for integers.
+     */
+    DataHandler<Integer> INTEGER = new DataHandler<Integer>() {
 
         @Override
         public Class<Integer> getTypeOf() {
             return Integer.class;
         }
 
+        /**
+         * If  <code>value</code> is a Number, the intValue is returned.
+         * If <code>value</code> is null, 0.0 is returned. Otherwise a {@link IllegalValueException} is thrown.
+         *
+         * @param value data to convert
+         * @return a Double value
+         * @throws IllegalValueException if <code>value</code> is not a double.
+         */
         @Override
         public Integer fromObject(Object value) {
-            return (Integer) value;
+            if (value == null) {
+                return 0;
+            }
+            if (value instanceof Integer) {
+                return (Integer) value;
+            }
+            if (value instanceof Number) {
+                return ((Number) value).intValue();
+            }
+            throw new IllegalValueException("Expected an Integer is "+value);
         }
 
         @Override
         public Integer fromString(String str) {
-            return Integer.parseInt(str);
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException e) {
+                throw  new IllegalValueException(e);
+            }
         }
 
+        /**
+         * Returns the greatest integer values less or equal to <code>value</code>.
+         *
+         * @param value a double value.
+         * @return the greatest integer values less or equal to <code>value</code>.
+         */
         @Override
         public Integer fromDouble(double value) {
             return (int) Math.floor(value);
         }
 
         @Override
-        public boolean checkType(Object o) {
+        public String toString(Integer integer) {
+            return integer.toString();
+        }
+
+        @Override
+        public double toDouble(Integer integer) {
+            return integer.doubleValue();
+        }
+
+        @Override
+        public boolean checkObjectValue(Object o) {
             return (o instanceof Integer);
         }
 
         @Override
-        public boolean checkTypeCode(String type) {
-            return INT_CODE.equals(type);
-        }
-
-        @Override
-        public String getTypeCode() {
-            return INT_CODE;
-        }
-
-        @Override
-        public boolean checkValueFromString(String value) {
+        public boolean checkStringValue(String value) {
             try {
                 Integer.parseInt(value);
                 return true;
@@ -125,98 +254,75 @@ public interface DataHandler<S> {
                 return false;
             }
         }
-
-
     };
 
-    public static final DataHandler<Boolean> BOOLEAN = new DataHandler<Boolean>() {
+    /**
+     * A data handler for booleans.
+     */
+    DataHandler<Boolean> BOOLEAN = new DataHandler<Boolean>() {
 
         @Override
         public Class<Boolean> getTypeOf() {
             return Boolean.class;
         }
 
+        /**
+         * Cast parameter <code>value</code> to an Boolean. If it is not of the right
+         * class a {@link IllegalValueException} is thrown. If <code>value</code> is null,
+         * false is returned.
+         *
+         * @param value data to convert
+         * @return a Double value
+         * @throws IllegalValueException if <code>value</code> is not a double.
+         */
         @Override
-        public Boolean fromObject(Object value) {
-            return (Boolean) value;
+        public Boolean fromObject(Object value) throws IllegalValueException {
+            if (value == null) {
+                return false;
+            }
+            if (value instanceof Boolean) {
+                return (Boolean) value;
+            }
+            throw new IllegalValueException("Expected Boolea is "+value);
         }
 
         @Override
-        public Boolean fromString(String str) {
+        public Boolean fromString(String str) throws IllegalValueException {
             return Boolean.parseBoolean(str);
         }
 
+        /**
+         * Returns true if <code>value</code> is greater than 0.0, false otherwise.
+         *
+         * @param value a double value.
+         * @return true if <code>value</code> is greater than 0.0, false otherwise.
+         */
         @Override
         public Boolean fromDouble(double value) {
-            return INTEGER.fromDouble(value) == 1;
+            return value > 0;
         }
 
         @Override
-        public boolean checkType(Object o) {
+        public String toString(Boolean aBoolean) {
+            return aBoolean.toString();
+        }
+
+        @Override
+        public double toDouble(Boolean aBoolean) {
+            return (aBoolean?1.0:-1.0);
+        }
+
+        @Override
+        public boolean checkObjectValue(Object o) {
             return (o instanceof Boolean);
         }
 
         @Override
-        public boolean checkTypeCode(String type) {
-            return BOOLEAN_CODE.equals(type);
-        }
-
-        @Override
-        public String getTypeCode() {
-            return BOOLEAN_CODE;
-        }
-
-        @Override
-        public boolean checkValueFromString(String value) {
-            return "true".equals(value) || "false".equals(value);
-        }
-
-
-    };
-
-    public static final DataHandler<String> STRING = new DataHandler<String>() {
-
-        @Override
-        public Class<String> getTypeOf() {
-            return String.class;
-        }
-
-        @Override
-        public String fromObject(Object value) {
-            return (String) value;
-        }
-
-        @Override
-        public String fromString(String str) {
-            return str;
-        }
-
-		@Override
-		public String fromDouble(double value) {
-			return String.valueOf(value); //TODO: does not make sense!!
-		}
-
-		@Override
-        public boolean checkType(Object o) {
-            return (o instanceof String);
-        }
-
-        @Override
-        public boolean checkTypeCode(String type) {
-            return STRING_CODE.equals(type);
-        }
-
-        @Override
-        public String getTypeCode() {
-            return STRING_CODE;
-        }
-
-        @Override
-        public boolean checkValueFromString(String value) {
+        public boolean checkStringValue(String value) {
             return true;
         }
 
-    };
 
+    };
 
 }

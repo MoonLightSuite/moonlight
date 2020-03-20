@@ -30,13 +30,14 @@ public class mainSp2 {
         city.add(6, 15.0, 3);
         city.add(3, 15.0, 6);
 
-        ArrayList<String> place = new ArrayList<>(Arrays.asList("BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop"));
+        String[] placeArray = new String[] { "BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop" };
+        ArrayList<String> place = new ArrayList<>(Arrays.asList(placeArray));
         ArrayList<Boolean> taxi = new ArrayList<>(Arrays.asList(false, false, true, false, false, true, false));
         ArrayList<Integer> people = new ArrayList<>(Arrays.asList(3, 145, 67, 243, 22, 103, 6));
 
 
         //// Stop property
-        ArrayList<Boolean> stop = new ArrayList<Boolean>();
+        ArrayList<Boolean> stop = new ArrayList<>();
         place.forEach(i -> stop.add(i.equals("BusStop") || i.equals("MetroStop")));
         System.out.println(stop);
 
@@ -69,7 +70,7 @@ public class mainSp2 {
 
         //// SpatioTemporalMonitoring
 
-        RecordHandler factory = new RecordHandler(DataHandler.STRING,DataHandler.BOOLEAN,DataHandler.INTEGER);
+        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray),DataHandler.BOOLEAN,DataHandler.INTEGER);
         HashMap<String, Integer> vTable = new HashMap<>();
         vTable.put("place", 1);
         vTable.put("taxi", 2);

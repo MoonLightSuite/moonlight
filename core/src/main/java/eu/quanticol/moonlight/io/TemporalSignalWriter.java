@@ -15,6 +15,6 @@ import eu.quanticol.moonlight.signal.Signal;
  */
 public interface TemporalSignalWriter {
 
-	public <S> void write(DataHandler<S> handler, Signal<S> signal, OutputStream stream)  throws IOException ;
+	<S> void write(DataHandler<S> handler, Signal<S> signal, OutputStream stream)  throws IOException ;
 	
 }

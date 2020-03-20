@@ -1,5 +1,21 @@
-/**
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
  *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package eu.quanticol.moonlight;
 
@@ -17,8 +33,7 @@ import java.io.OutputStream;
 import java.util.function.Function;
 
 /**
- * @author loreti
- *
+ * An instance of this class an be used to instantiate a monitor of given property.
  */
 public class TemporalScriptComponent<S> {
 
@@ -28,6 +43,14 @@ public class TemporalScriptComponent<S> {
     private final RecordHandler parameters;
     private final Function<Record, TemporalMonitor<Record, S>> builder;
 
+    /**
+     * Create a new TemporalScriptComponent
+     * @param name property name.
+     * @param signalRecordHandler signal input data handler.
+     * @param outputTypeHandler signal output data handler.
+     * @param parameters parameters that can be used to instantiate.
+     * @param builder function used to build the monitor.
+     */
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
                                    DataHandler<S> outputTypeHandler,
                                    RecordHandler parameters,
@@ -40,6 +63,14 @@ public class TemporalScriptComponent<S> {
         this.builder = builder;
     }
 
+
+    /**
+     * Create a new TemporalScriptComponent
+     * @param name property name.
+     * @param signalRecordHandler signal input data handler.
+     * @param outputTypeHandler signal output data handler.
+     * @param builder function used to build the monitor.
+     */
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
                                    DataHandler<S> outputTypeHandler,
                                    Function<Record, TemporalMonitor<Record, S>> builder) {
@@ -50,7 +81,12 @@ public class TemporalScriptComponent<S> {
         return name;
     }
 
-    public TemporalMonitor<Record, S> getMonitor(String ... values) {
+    /**
+     * Creates a monitor given a list of parameters as an array of strings.
+     * @param values parameters.
+     * @return a monitor.
+     */
+    public TemporalMonitor<Record, S> getMonitorFromString(String ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromString(values));
         } else {
@@ -58,7 +94,25 @@ public class TemporalScriptComponent<S> {
         }
     }
 
-    public TemporalMonitor<Record, S> getMonitor(Object ... values) {
+    /**
+     * Creates a monitor given a list of parameters as an array of doulbe.
+     * @param values parameters.
+     * @return a monitor.
+     */
+    public TemporalMonitor<Record, S> getMonitorFromDouble(double ... values) {
+        if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
+            return builder.apply(parameters.fromDouble(values));
+        } else {
+            return builder.apply(null);
+        }
+    }
+
+    /**
+     * Creates a monitor given a list of parameters as an array of objects.
+     * @param values parameters.
+     * @return a monitor.
+     */
+    public TemporalMonitor<Record, S> getMonitorFromObject(Object ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromObject(values));
         } else {
@@ -66,36 +120,94 @@ public class TemporalScriptComponent<S> {
         }
     }
 
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on signal input.
+     *
+     * @param input input signal.
+     * @param values parameters.
+     * @return monitor result.
+     */
     public Signal<S> monitor(Signal<Record> input, String ... values) {
-        TemporalMonitor<Record, S> monitor = getMonitor(values);
+        TemporalMonitor<Record, S> monitor = getMonitorFromString(values);
         return monitor.monitor(input);
     }
 
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on signal input.
+     *
+     * @param input input signal.
+     * @param values parameters.
+     * @return monitor result.
+     */
     public Signal<S> monitor(Signal<Record> input, Object ... values) {
-        TemporalMonitor<Record, S> monitor = getMonitor(values);
+        TemporalMonitor<Record, S> monitor = getMonitorFromObject(values);
         return monitor.monitor(input);
     }
 
-
-    public Object[][] monitorToObjectArray(Signal<Record> input, String ... values) {
-        return monitor(input, values).toObjectArray();
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on signal input.
+     *
+     * @param input input signal.
+     * @param values parameters.
+     * @return monitor result.
+     */
+    public Signal<S> monitor(Signal<Record> input, double ... values) {
+        TemporalMonitor<Record, S> monitor = getMonitorFromDouble(values);
+        return monitor.monitor(input);
     }
 
-    public Object[][] monitorToObjectArray(Signal<Record> input, Object ... values) {
-        return monitor(input, values).toObjectArray();
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on signal input. Results are reported in an array of double.
+     *
+     * @param input input signal.
+     * @param values parameters.
+     * @return monitor result.
+     */
+    public double[][] monitorToArray(Signal<Record> input, String ... values) {
+        return monitor(input, values).arrayOf(outputTypeHandler::toDouble);
     }
 
-    public Object[][] monitorToObjectArray(double[] time, String[][] signal, String... values) {
-        return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on signal input. Results are reported in an array of double.
+     *
+     * @param input input signal.
+     * @param values parameters.
+     * @return monitor result.
+     */
+    public double[][] monitorToArray(Signal<Record> input, double ... values) {
+        return monitor(input, values).arrayOf(outputTypeHandler::toDouble);
     }
 
-    public Object[][] monitorToObjectArray(double[] time, Object[][] signal, Object ... values) {
-        return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on a signal described as a matrix of strings. Results are reported in an array of double.
+     *
+     * @param time input signal time intervals.
+     * @param values signal values.
+     * @return monitor result as an array of doubles.
+     */
+    public double[][] monitorToArray(double[] time, String[][] signal, String... values) {
+        return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
-    public Object[][] monitorToDoubleArray(double[] time, double[][] signal, String ... values) {
-        return monitorToObjectArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+    /**
+     * Computes the result of the monitoring of the proprerty instantiated with the given parameters
+     * on a signal described as a matrix of doubles. Results are reported in an array of double.
+     *
+     * @param time input signal time intervals.
+     * @param values signal values.
+     * @return monitor result as an array of doubles.
+     */
+    public double[][] monitorToArray(double[] time, double[][] signal, double ... values) {
+        return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
+
     public void monitorToFile(TemporalSignalWriter writer, OutputStream stream, Signal<Record> input, String... values) throws IOException {
         Signal<S> signal = monitor(input, values);
         writer.write(outputTypeHandler, signal, stream);

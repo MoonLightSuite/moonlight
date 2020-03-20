@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
  * Copyright (C) 2018 
  *
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.util.Pair;
@@ -43,7 +43,7 @@ public class RecordHandler {
     }
 
     @SafeVarargs
-    public static RecordHandler createFactory(Pair<String, DataHandler<?>>... variables) {
+    public static RecordHandler createFactory(Pair<String, DataHandler<?>> ... variables) {
         DataHandler<?>[] dataHandlers = new DataHandler<?>[variables.length];
         Map<String, Integer> variableIndex = new HashMap<>();
         int counter = 0;
@@ -56,45 +56,68 @@ public class RecordHandler {
         return new RecordHandler(variableIndex, dataHandlers);
     }
 
-    public Record fromObject(Object... values) {
+    public Record fromObject(Object ... values) {
         if (values.length != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + values.length);
         }
-        return build(IntStream.range(0, values.length).boxed().map(i -> handlers[i].fromObject(values[i])).toArray());
+        Object[] data = new Object[values.length];
+        for (int i=0 ; i<values.length ; i++) {
+            data[i] = handlers[i].fromObject(values[i]);
+        }
+        return build(data);
     }
 
-    public Record fromDouble(double... values) {
-        if (values.length != handlers.length) {
-            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + values.length);
-        }
-        return build(IntStream.range(0, values.length).boxed().map(i -> handlers[i].fromDouble(values[i])).toArray());
+    public Record fromDouble(double ... values) {
+        return fromDouble(values,0,values.length);
     }
+
+    public Record fromDouble(double[] values, int from, int to) {
+        if ((to-from) != handlers.length) {
+            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
+        }
+        Object[] data = new Object[values.length];
+        for (int i=from ; i<to ; i++) {
+            data[i] = handlers[i].fromDouble(values[i]);
+        }
+        return build(data);
+    }
+
 
     private Record build(Object[] values) {
         return new Record(i -> handlers[i], values);
     }
 
-    public Record fromString(String... strings) {
-        if (strings.length != handlers.length) {
-            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + strings.length + ")");
-        }
-        return build(IntStream.range(0, strings.length).boxed().map(i -> handlers[i].fromString(strings[i])).toArray());
+    public Record fromString(String... values) {
+        return fromString(values,0,values.length);
     }
 
-    public Record fromObject(Map<String, Object> values) {
+    public Record fromString(String[] values, int from, int to) {
+        if ((to-from) != handlers.length) {
+            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from) + ")");
+        }
+        Object[] data = new Object[values.length];
+        for (int i=from ; i<to ; i++) {
+            data[i] = handlers[i].fromString(values[i]);
+        }
+        return build(data);
+    }
+
+    public Record fromObject(Map<String, Object> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
-        values.forEach((v, o) -> {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            String v = entry.getKey();
+            Object o = entry.getValue();
             int variableIndex = getVariableIndex(v);
             if (variableIndex < 0) {
                 throwUnknownVariableException(v);
             }
             DataHandler<?> handler = handlers[variableIndex];
-            if (!handler.checkType(o)) {
-                throwVariableTypeException(v, handler.getTypeOf().getTypeName(), o.getClass().getTypeName());
-            }
+//            if (!handler.checkType(o)) {
+//                throwVariableTypeException(v, handler.getTypeOf().getTypeName(), o.getClass().getTypeName());
+//            }
             data[variableIndex] = handler.fromObject(o);
-        });
+        }
         return build(data);
     }
 
@@ -111,17 +134,35 @@ public class RecordHandler {
         return variables.getOrDefault(v, -1);
     }
 
-    public Record fromString(Map<String, String> values) {
+    public Record fromString(Map<String, String> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
-        values.forEach((v, o) -> {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            String v = entry.getKey();
+            String o = entry.getValue();
             int variableIndex = getVariableIndex(v);
             if (variableIndex < 0) {
                 throwUnknownVariableException(v);
             }
             DataHandler<?> handler = handlers[variableIndex];
             data[variableIndex] = handler.fromString(o);
-        });
+        }
+        return build(data);
+    }
+
+    public Record fromDouble(Map<String, Double> values) throws IllegalValueException {
+        checkNumberOfVariables(values.size());
+        Object[] data = new Object[handlers.length];
+        for (Map.Entry<String, Double> entry : values.entrySet()) {
+            String v = entry.getKey();
+            Double d = entry.getValue();
+            int variableIndex = getVariableIndex(v);
+            if (variableIndex < 0) {
+                throwUnknownVariableException(v);
+            }
+            DataHandler<?> handler = handlers[variableIndex];
+            data[variableIndex] = handler.fromDouble(d);
+        }
         return build(data);
     }
 
@@ -137,7 +178,8 @@ public class RecordHandler {
         if (variableIndex < 0) {
             return false;
         }
-        return handlers[variableIndex].checkTypeCode(type);
+        /* TODO: Fix this method! */
+        return true; //handlers[variableIndex].checkTypeCode(type);
     }
 
     public Map<String, Integer> getVariableIndex() {
@@ -153,7 +195,8 @@ public class RecordHandler {
         if (variableIndex < 0) {
             return null;
         }
-        return handlers[variableIndex].getTypeCode();
+        //TODO: Fix this method! The method should be removed.
+        return "";//handlers[variableIndex].getTypeCode();
     }
 
     public String[] getVariables() {
@@ -165,25 +208,16 @@ public class RecordHandler {
         if (variableIndex < 0) {
             return false;
         }
-        return handlers[variableIndex].checkValueFromString(value);
+        return handlers[variableIndex].checkStringValue(value);
     }
 
     public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
-                                                     String[][] signal) {
+                                                     String[][] signal) throws IllegalValueException {
         Signal<Record> toReturn = new Signal<>();
         for (int i = 0; i < time.length; i++) {
             toReturn.add(time[i], handler.fromString(signal[i]));
         }
         return toReturn;
-    }
-
-    public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
-            Object[][] signal) {
-    	Signal<Record> toReturn = new Signal<>();
-    	for (int i = 0; i < time.length; i++) {
-    		toReturn.add(time[i], handler.fromObject(signal[i]));
-    	}
-    	return toReturn;
     }
 
     public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
@@ -201,13 +235,8 @@ public class RecordHandler {
     }
 
     public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-            Object[][][] signal) {
+            double[][][] signal) {
     	return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
-    }
-
-    public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-                                                                         double[][][] signal) {
-        return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
 }

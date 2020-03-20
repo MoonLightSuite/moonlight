@@ -1,9 +1,9 @@
 /*******************************************************************************
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
+ * Copyright (C) 2018
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,9 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
-/**
- * A <code>SignalCursor</code> is used to scan values in a signal. 
- */
-public interface SignalCursor<T> {
-		
-	double time();
-	
-	T value();
-	
-	void forward();
+@FunctionalInterface
+public interface FunctionToDouble<S> {
 
-	void backward();
+    double apply(S s);
 
-	void move(double t);
-	
-	double nextTime();
-
-	double previousTime();
-
-	boolean hasNext();
-	
-	boolean hasPrevious();
-
-	boolean completed();
-	
 }

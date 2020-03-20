@@ -1,9 +1,9 @@
 /*******************************************************************************
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
+ * Copyright (C) 2018
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,20 @@
 package eu.quanticol.moonlight.signal;
 
 /**
- * A <code>SignalCursor</code> is used to scan values in a signal. 
+ * This exception is thrown when a value that is not fitting with expected
+ * type or format is passed.
  */
-public interface SignalCursor<T> {
-		
-	double time();
-	
-	T value();
-	
-	void forward();
+public class IllegalValueException extends RuntimeException {
 
-	void backward();
+    public IllegalValueException() {
+        super();
+    }
 
-	void move(double t);
-	
-	double nextTime();
+    public IllegalValueException(String message) {
+        super(message);
+    }
 
-	double previousTime();
-
-	boolean hasNext();
-	
-	boolean hasPrevious();
-
-	boolean completed();
-	
+    public IllegalValueException(NumberFormatException e) {
+        super(e);
+    }
 }

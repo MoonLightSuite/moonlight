@@ -129,10 +129,10 @@ public class SpatioTemporalSignal<T> {
 		return end;
 	}
 	
-	public Object[][][] toObjectArray() {
+	public double[][][] toArray(FunctionToDouble<T> f) {
 		Double[] timePoints = getTimeArray();
-		Object[][][] toReturn = new Object[size][][];
-		IntStream.range(0, size).forEach(i -> toReturn[i] = signals.get(i).toObjectArray(timePoints));
+		double[][][] toReturn = new double[size][][];
+		IntStream.range(0, size).forEach(i -> toReturn[i] = signals.get(i).arrayOf(timePoints,f));
 		return toReturn;
 	}
 
