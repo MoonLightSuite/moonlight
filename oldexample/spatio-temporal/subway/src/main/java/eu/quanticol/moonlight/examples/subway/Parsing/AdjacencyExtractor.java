@@ -31,7 +31,7 @@ public class AdjacencyExtractor implements ParsingStrategy<GraphModel<Double>> {
     public void process(String[] data) {
         for(int i = 0; i < data.length; i++) {
             double v = Double.parseDouble(data[i]);
-            if(1 == v)
+            if(v == 1)
                 graph.add(row, weight, i);
         }
 
