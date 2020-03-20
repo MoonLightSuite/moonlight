@@ -32,6 +32,10 @@ public interface SpatioTemporalMonitor<E,S,T> {
 	public static <E,S,T> SpatioTemporalMonitor<E,S,T> orMonitor(  SpatioTemporalMonitor<E,S,T> m1, SignalDomain<T> domain, SpatioTemporalMonitor<E,S,T> m2) {
 		return new SpatioTemporalMonitorBinaryOperator<E,S,T>(m1,domain::disjunction,m2);
 	}
+
+	public static <E,S,T> SpatioTemporalMonitor<E,S,T> impliesMonitor(  SpatioTemporalMonitor<E,S,T> m1, SignalDomain<T> domain, SpatioTemporalMonitor<E,S,T> m2) {
+		return new SpatioTemporalMonitorBinaryOperator<E,S,T>(notMonitor(m1, domain),domain::disjunction,m2);
+	}
 	
 	public static <E,S,T> SpatioTemporalMonitor<E,S,T> notMonitor(SpatioTemporalMonitor<E,S,T> m, SignalDomain<T> domain ) {
 		return new SpatioTemporalMonitorUnaryOperator<E,S,T>(m,domain::negation); 

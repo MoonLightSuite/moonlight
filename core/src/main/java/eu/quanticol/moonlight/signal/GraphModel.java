@@ -44,6 +44,23 @@ public class GraphModel<T> implements SpatialModel<T> {
 		}
 	}
 	
+	public void remove( int src, int trg ) {
+		if (src >= size || trg >= size) {
+			throw new ArrayIndexOutOfBoundsException("Unable to remove the edge");
+		}
+
+		if (!this.edges.get(src).containsKey(trg)) {
+			throw new IllegalArgumentException("Edge not present!");
+		}
+
+		Pair<Integer,T> out = this.outEdges.get(src).get(trg);
+		Pair<Integer,T> in = this.inEdges.get(src).get(trg);
+
+		this.edges.get(src).remove(trg);
+		this.outEdges.get(src).remove(out);
+		this.inEdges.get(trg).remove(in);
+	}
+
 	public void add( int src, T value , int trg ) {
 		if (src == trg) {
 			throw new IllegalArgumentException("Self-loops are not allowed!");
