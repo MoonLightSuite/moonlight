@@ -101,8 +101,8 @@ public class Grid {
      * @see #toArray for details on the serialization technique
      */
     public static List<Integer> getNeighboursByDirection(int loc, GridDirection dir, int size) {
-        var x = Grid.fromArray(loc, size).getFirst();
-        var y = Grid.fromArray(loc, size).getSecond();
+        int x = Grid.fromArray(loc, size).getFirst();
+        int y = Grid.fromArray(loc, size).getSecond();
         List<Integer> neighbours = getNeighbours(x, y, size);
 
         // remove neighbours not in the right direction
@@ -178,8 +178,8 @@ public class Grid {
      * @return the pair (x,y) of coordinates in the matrix.
      */
     private static Pair<Integer, Integer> fromArray(int a, int size) {
-        var x = a % size;
-        var y = a / size;
+        int x = a % size;
+        int y = a / size;
         return new Pair<>(x, y);
     }
 

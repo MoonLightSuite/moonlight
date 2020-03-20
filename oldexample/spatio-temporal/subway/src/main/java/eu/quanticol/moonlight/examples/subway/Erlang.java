@@ -92,15 +92,15 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        var signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
+        SpatioTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
 
         //// We are considering a dynamic Location Service ///
-        var locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
+        LocationService<Double> locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
 
         // Now we can monitor the system for the satisfaction of our Peak Management property
-        var m = neighbourSafety();
-        var output = m.monitor(locService, signal);
-        var signals = output.getSignals();
+        SpatioTemporalMonitor<Double, List<Comparable>, Boolean> m = neighbourSafety();
+        SpatioTemporalSignal<Boolean> output = m.monitor(locService, signal);
+        List<Signal<Boolean>> signals = output.getSignals();
 
         System.out.print("The safety monitoring result is: ");
         System.out.println(signals.get(0).valueAt(0));
@@ -178,10 +178,10 @@ public class Erlang {
      */
     private static LocationService<Double>
     createOrientedLocSvc(List<Integer> devPos, List<GridDirection> devDir) {
-        var locService = new LocationServiceList<Double>();
+        LocationServiceList<Double> locService = new LocationServiceList<>();
 
         // initial configuration
-        var edges = getEdges(devPos.get(0), devDir.get(0));
+        List<Pair<Double, Integer>> edges = getEdges(devPos.get(0), devDir.get(0));
         for(Pair<Double, Integer> e: edges)
             network.add(devPos.get(0), e.getFirst(), e.getSecond());
 
@@ -213,7 +213,7 @@ public class Erlang {
      * @return a list of (weight, destination) relevant to the given direction
      */
     private static List<Pair<Double, Integer>> getEdges(Integer node, GridDirection dir) {
-        var ns = Grid.getNeighboursByDirection(node, dir, network.size());
+        List<Integer> ns = Grid.getNeighboursByDirection(node, dir, network.size());
 
         List<Pair<Double, Integer>> edges = new ArrayList<>();
         for(Integer n: ns) {
@@ -261,7 +261,7 @@ public class Erlang {
      * @return a list representing the 5-tuple (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
      */
     private static List<Comparable> getMultiValuedSignal(int t, int l) {
-        var s = new ArrayList<Comparable>();
+        List<Comparable> s = new ArrayList<Comparable>();
         s.add(DEV_CONNECTED, isDevicePresent(t, l));        //devConnected
         s.add(DEV_DIRECTION, getDeviceDirection(t, l));     //devDirection
         s.add(LOC_ROUTER, getRouterLocation(t, l));         //locRouter
@@ -317,16 +317,16 @@ public class Erlang {
     // might be useful in future...
     /*
     private static Boolean acceptableLocation(List<Comparable> s) {
-        var l = (Integer) s.get(LOC_ROUTER);
-        var n = (Integer) s.get(OUT_ROUTER);
-        var d = (GridDirection) s.get(DEV_DIRECTION);
+        int l = (Integer) s.get(LOC_ROUTER);
+        int n = (Integer) s.get(OUT_ROUTER);
+        GridDirection d = (GridDirection) s.get(DEV_DIRECTION);
 
         return Grid.checkDirection(n,l,d,network.size());
     }
 
     private static Boolean sameRouter(List<Comparable> s) {
-        var s1 = s.get(OUT_ROUTER);
-        var s2 = s.get(LOC_ROUTER);
+        Comparable s1 = s.get(OUT_ROUTER);
+        Comparable s2 = s.get(LOC_ROUTER);
 
         return s1.equals(s2);
     }
