@@ -49,11 +49,11 @@ public class Subway {
 
     /**
      * We initialize the domains and the spatial network
-     * @see SubwayNetwork for a description of the spatial model.
+     * @see Grid for a description of the spatial model.
      */
     private static final DoubleDomain ROBUSTNESS = new DoubleDomain();
     private static final BooleanDomain SATISFACTION = new BooleanDomain();
-    private static SpatialModel<Double> network = SubwayNetwork.simulateModel();
+    private static SpatialModel<Double> network = Grid.simulateModel();
 
     /**
      * Signal Dimensions (i.e. signal domain)

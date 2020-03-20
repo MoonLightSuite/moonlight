@@ -16,13 +16,53 @@ import java.util.List;
  * We are assuming the Subway network is part of an N x N grid,
  * where all the edges represent the same distance.
  */
-public class SubwayNetwork {
+public class Grid {
 
-    public SpatialModel<Double> getModel(String file) {
+    public GraphModel<Double> getModel(String file) {
         ParsingStrategy<GraphModel<Double>> s = new AdjacencyExtractor();
         DataReader<GraphModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
 
         return data.read();
+    }
+
+    /**
+     * Predicate that, given two locations, converts them in grid coordinates
+     * and checks whether the direction is consistent with the new location.
+     * @param nl identifier of the new location
+     * @param ol identifier of the old location
+     * @param dir direction to consider
+     * @param size dimension of the (squared) grid
+     * @return the result of the comparison between the direction and the locations.
+     */
+    public static Boolean checkDirection(int nl, int ol, GridDirection dir, int size) {
+        int nx = fromArray(nl, size).getFirst();
+        int ny = fromArray(nl, size).getSecond();
+        int ox = fromArray(ol, size).getFirst();
+        int oy = fromArray(ol, size).getSecond();
+
+        switch(dir) {
+            case NE:
+                return (ny == oy + 1) && (nx == ox + 1);
+            case NW:
+                return (ny == oy + 1) && (nx == ox - 1);
+            case SE:
+                return (ny == oy - 1) && (nx == ox + 1);
+            case SW:
+                return (ny == oy - 1) && (nx == ox - 1);
+            case NN:
+                return ny == oy + 1;
+            case SS:
+                return ny == oy - 1;
+            case WW:
+                return nx == ox - 1;
+            case EE:
+                return nx == ox + 1;
+            case HH:
+                return nx == ox && ny == oy;
+            default:
+                throw new UnsupportedOperationException("Invalid direction provided.");
+        }
+
     }
 
     /**
@@ -52,14 +92,35 @@ public class SubwayNetwork {
     }
 
     /**
-     * Surroundings of the current node
-     * @param x first coordinate of the current node
-     * @param y second coordinate of the current node
+     * Surroundings of the current node, filtered by a direction
+     * @param loc the current node
+     * @param dir the direction of interest
+     * @param size dimension of the (quadratic) grid
      * @return a List of the serialized coordinates of the nodes.
      *
      * @see #toArray for details on the serialization technique
      */
-    private static List<Integer> getNeighbours(int x, int y, int size) {
+    public static List<Integer> getNeighboursByDirection(int loc, GridDirection dir, int size) {
+        var x = Grid.fromArray(loc, size).getFirst();
+        var y = Grid.fromArray(loc, size).getSecond();
+        List<Integer> neighbours = getNeighbours(x, y, size);
+
+        // remove neighbours not in the right direction
+        neighbours.removeIf(n -> !checkDirection(n, loc, dir, size));
+
+        return neighbours;
+    }
+
+    /**
+     * Surroundings of the current node
+     * @param x first coordinate of the current node
+     * @param y second coordinate of the current node
+     * @param size dimension of the (quadratic) grid
+     * @return a List of the serialized coordinates of the nodes.
+     *
+     * @see #toArray for details on the serialization technique
+     */
+    public static List<Integer> getNeighbours(int x, int y, int size) {
         List<Integer> neighbours = new ArrayList<>();
 
         // left boundary
@@ -107,6 +168,19 @@ public class SubwayNetwork {
      */
     private static int toArray(int x, int y, int size) {
         return x + y * size;
+    }
+
+    /**
+     * Given the dimension n of the square matrix, it converts a position in the
+     * array to a position in the n x n matrix.
+     * @param a position in the array
+     * @param size dimension of the matrix
+     * @return the pair (x,y) of coordinates in the matrix.
+     */
+    private static Pair<Integer, Integer> fromArray(int a, int size) {
+        var x = a % size;
+        var y = a / size;
+        return new Pair<>(x, y);
     }
 
 }
