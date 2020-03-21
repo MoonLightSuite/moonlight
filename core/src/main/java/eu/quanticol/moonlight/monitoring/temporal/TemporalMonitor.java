@@ -34,7 +34,12 @@ public abstract class TemporalMonitor<S,T> {
 	public static <S,T> TemporalMonitor<S,T> orMonitor( TemporalMonitor<S,T> m1, SignalDomain<T> domain, TemporalMonitor<S,T> m2) {
 		return new TemporalMonitorBinary<S,T>( m1 , domain::disjunction , m2 );
 	}
+
+	public static <S,T> TemporalMonitor<S,T> impliesMonitor( TemporalMonitor<S,T> m1, SignalDomain<T> domain, TemporalMonitor<S,T> m2) {
+		return new TemporalMonitorBinary<S,T>( m1 , domain::implies , m2 );
+	}
 	
+
 	public static <S,T> TemporalMonitor<S,T> notMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain ) {
 		return new TemporalMonitorUnary<S,T>( m , domain::negation );
 	}

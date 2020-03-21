@@ -48,6 +48,9 @@ import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.StrelNotFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.BinaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelImplyFormula
 
 class ScriptToJava {
 	
@@ -333,6 +336,17 @@ class ScriptToJava {
 		)
 		'''
 	}
+	
+	def dispatch CharSequence temporalMonitorCode(StrelImplyFormula f, String prefix, String domain) {
+		'''
+		TemporalMonitor.impliesMonitor( 
+			«f.left.temporalMonitorCode(prefix,domain)» ,
+			«domain» , 
+			«f.right.temporalMonitorCode(prefix,domain)»
+		)
+		'''
+	}
+	
 
 	def dispatch CharSequence temporalMonitorCode(StrelAndFormula f, String prefix, String domain) {
 		'''
@@ -446,6 +460,16 @@ class ScriptToJava {
 	def dispatch CharSequence spatioTemporalMonitorCode(StrelOrFormula f, String prefix, String domain) {
 	  '''
 	  SpatioTemporalMonitor.orMonitor( 
+	    «f.left.spatioTemporalMonitorCode(prefix,domain)» ,
+	    «domain» , 
+	    «f.right.spatioTemporalMonitorCode(prefix,domain)»
+	  )
+	  '''
+	}
+	
+	def dispatch CharSequence spatioTemporalMonitorCode(StrelImplyFormula f, String prefix, String domain) {
+	  '''
+	  SpatioTemporalMonitor.impliesMonitor( 
 	    «f.left.spatioTemporalMonitorCode(prefix,domain)» ,
 	    «domain» , 
 	    «f.right.spatioTemporalMonitorCode(prefix,domain)»
@@ -694,5 +718,12 @@ class ScriptToJava {
 		}
 	}
 	
+	def dispatch CharSequence getExpressionToJava(UnaryMathFunction expression) {
+		'''(double) Math.«expression.fun.name»( «expression.arg.expressionToJava» )'''
+	}
+
+	def dispatch CharSequence getExpressionToJava(BinaryMathFunction expression) {
+		'''(double) Math.«expression.fun.name»( «expression.arg1.expressionToJava» , «expression.arg2.expressionToJava» )'''
+	}
 	
 }
