@@ -19,7 +19,7 @@
  */
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.io.TemporalSignalReader;
+import eu.quanticol.moonlight.io.TemporalSignalLoader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
@@ -210,11 +210,12 @@ public class TemporalScriptComponent<S> {
 
     public void monitorToFile(TemporalSignalWriter writer, OutputStream stream, Signal<Record> input, String... values) throws IOException {
         Signal<S> signal = monitor(input, values);
-        writer.write(outputTypeHandler, signal, stream);
+        //writer.write(outputTypeHandler, signal, stream);
+        //TODO: FIX ME!
     }
 
-    public void monitor(TemporalSignalReader reader, InputStream input, TemporalSignalWriter writer, OutputStream output, Object... values) throws IOException {
-        monitorToFile(writer, output, reader.load(signalRecordHandler, input));
+    public void monitor(TemporalSignalLoader reader, InputStream input, TemporalSignalWriter writer, OutputStream output, Object... values) throws IOException {
+        //monitorToFile(writer, output, reader.load(signalRecordHandler, input));
     }
 
     public String getInfo() {

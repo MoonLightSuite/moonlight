@@ -3,16 +3,10 @@
  */
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.io.TemporalSignalReader;
-import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**

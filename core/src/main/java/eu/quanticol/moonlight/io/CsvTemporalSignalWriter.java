@@ -17,23 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.quanticol.moonlight.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
-/**
- * @author loreti
- *
- */
-public interface TemporalSignalWriter {
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
-	<S> void write(DataHandler<S> handler, Signal<S> signal, File file)  throws IOException ;
+public class CsvTemporalSignalWriter implements TemporalSignalWriter {
 
-	<S> String stringOf( DataHandler<S> handler, Signal<S> signal) ;
+
+    @Override
+    public <S> void write(DataHandler<S> handler, Signal<S> signal, File file) throws IOException {
+        Files.write(file.toPath(),stringOf(handler,signal).getBytes());
+    }
+
+    @Override
+    public <S> String stringOf(DataHandler<S> handler, Signal<S> signal) {
+        return signal.reduce((p,s) -> s+p.getFirst ()+";"+handler.toString(p.getSecond())+"\n","");
+    }
 
 }

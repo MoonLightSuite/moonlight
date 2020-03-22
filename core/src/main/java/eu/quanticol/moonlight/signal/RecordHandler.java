@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class RecordHandler {
+public class RecordHandler implements DataHandler<Record> {
 
     private DataHandler<?>[] handlers;
 
@@ -76,14 +76,17 @@ public class RecordHandler {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
         }
         Object[] data = new Object[values.length];
-        for (int i=from ; i<to ; i++) {
-            data[i] = handlers[i].fromDouble(values[i]);
+        for (int i=0 ; i<handlers.length ; i++) {
+            data[i] = handlers[i].fromDouble(values[i+from]);
         }
         return build(data);
     }
 
 
     private Record build(Object[] values) {
+        if (values.length != handlers.length) {
+            throw new IllegalArgumentException();
+        }
         return new Record(i -> handlers[i], values);
     }
 
@@ -95,9 +98,9 @@ public class RecordHandler {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from) + ")");
         }
-        Object[] data = new Object[values.length];
-        for (int i=from ; i<to ; i++) {
-            data[i] = handlers[i].fromString(values[i]);
+        Object[] data = new Object[handlers.length];
+        for (int i=0 ; i<handlers.length ; i++) {
+            data[i] = handlers[i].fromString(values[i+from]);
         }
         return build(data);
     }
@@ -211,6 +214,17 @@ public class RecordHandler {
         return handlers[variableIndex].checkStringValue(value);
     }
 
+    public boolean checkValuesFromStrings(String[] values) {
+        return checkValuesFromStrings(values, 0, values.length);
+    }
+
+    public boolean checkValuesFromStrings(String[] values, int from, int to) {
+        if ((to-from) != handlers.length) {
+            return false;
+        }
+        return IntStream.range(0,handlers.length).allMatch(i -> handlers[i].checkStringValue(values[i+from]));
+    }
+
     public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
                                                      String[][] signal) throws IllegalValueException {
         Signal<Record> toReturn = new Signal<>();
@@ -239,4 +253,77 @@ public class RecordHandler {
     	return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
+    @Override
+    public Class<Record> getTypeOf() {
+        return Record.class;
+    }
+
+    @Override
+    public Record fromObject(Object o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (o instanceof Record) {
+            Record r = (Record) o;
+            Object[] values = r.getValues();
+            if (this.checkValues(values)) {
+                return build(values);
+            }
+            throw new IllegalValueException("Illegal data type!");
+        }
+        throw new IllegalValueException("A record is espected. Here we have "+o.getClass().getName());
+    }
+
+    private boolean checkValues(Object[] values) {
+        if (handlers.length == values.length) {
+            for( int i=0 ; i<values.length ; i++ ) {
+                if (!handlers[i].checkObjectValue(values[i])) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Record fromString(String str) {
+        String[] data = str.split(";");
+        return fromString(data);
+    }
+
+    @Override
+    public Record fromDouble(double value) {
+        throw new IllegalValueException("A record cannot be built from a double!");
+    }
+
+    @Override
+    public String toString(Record record) {
+        return record.toString();
+    }
+
+    @Override
+    public double toDouble(Record record) {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public boolean checkObjectValue(Object o) {
+        if (o instanceof Record) {
+            Record r = (Record) o;
+            Object[] values = r.getValues();
+            return (this.checkValues(values));
+            }
+        return false;
+    }
+
+    @Override
+    public boolean checkStringValue(String value) {
+        return checkValuesFromStrings(value.split(";"));
+    }
+
+    @Override
+    public boolean checkDoubleValue(double value) {
+        return false;
+    }
 }

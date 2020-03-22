@@ -3,6 +3,7 @@
  */
 package eu.quanticol.moonlight.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,8 +15,9 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public interface TemporalSignalReader {
+public interface TemporalSignalLoader {
 	
-	public Signal<Record> load( RecordHandler handler, InputStream input ) throws IOException ;
+	Signal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
+	Signal<Record> load(RecordHandler handler, String input) throws IOException, IllegalFileFormatException;
 
 }

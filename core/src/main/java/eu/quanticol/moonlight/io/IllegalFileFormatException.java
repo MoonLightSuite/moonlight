@@ -17,23 +17,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package eu.quanticol.moonlight.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+public class IllegalFileFormatException extends Exception {
 
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Signal;
+    private final int line;
 
-/**
- * @author loreti
- *
- */
-public interface TemporalSignalWriter {
+    public IllegalFileFormatException(int line, String message) {
+        super("Syntax error at line "+line+": "+message);
+        this.line = line;
+    }
 
-	<S> void write(DataHandler<S> handler, Signal<S> signal, File file)  throws IOException ;
-
-	<S> String stringOf( DataHandler<S> handler, Signal<S> signal) ;
+    public int getLine() {
+        return line;
+    }
 
 }

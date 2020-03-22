@@ -22,6 +22,8 @@ package eu.quanticol.moonlight.signal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -30,7 +32,7 @@ public class Record {
 	
 	private Object[] values;
 	private Function<Integer,DataHandler<?>> handlers;
-	
+
 	public Record( Function<Integer,DataHandler<?>> handlers , Object[] values ) {
 		this.values = values;
 		this.handlers = handlers;
@@ -39,7 +41,11 @@ public class Record {
 	public <T> T get( int i , Class<T> varType) {
 		return varType.cast(values[i]);
 	}
-	
+
+	public Object get( int i ) {
+		return values[i];
+	}
+
 	public Class<?> getTypeOf( int i ) {
 		return handlers.apply(i).getTypeOf();
 	}
@@ -47,5 +53,26 @@ public class Record {
 	public <T> boolean hasType( int i , Class<T> varType ) {
 		return varType.isAssignableFrom(getTypeOf(i));				
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Record)) return false;
+		Record record = (Record) o;
+		return Arrays.equals(values, record.values);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(values);
+	}
+
+	@Override
+	public String toString() {
+		return IntStream.range(0,values.length).mapToObj(i -> values[i].toString()).collect(Collectors.joining(";"));
+	}
+
+	public Object[] getValues() {
+		return Arrays.copyOf(values,values.length);
+	}
 }

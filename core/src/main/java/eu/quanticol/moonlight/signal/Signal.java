@@ -19,8 +19,11 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.util.Pair;
+
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -196,6 +199,24 @@ public class Signal<T> {
         }
         newSignal.end = end;
         return newSignal;
+    }
+
+    public void forEach(BiConsumer<Double,T> consumer) {
+        SignalCursor<T> cursor = getIterator(true);
+        while (!cursor.completed()) {
+            consumer.accept(cursor.time(),cursor.value());
+            cursor.forward();
+        }
+    }
+
+    public <R> R reduce(BiFunction<Pair<Double,T>,R,R> reducer, R init) {
+        R toReturn = init;
+        SignalCursor<T> cursor = getIterator(true);
+        while (!cursor.completed()) {
+            toReturn = reducer.apply(new Pair<>(cursor.time(),cursor.value()),toReturn);
+            cursor.forward();
+        }
+        return toReturn;
     }
 
     /**
