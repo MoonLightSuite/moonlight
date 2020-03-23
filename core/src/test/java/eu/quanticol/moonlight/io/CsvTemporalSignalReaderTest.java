@@ -24,7 +24,6 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.SignalGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.DoubleFunction;
 import java.util.function.IntFunction;
@@ -102,7 +101,7 @@ class CsvTemporalSignalReaderTest {
         DoubleFunction<Boolean> boolGenerator = SignalGenerator.booleanGenerator(r,0.5);
 
         Record[] data = new Record[size];
-        DoubleFunction<Record> generateFunction = d -> rh.fromObject(
+        DoubleFunction<Record> generateFunction = d -> rh.fromObjectArray(
                 realGenerator.apply(d), intGenerator.apply(d),boolGenerator.apply(d)
         );
         SignalGenerator.fillArray(timePoints,data, generateFunction,0.0,d -> 0.3);

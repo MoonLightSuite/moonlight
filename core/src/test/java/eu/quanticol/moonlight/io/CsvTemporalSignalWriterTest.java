@@ -66,7 +66,7 @@ class CsvTemporalSignalWriterTest {
         DoubleFunction<Boolean> boolGenerator = SignalGenerator.booleanGenerator(r,0.5);
 
         Record[] data = new Record[size];
-        DoubleFunction<Record> generateFunction = d -> rh.fromObject(
+        DoubleFunction<Record> generateFunction = d -> rh.fromObjectArray(
                 realGenerator.apply(d), intGenerator.apply(d),boolGenerator.apply(d)
         );
         SignalGenerator.fillArray(timePoints,data, generateFunction,0.0,d -> 0.3);

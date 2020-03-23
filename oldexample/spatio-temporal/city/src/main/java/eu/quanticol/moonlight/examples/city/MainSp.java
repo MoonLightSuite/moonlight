@@ -1,16 +1,14 @@
 package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 
@@ -44,9 +42,9 @@ public class MainSp {
         RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray),DataHandler.BOOLEAN,DataHandler.INTEGER);
         ArrayList<Record> signalSP = new ArrayList<Record>();
         for (int i = 0; i < size; i++) {
-            signalSP.add(factory.fromObject(place.get(i), taxi.get(i), people.get(i)));
+            signalSP.add(factory.fromObjectArray(place.get(i), taxi.get(i), people.get(i)));
         }
-        SpatioTemporalSignal<Record> citySignal = new SpatioTemporalSignal<>(size);
+        SpatialTemporalSignal<Record> citySignal = new SpatialTemporalSignal<>(size);
         citySignal.add(0, signalSP);
         citySignal.add(1, signalSP);
         citySignal.add(3, signalSP);
@@ -75,10 +73,10 @@ public class MainSp {
 
 
         SignalDomain<Boolean> module = new BooleanDomain();
-        SpatioTemporalMonitoring<Double, Record, Boolean> monitorFactory = new SpatioTemporalMonitoring<Double, Record, Boolean>(atomicPropositions, distanceFunctions, module, true);
-        SpatioTemporalMonitor<Double, Record, Boolean> m = monitorFactory.monitor(someT, null);
+        SpatialTemporalMonitoring<Double, Record, Boolean> monitorFactory = new SpatialTemporalMonitoring<Double, Record, Boolean>(atomicPropositions, distanceFunctions, module, true);
+        SpatialTemporalMonitor<Double, Record, Boolean> m = monitorFactory.monitor(someT, null);
 
-        SpatioTemporalSignal<Boolean> out = m.monitor(locService, citySignal);
+        SpatialTemporalSignal<Boolean> out = m.monitor(locService, citySignal);
 
         System.out.println(out.getSignals().get(0));
 

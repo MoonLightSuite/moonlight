@@ -20,20 +20,14 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -41,19 +35,14 @@ import java.util.stream.Stream;
  * The file format consits of a sequence of data separated by a ';', the first of which must
  * be a double. The first column must be ordered.
  */
-public class CsvTemporalSignalReader implements TemporalSignalLoader {
+public class CsvTemporalSignalReader extends AbstractFileByRowReader implements TemporalSignalReader {
 
     @Override
     public Signal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
-        return load(handler, Files.lines(input.toPath()));
+        return load(handler, collectDataRows(Files.lines(input.toPath())));
     }
 
-    private Signal<Record> load(RecordHandler handler, Stream<String> lines) throws IllegalFileFormatException {
-        List<Row> data = lines.map(s -> new Row(s)).collect(Collectors.toList());
-        int line = 1;
-        for (Row r: data) {
-            r.setLine(line++);
-        }
+    private Signal<Record> load(RecordHandler handler, List<Row> data ) throws IllegalFileFormatException {
         checkData(handler,data);
         Signal<Record> s = new Signal<>();
         for (Row row: data) {
@@ -65,65 +54,20 @@ public class CsvTemporalSignalReader implements TemporalSignalLoader {
 
     private void checkData(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
         for (Row row: data) {
-            if (!row.firstIsADouble()) {
-                throw new IllegalFileFormatException(row.index, "First element of each row must be a double!");
+            if (!row.isEmpty()) {
+                if (!row.isDouble(0)) {
+                    throw new IllegalFileFormatException(row.index, "First element of each row must be a double!");
+                }
+                if (!row.checkRecord(handler)) {
+                    throw new IllegalFileFormatException(row.index, "Input data error!");
+                }
             }
-            if (!row.checkRecord(handler)) {
-                throw new IllegalFileFormatException(row.index,"Input data error!");
-            }
-        }
-    }
-
-    private boolean isDouble( String str ) {
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 
     @Override
     public Signal<Record> load(RecordHandler handler, String input) throws IllegalFileFormatException {
-        return load(handler,Stream.of(input.split("\n")));
+        return load(handler,collectDataRows(Stream.of(input.split("\n"))));
     }
 
-    public class Row {
-        int index;
-        String[] elements;
-
-        public Row(String row) {
-            if (row.trim().isEmpty()) {
-                elements = null;
-            } else {
-                elements = row.split(";");
-            }
-        }
-
-        public void setLine(int index) {
-            this.index = index;
-        }
-
-        public boolean firstIsADouble() {
-            if (elements == null) {
-                return true;
-            }
-            if (elements.length>0) {
-                return isDouble(elements[0]);
-            }
-            return false;
-        }
-
-        public boolean checkRecord(RecordHandler handler) {
-            return (elements == null)||handler.checkValuesFromStrings(elements,1,elements.length);
-        }
-
-        public void addValueToSignal(RecordHandler handler, Signal<Record> s) {
-            if (elements != null) {
-                double t = Double.parseDouble(elements[0]);
-                Record r = handler.fromString(elements,1,elements.length);
-                s.add(t,r);
-            }
-        }
-    }
 }

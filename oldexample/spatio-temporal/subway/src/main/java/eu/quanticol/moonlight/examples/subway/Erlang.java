@@ -6,8 +6,8 @@ import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
-import static eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor.*;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.signal.GraphModel;
@@ -92,14 +92,14 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        SpatioTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
+        SpatialTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
 
         //// We are considering a dynamic Location Service ///
         LocationService<Double> locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
 
         // Now we can monitor the system for the satisfaction of our Peak Management property
-        SpatioTemporalMonitor<Double, List<Comparable>, Boolean> m = neighbourSafety();
-        SpatioTemporalSignal<Boolean> output = m.monitor(locService, signal);
+        SpatialTemporalMonitor<Double, List<Comparable>, Boolean> m = neighbourSafety();
+        SpatialTemporalSignal<Boolean> output = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = output.getSignals();
 
         System.out.print("The safety monitoring result is: ");
@@ -115,28 +115,28 @@ public class Erlang {
 
     // --------- FORMULAE --------- //
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> neighbourSafety() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> neighbourSafety() {
         return globallyMonitor(   // Globally in TH...
                     impliesMonitor(request(), SATISFACTION, someCell())
                 , new Interval(0, TH), SATISFACTION);
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> communicationLiveness() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> communicationLiveness() {
         return eventuallyMonitor(   // Eventually in T2...
                 impliesMonitor(request(), SATISFACTION,
                         eventuallyMonitor(response(), new Interval(0, T3), SATISFACTION))
                 , new Interval(0, T2), SATISFACTION);
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> request() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> request() {
         return andMonitor(devConnected(), SATISFACTION, devMoving());
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> response() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> response() {
         return outputRouter(); //some quality metrics may be added here...
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> someCell() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> someCell() {
         return somewhereMonitor(
                     andMonitor(locationCrowdedness(), SATISFACTION, locationRouter())
                 , distance(0, LH), SATISFACTION);
@@ -145,23 +145,23 @@ public class Erlang {
 
     // --------- ATOMIC PREDICATES --------- //
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> devConnected() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> devConnected() {
         return atomicMonitor((s -> (Boolean) s.get(DEV_CONNECTED)));
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> devMoving() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> devMoving() {
         return atomicMonitor((s -> s.get(DEV_DIRECTION) != GridDirection.HH));
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> locationRouter() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> locationRouter() {
         return atomicMonitor((s -> (Integer) s.get(LOC_ROUTER) >= 0));
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> locationCrowdedness() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> locationCrowdedness() {
         return atomicMonitor((s -> (Double) s.get(LOC_CROWDEDNESS) < C));
     }
 
-    private static SpatioTemporalMonitor<Double, List<Comparable>, Boolean> outputRouter() {
+    private static SpatialTemporalMonitor<Double, List<Comparable>, Boolean> outputRouter() {
         return atomicMonitor((s -> (Integer) s.get(OUT_ROUTER) >= 0));
     }
 
@@ -242,9 +242,9 @@ public class Erlang {
      * @param <T> domain of the signal
      * @return a SpatioTemporal signal generated from f.
      */
-    private static <T> SpatioTemporalSignal<T>
+    private static <T> SpatialTemporalSignal<T>
     createSTSignal(int size, int end, BiFunction<Integer, Integer, T> f) {
-        SpatioTemporalSignal<T> s = new SpatioTemporalSignal(size);
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
 
         for(int t = 0; t < end; t ++) {
             int time = t;

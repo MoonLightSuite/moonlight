@@ -10,11 +10,10 @@ import java.util.stream.IntStream;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitorinInput;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoringInput;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.LocationServiceList;
@@ -22,7 +21,7 @@ import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
  * @author loreti
@@ -39,14 +38,14 @@ public class JSonSpatioTemporalSignalDeserializer {
 	}
 	
 	
-	public SpatioTemporalMonitorinInput<Record, Record> load( String str ) throws IllegalFileFormat {
+	public SpatialTemporalMonitoringInput<Record, Record> load(String str ) throws IllegalFileFormat {
 		JsonParser parser = new JsonParser();
 		JsonObject root = getRoot( parser.parse(str) );
 		checkTypes( root );
 		Map<String,Integer> locationIndex = getLocationIndex( root );
-		SpatioTemporalSignal<Record> signal = loadSignal( locationIndex, root );
+		SpatialTemporalSignal<Record> signal = loadSignal( locationIndex, root );
 		LocationService<Record> locationService = loadLocationService( locationIndex, root );
-		return new SpatioTemporalMonitorinInput<>(signal, locationService,null);
+		return new SpatialTemporalMonitoringInput<>(signal, locationService,null);
 	}
 
 
@@ -167,11 +166,11 @@ public class JSonSpatioTemporalSignalDeserializer {
 			}
 			valuesMap.put(v, value);
 		}
-		return edgeRecordHandler.fromString(valuesMap);
+		return edgeRecordHandler.fromStringArray(valuesMap);
 	}
 
 
-	private SpatioTemporalSignal<Record> loadSignal(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {				
+	private SpatialTemporalSignal<Record> loadSignal(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
 		if (!root.has(JSONUtils.SIGNAL_TAG)) {
 			throw new IllegalFileFormat("Tag "+JSONUtils.SIGNAL_TAG+" is missing!");			
 		}
@@ -183,12 +182,12 @@ public class JSonSpatioTemporalSignalDeserializer {
 		JsonObject data = getSignalData(locationIndex,signals);
 		String[] locations = new String[locationIndex.size()];
 		locationIndex.forEach((v,i) -> locations[i]=v);
-		return new SpatioTemporalSignal<>(locations.length, i -> getSignal(time,locations[i],data.get(locations[i]).getAsJsonObject()));
+		return new SpatialTemporalSignal<>(locations.length, i -> getSignal(time,locations[i],data.get(locations[i]).getAsJsonObject()));
 	}
 
 	private Signal<Record> getSignal(double[] time, String string, JsonObject locationData) {
 		Signal<Record> record = new Signal<Record>();
-		IntStream.range(0, time.length).sequential().forEach(i -> record.add(time[i], signalRecordHandler.fromString(getRecordStringMap(i,locationData,signalRecordHandler))));
+		IntStream.range(0, time.length).sequential().forEach(i -> record.add(time[i], signalRecordHandler.fromStringArray(getRecordStringMap(i,locationData,signalRecordHandler))));
 		return record;
 	}
 

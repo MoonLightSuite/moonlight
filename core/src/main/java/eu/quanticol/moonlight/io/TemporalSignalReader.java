@@ -15,7 +15,7 @@ import eu.quanticol.moonlight.signal.Signal;
  * @author loreti
  *
  */
-public interface TemporalSignalLoader {
+public interface TemporalSignalReader {
 	
 	Signal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
 	Signal<Record> load(RecordHandler handler, String input) throws IOException, IllegalFileFormatException;

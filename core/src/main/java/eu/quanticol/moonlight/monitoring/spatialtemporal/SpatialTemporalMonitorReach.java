@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.monitoring.spatiotemporal;
+package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,23 +12,23 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
  * @author loreti
  *
  */
-public class SpatioTemporalMonitorReach<E,S,T> implements SpatioTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
-	private SpatioTemporalMonitor<E, S, T> m1;
+	private SpatialTemporalMonitor<E, S, T> m1;
 	private Function<SpatialModel<E>, DistanceStructure<E, ?>> distance;
-	private SpatioTemporalMonitor<E, S, T> m2;
+	private SpatialTemporalMonitor<E, S, T> m2;
 	private SignalDomain<T> domain;
 
-	public SpatioTemporalMonitorReach(SpatioTemporalMonitor<E, S, T> m1,
-			Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SpatioTemporalMonitor<E, S, T> m2,
-			SignalDomain<T> domain) {
+	public SpatialTemporalMonitorReach(SpatialTemporalMonitor<E, S, T> m1,
+                                       Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SpatialTemporalMonitor<E, S, T> m2,
+                                       SignalDomain<T> domain) {
 		this.m1 = m1;
 		this.distance = distance;
 		this.m2 = m2;
@@ -36,12 +36,12 @@ public class SpatioTemporalMonitorReach<E,S,T> implements SpatioTemporalMonitor<
 	}
 
 	@Override
-	public SpatioTemporalSignal<T> monitor(LocationService<E> locationService, SpatioTemporalSignal<S> signal) {
+	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
 		return computeReachDynamic(locationService, m1.monitor(locationService, signal), m2.monitor(locationService, signal));
 	}
 	
-	private SpatioTemporalSignal<T> computeReachDynamic(LocationService<E> locationService, SpatioTemporalSignal<T> s1, SpatioTemporalSignal<T> s2) {
-        SpatioTemporalSignal<T> toReturn = new SpatioTemporalSignal<T>(s1.getNumberOfLocations());
+	private SpatialTemporalSignal<T> computeReachDynamic(LocationService<E> locationService, SpatialTemporalSignal<T> s1, SpatialTemporalSignal<T> s2) {
+        SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s1.getNumberOfLocations());
         if (locationService.isEmpty()) {
             return toReturn;
         }

@@ -2,8 +2,6 @@ package eu.quanticol.moonlight.signal;
 
 import org.junit.jupiter.api.Test;
 
-import java.awt.dnd.DropTarget;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataHandlerTest {
@@ -102,8 +100,8 @@ class DataHandlerTest {
     @Test
     public void testRecordEquals() {
         RecordHandler rh = new RecordHandler(DataHandler.REAL,DataHandler.INTEGER,DataHandler.BOOLEAN);
-        Record r1 = rh.fromObject(4.440193097192868,4,false);
-        Record r2 = rh.fromObject(4.440193097192868,4,false);
+        Record r1 = rh.fromObjectArray(4.440193097192868,4,false);
+        Record r2 = rh.fromObjectArray(4.440193097192868,4,false);
         assertEquals(r1,r2);
     }
 }

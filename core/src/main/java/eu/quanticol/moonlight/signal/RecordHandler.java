@@ -56,7 +56,7 @@ public class RecordHandler implements DataHandler<Record> {
         return new RecordHandler(variableIndex, dataHandlers);
     }
 
-    public Record fromObject(Object ... values) {
+    public Record fromObjectArray(Object ... values) {
         if (values.length != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + values.length);
         }
@@ -67,11 +67,11 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromDouble(double ... values) {
-        return fromDouble(values,0,values.length);
+    public Record fromDoubleArray(double ... values) {
+        return fromDoubleArray(values,0,values.length);
     }
 
-    public Record fromDouble(double[] values, int from, int to) {
+    public Record fromDoubleArray(double[] values, int from, int to) {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
         }
@@ -90,11 +90,11 @@ public class RecordHandler implements DataHandler<Record> {
         return new Record(i -> handlers[i], values);
     }
 
-    public Record fromString(String... values) {
-        return fromString(values,0,values.length);
+    public Record fromStringArray(String... values) {
+        return fromStringArray(values,0,values.length);
     }
 
-    public Record fromString(String[] values, int from, int to) {
+    public Record fromStringArray(String[] values, int from, int to) {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from) + ")");
         }
@@ -105,7 +105,7 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromObject(Map<String, Object> values) throws IllegalValueException {
+    public Record fromObjectArray(Map<String, Object> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -137,7 +137,7 @@ public class RecordHandler implements DataHandler<Record> {
         return variables.getOrDefault(v, -1);
     }
 
-    public Record fromString(Map<String, String> values) throws IllegalValueException {
+    public Record fromStringArray(Map<String, String> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, String> entry : values.entrySet()) {
@@ -153,7 +153,7 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromDouble(Map<String, Double> values) throws IllegalValueException {
+    public Record fromDoubleArray(Map<String, Double> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, Double> entry : values.entrySet()) {
@@ -229,7 +229,7 @@ public class RecordHandler implements DataHandler<Record> {
                                                      String[][] signal) throws IllegalValueException {
         Signal<Record> toReturn = new Signal<>();
         for (int i = 0; i < time.length; i++) {
-            toReturn.add(time[i], handler.fromString(signal[i]));
+            toReturn.add(time[i], handler.fromStringArray(signal[i]));
         }
         return toReturn;
     }
@@ -238,19 +238,19 @@ public class RecordHandler implements DataHandler<Record> {
                                                      double[][] signal) {
         Signal<Record> toReturn = new Signal<>();
         for (int i = 0; i < time.length; i++) {
-            toReturn.add(time[i], handler.fromDouble(signal[i]));
+            toReturn.add(time[i], handler.fromDoubleArray(signal[i]));
         }
         return toReturn;
     }
 
-    public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-                                                                         String[][][] signal) {
-        return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
+    public static SpatialTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+                                                                          String[][][] signal) {
+        return new SpatialTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
-    public static SpatioTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-            double[][][] signal) {
-    	return new SpatioTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
+    public static SpatialTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+                                                                          double[][][] signal) {
+    	return new SpatialTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
     @Override
@@ -289,7 +289,7 @@ public class RecordHandler implements DataHandler<Record> {
     @Override
     public Record fromString(String str) {
         String[] data = str.split(";");
-        return fromString(data);
+        return fromStringArray(data);
     }
 
     @Override
@@ -298,12 +298,12 @@ public class RecordHandler implements DataHandler<Record> {
     }
 
     @Override
-    public String toString(Record record) {
+    public String stringOf(Record record) {
         return record.toString();
     }
 
     @Override
-    public double toDouble(Record record) {
+    public double doubleOf(Record record) {
         throw new IllegalArgumentException();
     }
 

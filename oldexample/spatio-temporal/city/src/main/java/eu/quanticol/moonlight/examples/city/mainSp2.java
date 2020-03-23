@@ -82,10 +82,10 @@ public class mainSp2 {
 
         ArrayList<Record> signalSP = new ArrayList<Record>();
         for (int i = 0; i < size; i++) {
-            signalSP.add(factory.fromObject(place.get(i), taxi.get(i), people.get(i)));
+            signalSP.add(factory.fromObjectArray(place.get(i), taxi.get(i), people.get(i)));
         }
 
-        SpatioTemporalSignal<Record> citySignal = new SpatioTemporalSignal<>(size);
+        SpatialTemporalSignal<Record> citySignal = new SpatialTemporalSignal<>(size);
         citySignal.add(0, signalSP);
 
 

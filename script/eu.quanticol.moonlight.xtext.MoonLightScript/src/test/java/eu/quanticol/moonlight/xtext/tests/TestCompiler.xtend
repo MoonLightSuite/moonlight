@@ -140,7 +140,7 @@ class TestCompiler {
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
-		Assertions.assertEquals(3, script.spatioTemporalMonitors.length)
+		Assertions.assertEquals(3, script.spatialTemporalMonitors.length)
 	}	
 	
 	@Test
@@ -177,7 +177,7 @@ monitor SensNetkQuant {
 	
 	
 	@Test
-	def void testSpatioTemporal() {
+	def void testSpatialTemporal() {
 		val result = parseHelper.parse('''
 		monitor SensTemp {
                 signal { int nodeType; real battery; real temperature; }

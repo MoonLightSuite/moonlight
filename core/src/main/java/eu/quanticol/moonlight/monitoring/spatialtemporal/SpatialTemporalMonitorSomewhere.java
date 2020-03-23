@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.monitoring.spatiotemporal;
+package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -11,34 +11,34 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
  * @author loreti
  *
  */
-public class SpatioTemporalMonitorSomewhere<E,S,T> implements SpatioTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorSomewhere<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
-	private SpatioTemporalMonitor<E, S, T> m;
+	private SpatialTemporalMonitor<E, S, T> m;
 	private Function<SpatialModel<E>, DistanceStructure<E, ?>> distance;
 	private SignalDomain<T> domain;
 
-	public SpatioTemporalMonitorSomewhere(SpatioTemporalMonitor<E, S, T> m,
-			Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SignalDomain<T> domain) {
+	public SpatialTemporalMonitorSomewhere(SpatialTemporalMonitor<E, S, T> m,
+                                           Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SignalDomain<T> domain) {
 		this.m = m;
 		this.distance = distance;
 		this.domain = domain;
 	}
 
 	@Override
-	public SpatioTemporalSignal<T> monitor(LocationService<E> locationService, SpatioTemporalSignal<S> signal) {
+	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
 		return computeSomewhereDynamic(locationService,m.monitor(locationService, signal));
 	}
 
-    private SpatioTemporalSignal<T> computeSomewhereDynamic(
-            LocationService<E> l, SpatioTemporalSignal<T> s) {
-        SpatioTemporalSignal<T> toReturn = new SpatioTemporalSignal<T>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<T> computeSomewhereDynamic(
+            LocationService<E> l, SpatialTemporalSignal<T> s) {
+        SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }

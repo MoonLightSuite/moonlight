@@ -18,26 +18,17 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.io;
+package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
-public class CsvTemporalSignalWriter implements TemporalSignalWriter {
+public interface LocationServiceLoader {
 
+    LocationService<Record> load(RecordHandler handler, File input ) throws IOException, IllegalFileFormat;
+    LocationService<Record> load(RecordHandler handler, String input ) throws  IllegalFileFormat;
 
-    @Override
-    public <S> void write(DataHandler<S> handler, Signal<S> signal, File file) throws IOException {
-        Files.write(file.toPath(),stringOf(handler,signal).getBytes());
-    }
-
-    @Override
-    public <S> String stringOf(DataHandler<S> handler, Signal<S> signal) {
-        return signal.reduce((p,s) -> s+p.getFirst ()+";"+handler.stringOf(p.getSecond())+"\n","");
-    }
 
 }

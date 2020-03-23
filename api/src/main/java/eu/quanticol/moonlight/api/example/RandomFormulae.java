@@ -1,10 +1,9 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.SpatioTemporalScriptComponent;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
@@ -76,7 +75,7 @@ public class RandomFormulae extends MoonLightScript {
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
         return null;
     }
 
@@ -84,7 +83,7 @@ public class RandomFormulae extends MoonLightScript {
         return MONITOR_RandomFormulae;
     }
 
-    public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
         return null;
     }
 

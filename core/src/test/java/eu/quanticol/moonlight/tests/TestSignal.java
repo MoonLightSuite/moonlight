@@ -149,14 +149,14 @@ class TestSignal {
     @Test
     void testToObjectArrayEmpty() {
     	Signal<Double> signal = new Signal<>();
-    	assertThrows(IllegalStateException.class, () -> signal.arrayOf(DataHandler.REAL::toDouble));
+    	assertThrows(IllegalStateException.class, () -> signal.arrayOf(DataHandler.REAL::doubleOf));
     }
     
     @Test
     void testToObjectArrayOneElement() {
     	Signal<Double> signal = new Signal<>();
     	signal.add(0.0, 10.0);
-    	double[][] res = signal.arrayOf(DataHandler.REAL::toDouble);
+    	double[][] res = signal.arrayOf(DataHandler.REAL::doubleOf);
     	assertEquals(1, res.length);
     	assertEquals(2, res[0].length);
     	assertEquals(0.0,res[0][0]);
@@ -170,7 +170,7 @@ class TestSignal {
     	for( double i=0 ; i<10 ; i++ ) {
         	signal.add(i, i);
     	}
-    	double[][] res = signal.arrayOf(DataHandler.REAL::toDouble);
+    	double[][] res = signal.arrayOf(DataHandler.REAL::doubleOf);
     	assertEquals(10, res.length);
     	assertEquals(2, res[0].length);
     	for( int i=0 ; i<10 ; i++ ) {

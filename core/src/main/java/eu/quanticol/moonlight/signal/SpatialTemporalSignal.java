@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.util.Pair;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,29 +17,29 @@ import java.util.stream.IntStream;
  * @author loreti
  *
  */
-public class SpatioTemporalSignal<T> {
+public class SpatialTemporalSignal<T> {
 	
 	private ArrayList<Signal<T>> signals;
 	private int size; 
 
-	public SpatioTemporalSignal( int size ) {
+	public SpatialTemporalSignal(int size ) {
 		this( size, i -> new Signal<T>() );
 	}
 	
-	public SpatioTemporalSignal( int size , Function<Integer,Signal<T>> f ) {
+	public SpatialTemporalSignal(int size , Function<Integer,Signal<T>> f ) {
 		this.signals = new ArrayList<>(size);
 		this.size = size;
 		init( f );
 	}
 	
-	public SpatioTemporalSignal( int size, double[] t, Function<Double,T[]> f ) {
+	public SpatialTemporalSignal(int size, double[] t, Function<Double,T[]> f ) {
 		this( size );
 		for( int i=0 ; i<t.length ; i++ ) {
 			add( t[i], f.apply(t[i]) );
 		}
 	}
 
-	public SpatioTemporalSignal( int size, double[] t, T[][] m ) {
+	public SpatialTemporalSignal(int size, double[] t, T[][] m ) {
 		this.signals = new ArrayList<>(size);
 		this.size = size;
 		for( int i=0 ; i<t.length ; i++ ) {
@@ -87,26 +89,26 @@ public class SpatioTemporalSignal<T> {
 		return spSignal;
 	}
 
-	public <R> SpatioTemporalSignal<R> apply( Function<T,R> f ) {
-		return new SpatioTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
+	public <R> SpatialTemporalSignal<R> apply(Function<T,R> f ) {
+		return new SpatialTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
 	}
 	
-	public static <T,R> SpatioTemporalSignal<R> apply( SpatioTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatioTemporalSignal<T> s2 ) {
+	public static <T,R> SpatialTemporalSignal<R> apply(SpatialTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatialTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatioTemporalSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
+		return new SpatialTemporalSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
 	}
 
-	public static <T,R> SpatioTemporalSignal<R> applyToSignal( SpatioTemporalSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatioTemporalSignal<T> s2 ) {
+	public static <T,R> SpatialTemporalSignal<R> applyToSignal(SpatialTemporalSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatialTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatioTemporalSignal<R>( s1.size , (i -> f.apply( s1.signals.get(i), s2.signals.get(i)) ));
+		return new SpatialTemporalSignal<R>( s1.size , (i -> f.apply( s1.signals.get(i), s2.signals.get(i)) ));
 	}
 
-	public <R> SpatioTemporalSignal<R> applyToSignal( Function<Signal<T>,Signal<R>> f ) {
-		return new SpatioTemporalSignal<R>(this.size, (i -> f.apply(signals.get(i))));
+	public <R> SpatialTemporalSignal<R> applyToSignal(Function<Signal<T>,Signal<R>> f ) {
+		return new SpatialTemporalSignal<R>(this.size, (i -> f.apply(signals.get(i))));
 	}
 	
 	public ParallelSignalCursor<T> getSignalCursor( boolean forward ) {
@@ -130,17 +132,28 @@ public class SpatioTemporalSignal<T> {
 	}
 	
 	public double[][][] toArray(FunctionToDouble<T> f) {
-		Double[] timePoints = getTimeArray();
+		double[] timePoints = getTimeArray();
 		double[][][] toReturn = new double[size][][];
 		IntStream.range(0, size).forEach(i -> toReturn[i] = signals.get(i).arrayOf(timePoints,f));
 		return toReturn;
 	}
 
-	private Double[] getTimeArray() {
+	public double[] getTimeArray() {
 		Set<Double> timeSet = new HashSet<>();
 		for (Signal<T> s : this.signals) {
 			timeSet.addAll(s.getTimeSet());
 		}
-		return timeSet.stream().sorted().toArray(i -> new Double[i]);
+		return timeSet.stream().sorted().distinct().mapToDouble(d -> d.doubleValue()).toArray();
+	}
+
+	public <R> void fill( double[] timePoints, R[][] data, Function<T,R> f) {
+		for( int i=0 ; i<size ; i++ ) {
+			signals.get(i).fill(timePoints,data[i],f);
+		}
+	}
+
+
+	public int size() {
+		return size;
 	}
 }

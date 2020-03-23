@@ -2,24 +2,19 @@ package eu.quanticol.moonlight.examples.patterns;
 
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import eu.quanticol.moonlight.util.Triple;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 
-import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 public class Pattern {
@@ -47,7 +42,7 @@ public class Pattern {
 
 
         BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
-        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
+        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1, gridFunction);
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, Atraj.length-1,gridModel);
 
     /*    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
@@ -106,25 +101,25 @@ public class Pattern {
         Formula surr = new AndFormula(new AndFormula(new AtomicFormula("LowValues"), negReach), negEsc);
 
         //// MONITOR /////
-        SpatioTemporalMonitoring<Double, Double, Double> monitor =
-                new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Double, Double> monitor =
+                new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
                         new DoubleDomain(),
                         true);
 
-        SpatioTemporalMonitoring<Double, Double, Boolean> monitorB =
-                new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Double, Boolean> monitorB =
+                new SpatialTemporalMonitoring<>(
                         atomicFormulasB,
                         distanceFunctions,
                         new BooleanDomain(),
                         true);
 
 
-        SpatioTemporalMonitor<Double, Double, Double> m =
+        SpatialTemporalMonitor<Double, Double, Double> m =
                 monitor.monitor(surr, null);
         long start = System.currentTimeMillis();
-        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
+        SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         float elapsedTime = (System.nanoTime() - start)/1000F;
         List<Signal<Double>> signals = sout.getSignals();
 

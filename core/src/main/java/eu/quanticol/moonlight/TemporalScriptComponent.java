@@ -19,7 +19,8 @@
  */
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.io.TemporalSignalLoader;
+import eu.quanticol.moonlight.io.IllegalFileFormatException;
+import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
@@ -27,9 +28,8 @@ import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.function.Function;
 
 /**
@@ -88,7 +88,7 @@ public class TemporalScriptComponent<S> {
      */
     public TemporalMonitor<Record, S> getMonitorFromString(String ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromString(values));
+            return builder.apply(parameters.fromStringArray(values));
         } else {
             return builder.apply(null);
         }
@@ -101,7 +101,7 @@ public class TemporalScriptComponent<S> {
      */
     public TemporalMonitor<Record, S> getMonitorFromDouble(double ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromDouble(values));
+            return builder.apply(parameters.fromDoubleArray(values));
         } else {
             return builder.apply(null);
         }
@@ -114,7 +114,7 @@ public class TemporalScriptComponent<S> {
      */
     public TemporalMonitor<Record, S> getMonitorFromObject(Object ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromObject(values));
+            return builder.apply(parameters.fromObjectArray(values));
         } else {
             return builder.apply(null);
         }
@@ -168,7 +168,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result.
      */
     public double[][] monitorToArray(Signal<Record> input, String ... values) {
-        return monitor(input, values).arrayOf(outputTypeHandler::toDouble);
+        return monitor(input, values).arrayOf(outputTypeHandler::doubleOf);
     }
 
     /**
@@ -180,7 +180,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result.
      */
     public double[][] monitorToArray(Signal<Record> input, double ... values) {
-        return monitor(input, values).arrayOf(outputTypeHandler::toDouble);
+        return monitor(input, values).arrayOf(outputTypeHandler::doubleOf);
     }
 
 
@@ -208,14 +208,13 @@ public class TemporalScriptComponent<S> {
         return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
-    public void monitorToFile(TemporalSignalWriter writer, OutputStream stream, Signal<Record> input, String... values) throws IOException {
+    public void monitorToFile(TemporalSignalWriter writer, File output, Signal<Record> input, String ... values) throws IOException {
         Signal<S> signal = monitor(input, values);
-        //writer.write(outputTypeHandler, signal, stream);
-        //TODO: FIX ME!
+        writer.write(outputTypeHandler, signal, output);
     }
 
-    public void monitor(TemporalSignalLoader reader, InputStream input, TemporalSignalWriter writer, OutputStream output, Object... values) throws IOException {
-        //monitorToFile(writer, output, reader.load(signalRecordHandler, input));
+    public void monitor(TemporalSignalReader reader, File input, TemporalSignalWriter writer, File output, String ... values) throws IOException, IllegalFileFormatException {
+        monitorToFile(writer, output, reader.load(signalRecordHandler, input), values);
     }
 
     public String getInfo() {

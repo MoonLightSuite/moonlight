@@ -39,7 +39,7 @@ public class MultipleMonitors {
 
         // Monitoring
         Signal<Boolean> soutB = mB.monitor(signal);
-        double[][] monitorValuesB = soutB.arrayOf(DataHandler.BOOLEAN::toDouble);
+        double[][] monitorValuesB = soutB.arrayOf(DataHandler.BOOLEAN::doubleOf);
         // Print results
         System.out.print("fromJava Boolean\n");
         printResults(monitorValuesB);
@@ -48,7 +48,7 @@ public class MultipleMonitors {
         TemporalMonitor<Pair<Double,Double>,Double> mQ = TemporalMonitor.globallyMonitor(
                 TemporalMonitor.atomicMonitor(x -> x.getFirst()-x.getSecond()), new DoubleDomain(),new Interval(0,0.2));
         Signal<Double> soutQ = mQ.monitor(signal);
-        double[][] monitorValuesQ = soutQ.arrayOf(DataHandler.REAL::toDouble);
+        double[][] monitorValuesQ = soutQ.arrayOf(DataHandler.REAL::doubleOf);
         // Print results
         System.out.print("fromJava Quantitative \n");
         printResults(monitorValuesQ);

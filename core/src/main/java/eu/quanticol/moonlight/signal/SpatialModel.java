@@ -94,7 +94,7 @@ public interface SpatialModel<T> {
             String[] row = data[i];
             int src = Integer.parseInt(row[0]);
             int trg = Integer.parseInt(row[1]);
-            toReturn.add(src,edgeRecordHandler.fromString(row,2,row.length),trg);
+            toReturn.add(src,edgeRecordHandler.fromStringArray(row,2,row.length),trg);
         }
         return toReturn;
     }
@@ -117,7 +117,7 @@ public interface SpatialModel<T> {
             double[] row = data[i];
             int src = (int) row[0];
             int trg = (int) row[1];
-            toReturn.add(src,edgeRecordHandler.fromDouble(row,2,row.length),trg);
+            toReturn.add(src,edgeRecordHandler.fromDoubleArray(row,2,row.length),trg);
         }
         return toReturn;
     }
@@ -140,7 +140,7 @@ public interface SpatialModel<T> {
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
                 if (i != j && isFull(data[i][j])) {
-                    toReturn.add(i, edgeRecordHandler.fromString(data[i][j]), j);
+                    toReturn.add(i, edgeRecordHandler.fromStringArray(data[i][j]), j);
                 }
             }
         }
@@ -164,7 +164,7 @@ public interface SpatialModel<T> {
         for (int i = 0; i < objects.length; i++) {
             for (int j = 0; j < objects[i].length; j++) {
                 if (i != j && isFull(objects[i][j])) {
-                    toReturn.add(i, edgeRecordHandler.fromDouble(objects[i][j]), j);
+                    toReturn.add(i, edgeRecordHandler.fromDoubleArray(objects[i][j]), j);
                 }
             }
         }

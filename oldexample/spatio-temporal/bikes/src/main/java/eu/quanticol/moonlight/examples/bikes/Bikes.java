@@ -4,8 +4,8 @@ package eu.quanticol.moonlight.examples.bikes;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,7 +25,7 @@ public class Bikes {
     public static void main(String[] args) throws IOException, SyntaxErrorExpection {
         GraphModel<Double> graphModel = getDoubleGraphModel("bssSpatialModel.tra");
         String trajectoryPat = Bikes.class.getResource("trajectory.tra").getPath();
-        SpatioTemporalSignal<Pair<Double, Double>> spatioTemporalSignal = readTrajectory(graphModel, trajectoryPat);
+        SpatialTemporalSignal<Pair<Double, Double>> spatialTemporalSignal = readTrajectory(graphModel, trajectoryPat);
 
         //// Loc Service Static ///
         LocationService<Double> locService = TestUtils.createLocServiceStaticFromTimeTraj(readTime(trajectoryPat),graphModel);
@@ -59,17 +57,17 @@ public class Bikes {
 
 
         //// MONITOR /////
-        SpatioTemporalMonitoring<Double, Pair<Double,Double>, Boolean> monitor =
-                new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Pair<Double,Double>, Boolean> monitor =
+                new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
                         new BooleanDomain(),
                         true);
 
 
-        SpatioTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
+        SpatialTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
                 monitor.monitor(phi1, null);
-        SpatioTemporalSignal<Boolean> sout = m.monitor(locService, spatioTemporalSignal);
+        SpatialTemporalSignal<Boolean> sout = m.monitor(locService, spatialTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0).valueAt(0));
     }
@@ -115,7 +113,7 @@ public class Bikes {
     }
 
 
-    private static SpatioTemporalSignal<Pair<Double, Double>> readTrajectory(GraphModel<Double> graph, String filename) throws IOException {
+    private static SpatialTemporalSignal<Pair<Double, Double>> readTrajectory(GraphModel<Double> graph, String filename) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             List<String> strings = new ArrayList<>();
             String line = null;
@@ -150,14 +148,14 @@ public class Bikes {
                 }
             }
 
-            SpatioTemporalSignal<Pair<Double, Double>> pairSpatioTemporalSignal = new SpatioTemporalSignal<>(graph.size());
+            SpatialTemporalSignal<Pair<Double, Double>> pairSpatialTemporalSignal = new SpatialTemporalSignal<>(graph.size());
             for (int i = 0; i < times.length; i++) {
                 Integer index = i;
                 double t = times[i];
                 List<Pair<Double, Double>> collect = IntStream.range(0, graph.size()).mapToObj(s -> new Pair<>(data[s][index][0], data[s][index][1])).collect(Collectors.toList());
-                pairSpatioTemporalSignal.add(t, collect);
+                pairSpatialTemporalSignal.add(t, collect);
             }
-            return pairSpatioTemporalSignal;
+            return pairSpatialTemporalSignal;
         }
     }
 

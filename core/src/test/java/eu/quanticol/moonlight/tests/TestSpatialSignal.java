@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.tests;
 
 
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class TestSpatialSignal {
     @Test
     void testSignalInit() {
         int size = 100;
-        SpatioTemporalSignal<Integer> s = new SpatioTemporalSignal<>(size);
+        SpatialTemporalSignal<Integer> s = new SpatialTemporalSignal<>(size);
         assertEquals(size, s.getNumberOfLocations());
         assertNotNull(s);
         assertTrue(Double.isNaN(s.start()));
@@ -28,7 +28,7 @@ class TestSpatialSignal {
 
     @Test
     void testSignalCretion() {
-        SpatioTemporalSignal<Double> as = TestUtils.createSpatioTemporalSignal(100, 0.0, 0.1, 100.0, Math::pow);
+        SpatialTemporalSignal<Double> as = TestUtils.createSpatioTemporalSignal(100, 0.0, 0.1, 100.0, Math::pow);
         assertNotNull(as);
         assertEquals(0.0, as.start(), 0.0);
         assertEquals(100.0, as.end(), EPSILON);
@@ -36,7 +36,7 @@ class TestSpatialSignal {
 
     @Test
     void testSignalCursor() {
-        SpatioTemporalSignal<Double> as = TestUtils.createSpatioTemporalSignal(5, 0.0, 0.1, 100.0, Math::pow);
+        SpatialTemporalSignal<Double> as = TestUtils.createSpatioTemporalSignal(5, 0.0, 0.1, 100.0, Math::pow);
         ParallelSignalCursor<Double> cursor = as.getSignalCursor(true);
         assertEquals(0.0, as.start(), 0.0);
         assertEquals(100.0, as.end(), EPSILON);

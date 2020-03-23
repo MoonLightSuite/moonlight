@@ -8,14 +8,13 @@ import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 /**
@@ -24,8 +23,8 @@ import java.util.function.Function;
 public class SpatioTemporalMonitoringOld<V, T, R> implements
         FormulaVisitor<Parameters, BiFunction<
                 LocationService<V>,
-                SpatioTemporalSignal<T>,
-                SpatioTemporalSignal<R>>> {
+                SpatialTemporalSignal<T>,
+                SpatialTemporalSignal<R>>> {
 
     private final Map<String, Function<Parameters, Function<T, R>>> atomicPropositions;
 
@@ -36,7 +35,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
     private final boolean staticSpace;
 
 
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> monitor(Formula f, Parameters parameters) {
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> monitor(Formula f, Parameters parameters) {
         return f.accept(this, parameters);
     }
 
@@ -60,7 +59,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.AtomicFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             AtomicFormula atomicFormula, Parameters parameters) {
         Function<Parameters, Function<T, R>> f = atomicPropositions.get(atomicFormula.getAtomicId());
         if (f == null) {
@@ -74,19 +73,19 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.AndFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(AndFormula andFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
-        return (l, s) -> SpatioTemporalSignal.apply(leftMonitoring.apply(l, s), module::conjunction, rightMonitoring.apply(l, s));
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(AndFormula andFormula, Parameters parameters) {
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
+        return (l, s) -> SpatialTemporalSignal.apply(leftMonitoring.apply(l, s), module::conjunction, rightMonitoring.apply(l, s));
     }
 
     /* (non-Javadoc)
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.NegationFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             NegationFormula negationFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> m = negationFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> m = negationFormula.getArgument().accept(this, parameters);
         return (l, s) -> m.apply(l, s).apply(module::negation);
     }
 
@@ -94,20 +93,20 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.OrFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(OrFormula orFormula,
-                                                                                                  Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
-        return (l, s) -> SpatioTemporalSignal.apply(leftMonitoring.apply(l, s), module::disjunction, rightMonitoring.apply(l, s));
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(OrFormula orFormula,
+                                                                                                    Parameters parameters) {
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
+        return (l, s) -> SpatialTemporalSignal.apply(leftMonitoring.apply(l, s), module::disjunction, rightMonitoring.apply(l, s));
     }
 
     /* (non-Javadoc)
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EventuallyFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             EventuallyFormula eventuallyFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> m = eventuallyFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> m = eventuallyFormula.getArgument().accept(this, parameters);
         if (eventuallyFormula.isUnbounded()) {
             return (l, s) -> m.apply(l, s).applyToSignal(x -> x.iterateBackward(module::disjunction, module.min()));
         } else {
@@ -120,9 +119,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.GloballyFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             GloballyFormula globallyFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> m = globallyFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> m = globallyFormula.getArgument().accept(this, parameters);
         if (globallyFormula.isUnbounded()) {
             return (l, s) -> m.apply(l, s).applyToSignal(x -> x.iterateBackward(module::conjunction, module.max()));
         } else {
@@ -135,12 +134,12 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.UntilFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             UntilFormula untilFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> unboundedMonitoring =
-                (l, s) -> SpatioTemporalSignal.applyToSignal(
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> unboundedMonitoring =
+                (l, s) -> SpatialTemporalSignal.applyToSignal(
                         firstMonitoring.apply(l, s),
                         (s1, s2) -> TemporalMonitoringOld.unboundedUntilMonitoring(s1, s2, module),
                         secondMonitoring.apply(l, s));
@@ -148,7 +147,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
             return unboundedMonitoring;
         } else {
             return (l, s) ->
-                    SpatioTemporalSignal.applyToSignal(firstMonitoring.apply(l, s),
+                    SpatialTemporalSignal.applyToSignal(firstMonitoring.apply(l, s),
                             (s1, s2) -> TemporalMonitoringOld.boundedUntilMonitoring(s1, untilFormula.getInterval(), s2, module),
                             secondMonitoring.apply(l, s));
         }
@@ -158,17 +157,17 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.SinceFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             SinceFormula sinceFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
         if (sinceFormula.isUnbounded()) {
-            return (l, s) -> SpatioTemporalSignal.applyToSignal(
+            return (l, s) -> SpatialTemporalSignal.applyToSignal(
                     firstMonitoring.apply(l, s),
                     (s1, s2) -> TemporalMonitoringOld.unboundedSinceMonitoring(s1, s2, module),
                     secondMonitoring.apply(l, s));
         } else {
-            return (l, s) -> SpatioTemporalSignal.applyToSignal(
+            return (l, s) -> SpatialTemporalSignal.applyToSignal(
                     firstMonitoring.apply(l, s),
                     (s1, s2) -> TemporalMonitoringOld.boundedSinceMonitoring(s1, sinceFormula.getInterval(), s2, module),
                     secondMonitoring.apply(l, s));
@@ -179,9 +178,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HistoricallyFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             HistoricallyFormula historicallyFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
         if (historicallyFormula.isUnbounded()) {
             return (l, s) -> argumentMonitoring.apply(l, s).applyToSignal(x -> x.iterateForward(module::conjunction, module.min()));
         } else {
@@ -194,9 +193,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.OnceFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             OnceFormula onceFormula, Parameters parameters) {
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
         if (onceFormula.isUnbounded()) {
             return (l, s) -> argumentMonitoring.apply(l, s).applyToSignal(x -> x.iterateForward(module::conjunction, module.min()));
         } else {
@@ -209,16 +208,16 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.SomewhereFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             SomewhereFormula somewhereFormula, Parameters parameters) {
         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
         return (l, s) -> computeSomewhere(l, distanceFunction, argumentMonitor.apply(l, s));
     }
 
-    private SpatioTemporalSignal<R> computeSomewhere(
+    private SpatialTemporalSignal<R> computeSomewhere(
             LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-            SpatioTemporalSignal<R> s) {
+            SpatialTemporalSignal<R> s) {
         if (staticSpace) {
             return computeSomewhereStatic(l, distanceFunction, s);
         } else {
@@ -226,9 +225,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
     }
 
-    private SpatioTemporalSignal<R> computeSomewhereDynamic(
-            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeSomewhereDynamic(
+            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }
@@ -262,9 +261,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         return toReturn;
     }
 
-    private SpatioTemporalSignal<R> computeSomewhereStatic(
-            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeSomewhereStatic(
+            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
         double time = cursor.getTime();
         SpatialModel<V> sm = l.get(time);
@@ -281,16 +280,16 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EverywhereFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             EverywhereFormula everywhereFormula, Parameters parameters) {
         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
         return (l, s) -> computeEverywhere(l, distanceFunction, argumentMonitor.apply(l, s));
     }
 
-    public SpatioTemporalSignal<R> computeEverywhere(
+    public SpatialTemporalSignal<R> computeEverywhere(
             LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-            SpatioTemporalSignal<R> s) {
+            SpatialTemporalSignal<R> s) {
         if (staticSpace) {
             return computeEverywhereStatic(l, distanceFunction, s);
         } else {
@@ -298,9 +297,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
     }
 
-    private SpatioTemporalSignal<R> computeEverywhereDynamic(
-            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeEverywhereDynamic(
+            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }
@@ -333,9 +332,9 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         return toReturn;
     }
 
-    private SpatioTemporalSignal<R> computeEverywhereStatic(
-            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeEverywhereStatic(
+            LocationService<V> l, Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction, SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
         double time = cursor.getTime();
         SpatialModel<V> sm = l.get(time);
@@ -352,11 +351,11 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.ReachFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             ReachFormula reachFormula, Parameters parameters) {
         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> m1 = reachFormula.getFirstArgument().accept(this, parameters);
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> m2 = reachFormula.getSecondArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> m1 = reachFormula.getFirstArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> m2 = reachFormula.getSecondArgument().accept(this, parameters);
         if (staticSpace) {
             return (l, s) -> computeReachStatic(l, m1.apply(l, s), distanceFunction, m2.apply(l, s));
         } else {
@@ -364,10 +363,10 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
     }
 
-    private SpatioTemporalSignal<R> computeReachDynamic(LocationService<V> l, SpatioTemporalSignal<R> s1,
-                                                        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-                                                        SpatioTemporalSignal<R> s2) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s1.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeReachDynamic(LocationService<V> l, SpatialTemporalSignal<R> s1,
+                                                         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
+                                                         SpatialTemporalSignal<R> s2) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s1.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }
@@ -407,10 +406,10 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         return toReturn;
     }
 
-    private SpatioTemporalSignal<R> computeReachStatic(LocationService<V> l, SpatioTemporalSignal<R> s1,
-                                                       Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-                                                       SpatioTemporalSignal<R> s2) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s1.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeReachStatic(LocationService<V> l, SpatialTemporalSignal<R> s1,
+                                                        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
+                                                        SpatialTemporalSignal<R> s2) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s1.getNumberOfLocations());
         ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
         ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
         double time = Math.max(s1.start(), s2.start());
@@ -432,10 +431,10 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
      * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EscapeFormula, java.lang.Object)
      */
     @Override
-    public BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> visit(
+    public BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> visit(
             EscapeFormula escapeFormula, Parameters parameters) {
         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
-        BiFunction<LocationService<V>, SpatioTemporalSignal<T>, SpatioTemporalSignal<R>> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
+        BiFunction<LocationService<V>, SpatialTemporalSignal<T>, SpatialTemporalSignal<R>> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
         if (staticSpace) {
             return (l, s) -> computeEscapeStatic(l, distanceFunction, argumentMonitor.apply(l, s));
         } else {
@@ -443,10 +442,10 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
     }
 
-    private SpatioTemporalSignal<R> computeEscapeStatic(LocationService<V> l,
-                                                        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-                                                        SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeEscapeStatic(LocationService<V> l,
+                                                         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
+                                                         SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
         double time = cursor.getTime();
         SpatialModel<V> sm = l.get(time);
@@ -459,10 +458,10 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         return toReturn;
     }
 
-    private SpatioTemporalSignal<R> computeEscapeDynamic(LocationService<V> l,
-                                                         Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
-                                                         SpatioTemporalSignal<R> s) {
-        SpatioTemporalSignal<R> toReturn = new SpatioTemporalSignal<R>(s.getNumberOfLocations());
+    private SpatialTemporalSignal<R> computeEscapeDynamic(LocationService<V> l,
+                                                          Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction,
+                                                          SpatialTemporalSignal<R> s) {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }

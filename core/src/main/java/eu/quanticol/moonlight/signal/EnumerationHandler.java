@@ -82,12 +82,12 @@ public class EnumerationHandler<T> implements DataHandler<T> {
     }
 
     @Override
-    public String toString(T t) {
+    public String stringOf(T t) {
         return t.toString();
     }
 
     @Override
-    public double toDouble(T t) {
+    public double doubleOf(T t) {
         int idx = indexOf.getOrDefault(t,-1);
         return idx;
     }

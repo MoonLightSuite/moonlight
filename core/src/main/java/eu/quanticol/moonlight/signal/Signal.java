@@ -219,6 +219,17 @@ public class Signal<T> {
         return toReturn;
     }
 
+    public <R> void fill( double[] timePoints, R[] data, Function<T,R> f) {
+        if (size == 0) {
+            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+        }
+        Segment<T> current = first;
+        for (int i = 0; i < timePoints.length; i++) {
+            current = current.jump(timePoints[i]);
+            data[i] = f.apply(current.getValue());
+        }
+    }
+
     /**
      * @return
      */
@@ -364,7 +375,7 @@ public class Signal<T> {
         return toReturn;
     }
 
-    public double[][] arrayOf(Double[] timePoints, FunctionToDouble<T> f) {
+    public double[][] arrayOf(double[] timePoints, FunctionToDouble<T> f) {
         if (size == 0) {
             throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }

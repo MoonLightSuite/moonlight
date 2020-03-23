@@ -67,7 +67,7 @@ public interface DataHandler<S> {
      * @param s data item to represent.
      * @return string representation of <code>s</code>.
      */
-    String toString(S s);
+    String stringOf(S s);
 
     /**
      * Return a double representation of a data item <code>s</code>.
@@ -75,7 +75,7 @@ public interface DataHandler<S> {
      * @param s data item to represent.
      * @return double representation of <code>s</code>.
      */
-    double toDouble(S s);
+    double doubleOf(S s);
 
     /**
      * Check if the object <code>o</code> is a valid data type.
@@ -152,12 +152,12 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public String toString(Double aDouble) {
+        public String stringOf(Double aDouble) {
             return aDouble.toString();
         }
 
         @Override
-        public double toDouble(Double aDouble) {
+        public double doubleOf(Double aDouble) {
             return aDouble;
         }
 
@@ -231,12 +231,12 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public String toString(Integer integer) {
+        public String stringOf(Integer integer) {
             return integer.toString();
         }
 
         @Override
-        public double toDouble(Integer integer) {
+        public double doubleOf(Integer integer) {
             return integer.doubleValue();
         }
 
@@ -303,12 +303,12 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public String toString(Boolean aBoolean) {
+        public String stringOf(Boolean aBoolean) {
             return aBoolean.toString();
         }
 
         @Override
-        public double toDouble(Boolean aBoolean) {
+        public double doubleOf(Boolean aBoolean) {
             return (aBoolean?1.0:-1.0);
         }
 

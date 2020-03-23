@@ -3,13 +3,7 @@
  */
 package eu.quanticol.moonlight;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
  * @author loreti
@@ -18,27 +12,27 @@ import java.net.URLClassLoader;
 public abstract class MoonLightScript {
 
     private final String[] temporalMonitors;
-    private final String[] spatioTemporalMonitors;
+    private final String[] spatialTemporalMonitors;
 
-    public MoonLightScript(String[] temporalMonitors, String[] spatioTemporalMonitors) {
+    public MoonLightScript(String[] temporalMonitors, String[] spatialTemporalMonitors) {
         this.temporalMonitors = temporalMonitors;
-        this.spatioTemporalMonitors = spatioTemporalMonitors;
+        this.spatialTemporalMonitors = spatialTemporalMonitors;
     }
 
     public abstract TemporalScriptComponent<?> selectTemporalComponent(String name);
 
-    public abstract SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name);
+    public abstract SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name);
 
     public abstract TemporalScriptComponent<?> selectDefaultTemporalComponent();
 
-    public abstract SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent();
+    public abstract SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent();
 
     public String[] getTemporalMonitors() {
         return temporalMonitors;
     }
 
-    public String[] getSpatioTemporalMonitors() {
-        return spatioTemporalMonitors;
+    public String[] getSpatialTemporalMonitors() {
+        return spatialTemporalMonitors;
     }
 
     public String getInfoDefaultTemporalMonitor() {
@@ -59,21 +53,21 @@ public abstract class MoonLightScript {
         }
     }
 
-    public String getInfoSpatioTemporalMonitor(String name) {
-        SpatioTemporalScriptComponent<?> c = selectSpatioTemporalComponent(name);
+    public String getInfoSpatialTemporalMonitor(String name) {
+        SpatialTemporalScriptComponent<?> c = selectSpatialTemporalComponent(name);
         if (c != null) {
             return c.getInfo();
         } else {
-            return "Spatio-temporal monitor " + name + " is unknown!";
+            return "Spatial-temporal monitor " + name + " is unknown!";
         }
     }
 
-    public String getInfoDefaultSpatioTemporalMonitor() {
-        SpatioTemporalScriptComponent<?> c = selectDefaultSpatioTemporalComponent();
+    public String getInfoDefaultSpatialTemporalMonitor() {
+        SpatialTemporalScriptComponent<?> c = selectDefaultSpatialTemporalComponent();
         if (c != null) {
             return c.getInfo();
         } else {
-            return "There it not any default spatio temporal monitor!";
+            return "There it not any default spatial temporal monitor!";
         }
     }
 
