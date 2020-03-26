@@ -1,4 +1,4 @@
-classdef MoonlightEngine
+classdef MoonlightEngineFast
     % This is a wrapper class arounf the java core of Moonlight
     % Use the static constructor load(filename) to build it
   
@@ -9,7 +9,7 @@ classdef MoonlightEngine
     methods(Static)
         function  self = load(filename)
             % class static constructor
-            self = MoonlightEngine;
+            self = MoonlightEngineFast;
             [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));
             if(status~=0)
                 throw(MException("","PARSER OF THE SCRIPT FAILED "+out))
@@ -46,9 +46,9 @@ classdef MoonlightEngine
             javaGraphModel = self.toJavaGraphModel(graph,length(values));
             javaSignal = self.toJavaSignal(values);
             tic
-            result=spatioTemporalMonitor.monitorToObjectArrayAdjacencyMatrix(time,javaGraphModel,time,javaSignal,parameters);
+            matrix=spatioTemporalMonitor.monitorToDoubleArray(time,javaGraphModel,time,javaSignal,parameters);
             time = toc;
-            %result = self.spatialObjectToMatrix(matrix);
+            result = self.spatialObjectToMatrix(matrix);
         end
         function result = getTemporalMonitors(self)
             %list all the temporal monitors
