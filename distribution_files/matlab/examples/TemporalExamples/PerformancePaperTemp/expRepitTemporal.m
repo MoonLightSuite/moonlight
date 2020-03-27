@@ -1,7 +1,7 @@
 clear;
 %%%% PROPERTY %%%
 %%%%%  MOONLIGHT prop %%%%%%%%
-monitor = MoonlightEngineFast.load("TempFormScript");
+monitor = MoonlightEngine.load("TempFormScript");
 %phiString = "RandomFormulaeQ";
 phiString = "nesting";
 %%%%%  TALIRO prop %%%%%%%%
