@@ -1,32 +1,23 @@
 package eu.quanticol.moonlight.tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.formula.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.EscapeFormula;
-import eu.quanticol.moonlight.formula.EventuallyFormula;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.formula.NegationFormula;
-import eu.quanticol.moonlight.formula.OrFormula;
-import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.formula.ReachFormula;
-import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.Signal;
@@ -212,6 +203,66 @@ class TestCity2 {
         SpatialTemporalSignal<Double> sout8 = m8.monitor(locService, signal);
         List<Signal<Double>> signals8 = sout8.getSignals();
         assertEquals(-102.5, signals8.get(0).valueAt(1));
+
+
+
+
+    }
+
+    @Test
+    public void wrongTemporalInput() {
+        Throwable exception = assertThrows(IllegalArgumentException.class,
+                ()->{
+            ///// Signals  /////
+            List<String> places = Arrays.asList("BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop");
+            List<Boolean> taxiAvailability = Arrays.asList(false, false, true, false, false, true, false);
+            List<Integer> peopleAtPlaces = Arrays.asList(3, 145, 67, 243, 22, 103, 6);
+            SpatialTemporalSignal<Triple<String, Boolean, Integer>> signal = TestUtils.createSpatioTemporalSignal(SIZE, 0, 1, 20.0,
+                    (t, l) -> new Triple<>(places.get(l), taxiAvailability.get(l), peopleAtPlaces.get(l)));
+
+
+            //// Loc Service Static ///
+            LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,city);
+
+            ///// Properties  //////
+            HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Boolean>>> atomicFormulas = new HashMap<>();
+            atomicFormulas.put("isThereATaxi", p -> (Triple::getSecond));
+            atomicFormulas.put("isThereAStop", p -> (x -> "BusStop".equals(x.getFirst()) || "MetroStop".equals(x.getFirst())));
+            atomicFormulas.put("isHospital", p -> (x -> "Hospital".equals(x.getFirst())));
+            atomicFormulas.put("isMainSquare", p -> (x -> "MainSquare".equals(x.getFirst())));
+
+            HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Double>>> atomicFormulasQuant = new HashMap<>();
+            atomicFormulasQuant.put("FewPeople", p -> (x -> 0.5 - x.getThird()));
+            atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 0.5));
+
+
+            HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+            DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
+            DistanceStructure<Double, Double> predist3 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
+            DistanceStructure<Double, Double> predist6 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, city);
+            DistanceStructure<Double, Double> predist10 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 10.0, city);
+            DistanceStructure<Double, Double> predistX = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, city);
+
+            distanceFunctions.put("distX", x -> predist);
+            distanceFunctions.put("dist3", x -> predist3);
+            distanceFunctions.put("dist6", x -> predist6);
+            distanceFunctions.put("dist10", x -> predist10);
+            distanceFunctions.put("distH", x -> predistX);
+
+            //// MONITOR QUANT/////
+                    SpatialTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Double> monitorQuant =
+                            new SpatialTemporalMonitoring<>(
+                                    atomicFormulasQuant,
+                                    distanceFunctions,
+                                    new DoubleDomain(),
+                                    true);
+
+            Formula globalQuant = new GloballyFormula( new AtomicFormula("FewPeople"), new Interval(0,20));
+
+            ////  9 Global Quant ////
+            SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Double>  m9 =
+            monitorQuant.monitor(globalQuant, null);
+                });
 
     }
 
