@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -43,6 +44,7 @@ public class TestAfterSignalEnd {
 
 
     @Test
+    @Disabled
     public void untilExceeding() {
         Throwable exception = assertThrows(IllegalArgumentException.class,
             ()->{
@@ -58,6 +60,7 @@ public class TestAfterSignalEnd {
     }
 
     @Test
+    @Disabled
     public void eventuallyExceeding() {
         Throwable exception = assertThrows(IllegalArgumentException.class,
                 ()->{
@@ -73,6 +76,7 @@ public class TestAfterSignalEnd {
     }
 
     @Test
+    @Disabled
     public void globallyExceeding() {
         Throwable exception = assertThrows(IllegalArgumentException.class,
                 ()->{

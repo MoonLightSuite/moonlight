@@ -45,7 +45,7 @@ import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.SignalGenerator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestTemporalMonitoring {
 
@@ -127,10 +127,54 @@ class TestTemporalMonitoring {
     @Test void testEventuallyOutOfTime() {
         double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
         Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
-        TemporalMonitor<Double,Double> monitor = TemporalMonitor.globallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.eventuallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
                 new DoubleDomain(),new Interval(0.5,10.0));
         Signal<Double> output = monitor.monitor(signal);
         assertTrue(output.isEmpty());
+    }
+
+    @Test void testGloballySameTime() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.globallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain(),new Interval(0.0,0.6));
+        Signal<Double> output = monitor.monitor(signal);
+        assertEquals(1,output.size());
+        assertEquals( 0.0, output.valueAt(0.0));
+    }
+
+    @Test void testEventuallySameTime() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.eventuallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain(),new Interval(0.0,0.6));
+        Signal<Double> output = monitor.monitor(signal);
+        assertEquals(1,output.size());
+        assertEquals( 0.6, output.valueAt(0.0));
+    }
+
+    @Test void testUntilExceed() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.untilMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new Interval(0.0,1.0),
+                TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain());
+        Signal<Double> output = monitor.monitor(signal);
+        assertTrue(output.isEmpty());
+    }
+
+    @Test void testUntilSame() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.untilMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new Interval(0.0,0.6),
+                TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain());
+        Signal<Double> output = monitor.monitor(signal);
+        assertFalse(output.isEmpty());
+        assertEquals(1,output.size());
+        assertEquals(0.0,output.valueAt(0.0));
     }
 
 }
