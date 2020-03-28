@@ -213,7 +213,6 @@ class TestCity2 {
 
 
 
-
     private static SpatialModel<Double> buildingCity() { //metto alla fine tutti i metodi privati di servizio.
         HashMap<Pair<Integer, Integer>, Double> cityMap = new HashMap<>();
         cityMap.put(new Pair<>(0, 1), 2.0);
