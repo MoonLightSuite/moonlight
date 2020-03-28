@@ -22,9 +22,11 @@ package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.signal.Signal;
 
 import java.util.Random;
 import java.util.function.DoubleFunction;
+import java.util.function.IntFunction;
 
 /**
  * Utility class used to generate different kind of signals.
@@ -64,4 +66,19 @@ public class SignalGenerator {
         return d -> values[r.nextInt(values.length)];
     }
 
+    public static <T> Signal<T> createSignal(double[] time, T[] values) {
+        Signal<T> signal =  new Signal<>();
+        for( int i=0 ; i<time.length ; i++ ) {
+            signal.add(time[i],values[i]);
+        }
+        return signal;
+    }
+
+    public static <T> Signal<T> createSignal(double[] time, DoubleFunction<T> f) {
+        Signal<T> signal =  new Signal<>();
+        for( int i=0 ; i<time.length ; i++ ) {
+            signal.add(time[i],f.apply(time[i]));
+        }
+        return signal;
+    }
 }

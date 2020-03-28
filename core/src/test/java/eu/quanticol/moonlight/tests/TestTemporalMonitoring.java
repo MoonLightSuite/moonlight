@@ -23,9 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.stream.DoubleStream;
 
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
+import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
@@ -40,7 +42,10 @@ import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
 import eu.quanticol.moonlight.util.Pair;
 
+import eu.quanticol.moonlight.util.SignalGenerator;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestTemporalMonitoring {
 
@@ -108,6 +113,24 @@ class TestTemporalMonitoring {
         TemporalMonitor<Record, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);
         outputSignal.getIterator(true).value();
+    }
+
+    @Test void testGloballyOutOfTime() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.globallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain(),new Interval(0.5,10.0));
+        Signal<Double> output = monitor.monitor(signal);
+        assertTrue(output.isEmpty());
+    }
+
+    @Test void testEventuallyOutOfTime() {
+        double[] times = new double[] {0.0, 0.1, 0.2, 0.3, 0.5, 0.6};
+        Signal<Double> signal = SignalGenerator.createSignal(times, d -> d);
+        TemporalMonitor<Double,Double> monitor = TemporalMonitor.globallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
+                new DoubleDomain(),new Interval(0.5,10.0));
+        Signal<Double> output = monitor.monitor(signal);
+        assertTrue(output.isEmpty());
     }
 
 }
