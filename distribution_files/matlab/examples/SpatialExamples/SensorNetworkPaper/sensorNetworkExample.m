@@ -3,8 +3,8 @@ clear
 monitor = MoonlightEngine.load("test");
 
 % generation of the data
-numSteps        = 10;
-num_nodes       = 20;
+numSteps        = 3;
+num_nodes       = 5;
 framePlot = false; % to enable or disable the plot of the graph
 [spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
 
