@@ -1,8 +1,8 @@
-monitor MyFirstMonitor {
+monitor SomeWhereMon {
                 signal { int nodeType; real battery; real temperature; }
              	space {
              	edges { int hop; real dist; }
              	}
-             	domain boolean;
-             	formula #[ nodeType==3 ]# reach (hop)[0, 2] #[ nodeType==2 ]# ;
+             	domain minmax;
+             	formula somewhere(dist)[0,3] #[ battery - 0.5]#;
              }

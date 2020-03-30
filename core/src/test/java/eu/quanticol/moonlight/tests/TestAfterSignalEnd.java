@@ -3,8 +3,10 @@ package eu.quanticol.moonlight.tests;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.SignalGenerator;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.Disabled;
@@ -17,6 +19,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestAfterSignalEnd {
 
@@ -46,51 +49,29 @@ public class TestAfterSignalEnd {
     @Test
     @Disabled
     public void untilExceeding() {
-        Throwable exception = assertThrows(IllegalArgumentException.class,
-            ()->{
                 SpatialTemporalSignal<Boolean> result = init(until());
                 List<Signal<Boolean>> signals = result.getSignals();
-
-                System.out.print("The monitoring result is: ");
-                System.out.println(signals.get(0).valueAt(0));
-
-            });
-
-        exception.printStackTrace();
+                Signal<Boolean> onesignal = signals.get(0);
+                assertTrue(onesignal.isEmpty());
     }
 
+
     @Test
-    @Disabled
     public void eventuallyExceeding() {
-        Throwable exception = assertThrows(IllegalArgumentException.class,
-                ()->{
-                    SpatialTemporalSignal<Boolean> result = init(peopleLeave());
-                    List<Signal<Boolean>> signals = result.getSignals();
+        SpatialTemporalSignal<Boolean> result = init(peopleLeave());
+        List<Signal<Boolean>> signals = result.getSignals();
+        Signal<Boolean> onesignal = signals.get(0);
+        assertTrue(onesignal.isEmpty());
 
-                    System.out.print("The monitoring result is: ");
-                    System.out.println(signals.get(0).valueAt(0));
-
-                });
-
-        exception.printStackTrace();
     }
 
     @Test
-    @Disabled
     public void globallyExceeding() {
-        Throwable exception = assertThrows(IllegalArgumentException.class,
-                ()->{
-                    SpatialTemporalSignal<Boolean> result = init(peopleLeave2());
-                    List<Signal<Boolean>> signals = result.getSignals();
-
-                    System.out.print("The monitoring result is: ");
-                    System.out.println(signals.get(0).valueAt(0));
-
-                });
-
-        exception.printStackTrace();
+        SpatialTemporalSignal<Boolean> result = init(peopleLeave2());
+        List<Signal<Boolean>> signals = result.getSignals();
+        Signal<Boolean> onesignal = signals.get(0);
+        assertTrue(onesignal.isEmpty());
     }
-
 
 
     // --------- FORMULAE --------- //

@@ -3,7 +3,7 @@ clear
 monitor = MoonlightEngine.load("test");
 
 % generation of the data
-numSteps        = 3;
+numSteps        = 10;
 num_nodes       = 5;
 framePlot = false; % to enable or disable the plot of the graph
 [spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
@@ -13,10 +13,10 @@ plotGraph(spatialModel, numframe , 'node');
 
 %%%%%% monitor  %%%%
 %%%%% phi 1 %%%%%%
-result1 = monitor.spatioTemporalMonitor("MyFirstMonitor",spatialModel,time,signal);
+result1 = monitor.spatioTemporalMonitor("SomeWhereMon",spatialModel,time,signal);
 
 
-time=result1{1}(:,1);
+time=result1(1,:,1);
 signalResult1= zeros(length(time), num_nodes);
  
 for t=1:length(time)
