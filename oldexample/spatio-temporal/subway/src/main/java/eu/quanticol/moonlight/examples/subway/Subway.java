@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
@@ -49,11 +49,11 @@ public class Subway {
 
     /**
      * We initialize the domains and the spatial network
-     * @see SubwayNetwork for a description of the spatial model.
+     * @see Grid for a description of the spatial model.
      */
     private static final DoubleDomain ROBUSTNESS = new DoubleDomain();
     private static final BooleanDomain SATISFACTION = new BooleanDomain();
-    private static SpatialModel<Double> network = SubwayNetwork.simulateModel();
+    private static SpatialModel<Double> network = Grid.simulateModel();
 
     /**
      * Signal Dimensions (i.e. signal domain)
@@ -67,7 +67,7 @@ public class Subway {
     public static void main(String[] argv) {
 
         //// We initialize our 3-dimensional signal ////
-        SpatioTemporalSignal<Triple<Integer, Boolean, Integer>> signal =
+        SpatialTemporalSignal<Triple<Integer, Boolean, Integer>> signal =
                 createSTSignal(network.size(), 0, 1, T, Subway::sValues);
 
 
@@ -76,8 +76,8 @@ public class Subway {
 
 
         // Now we can monitor the system for the satisfaction of our Peak Management property
-        SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> m = peakManagement();
-        SpatioTemporalSignal<Boolean> output = m.monitor(locService, signal);
+        SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> m = peakManagement();
+        SpatialTemporalSignal<Boolean> output = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = output.getSignals();
 
         System.out.print("The monitoring result is: ");
@@ -94,9 +94,9 @@ public class Subway {
      *
      * @return a GloballyMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peakManagement() {
-        return SpatioTemporalMonitor.globallyMonitor(   // Eventually...
-                SpatioTemporalMonitor.untilMonitor(
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peakManagement() {
+        return SpatialTemporalMonitor.globallyMonitor(   // Eventually...
+                SpatialTemporalMonitor.untilMonitor(
                         crowdedStation(), new Interval(0,M), properService(), // a Until b...
                         SATISFACTION)
                 , new Interval(0,TH), SATISFACTION);
@@ -109,9 +109,9 @@ public class Subway {
      *
      * @return an AndMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> crowdedStation() {
-        return SpatioTemporalMonitor.andMonitor(
-                SpatioTemporalMonitor.somewhereMonitor(tooManyPeople(), distance(0, D), SATISFACTION),
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> crowdedStation() {
+        return SpatialTemporalMonitor.andMonitor(
+                SpatialTemporalMonitor.somewhereMonitor(tooManyPeople(), distance(0, D), SATISFACTION),
                 SATISFACTION,
                 rightStation());
     }
@@ -124,8 +124,8 @@ public class Subway {
      *
      * @return an AndMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> properService() {
-        return SpatioTemporalMonitor.andMonitor(trainArrives(), SATISFACTION, peopleLeave());
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> properService() {
+        return SpatialTemporalMonitor.andMonitor(trainArrives(), SATISFACTION, peopleLeave());
     }
 
     /**
@@ -135,9 +135,9 @@ public class Subway {
      *
      * @return an AndMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> trainArrives() {
-        return SpatioTemporalMonitor.andMonitor(
-                SpatioTemporalMonitor.somewhereMonitor(atLeastATrain(), distance(0, D), SATISFACTION),
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> trainArrives() {
+        return SpatialTemporalMonitor.andMonitor(
+                SpatialTemporalMonitor.somewhereMonitor(atLeastATrain(), distance(0, D), SATISFACTION),
                 SATISFACTION, rightStation()
         );
 
@@ -152,8 +152,8 @@ public class Subway {
      *
      * @return an EventuallyMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
-        return SpatioTemporalMonitor.eventuallyMonitor(SpatioTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
+        return SpatialTemporalMonitor.eventuallyMonitor(SpatialTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
                 , new Interval(0, M + O), SATISFACTION);
     }
 
@@ -166,8 +166,8 @@ public class Subway {
      *
      * @return an AtomicMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> tooManyPeople() {
-        return SpatioTemporalMonitor.atomicMonitor((x -> x.getThird().doubleValue() >= P));
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> tooManyPeople() {
+        return SpatialTemporalMonitor.atomicMonitor((x -> x.getThird().doubleValue() >= P));
     }
 
     /**
@@ -178,8 +178,8 @@ public class Subway {
      *
      * @return an AtomicMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> atLeastATrain() {
-        return SpatioTemporalMonitor.atomicMonitor((x -> x.getFirst() > 0));
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> atLeastATrain() {
+        return SpatialTemporalMonitor.atomicMonitor((x -> x.getFirst() > 0));
     }
 
 
@@ -191,8 +191,8 @@ public class Subway {
      *
      * @return an AtomicMonitor for the property
      */
-    private static SpatioTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> rightStation() {
-        return SpatioTemporalMonitor.atomicMonitor(Triple::getSecond);
+    private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> rightStation() {
+        return SpatialTemporalMonitor.atomicMonitor(Triple::getSecond);
     }
 
 
@@ -220,9 +220,9 @@ public class Subway {
         return new Triple<>(trainsAvailable.get(l), isStation.get(l), peopleAtStations.get(l));
     }
 
-    private static <T> SpatioTemporalSignal<T>
+    private static <T> SpatialTemporalSignal<T>
     createSTSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
-        SpatioTemporalSignal<T> s = new SpatioTemporalSignal(size);
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
 
         for(double t = start; t < end; t += dt) {
             double finalTime = t;

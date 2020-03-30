@@ -1,9 +1,8 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.SpatioTemporalMonitoringOld;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.ObjectSerializer;
 import eu.quanticol.moonlight.util.Pair;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +36,7 @@ class TestSpatialTemporalProperties {
         //      SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(trajectory[0].length, trajectory[0][0].length, 0, 1, trajectory.length - 1, gridFunction);
 
 
-        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
+        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
@@ -55,15 +53,15 @@ class TestSpatialTemporalProperties {
         Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
 
 
-        SpatioTemporalMonitoring<Double, Double, Double> monitor = new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
                 new DoubleDomain(),
                 true);
 
-        SpatioTemporalMonitor<Double,Double,Double> m = monitor.monitor(
+        SpatialTemporalMonitor<Double,Double,Double> m = monitor.monitor(
                 escape, null);
-        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
+        SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
 
@@ -90,25 +88,25 @@ class TestSpatialTemporalProperties {
         Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "ciccia", "dist6", new AtomicFormula("simpleAtomich"));
         Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
 
-        SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
+        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
-        SpatioTemporalMonitoring<Double, Double, Double> monitor = new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
                 new DoubleDomain(),
                 true);
 
-        SpatioTemporalMonitor<Double,Double,Double> m = monitor.monitor(
+        SpatialTemporalMonitor<Double,Double,Double> m = monitor.monitor(
                 new AtomicFormula("simpleAtomic"), null);
-        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
+        SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
         }
 
-        SpatioTemporalMonitor<Double,Double,Double> m2 = monitor.monitor(
+        SpatialTemporalMonitor<Double,Double,Double> m2 = monitor.monitor(
                 somewhere, null);
-        SpatioTemporalSignal<Double> sout2 = m2.monitor(locService, signal);
+        SpatialTemporalSignal<Double> sout2 = m2.monitor(locService, signal);
         List<Signal<Double>> signals2 = sout2.getSignals();
         assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
 
@@ -124,16 +122,16 @@ class TestSpatialTemporalProperties {
         HashMap<String, Function<Parameters, Function<Pair<Double, Double>, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x.getFirst() + x.getSecond() - 2)));
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
-        SpatioTemporalSignal<Pair<Double, Double>> signal = TestUtils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> new Pair<>(t * l / 2, t * l / 2));
+        SpatialTemporalSignal<Pair<Double, Double>> signal = TestUtils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> new Pair<>(t * l / 2, t * l / 2));
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
-        SpatioTemporalMonitoring<Double, Pair<Double, Double>, Double> monitor = new SpatioTemporalMonitoring<>(
+        SpatialTemporalMonitoring<Double, Pair<Double, Double>, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 new HashMap<>(),
                 new DoubleDomain(),
                 true);
 
-        SpatioTemporalMonitor<Double,Pair<Double,Double>,Double> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
-        SpatioTemporalSignal<Double> sout = m.monitor(locService, signal);
+        SpatialTemporalMonitor<Double,Pair<Double,Double>,Double> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
             assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
@@ -153,9 +151,9 @@ class TestSpatialTemporalProperties {
     
     @Test
     void testSpatioTemporalSignalWithOneEntry() {
-    	SpatioTemporalSignal<Double> stl = new SpatioTemporalSignal<>(10);
+    	SpatialTemporalSignal<Double> stl = new SpatialTemporalSignal<>(10);
     	stl.add(0.0, i -> 1.0);
-    	stl.toObjectArray();
+    	stl.toArray(DataHandler.REAL::doubleOf);
     	assertTrue(true);
     }
 

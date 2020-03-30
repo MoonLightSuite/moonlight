@@ -3,9 +3,6 @@ package eu.quanticol.moonlight.compiler;
 import org.junit.jupiter.api.Test;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
 
 import java.io.IOException;
 
@@ -34,7 +31,7 @@ class MoonlightCompilerTest {
         		"\n" + 
         		"\n" + 
         		"import eu.quanticol.moonlight.MoonLightScript;\n" + 
-        		"import eu.quanticol.moonlight.SpatioTemporalScriptComponent;\n" + 
+        		"import eu.quanticol.moonlight.SpatialTemporalScriptComponent;\n" + 
         		"import eu.quanticol.moonlight.TemporalScriptComponent;\n" + 
         		"\n" + 
         		"/**\n" + 
@@ -54,7 +51,7 @@ class MoonlightCompilerTest {
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {\n" + 
+        		"	public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 
@@ -66,7 +63,7 @@ class MoonlightCompilerTest {
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
-        		"	public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {\n" + 
+        		"	public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent() {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 

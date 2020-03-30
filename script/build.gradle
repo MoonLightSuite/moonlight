@@ -25,8 +25,8 @@ subprojects {
 	group = 'eu.quanticol.moonlight.xtext.MoonLightScript'
 	version = '1.0.0-SNAPSHOT'
 	
-	sourceCompatibility = '8'
-	targetCompatibility = '8'
+	sourceCompatibility = '11'
+	targetCompatibility = '11'
 	
 	configurations.all {
 		exclude group: 'asm'

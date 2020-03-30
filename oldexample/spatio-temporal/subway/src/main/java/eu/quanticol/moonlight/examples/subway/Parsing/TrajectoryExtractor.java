@@ -1,9 +1,5 @@
 package eu.quanticol.moonlight.examples.subway.Parsing;
 
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
-
-import java.util.function.BiFunction;
-
 /**
  * Parsing strategy that generates a double[][] spatio-temporal signal
  * based on a set of String-based time series

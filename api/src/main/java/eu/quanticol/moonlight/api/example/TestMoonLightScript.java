@@ -1,10 +1,10 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.SpatioTemporalScriptComponent;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Record;
@@ -31,9 +31,9 @@ public class TestMoonLightScript extends MoonLightScript {
             temporalBuilder);
 
     //SPATIO-TEMPORAL
-    private Function<Record, SpatioTemporalMonitor<Record, Record, Boolean>> spatialBuilder = r -> SpatioTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
+    private Function<Record, SpatialTemporalMonitor<Record, Record, Boolean>> spatialBuilder = r -> SpatialTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
 
-    private SpatioTemporalScriptComponent<?> spatioTemporalMonitor = new SpatioTemporalScriptComponent<>(SPATIAL[0],
+    private SpatialTemporalScriptComponent<?> spatioTemporalMonitor = new SpatialTemporalScriptComponent<>(SPATIAL[0],
             new RecordHandler(DataHandler.REAL), new RecordHandler(DataHandler.BOOLEAN, DataHandler.INTEGER),
             DataHandler.BOOLEAN,
             spatialBuilder);
@@ -56,9 +56,9 @@ public class TestMoonLightScript extends MoonLightScript {
     }
 
     @Override
-    public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {
         if (SPATIAL[0].equals(name)) {
-            return selectDefaultSpatioTemporalComponent();
+            return selectDefaultSpatialTemporalComponent();
         }
         return null;
     }
@@ -69,7 +69,7 @@ public class TestMoonLightScript extends MoonLightScript {
     }
 
     @Override
-    public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent() {
         return spatioTemporalMonitor;
     }
 

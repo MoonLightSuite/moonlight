@@ -19,8 +19,11 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.util.Pair;
+
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -198,6 +201,35 @@ public class Signal<T> {
         return newSignal;
     }
 
+    public void forEach(BiConsumer<Double,T> consumer) {
+        SignalCursor<T> cursor = getIterator(true);
+        while (!cursor.completed()) {
+            consumer.accept(cursor.time(),cursor.value());
+            cursor.forward();
+        }
+    }
+
+    public <R> R reduce(BiFunction<Pair<Double,T>,R,R> reducer, R init) {
+        R toReturn = init;
+        SignalCursor<T> cursor = getIterator(true);
+        while (!cursor.completed()) {
+            toReturn = reducer.apply(new Pair<>(cursor.time(),cursor.value()),toReturn);
+            cursor.forward();
+        }
+        return toReturn;
+    }
+
+    public <R> void fill( double[] timePoints, R[] data, Function<T,R> f) {
+        if (size == 0) {
+            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+        }
+        Segment<T> current = first;
+        for (int i = 0; i < timePoints.length; i++) {
+            current = current.jump(timePoints[i]);
+            data[i] = f.apply(current.getValue());
+        }
+    }
+
     /**
      * @return
      */
@@ -319,43 +351,45 @@ public class Signal<T> {
         return (first == null ? null : first.getValueAt(t));
     }
 
-    public Object[][] toObjectArray() {
+    public double[][] arrayOf(FunctionToDouble<T> f) {
         if (size == 0) {
             throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         int arraySize = size;
         if (!last.isAPoint()) {
-        	arraySize++;
+            arraySize++;
         }
-        Object[][] toReturn = new Object[arraySize][2];
+        double[][] toReturn = new double[arraySize][2];
         Segment<T> current = first;
         int counter = 0;
         while (current != null) {
             toReturn[counter][0] = current.getTime();
-            toReturn[counter][1] = current.getValue();
+            toReturn[counter][1] = f.apply( current.getValue() );
             current = current.getNext();
             counter++;
         }
         if (!last.isAPoint()) {
             toReturn[size][0] = end;
-            toReturn[size][1] = last.getValue();
+            toReturn[size][1] = f.apply( last.getValue() );
         }
         return toReturn;
     }
 
-    public Object[][] toObjectArray(Double[] timePoints) {
+    public double[][] arrayOf(double[] timePoints, FunctionToDouble<T> f) {
         if (size == 0) {
             throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
-        Object[][] toReturn = new Object[timePoints.length][2];
+        double[][] toReturn = new double[timePoints.length][2];
         Segment<T> current = first;
         for (int i = 0; i < timePoints.length; i++) {
             current = current.jump(timePoints[i]);
             toReturn[i][0] = timePoints[i];
-            toReturn[i][1] = current.getValue();
+            toReturn[i][1] = f.apply(current.getValue());
         }
         return toReturn;
     }
+
+
 
     public Set<Double> getTimeSet() {
         HashSet<Double> timeSet = new HashSet<>();
@@ -367,4 +401,5 @@ public class Signal<T> {
         timeSet.add(end);
         return timeSet;
     }
+
 }

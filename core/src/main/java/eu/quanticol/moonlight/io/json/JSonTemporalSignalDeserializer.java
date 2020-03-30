@@ -50,7 +50,7 @@ public class JSonTemporalSignalDeserializer {
 		String[] variables = recordHandler.getVariables();
 		Signal<Record> toReturn = new Signal<Record>();
 		for( int i=0 ; i<times.length ; i++ ) {
-			toReturn.add(times[i],recordHandler.fromString( JSONUtils.getAssignmentMap(variables, i, signals)) );
+			toReturn.add(times[i],recordHandler.fromStringArray( JSONUtils.getAssignmentMap(variables, i, signals)) );
 		}
 		return toReturn;
 	}

@@ -48,6 +48,9 @@ import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.StrelNotFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.BinaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelImplyFormula
 
 class ScriptToJava {
 	
@@ -64,7 +67,7 @@ class ScriptToJava {
 		
 		import eu.quanticol.moonlight.*;
 		import eu.quanticol.moonlight.monitoring.temporal.*;
-		import eu.quanticol.moonlight.monitoring.spatiotemporal.*;
+		import eu.quanticol.moonlight.monitoring.spatialtemporal.*;
 		import eu.quanticol.moonlight.signal.*;
 		import eu.quanticol.moonlight.util.*;
 		import eu.quanticol.moonlight.*;
@@ -126,7 +129,7 @@ class ScriptToJava {
 				return null;					
 			}				
 
-			public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+			public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent( String name ) {
 				«FOR m: model.elements.filter(typeof(Monitor)).filter[it.isIsSpatial]»
 				if ("«m.name»".equals( name ) ) {
 					return 	MONITOR_«m.name»; 
@@ -139,7 +142,7 @@ class ScriptToJava {
 				return «model.elements.filter(typeof(Monitor)).filter[!it.isIsSpatial].generateReferenceToDefaultMonitor»;	
 			}
 				
-			public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+			public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
 				return «model.elements.filter(typeof(Monitor)).filter[it.isIsSpatial].generateReferenceToDefaultMonitor»;	
 			}
 		
@@ -237,8 +240,8 @@ class ScriptToJava {
 	def  generateGenerateFormulaBuilderDeclaration(StrelFormula f, String name, Monitor monitor) {
 		if (monitor.isIsSpatial) {
 			'''
-			private SpatioTemporalMonitor<Record,Record,«monitor.semiring.javaTypeOf»> «monitorSubFormulaName(monitor.name,name)»( Record parameters ) {
-				return «f.spatioTemporalMonitorCode(monitor.name,monitor.name.domainVariable)»;	
+			private SpatialTemporalMonitor<Record,Record,«monitor.semiring.javaTypeOf»> «monitorSubFormulaName(monitor.name,name)»( Record parameters ) {
+				return «f.SpatialTemporalMonitorCode(monitor.name,monitor.name.domainVariable)»;	
 			}			
 			'''
 		} else {
@@ -253,7 +256,7 @@ class ScriptToJava {
 	
 	def  generateMonitorDeclaration(Monitor monitor) {
 		if (monitor.isIsSpatial) {
-			'''private SpatioTemporalScriptComponent<«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = new SpatioTemporalScriptComponent<>(
+			'''private SpatialTemporalScriptComponent<«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = new SpatialTemporalScriptComponent<>(
 				"«monitor.name»" ,
 				«monitor.name.edgeRecordHandlerName» ,
 				«monitor.name.signalRecordHandlerName» ,
@@ -333,6 +336,17 @@ class ScriptToJava {
 		)
 		'''
 	}
+	
+	def dispatch CharSequence temporalMonitorCode(StrelImplyFormula f, String prefix, String domain) {
+		'''
+		TemporalMonitor.impliesMonitor( 
+			«f.left.temporalMonitorCode(prefix,domain)» ,
+			«domain» , 
+			«f.right.temporalMonitorCode(prefix,domain)»
+		)
+		'''
+	}
+	
 
 	def dispatch CharSequence temporalMonitorCode(StrelAndFormula f, String prefix, String domain) {
 		'''
@@ -439,24 +453,34 @@ class ScriptToJava {
 	}
 
 
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelFormula f, String prefix, String domain) {
 	  throw new IllegalArgumentException("Unexpected formula in temporal monitoring ("+f.class+") in monitor "+prefix);
 	} 
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelOrFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelOrFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.orMonitor( 
-	    «f.left.spatioTemporalMonitorCode(prefix,domain)» ,
+	  SpatialTemporalMonitor.orMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)» ,
 	    «domain» , 
-	    «f.right.spatioTemporalMonitorCode(prefix,domain)»
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)»
 	  )
 	  '''
 	}
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelNotFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelImplyFormula f, String prefix, String domain) {
+	  '''
+	  SpatialTemporalMonitor.impliesMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)» ,
+	    «domain» , 
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)»
+	  )
+	  '''
+	}
+	
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelNotFormula f, String prefix, String domain) {
 		'''
-		SpatioTemporalMonitor.notMonitor( 
-			«f.argument.spatioTemporalMonitorCode(prefix,domain)» ,
+		SpatialTemporalMonitor.notMonitor( 
+			«f.argument.SpatialTemporalMonitorCode(prefix,domain)» ,
 			«domain»
 		)
 		'''
@@ -464,54 +488,54 @@ class ScriptToJava {
 
 	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelAndFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelAndFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.andMonitor( 
-	    «f.left.spatioTemporalMonitorCode(prefix,domain)» ,
+	  SpatialTemporalMonitor.andMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)» ,
 	    «domain» , 
-	    «f.right.spatioTemporalMonitorCode(prefix,domain)»
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)»
 	  )
 	  '''
 	}
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelSinceFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelSinceFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.sinceMonitor( 
-	    «f.left.spatioTemporalMonitorCode(prefix,domain)» , 
+	  SpatialTemporalMonitor.sinceMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)» , 
 	    «IF f.interval !== null»
 	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    «ENDIF»
-	    «f.right.spatioTemporalMonitorCode(prefix,domain)» ,
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)» ,
 	    «domain» 
 	  )
 	  '''
 	}
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelUntilFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelUntilFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.untilMonitor( 
-	    «f.left.spatioTemporalMonitorCode(prefix,domain)» , 
+	  SpatialTemporalMonitor.untilMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)» , 
 	    «IF f.interval !== null»
 	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    «ENDIF»
-	    «f.right.spatioTemporalMonitorCode(prefix,domain)» ,
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)» ,
 	    «domain» 
 	  )
 	  '''
 	}
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelAtomicFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelAtomicFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.atomicMonitor( 
+	  SpatialTemporalMonitor.atomicMonitor( 
 	    «signalRecord» -> «f.atomic.expressionToJava»
 	  )
 	  '''
 	}
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelEventuallyFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelEventuallyFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.eventuallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	  SpatialTemporalMonitor.eventuallyMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
 	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    	    «ENDIF»
 	    	    «domain»
@@ -519,10 +543,10 @@ class ScriptToJava {
 	  '''
 	}	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelAlwaysFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelAlwaysFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.globallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	  SpatialTemporalMonitor.globallyMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
 	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    	    «ENDIF»
 	    	    «domain»
@@ -530,10 +554,10 @@ class ScriptToJava {
 	  '''
 	 }	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelHistoricallyFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelHistoricallyFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.historicallyMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	  SpatialTemporalMonitor.historicallyMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
 	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    	    «ENDIF»
 	    	    «domain»
@@ -541,10 +565,10 @@ class ScriptToJava {
 	  '''
 	}	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelOnceFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelOnceFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.onceMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
+	  SpatialTemporalMonitor.onceMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,«IF f.interval !== null»
 	    	    new Interval(«f.interval.from.expressionToJava»,«f.interval.to.expressionToJava»),
 	    	    «ENDIF»
 	    	    «domain»
@@ -552,10 +576,10 @@ class ScriptToJava {
 	  '''
 	}	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelEscapeFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelEscapeFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.escapeMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
+	  SpatialTemporalMonitor.escapeMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
 	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
 	    	(double) «f.interval.from.expressionToJava»,
@@ -565,10 +589,10 @@ class ScriptToJava {
 	  '''		
 	}	
 
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelSomewhereFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelSomewhereFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.somewhereMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
+	  SpatialTemporalMonitor.somewhereMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
 	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
 	    	(double) «f.interval.from.expressionToJava»,
@@ -578,10 +602,10 @@ class ScriptToJava {
 	  '''		
 	}	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelEverywhereFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelEverywhereFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.everywhereMonitor( 
-	    «f.argument.spatioTemporalMonitorCode(prefix,domain)»,
+	  SpatialTemporalMonitor.everywhereMonitor( 
+	    «f.argument.SpatialTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
 	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
 	    	(double) «f.interval.from.expressionToJava»,
@@ -591,22 +615,22 @@ class ScriptToJava {
 	  '''		
 	}		
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelReachFormula f, String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelReachFormula f, String prefix, String domain) {
 	  '''
-	  SpatioTemporalMonitor.reachMonitor( 
-	    «f.left.spatioTemporalMonitorCode(prefix,domain)»,
+	  SpatialTemporalMonitor.reachMonitor( 
+	    «f.left.SpatialTemporalMonitorCode(prefix,domain)»,
 	    m -> DistanceStructure.buildDistanceStructure(m, 
 	    	«edgeRecord» -> (double) «IF f.distanceExpression !== null»«f.distanceExpression.expressionToJava»«ELSE»1.0«ENDIF»,
 	    	(double) «f.interval.from.expressionToJava»,
 	    	(double) «f.interval.to.expressionToJava»),
-	    «f.right.spatioTemporalMonitorCode(prefix,domain)»,
+	    «f.right.SpatialTemporalMonitorCode(prefix,domain)»,
 	    «domain»
 	  )
 	  '''		
 	}		
 	
 	
-	def dispatch CharSequence spatioTemporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
+	def dispatch CharSequence SpatialTemporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 	  '''
 	  «prefix»_FORMULA_«f.reference.name»'(' parameters ')'
 	  '''		
@@ -694,5 +718,12 @@ class ScriptToJava {
 		}
 	}
 	
+	def dispatch CharSequence getExpressionToJava(UnaryMathFunction expression) {
+		'''(double) Math.«expression.fun.name»( «expression.arg.expressionToJava» )'''
+	}
+
+	def dispatch CharSequence getExpressionToJava(BinaryMathFunction expression) {
+		'''(double) Math.«expression.fun.name»( «expression.arg1.expressionToJava» , «expression.arg2.expressionToJava» )'''
+	}
 	
 }

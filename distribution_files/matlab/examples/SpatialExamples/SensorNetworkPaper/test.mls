@@ -1,0 +1,8 @@
+monitor SomeWhereMon {
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula somewhere(dist)[0,3] #[ battery - 0.5]#;
+             }

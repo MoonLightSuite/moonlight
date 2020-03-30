@@ -4,14 +4,10 @@
 package moonlight.test;
 
 import eu.quanticol.moonlight.*;
-import eu.quanticol.moonlight.monitoring.temporal.*;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.*;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.util.*;
-import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.formula.*;
-import java.util.function.Function;
-import java.util.HashSet;
+
 import java.util.HashMap;
 
 
@@ -22,10 +18,10 @@ public class CityMonitor extends MoonLightScript {
 	private final SignalDomain<Boolean> _domain_SensTemp2 = new BooleanDomain();
 	private final SignalDomain<Boolean> _domain_SensTemp3 = new BooleanDomain();
 	
-	private SpatioTemporalMonitor<Record,Record,Boolean> SensTemp_main( Record parameters ) {
-		return SpatioTemporalMonitor.somewhereMonitor( 
-		  SpatioTemporalMonitor.globallyMonitor( 
-		    SpatioTemporalMonitor.atomicMonitor( 
+	private SpatialTemporalMonitor<Record,Record,Boolean> SensTemp_main(Record parameters ) {
+		return SpatialTemporalMonitor.somewhereMonitor(
+		  SpatialTemporalMonitor.globallyMonitor(
+		    SpatialTemporalMonitor.atomicMonitor(
 		      signal -> ((((double) signal.get(1,Double.class)))>(0.5))
 		    )
 		    ,
@@ -41,10 +37,10 @@ public class CityMonitor extends MoonLightScript {
 		)
 		;	
 	}			
-	private SpatioTemporalMonitor<Record,Record,Boolean> SensTemp2_main( Record parameters ) {
-		return SpatioTemporalMonitor.somewhereMonitor( 
-		  SpatioTemporalMonitor.eventuallyMonitor( 
-		    SpatioTemporalMonitor.atomicMonitor( 
+	private SpatialTemporalMonitor<Record,Record,Boolean> SensTemp2_main(Record parameters ) {
+		return SpatialTemporalMonitor.somewhereMonitor(
+		  SpatialTemporalMonitor.eventuallyMonitor(
+		    SpatialTemporalMonitor.atomicMonitor(
 		      signal -> ((((double) signal.get(1,Double.class)))>(0.5))
 		    )
 		    ,
@@ -60,10 +56,10 @@ public class CityMonitor extends MoonLightScript {
 		)
 		;	
 	}			
-	private SpatioTemporalMonitor<Record,Record,Boolean> SensTemp3_main( Record parameters ) {
-		return SpatioTemporalMonitor.somewhereMonitor( 
-		  SpatioTemporalMonitor.onceMonitor( 
-		    SpatioTemporalMonitor.atomicMonitor( 
+	private SpatialTemporalMonitor<Record,Record,Boolean> SensTemp3_main(Record parameters ) {
+		return SpatialTemporalMonitor.somewhereMonitor(
+		  SpatialTemporalMonitor.onceMonitor(
+		    SpatialTemporalMonitor.atomicMonitor(
 		      signal -> ((((double) signal.get(1,Double.class)))>(0.5))
 		    )
 		    ,
@@ -168,7 +164,7 @@ public class CityMonitor extends MoonLightScript {
 	
 	private DataHandler<Boolean> SensTemp3_output_data_handler_ = DataHandler.BOOLEAN;
 	
-	private SpatioTemporalScriptComponent<Boolean> MONITOR_SensTemp = new SpatioTemporalScriptComponent<>(
+	private SpatialTemporalScriptComponent<Boolean> MONITOR_SensTemp = new SpatialTemporalScriptComponent<>(
 					"SensTemp" ,
 					SensTemp_edge_handler_ ,
 					SensTemp_signal_handler_ ,
@@ -176,7 +172,7 @@ public class CityMonitor extends MoonLightScript {
 					SensTemp_parameters_handler_ ,
 					r -> SensTemp_main( r )	
 				);
-	private SpatioTemporalScriptComponent<Boolean> MONITOR_SensTemp2 = new SpatioTemporalScriptComponent<>(
+	private SpatialTemporalScriptComponent<Boolean> MONITOR_SensTemp2 = new SpatialTemporalScriptComponent<>(
 					"SensTemp2" ,
 					SensTemp2_edge_handler_ ,
 					SensTemp2_signal_handler_ ,
@@ -184,7 +180,7 @@ public class CityMonitor extends MoonLightScript {
 					SensTemp2_parameters_handler_ ,
 					r -> SensTemp2_main( r )	
 				);
-	private SpatioTemporalScriptComponent<Boolean> MONITOR_SensTemp3 = new SpatioTemporalScriptComponent<>(
+	private SpatialTemporalScriptComponent<Boolean> MONITOR_SensTemp3 = new SpatialTemporalScriptComponent<>(
 					"SensTemp3" ,
 					SensTemp3_edge_handler_ ,
 					SensTemp3_signal_handler_ ,
@@ -208,7 +204,7 @@ public class CityMonitor extends MoonLightScript {
 		return null;					
 	}				
 
-	public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+	public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
 		if ("SensTemp".equals( name ) ) {
 			return 	MONITOR_SensTemp; 
 		}
@@ -225,7 +221,7 @@ public class CityMonitor extends MoonLightScript {
 		return null;	
 	}
 		
-	public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+	public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
 		return MONITOR_SensTemp;	
 	}
 

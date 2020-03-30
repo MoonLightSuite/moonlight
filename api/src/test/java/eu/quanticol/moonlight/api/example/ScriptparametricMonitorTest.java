@@ -1,13 +1,9 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.TemporalScriptComponent;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ScriptparametricMonitorTest {
 
@@ -21,7 +17,7 @@ class ScriptparametricMonitorTest {
             value[i]=new String[]{String.valueOf(Math.sin(times[i])), String.valueOf(Math.cos(times[i]))};
         }
 
-        Object[][] objects = booleanMonitorScript.monitorToObjectArray(times, value, new String[]{"0", "4"});
+        double[][] objects = booleanMonitorScript.monitorToArray(times, value, new String[]{"0", "4"});
         System.out.println();
     }
 }

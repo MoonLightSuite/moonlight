@@ -12,7 +12,7 @@ class JSONUtils {
 
     public static final String TRACE_TYPE_TAG = "trace_type";
 	public static final String TRACE_TYPE_TEMPORAL = "temporal";
-	public static final String TRACE_TYPE_SPATIO_TEMPORAL = "spatiotemporal";
+	public static final String TRACE_TYPE_SPATIO_TEMPORAL = "spatialtemporal";
 	public static final String SIGNAL_TAG = "signals";
 	public static final String TIME_TAG = "t";
 	public static final String NAME_TAG = "name";

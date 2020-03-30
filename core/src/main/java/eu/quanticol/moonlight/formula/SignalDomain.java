@@ -25,4 +25,8 @@ public interface SignalDomain<R> extends Semiring<R> {
 
 	boolean equalTo(R x, R y);
 	
+	public default R  implies(R x, R y) {
+		return disjunction(negation(x), y);
+	}
+	
 }

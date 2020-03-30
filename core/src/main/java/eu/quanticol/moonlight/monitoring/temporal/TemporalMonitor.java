@@ -3,16 +3,10 @@
  */
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.io.TemporalSignalReader;
-import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
@@ -34,7 +28,12 @@ public abstract class TemporalMonitor<S,T> {
 	public static <S,T> TemporalMonitor<S,T> orMonitor( TemporalMonitor<S,T> m1, SignalDomain<T> domain, TemporalMonitor<S,T> m2) {
 		return new TemporalMonitorBinary<S,T>( m1 , domain::disjunction , m2 );
 	}
+
+	public static <S,T> TemporalMonitor<S,T> impliesMonitor( TemporalMonitor<S,T> m1, SignalDomain<T> domain, TemporalMonitor<S,T> m2) {
+		return new TemporalMonitorBinary<S,T>( m1 , domain::implies , m2 );
+	}
 	
+
 	public static <S,T> TemporalMonitor<S,T> notMonitor( TemporalMonitor<S,T> m , SignalDomain<T> domain ) {
 		return new TemporalMonitorUnary<S,T>( m , domain::negation );
 	}

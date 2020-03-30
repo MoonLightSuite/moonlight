@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -17,9 +16,7 @@ import eu.quanticol.moonlight.signal.LocationServiceList;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.signal.SpatioTemporalSignal;
-import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 class TestSensorScript {
@@ -41,14 +38,14 @@ class TestSensorScript {
 	void test() throws IOException {		
 		ScriptLoader sl = new ScriptLoader();
 		MoonLightScript script = sl.compileScript(code);
-		SpatioTemporalScriptComponent<?> stc = script.selectDefaultSpatioTemporalComponent();
+		SpatialTemporalScriptComponent<?> stc = script.selectDefaultSpatialTemporalComponent();
         List<Integer> typeNode = Arrays.asList( 1, 3, 3, 3, 3);
-        SpatioTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
-                (t, l) -> signalRecordHandkler.fromObject(typeNode.get(l)));
-        SpatioTemporalSignal<?> res = stc.monitor(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
+        SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
+                (t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
+        SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
         assertEquals(true, res.getSignals().get(0).valueAt(0.0));        
-        Object[][][] oArray = stc.monitorToObjectArray(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
-        assertEquals(true, oArray[0][0][1]);
+        double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
+        assertEquals(1.0, oArray[0][0][1]);
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
 	}
 
@@ -67,25 +64,25 @@ class TestSensorScript {
 	
 	private SpatialModel<Record> getGraphModel() { //metto alla fine tutti i metodi privati di servizio.
 		GraphModel<Record> m = new GraphModel<>(5);
-		m.add(0, edgeRecordHandler.fromDouble(1.0), 2);		
-		m.add(0, edgeRecordHandler.fromDouble(1.0), 4);		
-		m.add(1, edgeRecordHandler.fromDouble(1.0), 2);		
-		m.add(1, edgeRecordHandler.fromDouble(1.0), 3);		
-		m.add(1, edgeRecordHandler.fromDouble(1.0), 4);		
-		m.add(2, edgeRecordHandler.fromDouble(1.0), 0);		
-		m.add(2, edgeRecordHandler.fromDouble(1.0), 1);		
-		m.add(2, edgeRecordHandler.fromDouble(1.0), 3);		
-		m.add(2, edgeRecordHandler.fromDouble(1.0), 4);		
-		m.add(3, edgeRecordHandler.fromDouble(1.0), 1);		
-		m.add(3, edgeRecordHandler.fromDouble(1.0), 2);		
-		m.add(4, edgeRecordHandler.fromDouble(1.0), 0);		
-		m.add(4, edgeRecordHandler.fromDouble(1.0), 1);		
-		m.add(4, edgeRecordHandler.fromDouble(1.0), 2);		
+		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 2);
+		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 4);
+		m.add(1, edgeRecordHandler.fromDoubleArray(1.0), 2);
+		m.add(1, edgeRecordHandler.fromDoubleArray(1.0), 3);
+		m.add(1, edgeRecordHandler.fromDoubleArray(1.0), 4);
+		m.add(2, edgeRecordHandler.fromDoubleArray(1.0), 0);
+		m.add(2, edgeRecordHandler.fromDoubleArray(1.0), 1);
+		m.add(2, edgeRecordHandler.fromDoubleArray(1.0), 3);
+		m.add(2, edgeRecordHandler.fromDoubleArray(1.0), 4);
+		m.add(3, edgeRecordHandler.fromDoubleArray(1.0), 1);
+		m.add(3, edgeRecordHandler.fromDoubleArray(1.0), 2);
+		m.add(4, edgeRecordHandler.fromDoubleArray(1.0), 0);
+		m.add(4, edgeRecordHandler.fromDoubleArray(1.0), 1);
+		m.add(4, edgeRecordHandler.fromDoubleArray(1.0), 2);
 		return m;
     }
 	
-    private static <T> SpatioTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
-        SpatioTemporalSignal<T> s = new SpatioTemporalSignal(size);
+    private static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
 
         for(double time = start; time < end; time += dt) {
             double finalTime = time;

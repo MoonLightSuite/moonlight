@@ -1,11 +1,11 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.SpatioTemporalScriptComponent;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.Record;
@@ -26,9 +26,9 @@ public class CityMonitor extends MoonLightScript{
     private final SignalDomain<Boolean> _domain_City = new BooleanDomain();
     private final SignalDomain<Boolean> _domain_City2 = new BooleanDomain();
 
-    private SpatioTemporalMonitor<Record,Record,Boolean> City_main(Record parameters ) {
-        return SpatioTemporalMonitor.somewhereMonitor(
-                SpatioTemporalMonitor.atomicMonitor(
+    private SpatialTemporalMonitor<Record,Record,Boolean> City_main(Record parameters ) {
+        return SpatialTemporalMonitor.somewhereMonitor(
+                SpatialTemporalMonitor.atomicMonitor(
                         signal -> signal.get(0,Boolean.class)
                 )
                 ,
@@ -40,9 +40,9 @@ public class CityMonitor extends MoonLightScript{
         )
                 ;
     }
-    private SpatioTemporalMonitor<Record,Record,Boolean> City2_main( Record parameters ) {
-        return SpatioTemporalMonitor.somewhereMonitor(
-                SpatioTemporalMonitor.atomicMonitor(
+    private SpatialTemporalMonitor<Record,Record,Boolean> City2_main(Record parameters ) {
+        return SpatialTemporalMonitor.somewhereMonitor(
+                SpatialTemporalMonitor.atomicMonitor(
                         signal -> signal.get(0,Boolean.class)
                 )
                 ,
@@ -110,7 +110,7 @@ public class CityMonitor extends MoonLightScript{
 
     private DataHandler<Boolean> City2_output_data_handler_ = DataHandler.BOOLEAN;
 
-    private SpatioTemporalScriptComponent<Boolean> MONITOR_City = new SpatioTemporalScriptComponent<>(
+    private SpatialTemporalScriptComponent<Boolean> MONITOR_City = new SpatialTemporalScriptComponent<>(
             "City" ,
             City_edge_handler_ ,
             City_signal_handler_ ,
@@ -118,7 +118,7 @@ public class CityMonitor extends MoonLightScript{
             City_parameters_handler_ ,
             r -> City_main( r )
     );
-    private SpatioTemporalScriptComponent<Boolean> MONITOR_City2 = new SpatioTemporalScriptComponent<>(
+    private SpatialTemporalScriptComponent<Boolean> MONITOR_City2 = new SpatialTemporalScriptComponent<>(
             "City2" ,
             City2_edge_handler_ ,
             City2_signal_handler_ ,
@@ -141,7 +141,7 @@ public class CityMonitor extends MoonLightScript{
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
         if ("City".equals( name ) ) {
             return 	MONITOR_City;
         }
@@ -155,7 +155,7 @@ public class CityMonitor extends MoonLightScript{
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
         return MONITOR_City;
     }
 }

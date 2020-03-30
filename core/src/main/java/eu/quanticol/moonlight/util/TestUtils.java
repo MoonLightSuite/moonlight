@@ -1,7 +1,6 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -28,8 +27,8 @@ public class TestUtils {
     }
 
 
-    public static <T> SpatioTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
-        SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(size);
+    public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(size);
         double time = start;
         while (time < end) {
             double current = time;
@@ -40,8 +39,8 @@ public class TestUtils {
         return s;
     }
 
-    public static <T> SpatioTemporalSignal<T> createSpatioTemporalSignalFromGrid(int rowLength, int columnLength, double start, double dt, double end, BiFunction<Double, Pair<Integer,Integer>, T> f) {
-        SpatioTemporalSignal<T> s = new SpatioTemporalSignal<>(rowLength*columnLength);
+    public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignalFromGrid(int rowLength, int columnLength, double start, double dt, double end, BiFunction<Double, Pair<Integer,Integer>, T> f) {
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(rowLength*columnLength);
         double time = start;
         while (time < end) {
             double current = time;

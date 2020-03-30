@@ -192,11 +192,48 @@ BasicExpression returns Expression:
 	| {InfiniteLiteral} 'INF'
 	| '(' Expression ({IfThenElseExpression.guard=current} '?' thenCase=BasicExpression ':' elseCase=BasicExpression)? ')'
 	| {ReferencedValue} reference=[VariableDeclaration]
+	| {UnaryMathFunction} fun=UnaryMathFunctionName '(' arg=Expression ')'
+	| {BinaryMathFunction} fun=BinaryMathFunctionName '(' arg1=Expression ',' arg2=Expression ')'
 //	| {TupleExpression} '<' elements += BasicExpression (',' elements += BasicExpression)+ '>'
 ;
 
+BinaryMathFunctionName:
+	name=('atan2'
+	| 'hypot'
+	| 'max'
+	| 'min'
+	| 'pow') 
+;
+
+UnaryMathFunctionName: 
+      name=('abs'
+	| 'acos'
+	| 'asin'
+	| 'atan'
+	| 'cbrt'
+	| 'ceil'
+	| 'cos'
+	| 'cosh'
+	| 'exp'
+	| 'expm1'
+	| 'floor'
+	| 'getExponent'
+	| 'log'
+	| 'log10'
+	| 'log1p'
+	| 'signum'
+	| 'sin'
+	| 'sinh'
+	| 'sqrt'
+	| 'tan')
+;
+
 StrelFormula:
-	StrelOrFormula
+	StrelImplyFormula
+;
+
+StrelImplyFormula returns StrelFormula:
+	StrelOrFormula ({StrelImplyFormula.left=current} '->' right=StrelOrFormula)*	
 ;
 
 StrelOrFormula returns StrelFormula:

@@ -19,7 +19,6 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,15 +34,15 @@ public class VariableArraySignal extends Signal<Record>{
 	}
 	
 	public void addFromMap( double t , Map<String,Object> values ) {
-		super.add(t,factory.fromObject(values));
+		super.add(t,factory.fromObjectArray(values));
 	}
 
 	public void addFromString( double t , Map<String,String> values ) {
-		super.add(t,factory.fromString(values));
+		super.add(t,factory.fromStringArray(values));
 	}	
 	
 	public void addFromObject( double t , Object ... values ) {
-		super.add(t, factory.fromObject(values));
+		super.add(t, factory.fromObjectArray(values));
 	}
 
 	public int getVariableIndex(String name) {

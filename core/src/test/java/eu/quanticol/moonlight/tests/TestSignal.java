@@ -20,6 +20,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.formula.SlidingWindow;
+import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -148,14 +149,14 @@ class TestSignal {
     @Test
     void testToObjectArrayEmpty() {
     	Signal<Double> signal = new Signal<>();
-    	assertThrows(IllegalStateException.class, () -> signal.toObjectArray());
+    	assertThrows(IllegalStateException.class, () -> signal.arrayOf(DataHandler.REAL::doubleOf));
     }
     
     @Test
     void testToObjectArrayOneElement() {
     	Signal<Double> signal = new Signal<>();
     	signal.add(0.0, 10.0);
-    	Object[][] res = signal.toObjectArray();
+    	double[][] res = signal.arrayOf(DataHandler.REAL::doubleOf);
     	assertEquals(1, res.length);
     	assertEquals(2, res[0].length);
     	assertEquals(0.0,res[0][0]);
@@ -169,7 +170,7 @@ class TestSignal {
     	for( double i=0 ; i<10 ; i++ ) {
         	signal.add(i, i);
     	}
-    	Object[][] res = signal.toObjectArray();
+    	double[][] res = signal.arrayOf(DataHandler.REAL::doubleOf);
     	assertEquals(10, res.length);
     	assertEquals(2, res[0].length);
     	for( int i=0 ; i<10 ; i++ ) {

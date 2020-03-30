@@ -13,43 +13,73 @@ import eu.quanticol.moonlight.util.Pair;
  */
 public interface LocationService<V> {
 	
-	public SpatialModel<V> get(double t);
+	SpatialModel<V> get(double t);
 	
-	public Iterator<Pair<Double, SpatialModel<V>>> times();
+	Iterator<Pair<Double, SpatialModel<V>>> times();
 
-	public boolean isEmpty();
+	boolean isEmpty();
 
-	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-			String[][][][] graph) {
+	static LocationService<Record> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
+																		   String[][][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
-			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph[i]));
+			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph[i]));
 		}
 		return toReturn;
 	}
 
-	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double time,
-			String[][][] graph) {
+	static LocationService<Record> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double time,
+																		   String[][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
-		toReturn.add(time, SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph));
+		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph));
 		return toReturn;
 	}
 
-	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-															   double[][][][] graph) {
+	static LocationService<Record> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
+																		   double[][][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
-			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph[i]));
+			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph[i]));
 		}
 		return toReturn;
 	}
 
-	public static LocationService<Record> buildLocationService(int locations, RecordHandler edgeRecordHandler, double time,
-															   double[][][] graph) {
+	static LocationService<Record> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double time,
+																		   double[][][] graph) {
 		LocationServiceList<Record> toReturn = new LocationServiceList<>();
-		toReturn.add(time, SpatialModel.buildSpatialModel(locations,edgeRecordHandler,graph));
+		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph));
 		return toReturn;
 	}
 
+	static LocationService<Record> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
+																		 String[][][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
+			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph[i]));
+		}
+		return toReturn;
+	}
 
+	static LocationService<Record> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double time,
+																		 String[][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph));
+		return toReturn;
+	}
+
+	static LocationService<Record> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
+																		 double[][][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
+			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph[i]));
+		}
+		return toReturn;
+	}
+
+	static LocationService<Record> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double time,
+																		 double[][] graph) {
+		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph));
+		return toReturn;
+	}
 }

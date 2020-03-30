@@ -3,13 +3,9 @@ package eu.quanticol.moonlight.api.example; /**
  */
 import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.monitoring.temporal.*;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.*;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.util.*;
-import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.formula.*;
-import java.util.function.Function;
-import java.util.HashSet;
+
 import java.util.HashMap;
 
 
@@ -120,7 +116,7 @@ public class ScriptparametricMonitor extends MoonLightScript {
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent( String name ) {
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
         return null;
     }
 
@@ -128,7 +124,7 @@ public class ScriptparametricMonitor extends MoonLightScript {
         return MONITOR_BooleanMonitorScript;
     }
 
-    public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent( ) {
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
         return null;
     }
 

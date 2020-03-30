@@ -24,24 +24,24 @@ package eu.quanticol.moonlight.signal;
  */
 public interface SignalCursor<T> {
 		
-	public double time();
+	double time();
 	
-	public T value();
+	T value();
 	
-	public void forward();
+	void forward();
 
-	public void backward();
+	void backward();
 
-	public void move( double t );
+	void move(double t);
 	
-	public double nextTime();
+	double nextTime();
 
-	public double previousTime();
+	double previousTime();
 
-	public boolean hasNext();
+	boolean hasNext();
 	
-	public boolean hasPrevious();
+	boolean hasPrevious();
 
-	public boolean completed();
+	boolean completed();
 	
 }

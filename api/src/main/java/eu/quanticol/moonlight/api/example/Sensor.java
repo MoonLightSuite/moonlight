@@ -1,11 +1,11 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
-import eu.quanticol.moonlight.SpatioTemporalScriptComponent;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.monitoring.spatiotemporal.SpatioTemporalMonitor;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.Record;
@@ -19,9 +19,9 @@ public class Sensor extends MoonLightScript {
 
     private final SignalDomain<Double> _domain_SensorNetwork = new DoubleDomain();
 
-    private SpatioTemporalMonitor<Record, Record, Double> SensorNetwork_main(Record parameters) {
-        return SpatioTemporalMonitor.everywhereMonitor(
-                SpatioTemporalMonitor.atomicMonitor(
+    private SpatialTemporalMonitor<Record, Record, Double> SensorNetwork_main(Record parameters) {
+        return SpatialTemporalMonitor.everywhereMonitor(
+                SpatialTemporalMonitor.atomicMonitor(
                         signal -> Math.min((((signal.get(1, Double.class)) - (0.5))), (((signal.get(2, Double.class)) - (20))))
                 )
                 ,
@@ -65,7 +65,7 @@ public class Sensor extends MoonLightScript {
 
     private DataHandler<Double> SensorNetwork_output_data_handler_ = DataHandler.REAL;
 
-    private SpatioTemporalScriptComponent<Double> MONITOR_SensorNetwork = new SpatioTemporalScriptComponent<>(
+    private SpatialTemporalScriptComponent<Double> MONITOR_SensorNetwork = new SpatialTemporalScriptComponent<>(
             "SensorNetwork",
             SensorNetwork_edge_handler_,
             SensorNetwork_signal_handler_,
@@ -87,7 +87,7 @@ public class Sensor extends MoonLightScript {
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectSpatioTemporalComponent(String name) {
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {
         if ("SensorNetwork".equals(name)) {
             return MONITOR_SensorNetwork;
         }
@@ -98,7 +98,7 @@ public class Sensor extends MoonLightScript {
         return null;
     }
 
-    public SpatioTemporalScriptComponent<?> selectDefaultSpatioTemporalComponent() {
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent() {
         return MONITOR_SensorNetwork;
     }
 
