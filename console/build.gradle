@@ -62,6 +62,10 @@ task distribution(type: Copy, dependsOn: copyJar) {
         from "${buildDir}/libs/moonlight.jar"
         into "$rootDir/distribution/matlab/moonlight/jar"
     }
+    copy {
+        from "${buildDir}/libs/moonlight.jar"
+        into "$rootDir/distribution/python/jar"
+    }
 }
 
 //task distributionZip(type: Zip, dependsOn: distribution) {
@@ -69,7 +73,3 @@ task distribution(type: Copy, dependsOn: copyJar) {
 //    destinationDirectory = file("$rootDir/distribution/")
 //    from "$rootDir/distribution/"
 //}
-
-
-
-
