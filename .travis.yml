@@ -1,0 +1,13 @@
+language: java
+
+addons:
+  sonarcloud:
+    organization: "enniovisco"
+    token:
+      secure: "NwXAK7VGR5fjKWIENphjBaleRCEwpyflCUt9nVirh+NKh9XGSktfj6j/K8zmqdhohnU11VIVQk5LAp7NKZhTyiZ41VDobXgT6tJT5+SLb814E8miiYZ/SN2UBQ61c9rvSYQ9wh7HtsOnHkTTLAX7JG2/PPH1j71UZwYQe0JbI
+CQTlRbqEqoIyoTIOJBN5izww+bgMGY3Bm3hB7Z6Tki/sNYiSHdjpHHdClsxstFXEu3s1fpG1zpMGn+l2MFsEflCav22lmkWxiB4RSSD0rssa1y1y1YudtEra+ktKj/GNej4EpNmYFwOonXWCq0HCuvYrfLFVUoz6vwHNmXKBesIIf4OTDq8c
+foS4D/+aD37ZxjMq+AFlaPpgXzVV4ApMYQFtPjUxGyeN11w8aUc9b2f97s80eFHkPN6KAbrozickPtH4fn5TdLSuMG4o2jUvEe1Zp7MSXIk7e72VhbvB1ELNkThaLtDDPnme3brrRMnWCdmQi0Bk5M3Nk5aW2metnPwcLD66Z1p9sHW1rye1
+uTy3MjVy2RhSBdV+dtHyalyypH2U+0ysxNw6VHC4k5WBwBsoYsbak67aXZh31ZaW70HKia6wlp+A0F9ljJunccw725Xur1miMFW6DCLgh5bAcNVD9q/jUwRoLxnHNSZQflSygeP8aflQH7nQZqtubLDC7Y="
+
+script:
+  - ./gradlew sonarqube
