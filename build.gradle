@@ -11,8 +11,8 @@ subprojects {
     apply plugin: 'distribution'
     apply from: rootDir.absolutePath + '/module.gradle'
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 8
+    targetCompatibility = 8
 
     repositories {
         jcenter()
