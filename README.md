@@ -7,3 +7,5 @@ It supports the specification of properties written with the *Reach and Escape L
 The monitoring procedure is done with respect a single spatio-temporal trajecotry. Given a spatial configuration, a trajectory and a property the tool returns a spatio-temporal signal that describes the satisfaction of the property in each location and at each time.
 The tool supports two type of semantics (satisfaction), the Boolean and the quantitative semantics.
 Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, that tells at each time in each location if the trajectory satisfies or not the property, choosing instead the Quantitative semantics the tool returns a real-value signal that corresponds to the value of satisfaction of the property.
+
+- [Getting started](doc/getting_started.md)
