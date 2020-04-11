@@ -2,7 +2,7 @@
 
 monitor BooleanMonitorSpec1 (real omega) {
 
-        signal { real e_speed;}
+        signal {  real v_speed; real e_speed; int gear}
         
         domain boolean;
         
@@ -11,7 +11,7 @@ monitor BooleanMonitorSpec1 (real omega) {
 
 monitor QuantitativeMonitorSpec1 (real omega) {
 
-        signal { real e_speed;}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain minmax;
         
@@ -23,7 +23,7 @@ reach omega and v, respectively. */
 
 monitor BooleanMonitorSpec2 (real omega, real v) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain boolean;
         
@@ -32,7 +32,7 @@ monitor BooleanMonitorSpec2 (real omega, real v) {
 
 monitor QuantitativeMonitorSpec2 (real omega, real v) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain minmax;
         
@@ -44,21 +44,21 @@ the vehicle speed can not exceed v in less than T sec. */
 
 monitor BooleanMonitorSpec6 (real omega, real v, real T) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain boolean;
         
-        formula ! { eventually [0 T] #[ v_speed > v ]# &  globally #[ e_speed < omega ]# } ;
+        formula ! { {eventually [0 T] #[ v_speed > v ]#} &  {globally #[ e_speed < omega ]#} } ;
 }
 
 
 monitor QuantitativeMonitorSpec6 (real omega, real v, real T) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain minmax;
         
-        formula ! { eventually [0 T] #[ v_speed - v ]# &  globally #[ omega - e_speed ]# } ;
+        formula ! { {eventually [0 T] #[ v_speed - v ]#} &  {globally #[ omega - e_speed ]#} } ;
 }
 
 /* Spec 7 - Within T sec the vehicle speed is above v 
@@ -67,7 +67,7 @@ v in less than T sec. */
 
 monitor BooleanMonitorSpec7 (real omega, real v, real T) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain boolean;
         
@@ -77,7 +77,7 @@ monitor BooleanMonitorSpec7 (real omega, real v, real T) {
 
 monitor QuantitativeMonitorSpec7 (real omega, real v, real T) {
 
-        signal { real e_speed; real v_speed}
+        signal { real v_speed; real e_speed;  int gear}
         
         domain minmax;
         
