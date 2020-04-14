@@ -57,8 +57,8 @@ plotting (input, output);
 
 %% Monitoring
 
-bMonitorResult1  = monitor.temporalMonitor("BooleanMonitorSpec1",     time,output,4000); 
-qMonitorResult1  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time,output,4000); 
+[bMonitorResult1, t]  = monitor.temporalMonitor("BooleanMonitorSpec1",     time,output,4000); 
+[qMonitorResult1, t]  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time,output,4000); 
 
 bMonitorResult2  = monitor.temporalMonitor("BooleanMonitorSpec2",     time,output,[3000, 120]); 
 qMonitorResult2  = monitor.temporalMonitor("QuantitativeMonitorSpec2",time,output,[3000, 120]); 

@@ -23,8 +23,8 @@ import java.util.stream.IntStream;
 
 public class MultipleMonitors {
     public static void main(String[] args) throws IOException, URISyntaxException {
-        fromJava();
-        fromFileScript();
+        //fromJava();
+        //fromFileScript();
         fromStringScript();
     }
 
@@ -84,12 +84,12 @@ public class MultipleMonitors {
         String script = "monitor BooleanMonitorScript {\n" +
                 "signal { real x; real y;}\n" +
                 "domain boolean;\n" +
-                "formula globally [0, 0.2]  #[ x > y ]#;\n" +
+                "formula globally #[ x > y ]#;\n" +
                 "}\n" +
                 "monitor QuantitativeMonitorScript{\n" +
                 "signal { real x; real y;}\n" +
                 "domain minmax;\n" +
-                "formula globally [0, 0.2] #[ x - y ]#;\n" +
+                "formula globally #[ x - y ]#;\n" +
                 "}";
         //@formatter:on
         // Load script
@@ -106,6 +106,18 @@ public class MultipleMonitors {
         // Print results
         System.out.print("fromStringScript Quantitative \n");
         printResults(monitorValues);
+
+        // Choose the monitor
+        TemporalScriptComponent<?> BooleanMonitorScript = moonLightScript.selectTemporalComponent("BooleanMonitorScript");
+
+        // Get signal
+        double[] timesB = IntStream.range(0, 50).mapToDouble(s -> s).toArray();
+        double[][] signalsB = toSignal(times, x -> x, x -> 3 * x);
+        double[][] monitorValuesB = BooleanMonitorScript.monitorToArray(times, signals);
+
+        // Print results
+        System.out.print("fromStringScript Boolean \n");
+        printResults(monitorValuesB);
     }
 
     private static void printResults(double[][] monitorValues) {
