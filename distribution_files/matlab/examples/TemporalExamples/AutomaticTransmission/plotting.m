@@ -1,31 +1,25 @@
-function [] = plotting (input, output)
+function [] = plotting (input, output, input_labels, output_labels)
 
     figure
     time = input(:,1);
     
-    subplot(5,1,1);
-    plot(time,input(:,2), 'color','red', 'LineWidth',3)
-    xlabel('time')
-    ylabel('Input (Throttle)')
-
-    subplot(5,1,2);
-    plot(time,input(:,3), 'color','red', 'LineWidth',3)
-    xlabel('time')
-    ylabel('Input (Brake)')
-
-    subplot(5,1,3);
-    plot(time,output(:,1), 'color','blue', 'LineWidth',3)
-    xlabel('time')
-    ylabel('Output (Vehicle Speed in mph)')
-
-    subplot(5,1,4);
-    plot(time,output(:,2), 'color','blue', 'LineWidth',3)
-    xlabel('time')
-    ylabel('Output (Engine Speed in rpm)')
-
-    subplot(5,1,5);
-    plot(time,output(:,3), 'color','blue', 'LineWidth',3)
-    xlabel('time')
-    ylabel('Output (Gear)')
+    num_inputs  = size(input,  2);
+    num_outputs = size(output, 2);
+    
+    num_plots   = (num_inputs - 1) + num_outputs;
+    
+    for i=2:num_inputs
+        subplot(num_plots,1,i-1);
+        plot(time,input(:,i), 'color','red', 'LineWidth',3);
+        xlabel(input_labels(1));
+        ylabel(strcat('Input (',input_labels(i) ,')'));
+    end
+    
+    for i=1:num_outputs 
+        subplot(num_plots,1,num_inputs+i-1);
+        plot(time,output(:,i), 'color','blue', 'LineWidth',3);
+        xlabel(input_labels(1));
+        ylabel(strcat('Output (',output_labels(i) ,')'));
+    end
 
 end
