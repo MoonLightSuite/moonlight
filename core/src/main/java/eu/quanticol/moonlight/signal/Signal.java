@@ -109,12 +109,15 @@ public class Signal<T> {
      * @return last time step
      */
     public void addBefore(double t, T value) {
+        Segment<T> oldFirst = first;
         if (first == null) {
             startWith(t, value);
         } else {
             first = first.addBefore(t, value);
         }
-        size++;
+        if (first != oldFirst) {
+            size++;
+        }
     }
 
     /**
@@ -264,8 +267,12 @@ public class Signal<T> {
             @Override
             public void backward() {
                 if (current != null) {
-                    current = current.getPrevious();
-                    time = (current != null ? current.getTime() : Double.NaN);
+                    if (time>current.getTime()) {
+                        time = current.getTime();
+                    } else {
+                        current = current.getPrevious();
+                        time = (current != null ? current.getTime() : Double.NaN);
+                    }
                 }
             }
 

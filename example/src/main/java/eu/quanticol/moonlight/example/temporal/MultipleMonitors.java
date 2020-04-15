@@ -106,7 +106,7 @@ public class MultipleMonitors {
         // Print results
         System.out.print("fromStringScript Quantitative \n");
         printResults(monitorValues);
-
+        System.out.println("MAREMMA");
         // Choose the monitor
         TemporalScriptComponent<?> BooleanMonitorScript = moonLightScript.selectTemporalComponent("BooleanMonitorScript");
 

@@ -180,6 +180,44 @@ class TestSignal {
     	
     }
 
+    @Test
+    void testToDoubleArrayConstant() {
+        Signal<Double> doubleSignal = new Signal<>();
+        doubleSignal.add(0.0,0.0);
+        doubleSignal.add(1.0,0.0);
+        doubleSignal.add(2.0,0.0);
+        doubleSignal.end();
+        double[][] array = doubleSignal.arrayOf(Double::valueOf);
+        assertEquals(doubleSignal.size()+1,array.length);
+    }
+
+    @Test
+    void testToDoubleArrayMultiple() {
+        Signal<Double> doubleSignal = new Signal<>();
+        doubleSignal.add(0.0,0.0);
+        doubleSignal.add(1.0,1.0);
+        doubleSignal.add(2.0,0.0);
+        doubleSignal.end();
+        double[][] array = doubleSignal.arrayOf(Double::valueOf);
+        assertEquals(3,array.length);
+    }
+
+
+    @Test
+    void testIterateBackwardSingleValue() {
+        Signal<Double> s = new Signal<>();
+        s.add(0.0,10.0);
+        s.endAt(10.0);
+        assertEquals(1,s.size());
+        assertEquals(0.0,s.start());
+        assertEquals(10.0,s.end());
+        Signal<Double> s2 = s.iterateBackward((x,y) -> Math.min(x,y),Double.POSITIVE_INFINITY);
+        assertEquals(s.start(),s2.start());
+        assertEquals(s.end(),s2.end());
+        double[][] da = s2.arrayOf(Double::valueOf);
+        assertEquals(2,da.length);
+    }
+
 }
 
 
