@@ -48,24 +48,25 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
-task copyJar(type: Copy, dependsOn: jar) {
-    from "$rootDir/distribution_files/"
-    into "$rootDir/distribution/"
+task distribution(type: Copy, dependsOn:[jar]) {
+    println "exec distribution Task!"
+    copy {
+        from jar
+        into rootProject.file("distribution_files/java")
+    }
+    copy {
+        from jar
+        into rootProject.file("distribution_files/matlab/moonlight/jar")
+    }
+    copy {
+        from jar
+        into rootProject.file("distribution_files/python/jar")
+    }
 }
 
-task distribution(type: Copy, dependsOn: copyJar) {
-    copy {
-        from "${buildDir}/libs/moonlight.jar"
-        into "$rootDir/distribution/java"
-    }
-    copy {
-        from "${buildDir}/libs/moonlight.jar"
-        into "$rootDir/distribution/matlab/moonlight/jar"
-    }
-    copy {
-        from "${buildDir}/libs/moonlight.jar"
-        into "$rootDir/distribution/python/jar"
-    }
+task release(type: Copy, dependsOn: distribution) {
+    from rootProject.file("distribution_files/")
+    into rootProject.file("distribution/")
 }
 
 //task distributionZip(type: Zip, dependsOn: distribution) {
