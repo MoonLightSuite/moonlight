@@ -67,44 +67,158 @@ plotting (input, output, input_labels, output_labels);
 
 %% Monitoring initialization
 
-<<<<<<< HEAD
-[bMonitorResult1, t]  = monitor.temporalMonitor("BooleanMonitorSpec1",     time,output,4000); 
-[qMonitorResult1, t]  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time,output,4000); 
-=======
-fprintf('Monitoring initialization\n');
-
 %Generate a monitor object from the script fine multiple_spec.mls 
 %this object is an implementation of MoonlightEngine class, please 
 %refer to the doc of this class for more details (ex. write in console 
 %"doc MoonlightEngine" ) please, open multiple_spec.mls 
 monitor = MoonlightEngine.load("multiple_spec");
->>>>>>> 02f64f22284a5408c3864fc67ab862f6eced66ec
+
+%[bMonitorResult1, t]  = monitor.temporalMonitor("BooleanMonitorSpec1",     time,output,4000); 
+%[qMonitorResult1, t]  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time,output,4000); 
 
 
-%% Monitoring
+%% Monitoring property with Moonlight
 
 fprintf('Monitoring\n');
-tic
-bMonitorResult1  = monitor.temporalMonitor("BooleanMonitorSpec1",     time, output, 4000); 
-toc 
-tic
-qMonitorResult1  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time, output, 4000); 
-toc
-tic
-bMonitorResult2  = monitor.temporalMonitor("BooleanMonitorSpec2",     time, output,[3000, 120]); 
-toc
-tic
-qMonitorResult2  = monitor.temporalMonitor("QuantitativeMonitorSpec2",time, output,[3000, 120]); 
-toc
-tic
-bMonitorResult6  = monitor.temporalMonitor("BooleanMonitorSpec6",     time, output,[3000, 120, 10]);
-toc
-tic
-qMonitorResult6  = monitor.temporalMonitor("QuantitativeMonitorSpec6",time, output,[3000, 120, 10]); 
-toc
 
+tStart                = tic;
+bMonitorResult1  = monitor.temporalMonitor("BooleanMonitorSpec1",     time, output, 4000); 
+tElapsedSpec1MoonlightBoolean   = toc(tStart)
+
+tStart                = tic;
+qMonitorResult1  = monitor.temporalMonitor("QuantitativeMonitorSpec1",time, output, 4000); 
+tElapsedSpec1MoonlightRobust   = toc(tStart)
+
+tStart                = tic;
+bMonitorResult2  = monitor.temporalMonitor("BooleanMonitorSpec2",     time, output,[3000, 120]); 
+tElapsedSpec2MoonlightBoolean   = toc(tStart)
+
+tStart                = tic;
+qMonitorResult2  = monitor.temporalMonitor("QuantitativeMonitorSpec2",time, output,[3000, 120]); 
+tElapsedSpec2MoonlightRobust   = toc(tStart)
+
+tStart                = tic;
+bMonitorResult6  = monitor.temporalMonitor("BooleanMonitorSpec6",     time, output,[3000, 120, 10]);
+tElapsedSpec6MoonlightBoolean   = toc(tStart)
+
+tStart                = tic;
+qMonitorResult6  = monitor.temporalMonitor("QuantitativeMonitorSpec6",time, output,[3000, 120, 10]); 
+tElapsedSpec6MoonlightRobust   = toc(tStart)
+
+tStart                = tic;
 bMonitorResult7  = monitor.temporalMonitor("BooleanMonitorSpec7",     time, output,[3000, 120, 10]); 
+tElapsedSpec7MoonlightBoolean   = toc(tStart)
+
+tStart                = tic;
 qMonitorResult7  = monitor.temporalMonitor("QuantitativeMonitorSpec7",time, output,[3000, 120, 10]); 
+tElapsedSpec7MoonlightRobust   = toc(tStart)
+
+%% Monitoring property with Breach
+
+trace = [time'; output']; % trace is in column format, first column is time
+BrTrace = BreachTraceSystem({'v_speed','e_speed','gear'}, trace');
+figure; BrTrace.PlotSignals();
+
+figure; BrTrace.PlotRobustSat('alw (e_speed[t] < 4000)',1);
+
+tStart                = tic;
+spec1                 = STL_Formula('Spec1', 'alw (e_speed[t] < 4000)');
+spec1_rob             = BrTrace.CheckSpec(spec1)
+tElapsedSpec1Breach   = toc(tStart)
+
+tStart                = tic;
+spec2                 = STL_Formula('Spec2', 'alw (( e_speed[t] < 3000 ) and (v_speed[t] < 120))');
+spec2_rob             = BrTrace.CheckSpec(spec2)
+tElapsedSpec2Breach   = toc(tStart)
+
+
+tStart                = tic;
+spec6                 = STL_Formula('Spec6', 'not ((alw_[0,10] (v_speed[t] > 120))  and  alw (e_speed[t] < 3000 ))');
+spec6_rob             = BrTrace.CheckSpec(spec6)
+tElapsedSpec6Breach   = toc(tStart)
+
+tStart                = tic;
+spec7                 = STL_Formula('Spec7', '(ev_[0,10] (v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))');
+spec7_rob             = BrTrace.CheckSpec(spec7)
+tElapsedSpec7Breach   = toc(tStart)
+
+%% Monitoring property with S-Taliro
+
+
+% alw (e_speed[t] < 4000)
+
+st_spec1 = '[] (a1)';
+
+%a1: e_speed < omega
+
+st_spec1_Pred(1).str = 'a1';
+st_spec1_Pred(1).A = [0 1 0];
+st_spec1_Pred(1).b = [4000];
+
+tStart                = tic;
+rob1 = fw_taliro(st_spec1,st_spec1_Pred,output,time)
+tElapsedSpec1Staliro  = toc(tStart)
+
+% alw (( e_speed[t] < 3000 ) and (v_speed[t] < 120))
+
+st_spec2 = '[] (a1 /\ a2)';
+
+%a1: e_speed[t] < 3000
+
+st_spec2_Pred(1).str = 'a1';
+st_spec2_Pred(1).A = [0 1 0];
+st_spec2_Pred(1).b = [3000];
+
+%a2: (v_speed[t] < 120)
+
+st_spec2_Pred(2).str = 'a2';
+st_spec2_Pred(2).A = [1 0 0];
+st_spec2_Pred(2).b = [120];
+
+tStart                = tic;
+rob2 = fw_taliro(st_spec2,st_spec2_Pred,output,time)
+tElapsedSpec2Staliro  = toc(tStart)
+
+% not ((alw_[0,10] (v_speed[t] > 120))  and  alw (e_speed[t] < 3000 ))
+
+st_spec6 = '!([]_[0,10] (a1) /\ [] (a2))';
+
+%a1: v_speed[t] > 120
+
+st_spec6_Pred(1).str = 'a1';
+st_spec6_Pred(1).A = [-1 0 0];
+st_spec6_Pred(1).b = [-120];
+
+%a2: e_speed[t] < 3000
+
+st_spec6_Pred(2).str = 'a2';
+st_spec6_Pred(2).A = [0 1 0];
+st_spec6_Pred(2).b = [3000];
+
+tStart                = tic;
+rob6 = fw_taliro(st_spec6,st_spec6_Pred,output,time)
+tElapsedSpec6Staliro  = toc(tStart)
+
+% (ev_[0,10] (v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))
+
+st_spec7 = '(<>_[0,10] (a1)) /\ ([] (a2))';
+
+%a1: v_speed[t] > 120
+
+st_spec7_Pred(1).str = 'a1';
+st_spec7_Pred(1).A = [-1 0 0];
+st_spec7_Pred(1).b = [-120];
+
+%a2: e_speed[t] < 3000
+
+st_spec7_Pred(2).str = 'a2';
+st_spec7_Pred(2).A = [0 1 0];
+st_spec7_Pred(2).b = [3000];
+
+tStart                = tic;
+rob7 = fw_taliro(st_spec7,st_spec7_Pred,output,time)
+tElapsedSpec7Staliro  = toc(tStart)
+
 
 
 
