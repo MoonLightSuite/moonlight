@@ -47,7 +47,6 @@ public class TestAfterSignalEnd {
 
 
     @Test
-    @Disabled
     public void untilExceeding() {
                 SpatialTemporalSignal<Boolean> result = init(until());
                 List<Signal<Boolean>> signals = result.getSignals();

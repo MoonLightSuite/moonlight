@@ -115,6 +115,9 @@ public class Segment<T> {
 			this.previous.next = this;
 			return this.previous;
 		} else {
+			if (isAPoint()) {
+				this.end = this.time;
+			}
 			this.time = time;
 			return this;
 		}
@@ -183,7 +186,7 @@ public class Segment<T> {
 	}
 
 	public boolean isAPoint() {
-		return Double.isNaN(this.end)||(this.time==this.end);
+		return (this.next==null)&&(Double.isNaN(this.end)||(this.time==this.end));
 	}
 	
 }

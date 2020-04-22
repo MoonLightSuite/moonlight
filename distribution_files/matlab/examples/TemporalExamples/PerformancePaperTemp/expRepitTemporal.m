@@ -21,22 +21,15 @@ nRuns = 10;
 timeMoonRepSignal = [];
 timeTalRepSignal = [];
 timeBreachRepSignal = [];
-numStepInt= 101:1001:10001;
-% for numStep= numStepInt
-%     numStep
-%     [meanTimeMoon ,meanTimeTal, meaTimeBreach]  =  evalRep(nRuns, numStep,...
-%     monitor, phiString,psi,psi_Pred,phiBreach);
-%     timeMoonRepSignal = [timeMoonRepSignal,meanTimeMoon];
-%     timeTalRepSignal = [timeTalRepSignal,meanTimeTal];
-%     timeBreachRepSignal = [timeBreachRepSignal,meaTimeBreach];
-% end
-nRuns = 10;
-numStep = 10000;
-[meanTimeMoon ,meanTimeTal, meaTimeBreach]  =  evalRep(nRuns, numStep,...
-monitor, phiString,psi,psi_Pred,phiBreach);
-timeMoonRepSignal = [timeMoonRepSignal,meanTimeMoon];
-timeTalRepSignal = [timeTalRepSignal,meanTimeTal];
-timeBreachRepSignal = [timeBreachRepSignal,meaTimeBreach];
+numStepInt= 101:101:1001;
+for numStep= numStepInt
+    numStep
+    [meanTimeMoon ,meanTimeTal, meaTimeBreach]  =  evalRep(nRuns, numStep,...
+    monitor, phiString,psi,psi_Pred,phiBreach);
+    timeMoonRepSignal = [timeMoonRepSignal,meanTimeMoon];
+    timeTalRepSignal = [timeTalRepSignal,meanTimeTal];
+    timeBreachRepSignal = [timeBreachRepSignal,meaTimeBreach];
+end
 
 
 t =numStepInt;
