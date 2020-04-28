@@ -37,3 +37,8 @@ boolean = [booleanMonitorResult;time(end), booleanMonitorResult(2,end)];
 stairs(boolean(:,1),boolean(:,2))
 title('globally [0, 0.2]  #[ x > y ]#')
 legend('Quantiative Monitor','Boolean Monitor')
+
+
+%Formula: historically [0, 0.2]  #[ x > y ]#
+[quantiativePastMonitorResult,t] = monitor.temporalMonitor("QuantitativePastMonitorScrip",time,values);
+disp(t)

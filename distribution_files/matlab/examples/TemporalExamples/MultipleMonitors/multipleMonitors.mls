@@ -8,3 +8,8 @@ signal { real x; real y;}
 domain minmax;
 formula globally [0, 0.2] #[ x - y ]#;
 }
+monitor QuantitativePastMonitorScript{
+signal { real x; real y;}
+domain minmax;
+formula historically [0.4, 0.5] #[ x - y ]#;
+}

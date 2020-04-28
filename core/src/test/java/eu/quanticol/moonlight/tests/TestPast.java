@@ -59,6 +59,7 @@ class TestPast {
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Record> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
+            System.out.println(actual);
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double valueActual = actual.value();
