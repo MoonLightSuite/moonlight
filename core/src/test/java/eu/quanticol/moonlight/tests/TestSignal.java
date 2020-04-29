@@ -149,7 +149,8 @@ class TestSignal {
     @Test
     void testToObjectArrayEmpty() {
     	Signal<Double> signal = new Signal<>();
-    	assertThrows(IllegalStateException.class, () -> signal.arrayOf(DataHandler.REAL::doubleOf));
+    	double[][] data = signal.arrayOf(DataHandler.REAL::doubleOf);
+    	assertEquals(0,data.length);
     }
     
     @Test
