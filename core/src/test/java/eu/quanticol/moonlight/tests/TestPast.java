@@ -198,5 +198,26 @@ class TestPast {
         assertEquals(10.25, time, 0.0);
     }
 
+    @Test
+    void testHistorically3() {
+        Signal<Double> signal = TestUtils.createSignal(0.0, 3.1, 0.1, x -> x);
+        Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.4));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test", p -> (x -> x));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        Signal<Double> result = m.monitor(signal);
+        System.out.println("ciao");
+        assertEquals(signal.end(), result.end(), 0.0);
+        assertEquals(5.0, result.start(), 0.0);
+        SignalCursor<Double> c = result.getIterator(true);
+        double time = 5.0;
+        while (!c.completed()) {
+            assertEquals(c.time() - 5.0, c.value(), 0.0, "Time: " + c.time());
+            c.forward();
+            time += 0.25;
+        }
+        assertEquals(10.25, time, 0.0);
+    }
+
 
 }

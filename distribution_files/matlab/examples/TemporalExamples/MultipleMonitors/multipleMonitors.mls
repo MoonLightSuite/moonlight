@@ -1,15 +1,21 @@
 monitor BooleanMonitorScript {
 signal { real x; real y;}
 domain boolean;
-formula globally [0, 0.2]  #[ x > y ]#;
+formula globally [0, 3]  #[ x > y ]#;
 }
 monitor QuantitativeMonitorScript{
 signal { real x; real y;}
 domain minmax;
-formula globally [0, 0.2] #[ x - y ]#;
+formula globally [0, 3] #[ x - y ]#;
+}
+
+monitor BooleanPastMonitorScript {
+signal { real x; real y;}
+domain boolean;
+formula historically [0, 3]  #[ x > y ]#;
 }
 monitor QuantitativePastMonitorScript{
 signal { real x; real y;}
 domain minmax;
-formula historically [0.4, 0.5] #[ x - y ]#;
+formula historically [0.1, 0.3] #[ x - y ]#;
 }
