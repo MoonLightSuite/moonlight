@@ -360,7 +360,8 @@ public class Signal<T> {
 
     public double[][] arrayOf(FunctionToDouble<T> f) {
         if (size == 0) {
-            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+            return new double[][] {};
+            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         int arraySize = size;
         if (!last.isAPoint()) {
