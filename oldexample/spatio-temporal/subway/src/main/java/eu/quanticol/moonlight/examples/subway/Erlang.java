@@ -1,7 +1,11 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.examples.subway.Parsing.FileType;
-import eu.quanticol.moonlight.examples.subway.Parsing.TrajectoryExtractor;
+import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
+import eu.quanticol.moonlight.examples.subway.grid.Grid;
+import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
+import eu.quanticol.moonlight.examples.subway.io.DataReader;
+import eu.quanticol.moonlight.examples.subway.io.FileType;
+import eu.quanticol.moonlight.examples.subway.parsing.*;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.DoubleDomain;
@@ -13,8 +17,8 @@ import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.signal.GraphModel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -45,8 +49,8 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String trajectorySource = Erlang.class.getResource("trajectory.csv").getPath();
-    private static final String networkSource = Erlang.class.getResource("adj_matrix.txt").getPath();
+    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectory.csv").getPath();
+    private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
 
     /**
      * Numeric constants of the problem
@@ -63,14 +67,16 @@ public class Erlang {
      */
     private static final DoubleDomain ROBUSTNESS = new DoubleDomain();
     private static final BooleanDomain SATISFACTION = new BooleanDomain();
-    private static GraphModel<Double> network = new Grid().getModel(networkSource);
+    private static final GraphModel<Double> network = new Grid().getModel(NETWORK_SOURCE);
 
     /**
      * Signal Dimensions (i.e. signal domain)
      */
-    private static final TrajectoryExtractor s = new TrajectoryExtractor(network.size());
-    private static final double[][] data = new DataReader<>(trajectorySource, FileType.CSV, s).read();
-    private static final int timeSamples = data[0].length;
+    private static final TrajectoryExtractor singleTraj = new TrajectoryExtractor(network.size());
+    private static final MultiTrajectoryExtractor multiTraj = new MultiTrajectoryExtractor(network.size());
+    private static final Collection<HashBiMap<Integer, Integer, Double>> data =
+            new DataReader<>(TRAJECTORY_SOURCE, FileType.CSV, multiTraj).read();
+    private static final int timeSamples = multiTraj.getTimePoints();
 
     /**
      * Input Signals
@@ -88,29 +94,34 @@ public class Erlang {
      * Output Signals
      */
     private static final int OUT_ROUTER = 4;
-    //private static final int OUT_CROWDEDNESS = 5;
 
 
     public static void main(String[] argv) {
-        SpatialTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
+        List<? extends SpatialTemporalSignal> signalSet = toSignals(data);
+        //SpatialTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
+        SpatialTemporalSignal<List<Comparable>> signal = signalSet.get(0);
 
         //// We are considering a dynamic Location Service ///
         LocationService<Double> locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
 
-        // Now we can monitor the system for the satisfaction of our Peak Management property
-        SpatialTemporalMonitor<Double, List<Comparable>, Boolean> m = neighbourSafety();
-        SpatialTemporalSignal<Boolean> output = m.monitor(locService, signal);
+        // Now we can monitor the system for the satisfaction of our properties
+        SpatialTemporalMonitor<Double, List<Comparable>, Boolean> safety = neighbourSafety();
+        SpatialTemporalSignal<Boolean> output = safety.monitor(locService, signal);
+        /*StatisticalModelChecker<Double, List<Comparable>, Boolean> smc =
+                new StatisticalModelChecker<Double, List<Comparable>, Boolean>(safety, data, locService);
+        smc.run();*/
         List<Signal<Boolean>> signals = output.getSignals();
 
-        System.out.print("The safety monitoring result is: ");
-        System.out.println(signals.get(0).valueAt(0));
+        System.out.println("The safety monitoring result is: " +
+                    signals.get(0).valueAt(0));
 
-        m = communicationLiveness();
-        output = m.monitor(locService, signal);
+        SpatialTemporalMonitor<Double, List<Comparable>, Boolean> liveness = communicationLiveness();
+        output = liveness.monitor(locService, signal);
         signals = output.getSignals();
 
-        System.out.print("The liveness monitoring result is: ");
-        System.out.println(signals.get(0).valueAt(0));
+
+        System.out.println("The liveness monitoring result is: " +
+                    signals.get(0).valueAt(0));
     }
 
     // --------- FORMULAE --------- //
@@ -167,6 +178,40 @@ public class Erlang {
 
 
     // ------------- HELPERS ------------- //
+
+
+    private static List<MultiValuedSignal> toSignals(Collection<HashBiMap<Integer, Integer, Double>> input) {
+        List<MultiValuedSignal> signals = new ArrayList<>();
+        for(HashBiMap<Integer, Integer, Double> s : input) {
+            MultiValuedSignal signal = new MultiValuedSignal(network.size(), timeSamples);
+
+
+
+            HashBiMap<Integer, Integer, Boolean> devConn = new HashBiMap<>();
+            HashBiMap<Integer, Integer, GridDirection> devDir = new HashBiMap<>();
+            HashBiMap<Integer, Integer, Integer> routerLoc = new HashBiMap<>();
+            HashBiMap<Integer, Integer, Integer> outRouter = new HashBiMap<>();
+            for(int l = 0; l < network.size(); l++) {
+                for(int t = 0; t < timeSamples; t++) {
+                    devConn.put(l, t, isDevicePresent(l, t));
+                    devDir.put(l, t, getDeviceDirection(l, t));
+                    routerLoc.put(l, t, getRouterLocation(l));
+                    outRouter.put(l, t, getOutputRouter(l, t));
+                }
+            }
+
+            signal
+            .setDimension(devConn, DEV_CONNECTED)   // Device Position
+            .setDimension(devDir, DEV_DIRECTION)    // Device Direction
+            .setDimension(routerLoc, LOC_ROUTER)    // Location Router ID
+            .setDimension(s, LOC_CROWDEDNESS)       // Location Crowdedness
+            .setDimension(outRouter, OUT_ROUTER)    // Output Router ID
+            .initialize();
+
+            signals.add(signal);
+        }
+        return signals;
+    }
 
     /**
      * Given a list of (devPos, devDir), one for every time instant,
@@ -234,25 +279,21 @@ public class Erlang {
         return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
-    /**
-     * Signal generator from function
-     * @param size signal spatial size
-     * @param end  signal time length
-     * @param f function of interest
-     * @param <T> domain of the signal
-     * @return a SpatioTemporal signal generated from f.
-     */
-    private static <T> SpatialTemporalSignal<T>
-    createSTSignal(int size, int end, BiFunction<Integer, Integer, T> f) {
-        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
-
-        for(int t = 0; t < end; t ++) {
-            int time = t;
-            s.add(t, (i) -> f.apply(time, i));
+    /*private <T extends Comparable<T>> T[][] toSTVector(BiFunction<Integer, Integer, T> f) {
+        Class<T> type = new T();
+        Array.newInstance(type, 10);
+        List<List<T>> data = new ArrayList<>();
+        for(int l = 0; l < network.size(); l++) {
+            List<T> timeSeries = new ArrayList<>();
+            for(int t = 0; t < timeSamples; t++) {
+                timeSeries.add(f.apply(t, l));
+            }
+            data.add(timeSeries);
         }
 
-        return s;
-    }
+        List<T>[] test = (List<T>[]) data.toArray();
+        return o;
+    }*/
 
     /**
      * Gathers the values to generate a multi-valued signal of arbitrary dimensions
@@ -261,31 +302,31 @@ public class Erlang {
      * @return a list representing the 5-tuple (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
      */
     private static List<Comparable> getMultiValuedSignal(int t, int l) {
-        List<Comparable> s = new ArrayList<Comparable>();
-        s.add(DEV_CONNECTED, isDevicePresent(t, l));        //devConnected
-        s.add(DEV_DIRECTION, getDeviceDirection(t, l));     //devDirection
-        s.add(LOC_ROUTER, getRouterLocation(t, l));         //locRouter
-        s.add(LOC_CROWDEDNESS, getTrajectoryValue(t, l));   //locCrowdedness
-        s.add(OUT_ROUTER, getOutputRouter(t, l));           //outRouter
+        List<Comparable> s = new ArrayList<>();
+        s.add(DEV_CONNECTED, isDevicePresent(t, l));              //devConnected
+        s.add(DEV_DIRECTION, getDeviceDirection(t, l));           //devDirection
+        s.add(LOC_ROUTER, getRouterLocation(l));               //locRouter
+        s.add(LOC_CROWDEDNESS, getTrajectoryValue(t, l));         //locCrowdedness
+        s.add(OUT_ROUTER, getOutputRouter(t, l));                 //outRouter
 
         return s;
     }
 
     // ------------- SIGNAL EXTRACTORS ------------- ////
 
-    private static Double getTrajectoryValue(int t, int l) {
-        return data[l][t];
+    private static Double getTrajectoryValue(int l, int t) {
+        return ((double[][]) data.toArray()[0])[l][t];
     }
 
-    private static Integer getRouterLocation(int t, int l) {
+    private static Integer getRouterLocation(int l) {
         return l;
     }
 
-    private static Boolean isDevicePresent(int t, int l) {
+    private static Boolean isDevicePresent(int l, int t) {
         return sampleDevice().getFirst().get(t) == l;
     }
 
-    private static GridDirection getDeviceDirection(int t, int l) {
+    private static GridDirection getDeviceDirection(int l, int t) {
         return sampleDevice().getSecond().get(t);
     }
 
@@ -307,7 +348,7 @@ public class Erlang {
         return new Pair<>(positions, directions);
     }
 
-    //TODO: dynamize this methods...
+    //TODO: dynamize these methods...
     private static Integer getOutputRouter(int t, int l) {
         return 1;
     }

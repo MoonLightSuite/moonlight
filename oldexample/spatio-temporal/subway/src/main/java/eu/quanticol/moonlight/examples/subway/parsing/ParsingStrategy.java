@@ -1,8 +1,11 @@
-package eu.quanticol.moonlight.examples.subway.Parsing;
+package eu.quanticol.moonlight.examples.subway.parsing;
 
 /**
  * Generic interface that characterizes a parsing strategy
  * for gathering data from a String array (e.g. a text file).
+ *
+ * This strategy is supposed to have side-effects on the
+ * chosen output data structure.
  *
  * @param <T> the data structure that results from the parsing
  */

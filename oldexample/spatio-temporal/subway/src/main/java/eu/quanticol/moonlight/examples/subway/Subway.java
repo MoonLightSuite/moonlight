@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.subway;
 
+import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.DoubleDomain;
