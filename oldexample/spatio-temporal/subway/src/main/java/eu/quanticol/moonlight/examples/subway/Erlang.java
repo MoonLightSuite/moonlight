@@ -97,9 +97,8 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        List<? extends SpatialTemporalSignal> signalSet = toSignals(data);
-        //SpatialTemporalSignal<List<Comparable>> signal = createSTSignal(network.size(), timeSamples, Erlang::getMultiValuedSignal);
-        SpatialTemporalSignal<List<Comparable>> signal = signalSet.get(0);
+        List<MultiValuedSignal> signalSet = toSignals(data);
+        MultiValuedSignal signal = signalSet.get(0);
 
         //// We are considering a dynamic Location Service ///
         LocationService<Double> locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
@@ -108,12 +107,12 @@ public class Erlang {
         SpatialTemporalMonitor<Double, List<Comparable>, Boolean> safety = neighbourSafety();
         SpatialTemporalSignal<Boolean> output = safety.monitor(locService, signal);
         /*StatisticalModelChecker<Double, List<Comparable>, Boolean> smc =
-                new StatisticalModelChecker<Double, List<Comparable>, Boolean>(safety, data, locService);
+                new StatisticalModelChecker<Double, List<Comparable>, Boolean>(
+                safety, data, locService);
         smc.run();*/
         List<Signal<Boolean>> signals = output.getSignals();
 
-        System.out.println("The safety monitoring result is: " +
-                    signals.get(0).valueAt(0));
+        System.out.println("The safety monitoring result is: " + signals.get(0).valueAt(0));
 
         SpatialTemporalMonitor<Double, List<Comparable>, Boolean> liveness = communicationLiveness();
         output = liveness.monitor(locService, signal);
@@ -180,17 +179,27 @@ public class Erlang {
     // ------------- HELPERS ------------- //
 
 
-    private static List<MultiValuedSignal> toSignals(Collection<HashBiMap<Integer, Integer, Double>> input) {
+    /**
+     * Gathers the values to generate a multi-valued signal of the dimensions
+     * of interest from the input.
+     *
+     * @param input the data to be loaded
+     * @return a list of signals representing the 5-tuple:
+     * (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
+     */
+    private static List<MultiValuedSignal> toSignals(
+            Collection<HashBiMap<Integer, Integer, Double>> input) {
+
         List<MultiValuedSignal> signals = new ArrayList<>();
+
         for(HashBiMap<Integer, Integer, Double> s : input) {
             MultiValuedSignal signal = new MultiValuedSignal(network.size(), timeSamples);
-
-
 
             HashBiMap<Integer, Integer, Boolean> devConn = new HashBiMap<>();
             HashBiMap<Integer, Integer, GridDirection> devDir = new HashBiMap<>();
             HashBiMap<Integer, Integer, Integer> routerLoc = new HashBiMap<>();
             HashBiMap<Integer, Integer, Integer> outRouter = new HashBiMap<>();
+
             for(int l = 0; l < network.size(); l++) {
                 for(int t = 0; t < timeSamples; t++) {
                     devConn.put(l, t, isDevicePresent(l, t));
@@ -210,6 +219,7 @@ public class Erlang {
 
             signals.add(signal);
         }
+
         return signals;
     }
 
@@ -279,44 +289,7 @@ public class Erlang {
         return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
-    /*private <T extends Comparable<T>> T[][] toSTVector(BiFunction<Integer, Integer, T> f) {
-        Class<T> type = new T();
-        Array.newInstance(type, 10);
-        List<List<T>> data = new ArrayList<>();
-        for(int l = 0; l < network.size(); l++) {
-            List<T> timeSeries = new ArrayList<>();
-            for(int t = 0; t < timeSamples; t++) {
-                timeSeries.add(f.apply(t, l));
-            }
-            data.add(timeSeries);
-        }
-
-        List<T>[] test = (List<T>[]) data.toArray();
-        return o;
-    }*/
-
-    /**
-     * Gathers the values to generate a multi-valued signal of arbitrary dimensions
-     * @param t the time instant considered
-     * @param l the location considered
-     * @return a list representing the 5-tuple (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
-     */
-    private static List<Comparable> getMultiValuedSignal(int t, int l) {
-        List<Comparable> s = new ArrayList<>();
-        s.add(DEV_CONNECTED, isDevicePresent(t, l));              //devConnected
-        s.add(DEV_DIRECTION, getDeviceDirection(t, l));           //devDirection
-        s.add(LOC_ROUTER, getRouterLocation(l));               //locRouter
-        s.add(LOC_CROWDEDNESS, getTrajectoryValue(t, l));         //locCrowdedness
-        s.add(OUT_ROUTER, getOutputRouter(t, l));                 //outRouter
-
-        return s;
-    }
-
     // ------------- SIGNAL EXTRACTORS ------------- ////
-
-    private static Double getTrajectoryValue(int l, int t) {
-        return ((double[][]) data.toArray()[0])[l][t];
-    }
 
     private static Integer getRouterLocation(int l) {
         return l;
@@ -349,7 +322,7 @@ public class Erlang {
     }
 
     //TODO: dynamize these methods...
-    private static Integer getOutputRouter(int t, int l) {
+    private static Integer getOutputRouter(int l, int t) {
         return 1;
     }
 
