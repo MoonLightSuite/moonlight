@@ -1,11 +1,13 @@
 package eu.quanticol.moonlight.examples.subway;
 
 import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
 import eu.quanticol.moonlight.examples.subway.io.DataReader;
 import eu.quanticol.moonlight.examples.subway.io.FileType;
 import eu.quanticol.moonlight.examples.subway.parsing.*;
+import eu.quanticol.moonlight.examples.subway.statistics.StatisticalModelChecker;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDistance;
 import eu.quanticol.moonlight.formula.DoubleDomain;
@@ -49,7 +51,7 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectory.csv").getPath();
+    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectories_100.csv").getPath();
     private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
 
     /**
@@ -97,30 +99,35 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        List<MultiValuedSignal> signalSet = toSignals(data);
-        MultiValuedSignal signal = signalSet.get(0);
+        List<MultiValuedSignal> signals = toSignals(data);
+        MultiValuedSignal signal = signals.get(0);
 
         //// We are considering a dynamic Location Service ///
         LocationService<Double> locService = createOrientedLocSvc(sampleDevice().getFirst(), sampleDevice().getSecond());
 
         // Now we can monitor the system for the satisfaction of our properties
         SpatialTemporalMonitor<Double, List<Comparable>, Boolean> safety = neighbourSafety();
-        SpatialTemporalSignal<Boolean> output = safety.monitor(locService, signal);
-        /*StatisticalModelChecker<Double, List<Comparable>, Boolean> smc =
-                new StatisticalModelChecker<Double, List<Comparable>, Boolean>(
-                safety, data, locService);
-        smc.run();*/
-        List<Signal<Boolean>> signals = output.getSignals();
+        SpatialTemporalSignal<Boolean> result = safety.monitor(locService, signal);
 
-        System.out.println("The safety monitoring result is: " + signals.get(0).valueAt(0));
+        Signal<Boolean> output = result.getSignals().get(0);
+
+        System.out.println("The safety monitoring result is: " + output.valueAt(0));
 
         SpatialTemporalMonitor<Double, List<Comparable>, Boolean> liveness = communicationLiveness();
-        output = liveness.monitor(locService, signal);
-        signals = output.getSignals();
+        result = liveness.monitor(locService, signal);
+        output = result.getSignals().get(0);
 
 
-        System.out.println("The liveness monitoring result is: " +
-                    signals.get(0).valueAt(0));
+        System.out.println("The liveness monitoring result is: " + output.valueAt(0));
+
+        //Statistical Model Checking
+        StatisticalModelChecker<Double, List<Comparable>, Boolean> smc =
+                new StatisticalModelChecker<>( safety, signals, locService);
+        smc.compute();
+
+        for(SpatialTemporalSignal<Boolean> r : smc.getResults()) {
+            System.out.println("SMC Safety result: " + r.getSignals().get(0).valueAt(0));
+        }
     }
 
     // --------- FORMULAE --------- //

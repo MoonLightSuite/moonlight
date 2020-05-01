@@ -1,13 +1,10 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.examples.subway.data;
 
 
-import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Spatial-temporal signal that represents a generic signal of the kind
