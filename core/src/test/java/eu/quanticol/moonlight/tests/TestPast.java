@@ -5,15 +5,10 @@ import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalCursor;
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.SignalGenerator;
 import eu.quanticol.moonlight.util.TestUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,13 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestPast {
 
 
-//    private VariableArraySignal load(String name) throws IOException {
-//        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//        File file = new File(classLoader.getResource(name).getFile());
-//        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-//        return Deserializer.VARIABLE_ARRAY_SIGNAL.deserialize(contents);
-//    }
-
     @Test
     void testHistorically() throws IllegalFileFormat {
         //FORMULA: !H_[0,500]!(a>=0)
@@ -43,11 +31,11 @@ class TestPast {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
         try {
-        	RecordHandler factory = RecordHandler.createFactory(
-            		new Pair<String,DataHandler<?>>("a",DataHandler.REAL),
-            		new Pair<String,DataHandler<?>>("b",DataHandler.REAL)
-            	);
-        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            RecordHandler factory = RecordHandler.createFactory(
+                    new Pair<String, DataHandler<?>>("a", DataHandler.REAL),
+                    new Pair<String, DataHandler<?>>("b", DataHandler.REAL)
+            );
+            String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
@@ -81,12 +69,12 @@ class TestPast {
         double onceEnd = 500.0;
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("traceIdentity/traceLaura.json").getFile());
-        	RecordHandler factory = RecordHandler.createFactory(
-            		new Pair<String,DataHandler<?>>("a",DataHandler.REAL),
-            		new Pair<String,DataHandler<?>>("b",DataHandler.REAL)
-            	);
-        	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+        RecordHandler factory = RecordHandler.createFactory(
+                new Pair<String, DataHandler<?>>("a", DataHandler.REAL),
+                new Pair<String, DataHandler<?>>("b", DataHandler.REAL)
+        );
+        String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+        Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
         Formula once = new OnceFormula(notA, new Interval(onceStart, onceEnd));
@@ -199,49 +187,88 @@ class TestPast {
         assertEquals(10.25, time, 0.0);
     }
 
-//    @Test
-//    void testHistorically3() {
-//        Signal<Double> signal = TestUtils.createSignal(0.0, 3.1, 0.1, x -> x);
-//        // errore per  Interval(0.1, 0.3)
-//        Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.2, 0.5));
-//        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
-//        monitoring.addProperty("test", p -> (x -> x));
-//        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
-//        Signal<Double> result = m.monitor(signal);
-//        // <3.1000000000000014>
-//        assertEquals(signal.end(), result.end(), 0.0);
-//        // dovrebbe partire da 0.1
-//        assertEquals(0.3, result.start(), 0.0);
-//    }
-
-    @Test void testHistorically4() {
-        double endTime = 3;
-        Signal<Double> signal = TestUtils.createSignal(0.0, endTime, 0.1, x -> x);
-        double a = 0;
-        double b = 3.3;
-        TemporalMonitor<Double,Double> monitor = TemporalMonitor.historicallyMonitor(TemporalMonitor.atomicMonitor(d -> d),
-                new DoubleDomain(),new Interval(a,b));
-        Signal<Double> output = monitor.monitor(signal);
-        assertTrue(output.isEmpty());
-//        assertEquals(signal.end(), output.end(), 0.0);
-//        assertEquals(1, output.start(), 0.0);
+    @Disabled("Michele")
+    @Test
+    void testHistoricallyFailsInternally() {
+        Signal<Double> signal = TestUtils.createSignal(0.0, 0.4, 0.1, x -> x);
+        // errore per  Interval(0.1, 0.3)
+        Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test", p -> (x -> x));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        Signal<Double> result = m.monitor(signal);
+        // <3.1000000000000014>
+        assertEquals(signal.end(), result.end(), 0.0);
+        // dovrebbe partire da 0.1
+        assertEquals(0.3, result.start(), 0.0);
     }
 
-    @Test void testOnce3() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 3, 0.1, x -> x);
-        TemporalMonitor<Double,Double> monitor = TemporalMonitor.onceMonitor(TemporalMonitor.atomicMonitor(d -> d),
-                new DoubleDomain(),new Interval(0.1,3));
-        Signal<Double> output = monitor.monitor(signal);
-        assertTrue(output.isEmpty());
+    @Disabled("Michele")
+    @Test
+    void testFormulasProduceASignalOfWrongLength() {
+        testHistoricallyFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
+        testOnceFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
+        testSinceFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
     }
 
-    @Test void testSince3() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 3, 0.1, x -> x);
-        TemporalMonitor<Double,Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(d -> d),
-                new Interval(0,3.1),
-                TemporalMonitor.atomicMonitor(d -> d),
-                new DoubleDomain());
+
+    @Test
+    void testFormulasProduceASignalOfRightLength() {
+        assertAll(
+                () -> testAllFormulasProduceASignalOfRightLength(0.0, 3.0, 0.0, 2.0)
+                //() -> testAllFormulasProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0)
+        );
+    }
+
+    void testAllFormulasProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
+        assertAll(
+                () -> testHistoricallyFormulaProduceASignalOfRightLength(signalLowerBound, signalUpperBound, formulaLowerBound, formulaUpperBound),
+                () -> testOnceFormulaProduceASignalOfRightLength(signalLowerBound, signalUpperBound, formulaLowerBound, formulaUpperBound),
+                () -> testSinceFormulaProduceASignalOfRightLength(signalLowerBound, signalUpperBound, formulaLowerBound, formulaUpperBound)
+        );
+    }
+
+    void testHistoricallyFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
+        double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
+        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        Function<Double, Double> atomicFormula = d -> d;
+        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        TemporalMonitor<Double, Double> monitor = TemporalMonitor.historicallyMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
+                new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
         Signal<Double> output = monitor.monitor(signal);
-        assertTrue(output.isEmpty());
+        assertAll(
+                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+
+        );
+    }
+
+    void testOnceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
+        double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
+        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        Function<Double, Double> atomicFormula = d -> d;
+        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        TemporalMonitor<Double, Double> monitor = TemporalMonitor.onceMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
+                new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
+        Signal<Double> output = monitor.monitor(signal);
+        assertAll(
+                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("ONCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("ONCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+
+        );
+    }
+
+    void testSinceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
+        double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
+        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        Function<Double, Double> atomicFormula = d -> d;
+        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        TemporalMonitor<Double, Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(atomicFormula), new Interval(formulaLowerBound, formulaUpperBound), TemporalMonitor.atomicMonitor(atomicFormula), new DoubleDomain());
+        Signal<Double> output = monitor.monitor(signal);
+        assertAll(
+                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("SINCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("SINCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+
+        );
     }
 }
