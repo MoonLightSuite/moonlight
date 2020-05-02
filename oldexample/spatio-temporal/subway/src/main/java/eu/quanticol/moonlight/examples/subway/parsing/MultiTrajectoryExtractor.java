@@ -13,7 +13,7 @@ import java.util.List;
  * s.t. (Integer space, Integer time) -> Double value
  *
  * @see HashBiMap for more info about the internal data structure.
- * @see TrajectoryExtractor for importing a single trajectory from a file.
+ * @see RawTrajectoryExtractor for importing a single trajectory from a file.
  */
 public class MultiTrajectoryExtractor implements ParsingStrategy<Collection<HashBiMap<Integer, Integer, Double>>> {
     private final int spaceNodes;

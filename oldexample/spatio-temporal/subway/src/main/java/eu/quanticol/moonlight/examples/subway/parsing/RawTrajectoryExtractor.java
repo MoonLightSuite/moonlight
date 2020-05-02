@@ -7,7 +7,7 @@ package eu.quanticol.moonlight.examples.subway.parsing;
  * @see MultiTrajectoryExtractor for importing multiple trajectories from the
  * same file.
  */
-public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
+public class RawTrajectoryExtractor implements ParsingStrategy<double[][]> {
     private final int spaceNodes;
     private int timePoints;
     private double[][] signal;  // [Space][Time] signal
@@ -18,7 +18,7 @@ public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
      * Initializes the spatial dimension of the spatio-temporal signal
      * @param spaceSize dimension of the space of interest
      */
-    public TrajectoryExtractor(int spaceSize) {
+    public RawTrajectoryExtractor(int spaceSize) {
         spaceNodes = spaceSize;
     }
 
@@ -41,7 +41,7 @@ public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
      */
     @Override
     public void process(String[] data) {
-        if(spaceIterator >= spaceNodes)
+        if (spaceIterator >= spaceNodes)
             throw new UnsupportedOperationException
                     ("Trajectory bigger than spatial dimension. Are you importing multiple trajectories?");
 

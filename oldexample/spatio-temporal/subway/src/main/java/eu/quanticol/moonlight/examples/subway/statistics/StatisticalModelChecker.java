@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.statistics;
 
+import eu.quanticol.moonlight.examples.subway.statistics.SignalStatistics.Statistics;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -45,7 +46,7 @@ public class StatisticalModelChecker<E,S,T> {
         samples = trajectorySamples;
         locService = locationService;
 
-        stats =  new SignalStatistics<>();
+        stats =  new SignalStatistics<SpatialTemporalSignal<T>>();
         results = new ArrayList<>();
     }
 
@@ -58,11 +59,11 @@ public class StatisticalModelChecker<E,S,T> {
      * and <code>stats</code>.
      */
     public void compute() {
-        for(SpatialTemporalSignal<S> s : samples) {
+        for (SpatialTemporalSignal<S> s : samples) {
 
             SpatialTemporalSignal<T> result = stats.record(
                                         () -> monitor.monitor(locService, s));
-            if(result != null)
+            if (result != null)
                 results.add(result);
         }
     }
@@ -71,8 +72,8 @@ public class StatisticalModelChecker<E,S,T> {
     /**
      * @return The results collected, following a <code>compute</code> execution
      */
-    public SignalStatistics<SpatialTemporalSignal<T>> getStats() {
-        return stats;
+    public Statistics getStats() {
+        return stats.analyze();
     }
 
     /**

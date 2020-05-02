@@ -74,7 +74,7 @@ public class Erlang {
     /**
      * Signal Dimensions (i.e. signal domain)
      */
-    private static final TrajectoryExtractor singleTraj = new TrajectoryExtractor(network.size());
+    private static final RawTrajectoryExtractor singleTraj = new RawTrajectoryExtractor(network.size());
     private static final MultiTrajectoryExtractor multiTraj = new MultiTrajectoryExtractor(network.size());
     private static final Collection<HashBiMap<Integer, Integer, Double>> data =
             new DataReader<>(TRAJECTORY_SOURCE, FileType.CSV, multiTraj).read();
@@ -125,9 +125,10 @@ public class Erlang {
                 new StatisticalModelChecker<>( safety, signals, locService);
         smc.compute();
 
-        for(SpatialTemporalSignal<Boolean> r : smc.getResults()) {
+        for (SpatialTemporalSignal<Boolean> r : smc.getResults()) {
             System.out.println("SMC Safety result: " + r.getSignals().get(0).valueAt(0));
         }
+        System.out.println("SMC Average Satsfiability: " + smc.getStats().toString());
     }
 
     // --------- FORMULAE --------- //
@@ -320,7 +321,7 @@ public class Erlang {
 
         // at every time instant i, the device is at position i
         // and is directed to South East.
-        for(int t = 0; t < timeSamples; t++) {
+        for (int t = 0; t < timeSamples; t++) {
             positions.add(t);
             directions.add(GridDirection.SE);
         }
