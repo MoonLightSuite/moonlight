@@ -17,3 +17,9 @@ output/
 api_resources/
 
 distribution/**/**
+distribution_files/matlab/moonlight/jar
+distribution_files/matlab/moonlight/script
+distribution_files/python/.ipynb_checkpoints/
+distribution_files/python/jar/
+distribution_files/java/
+!distribution_files/matlab/moonlight/script/.placeHolder

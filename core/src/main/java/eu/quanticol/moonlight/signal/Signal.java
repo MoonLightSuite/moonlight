@@ -109,12 +109,15 @@ public class Signal<T> {
      * @return last time step
      */
     public void addBefore(double t, T value) {
+        Segment<T> oldFirst = first;
         if (first == null) {
             startWith(t, value);
         } else {
             first = first.addBefore(t, value);
         }
-        size++;
+        if (first != oldFirst) {
+            size++;
+        }
     }
 
     /**
@@ -264,8 +267,12 @@ public class Signal<T> {
             @Override
             public void backward() {
                 if (current != null) {
-                    current = current.getPrevious();
-                    time = (current != null ? current.getTime() : Double.NaN);
+                    if (time>current.getTime()) {
+                        time = current.getTime();
+                    } else {
+                        current = current.getPrevious();
+                        time = (current != null ? current.getTime() : Double.NaN);
+                    }
                 }
             }
 
@@ -353,7 +360,8 @@ public class Signal<T> {
 
     public double[][] arrayOf(FunctionToDouble<T> f) {
         if (size == 0) {
-            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+            return new double[][] {};
+            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         int arraySize = size;
         if (!last.isAPoint()) {

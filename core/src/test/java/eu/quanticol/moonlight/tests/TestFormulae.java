@@ -110,4 +110,24 @@ class TestFormulae {
         }
         assertEquals(10.25, time, 0.0);
     }
+
+    @Test
+    void testOnce() {
+        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
+        Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test", p -> (x -> x));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
+        Signal<Double> result = m.monitor(signal);
+        assertEquals(signal.end() - 5.0, result.end(), 0.0);
+        assertEquals(signal.start(), result.start(), 0.0);
+        SignalCursor<Double> c = result.getIterator(true);
+        double time = 5.0;
+        while (!c.completed()) {
+            assertEquals(c.time() + 5.0, c.value(), 0.0000001);
+            c.forward();
+            time += 0.1;
+        }
+        assertTrue(time > 10.0);
+    }
 }
