@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.examples.subway;
+package eu.quanticol.moonlight.examples.subway.grid;
 
 public enum GridDirection {
 

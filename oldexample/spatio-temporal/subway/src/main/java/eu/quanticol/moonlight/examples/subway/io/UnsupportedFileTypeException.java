@@ -1,4 +1,6 @@
-package eu.quanticol.moonlight.examples.subway.Parsing;
+package eu.quanticol.moonlight.examples.subway.io;
+
+import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
 
 /**
  * Exception raised when trying to parse an unsupported file type.

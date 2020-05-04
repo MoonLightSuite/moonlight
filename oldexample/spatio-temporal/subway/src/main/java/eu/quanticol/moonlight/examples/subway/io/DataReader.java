@@ -1,8 +1,6 @@
-package eu.quanticol.moonlight.examples.subway;
+package eu.quanticol.moonlight.examples.subway.io;
 
-import eu.quanticol.moonlight.examples.subway.Parsing.FileType;
-import eu.quanticol.moonlight.examples.subway.Parsing.ParsingStrategy;
-import eu.quanticol.moonlight.examples.subway.Parsing.UnsupportedFileTypeException;
+import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -1,11 +1,14 @@
-package eu.quanticol.moonlight.examples.subway.Parsing;
+package eu.quanticol.moonlight.examples.subway.parsing;
 
 /**
  * Parsing strategy that generates a double[][] spatio-temporal signal
  * based on a set of String-based time series
+ *
+ * @see MultiTrajectoryExtractor for importing multiple trajectories from the
+ * same file.
  */
-public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
-    private int spaceNodes;
+public class RawTrajectoryExtractor implements ParsingStrategy<double[][]> {
+    private final int spaceNodes;
     private int timePoints;
     private double[][] signal;  // [Space][Time] signal
 
@@ -15,7 +18,7 @@ public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
      * Initializes the spatial dimension of the spatio-temporal signal
      * @param spaceSize dimension of the space of interest
      */
-    public TrajectoryExtractor(int spaceSize) {
+    public RawTrajectoryExtractor(int spaceSize) {
         spaceNodes = spaceSize;
     }
 
@@ -38,8 +41,7 @@ public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
      */
     @Override
     public void process(String[] data) {
-        //TODO: add here control: if spaceIterator == spaceNode then new trajectory
-        if(spaceIterator >= spaceNodes)
+        if (spaceIterator >= spaceNodes)
             throw new UnsupportedOperationException
                     ("Trajectory bigger than spatial dimension. Are you importing multiple trajectories?");
 
@@ -56,5 +58,12 @@ public class TrajectoryExtractor implements ParsingStrategy<double[][]> {
     @Override
     public double[][] result() {
         return signal;
+    }
+
+    /**
+     * @return the number of samples expected to be in the trajectory
+     */
+    public int getTimePoints() {
+        return timePoints;
     }
 }
