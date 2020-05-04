@@ -68,8 +68,8 @@ public class SlidingWindow<R> {
 		if (isFuture&&(window.size()==size)) {
 			result.add(timeOf(window.firstTime()), window.firstValue());	
 		}
-		if ((!isFuture)&&(s.end()==window.end)&&(window.size()==size)) {
-			result.add(timeOf(window.firstTime()), window.firstValue());	
+		if ((!isFuture)&&(s.end()==window.end)&&(window.size()>=size)) {
+			result.add(timeOf(window.firstTime()), window.firstValue());
 		}
 		return result;
 	}
@@ -82,7 +82,8 @@ public class SlidingWindow<R> {
 		if (isFuture) {
 			return t-a;
 		} else {
-			return t+a+size;
+			return t+size;
+//			return t+a+size;
 		}
 	}
 

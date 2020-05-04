@@ -187,7 +187,6 @@ class TestPast {
         assertEquals(10.25, time, 0.0);
     }
 
-    @Disabled("Michele")
     @Test
     void testHistoricallyFailsInternally() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 0.4, 0.1, x -> x);
@@ -203,7 +202,6 @@ class TestPast {
         assertEquals(0.3, result.start(), 0.0);
     }
 
-    @Disabled("Michele")
     @Test
     void testFormulasProduceASignalOfWrongLength() {
         testHistoricallyFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
@@ -230,7 +228,7 @@ class TestPast {
 
     void testHistoricallyFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.historicallyMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
@@ -245,7 +243,7 @@ class TestPast {
 
     void testOnceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.onceMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
@@ -260,7 +258,7 @@ class TestPast {
 
     void testSinceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(atomicFormula), new Interval(formulaLowerBound, formulaUpperBound), TemporalMonitor.atomicMonitor(atomicFormula), new DoubleDomain());
