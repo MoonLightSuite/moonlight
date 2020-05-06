@@ -51,8 +51,8 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectories_100.csv").getPath();
-    private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
+    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("ntrajectories_100_n1_24_n2_27_T_672.csv").getPath();
+    private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix_n1_24_n2_27_T_672.txt").getPath();
 
     /**
      * Numeric constants of the problem
@@ -99,6 +99,8 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
+        System.out.println("The network size is: " + network.size());
+
         List<MultiValuedSignal> signals = toSignals(data);
         MultiValuedSignal signal = signals.get(0);
 

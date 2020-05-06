@@ -20,6 +20,8 @@ public class DataReader<T> {
     private String path;
     private ParsingStrategy<T> strategy;
 
+    private final int BEGINNING_OF_FILE = 0;
+
     /**
      * Reader initialization
      * @param path the path to the data source file
@@ -42,13 +44,13 @@ public class DataReader<T> {
             BufferedReader fileReader = new BufferedReader(new FileReader(path));
 
             // Read the first line to initialize the parser
-            readHeader(fileReader);
+            fileReader = readHeader(fileReader);
 
             // Process the data
             readLines(fileReader);
 
             fileReader.close();
-        } catch (IOException | UnsupportedFileTypeException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -62,18 +64,27 @@ public class DataReader<T> {
      * @param fileReader buffer to the file to read
      * @throws IOException when a new line can't be read
      */
-    private void readHeader(BufferedReader fileReader) throws IOException {
-        // Warning: hack!! Headers longer than 500 chars will break this method!
-        int headerLimit = 500;
-        fileReader.mark(headerLimit);
+    private BufferedReader readHeader(BufferedReader fileReader) throws IOException {
+        // Warning: hack!! Headers longer than headerLimit chars will break this method!
+        //int headerLimit = 1300;
+        //fileReader.mark(BEGINNING_OF_FILE);
+
         String header = fileReader.readLine();
-        if (headerLimit < header.length())
-            throw new IOException("File's first line exceeds the maximum string length of " + headerLimit);
+
+        //fileReader.mark(header.length());
+        //if (headerLimit < header.length())
+        //    throw new IOException("File's first line exceeds the maximum string length of " + headerLimit);
 
         strategy.initialize(splitLine(header));
 
-        if (FileType.TEXT == type)
-            fileReader.reset();
+        // Text files have header that coincides with the first line of data
+        // so we reset
+        if (FileType.TEXT == type) {
+            fileReader.close();
+            fileReader = new BufferedReader(new FileReader(path));
+        }
+
+        return fileReader;
     }
 
     /**
@@ -96,7 +107,8 @@ public class DataReader<T> {
         else if (FileType.TEXT == type)
             data = line.split(" ");
         else
-            throw new UnsupportedFileTypeException("The file format doesn't comply with the allowed ones.");
+            throw new UnsupportedFileTypeException(
+                    "The file format doesn't comply with the allowed ones.");
 
         return data;
     }
