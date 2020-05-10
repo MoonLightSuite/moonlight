@@ -56,4 +56,39 @@ public class DoubleDomain implements SignalDomain<Double> {
 		return Double.POSITIVE_INFINITY;
 	}
 
+	@Override
+	public Double valueOf(boolean b) {
+		return (b?Double.POSITIVE_INFINITY:Double.NEGATIVE_INFINITY);
+	}
+
+	@Override
+	public Double valueOf(double v) {
+		return v;
+	}
+
+	@Override
+	public Double computeLessThan(double v1, double v2) {
+		return v2-v1;
+	}
+
+	@Override
+	public Double computeLessOrEqualThan(double v1, double v2) {
+		return v2-v1;
+	}
+
+	@Override
+	public Double computeEqualTo(double v1, double v2) {
+		return -Math.abs(v1-v2);
+	}
+
+	@Override
+	public Double computeGreaterThan(double v1, double v2) {
+		return v1-v2;
+	}
+
+	@Override
+	public Double computeGreaterOrEqualThan(double v1, double v2) {
+		return v1-v2;
+	}
+
 }

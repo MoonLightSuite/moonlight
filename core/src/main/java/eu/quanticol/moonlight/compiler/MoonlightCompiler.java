@@ -1,6 +1,8 @@
 package eu.quanticol.moonlight.compiler;
 
 import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
+import eu.quanticol.moonlight.MoonLightTemporalScript;
 
 import javax.tools.*;
 import java.io.File;
@@ -70,4 +72,14 @@ public class MoonlightCompiler {
     public MoonLightScript getIstance(String packageName, String className, String source) throws IOException, ReflectiveOperationException {
         return getIstance(packageName, className, source, MoonLightScript.class);
     }
+    
+    public MoonLightTemporalScript loadTemporalScript(String packageName, String className, String source) throws IOException, ReflectiveOperationException {
+        return getIstance(packageName, className, source, MoonLightTemporalScript.class);
+    }
+
+    public MoonLightSpatialTemporalScript loadSpatialTemporalScript(String packageName, String className, String source) throws IOException, ReflectiveOperationException {
+        return getIstance(packageName, className, source, MoonLightSpatialTemporalScript.class);
+    }
+
+    
 }

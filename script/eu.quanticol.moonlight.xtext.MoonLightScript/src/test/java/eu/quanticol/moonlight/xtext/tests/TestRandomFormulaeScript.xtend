@@ -26,12 +26,9 @@ class TestRandomFormulaeScript {
   @Test
   def void loadModel() {
   		val result = parseHelper.parse('''
-   			monitor RandomFormulae {
-      				signal { real x; real y; real z;}
-      				domain minmax;
-      				formula globally  [73.01,98.272]  !#[ x ]#;
-      			}
-
+			signal { real x; real y; real z;}
+			domain minmax;
+			formula aFormula = globally  [73.01,98.272] ( x > 0 );
   		''')
     Assertions.assertNotNull(result)
     val errors = result.eResource.errors
@@ -41,12 +38,9 @@ class TestRandomFormulaeScript {
   @Test
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
-   			monitor RandomFormulae {
-      				signal { real x; real y; real z;}
-      				domain minmax;
-      				formula globally [73.01,98.272] !#[ x ]#;
-      			}
-
+			signal { real x; real y; real z;}
+			domain minmax;
+			formula aFormula = globally  [73.01,98.272] ( x > 0);
   		''')
   		val scriptToJava = new ScriptToJava();
   		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","RandomFormulae")

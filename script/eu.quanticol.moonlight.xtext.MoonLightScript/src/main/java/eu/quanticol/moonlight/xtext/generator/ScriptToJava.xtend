@@ -1,62 +1,64 @@
 package eu.quanticol.moonlight.xtext.generator
 
-import eu.quanticol.moonlight.xtext.moonLightScript.Model
-import eu.quanticol.moonlight.xtext.moonLightScript.Monitor
-import eu.quanticol.moonlight.xtext.moonLightScript.SemiringExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.MinMaxSemiring
-import eu.quanticol.moonlight.xtext.moonLightScript.BooleanSemiring
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelOrFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelAndFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelSinceFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.Expression
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelUntilFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelAtomicFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelEventuallyFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelAlwaysFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelFormulaReference
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelHistoricallyFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelOnceFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelEscapeFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelSomewhereFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelEverywhereFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelReachFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.TypeDefinition
-import eu.quanticol.moonlight.xtext.moonLightScript.OrExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.AndExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.RelationExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.PlusExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.BasicType
+import eu.quanticol.moonlight.xtext.moonLightScript.BinaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.BooleanSemiring
+import eu.quanticol.moonlight.xtext.moonLightScript.BooleanType
+import eu.quanticol.moonlight.xtext.moonLightScript.Expression
+import eu.quanticol.moonlight.xtext.moonLightScript.FalseLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.FormulaDeclaration
+import eu.quanticol.moonlight.xtext.moonLightScript.IfThenElseExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.IntegerType
+import eu.quanticol.moonlight.xtext.moonLightScript.MinMaxSemiring
 import eu.quanticol.moonlight.xtext.moonLightScript.MinusExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.Model
 import eu.quanticol.moonlight.xtext.moonLightScript.ModuloExpression
 import eu.quanticol.moonlight.xtext.moonLightScript.MulOrDivExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.TrueLiteral
-import eu.quanticol.moonlight.xtext.moonLightScript.FalseLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.NotExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.UnaryPlusExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMinusExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.IfThenElseExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.OrExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.PlusExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.RealType
 import eu.quanticol.moonlight.xtext.moonLightScript.ReferencedValue
+import eu.quanticol.moonlight.xtext.moonLightScript.RelationExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.SemiringExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelAlwaysFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelAndFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelAtomicFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelEscapeFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelEventuallyFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelEverywhereFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelFormulaReference
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelHistoricallyFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelImplyFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelNotFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelOnceFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelOrFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelReachFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelSinceFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelSomewhereFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.StrelUntilFormula
+import eu.quanticol.moonlight.xtext.moonLightScript.TrueLiteral
+import eu.quanticol.moonlight.xtext.moonLightScript.TypeReference
+import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMathFunction
+import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMinusExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.UnaryPlusExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
+import org.eclipse.emf.common.util.EList
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import eu.quanticol.moonlight.xtext.moonLightScript.BasicType
-import eu.quanticol.moonlight.xtext.moonLightScript.IntegerType
-import eu.quanticol.moonlight.xtext.moonLightScript.RealType
-import eu.quanticol.moonlight.xtext.moonLightScript.BooleanType
-import eu.quanticol.moonlight.xtext.moonLightScript.TypeReference
-import org.eclipse.emf.common.util.EList
-import eu.quanticol.moonlight.xtext.moonLightScript.VariableDeclaration
-import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
-import eu.quanticol.moonlight.xtext.moonLightScript.RealLiteral
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelNotFormula
-import eu.quanticol.moonlight.xtext.moonLightScript.UnaryMathFunction
-import eu.quanticol.moonlight.xtext.moonLightScript.BinaryMathFunction
-import eu.quanticol.moonlight.xtext.moonLightScript.StrelImplyFormula
 
 class ScriptToJava {
 	
 	val edgeRecord = "edge"
 	val signalRecord = "signal"
-	val parameterRecord = "parameters"
+	val edgeRecordHandler = "_edge_handler_"
+	val outputHandler = "_output_handler_"
+	val signalHandler = "_signal_handler_"
+	val signalDomain = "_signal_domain_"
 	
 	def getJavaCode( Model model, String packageName , String className ) {
 		'''
@@ -77,9 +79,9 @@ class ScriptToJava {
 		import java.util.HashMap;
 		
 		
-		public class «className» extends MoonLightScript {			
+		public class «className» extends «IF model.isIsSpatial»MoonLightSpatialTemporalScript«ELSE»MoonLightTemporalScript«ENDIF» {			
 			
-			«FOR generatedEnum: model.elements.filter(typeof(TypeDefinition))»
+			«FOR generatedEnum: model.types»
 			public static enum «generatedEnum.name» {
 				«FOR e: generatedEnum.elements SEPARATOR ','»	
 				«e.name»
@@ -87,65 +89,73 @@ class ScriptToJava {
 			}
 			«ENDFOR»
 						
-			«FOR m: model.elements.filter(typeof(Monitor))»
-			private final SignalDomain<«m.semiring.javaTypeOf»> «m.name.domainVariable» = new «m.semiring.domainOf»();
+			private final SignalDomain<«model.semiring.javaTypeOf»> «signalDomain» = new «model.semiring.domainOf»();
+
+			«IF model.isIsSpatial» 
+			private RecordHandler «edgeRecordHandler» = generateEdgesRecordHandler();
+			
+			private static RecordHandler generateEdgesRecordHandler() {
+				«model.edgeVariables.recordHandlerCreationCode»
+			}
+			«ENDIF»
+			
+			private DataHandler<«model.semiring.javaTypeOf»> «outputHandler» = «model.semiring.dataHandlerOf»;
+			
+			
+			private RecordHandler «signalHandler» = generateSignalRecordHandler();
+					
+			private static RecordHandler generateSignalRecordHandler() {
+				«model.signalVariables.recordHandlerCreationCode»
+			}
+			
+			«FOR f: model.formulas»
+			«f.generateGenerateFormulaBuilderDeclaration(model)»
 			«ENDFOR»
 			
-			«FOR m: model.elements.filter(typeof(Monitor))»
-			«m.formula.generateGenerateFormulaBuilderDeclaration("main",m)»
-			«FOR f: m.subformulas»
-			«f.formula.generateGenerateFormulaBuilderDeclaration(f.name,m)»
-			«ENDFOR»
+			«FOR f: model.formulas»
+			«f.generateMonitorDataHandlers»
 			«ENDFOR»
 			
-			«FOR m: model.elements.filter(typeof(Monitor))»
-			«m.generateMonitorDataHandlers»
-			«ENDFOR»
-			
-			«FOR m: model.elements.filter(typeof(Monitor))»
-			«m.generateMonitorDeclaration»
+			«FOR f: model.formulas»
+			«f.generateMonitorDeclaration(model)»
 			«ENDFOR»
 			
 			public «className»() {
 				super( new String[] { 
-					«FOR m: model.elements.filter(typeof(Monitor)).filter[!it.isIsSpatial] SEPARATOR ','»
-					"«m.name»"
-					«ENDFOR»					
-				}, 
-				new String[] {
-					«FOR m: model.elements.filter(typeof(Monitor)).filter[it.isIsSpatial] SEPARATOR ","»
-					"«m.name»"
+					«FOR f: model.formulas SEPARATOR ','»
+					"«f.name»"
 					«ENDFOR»					
 				});	
 			}
 		
-			@Override
-			public TemporalScriptComponent<?> selectTemporalComponent( String name ) {
-				«FOR m: model.elements.filter(typeof(Monitor)).filter[!it.isIsSpatial]»
-				if ("«m.name»".equals( name ) ) {
-					return 	MONITOR_«m.name»; 
-				}
-				«ENDFOR»
-				return null;					
-			}				
-
+		«IF model.isIsSpatial»
 			public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent( String name ) {
-				«FOR m: model.elements.filter(typeof(Monitor)).filter[it.isIsSpatial]»
-				if ("«m.name»".equals( name ) ) {
-					return 	MONITOR_«m.name»; 
+				«FOR f: model.formulas»
+				if ("«f.name»".equals( name ) ) {
+					return 	MONITOR_«f.name»; 
 				}
 				«ENDFOR»
 				return null;
 			}
+			
+			public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
+				return «generateReferenceToDefaultFormula(model.formulas)»;
+			}
+		«ELSE»			
+			@Override
+			public TemporalScriptComponent<?> selectTemporalComponent( String name ) {
+				«FOR f: model.formulas»
+				if ("«f.name»".equals( name ) ) {
+					return 	MONITOR_«f.name»; 
+				}
+				«ENDFOR»
+				return «generateReferenceToDefaultFormula(model.formulas)»;					
+			}				
 
 			public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
-				return «model.elements.filter(typeof(Monitor)).filter[!it.isIsSpatial].generateReferenceToDefaultMonitor»;	
+				return «generateReferenceToDefaultFormula(model.formulas)»;
 			}
-				
-			public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
-				return «model.elements.filter(typeof(Monitor)).filter[it.isIsSpatial].generateReferenceToDefaultMonitor»;	
-			}
-		
+		«ENDIF»						
 		
 		}
 		'''
@@ -153,36 +163,25 @@ class ScriptToJava {
 		
 	}
 	
-	def generateReferenceToDefaultMonitor( Iterable<Monitor> list ) {
-		if (list.empty) {
+	def generateReferenceToDefaultFormula( Iterable<FormulaDeclaration> list ) {
+		var f = list.findFirst[it.isIsDefault];
+		if (f === null) {
+			f = list.get(0)
+		}
+		if (f === null) {
 			return '''null'''
 		} else {
-			return '''MONITOR_«list.get(0).name»'''
+			return '''MONITOR_«f.name»'''
 		}
 	}
 	
-	def CharSequence generateMonitorDataHandlers(Monitor monitor) {
+	def CharSequence generateMonitorDataHandlers(FormulaDeclaration formulaDeclaration) {
 		'''
-		private RecordHandler «monitor.name.signalRecordHandlerName» = generate«monitor.name»SignalRecordHandler();
+		private RecordHandler «formulaDeclaration.name.parametersRecordHandlerName» = generate«formulaDeclaration.name»ParametersRecordHandler();
 		
-		private static RecordHandler generate«monitor.name»SignalRecordHandler() {
-			«monitor.signalVariables.recordHandlerCreationCode»
+		private static RecordHandler generate«formulaDeclaration.name»ParametersRecordHandler() {
+			«formulaDeclaration.parameters.recordHandlerCreationCode»
 		}
-		
-		private RecordHandler «monitor.name.parametersRecordHandlerName» = generate«monitor.name»ParametersRecordHandler();
-		
-		private static RecordHandler generate«monitor.name»ParametersRecordHandler() {
-			«monitor.parameters.recordHandlerCreationCode»
-		}
-		«IF monitor.isIsSpatial» 
-		private RecordHandler «monitor.name.edgeRecordHandlerName» = generate«monitor.name»EdgesRecordHandler();
-		
-		private static RecordHandler generate«monitor.name»EdgesRecordHandler() {
-			«monitor.edgeVariables.recordHandlerCreationCode»
-		}
-		«ENDIF»
-		
-		private DataHandler<«monitor.semiring.javaTypeOf»> «monitor.name.dataOutputHandlerName» = «monitor.semiring.dataHandlerOf»;
 		'''
 	}
 	
@@ -237,40 +236,64 @@ class ScriptToJava {
 		return "_domain_"+name
 	}
 
-	def  generateGenerateFormulaBuilderDeclaration(StrelFormula f, String name, Monitor monitor) {
-		if (monitor.isIsSpatial) {
+	def  generateGenerateFormulaBuilderDeclaration(FormulaDeclaration f, Model model) {
+		if (model.isIsSpatial) {
 			'''
-			private SpatialTemporalMonitor<Record,Record,«monitor.semiring.javaTypeOf»> «monitorSubFormulaName(monitor.name,name)»( Record parameters ) {
-				return «f.SpatialTemporalMonitorCode(monitor.name,monitor.name.domainVariable)»;	
+			private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( Record parameters ) {				
+				return «monitorSubFormulaName(f.name)»( 
+					«FOR p:f.parameters SEPARATOR ','»
+					((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
+					«ENDFOR»					
+				);				
+			}
+			
+			private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
+				«FOR p:f.parameters SEPARATOR ','»
+				«p.type.basicTypeOf» «p.name»
+				«ENDFOR»
+			) {
+				return «f.formula.SpatialTemporalMonitorCode(f.name,signalDomain)»;	
 			}			
 			'''
 		} else {
 			'''
-			private TemporalMonitor<Record,«monitor.semiring.javaTypeOf»> «monitorSubFormulaName(monitor.name,name)» ( Record parameters ) {
-				return «f.temporalMonitorCode(monitor.name,monitor.name.domainVariable)»;	
+			private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)» ( Record parameters ) {
+				return «monitorSubFormulaName(f.name)»( 
+					«FOR p:f.parameters SEPARATOR ','»
+					((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
+					«ENDFOR»					
+				);				
+			}
+						
+			private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
+				«FOR p:f.parameters SEPARATOR ','»
+				«p.type.basicTypeOf» «p.name»
+				«ENDFOR»
+			) {
+				return «f.formula.temporalMonitorCode(f.name,signalDomain)»;	
 			}
 			'''
 		}
 	}
 	
 	
-	def  generateMonitorDeclaration(Monitor monitor) {
-		if (monitor.isIsSpatial) {
-			'''private SpatialTemporalScriptComponent<«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = new SpatialTemporalScriptComponent<>(
-				"«monitor.name»" ,
-				«monitor.name.edgeRecordHandlerName» ,
-				«monitor.name.signalRecordHandlerName» ,
-				«monitor.name.dataOutputHandlerName» ,
-				«monitor.name.parametersRecordHandlerName» ,
-				r -> «monitorSubFormulaName(monitor.name,"main")»( r )	
+	def  generateMonitorDeclaration(FormulaDeclaration formulaDeclaration, Model model) {
+		if (model.isIsSpatial) {
+			'''private SpatialTemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new SpatialTemporalScriptComponent<>(
+				"«formulaDeclaration.name»" ,
+				«edgeRecordHandler» ,
+				«signalHandler» ,
+				«outputHandler» ,
+				«formulaDeclaration.name.parametersRecordHandlerName» ,
+				r -> «monitorSubFormulaName(formulaDeclaration.name)»( r )	
 			);'''
 		} else {
-			'''private TemporalScriptComponent<«monitor.semiring.javaTypeOf»> MONITOR_«monitor.name» = new TemporalScriptComponent<>(
-				"«monitor.name»" ,
-				«monitor.name.signalRecordHandlerName» ,
-				«monitor.name.dataOutputHandlerName» ,
-				«monitor.name.parametersRecordHandlerName» ,
-				r -> «monitorSubFormulaName(monitor.name,"main")»( r )	
+			'''private TemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new TemporalScriptComponent<>(
+				"«formulaDeclaration.name»" ,
+				«signalHandler» ,
+				«outputHandler» ,
+				«formulaDeclaration.name.parametersRecordHandlerName» ,
+				r -> «monitorSubFormulaName(formulaDeclaration.name)»( r )	
 			);'''
 		}
 	}
@@ -314,15 +337,10 @@ class ScriptToJava {
 		}
 	}
 	
-	def CharSequence monitorSubFormulaName(String monitorName, String formulaName ) {
-		'''«monitorName»_«formulaName»'''
+	def CharSequence monitorSubFormulaName(String formulaName ) {
+		'''_FORMULA_«formulaName»'''
 	}
 
-	def CharSequence monitorMainFormulaName(String monitorName, String formulaName ) {
-		'''«monitorName»_main'''
-	}
-	
-	
 	def dispatch CharSequence temporalMonitorCode(StrelFormula f, String prefix, String domain) {
 		throw new IllegalArgumentException("Unexpected formula in temporal monitoring ("+f.class+") in monitor "+prefix);
 	} 
@@ -387,7 +405,7 @@ class ScriptToJava {
 	def dispatch CharSequence temporalMonitorCode(StrelAtomicFormula f, String prefix, String domain) {
 		'''
 		TemporalMonitor.atomicMonitor( 
-			«signalRecord» -> «f.atomic.expressionToJava»
+			«signalRecord» -> «f.atomic.buildAtomicFormula»
 		)
 		'''
 	}
@@ -448,7 +466,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence temporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 		'''
-		«prefix»_FORMULA_«f.reference.name»'(' parameters ')'
+		«prefix»_FORMULA_«f.reference.name»'(' «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» ')'
 		'''		
 	}
 
@@ -527,7 +545,7 @@ class ScriptToJava {
 	def dispatch CharSequence SpatialTemporalMonitorCode(StrelAtomicFormula f, String prefix, String domain) {
 	  '''
 	  SpatialTemporalMonitor.atomicMonitor( 
-	    «signalRecord» -> «f.atomic.expressionToJava»
+	    «signalRecord» -> «f.atomic.buildAtomicFormula»
 	  )
 	  '''
 	}
@@ -636,9 +654,38 @@ class ScriptToJava {
 	  '''		
 	}
 	
+	
+	def dispatch CharSequence buildAtomicFormula(Expression expression) {
+		'''«signalDomain».valueOf(«expression.expressionToJava»)'''		
+	}
 
-	
-	
+	def dispatch CharSequence buildAtomicFormula(OrExpression expression) {
+		'''«signalDomain».disjunction((«expression.left.buildAtomicFormula»),(«expression.right.buildAtomicFormula»))'''	
+	}
+
+	def dispatch CharSequence buildAtomicFormula(AndExpression expression) {
+		'''«signalDomain».conjunction((«expression.left.buildAtomicFormula»),(«expression.right.buildAtomicFormula»))'''	
+	}
+
+	def CharSequence relationMethod( String op ) {
+		switch (op) {
+			case '<': '''computeLessThan'''
+			case '<=': '''computeLessOrEqual'''
+			case '==': '''computeEqualTo'''
+			case '>': '''computeGreaterThan'''
+			case '>=':	'''computeGreaterOrEqualThan'''
+		}
+		
+	}
+
+	def dispatch CharSequence buildAtomicFormula(RelationExpression expression) {
+		'''«signalDomain».«expression.op.relationMethod»((«expression.left.expressionToJava»),(«expression.right.expressionToJava»))'''	
+	}
+
+	def dispatch CharSequence buildAtomicFormula(NotExpression expression) {
+		'''«signalDomain».negation(«expression.argument.expressionToJava»)'''	
+	}
+
 	def dispatch CharSequence getExpressionToJava(Expression expression) {
 		'''1.0'''
 		
@@ -706,15 +753,16 @@ class ScriptToJava {
 	
 	def dispatch CharSequence getExpressionToJava(ReferencedValue expression) {
 		val variable = expression.reference
-		val monitor = variable.getContainerOfType(typeof(Monitor))
-		if (monitor.signalVariables.contains(variable)) {
-			return '''((«variable.type.basicTypeOf») «signalRecord».get(«monitor.signalVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
+		val model = variable.getContainerOfType(typeof(Model))
+		val formula = variable.getContainerOfType(typeof(FormulaDeclaration))
+		if (model.signalVariables.contains(variable)) {
+			return '''((«variable.type.basicTypeOf») «signalRecord».get(«model.signalVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
 		}
-		if (monitor.edgeVariables.contains(variable)) {
-			return '''((«variable.type.basicTypeOf») «edgeRecord».get(«monitor.edgeVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
+		if (model.edgeVariables.contains(variable)) {
+			return '''((«variable.type.basicTypeOf») «edgeRecord».get(«model.edgeVariables.indexOf(variable)»,«variable.type.toJavaType»))'''
 		}
-		if (monitor.parameters.contains(variable)) {
-			return '''((«variable.type.basicTypeOf») «parameterRecord».get(«monitor.parameters.indexOf(variable)»,«variable.type.toJavaType»))'''
+		if (formula.parameters.contains(variable)) {
+			return '''«variable.name»'''
 		}
 	}
 	

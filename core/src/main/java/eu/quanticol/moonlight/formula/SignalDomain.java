@@ -29,4 +29,22 @@ public interface SignalDomain<R> extends Semiring<R> {
 		return disjunction(negation(x), y);
 	}
 	
+	R valueOf(boolean b);
+	
+	R valueOf(double v);
+	
+	default R valueOf(int v) {
+		return valueOf((double) v);
+	}
+	
+	R computeLessThan(double v1, double v2);
+
+	R computeLessOrEqualThan(double v1, double v2);
+
+	R computeEqualTo(double v1, double v2);
+	
+	R computeGreaterThan(double v1, double v2);
+	
+	R computeGreaterOrEqualThan(double v1, double v2);
+
 }

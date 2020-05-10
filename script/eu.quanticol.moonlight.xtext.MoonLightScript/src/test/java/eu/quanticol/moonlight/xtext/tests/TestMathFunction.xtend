@@ -26,41 +26,38 @@ class TestMathFunction {
   @Test
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
-            monitor TestMathFunction {
                 signal { real x; real y; }
                 domain minmax;
-                formula #[ x+y ]#;
-                where 
-                testAbs = #[ abs(x) ]#;
-                testACos = #[ acos(x) ]#;
-                testASin = #[ asin(x) ]#;
-                testATan = #[ atan(x) ]#;
-                testCbrt = #[ cbrt(x) ]#;
-                testCeil = #[ ceil(x) ]#;
-                testCos = #[ cos(x) ]#;
-                testCosh = #[ cosh(x) ]#;
-                testExp = #[ exp(x) ]#;
-                testExpm1 = #[ expm1(x) ]#;
-                testFloor = #[ floor(x) ]#;
-                testGetExponent = #[ getExponent(x) ]#;
-                testLog = #[ log(x) ]#;
-                testLog10 = #[ log10(x) ]#;
-                testLog1p = #[ log1p(x) ]#;
-                testSignum = #[ signum(x) ]#;
-                testSin = #[ sin(x) ]#;
-                testSinh = #[ sinh(x) ]#;
-                testSqrt = #[ sqrt(x) ]#;
-                testTan = #[ tan(x) ]#;
-                testAtan2 = #[ atan2(x,y) ]#
-                testHypot = #[ hypot(x,y) ]#
-                testMax = #[ max(x,y) ]#
-                testMin = #[ min(x,y) ]#
-                testPow = #[ pow(x,y) ]#
-             }
-
+                formula mainFormula = ( x+y > 0 );
+                formula testAbs = ( abs(x) > 0);
+                formula testACos = ( acos(x) > 0);
+                formula testASin = ( asin(x) > 0);
+                formula testATan = ( atan(x) > 0);
+                formula testCbrt = ( cbrt(x) > 0);
+                formula testCeil = ( ceil(x) > 0);
+                formula testCos = ( cos(x) > 0);
+                formula testCosh = ( cosh(x) > 0);
+                formula testExp = ( exp(x) > 0);
+                formula testExpm1 = ( expm1(x) > 0);
+                formula testFloor = ( floor(x) > 0);
+                formula testGetExponent = ( getExponent(x) > 0);
+                formula testLog = ( log(x) > 0);
+                formula testLog10 = ( log10(x) > 0);
+                formula testLog1p = ( log1p(x) > 0);
+                formula testSignum = ( signum(x) > 0);
+                formula testSin = ( sin(x) > 0);
+                formula testSinh = ( sinh(x) > 0);
+                formula testSqrt = ( sqrt(x) > 0);
+                formula testTan = ( tan(x) > 0);
+                formula testAtan2 = ( atan2(x,y) > 0)
+                formula testHypot = ( hypot(x,y) > 0)
+                formula testMax = ( max(x,y) > 0)
+                formula testMin = ( min(x,y) > 0)
+                formula testPow = ( pow(x,y) > 0)
   		''')
   		val scriptToJava = new ScriptToJava();
   		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","TestMathFunction")
+  		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","TestMathFunction",generatedCode.toString,typeof(MoonLightScript))
 		Assertions.assertNotNull(script);

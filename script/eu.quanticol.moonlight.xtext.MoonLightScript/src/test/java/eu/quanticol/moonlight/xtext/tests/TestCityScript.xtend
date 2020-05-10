@@ -27,15 +27,13 @@ class TestCityScript {
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
    			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;
-            monitor City {
-                signal { bool taxi; int peole; }
-                space { locations {poiType poi; }
-                edges { real length; }
-                }
-                domain boolean;
-                formula somewhere [0.0, 1.0] #[ taxi ]#;
-             }
 
+            signal { bool taxi; int peole; }
+            space { locations {poiType poi; }
+            edges { real length; }
+            }
+            domain boolean;
+            formula aFormula = somewhere [0.0, 1.0] ( taxi );
   		''')
   		val scriptToJava = new ScriptToJava();
   		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","City")
