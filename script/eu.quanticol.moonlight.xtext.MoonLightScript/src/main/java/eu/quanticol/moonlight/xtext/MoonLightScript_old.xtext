@@ -5,23 +5,16 @@ generate moonLightScript "http://www.quanticol.eu/moonlight/xtext/MoonLightScrip
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 Model: {Model}
-	(types += TypeDefinition)*
-	'signal' '{' 
-		(signalVariables += VariableDeclaration ';')+
-	'}'	
-	(isSpatial ?= 'space' '{' 
-		('locations' '{' (locationVariables += VariableDeclaration ';')+ '}')?
-		('edges' '{' (edgeVariables += VariableDeclaration ';')+ '}')
-	 '}'
-	)?
-	'domain' semiring=SemiringExpression ';'	
-	(formulas += FormulaDeclaration)+
-;
+	(elements += Element)*;
 
-FormulaDeclaration:
-	(isDefault?='default')? 'formula' name=ID  ('(' parameters += VariableDeclaration ( ',' parameters += VariableDeclaration)* ')')?'=' formula=StrelFormula ';'
+Element:
+	Monitor	|
+	TypeDefinition //| 
+//	FunctionDefinition | 
+//	SemiringDefinition 
+//	|
+//	DistanceDomainDefinition 
 ;
-
 
 //DistanceDomainDefinition:
 //	'distance' name=ID '{' 
@@ -119,7 +112,28 @@ TypeElement:
 ;
 
 
+Monitor:
+	'monitor' name=ID ('(' parameters += VariableDeclaration ( ',' parameters += VariableDeclaration)* ')')? '{'
+		'signal' '{' 
+			(signalVariables += VariableDeclaration ';')+
+		'}'
+		
+		(isSpatial ?= 'space' '{' 
+			('locations' '{' (locationVariables += VariableDeclaration ';')+ '}')?
+			('edges' '{' (edgeVariables += VariableDeclaration ';')+ '}')
+		 '}'
+		)?
+		'domain' semiring=SemiringExpression ';'
+		'formula' formula=StrelFormula ';'
+		('where'   
+			(subformulas += FormulaDeclaration ';')*
+		)?
+	'}'
+;
 
+FormulaDeclaration:
+	name=ID '=' formula=StrelFormula ';'
+;
 
 SemiringExpression:
 //	{TropicalSemiring} 'tropical' |
@@ -244,7 +258,7 @@ Interval:
 ;
 
 StrelBasicFormula returns StrelFormula:
-	{StrelAtomicFormula} '(' atomic=Expression ')'
+	{StrelAtomicFormula} '#[' atomic=Expression ']#'
 //	| {StrelEscapeFormula} 'escape' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
 	| {StrelEscapeFormula} 'escape' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
 	| {StrelEventuallyFormula} 'eventually' (interval=Interval)? argument=StrelBasicFormula
@@ -259,8 +273,10 @@ StrelBasicFormula returns StrelFormula:
 //	| {StrelNextFormula} 'next' ('['distance=[DistanceDomainDefinition]']')? ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
 	| {StrelNextFormula} 'next' ('(' distanceExpression=Expression ')')? interval=Interval argument=StrelBasicFormula
 	| '{' StrelFormula '}'
-	| {StrelFormulaReference} reference=[FormulaDeclaration] ('(' (arguments += Expression (',' arguments += Expression)*)? ')')?
+	| {StrelFormulaReference} reference=[FormulaDeclaration]
 ;
+
+
 
 SignalType:
 	RecordType

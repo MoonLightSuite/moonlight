@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.examples.subway.io;
 
 import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +23,7 @@ class DataReaderTest {
 
 
     @Test
+    @Disabled
     void readText() {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(files[0]).getFile());
@@ -42,6 +44,7 @@ class DataReaderTest {
 
 
     @Test
+    @Disabled
     void readCSV() {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(files[1]).getFile());
@@ -61,6 +64,7 @@ class DataReaderTest {
     }
 
     @Test
+    @Disabled
     void readLongHeaderTxt() {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(files[2]).getFile());
@@ -80,6 +84,7 @@ class DataReaderTest {
     }
 
     @Test
+    @Disabled
     void unsupportedFile() {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(files[3]).getFile());

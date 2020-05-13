@@ -14,6 +14,8 @@ import org.junit.jupiter.api.^extension.ExtendWith
 import eu.quanticol.moonlight.xtext.generator.ScriptToJava
 import eu.quanticol.moonlight.compiler.MoonlightCompiler
 import eu.quanticol.moonlight.MoonLightScript
+import eu.quanticol.moonlight.MoonLightTemporalScript
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript
 
 @ExtendWith(InjectionExtension)
 @InjectWith(MoonLightScriptInjectorProvider)
@@ -22,24 +24,30 @@ class TestCompiler {
 	ParseHelper<Model> parseHelper
 	
 	@Test
-	def void loadModel() {
+	def void loadModelSpatialModel() {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor City {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-				edges { real length; }
-				}
-				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
+			signal { bool taxi; int peole; }
+			space { locations {poiType poi; }
+			edges { real length; }
 			}
+			domain boolean;
+			formula aFormula = somewhere [0.0, 1.0] ( taxi );
+		''')
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+	}
+	
+	@Test
+	def void loadTemporalModel() {
+		val result = parseHelper.parse('''
+			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor Temporal( int a, int b) {
-				signal { bool x; real y; int z; }
-				domain boolean;
-				formula eventually [a,b] #[ y>0 ]#;
-			}
+			signal { bool x; real y; int z; }
+			domain boolean;
+			formula aFormula(int a,int b) = eventually [a,b] ( y>0 );
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
@@ -51,23 +59,16 @@ class TestCompiler {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor City( real distance ) {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-					edges { 
-						real length; 
-						int hop;
-					}
+			signal { bool taxi; int peole; }
+			space { 
+				locations {poiType poi; }
+				edges { 
+					real length; 
+					int hop;
 				}
-				domain boolean;
-				formula somewhere(hop) [0.0, distance] #[ taxi ]#;
 			}
-			
-			monitor Temporal( int a, int b) {
-				signal { bool x; real y; int z; }
-				domain boolean;
-				formula eventually [a,b] #[ y>0 ]#;
-			}
+			domain boolean;
+			formula aFormula(int hop) = somewhere(hop) [0.0, distance] ( taxi );
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
@@ -80,58 +81,14 @@ class TestCompiler {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor City {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-				edges { real length; }
+			signal { bool taxi; int peole; }
+			space { 
+				edges { real length; 
+						int hop;
 				}
-				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
 			}
-
-			monitor City2 {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-				edges { real length; }
-				}
-				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
-			}
-
-			monitor City3 {
-				signal { bool taxi; int peole; }
-				domain boolean;
-				formula globally [0.0, 1.0] #[ taxi ]#;
-			}
-
-			monitor City4 {
-				signal { bool taxi; int peole; }
-				domain boolean;
-				formula eventually [0.0, 1.001] #[ taxi ]#;
-			}
-			
-			monitor City5 {
-				signal { bool taxi; int peole; }
-				domain boolean;
-				formula historically [0.0, 1.0] #[ taxi ]#;
-			}
-
-			monitor City6 {
-				signal { bool taxi; int peole; }
-				domain boolean;
-				formula once [0.0, 1.0] #[ taxi ]#;
-			}
-			
-			monitor City7( int steps ) {
-							signal { bool taxi; int peole; }
-							space { 
-							edges { real length; 
-								int hop;
-							}
-							}
-							domain boolean;
-							formula  globally [0.0, 1.0]{somewhere(hop) [0.0, steps] #[ taxi ]#};
-						}
+			domain boolean;
+			formula  aFormula(int steps) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi )};
 			
 			
 		''')
@@ -139,30 +96,19 @@ class TestCompiler {
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
-		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
-		Assertions.assertEquals(3, script.spatialTemporalMonitors.length)
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
+		Assertions.assertEquals(1, script.spatialTemporalMonitors.length)
 	}	
 	
 	@Test
-	def void testReachMonitor() {
+	def void testReachMonitorQualitative() {
 		val result = parseHelper.parse('''
-monitor SensNetkBool {
                 signal { int nodeType; real battery; real temperature; }
              	space {
              	edges { int hop; real dist; }
              	}
              	domain boolean;
-             	formula everywhere[0.0, 5.0] #[  nodeType==2 ]# ;
-             }
-//Questo è un commento.
-monitor SensNetkQuant {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain minmax;
-             	formula everywhere[0.0, 5.0] #[ battery - 0.5 ]# ;
-             }
+             	formula SensNetkBool = everywhere[0.0, 5.0] (  nodeType==2 ) ;
             		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
@@ -171,68 +117,52 @@ monitor SensNetkQuant {
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
-		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
 		Assertions.assertNotNull(script)
 	}	
+	
+	@Test
+	def void testReachMonitorQuantitative() {
+		val result = parseHelper.parse('''
+                signal { int nodeType; real battery; real temperature; }
+             	space {
+             	edges { int hop; real dist; }
+             	}
+             	domain minmax;
+             	formula SensNetkQuant = everywhere[0.0, 5.0] (battery > 0.5 ) ;
+            		''')
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		val scriptToJava = new ScriptToJava();		
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
+		Assertions.assertNotNull(script)
+	}		
 	
 	
 	@Test
 	def void testSpatialTemporal() {
 		val result = parseHelper.parse('''
-		monitor SensTemp {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{globally [0, 0.2]  #[  battery > 0.5 ]#};
-             }
+		signal { int nodeType; real battery; real temperature; }
+		space {
+		 	edges { int hop; real dist; }
+		}
+		domain boolean;
+		
+		formula SensTemp = somewhere(hop)[0, 3]{globally [0, 0.2]  (battery > 0.5)};
 
-		monitor SensTemp2 {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{eventually [0, 0.2]  #[  battery > 0.5 ]#};
-             }
+		formula SensTemp2 = somewhere(hop)[0, 3]{eventually [0, 0.2]  (  battery > 0.5 )};
 
-		monitor SensTemp3 {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{once [0, 0.2]  #[  battery > 0.5 ]#};
-             }
+		formula SensTemp3 = somewhere(hop)[0, 3]{once [0, 0.2]  (  battery > 0.5 )};
 
-		monitor SensTemp4 {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{historically [0, 0.2]  #[  battery > 0.5 ]#};
-             }
+		formula SensTemp4 = somewhere(hop)[0, 3]{historically [0, 0.2]  (  battery > 0.5 )};
 
-		monitor SensTem5 {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{#[  battery > 0.5 ]# until[0, 0.2]  #[  battery > 0.5 ]#};
-             }
+		formula SensTem5 =  somewhere(hop)[0, 3]{(  battery > 0.5 ) until[0, 0.2]  (  battery > 0.5 )};
 
-		monitor SensTem6 {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real dist; }
-             	}
-             	domain boolean;
-                formula somewhere(hop)[0, 3]{#[  battery > 0.5 ]# since[0, 0.2]  #[  battery > 0.5 ]#};
-             }
-
+		formula SensTem6 = somewhere(hop)[0, 3]{(  battery > 0.5 ) since[0, 0.2]  (  battery > 0.5 )};
         ''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
@@ -241,7 +171,7 @@ monitor SensNetkQuant {
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
-		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightScript))
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
 		Assertions.assertNotNull(script)
 	}		
 }

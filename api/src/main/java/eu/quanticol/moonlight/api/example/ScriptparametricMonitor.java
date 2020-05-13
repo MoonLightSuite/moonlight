@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.formula.*;
 import java.util.HashMap;
 
 
-public class ScriptparametricMonitor extends MoonLightScript {
+public class ScriptparametricMonitor extends MoonLightTemporalScript {
 
 
     private final SignalDomain<Boolean> _domain_BooleanMonitorScript = new BooleanDomain();
@@ -100,8 +100,6 @@ public class ScriptparametricMonitor extends MoonLightScript {
         super( new String[] {
                         "BooleanMonitorScript",
                         "QuantitativeMonitorScript"
-                },
-                new String[] {
                 });
     }
 
@@ -116,16 +114,8 @@ public class ScriptparametricMonitor extends MoonLightScript {
         return null;
     }
 
-    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
-        return null;
-    }
-
     public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
         return MONITOR_BooleanMonitorScript;
-    }
-
-    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
-        return null;
     }
 
 
