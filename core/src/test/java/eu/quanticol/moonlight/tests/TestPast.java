@@ -299,6 +299,60 @@ class TestPast {
     }
 
 
+    @Test
+    void testTimeAtTheEndOfMonitoredSignalWithOnceOperator() {
+        int start = 0;
+        int end = 199;
 
+        // Questi array corrispondono alle variabili di due segnali fallaci
+        double[] data1 = new double[] {6.0, 1.0, 5.0, 5.0, 5.0, 3.0, 6.0, 2.0, 4.0, 6.0, 5.0, 6.0, 2.0, 7.0, 1.0, 4.0, 2.0, 3.0, 6.0, 3.0, 4.0, 3.0, 7.0, 1.0, 2.0, 7.0, 4.0, 2.0, 5.0, 7.0, 4.0, 4.0, 4.0, 1.0, 2.0, 4.0, 6.0, 5.0, 2.0, 2.0, 4.0, 2.0, 4.0, 5.0, 7.0, 3.0, 2.0, 4.0, 3.0, 1.0, 4.0, 2.0, 4.0, 5.0, 4.0, 2.0, 4.0, 6.0, 6.0, 3.0, 2.0, 6.0, 1.0, 2.0, 6.0, 1.0, 3.0, 6.0, 1.0, 4.0, 2.0, 4.0, 3.0, 4.0, 4.0, 2.0, 7.0, 5.0, 2.0, 2.0, 4.0, 2.0, 2.0, 7.0, 5.0, 4.0, 4.0, 5.0, 6.0, 1.0, 4.0, 6.0, 6.0, 4.0, 5.0, 2.0, 4.0, 4.0, 4.0, 6.0, 6.0, 5.0, 5.0, 6.0, 4.0, 3.0, 2.0, 3.0, 5.0, 7.0, 5.0, 5.0, 5.0, 2.0, 7.0, 4.0, 6.0, 7.0, 2.0, 5.0, 6.0, 2.0, 5.0, 1.0, 6.0, 6.0, 7.0, 5.0, 5.0, 6.0, 3.0, 3.0, 7.0, 5.0, 5.0, 3.0, 5.0, 6.0, 5.0, 5.0, 4.0, 4.0, 1.0, 7.0, 4.0, 4.0, 1.0, 6.0, 5.0, 4.0, 3.0, 2.0, 5.0, 3.0, 7.0, 4.0, 4.0, 4.0, 3.0, 4.0, 5.0, 6.0, 2.0, 1.0, 1.0, 6.0, 5.0, 5.0, 2.0, 3.0, 6.0, 4.0, 4.0, 1.0, 7.0, 3.0, 6.0, 6.0, 6.0, 5.0, 5.0, 2.0, 6.0, 2.0, 4.0, 5.0, 5.0, 2.0, 1.0, 2.0, 1.0, 4.0, 5.0, 6.0, 5.0, 6.0, 6.0, 4.0, 7.0, 3.0};
+        boolean[] data2 = new boolean[] {false, false, true, true, false, false, false, true, false, false, false, true, false, false, true, false, false, false, false, true, false, false, false, true, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, true, false, false, true, true, true, false, false, false, false, false, true, false, true, false, false, true, true, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 
+        // ignorare questa parte di boiler-plate code
+        HashMap<Double, Double> dataMap1 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap1.put((double)i, data1[i - start]);
+        HashMap<Double, Double> dataMap2 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
+
+        // segnale su [0.0, 199.0] con le variabili di sopra
+        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+
+        // TemporalMonitor corrispondente a:
+        //⃟ I=[60.0, 84.0]
+        //└──Lane_ID > 72.0
+        TemporalMonitor<Pair<Double, Double>, Double> mQ1 = TemporalMonitor.onceMonitor(
+                TemporalMonitor.atomicMonitor(x -> x.getFirst() - 72.0), new DoubleDomain(), new Interval(60, 84));
+        // monitoraggio e risultati
+        Signal<Double> soutQ2 = mQ1.monitor(signal);
+        assertEquals(end,soutQ2.end(),0.0000001);
+    }
+
+    @Test
+    void testTimeAtTheEndOfMonitoredSignalWithHistoricallyOperator() {
+        int start = 0;
+        int end = 199;
+
+        // Questi array corrispondono alle variabili di due segnali fallaci
+        double[] data1 = new double[] {6.0, 1.0, 5.0, 5.0, 5.0, 3.0, 6.0, 2.0, 4.0, 6.0, 5.0, 6.0, 2.0, 7.0, 1.0, 4.0, 2.0, 3.0, 6.0, 3.0, 4.0, 3.0, 7.0, 1.0, 2.0, 7.0, 4.0, 2.0, 5.0, 7.0, 4.0, 4.0, 4.0, 1.0, 2.0, 4.0, 6.0, 5.0, 2.0, 2.0, 4.0, 2.0, 4.0, 5.0, 7.0, 3.0, 2.0, 4.0, 3.0, 1.0, 4.0, 2.0, 4.0, 5.0, 4.0, 2.0, 4.0, 6.0, 6.0, 3.0, 2.0, 6.0, 1.0, 2.0, 6.0, 1.0, 3.0, 6.0, 1.0, 4.0, 2.0, 4.0, 3.0, 4.0, 4.0, 2.0, 7.0, 5.0, 2.0, 2.0, 4.0, 2.0, 2.0, 7.0, 5.0, 4.0, 4.0, 5.0, 6.0, 1.0, 4.0, 6.0, 6.0, 4.0, 5.0, 2.0, 4.0, 4.0, 4.0, 6.0, 6.0, 5.0, 5.0, 6.0, 4.0, 3.0, 2.0, 3.0, 5.0, 7.0, 5.0, 5.0, 5.0, 2.0, 7.0, 4.0, 6.0, 7.0, 2.0, 5.0, 6.0, 2.0, 5.0, 1.0, 6.0, 6.0, 7.0, 5.0, 5.0, 6.0, 3.0, 3.0, 7.0, 5.0, 5.0, 3.0, 5.0, 6.0, 5.0, 5.0, 4.0, 4.0, 1.0, 7.0, 4.0, 4.0, 1.0, 6.0, 5.0, 4.0, 3.0, 2.0, 5.0, 3.0, 7.0, 4.0, 4.0, 4.0, 3.0, 4.0, 5.0, 6.0, 2.0, 1.0, 1.0, 6.0, 5.0, 5.0, 2.0, 3.0, 6.0, 4.0, 4.0, 1.0, 7.0, 3.0, 6.0, 6.0, 6.0, 5.0, 5.0, 2.0, 6.0, 2.0, 4.0, 5.0, 5.0, 2.0, 1.0, 2.0, 1.0, 4.0, 5.0, 6.0, 5.0, 6.0, 6.0, 4.0, 7.0, 3.0};
+        boolean[] data2 = new boolean[] {false, false, true, true, false, false, false, true, false, false, false, true, false, false, true, false, false, false, false, true, false, false, false, true, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, true, false, false, true, true, true, false, false, false, false, false, true, false, true, false, false, true, true, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+
+        // ignorare questa parte di boiler-plate code
+        HashMap<Double, Double> dataMap1 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap1.put((double)i, data1[i - start]);
+        HashMap<Double, Double> dataMap2 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
+
+        // segnale su [0.0, 199.0] con le variabili di sopra
+        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+
+        // TemporalMonitor corrispondente a:
+        // ⟏ I=[24.0, 49.0]
+        // └──isByGuardrail is false
+        TemporalMonitor<Pair<Double, Double>, Double> mQ2 = TemporalMonitor.historicallyMonitor(
+                TemporalMonitor.atomicMonitor(x -> {if (x.getSecond() == 0) {return 1.0;} else {return -1.0;}}), new DoubleDomain(), new Interval(24, 49));
+        // monitoraggio ed Exception
+        Signal<Double> soutQ = mQ2.monitor(signal);
+        double[][] monitorValuesQ2 = soutQ.arrayOf((Double x) -> (double) x);
+        assertEquals(end,soutQ.end());
+    }
 }

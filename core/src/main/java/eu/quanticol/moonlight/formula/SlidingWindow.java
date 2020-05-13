@@ -172,6 +172,7 @@ public class SlidingWindow<R> {
 		private void init(double time, R value) {
 			first = new Segment<R>(time,value);
 			last = first;
+			end = time;
 		}
 		
 		@Override
