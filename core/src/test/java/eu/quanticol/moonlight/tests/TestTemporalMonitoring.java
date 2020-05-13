@@ -172,7 +172,6 @@ class TestTemporalMonitoring {
         assertEquals(0.0,output.valueAt(0.0));
     }
 
-   @Disabled("errore di diminuizione dell'upperbound")
     @Test
     void testeveWrongSimpleLaura() {
         double step = 0.1;
@@ -188,7 +187,7 @@ class TestTemporalMonitoring {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(phi, null);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(expectedOutputUpperBound, result.end(), 0.0);
+        assertEquals(expectedOutputUpperBound, result.end(), 0.0000001);
     }
 
 }

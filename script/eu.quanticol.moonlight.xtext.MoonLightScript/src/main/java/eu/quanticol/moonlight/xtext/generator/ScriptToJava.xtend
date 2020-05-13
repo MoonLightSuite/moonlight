@@ -466,7 +466,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence temporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 		'''
-		«prefix»_FORMULA_«f.reference.name»'(' «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» ')'
+		_FORMULA_«f.reference.name»( «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» )
 		'''		
 	}
 
@@ -650,7 +650,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence SpatialTemporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 	  '''
-	  «prefix»_FORMULA_«f.reference.name»'(' parameters ')'
+		_FORMULA_«f.reference.name»( «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» )
 	  '''		
 	}
 	

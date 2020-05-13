@@ -28,12 +28,13 @@ class TestCompiler {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			signal { bool taxi; int peole; }
+			signal { bool taxi; int people; }
 			space { locations {poiType poi; }
 			edges { real length; }
 			}
 			domain boolean;
 			formula aFormula = somewhere [0.0, 1.0] ( taxi );
+			formula anotherFormula(int v) = (people > v);
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
@@ -81,23 +82,22 @@ class TestCompiler {
 		val result = parseHelper.parse('''
 			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			signal { bool taxi; int peole; }
+			signal { bool taxi; int people; }
 			space { 
 				edges { real length; 
 						int hop;
 				}
 			}
 			domain boolean;
-			formula  aFormula(int steps) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi )};
-			
-			
+			formula  aFormula(int steps, int v) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
+			formula anotherFormula(int v) = (people > v);
 		''')
 		val scriptToJava = new ScriptToJava();		
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
-		Assertions.assertEquals(1, script.spatialTemporalMonitors.length)
+		Assertions.assertEquals(2, script.spatialTemporalMonitors.length)
 	}	
 	
 	@Test

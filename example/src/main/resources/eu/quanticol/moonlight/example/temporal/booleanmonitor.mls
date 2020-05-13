@@ -1,0 +1,3 @@
+signal { real x; real y;}
+domain boolean;
+formula main = globally [0, 0.2]  ( x > y );
