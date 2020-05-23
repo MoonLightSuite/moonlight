@@ -31,7 +31,9 @@ classdef MoonlightEngine
                 % array (i.e., [])
                 parameters = [];
             end
-            temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
+            
+            temporalMonitor = self.Script.temporal().selectDefaultTemporalComponent();
+            % OLD temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
             result=temporalMonitor.monitorToArray(time,values,parameters);
             t=toc;
         end
@@ -42,7 +44,7 @@ classdef MoonlightEngine
                 % array (i.e., [])
                 parameters = [];
             end
-            spatioTemporalMonitor = self.Script.selectSpatioTemporalComponent(spatioTemporalMonitorName);
+            spatioTemporalMonitor = self.Script.spatial().selectSpatioTemporalComponent(spatioTemporalMonitorName);
             javaGraphModel = self.toJavaGraphModel(graph,length(values));
             javaSignal = self.toJavaSignal(values);
             tic
