@@ -30,10 +30,8 @@ classdef MoonlightEngine
                 % third parameter does not exist. Default is the empty
                 % array (i.e., [])
                 parameters = [];
-            end
-            
-            temporalMonitor = self.Script.temporal().selectDefaultTemporalComponent();
-            % OLD temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
+            end          
+            temporalMonitor = self.Script.temporal().selectTemporalComponent(temporalMonitorName);
             result=temporalMonitor.monitorToArray(time,values,parameters);
             t=toc;
         end
