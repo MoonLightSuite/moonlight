@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.SignalDomain;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -15,7 +17,7 @@ public interface MoonLightScript {
 	boolean isTemporal();
 	
 	boolean isSpatialTemporal();
-	
+
 	default MoonLightTemporalScript temporal() {
 		throw new IllegalStateException();//TODO: Add error message!
 	}

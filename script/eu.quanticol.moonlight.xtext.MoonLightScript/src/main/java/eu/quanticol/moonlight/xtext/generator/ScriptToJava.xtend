@@ -89,9 +89,9 @@ class ScriptToJava {
 			}
 			«ENDFOR»
 						
-			private final SignalDomain<«model.semiring.javaTypeOf»> «signalDomain» = new «model.semiring.domainOf»();
+			private SignalDomain<«model.semiring.javaTypeOf»> «signalDomain» = new «model.semiring.domainOf»();
 
-			«IF model.isIsSpatial» 
+			«IF model.isIsSpatial»
 			private RecordHandler «edgeRecordHandler» = generateEdgesRecordHandler();
 			
 			private static RecordHandler generateEdgesRecordHandler() {
@@ -670,7 +670,7 @@ class ScriptToJava {
 	def CharSequence relationMethod( String op ) {
 		switch (op) {
 			case '<': '''computeLessThan'''
-			case '<=': '''computeLessOrEqual'''
+			case '<=': '''computeLessOrEqualThan'''
 			case '==': '''computeEqualTo'''
 			case '>': '''computeGreaterThan'''
 			case '>=':	'''computeGreaterOrEqualThan'''
