@@ -1,6 +1,6 @@
 clear
 % loading of the script
-monitor = MoonlightEngine.load("sensorScript");
+monitor = MoonlightEngine.load("test");
 
 % generation of the data
 numSteps        = 1;
