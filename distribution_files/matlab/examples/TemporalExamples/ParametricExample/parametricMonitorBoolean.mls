@@ -1,4 +1,3 @@
-signal { real x; real y;}
+signal { real x; real y}
 domain boolean;
 formula expFormula(real LB, real UB) = globally [LB, UB]  ( x >= y );
-}
