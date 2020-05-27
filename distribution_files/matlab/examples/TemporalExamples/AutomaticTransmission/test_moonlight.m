@@ -71,47 +71,47 @@ plotting (input, output, input_labels, output_labels);
 
 [boolean_results, robust_results1] = monMoonlight (time, output, 200, 4000, 120, 10);
 
-% %% Monitoring property with Breach
-% 
-% [robust_results2]                  = monBreach   (time, output, 200, 4000, 120, 10);
-% 
-% %% Monitoring property with S-Taliro
-% 
-% [robust_results3]                  = monStaliro  (time, output, 200, 4000, 120, 10);
-% 
-% 
-% %% Checking the results between Moonlight and Breach
-% 
-% count = 0;
-% for i=1:size (robust_results2)
-%     
-%     if (robust_results1(i) == robust_results2(i))
-%         count = count + 1;
-%     elseif (abs(robust_results1(i) - robust_results2(i)) < 0.0001)
-%         fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results2(i)), i);
-%     else 
-%        fprintf("Comparison between Moonlight and Breach failed on Specification num (%d) Moonlight=%d Breach=%d \n", i, robust_results1(i), robust_results2(i));
-%     end
-% end
-% 
-% if (count == 4)
-%     fprintf("Comparison of results between Moonlight and Breach is successful !!\n");
-% end
-% 
-% count = 0;
-% for i=1:size (robust_results3)
-%     if (robust_results1(i) == robust_results3(i))
-%        count = count + 1;
-%     elseif (abs(robust_results1(i) - robust_results3(i)) < 0.0001)
-%        fprintf("Comparison between Moonlight and S-Taliro: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results3(i)),i ); 
-%        count = count + 1;
-%     else 
-%        fprintf("Comparison between Moonlight and S-Taliro failed on Specification num (%d) Moonlight=%d S-Taliro=%d \n", i, robust_results1(i), robust_results3(i));
-%     end
-% end
-% 
-% if (count == 4)
-%     fprintf("Comparison of results between Moonlight and S-Taliro is successful!!\n");
-% end
-% 
-% 
+%% Monitoring property with Breach
+
+[robust_results2]                  = monBreach   (time, output, 200, 4000, 120, 10);
+
+%% Monitoring property with S-Taliro
+
+[robust_results3]                  = monStaliro  (time, output, 200, 4000, 120, 10);
+
+
+%% Checking the results between Moonlight and Breach
+
+count = 0;
+for i=1:size (robust_results2)
+    
+    if (robust_results1(i) == robust_results2(i))
+        count = count + 1;
+    elseif (abs(robust_results1(i) - robust_results2(i)) < 0.0001)
+        fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results2(i)), i);
+    else 
+       fprintf("Comparison between Moonlight and Breach failed on Specification num (%d) Moonlight=%d Breach=%d \n", i, robust_results1(i), robust_results2(i));
+    end
+end
+
+if (count == 4)
+    fprintf("Comparison of results between Moonlight and Breach is successful !!\n");
+end
+
+count = 0;
+for i=1:size (robust_results3)
+    if (robust_results1(i) == robust_results3(i))
+       count = count + 1;
+    elseif (abs(robust_results1(i) - robust_results3(i)) < 0.0001)
+       fprintf("Comparison between Moonlight and S-Taliro: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results3(i)),i ); 
+       count = count + 1;
+    else 
+       fprintf("Comparison between Moonlight and S-Taliro failed on Specification num (%d) Moonlight=%d S-Taliro=%d \n", i, robust_results1(i), robust_results3(i));
+    end
+end
+
+if (count == 4)
+    fprintf("Comparison of results between Moonlight and S-Taliro is successful!!\n");
+end
+
+

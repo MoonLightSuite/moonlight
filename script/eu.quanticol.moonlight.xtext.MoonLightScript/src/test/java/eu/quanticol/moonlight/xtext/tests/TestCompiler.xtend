@@ -89,7 +89,7 @@ class TestCompiler {
 				}
 			}
 			domain boolean;
-			formula  aFormula(int steps, int v) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
+			formula  aFormula(int steps, int v) = globally [0.0, 1.0]{git somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
 			formula anotherFormula(int v) = (people > v);
 		''')
 		val scriptToJava = new ScriptToJava();		

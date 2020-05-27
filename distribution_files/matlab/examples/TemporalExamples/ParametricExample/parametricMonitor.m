@@ -16,7 +16,7 @@ values = trajFunction(time);
 
 %evaluate the BooleanMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 0.1]  #[ x > y ]#
-booleanMonitorResult1 = booleanMonitor.temporalMonitor("expFormula",time,values,[0,0.1]); % we add the paramter vecotor [0, 0.1]
+booleanMonitorResult1 = booleanMonitor.temporalMonitor("expFormula0",time,values,0); % we add the paramter vecotor [0, 0.1]
                                                                                              % LB=0 and UB=0.1   
 %evalaute the QuantitativeMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 0.1]  #[ x > y ]#
