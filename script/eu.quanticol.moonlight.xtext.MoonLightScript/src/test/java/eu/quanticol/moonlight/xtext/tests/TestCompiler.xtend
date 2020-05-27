@@ -54,6 +54,18 @@ class TestCompiler {
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
 	}
+
+	@Test
+	def void testErrorSignal() {
+		val result = parseHelper.parse('''
+            signal { real x; real y; }
+            domain boolean;
+            formula future = globally [0, 0.2]  (x <= y);
+		''')
+		Assertions.assertNotNull(result)
+		val errors = result.eResource.errors
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+	}
 	
 	@Test
 	def void loadModelWithParameters() {
@@ -89,7 +101,7 @@ class TestCompiler {
 				}
 			}
 			domain boolean;
-			formula  aFormula(int steps, int v) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
+			formula aFormula(int steps, int v) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
 			formula anotherFormula(int v) = (people > v);
 		''')
 		val scriptToJava = new ScriptToJava();		
@@ -98,7 +110,22 @@ class TestCompiler {
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
 		Assertions.assertEquals(2, script.spatialTemporalMonitors.length)
-	}	
+	}
+
+    @Test
+    def void testErrorSignalLoad() {
+        val result = parseHelper.parse('''
+            signal { real x; real y; }
+            domain boolean;
+            formula future = globally [0, 0.2]  (x <= y);
+        ''')
+		val scriptToJava = new ScriptToJava();
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightTemporalScript))
+		Assertions.assertTrue(true);
+    }
 	
 	@Test
 	def void testReachMonitorQualitative() {
@@ -129,7 +156,7 @@ class TestCompiler {
              	edges { int hop; real dist; }
              	}
              	domain minmax;
-             	formula SensNetkQuant = everywhere[0.0, 5.0] (battery > 0.5 ) ;
+             	formula Prova = everywhere[0.0, 5.0] (battery > 0.5 ) ;
             		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
