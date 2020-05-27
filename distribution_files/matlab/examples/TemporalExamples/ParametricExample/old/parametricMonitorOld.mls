@@ -1,4 +1,3 @@
-
 monitor BooleanMonitorScript(real LB, real UB) {
 signal { real x; real y;}
 domain boolean;
