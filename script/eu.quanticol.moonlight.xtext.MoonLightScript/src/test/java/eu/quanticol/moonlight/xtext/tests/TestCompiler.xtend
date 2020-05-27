@@ -66,17 +66,17 @@ class TestCompiler {
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
 	}
-	
+
 	@Test
 	def void loadModelWithParameters() {
 		val result = parseHelper.parse('''
-			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
-			
+			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;
+
 			signal { bool taxi; int peole; }
-			space { 
+			space {
 				locations {poiType poi; }
-				edges { 
-					real length; 
+				edges {
+					real length;
 					int hop;
 				}
 			}
@@ -87,28 +87,24 @@ class TestCompiler {
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
 	}
-	
-	
+
+
 	@Test
 	def void compileAndLoadClass() {
 		val result = parseHelper.parse('''
-			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
-			
+			type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;
+
 			signal { bool taxi; int people; }
-			space { 
-				edges { real length; 
+			space {
+				edges { real length;
 						int hop;
 				}
 			}
 			domain boolean;
-<<<<<<< HEAD
-			formula  aFormula(int steps, int v) = globally [0.0, 1.0]{git somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
-=======
 			formula aFormula(int steps, int v) = globally [0.0, 1.0]{somewhere(hop) [0.0, steps] ( taxi ) & anotherFormula(v);
->>>>>>> 78d9bccb7ff39c1a9d9fe1fdee12fc1f85c5f89d
 			formula anotherFormula(int v) = (people > v);
 		''')
-		val scriptToJava = new ScriptToJava();		
+		val scriptToJava = new ScriptToJava();
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
@@ -130,7 +126,7 @@ class TestCompiler {
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightTemporalScript))
 		Assertions.assertTrue(true);
     }
-	
+
 	@Test
 	def void testReachMonitorQualitative() {
 		val result = parseHelper.parse('''
@@ -144,14 +140,14 @@ class TestCompiler {
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
 		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
-		val scriptToJava = new ScriptToJava();		
+		val scriptToJava = new ScriptToJava();
 		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
 		Assertions.assertNotNull(script)
-	}	
-	
+	}
+
 	@Test
 	def void testReachMonitorQuantitative() {
 		val result = parseHelper.parse('''
