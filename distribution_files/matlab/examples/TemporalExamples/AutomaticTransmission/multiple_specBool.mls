@@ -1,0 +1,5 @@
+// Spec 1 - The engine speed never reaches omega
+
+signal {  real v_speed; real e_speed; int gear}
+domain boolean;
+formula BooleanSpec1(real omega) = globally ( e_speed < omega );
