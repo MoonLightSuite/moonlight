@@ -58,11 +58,11 @@ public class MultipleMonitors {
 
     private static void fromFileScript() throws URISyntaxException, IOException {
         // Load File Script
-        URL multipleMonitorsUri = MultipleMonitors.class.getResource("multipleMonitors.mls");
+        URL multipleMonitorsUri = MultipleMonitors.class.getResource("booleanmonitor.mls");
         String multipleMonitorsPath = Paths.get(multipleMonitorsUri.toURI()).toString();
         ScriptLoader scriptLoader = new ScriptLoader();
         MoonLightScript moonLightScript = scriptLoader.loadFile(multipleMonitorsPath);
-        TemporalScriptComponent<?> booleanMonitorScript = moonLightScript.selectTemporalComponent("BooleanMonitorScript");
+        TemporalScriptComponent<?> booleanMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
 
         // Get signal
@@ -81,22 +81,15 @@ public class MultipleMonitors {
     private static void fromStringScript() throws IOException {
         // Write a monitor script
         //@formatter:off
-        String script = "monitor BooleanMonitorScript {\n" +
-                "signal { real x; real y;}\n" +
-                "domain boolean;\n" +
-                "formula globally #[ x > y ]#;\n" +
-                "}\n" +
-                "monitor QuantitativeMonitorScript{\n" +
-                "signal { real x; real y;}\n" +
+        String script = "signal { real x; real y;}\n" +
                 "domain minmax;\n" +
-                "formula globally #[ x - y ]#;\n" +
-                "}";
+                "formula main = globally ( x - y );\n";
         //@formatter:on
         // Load script
         ScriptLoader scriptLoader = new ScriptLoader();
         MoonLightScript moonLightScript = scriptLoader.compileScript(script);
         // Choose the monitor
-        TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.selectTemporalComponent("QuantitativeMonitorScript");
+        TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
         // Get signal
         double[] times = IntStream.range(0, 50).mapToDouble(s -> s).toArray();
@@ -106,9 +99,16 @@ public class MultipleMonitors {
         // Print results
         System.out.print("fromStringScript Quantitative \n");
         printResults(monitorValues);
-        System.out.println("MAREMMA");
+
+        script = "signal { real x; real y;}\n" +
+                "domain boolean;\n" +
+                "formula globally ( x > y );\n";
+
+        moonLightScript = scriptLoader.compileScript(script);
         // Choose the monitor
-        TemporalScriptComponent<?> BooleanMonitorScript = moonLightScript.selectTemporalComponent("BooleanMonitorScript");
+
+        // Choose the monitor
+        TemporalScriptComponent<?> BooleanMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
         // Get signal
         double[] timesB = IntStream.range(0, 50).mapToDouble(s -> s).toArray();

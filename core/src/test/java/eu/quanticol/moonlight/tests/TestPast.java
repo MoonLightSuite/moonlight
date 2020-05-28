@@ -187,7 +187,7 @@ class TestPast {
         assertEquals(10.25, time, 0.0);
     }
 
-    @Disabled("Michele")
+
     @Test
     void testHistoricallyFailsInternally() {
         Signal<Double> signal = TestUtils.createSignal(0.0, 0.4, 0.1, x -> x);
@@ -203,19 +203,21 @@ class TestPast {
         assertEquals(0.3, result.start(), 0.0);
     }
 
-    @Disabled("Michele")
     @Test
     void testFormulasProduceASignalOfWrongLength() {
+        testHistoricallyFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
         testHistoricallyFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
         testOnceFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
         testSinceFormulaProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0);
     }
 
-
+    //@Disabled("Michele per certi valori il segnale si accorcia")
     @Test
     void testFormulasProduceASignalOfRightLength() {
         assertAll(
-                () -> testAllFormulasProduceASignalOfRightLength(0.0, 3.0, 0.0, 2.0)
+                //() -> testAllFormulasProduceASignalOfRightLength(0.0, 0.5, 0.1, 0.3)
+                () -> testAllFormulasProduceASignalOfRightLength(500, 693, 60, 116)
+                //() -> testAllFormulasProduceASignalOfRightLength(0.0, 3.0, 0.0, 2.0)
                 //() -> testAllFormulasProduceASignalOfRightLength(0.0, 3.0, 2.0, 3.0)
         );
     }
@@ -230,7 +232,7 @@ class TestPast {
 
     void testHistoricallyFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.historicallyMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
@@ -245,7 +247,7 @@ class TestPast {
 
     void testOnceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.onceMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
@@ -260,7 +262,7 @@ class TestPast {
 
     void testSinceFormulaProduceASignalOfRightLength(double signalLowerBound, double signalUpperBound, double formulaLowerBound, double formulaUpperBound) {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
-        double expectedOutputUpperBound = signalUpperBound + formulaLowerBound;
+        double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
         Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(atomicFormula), new Interval(formulaLowerBound, formulaUpperBound), TemporalMonitor.atomicMonitor(atomicFormula), new DoubleDomain());
@@ -270,5 +272,87 @@ class TestPast {
                 () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("SINCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
 
         );
+    }
+
+    @Test
+    void testOnceFormulaFederico() {
+        double[] data = new double[] {78.14615476784513, 78.14615476784513, 78.14615476784513, 49.32833677512347, 78.14615476784513, 78.14615476784513, 15.088930843502473, 13.600775161732201, 78.14615476784513, 78.14615476784513, 78.14615476784513, 10.225363954402809, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 53.84903640734902, 78.14615476784513, 78.14615476784513, 17.35050134722348, 78.14615476784513, 78.14615476784513, 11.320109628444415, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.57040798944532, 78.14615476784513, 78.14615476784513, 12.543275489281049, 37.60403715028482, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 31.75348812335425, 78.14615476784513, 22.48618936147245, 78.14615476784513, 78.14615476784513, 15.426093867210874, 78.14615476784513, 78.14615476784513, 78.14615476784513, 14.98326593236601, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.732347941994501, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 14.044184169968752, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 11.450306589781787, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.062792963221874, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 15.885603702724088, 78.14615476784513, 78.14615476784513, 24.21713641205337, 78.14615476784513, 78.14615476784513, 14.787016365717582, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.434537580430526, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 12.374053377935622, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.526585452360093, 17.28258736416524, 78.14615476784513, 78.14615476784513, 12.585073579443236, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513};
+        HashMap<Double, Double> dataMap = new HashMap<>();
+        for (int i=500; i <= 693; ++i) dataMap.put((double)i, data[i - 500]);
+        Signal<Double> signal = TestUtils.createSignal(500.0, 693.0, 1, dataMap::get);
+        TemporalMonitor<Double, Double> mQ2 = TemporalMonitor.onceMonitor(
+                TemporalMonitor.notMonitor(TemporalMonitor.atomicMonitor(x -> x - 2.8E9), new DoubleDomain()), new DoubleDomain(), new Interval(60, 116));
+        Signal<Double> soutQ2 = mQ2.monitor(signal);
+        double expectedOutputUpperBound = 693;
+        assertEquals(expectedOutputUpperBound, soutQ2.end(), 0.0);
+    }
+
+    @Test
+    void testHistoricallyWrongSimpleLaura() {
+        Signal<Double> signal = TestUtils.createSignal(0.0, 0.5, 0.1, x -> x);
+        Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test", p -> (x -> x));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        Signal<Double> result = m.monitor(signal);
+        assertEquals(signal.end(), result.end(), 0.0);
+    }
+
+
+    @Test
+    void testTimeAtTheEndOfMonitoredSignalWithOnceOperator() {
+        int start = 0;
+        int end = 199;
+
+        // Questi array corrispondono alle variabili di due segnali fallaci
+        double[] data1 = new double[] {6.0, 1.0, 5.0, 5.0, 5.0, 3.0, 6.0, 2.0, 4.0, 6.0, 5.0, 6.0, 2.0, 7.0, 1.0, 4.0, 2.0, 3.0, 6.0, 3.0, 4.0, 3.0, 7.0, 1.0, 2.0, 7.0, 4.0, 2.0, 5.0, 7.0, 4.0, 4.0, 4.0, 1.0, 2.0, 4.0, 6.0, 5.0, 2.0, 2.0, 4.0, 2.0, 4.0, 5.0, 7.0, 3.0, 2.0, 4.0, 3.0, 1.0, 4.0, 2.0, 4.0, 5.0, 4.0, 2.0, 4.0, 6.0, 6.0, 3.0, 2.0, 6.0, 1.0, 2.0, 6.0, 1.0, 3.0, 6.0, 1.0, 4.0, 2.0, 4.0, 3.0, 4.0, 4.0, 2.0, 7.0, 5.0, 2.0, 2.0, 4.0, 2.0, 2.0, 7.0, 5.0, 4.0, 4.0, 5.0, 6.0, 1.0, 4.0, 6.0, 6.0, 4.0, 5.0, 2.0, 4.0, 4.0, 4.0, 6.0, 6.0, 5.0, 5.0, 6.0, 4.0, 3.0, 2.0, 3.0, 5.0, 7.0, 5.0, 5.0, 5.0, 2.0, 7.0, 4.0, 6.0, 7.0, 2.0, 5.0, 6.0, 2.0, 5.0, 1.0, 6.0, 6.0, 7.0, 5.0, 5.0, 6.0, 3.0, 3.0, 7.0, 5.0, 5.0, 3.0, 5.0, 6.0, 5.0, 5.0, 4.0, 4.0, 1.0, 7.0, 4.0, 4.0, 1.0, 6.0, 5.0, 4.0, 3.0, 2.0, 5.0, 3.0, 7.0, 4.0, 4.0, 4.0, 3.0, 4.0, 5.0, 6.0, 2.0, 1.0, 1.0, 6.0, 5.0, 5.0, 2.0, 3.0, 6.0, 4.0, 4.0, 1.0, 7.0, 3.0, 6.0, 6.0, 6.0, 5.0, 5.0, 2.0, 6.0, 2.0, 4.0, 5.0, 5.0, 2.0, 1.0, 2.0, 1.0, 4.0, 5.0, 6.0, 5.0, 6.0, 6.0, 4.0, 7.0, 3.0};
+        boolean[] data2 = new boolean[] {false, false, true, true, false, false, false, true, false, false, false, true, false, false, true, false, false, false, false, true, false, false, false, true, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, true, false, false, true, true, true, false, false, false, false, false, true, false, true, false, false, true, true, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+
+        // ignorare questa parte di boiler-plate code
+        HashMap<Double, Double> dataMap1 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap1.put((double)i, data1[i - start]);
+        HashMap<Double, Double> dataMap2 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
+
+        // segnale su [0.0, 199.0] con le variabili di sopra
+        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+
+        // TemporalMonitor corrispondente a:
+        //⃟ I=[60.0, 84.0]
+        //└──Lane_ID > 72.0
+        TemporalMonitor<Pair<Double, Double>, Double> mQ1 = TemporalMonitor.onceMonitor(
+                TemporalMonitor.atomicMonitor(x -> x.getFirst() - 72.0), new DoubleDomain(), new Interval(60, 84));
+        // monitoraggio e risultati
+        Signal<Double> soutQ2 = mQ1.monitor(signal);
+        assertEquals(end,soutQ2.end(),0.0000001);
+    }
+
+    @Test
+    void testTimeAtTheEndOfMonitoredSignalWithHistoricallyOperator() {
+        int start = 0;
+        int end = 199;
+
+        // Questi array corrispondono alle variabili di due segnali fallaci
+        double[] data1 = new double[] {6.0, 1.0, 5.0, 5.0, 5.0, 3.0, 6.0, 2.0, 4.0, 6.0, 5.0, 6.0, 2.0, 7.0, 1.0, 4.0, 2.0, 3.0, 6.0, 3.0, 4.0, 3.0, 7.0, 1.0, 2.0, 7.0, 4.0, 2.0, 5.0, 7.0, 4.0, 4.0, 4.0, 1.0, 2.0, 4.0, 6.0, 5.0, 2.0, 2.0, 4.0, 2.0, 4.0, 5.0, 7.0, 3.0, 2.0, 4.0, 3.0, 1.0, 4.0, 2.0, 4.0, 5.0, 4.0, 2.0, 4.0, 6.0, 6.0, 3.0, 2.0, 6.0, 1.0, 2.0, 6.0, 1.0, 3.0, 6.0, 1.0, 4.0, 2.0, 4.0, 3.0, 4.0, 4.0, 2.0, 7.0, 5.0, 2.0, 2.0, 4.0, 2.0, 2.0, 7.0, 5.0, 4.0, 4.0, 5.0, 6.0, 1.0, 4.0, 6.0, 6.0, 4.0, 5.0, 2.0, 4.0, 4.0, 4.0, 6.0, 6.0, 5.0, 5.0, 6.0, 4.0, 3.0, 2.0, 3.0, 5.0, 7.0, 5.0, 5.0, 5.0, 2.0, 7.0, 4.0, 6.0, 7.0, 2.0, 5.0, 6.0, 2.0, 5.0, 1.0, 6.0, 6.0, 7.0, 5.0, 5.0, 6.0, 3.0, 3.0, 7.0, 5.0, 5.0, 3.0, 5.0, 6.0, 5.0, 5.0, 4.0, 4.0, 1.0, 7.0, 4.0, 4.0, 1.0, 6.0, 5.0, 4.0, 3.0, 2.0, 5.0, 3.0, 7.0, 4.0, 4.0, 4.0, 3.0, 4.0, 5.0, 6.0, 2.0, 1.0, 1.0, 6.0, 5.0, 5.0, 2.0, 3.0, 6.0, 4.0, 4.0, 1.0, 7.0, 3.0, 6.0, 6.0, 6.0, 5.0, 5.0, 2.0, 6.0, 2.0, 4.0, 5.0, 5.0, 2.0, 1.0, 2.0, 1.0, 4.0, 5.0, 6.0, 5.0, 6.0, 6.0, 4.0, 7.0, 3.0};
+        boolean[] data2 = new boolean[] {false, false, true, true, false, false, false, true, false, false, false, true, false, false, true, false, false, false, false, true, false, false, false, true, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, true, false, false, true, true, true, false, false, false, false, false, true, false, true, false, false, true, true, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+
+        // ignorare questa parte di boiler-plate code
+        HashMap<Double, Double> dataMap1 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap1.put((double)i, data1[i - start]);
+        HashMap<Double, Double> dataMap2 = new HashMap<>();
+        for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
+
+        // segnale su [0.0, 199.0] con le variabili di sopra
+        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+
+        // TemporalMonitor corrispondente a:
+        // ⟏ I=[24.0, 49.0]
+        // └──isByGuardrail is false
+        TemporalMonitor<Pair<Double, Double>, Double> mQ2 = TemporalMonitor.historicallyMonitor(
+                TemporalMonitor.atomicMonitor(x -> {if (x.getSecond() == 0) {return 1.0;} else {return -1.0;}}), new DoubleDomain(), new Interval(24, 49));
+        // monitoraggio ed Exception
+        Signal<Double> soutQ = mQ2.monitor(signal);
+        double[][] monitorValuesQ2 = soutQ.arrayOf((Double x) -> (double) x);
+        assertEquals(end,soutQ.end());
     }
 }

@@ -30,8 +30,8 @@ classdef MoonlightEngine
                 % third parameter does not exist. Default is the empty
                 % array (i.e., [])
                 parameters = [];
-            end
-            temporalMonitor = self.Script.selectTemporalComponent(temporalMonitorName);
+            end          
+            temporalMonitor = self.Script.temporal().selectTemporalComponent(temporalMonitorName);
             result=temporalMonitor.monitorToArray(time,values,parameters);
             t=toc;
         end
@@ -42,7 +42,7 @@ classdef MoonlightEngine
                 % array (i.e., [])
                 parameters = [];
             end
-            spatioTemporalMonitor = self.Script.selectSpatioTemporalComponent(spatioTemporalMonitorName);
+            spatioTemporalMonitor = self.Script.spatial().selectSpatioTemporalComponent(spatioTemporalMonitorName);
             javaGraphModel = self.toJavaGraphModel(graph,length(values));
             javaSignal = self.toJavaSignal(values);
             tic

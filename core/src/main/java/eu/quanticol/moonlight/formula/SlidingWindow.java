@@ -52,6 +52,9 @@ public class SlidingWindow<R> {
 
 	public Signal<R> apply(Signal<R> s) {
 		Signal<R> result = new Signal<>();
+		if (s.isEmpty()||(s.end()-s.start()<size)) {
+			return result;
+		}
 		SignalCursor<R> iterator = s.getIterator(true);
 		InnerWindow window = new InnerWindow();
 		iterator.move(initTime(s.start()));
@@ -64,12 +67,10 @@ public class SlidingWindow<R> {
 			}
 			iterator.forward();
 		}
-//		if (isFuture&&(!result.isEmpty())) {
-		if (isFuture&&(window.size()==size)) {
+		if (isFuture) {
 			result.add(timeOf(window.firstTime()), window.firstValue());	
-		}
-		if ((!isFuture)&&(s.end()==window.end)&&(window.size()==size)) {
-			result.add(timeOf(window.firstTime()), window.firstValue());	
+		} else {
+			result.add(window.end, window.firstValue());
 		}
 		return result;
 	}
@@ -82,7 +83,8 @@ public class SlidingWindow<R> {
 		if (isFuture) {
 			return t-a;
 		} else {
-			return t+a+size;
+			return t+size;
+//			return t+a+size;
 		}
 	}
 
@@ -170,6 +172,7 @@ public class SlidingWindow<R> {
 		private void init(double time, R value) {
 			first = new Segment<R>(time,value);
 			last = first;
+			end = time;
 		}
 		
 		@Override

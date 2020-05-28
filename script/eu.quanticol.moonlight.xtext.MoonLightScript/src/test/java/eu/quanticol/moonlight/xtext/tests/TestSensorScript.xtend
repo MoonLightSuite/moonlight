@@ -26,15 +26,13 @@ class TestSensorScript {
   @Test
   	def void generateJavaCode() {
   		val result = parseHelper.parse('''
-   			monitor SensorNetwork {
-                signal { int nodeType; real battery; real temperature; }
-             	space {
-             	edges { int hop; real weight; }
-             	}
-             	domain minmax;
-             	formula everywhere [0.0, 1.0] #[ (battery - 0.5) & (temperature - 20)]#;
-             }
-
+            signal { int nodeType; real battery; real temperature; }
+         	space {
+         	edges { int hop; real weight; }
+         	}
+         	domain minmax;
+         	formula aFormula(real x) = everywhere [0.0, 1.0] { (battery > 0.5) & anotherFormula(x) };
+         	formula anotherFormula(real x) = (battery > x);
   		''')
   		val scriptToJava = new ScriptToJava();
   		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","Sensor")

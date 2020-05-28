@@ -5,7 +5,9 @@ clear
 %this object is an implementation of MoonlightEngine class, please refer to the doc of this class
 %for more details (ex. write in console "doc MoonlightEngine" )
 % please, open parametricMonitor.mls and look at the two paramters LB and UB! 
-monitor = MoonlightEngine.load("parametricMonitor");
+booleanMonitor = MoonlightEngine.load("parametricMonitorBoolean");
+quantitativeMonitor = MoonlightEngine.load("parametricMonitorQuantitative");
+
 
 %generate a signal [time, x, y]  where x= sin(t) and y = cos(t)
 trajFunction = @(t)[sin(t);cos(t)]';
@@ -14,19 +16,19 @@ values = trajFunction(time);
 
 %evaluate the BooleanMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 0.1]  #[ x > y ]#
-booleanMonitorResult1 = monitor.temporalMonitor("BooleanMonitorScript",time,values,[0,0.1]); % we add the paramter vecotor [0, 0.1]
+booleanMonitorResult1 = booleanMonitor.temporalMonitor("expFormula0",time,values,0); % we add the paramter vecotor [0, 0.1]
                                                                                              % LB=0 and UB=0.1   
 %evalaute the QuantitativeMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 0.1]  #[ x > y ]#
-quantiativeMonitorResult1 = monitor.temporalMonitor("QuantitativeMonitorScript",time,values,[0,0.1]);
+quantiativeMonitorResult1 = quantitativeMonitor.temporalMonitor("expFormula",time,values,[0,0.1]);
 
 %evaluate the BooleanMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 4]  #[ x > y ]#
-booleanMonitorResult2 = monitor.temporalMonitor("BooleanMonitorScript",time,values,[0,4]);
+booleanMonitorResult2 = booleanMonitor.temporalMonitor("expFormula",time,values,[0,4]);
 
 %evalaute the QuantitativeMonitorScript defined in multipleMonitors.mls
 %Formula: globally [0, 4]  #[ x > y ]#
-quantiativeMonitorResult2 = monitor.temporalMonitor("QuantitativeMonitorScript",time,values,[0,4]);
+quantiativeMonitorResult2 = quantitativeMonitor.temporalMonitor("expFormula",time,values,[0,4]);
 
 
 

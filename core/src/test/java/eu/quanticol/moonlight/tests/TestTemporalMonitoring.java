@@ -25,10 +25,7 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.formula.Parameters;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Record;
@@ -38,11 +35,9 @@ import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import eu.quanticol.moonlight.util.FormulaGenerator;
-import eu.quanticol.moonlight.util.FutureFormulaGenerator;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.*;
 
-import eu.quanticol.moonlight.util.SignalGenerator;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,6 +170,24 @@ class TestTemporalMonitoring {
         assertFalse(output.isEmpty());
         assertEquals(1,output.size());
         assertEquals(0.0,output.valueAt(0.0));
+    }
+
+    @Test
+    void testeveWrongSimpleLaura() {
+        double step = 0.1;
+        double signalLowerBound = 0;
+        double signalUpperBound = 0.5;
+        double formulaLowerBound = 0.1;
+        double formulaUpperBound = 0.3;
+        double expectedOutputLowerBound = signalLowerBound;
+        double expectedOutputUpperBound = signalUpperBound - formulaUpperBound;
+        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, step, x -> x);
+        Formula phi = new EventuallyFormula(new AtomicFormula("test"), new Interval(formulaLowerBound, formulaUpperBound));
+        TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
+        monitoring.addProperty("test", p -> (x -> x));
+        TemporalMonitor<Double, Double> m = monitoring.monitor(phi, null);
+        Signal<Double> result = m.monitor(signal);
+        assertEquals(expectedOutputUpperBound, result.end(), 0.0000001);
     }
 
 }
