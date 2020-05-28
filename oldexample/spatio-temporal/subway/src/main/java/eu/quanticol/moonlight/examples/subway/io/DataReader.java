@@ -16,11 +16,9 @@ import java.io.IOException;
  * @see ParsingStrategy
  */
 public class DataReader<T> {
-    private FileType type;
-    private String path;
-    private ParsingStrategy<T> strategy;
-
-    private final int BEGINNING_OF_FILE = 0;
+    private final FileType type;
+    private final String path;
+    private final ParsingStrategy<T> strategy;
 
     /**
      * Reader initialization
@@ -65,15 +63,7 @@ public class DataReader<T> {
      * @throws IOException when a new line can't be read
      */
     private BufferedReader readHeader(BufferedReader fileReader) throws IOException {
-        // Warning: hack!! Headers longer than headerLimit chars will break this method!
-        //int headerLimit = 1300;
-        //fileReader.mark(BEGINNING_OF_FILE);
-
         String header = fileReader.readLine();
-
-        //fileReader.mark(header.length());
-        //if (headerLimit < header.length())
-        //    throw new IOException("File's first line exceeds the maximum string length of " + headerLimit);
 
         strategy.initialize(splitLine(header));
 
