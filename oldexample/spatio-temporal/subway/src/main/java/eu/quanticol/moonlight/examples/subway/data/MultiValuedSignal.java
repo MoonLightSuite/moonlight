@@ -23,9 +23,10 @@ import java.util.List;
  * @see HashBiMap
  * @see SpatialTemporalSignal
  */
-public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable>> {
+public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable<?>>> {
     private final int length;
-    private final List<HashBiMap<Integer, Integer, ? extends Comparable>> data;
+    private int dimensions = 0;
+    private final List<Comparable<?>[][]> data;
 
     /**
      * Fixes the dimensions of the signal.
@@ -47,13 +48,19 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable>> {
      * or analysis over the signal.
      */
     public void initialize() {
+        dimensions = data.size();
+
         if (data.isEmpty())
             throw new IllegalArgumentException("Empty signal passed");
 
+        //System.out.println("Starting Signal Initialization");
         for(int t = 0; t < length; t ++) {
             int time = t;
             add(t, i -> setSignal(i, time));
         }
+        //System.out.println("Completed Signal Initialization");
+
+        data.clear();
     }
 
     /**
@@ -68,22 +75,25 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable>> {
      * @return the MultiValuedSignal itself, so that the method can be chained.
      */
     public MultiValuedSignal setDimension(
-            HashBiMap<Integer, Integer, ? extends Comparable> dimData,
+            Comparable<?>[][] dimData,
             int index) {
 
-        if(!data.isEmpty() && dimData.size() != size() * length)
-            throw new IllegalArgumentException("Mismatching dimensions " +
-                                               "time/space size");
+        if(!data.isEmpty() && dimData.length != size())
+            throw new IllegalArgumentException("Mismatching space size ");
 
+        if(!data.isEmpty() && dimData[0].length != length)
+            throw new IllegalArgumentException("Mismatching time length");
+
+        /*
         // We check if all required values exist
         for(int l = 0; l < size(); l++) {
             for(int t = 0; t < length; t++) {
                 // When we find a missing value, we throw an exception!
-                if(null == dimData.get(l, t))
+                if(null == dimData[l][t])
                     throw new IllegalArgumentException(
                                                     "Missing time/space data");
             }
-        }
+        }*/
 
         data.add(index, dimData);
 
@@ -100,11 +110,11 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable>> {
      * @param t time instant of interest
      * @return (x1, ..., xn) n-dimensional data list
      */
-    private List<Comparable> setSignal(int l, int t) {
-        List<Comparable> signal = new ArrayList<>();
+    private List<Comparable<?>> setSignal(int l, int t) {
+        List<Comparable<?>> signal = new ArrayList<>();
 
-        for (HashBiMap<Integer, Integer, ? extends Comparable> datum : data) {
-            signal.add(datum.get(l,t));
+        for (Comparable<?>[][] datum : data) {
+            signal.add(datum[l][t]);
         }
 
         return signal;
@@ -114,7 +124,7 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable>> {
      * @return the number of dimensions of the signal
      */
     public int dimensions() {
-        return data.size();
+        return dimensions;
     }
 
 }

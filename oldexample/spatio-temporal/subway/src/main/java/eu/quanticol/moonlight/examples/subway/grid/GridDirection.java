@@ -15,7 +15,7 @@ public enum GridDirection {
 
     public final int value;
 
-    private GridDirection(int value) {
+    GridDirection(int value) {
         this.value = value;
     }
 }
