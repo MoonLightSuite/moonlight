@@ -42,7 +42,7 @@ classdef MoonlightEngine
                 % array (i.e., [])
                 parameters = [];
             end
-            spatioTemporalMonitor = self.Script.spatial().selectSpatioTemporalComponent(spatioTemporalMonitorName);
+            spatioTemporalMonitor = self.Script.spatialTemporal().selectSpatialTemporalComponent(spatioTemporalMonitorName);
             javaGraphModel = self.toJavaGraphModel(graph,length(values));
             javaSignal = self.toJavaSignal(values);
             tic
