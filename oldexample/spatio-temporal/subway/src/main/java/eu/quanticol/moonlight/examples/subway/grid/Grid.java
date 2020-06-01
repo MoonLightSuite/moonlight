@@ -4,7 +4,10 @@ import eu.quanticol.moonlight.examples.subway.io.DataReader;
 import eu.quanticol.moonlight.examples.subway.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.examples.subway.io.FileType;
 import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.GraphModel;
+import eu.quanticol.moonlight.signal.ImmutableGraphModel;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -12,6 +15,7 @@ import eu.quanticol.moonlight.util.TestUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * We are assuming the Subway network is part of an N x N grid,
@@ -19,9 +23,9 @@ import java.util.List;
  */
 public class Grid {
 
-    public GraphModel<Double> getModel(String file) {
-        ParsingStrategy<GraphModel<Double>> s = new AdjacencyExtractor();
-        DataReader<GraphModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
+    public SpatialModel<Double> getModel(String file) {
+        ParsingStrategy<ImmutableGraphModel<Double>> s = new AdjacencyExtractor();
+        DataReader<ImmutableGraphModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
 
         return data.read();
     }
@@ -182,6 +186,17 @@ public class Grid {
         int x = a % size;
         int y = a / size;
         return new Pair<>(x, y);
+    }
+
+    /**
+     * It calculates the proper distance, given a spatial model
+     *
+     * @param from double representing the starting position
+     * @param to double representing the ending position
+     * @return a DoubleDistance object, meaningful in the given Spatial Model
+     */
+    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
+        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
 }

@@ -12,7 +12,13 @@ import java.util.function.Supplier;
 
 public class SignalStatistics<T extends SpatialTemporalSignal> {
     private final Collection<T> results = Collections.synchronizedCollection(new ArrayList<>());
-    private final Collection<Double> durations = new ArrayList<>();
+    private final Collection<Float> durations = new ArrayList<>();
+
+    private final long startingTime;
+
+    public SignalStatistics() {
+        startingTime = System.currentTimeMillis();
+    }
 
     public T record(Supplier<T> f) {
         try {
@@ -20,7 +26,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal> {
             T result = f.get(); //Supplier code execution (i.e. f.apply())
             long endingTime = System.currentTimeMillis();
 
-            double duration = (endingTime - startingTime) / 1000.0;
+            float duration = (float)((endingTime - startingTime) / 1000.0);
 
             durations.add(duration);
             results.add(result);
@@ -37,22 +43,25 @@ public class SignalStatistics<T extends SpatialTemporalSignal> {
      * @return a DTO containing the final statistics
      */
     public Statistics analyze() {
-        double avg = computeAverage();
-        double var = computeVariance(avg);
-        double stdDev = Math.sqrt(var);
-        double execTime = computeAvgExecTime();
+        float avg = computeAverage();
+        float var = computeVariance(avg);
+        float stdDev = (float) Math.sqrt(var);
+        float execTime = computeAvgExecTime();
         int cnt = results.size();
 
-        return new Statistics(avg, execTime, stdDev, var, cnt);
+        long endingTime = System.currentTimeMillis();
+        float totalTime = (float) ((endingTime - startingTime) / 1000.0);
+
+        return new Statistics(avg, execTime, stdDev, var, cnt, totalTime);
     }
 
-    private double computeAverage() {
-        double value = 0;
+    private float computeAverage() {
+        float value = 0;
 
         for (SpatialTemporalSignal<?> result : results) {
             Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Double) {
-                value += (Double) s.valueAt(0);
+            if (s.valueAt(0) instanceof Float) {
+                value += (Float) s.valueAt(0);
             } else if (s.valueAt(0) instanceof Boolean) {
                 value += (Boolean) s.valueAt(0) ? 1 : 0;
             }
@@ -63,77 +72,84 @@ public class SignalStatistics<T extends SpatialTemporalSignal> {
         return value / results.size();
     }
 
-    private double computeAvgExecTime() {
-        double t = 0;
+    private float computeAvgExecTime() {
+        float t = 0;
 
-        for (Double duration : durations) {
+        for (Float duration : durations) {
             t += duration;
         }
 
         return t / durations.size();
     }
 
-    private double computeVariance(double avg) {
-        double value = 0;
+    private float computeVariance(float avg) {
+        float value = 0;
 
         for (SpatialTemporalSignal<?> result : results) {
             Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Double) {
-                double v = (Double) s.valueAt(0);
+            if (s.valueAt(0) instanceof Float) {
+                float v = (Float) s.valueAt(0);
                 value += Math.pow((v - avg), 2);
             } else if (s.valueAt(0) instanceof Boolean) {
-                double v = (Boolean) s.valueAt(0) ? 1 : 0;
+                float v = (Boolean) s.valueAt(0) ? 1 : 0;
                 value += Math.pow((v - avg), 2);
             }
             else
                 throw new InvalidParameterException("Unknown Signal Output");
         }
 
-        return value / (results.size() - 1);
+        return value / (results.size());
     }
 
 
 
     public static class Statistics implements Serializable {
 
-        Statistics(double avg, double exec, double std, double var, int cnt) {
+        Statistics(float avg, float exec, float std, float var, int cnt, float tot) {
             average = avg;
             executionTime = exec;
             stdDeviation = std;
             variance = var;
             count = cnt;
+            totalExecutionTime = tot;
         }
 
         /**
          * Average of the results of the monitoring process
          */
-        public final double average;
+        public final float average;
 
         /**
          * Standard deviation of the results of the monitoring process
          */
-        public final double stdDeviation;
+        public final float stdDeviation;
 
         /**
          * Variance of the results of the monitoring process
          */
-        public final double variance;
+        public final float variance;
 
         /**
          * Average execution time of the monitoring process
          */
-        public final double executionTime;
+        public final float executionTime;
 
         /**
          * Number of executions of the monitoring process
          */
         public final int count;
 
+        /**
+         * Total execution time of the monitoring process
+         */
+        public final float totalExecutionTime;
+
         @Override
         public String toString() {
             return  "AVG:" + average + " | STD:" + stdDeviation +
                     " | VAR:" + variance + " | CNT:" + count +
-                    " | AVG_EXEC_TIME:" + executionTime + "ms";
+                    " | AVG_EXEC_TIME:" + executionTime + "ms" +
+                    " | TOT_EXEC_TIME:" + totalExecutionTime + "ms";
         }
     }
 }

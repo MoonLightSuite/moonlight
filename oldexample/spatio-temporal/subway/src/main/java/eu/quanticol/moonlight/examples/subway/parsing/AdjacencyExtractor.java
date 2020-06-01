@@ -1,14 +1,15 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
 import eu.quanticol.moonlight.signal.GraphModel;
+import eu.quanticol.moonlight.signal.ImmutableGraphModel;
 
 /**
  * Parsing strategy that generates a GraphModel based on
  * a String-based adjacency matrix
  */
-public class AdjacencyExtractor implements ParsingStrategy<GraphModel<Double>> {
+public class AdjacencyExtractor implements ParsingStrategy<ImmutableGraphModel<Double>> {
     private double weight;
-    private GraphModel<Double> graph;
+    private ImmutableGraphModel<Double> graph;
     private int row;
 
     /**
@@ -19,7 +20,7 @@ public class AdjacencyExtractor implements ParsingStrategy<GraphModel<Double>> {
     @Override
     public void initialize(String[] header) {
         this.weight = 1;
-        this.graph = new GraphModel<>(header.length);
+        this.graph = new ImmutableGraphModel<>(header.length);
         this.row = 0;
     }
 
@@ -42,7 +43,7 @@ public class AdjacencyExtractor implements ParsingStrategy<GraphModel<Double>> {
      * @return the graph spatial model generated so far
      */
     @Override
-    public GraphModel<Double> result() {
+    public ImmutableGraphModel<Double> result() {
         return graph;
     }
 }

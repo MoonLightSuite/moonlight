@@ -59,12 +59,16 @@ public class StatisticalModelChecker<E,S,T> {
      * and <code>stats</code>.
      */
     public void compute() {
+        int i = 0;
         for (SpatialTemporalSignal<S> s : samples) {
 
             SpatialTemporalSignal<T> result = stats.record(
                                         () -> monitor.monitor(locService, s));
-            if (result != null)
+            if (result != null) {
                 results.add(result);
+                i++;
+                System.out.println("Monitoring " + i + " finished with: " + result.getSignals().get(0).valueAt(0));
+            }
         }
     }
 

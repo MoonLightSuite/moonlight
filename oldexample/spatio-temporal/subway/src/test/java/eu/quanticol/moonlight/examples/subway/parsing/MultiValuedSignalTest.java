@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
 import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
 import org.junit.jupiter.api.Test;
 
@@ -25,20 +24,20 @@ class MultiValuedSignalTest {
         MultiValuedSignal s = new MultiValuedSignal(1, 1);
         MultiValuedSignal s1 = new MultiValuedSignal(2, 1);
 
-        HashBiMap<Integer, Integer, Integer> dim1 = new HashBiMap<>();
-        HashBiMap<Integer, Integer, Integer> dim2 = new HashBiMap<>();
-        HashBiMap<Integer, Integer, Integer> dim3 = new HashBiMap<>();
+        Integer[][] dim1 = new Integer[1][1];
+        Integer[][] dim2 = new Integer[2][1];
+        Integer[][] dim3 = new Integer[1][2];
 
         // First dimension is 1x1 space / time
-        dim1.put(0, 0, 1);
+        dim1[0][0] = 1;
 
         // Second dimension is 2x1 space / time
-        dim2.put(0, 0, 1);
-        dim2.put(1, 0, 2);
+        dim2[0][0] = 1;
+        dim2[1][0] = 2;
 
         // Third dimension is 1x2 space / time
-        dim3.put(0, 0, 1);
-        dim3.put(0, 1, 2);
+        dim3[0][0] = 1;
+        dim3[0][1] = 2;
 
         // We expect the second dimension to make the signal fail
         // because of space mismatch
@@ -61,15 +60,15 @@ class MultiValuedSignalTest {
     void simpleRightSignal() {
         MultiValuedSignal s = new MultiValuedSignal(2, 1);
 
-        HashBiMap<Integer, Integer, Integer> dim1 = new HashBiMap<>();
-        HashBiMap<Integer, Integer, Integer> dim2 = new HashBiMap<>();
+        Integer[][] dim1 = new Integer[2][1];
+        Integer[][] dim2 = new Integer[2][1];
 
         // First dimension
-        dim1.put(0, 0, 1);
-        dim1.put(1, 0, 2);
+        dim1[0][0] = 1;
+        dim1[1][0] = 2;
         // Second dimension
-        dim2.put(0, 0, 1);
-        dim2.put(1, 0, 2);
+        dim2[0][0] = 1;
+        dim2[1][0] = 2;
 
         s.setDimension(dim1, 0).setDimension(dim2, 1).initialize();
 
