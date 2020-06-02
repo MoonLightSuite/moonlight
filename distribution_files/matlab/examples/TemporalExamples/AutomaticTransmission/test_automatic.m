@@ -30,7 +30,8 @@ fprintf('\t solver = %s \n\n',solver);
 %picewise_brake    = [  0, stime;   %time
 %                       0,    0];   %value
                    
-[picewise_throttle, picewise_brake] = generate_inputs (stime, 12)
+[picewise_throttle, picewise_brake] = generate_inputs (stime, 12);
+
 
                    
 %% Generating input signals
@@ -64,7 +65,11 @@ fprintf('Simulation of Simulink Model \n');
 fprintf('Plotting simulation \n');
 
 %% Plotting the simulation
-plotting (input, output, input_labels, output_labels);
+%plotting (input, output, input_labels, output_labels);
+run('../../../init.m');
+addpath(genpath('../../../externalsw/breach'));
+addpath(genpath('../../../externalsw/s-taliro_public'));
+InitBreach;
 
 
 %% Monitoring property with Moonlight
@@ -113,5 +118,4 @@ end
 if (count == 4)
     fprintf("Comparison of results between Moonlight and S-Taliro is successful!!\n");
 end
-
-
+  

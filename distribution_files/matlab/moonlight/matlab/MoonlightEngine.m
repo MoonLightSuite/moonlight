@@ -8,8 +8,11 @@ classdef MoonlightEngine
     end
     methods(Static)
         function  self = load(filename)
+            MoonlightEngine.loadInner(filename);
+            self = MoonlightEngine.loadJavaClass(filename); 
+        end
+        function loadInner(filename)
             % class static constructor
-            self = MoonlightEngine;
             [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));
             if(status~=0)
                 throw(MException("","PARSER OF THE SCRIPT FAILED "+out))
@@ -18,8 +21,15 @@ classdef MoonlightEngine
             if(status~=0)
                 throw(MException("","CREATION OF THE JAR FAILED \n"+out))
             end
+            warning('off','all');
             javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight", "script",filename+".jar"));
+            warning('on','all');
+        end
+        function  self = loadJavaClass(filename)
+            self = MoonlightEngine;
+            warning('off','all');
             self.Script=eval("moonlight.script.Script"+filename);
+            warning('on','all');
         end
     end
     methods

@@ -14,7 +14,7 @@ disp(strcat("Created startup file: ", moonlightPath));
 startupPath = fullfile(userpath,'startup.m');
 if(~isfile(fullfile(userpath,'startup.m')))
     startup = fopen(startupPath,'w');
-    fprintf(startup,"moonlight\n");
+    fprintf(startup,"moonlight;\n");
     disp(strcat("Created startup file: ", startupPath));
 else
     content = fileread(fullfile(userpath,'startup.m'));
@@ -25,6 +25,8 @@ else
     end
 end
 
-init
+setenv("MOONLIGHT_FOLDER",pwd)
+javaaddpath(fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar"));
+addpath(fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","matlab"));
 disp("Environmental Variable Loaded");
 disp("### Moonlight Installation ENDED ###");
