@@ -276,11 +276,11 @@ breach_rob_mean_time_spec3   = mean(breach_robust_time_spec3(:));
 
 fprintf('Specification 3 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec3, breach_rob_max_time_spec3, breach_rob_mean_time_spec3, breach_rob_median_time_spec3, breach_rob_var_time_spec3);
 
-moonlight_rob_max_time_spec4    = max(moonlight_robust_time_spec4(:));
-moonlight_rob_min_time_spec4    = min(moonlight_robust_time_spec4(:));
-moonlight_rob_median_time_spec4 = median(moonlight_robust_time_spec4(:));
-moonlight_rob_var_time_spec4    = var(moonlight_robust_time_spec4(:));
-moonlight_rob_mean_time_spec4   = mean(moonlight_robust_time_spec4(:));
+breach_rob_max_time_spec4    = max(breach_robust_time_spec4(:));
+breach_rob_min_time_spec4    = min(breach_robust_time_spec4(:));
+breach_rob_median_time_spec4 = median(breach_robust_time_spec4(:));
+breach_rob_var_time_spec4    = var(breach_robust_time_spec4(:));
+breach_rob_mean_time_spec4   = mean(breach_robust_time_spec4(:));
 
 fprintf('Specification 4 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec4, breach_rob_max_time_spec4, breach_rob_mean_time_spec4, breach_rob_median_time_spec4, breach_rob_var_time_spec4);
 
