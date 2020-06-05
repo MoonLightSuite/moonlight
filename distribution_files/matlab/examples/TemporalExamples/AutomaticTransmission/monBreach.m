@@ -1,7 +1,7 @@
 function [robust_results] = monBreach (time, output, num_exp, omega, speed_threshold, T)
 
 
-fprintf('Monitoring with Breach\n');
+fprintf('Monitoring with Breach, omega=%f, speed_threshold=%f, T=%f\n', omega, speed_threshold, T);
 
 robust_results  = zeros(4,2);
 

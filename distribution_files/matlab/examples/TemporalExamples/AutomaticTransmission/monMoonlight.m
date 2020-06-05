@@ -10,7 +10,7 @@ booleanMonitor = MoonlightEngine.load("multiple_specBool");
 quantitativeMonitor = MoonlightEngine.load("multiple_specQuant");
 
 
-fprintf('Monitoring with Moonlight\n');
+fprintf('Monitoring with Moonlight, omega=%f, speed_threshold=%f, T=%f\n', omega, speed_threshold, T);
 
 boolean_results = zeros(4,2);
 robust_results  = zeros(4,2);

@@ -10,8 +10,8 @@ close all;   %close all the open windows
 %    - piecewise_throttle - define the input signal of the throttle
 %    - piecewise_break - define the input signal of the break
 
-dt            =  0.02;
-stime         =  64;
+dt            =  0.01;
+stime         =  32;
 solver        = 'ode5';
 
 model         = 'autotrans_mod04'
@@ -116,9 +116,8 @@ moonlight_robust_time_spec3   = zeros(size(vehicle_speed_thresholds,2), size(eng
 moonlight_robust_spec4        = zeros(size(vehicle_speed_thresholds,2), size(engine_speed_thresholds,2), size(time_bounds,2));
 moonlight_robust_time_spec4   = zeros(size(vehicle_speed_thresholds,2), size(engine_speed_thresholds,2), size(time_bounds,2));
 
-
-for vst=1:size(vehicle_speed_thresholds,2)
-    for est=1:size(engine_speed_thresholds,2)
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)
             [boolean_results, robust_results] = monMoonlight (time, output, 200, engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
             
@@ -144,6 +143,78 @@ for vst=1:size(vehicle_speed_thresholds,2)
         end
     end
 end
+moonlight_sat_max_time_spec1    = max(moonlight_satisfaction_time_spec1(:));
+moonlight_sat_min_time_spec1    = min(moonlight_satisfaction_time_spec1(:));
+moonlight_sat_median_time_spec1 = median(moonlight_satisfaction_time_spec1(:));
+moonlight_sat_var_time_spec1    = var(moonlight_satisfaction_time_spec1(:));
+moonlight_sat_mean_time_spec1   = mean(moonlight_satisfaction_time_spec1(:));
+
+fprintf('Specification 1 (Satisfaction)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_sat_min_time_spec1, moonlight_sat_max_time_spec1, moonlight_sat_mean_time_spec1, moonlight_sat_median_time_spec1, moonlight_sat_var_time_spec1);
+
+moonlight_sat_max_time_spec2    = max(moonlight_satisfaction_time_spec2(:));
+moonlight_sat_min_time_spec2    = min(moonlight_satisfaction_time_spec2(:));
+moonlight_sat_median_time_spec2 = median(moonlight_satisfaction_time_spec2(:));
+moonlight_sat_var_time_spec2    = var(moonlight_satisfaction_time_spec2(:));
+moonlight_sat_mean_time_spec2   = mean(moonlight_satisfaction_time_spec2(:));
+
+fprintf('Specification 2 (Satisfaction)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_sat_min_time_spec2, moonlight_sat_max_time_spec2, moonlight_sat_mean_time_spec2, moonlight_sat_median_time_spec2, moonlight_sat_var_time_spec2);
+
+moonlight_sat_max_time_spec3    = max(moonlight_satisfaction_time_spec3(:));
+moonlight_sat_min_time_spec3    = min(moonlight_satisfaction_time_spec3(:));
+moonlight_sat_median_time_spec3 = median(moonlight_satisfaction_time_spec3(:));
+moonlight_sat_var_time_spec3    = var(moonlight_satisfaction_time_spec3(:));
+moonlight_sat_mean_time_spec3   = mean(moonlight_satisfaction_time_spec3(:));
+
+fprintf('Specification 3 (Satisfaction)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_sat_min_time_spec3, moonlight_sat_max_time_spec3, moonlight_sat_mean_time_spec3, moonlight_sat_median_time_spec3, moonlight_sat_var_time_spec3);
+
+
+moonlight_sat_max_time_spec4    = max(moonlight_satisfaction_time_spec4(:));
+moonlight_sat_min_time_spec4    = min(moonlight_satisfaction_time_spec4(:));
+moonlight_sat_median_time_spec4 = median(moonlight_satisfaction_time_spec4(:));
+moonlight_sat_var_time_spec4    = var(moonlight_satisfaction_time_spec4(:));
+moonlight_sat_mean_time_spec4   = mean(moonlight_satisfaction_time_spec4(:));
+
+fprintf('Specification 4 (Satisfaction) - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_sat_min_time_spec4, moonlight_sat_max_time_spec4, moonlight_sat_mean_time_spec4, moonlight_sat_median_time_spec4, moonlight_sat_var_time_spec4);
+
+save (strcat('./test/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_max_time_spec1', 'moonlight_sat_min_time_spec1', 'moonlight_sat_median_time_spec1', 'moonlight_sat_var_time_spec1', 'moonlight_sat_mean_time_spec1', 'moonlight_sat_max_time_spec2', 'moonlight_sat_min_time_spec2', 'moonlight_sat_median_time_spec2', 'moonlight_sat_var_time_spec2', 'moonlight_sat_mean_time_spec2', 'moonlight_sat_max_time_spec3', 'moonlight_sat_min_time_spec3', 'moonlight_sat_median_time_spec3', 'moonlight_sat_var_time_spec3', 'moonlight_sat_mean_time_spec3', 'moonlight_sat_max_time_spec4', 'moonlight_sat_min_time_spec4', 'moonlight_sat_median_time_spec4', 'moonlight_sat_var_time_spec4', 'moonlight_sat_mean_time_spec4');
+
+
+moonlight_rob_max_time_spec1    = max(moonlight_robust_time_spec1(:));
+moonlight_rob_min_time_spec1    = min(moonlight_robust_time_spec1(:));
+moonlight_rob_median_time_spec1 = median(moonlight_robust_time_spec1(:));
+moonlight_rob_var_time_spec1    = var(moonlight_robust_time_spec1(:));
+moonlight_rob_mean_time_spec1   = mean(moonlight_robust_time_spec1(:));
+
+fprintf('Specification 1 (Robustness) - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_rob_min_time_spec1, moonlight_rob_max_time_spec1, moonlight_rob_mean_time_spec1, moonlight_rob_median_time_spec1, moonlight_rob_var_time_spec1);
+
+
+moonlight_rob_max_time_spec2    = max(moonlight_robust_time_spec2(:));
+moonlight_rob_min_time_spec2    = min(moonlight_robust_time_spec2(:));
+moonlight_rob_median_time_spec2 = median(moonlight_robust_time_spec2(:));
+moonlight_rob_var_time_spec2    = var(moonlight_robust_time_spec2(:));
+moonlight_rob_mean_time_spec2   = mean(moonlight_robust_time_spec2(:));
+
+fprintf('Specification 2 (Robustness)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_rob_min_time_spec2, moonlight_rob_max_time_spec2, moonlight_rob_mean_time_spec2, moonlight_rob_median_time_spec2, moonlight_rob_var_time_spec2);
+
+moonlight_rob_max_time_spec3    = max(moonlight_robust_time_spec3(:));
+moonlight_rob_min_time_spec3    = min(moonlight_robust_time_spec3(:));
+moonlight_rob_median_time_spec3 = median(moonlight_robust_time_spec3(:));
+moonlight_rob_var_time_spec3    = var(moonlight_robust_time_spec3(:));
+moonlight_rob_mean_time_spec3   = mean(moonlight_robust_time_spec3(:));
+
+fprintf('Specification 3 (Robustness)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_rob_min_time_spec3, moonlight_rob_max_time_spec3, moonlight_rob_mean_time_spec3, moonlight_rob_median_time_spec3, moonlight_rob_var_time_spec3);
+
+moonlight_rob_max_time_spec4    = max(moonlight_robust_time_spec4(:));
+moonlight_rob_min_time_spec4    = min(moonlight_robust_time_spec4(:));
+moonlight_rob_median_time_spec4 = median(moonlight_robust_time_spec4(:));
+moonlight_rob_var_time_spec4    = var(moonlight_robust_time_spec4(:));
+moonlight_rob_mean_time_spec4   = mean(moonlight_robust_time_spec4(:));
+
+fprintf('Specification 4 (Robustness)  - Moonlight Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', moonlight_rob_min_time_spec4, moonlight_rob_max_time_spec4, moonlight_rob_mean_time_spec4, moonlight_rob_median_time_spec4, moonlight_rob_var_time_spec4);
+
+save (strcat('./test/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_max_time_spec1', 'moonlight_rob_min_time_spec1', 'moonlight_rob_median_time_spec1', 'moonlight_rob_var_time_spec1', 'moonlight_rob_mean_time_spec1', 'moonlight_rob_max_time_spec2', 'moonlight_rob_min_time_spec2', 'moonlight_rob_median_time_spec2', 'moonlight_rob_var_time_spec2', 'moonlight_rob_mean_time_spec2', 'moonlight_rob_max_time_spec3', 'moonlight_rob_min_time_spec3', 'moonlight_rob_median_time_spec3', 'moonlight_rob_var_time_spec3', 'moonlight_rob_mean_time_spec3', 'moonlight_rob_max_time_spec4', 'moonlight_rob_min_time_spec4', 'moonlight_rob_median_time_spec4', 'moonlight_rob_var_time_spec4', 'moonlight_rob_mean_time_spec4');
+
+
 save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
 
 
@@ -161,9 +232,8 @@ breach_robust_time_spec3   = zeros(size(vehicle_speed_thresholds,2), size(engine
 breach_robust_spec4        = zeros(size(vehicle_speed_thresholds,2), size(engine_speed_thresholds,2), size(time_bounds,2));
 breach_robust_time_spec4   = zeros(size(vehicle_speed_thresholds,2), size(engine_speed_thresholds,2), size(time_bounds,2));
 
-
-for vst=1:size(vehicle_speed_thresholds,2)
-    for est=1:size(engine_speed_thresholds,2)
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)            
             [robust_results]                  = monBreach   (time, output, 200, engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
         
@@ -179,6 +249,45 @@ for vst=1:size(vehicle_speed_thresholds,2)
         end
     end
 end
+
+
+breach_rob_max_time_spec1    = max(breach_robust_time_spec1(:));
+breach_rob_min_time_spec1    = min(breach_robust_time_spec1(:));
+breach_rob_median_time_spec1 = median(breach_robust_time_spec1(:));
+breach_rob_var_time_spec1    = var(breach_robust_time_spec1(:));
+breach_rob_mean_time_spec1   = mean(breach_robust_time_spec1(:));
+
+fprintf('Specification 1 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec1, breach_rob_max_time_spec1, breach_rob_mean_time_spec1, breach_rob_median_time_spec1, breach_rob_var_time_spec1);
+
+
+breach_rob_max_time_spec2    = max(breach_robust_time_spec2(:));
+breach_rob_min_time_spec2    = min(breach_robust_time_spec2(:));
+breach_rob_median_time_spec2 = median(breach_robust_time_spec2(:));
+breach_rob_var_time_spec2    = var(breach_robust_time_spec2(:));
+breach_rob_mean_time_spec2   = mean(breach_robust_time_spec2(:));
+
+fprintf('Specification 2 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec2, breach_rob_max_time_spec2, breach_rob_mean_time_spec2, breach_rob_median_time_spec2, breach_rob_var_time_spec2);
+
+breach_rob_max_time_spec3    = max(breach_robust_time_spec3(:));
+breach_rob_min_time_spec3    = min(breach_robust_time_spec3(:));
+breach_rob_median_time_spec3 = median(breach_robust_time_spec3(:));
+breach_rob_var_time_spec3    = var(breach_robust_time_spec3(:));
+breach_rob_mean_time_spec3   = mean(breach_robust_time_spec3(:));
+
+fprintf('Specification 3 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec3, breach_rob_max_time_spec3, breach_rob_mean_time_spec3, breach_rob_median_time_spec3, breach_rob_var_time_spec3);
+
+moonlight_rob_max_time_spec4    = max(moonlight_robust_time_spec4(:));
+moonlight_rob_min_time_spec4    = min(moonlight_robust_time_spec4(:));
+moonlight_rob_median_time_spec4 = median(moonlight_robust_time_spec4(:));
+moonlight_rob_var_time_spec4    = var(moonlight_robust_time_spec4(:));
+moonlight_rob_mean_time_spec4   = mean(moonlight_robust_time_spec4(:));
+
+fprintf('Specification 4 (Robustness)  - Breach Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', breach_rob_min_time_spec4, breach_rob_max_time_spec4, breach_rob_mean_time_spec4, breach_rob_median_time_spec4, breach_rob_var_time_spec4);
+
+
+save (strcat('./test/',currDate,'/breach_rob_times_stat.mat'), 'breach_rob_max_time_spec1', 'breach_rob_min_time_spec1', 'breach_rob_median_time_spec1', 'breach_rob_var_time_spec1', 'breach_rob_mean_time_spec1', 'breach_rob_max_time_spec2', 'breach_rob_min_time_spec2', 'breach_rob_median_time_spec2', 'breach_rob_var_time_spec2', 'breach_rob_mean_time_spec2', 'breach_rob_max_time_spec3', 'breach_rob_min_time_spec3', 'breach_rob_median_time_spec3', 'breach_rob_var_time_spec3', 'breach_rob_mean_time_spec3', 'breach_rob_max_time_spec4', 'breach_rob_min_time_spec4', 'breach_rob_median_time_spec4', 'breach_rob_var_time_spec4', 'breach_rob_mean_time_spec4');
+
+
 
 save (strcat('./test/',currDate,'/monitoring_breach.mat'), 'breach_robust_spec1', 'breach_robust_spec2', 'breach_robust_spec3', 'breach_robust_spec4','breach_robust_time_spec1', 'breach_robust_time_spec2', 'breach_robust_time_spec3', 'breach_robust_time_spec4');
 
@@ -196,9 +305,8 @@ staliro_robust_spec4        = zeros(size(vehicle_speed_thresholds,2), size(engin
 staliro_robust_time_spec4   = zeros(size(vehicle_speed_thresholds,2), size(engine_speed_thresholds,2), size(time_bounds,2));
 
 
-
-for vst=1:size(vehicle_speed_thresholds,2)
-    for est=1:size(engine_speed_thresholds,2)
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)  
            [robust_results]                  = monStaliro  (time, output, 200, engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
            
@@ -214,6 +322,44 @@ for vst=1:size(vehicle_speed_thresholds,2)
         end
     end
 end
+
+staliro_rob_max_time_spec1    = max(staliro_robust_time_spec1(:));
+staliro_rob_min_time_spec1    = min(staliro_robust_time_spec1(:));
+staliro_rob_median_time_spec1 = median(staliro_robust_time_spec1(:));
+staliro_rob_var_time_spec1    = var(staliro_robust_time_spec1(:));
+staliro_rob_mean_time_spec1   = mean(staliro_robust_time_spec1(:));
+
+fprintf('Specification 1 (Robustness)  - S-Taliro Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', staliro_rob_min_time_spec1, staliro_rob_max_time_spec1, staliro_rob_mean_time_spec1, staliro_rob_median_time_spec1, staliro_rob_var_time_spec1);
+
+
+staliro_rob_max_time_spec2    = max(staliro_robust_time_spec2(:));
+staliro_rob_min_time_spec2    = min(staliro_robust_time_spec2(:));
+staliro_rob_median_time_spec2 = median(staliro_robust_time_spec2(:));
+staliro_rob_var_time_spec2    = var(staliro_robust_time_spec2(:));
+staliro_rob_mean_time_spec2   = mean(staliro_robust_time_spec2(:));
+
+fprintf('Specification 2 (Robustness)  - S-Taliro Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n',  staliro_rob_min_time_spec2,  staliro_rob_max_time_spec2, staliro_rob_mean_time_spec2,  staliro_rob_median_time_spec2,  staliro_rob_var_time_spec2);
+
+staliro_rob_max_time_spec3    = max(staliro_robust_time_spec3(:));
+staliro_rob_min_time_spec3    = min(staliro_robust_time_spec3(:));
+staliro_rob_median_time_spec3 = median(staliro_robust_time_spec3(:));
+staliro_rob_var_time_spec3    = var(staliro_robust_time_spec3(:));
+staliro_rob_mean_time_spec3   = mean(staliro_robust_time_spec3(:));
+
+fprintf('Specification 3 (Robustness)  - S-Taliro Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', staliro_rob_min_time_spec3, staliro_rob_max_time_spec3, staliro_rob_mean_time_spec3, staliro_rob_median_time_spec3, staliro_rob_var_time_spec3);
+
+staliro_rob_max_time_spec4    = max(staliro_robust_time_spec4(:));
+staliro_rob_min_time_spec4    = min(staliro_robust_time_spec4(:));
+staliro_rob_median_time_spec4 = median(staliro_robust_time_spec4(:));
+staliro_rob_var_time_spec4    = var(staliro_robust_time_spec4(:));
+staliro_rob_mean_time_spec4   = mean(staliro_robust_time_spec4(:));
+
+fprintf('Specification 4 (Robustness)  -  S-Taliro Times (sec): min=%f, max=%f, mean=%f, median=%f, var=%f\n', staliro_rob_min_time_spec4, staliro_rob_max_time_spec4, staliro_rob_mean_time_spec4, staliro_rob_median_time_spec4, staliro_rob_var_time_spec4);
+
+
+save (strcat('./test/',currDate,'/staliro_rob_times_stat.mat'), 'staliro_rob_max_time_spec1', 'staliro_rob_min_time_spec1', 'staliro_rob_median_time_spec1', 'staliro_rob_var_time_spec1', 'staliro_rob_mean_time_spec1', 'staliro_rob_max_time_spec2', 'staliro_rob_min_time_spec2', 'staliro_rob_median_time_spec2', 'staliro_rob_var_time_spec2', 'staliro_rob_mean_time_spec2', 'staliro_rob_max_time_spec3', 'staliro_rob_min_time_spec3', 'staliro_rob_median_time_spec3', 'staliro_rob_var_time_spec3', 'staliro_rob_mean_time_spec3', 'staliro_rob_max_time_spec4', 'staliro_rob_min_time_spec4', 'staliro_rob_median_time_spec4', 'staliro_rob_var_time_spec4', 'staliro_rob_mean_time_spec4');
+
+
 
 save (strcat('./test/',currDate,'/monitoring_staliro.mat'), 'staliro_robust_spec1', 'staliro_robust_spec2', 'staliro_robust_spec3', 'staliro_robust_spec4','staliro_robust_time_spec1', 'staliro_robust_time_spec2', 'staliro_robust_time_spec3', 'staliro_robust_time_spec4');
 
