@@ -452,35 +452,94 @@ if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) 
      fprintf("Comparison of results between Moonlight and Breach for Specification 4 is successful!!\n");
 end
 
-% count = 0;
-% for i=1:size (robust_results2)
-%     
-%     if (robust_results1(i) == robust_results2(i))
-%         count = count + 1;
-%     elseif (abs(robust_results1(i) - robust_results2(i)) < 0.0001)
-%         fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results2(i)), i);
-%     else 
-%        fprintf("Comparison between Moonlight and Breach failed on Specification num (%d) Moonlight=%d Breach=%d \n", i, robust_results1(i), robust_results2(i));
-%     end
-% end
-% 
-% if (count == 4)
-%     fprintf("Comparison of results between Moonlight and Breach is successful !!\n");
-% end
-% 
-% count = 0;
-% for i=1:size (robust_results3)
-%     if (robust_results1(i) == robust_results3(i))
-%        count = count + 1;
-%     elseif (abs(robust_results1(i) - robust_results3(i)) < 0.0001)
-%        fprintf("Comparison between Moonlight and S-Taliro: Warning Negligeble Rounded Error=%f on Specification num (%d)\n", abs(robust_results1(i) - robust_results3(i)),i ); 
-%        count = count + 1;
-%     else 
-%        fprintf("Comparison between Moonlight and S-Taliro failed on Specification num (%d) Moonlight=%d S-Taliro=%d \n", i, robust_results1(i), robust_results3(i));
-%     end
-% end
-% 
-% if (count == 4)
-%     fprintf("Comparison of results between Moonlight and S-Taliro is successful!!\n");
-% end
+
+%% Checking the results between Moonlight and STaliro
+
+fprintf('Checking consistency of the results between Moonlight and STaliro\n');
+
+count = 0;
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
+        for tbs=1:size(time_bounds,2)
+   
+            if (moonlight_robust_spec1 (vst,est,tbs) == staliro_robust_spec1 (vst,est,tbs))
+                count = count + 1;
+            elseif (abs(moonlight_robust_spec1 (vst,est,tbs) - staliro_robust_spec1 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and STaliro: Warning Negligeble Rounded Error=%f on Spec 1, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec1 (vst,est,tbs) - staliro_robust_time_spec1 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            else
+                fprintf("Comparison between Moonlight and STaliro failed on Spec 1, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec1 (vst,est,tbs), staliro_robust_spec1 (vst,est,tbs));
+            end
+        end
+    end
+end
+
+if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) * size(time_bounds,2))
+     fprintf("Comparison of results between Moonlight and STaliro for Specification 1 is successful!!\n");
+end
+
+count = 0;
+
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
+        for tbs=1:size(time_bounds,2)
+   
+            if (moonlight_robust_spec2 (vst,est,tbs) == staliro_robust_spec2 (vst,est,tbs))
+                count = count + 1;
+            elseif (abs(moonlight_robust_spec2 (vst,est,tbs) - staliro_robust_spec2 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and STaliro: Warning Negligeble Rounded Error=%f on Spec 2, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec2 (vst,est,tbs) - staliro_robust_spec2 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            else
+                fprintf("Comparison between Moonlight and STaliro failed on Spec 2, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec2 (vst,est,tbs), staliro_robust_spec2 (vst,est,tbs));
+            end
+        end
+    end
+end
+
+if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) * size(time_bounds,2))
+     fprintf("Comparison of results between Moonlight and STaliro for Specification 2 is successful!!\n");
+end
+
+count = 0;
+
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
+        for tbs=1:size(time_bounds,2)
+   
+            if (moonlight_robust_spec3 (vst,est,tbs) == staliro_robust_spec3 (vst,est,tbs))
+                count = count + 1;
+            elseif (abs(moonlight_robust_spec3 (vst,est,tbs) - staliro_robust_spec3 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and STaliro: Warning Negligeble Rounded Error=%f on Spec 3, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec3 (vst,est,tbs) - staliro_robust_spec3 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            else
+                fprintf("Comparison between Moonlight and STaliro failed on Spec 3, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f STaliro=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec3 (vst,est,tbs), staliro_robust_spec3 (vst,est,tbs));
+            end
+        end
+    end
+end
+
+if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) * size(time_bounds,2))
+     fprintf("Comparison of results between Moonlight and STaliro for Specification 3 is successful!!\n");
+end
+
+
+count = 0;
+
+for est=1:size(engine_speed_thresholds,2)
+    for vst=1:size(vehicle_speed_thresholds,2)
+        for tbs=1:size(time_bounds,2)
+   
+            if (moonlight_robust_spec4 (vst,est,tbs) == staliro_robust_spec4 (vst,est,tbs))
+                count = count + 1;
+            elseif (abs(moonlight_robust_spec4 (vst,est,tbs) - staliro_robust_spec4 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and STaliro: Warning Negligeble Rounded Error=%f on Spec 4, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec4 (vst,est,tbs) - staliro_robust_spec4 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            else
+                fprintf("Comparison between Moonlight and STaliro failed on Spec 4, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec4 (vst,est,tbs), staliro_robust_spec4 (vst,est,tbs));
+            end
+        end
+    end
+end
+
+if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) * size(time_bounds,2))
+     fprintf("Comparison of results between Moonlight and STaliro for Specification 4 is successful!!\n");
+end
+
+
   
