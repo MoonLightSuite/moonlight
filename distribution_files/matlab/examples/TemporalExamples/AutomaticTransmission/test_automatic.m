@@ -373,12 +373,12 @@ for est=1:size(engine_speed_thresholds,2)
     for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)
    
-            if (moonlight_robust_spec1 (vst,est,tbs) == breach_robust_time_spec1 (vst,est,tbs))
+            if (moonlight_robust_spec1 (vst,est,tbs) == breach_robust_spec1 (vst,est,tbs))
                 count = count + 1;
-            elseif (abs(moonlight_robust_spec1 (vst,est,tbs) - breach_robust_time_spec1 (vst,est,tbs)) < 0.0001)
+            elseif (abs(moonlight_robust_spec1 (vst,est,tbs) - breach_robust_spec1 (vst,est,tbs)) < 0.0001)
                 fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 1, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec1 (vst,est,tbs) - breach_robust_time_spec1 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
             else
-                fprintf("Comparison between Moonlight and Breach failed on Spec 1, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec1 (vst,est,tbs), breach_robust_time_spec1 (vst,est,tbs));
+                fprintf("Comparison between Moonlight and Breach failed on Spec 1, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec1 (vst,est,tbs), breach_robust_spec1 (vst,est,tbs));
             end
         end
     end
@@ -394,12 +394,12 @@ for est=1:size(engine_speed_thresholds,2)
     for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)
    
-            if (moonlight_robust_spec2 (vst,est,tbs) == breach_robust_time_spec2 (vst,est,tbs))
+            if (moonlight_robust_spec2 (vst,est,tbs) == breach_robust_spec2 (vst,est,tbs))
                 count = count + 1;
-            elseif (abs(moonlight_robust_spec2 (vst,est,tbs) - breach_robust_time_spec2 (vst,est,tbs)) < 0.0001)
-                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 2, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec2 (vst,est,tbs) - breach_robust_time_spec2 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            elseif (abs(moonlight_robust_spec2 (vst,est,tbs) - breach_robust_spec2 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 2, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec2 (vst,est,tbs) - breach_robust_spec2 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
             else
-                fprintf("Comparison between Moonlight and Breach failed on Spec 2, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec2 (vst,est,tbs), breach_robust_time_spec2 (vst,est,tbs));
+                fprintf("Comparison between Moonlight and Breach failed on Spec 2, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec2 (vst,est,tbs), breach_robust_spec2 (vst,est,tbs));
             end
         end
     end
@@ -415,12 +415,12 @@ for est=1:size(engine_speed_thresholds,2)
     for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)
    
-            if (moonlight_robust_spec3 (vst,est,tbs) == breach_robust_time_spec3 (vst,est,tbs))
+            if (moonlight_robust_spec3 (vst,est,tbs) == breach_robust_spec3 (vst,est,tbs))
                 count = count + 1;
-            elseif (abs(moonlight_robust_spec3 (vst,est,tbs) - breach_robust_time_spec3 (vst,est,tbs)) < 0.0001)
-                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 3, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec3 (vst,est,tbs) - breach_robust_time_spec3 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            elseif (abs(moonlight_robust_spec3 (vst,est,tbs) - breach_robust_spec3 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 3, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec3 (vst,est,tbs) - breach_robust_spec3 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
             else
-                fprintf("Comparison between Moonlight and Breach failed on Spec 3, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec3 (vst,est,tbs), breach_robust_time_spec3 (vst,est,tbs));
+                fprintf("Comparison between Moonlight and Breach failed on Spec 3, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec3 (vst,est,tbs), breach_robust_spec3 (vst,est,tbs));
             end
         end
     end
@@ -437,12 +437,12 @@ for est=1:size(engine_speed_thresholds,2)
     for vst=1:size(vehicle_speed_thresholds,2)
         for tbs=1:size(time_bounds,2)
    
-            if (moonlight_robust_spec4 (vst,est,tbs) == breach_robust_time_spec4 (vst,est,tbs))
+            if (moonlight_robust_spec4 (vst,est,tbs) == breach_robust_spec4 (vst,est,tbs))
                 count = count + 1;
-            elseif (abs(moonlight_robust_spec4 (vst,est,tbs) - breach_robust_time_spec4 (vst,est,tbs)) < 0.0001)
-                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 4, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec4 (vst,est,tbs) - breach_robust_time_spec4 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
+            elseif (abs(moonlight_robust_spec4 (vst,est,tbs) - breach_robust_spec4 (vst,est,tbs)) < 0.0001)
+                fprintf("Comparison between Moonlight and Breach: Warning Negligeble Rounded Error=%f on Spec 4, omega=%f, speed_threshold=%f, T=%f\n", abs(moonlight_robust_spec4 (vst,est,tbs) - breach_robust_spec4 (vst,est,tbs)), engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs));
             else
-                fprintf("Comparison between Moonlight and Breach failed on Spec 4, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec4 (vst,est,tbs), breach_robust_time_spec4 (vst,est,tbs));
+                fprintf("Comparison between Moonlight and Breach failed on Spec 4, omega=%f, speed_threshold=%f, T=%f\n, Moonlight=%f Breach=%f\n", engine_speed_thresholds(est), vehicle_speed_thresholds(vst), time_bounds(tbs), moonlight_robust_spec4 (vst,est,tbs), breach_robust_spec4 (vst,est,tbs));
             end
         end
     end
