@@ -71,8 +71,11 @@ staliro_rob_time_spec2 = staliro_rob_time_spec2 (:);
 staliro_rob_time_spec3 = staliro_rob_time_spec3 (:);
 staliro_rob_time_spec4 = staliro_rob_time_spec4 (:);
 
+status = mkdir('test', 'meta');
+
 
 currDate = strrep(datestr(datetime), ' ', '_');
+status = mkdir('test/meta', currDate);
 
 save (strcat('./test/meta/',currDate,'/meta.mat'), 'NTest', 'NExp', 'STime', 'Dt', 'testdirs', 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4', 'breach_rob_time_spec1', 'breach_rob_time_spec2' , 'breach_rob_time_spec3' , 'breach_rob_time_spec4' , 'staliro_rob_time_spec1','staliro_rob_time_spec2','staliro_rob_time_spec3','staliro_rob_time_spec4');
 
