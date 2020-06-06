@@ -1,6 +1,9 @@
 %% Initializing the script
 
-clear;       %clear all the memory
+
+function [currDate] = test_automatic (dt, stime, num_exp)
+
+%clear;       %clear all the memory
 close all;   %close all the open windows
 
 %% Configuration file for simulating the Simulink model "autotrans_mod04"
@@ -10,10 +13,10 @@ close all;   %close all the open windows
 %    - piecewise_throttle - define the input signal of the throttle
 %    - piecewise_break - define the input signal of the break
 
-dt            =  0.01;
-stime         =  32;
+%dt            =  0.01;
+%stime         =  32;
 solver        = 'ode5';
-num_exp       = 50;
+%num_exp       = 50;
 
 model         = 'autotrans_mod04'
 input_labels  = {'time', 'throttle', 'brake'};
@@ -541,5 +544,5 @@ if (count == size(engine_speed_thresholds,2) * size(vehicle_speed_thresholds,2) 
      fprintf("Comparison of results between Moonlight and STaliro for Specification 4 is successful!!\n");
 end
 
-
+end
   
