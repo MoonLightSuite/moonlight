@@ -1,7 +1,7 @@
 clear;       %clear all the memory
 close all;   %close all the open windows
 
-NTest = 10;
+NTest = 100;
 NExp  = 50;
 STime = 64;
 Dt    = 0.01;
