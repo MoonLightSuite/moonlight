@@ -77,7 +77,7 @@ save (strcat('./test/',currDate,'/simulation.mat'), 'dt', 'stime', 'solver', 'nu
 fprintf('Plotting simulation \n');
 
 %% Plotting the simulation
-plotting (input, output, input_labels, output_labels);
+% plotting (input, output, input_labels, output_labels);
 run('../../../init.m');
 addpath(genpath('../../../externalsw/breach'));
 addpath(genpath('../../../externalsw/s-taliro_public'));
