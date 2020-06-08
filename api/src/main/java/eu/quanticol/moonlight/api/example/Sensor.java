@@ -70,7 +70,7 @@ public class Sensor extends MoonLightSpatialTemporalScript {
             "SensorNetwork",
             SensorNetwork_edge_handler_,
             SensorNetwork_signal_handler_,
-            SensorNetwork_output_data_handler_,
+            _domain_SensorNetwork,
             SensorNetwork_parameters_handler_,
             r -> SensorNetwork_main(r)
     );

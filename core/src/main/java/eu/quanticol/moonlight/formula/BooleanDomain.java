@@ -19,6 +19,8 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.signal.DataHandler;
+
 /**
  *
  */
@@ -87,6 +89,11 @@ public class BooleanDomain implements SignalDomain<Boolean> {
 	@Override
 	public Boolean computeGreaterOrEqualThan(double v1, double v2) {
 		return (v1>=v2);
+	}
+
+	@Override
+	public DataHandler<Boolean> getDataHandler() {
+		return DataHandler.BOOLEAN;
 	}
 
 }

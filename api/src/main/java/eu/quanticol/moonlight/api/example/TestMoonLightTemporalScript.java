@@ -27,7 +27,7 @@ public class TestMoonLightTemporalScript extends MoonLightTemporalScript {
 
     private TemporalScriptComponent<?> temporalMonitor = new TemporalScriptComponent<Double>(TEMPORAL[0],
             new RecordHandler(DataHandler.REAL, DataHandler.REAL),
-            DataHandler.REAL,
+            domain,
             temporalBuilder);
 
     public TestMoonLightTemporalScript() {

@@ -3,6 +3,9 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.signal.DataHandler;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -12,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class MoonLightSpatialTemporalScript implements MoonLightScript {
 
     private final String[] spatialTemporalMonitors;
+    private SignalDomain<?> domain;
 
     public MoonLightSpatialTemporalScript(String[] spatialTemporalMonitors) {
         this.spatialTemporalMonitors = spatialTemporalMonitors;
@@ -20,6 +24,15 @@ public abstract class MoonLightSpatialTemporalScript implements MoonLightScript 
     public abstract SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name);
 
     public abstract SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent();
+
+    public void setMonitoringDomain(SignalDomain<?> domain) {
+        this.domain = domain;
+    }
+
+    public SignalDomain<?> getMonitoringDomain() {
+        return this.domain;
+    }
+
 
     public String[] getSpatialTemporalMonitors() {
         return spatialTemporalMonitors;

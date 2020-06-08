@@ -15,7 +15,7 @@ function [picewise_throttle, piecewise_brake] = generate_inputs (sim, spoints)
        picewise_throttle(2,2:spoints+2) = value_throttle; 
        
        
-       time_brake               = sort(random('unif', 0, sim, spoints, 1))
+       time_brake               = sort(random('unif', 0, sim, spoints, 1));
        value_brake              = random(     'unif', 0,  40, spoints+1, 1);
        
        

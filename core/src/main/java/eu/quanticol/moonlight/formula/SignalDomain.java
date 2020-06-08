@@ -19,6 +19,8 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.signal.DataHandler;
+
 public interface SignalDomain<R> extends Semiring<R> {
 	
 	R negation(R x);
@@ -47,4 +49,5 @@ public interface SignalDomain<R> extends Semiring<R> {
 	
 	R computeGreaterOrEqualThan(double v1, double v2);
 
+	DataHandler<R> getDataHandler();
 }

@@ -1,7 +1,7 @@
 function [robust_results] = monStaliro (time, output, num_exp, omega, speed_threshold, T)
 
 
-fprintf('Monitoring with S-Taliro\n');
+fprintf('Monitoring with S-Taliro, omega=%f, speed_threshold=%f, T=%f\n', omega, speed_threshold, T);
 
 robust_results  = zeros(4,2);
 
