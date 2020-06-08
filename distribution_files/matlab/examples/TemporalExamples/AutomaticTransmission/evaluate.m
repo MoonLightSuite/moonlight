@@ -1,9 +1,9 @@
 clear;       %clear all the memory
 close all;   %close all the open windows
 
-NTest = 20;
+NTest = 100;
 NExp  = 50;
-STime = 64;
+STime = 128;
 Dt    = 0.01;
 testdirs = {};
 
