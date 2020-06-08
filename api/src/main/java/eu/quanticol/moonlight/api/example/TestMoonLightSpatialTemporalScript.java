@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
+import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
@@ -22,9 +23,9 @@ public class TestMoonLightSpatialTemporalScript extends MoonLightSpatialTemporal
     //SPATIO-TEMPORAL
     private Function<Record, SpatialTemporalMonitor<Record, Record, Boolean>> spatialBuilder = r -> SpatialTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
 
-    private SpatialTemporalScriptComponent<?> spatioTemporalMonitor = new SpatialTemporalScriptComponent<>(SPATIAL[0],
+    private SpatialTemporalScriptComponent<?> spatioTemporalMonitor = new SpatialTemporalScriptComponent<Boolean>(SPATIAL[0],
             new RecordHandler(DataHandler.REAL), new RecordHandler(DataHandler.BOOLEAN, DataHandler.INTEGER),
-            DataHandler.BOOLEAN,
+            new BooleanDomain(),
             spatialBuilder);
 
 

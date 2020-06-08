@@ -89,7 +89,7 @@ class ScriptToJava {
 			}
 			«ENDFOR»
 						
-			private SignalDomain<«model.semiring.javaTypeOf»> «signalDomain» = new «model.semiring.domainOf»();
+			//private SignalDomain<«model.semiring.javaTypeOf»> «signalDomain» = new «model.semiring.domainOf»();
 
 			«IF model.isIsSpatial»
 			private RecordHandler «edgeRecordHandler» = generateEdgesRecordHandler();
@@ -126,13 +126,14 @@ class ScriptToJava {
 					"«f.name»"
 					«ENDFOR»					
 				});	
+				this.setMonitoringDomain(new «model.semiring.domainOf»());
 			}
 		
 		«IF model.isIsSpatial»
 			public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent( String name ) {
 				«FOR f: model.formulas»
 				if ("«f.name»".equals( name ) ) {
-					return 	MONITOR_«f.name»; 
+					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
 				return null;
@@ -146,7 +147,7 @@ class ScriptToJava {
 			public TemporalScriptComponent<?> selectTemporalComponent( String name ) {
 				«FOR f: model.formulas»
 				if ("«f.name»".equals( name ) ) {
-					return 	MONITOR_«f.name»; 
+					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
 				return «generateReferenceToDefaultFormula(model.formulas)»;					
@@ -171,7 +172,7 @@ class ScriptToJava {
 		if (f === null) {
 			return '''null'''
 		} else {
-			return '''MONITOR_«f.name»'''
+			return '''getMONITOR_«f.name»(getMonitoringDomain())'''
 		}
 	}
 	
@@ -239,17 +240,21 @@ class ScriptToJava {
 	def  generateGenerateFormulaBuilderDeclaration(FormulaDeclaration f, Model model) {
 		if (model.isIsSpatial) {
 			'''
-			private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( Record parameters ) {				
+			//private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( Record parameters ) {				
+			private <S> SpatialTemporalMonitor<Record,Record,S> «monitorSubFormulaName(f.name)»( SignalDomain<S> «signalDomain», Record parameters ) {				
 				return «monitorSubFormulaName(f.name)»( 
-					«FOR p:f.parameters SEPARATOR ','»
-					((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
+					«signalDomain»
+					«FOR p:f.parameters»
+					, ((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
 					«ENDFOR»					
 				);				
 			}
 			
-			private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
-				«FOR p:f.parameters SEPARATOR ','»
-				«p.type.basicTypeOf» «p.name»
+			//private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
+			private <S> SpatialTemporalMonitor<Record,Record,S> «monitorSubFormulaName(f.name)»( 
+				SignalDomain<S> «signalDomain»
+				«FOR p:f.parameters»
+				, «p.type.basicTypeOf» «p.name»
 				«ENDFOR»
 			) {
 				return «f.formula.SpatialTemporalMonitorCode(f.name,signalDomain)»;	
@@ -257,17 +262,21 @@ class ScriptToJava {
 			'''
 		} else {
 			'''
-			private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)» ( Record parameters ) {
+			//private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)» ( Record parameters ) {
+			private <S> TemporalMonitor<Record,S> «monitorSubFormulaName(f.name)» ( SignalDomain<S> «signalDomain» , Record parameters ) {
 				return «monitorSubFormulaName(f.name)»( 
-					«FOR p:f.parameters SEPARATOR ','»
-					((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
+					«signalDomain»
+					«FOR p:f.parameters»
+					, ((«p.type.basicTypeOf») parameters.get(«f.parameters.indexOf(p)»,«p.type.toJavaType»))
 					«ENDFOR»					
 				);				
 			}
 						
-			private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
-				«FOR p:f.parameters SEPARATOR ','»
-				«p.type.basicTypeOf» «p.name»
+			//private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
+			private <S> TemporalMonitor<Record,S> «monitorSubFormulaName(f.name)»( 
+				SignalDomain<S> «signalDomain» 
+				«FOR p:f.parameters»
+				, «p.type.basicTypeOf» «p.name»
 				«ENDFOR»
 			) {
 				return «f.formula.temporalMonitorCode(f.name,signalDomain)»;	
@@ -279,22 +288,30 @@ class ScriptToJava {
 	
 	def  generateMonitorDeclaration(FormulaDeclaration formulaDeclaration, Model model) {
 		if (model.isIsSpatial) {
-			'''private SpatialTemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new SpatialTemporalScriptComponent<>(
-				"«formulaDeclaration.name»" ,
-				«edgeRecordHandler» ,
-				«signalHandler» ,
-				«outputHandler» ,
-				«formulaDeclaration.name.parametersRecordHandlerName» ,
-				r -> «monitorSubFormulaName(formulaDeclaration.name)»( r )	
-			);'''
+			'''
+			//private SpatialTemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new SpatialTemporalScriptComponent<>(
+			private <S> SpatialTemporalScriptComponent<?> getMONITOR_«formulaDeclaration.name»(SignalDomain<S> «signalDomain») {
+				return new SpatialTemporalScriptComponent<S>(
+					"«formulaDeclaration.name»" ,
+					«edgeRecordHandler» ,
+					«signalHandler» ,
+					«signalDomain» ,
+					«formulaDeclaration.name.parametersRecordHandlerName» ,
+					r -> «monitorSubFormulaName(formulaDeclaration.name)»( «signalDomain» , r )	
+				);
+			}'''
 		} else {
-			'''private TemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new TemporalScriptComponent<>(
-				"«formulaDeclaration.name»" ,
-				«signalHandler» ,
-				«outputHandler» ,
-				«formulaDeclaration.name.parametersRecordHandlerName» ,
-				r -> «monitorSubFormulaName(formulaDeclaration.name)»( r )	
-			);'''
+			'''
+			//private TemporalScriptComponent<«model.semiring.javaTypeOf»> MONITOR_«formulaDeclaration.name» = new TemporalScriptComponent<>(
+			private <S> TemporalScriptComponent<?> getMONITOR_«formulaDeclaration.name»(SignalDomain<S> «signalDomain») {
+				return new TemporalScriptComponent<S>(
+					"«formulaDeclaration.name»" ,
+					«signalHandler» ,
+					«signalDomain» ,
+					«formulaDeclaration.name.parametersRecordHandlerName» ,
+					r -> «monitorSubFormulaName(formulaDeclaration.name)»( «signalDomain» , r )	
+				);
+			}'''
 		}
 	}
 	
@@ -466,7 +483,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence temporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 		'''
-		_FORMULA_«f.reference.name»( «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» )
+		_FORMULA_«f.reference.name»( «domain» «FOR p:f.arguments», «p.expressionToJava»«ENDFOR» )
 		'''		
 	}
 
@@ -650,7 +667,7 @@ class ScriptToJava {
 	
 	def dispatch CharSequence SpatialTemporalMonitorCode(StrelFormulaReference f , String prefix, String domain) {
 	  '''
-		_FORMULA_«f.reference.name»( «FOR p:f.arguments SEPARATOR ','»«p.expressionToJava»«ENDFOR» )
+		_FORMULA_«f.reference.name»( «domain» «FOR p:f.arguments», «p.expressionToJava»«ENDFOR» )
 	  '''		
 	}
 	

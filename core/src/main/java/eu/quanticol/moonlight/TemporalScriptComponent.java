@@ -19,6 +19,7 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
@@ -30,6 +31,7 @@ import eu.quanticol.moonlight.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -39,45 +41,37 @@ public class TemporalScriptComponent<S> {
 
     private final String name;
     private final RecordHandler signalRecordHandler;
-    private final DataHandler<S> outputTypeHandler;
     private final RecordHandler parameters;
     private final Function<Record, TemporalMonitor<Record, S>> builder;
+    private final SignalDomain<S> domain;
 
     /**
      * Create a new TemporalScriptComponent
      * @param name property name.
      * @param signalRecordHandler signal input data handler.
-     * @param outputTypeHandler signal output data handler.
+     * @param domain signal domain.
      * @param parameters parameters that can be used to instantiate.
      * @param builder function used to build the monitor.
      */
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
-                                   DataHandler<S> outputTypeHandler,
+                                   SignalDomain<S> domain,
                                    RecordHandler parameters,
                                    Function<Record, TemporalMonitor<Record, S>> builder) {
         super();
         this.name = name;
         this.signalRecordHandler = signalRecordHandler;
-        this.outputTypeHandler = outputTypeHandler;
+        this.domain = domain;
         this.parameters = parameters;
         this.builder = builder;
     }
 
-
-    /**
-     * Create a new TemporalScriptComponent
-     * @param name property name.
-     * @param signalRecordHandler signal input data handler.
-     * @param outputTypeHandler signal output data handler.
-     * @param builder function used to build the monitor.
-     */
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
-                                   DataHandler<S> outputTypeHandler,
+                                   SignalDomain<S> domain,
                                    Function<Record, TemporalMonitor<Record, S>> builder) {
-        this(name, signalRecordHandler, outputTypeHandler, null, builder);
+        this(name,signalRecordHandler,domain,null,builder);
     }
 
-    public String getName() {
+        public String getName() {
         return name;
     }
 
@@ -168,7 +162,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result.
      */
     public double[][] monitorToArray(Signal<Record> input, String ... values) {
-        return monitor(input, values).arrayOf(outputTypeHandler::doubleOf);
+        return monitor(input, values).arrayOf(domain.getDataHandler()::doubleOf);
     }
 
     /**
@@ -180,7 +174,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result.
      */
     public double[][] monitorToArray(Signal<Record> input, double ... values) {
-        return monitor(input, values).arrayOf(outputTypeHandler::doubleOf);
+        return monitor(input, values).arrayOf(domain.getDataHandler()::doubleOf);
     }
 
 
@@ -210,7 +204,7 @@ public class TemporalScriptComponent<S> {
 
     public void monitorToFile(TemporalSignalWriter writer, File output, Signal<Record> input, String ... values) throws IOException {
         Signal<S> signal = monitor(input, values);
-        writer.write(outputTypeHandler, signal, output);
+        writer.write(domain.getDataHandler(), signal, output);
     }
 
     public void monitor(TemporalSignalReader reader, File input, TemporalSignalWriter writer, File output, String ... values) throws IOException, IllegalFileFormatException {

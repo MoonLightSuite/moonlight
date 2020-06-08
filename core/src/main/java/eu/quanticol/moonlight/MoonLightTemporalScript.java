@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.SignalDomain;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -12,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class MoonLightTemporalScript implements MoonLightScript {
 
     private final String[] formulas;
+    private SignalDomain<?> domain;
 
     public MoonLightTemporalScript(String[] formulas) {
         this.formulas = formulas;
@@ -20,6 +23,14 @@ public abstract class MoonLightTemporalScript implements MoonLightScript {
     public abstract TemporalScriptComponent<?> selectTemporalComponent(String name);
 
     public abstract TemporalScriptComponent<?> selectDefaultTemporalComponent();
+
+    public void setMonitoringDomain(SignalDomain<?> domain) {
+        this.domain = domain;
+    }
+
+    public SignalDomain<?> getMonitoringDomain() {
+        return this.domain;
+    }
 
     public String[] getMonitors() {
         return formulas;

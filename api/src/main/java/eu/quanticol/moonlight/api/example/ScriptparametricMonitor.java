@@ -84,14 +84,14 @@ public class ScriptparametricMonitor extends MoonLightTemporalScript {
     private TemporalScriptComponent<Boolean> MONITOR_BooleanMonitorScript = new TemporalScriptComponent<>(
             "BooleanMonitorScript" ,
             BooleanMonitorScript_signal_handler_ ,
-            BooleanMonitorScript_output_data_handler_ ,
+            _domain_BooleanMonitorScript ,
             BooleanMonitorScript_parameters_handler_ ,
             r -> BooleanMonitorScript_main( r )
     );
     private TemporalScriptComponent<Double> MONITOR_QuantitativeMonitorScript = new TemporalScriptComponent<>(
             "QuantitativeMonitorScript" ,
             QuantitativeMonitorScript_signal_handler_ ,
-            QuantitativeMonitorScript_output_data_handler_ ,
+            _domain_QuantitativeMonitorScript ,
             QuantitativeMonitorScript_parameters_handler_ ,
             r -> QuantitativeMonitorScript_main( r )
     );

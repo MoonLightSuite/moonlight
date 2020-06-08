@@ -19,12 +19,14 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.io.SpatialTemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -36,26 +38,34 @@ public class SpatialTemporalScriptComponent<S> {
     private final String name;
     private final RecordHandler signalRecordHandler;
     private final RecordHandler edgeRecordHandler;
-    private final DataHandler<S> outputTypeHandler;
+    private final SignalDomain<S> domain;
     private final RecordHandler parameters;
     private final Function<Record, SpatialTemporalMonitor<Record, Record, S>> builder;
 
-    public SpatialTemporalScriptComponent(String name, RecordHandler edgeRecordHandler, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler, RecordHandler parameters,
-                                          Function<Record, SpatialTemporalMonitor<Record, Record, S>> builder) {
+    public SpatialTemporalScriptComponent(
+    		String name, 
+    		RecordHandler edgeRecordHandler, 
+    		RecordHandler signalRecordHandler,
+    		SignalDomain<S> domain, 
+    		RecordHandler parameters,
+    		Function<Record, SpatialTemporalMonitor<Record, Record, S>> builder) {
         super();
         this.name = name;
         this.signalRecordHandler = signalRecordHandler;
-        this.outputTypeHandler = outputTypeHandler;
+        this.domain = domain;
         this.edgeRecordHandler = edgeRecordHandler;
         this.parameters = parameters;
         this.builder = builder;
     }
 
-    public SpatialTemporalScriptComponent(String name, RecordHandler edgeRecordHandler, RecordHandler signalRecordHandler, DataHandler<S> outputTypeHandler,
-                                          Function<Record, SpatialTemporalMonitor<Record, Record, S>> builder) {
-        this(name, edgeRecordHandler, signalRecordHandler, outputTypeHandler, null, builder);
+    public SpatialTemporalScriptComponent(
+            String name,
+            RecordHandler edgeRecordHandler,
+            RecordHandler signalRecordHandler,
+            SignalDomain<S> domain,
+            Function<Record, SpatialTemporalMonitor<Record, Record, S>> builder) {
+        this(name,edgeRecordHandler,signalRecordHandler,domain,null,builder);
     }
-
 
     public String getName() {
         return name;
@@ -89,11 +99,11 @@ public class SpatialTemporalScriptComponent<S> {
     }
 
     public double[][][] monitorToArrayFromString(LocationService<Record> locations, SpatialTemporalSignal<Record> input, String ... parameters) {
-        return monitorFromString(locations, input, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromString(locations, input, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
     public double[][][] monitorToArrayFromDouble(LocationService<Record> locations, SpatialTemporalSignal<Record> input, double ... parameters) {
-        return monitorFromDouble(locations, input, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromDouble(locations, input, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
 
@@ -115,14 +125,14 @@ public class SpatialTemporalScriptComponent<S> {
         int locations = signalValues.length;
         SpatialTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationServiceFromAdjacencyMatrix(locations, edgeRecordHandler, locationTimeArray, graph);
-        return monitorFromDouble(locationService, signal, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromDouble(locationService, signal, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
     public double[][][] monitorToObjectArrayAdjacencyMatrix(double[][][] graph, double[] signalTimeArray, double[][][] signalValues, double ... parameters) {
         int locations = signalValues.length;
         SpatialTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationServiceFromAdjacencyMatrix(locations, edgeRecordHandler, signalTimeArray[0], graph);
-        return monitorFromDouble(locationService, signal, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromDouble(locationService, signal, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
     public double[][][] monitorToObjectArrayAdjacencyList(double[] locationTimeArray, String[][][] graph, double[] signalTimeArray, String[][][] signalValues, String... parameters) {
@@ -143,25 +153,25 @@ public class SpatialTemporalScriptComponent<S> {
         int locations = signalValues.length;
         SpatialTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationServiceFromAdjacencyList(locations, edgeRecordHandler, locationTimeArray, graph);
-        return monitorFromDouble(locationService, signal, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromDouble(locationService, signal, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
     public double[][][] monitorToObjectArrayAdjacencyList(double[][] graph, double[] signalTimeArray, double[][][] signalValues, double ... parameters) {
         int locations = signalValues.length;
         SpatialTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationServiceFromAdjacencyList(locations, edgeRecordHandler, signalTimeArray[0], graph);
-        return monitorFromDouble(locationService, signal, parameters).toArray(outputTypeHandler::doubleOf);
+        return monitorFromDouble(locationService, signal, parameters).toArray(domain.getDataHandler()::doubleOf);
     }
 
     public void monitorToFile(SpatialTemporalSignalWriter writer, File output, LocationService<Record> locations, SpatialTemporalSignal<Record> input, String... values) throws IOException {
         SpatialTemporalSignal<S> signal = monitorFromString(locations, input, values);
-        writer.write(outputTypeHandler, signal, output);
+        writer.write(domain.getDataHandler(), signal, output);
 
     }
 
     public void monitorToFile(SpatialTemporalSignalWriter writer, File output, LocationService<Record> locations, SpatialTemporalSignal<Record> input, double ... values) throws IOException {
         SpatialTemporalSignal<S> signal = monitorFromDouble(locations, input, values);
-        writer.write(outputTypeHandler, signal, output);
+        writer.write(domain.getDataHandler(), signal, output);
     }
 
     public String getInfo() {

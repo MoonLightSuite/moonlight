@@ -115,7 +115,7 @@ public class CityMonitor extends MoonLightSpatialTemporalScript {
             "City" ,
             City_edge_handler_ ,
             City_signal_handler_ ,
-            City_output_data_handler_ ,
+            _domain_City ,
             City_parameters_handler_ ,
             r -> City_main( r )
     );
@@ -123,7 +123,7 @@ public class CityMonitor extends MoonLightSpatialTemporalScript {
             "City2" ,
             City2_edge_handler_ ,
             City2_signal_handler_ ,
-            City2_output_data_handler_ ,
+            _domain_City ,
             City2_parameters_handler_ ,
             r -> City2_main( r )
     );
