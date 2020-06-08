@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.formula.BooleanDomain;
+import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +27,18 @@ public interface MoonLightScript {
 	default MoonLightSpatialTemporalScript spatialTemporal() {
 		throw new IllegalStateException(); //TODO: Add error message!
 	}
+
+	void setMonitoringDomain(SignalDomain<?> domain);
+
+	default void setBooleanDomain() {
+		setMonitoringDomain(new BooleanDomain());
+	}
+
+	default void setMinMaxDomain() {
+		setMonitoringDomain(new DoubleDomain());
+	}
+
+	SignalDomain<?> getMonitoringDomain();
 
 //    private final String[] temporalMonitors;
 //    private final String[] spatialTemporalMonitors;

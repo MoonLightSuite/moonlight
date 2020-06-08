@@ -55,7 +55,7 @@ public class RandomFormulae extends MoonLightTemporalScript {
     private TemporalScriptComponent<Boolean> MONITOR_RandomFormulae = new TemporalScriptComponent<>(
             "RandomFormulae" ,
             RandomFormulae_signal_handler_ ,
-            RandomFormulae_output_data_handler_ ,
+            _domain_RandomFormulae ,
             RandomFormulae_parameters_handler_ ,
             r -> RandomFormulae_main( r )
     );
