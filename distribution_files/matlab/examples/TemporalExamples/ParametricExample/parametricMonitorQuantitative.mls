@@ -1,3 +1,0 @@
-signal { real x; real y;}
-domain minmax;
-formula expFormula(real LB, real UB) = globally [LB, UB]  ( x >= y );
