@@ -10,6 +10,10 @@ booleanMonitor = moonlightScript.getMonitor("future");
 moonlightScript = ScriptLoader.load("multipleMonitorsQuantitative");
 quantitativeMonitor = moonlightScript.getMonitor("future");
 
+% moonlightScript.getMonitors()
+% moonlightScript.getInfoDefaultMonitor()
+% moonlightScript.getInfoMonitor("future")
+
 %generate a signal [time, x, y]  where x= sin(t) and y = cos(t)
 trajFunction = @(t)[sin(t);cos(t)]';
 time = 0:0.1:3.1;
