@@ -1,16 +1,9 @@
-/**
- *
- */
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.formula.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * @author loreti
- *
- */
 public abstract class MoonLightTemporalScript implements MoonLightScript {
 
     private final String[] formulas;
@@ -32,11 +25,13 @@ public abstract class MoonLightTemporalScript implements MoonLightScript {
         return this.domain;
     }
 
+    @Override
     public String[] getMonitors() {
         return formulas;
     }
 
-    public String getInfoDefaultTemporalMonitor() {
+    @Override
+    public String getInfoDefaultMonitor() {
         TemporalScriptComponent<?> c = selectDefaultTemporalComponent();
         if (c != null) {
             return c.getInfo();
@@ -45,7 +40,8 @@ public abstract class MoonLightTemporalScript implements MoonLightScript {
         }
     }
 
-    public String getInfoTemporalMonitor(String name) {
+    @Override
+    public String getInfoMonitor(String name) {
         TemporalScriptComponent<?> c = selectTemporalComponent(name);
         if (c != null) {
             return c.getInfo();
@@ -59,20 +55,19 @@ public abstract class MoonLightTemporalScript implements MoonLightScript {
         return (MoonLightTemporalScript) scriptClass.getDeclaredConstructor().newInstance();
     }
 
-	@Override
-	public boolean isTemporal() {
-		return true;
-	}
+    @Override
+    public boolean isTemporal() {
+        return true;
+    }
 
-	@Override
-	public boolean isSpatialTemporal() {
-		return false;
-	}
+    @Override
+    public boolean isSpatialTemporal() {
+        return false;
+    }
 
-	@Override
-	public MoonLightTemporalScript temporal() {
-		return this;
-	}
-
+    @Override
+    public MoonLightTemporalScript temporal() {
+        return this;
+    }
 
 }

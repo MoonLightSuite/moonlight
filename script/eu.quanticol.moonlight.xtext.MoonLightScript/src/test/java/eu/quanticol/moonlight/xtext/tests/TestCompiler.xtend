@@ -109,7 +109,7 @@ class TestCompiler {
 		System.out.println(generatedCode);
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
-		Assertions.assertEquals(2, script.spatialTemporalMonitors.length)
+		Assertions.assertEquals(2, script.monitors.length)
 	}
 
     @Test

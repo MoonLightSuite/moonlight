@@ -6,6 +6,15 @@ classdef MoonlightScript
         function self = MoonlightScript(script)
             self.Script = script;
         end
+        function result = getMonitors(self)
+            result = self.Script.getMonitors();
+        end
+        function result = getInfoDefaultMonitor(self)
+            result = self.Script.getInfoDefaultMonitor();
+        end
+        function result = getInfoMonitor(self, name)
+            result = self.Script.getInfoMonitor(name);
+        end
         function result = isTemporal(self)
             result = self.Script.isTemporal();
         end

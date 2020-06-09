@@ -1,109 +1,39 @@
-/**
- *
- */
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
 
-import java.lang.reflect.InvocationTargetException;
-
-/**
- * @author loreti
- *
- */
 public interface MoonLightScript {
-	
-	
-	boolean isTemporal();
-	
-	boolean isSpatialTemporal();
-
-	default MoonLightTemporalScript temporal() {
-		throw new IllegalStateException();//TODO: Add error message!
-	}
-	
-	default MoonLightSpatialTemporalScript spatialTemporal() {
-		throw new IllegalStateException(); //TODO: Add error message!
-	}
-
-	void setMonitoringDomain(SignalDomain<?> domain);
-
-	default void setBooleanDomain() {
-		setMonitoringDomain(new BooleanDomain());
-	}
-
-	default void setMinMaxDomain() {
-		setMonitoringDomain(new DoubleDomain());
-	}
-
-	SignalDomain<?> getMonitoringDomain();
-
-//    private final String[] temporalMonitors;
-//    private final String[] spatialTemporalMonitors;
-//
-//    public MoonLightScript(String[] temporalMonitors, String[] spatialTemporalMonitors) {
-//        this.temporalMonitors = temporalMonitors;
-//        this.spatialTemporalMonitors = spatialTemporalMonitors;
-//    }
-//
-//    public abstract TemporalScriptComponent<?> selectTemporalComponent(String name);
-//
-//    public abstract SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name);
-//
-//    public abstract TemporalScriptComponent<?> selectDefaultTemporalComponent();
-//
-//    public abstract SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent();
-//
-//    public String[] getTemporalMonitors() {
-//        return temporalMonitors;
-//    }
-//
-//    public String[] getSpatialTemporalMonitors() {
-//        return spatialTemporalMonitors;
-//    }
-//
-//    public String getInfoDefaultTemporalMonitor() {
-//        TemporalScriptComponent<?> c = selectDefaultTemporalComponent();
-//        if (c != null) {
-//            return c.getInfo();
-//        } else {
-//            return "There it not any default temporal monitor!";
-//        }
-//    }
-//
-//    public String getInfoTemporalMonitor(String name) {
-//        TemporalScriptComponent<?> c = selectTemporalComponent(name);
-//        if (c != null) {
-//            return c.getInfo();
-//        } else {
-//            return "Temporal monitor " + name + " is unknown!";
-//        }
-//    }
-//
-//    public String getInfoSpatialTemporalMonitor(String name) {
-//        SpatialTemporalScriptComponent<?> c = selectSpatialTemporalComponent(name);
-//        if (c != null) {
-//            return c.getInfo();
-//        } else {
-//            return "Spatial-temporal monitor " + name + " is unknown!";
-//        }
-//    }
-//
-//    public String getInfoDefaultSpatialTemporalMonitor() {
-//        SpatialTemporalScriptComponent<?> c = selectDefaultSpatialTemporalComponent();
-//        if (c != null) {
-//            return c.getInfo();
-//        } else {
-//            return "There it not any default spatial temporal monitor!";
-//        }
-//    }
-//
-//    public static MoonLightScript forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-//        Class<?> scriptClass = MoonLightScript.class.getClassLoader().loadClass(className);
-//        return (MoonLightScript) scriptClass.getDeclaredConstructor().newInstance();
-//    }
 
 
+    String[] getMonitors();
+
+    String getInfoDefaultMonitor();
+
+    String getInfoMonitor(String name);
+
+    boolean isTemporal();
+
+    boolean isSpatialTemporal();
+
+    default MoonLightTemporalScript temporal() {
+        throw new IllegalStateException("Temporal Monitor is not compatible with this Script");
+    }
+
+    default MoonLightSpatialTemporalScript spatialTemporal() {
+        throw new IllegalStateException("SpatialTemporal Monitor is not compatible with this Script");
+    }
+
+    void setMonitoringDomain(SignalDomain<?> domain);
+
+    default void setBooleanDomain() {
+        setMonitoringDomain(new BooleanDomain());
+    }
+
+    default void setMinMaxDomain() {
+        setMonitoringDomain(new DoubleDomain());
+    }
+
+    SignalDomain<?> getMonitoringDomain();
 }

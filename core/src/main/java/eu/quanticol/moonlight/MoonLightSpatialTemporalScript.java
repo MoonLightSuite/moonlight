@@ -1,17 +1,9 @@
-/**
- *
- */
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.formula.SignalDomain;
-import eu.quanticol.moonlight.signal.DataHandler;
 
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * @author loreti
- *
- */
 public abstract class MoonLightSpatialTemporalScript implements MoonLightScript {
 
     private final String[] spatialTemporalMonitors;
@@ -33,12 +25,13 @@ public abstract class MoonLightSpatialTemporalScript implements MoonLightScript 
         return this.domain;
     }
 
-
-    public String[] getSpatialTemporalMonitors() {
+    @Override
+    public String[] getMonitors() {
         return spatialTemporalMonitors;
     }
 
-    public String getInfoSpatialTemporalMonitor(String name) {
+    @Override
+    public String getInfoMonitor(String name) {
         SpatialTemporalScriptComponent<?> c = selectSpatialTemporalComponent(name);
         if (c != null) {
             return c.getInfo();
@@ -47,7 +40,8 @@ public abstract class MoonLightSpatialTemporalScript implements MoonLightScript 
         }
     }
 
-    public String getInfoDefaultSpatialTemporalMonitor() {
+    @Override
+    public String getInfoDefaultMonitor() {
         SpatialTemporalScriptComponent<?> c = selectDefaultSpatialTemporalComponent();
         if (c != null) {
             return c.getInfo();
@@ -61,20 +55,19 @@ public abstract class MoonLightSpatialTemporalScript implements MoonLightScript 
         return (MoonLightSpatialTemporalScript) scriptClass.getDeclaredConstructor().newInstance();
     }
 
-	@Override
-	public boolean isTemporal() {
-		return false;
-	}
+    @Override
+    public boolean isTemporal() {
+        return false;
+    }
 
-	@Override
-	public boolean isSpatialTemporal() {
-		return true;
-	}
+    @Override
+    public boolean isSpatialTemporal() {
+        return true;
+    }
 
-	@Override
-	public MoonLightSpatialTemporalScript spatialTemporal() {
-		return this;
-	}
-
+    @Override
+    public MoonLightSpatialTemporalScript spatialTemporal() {
+        return this;
+    }
 
 }
