@@ -6,9 +6,13 @@ from scipy.integrate import odeint
 
 import matplotlib.pyplot as plt
 
+# to use java in python you need to specify the path where is Java 
+import os
+#os.environ['JAVA_HOME'] = "/home/ssilvetti/Java/jdk1.8.0_172/"
+os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home"
 from moonlight import *
 
-# importing the model and the simulation function
+# importing the model, the simulation function
 from pancreasModel import modelPID, simulation
 
 # setting the k_i parameters
@@ -31,7 +35,8 @@ dg1 = np.random.normal(40, 10)
 dg2 = np.random.normal(90, 10)
 dg3 = np.random.normal(60, 10)
 
-t, y = simulation([t_meal1, t_meal2, t_meal3], [dg1, dg2, dg3], pidC3)
+# trying to vary oid constant pidC_i
+t, y = simulation([t_meal1, t_meal2, t_meal3], [dg1, dg2, dg3], pidC2)
 y = y[:,0];
 
 
@@ -40,14 +45,10 @@ y = y[:,0];
 thresholdUp = 180;
 thresholdDown = 70;
 
-y_signal = [yy for yy in y]
-plt.fill_between([t[0],t[-1]], [4,4],[max(y_signal),max(y_signal)],alpha=0.5)
-plt.plot(t,y_signal,'r-',linewidth=2)
+plt.fill_between([t[0],t[-1]], [4,4],[max(y),max(y)],alpha=0.5)
+plt.plot(t,y,'r-',linewidth=2)
 plt.axhline(y=thresholdUp, color='k', linestyle='-')
 plt.axhline(y=thresholdDown, color='k', linestyle='-')
-plt.xlabel('time')
-plt.ylabel('y(t)')
-plt.legend()
 plt.xlabel('Time (min)')
 plt.ylabel('BG (mmol/L)')
 plt.show()
@@ -62,13 +63,45 @@ formula hyperGlicemia = globally [0.0, 1400]  (y < 180);
 moonlight = Moonlight()
 moonlight.set_script(script)
 
-
+# monitoring the properties
 monitor = moonlight.get_monitor("hypoGlicemia")
 y_signal = [[yy] for yy in y]
 result = monitor.monitor(list(t),y_signal)
-print(result)
+print('robustness:'+ str(result[0][1])) # robustness at time zero
 
+# noise model 
+y_noise = [yy+ np.random.normal(0, 5) for yy in y]
+plt.fill_between([t[0],t[-1]], [4,4],[max(y_noise),max(y_noise)],alpha=0.5)
+plt.plot(t,y_noise,'r-',linewidth=2)
+plt.axhline(y=thresholdUp, color='k', linestyle='-')
+plt.axhline(y=thresholdDown, color='k', linestyle='-')
+plt.xlabel('Time (min)')
+plt.ylabel('BG (mmol/L)')
+plt.show()
 
+#falsification
+def findMinimum(pid, N):
+    minSTL = float('Inf')
+    vRob = float('Inf')
+    for i in range(N):
+        t_meal1 = np.random.normal(300, 60)
+        t_meal2 = np.random.normal(300, 60)
+        t_meal3 = 1440 - t_meal1 - t_meal2
+        dg1 = np.random.normal(40, 10)
+        dg2 = np.random.normal(90, 10)
+        dg3 = np.random.normal(60, 10)
+        t, y = simulation([t_meal1, t_meal2, t_meal3], [dg1, dg2, dg3], pid)
+        y = y[:, 0]
+        y_signal = [[yy] for yy in y]
+        result = monitor.monitor(list(t),y_signal)
+        stl =  result[0][1]
+        if (stl < minSTL):
+            minSTL = stl
+            vSTL = [t_meal1, t_meal2, t_meal3, dg1, dg2, dg3]
+        print(i)
 
-#y_signal = [yy+ np.random.normal(0, 5) for yy in y]
+    print('minSTL parameter: ' + str(vSTL))
+    print('minSTL: ' + str(minSTL))
 
+N = 10;    
+findMinimum(pidC2, N)

@@ -5,9 +5,9 @@ clear
 %this object is an implementation of MoonlightEngine class, please refer to the doc of this class
 %for more details (ex. write in console "doc MoonlightEngine" )
 
-moonlightScript = ScriptLoader.load("multipleMonitorsBoolean");
+moonlightScript = ScriptLoader.loadFromFile("multipleMonitorsBoolean");
 booleanMonitor = moonlightScript.getMonitor("future");
-moonlightScript = ScriptLoader.load("multipleMonitorsQuantitative");
+moonlightScript = ScriptLoader.loadFromFile("multipleMonitorsQuantitative");
 quantitativeMonitor = moonlightScript.getMonitor("future");
 
 % moonlightScript.getMonitors()
