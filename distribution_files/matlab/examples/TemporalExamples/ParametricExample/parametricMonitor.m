@@ -7,8 +7,9 @@ time = 0:0.1:2*pi;
 values = trajFunction(time);   % x,y
 
 %generate a moonlightScript object from the script fine parametricMonitor.mls (contained in this folder)
-%this object is an implementation of MoonlightScript class, please refer to the doc of this class
-%for more details (ex. write in console "doc MoonlightEngine" )
+%this object is an implementation of ScriptLoader class, please 
+%refer to the doc of this class for more details (ex. write in console 
+%"doc ScriptLoader" ) please, open parametricMonitor.mls 
 moonlightScript = ScriptLoader.load("parametricMonitor");
 
 % generate the monitor for each property, as default it is taken the
