@@ -1,0 +1,14 @@
+signal {  real v_speed; real e_speed; int gear;}
+domain boolean;
+
+// Spec 1 - The engine speed never reaches omega
+formula Spec1(real omega) = globally ( e_speed < omega );
+
+// Spec 2 - The engine and the vehicle speed never reach omega and v, respectively
+formula Spec2(real omega, real v) = globally {( e_speed < omega ) & ( v_speed < v )} ;
+
+// Spec 6 - If the engine speed is always less than omega the vehicle speed can not exceed v in less than T sec
+formula Spec6(real omega, real v, real T) = !{globally [0 T] ( v_speed > v ) &  globally ( e_speed < omega )};
+
+// Spec 7 - Within T sec the vehicle speed is above v  and from that point on the engine speed can not exceed v in less than T sec. */
+formula Spec7(real omega, real v, real T) = eventually [0 T] ( v_speed >= v ) &  globally ( e_speed < omega );
