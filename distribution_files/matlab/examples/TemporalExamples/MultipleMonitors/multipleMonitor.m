@@ -4,7 +4,8 @@ clear
 %generate a monitor object from the script fine multipleMonitors.mls (contained in this folder)
 %this object is an implementation of MoonlightEngine class, please refer to the doc of this class
 %for more details (ex. write in console "doc MoonlightEngine" )
-booleanMonitor = MoonlightEngine.load("multipleMonitorsBoolean");
+script = 
+booleanMonitor = MoonlightEngine.loadFromText("multipleMonitorsBoolean");
 quantitativeMonitor = MoonlightEngine.load("multipleMonitorsQuantitative");
 
 %generate a signal [time, x, y]  where x= sin(t) and y = cos(t)
