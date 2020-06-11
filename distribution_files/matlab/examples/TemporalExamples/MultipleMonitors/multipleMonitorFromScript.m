@@ -18,7 +18,7 @@ moonlightScript.setBooleanDomain();
 booleanMonitor = moonlightScript.getMonitor("future");
 
 
-%evalauting monitors
+%evaluating monitors
 quantiativeMonitorResult = quantitativeMonitor.monitor(time,values);
 booleanMonitorResult = booleanMonitor.monitor(time,values);
 
