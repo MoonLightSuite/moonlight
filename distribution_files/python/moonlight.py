@@ -1,5 +1,5 @@
 import jnius_config
-#jnius_config.set_classpath('./jar/moonlight.jar')
+jnius_config.set_classpath('./jar/moonlight.jar')
 from jnius import autoclass
 
 class Moonlight:
