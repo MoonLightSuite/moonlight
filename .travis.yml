@@ -1,7 +1,7 @@
 language: java
 
 git:
-  depth: false
+  depth: 1000000
 
 addons:
   sonarcloud:
