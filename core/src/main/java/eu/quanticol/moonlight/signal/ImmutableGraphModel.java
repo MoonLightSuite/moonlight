@@ -68,25 +68,7 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 			throw new IllegalArgumentException("Edge not present!");
 		}
 
-		Pair<Integer,T> out = this.outEdges.get(src).get(trg);
-		Pair<Integer,T> in = this.inEdges.get(src).get(trg);
-
-		// create new edges...
-		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
-		newEdges.set(src, new HashMap<>(this.edges.get(src)));
-		newEdges.get(src).remove(trg);
-
-		// create new inEdges...
-		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
-		newInEdges.set(trg, new ArrayList<>(trg));
-		newInEdges.get(trg).remove(in);
-
-		// create new outEdges...
-		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
-		newOutEdges.set(src, new ArrayList<>(src));
-		newOutEdges.get(src).remove(out);
-
-		return new ImmutableGraphModel<>(locations, newEdges, newInEdges, newOutEdges);
+		return generateFromRemoval(src, trg);
 	}
 
 	public ImmutableGraphModel<T> add( int src, T value , int trg ) {
@@ -97,25 +79,8 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 			throw new IllegalArgumentException("Duplicated edge!");
 		}
 
-		// create new edges...
-		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
-		newEdges.set(src, new HashMap<>(this.edges.get(src)));
-		newEdges.get(src).put(trg, value);
-
-		// create new inEdges...
-		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
-		newInEdges.set(trg, new ArrayList<>(trg));
-		newInEdges.get(trg).add(new Pair<>(src,value));
-
-		// create new outEdges...
-		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
-		newOutEdges.set(src, new ArrayList<>(src));
-		newOutEdges.get(src).add(new Pair<>(trg,value));
-
-		return new ImmutableGraphModel<>(locations, newEdges, newInEdges, newOutEdges);
-
+		return generateFromAddition(src, value, trg);
 	}
-
 
 	@Override
 	public T get(int src, int trg) {
@@ -140,6 +105,48 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 	@Override
 	public Set<Integer> getLocations() {
 		return IntStream.range(0, locations).boxed().collect(Collectors.toSet());
+	}
+
+	private ImmutableGraphModel<T> generateFromRemoval( int src, int trg) {
+		Pair<Integer,T> out = this.outEdges.get(src).get(trg);
+		Pair<Integer,T> in = this.inEdges.get(src).get(trg);
+
+		// create new edges...
+		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
+		newEdges.set(src, new HashMap<>(this.edges.get(src)));
+		newEdges.get(src).remove(trg);
+
+		// create new inEdges...
+		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
+		newInEdges.set(trg, new ArrayList<>(trg));
+		newInEdges.get(trg).remove(in);
+
+		// create new outEdges...
+		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
+		newOutEdges.set(src, new ArrayList<>(src));
+		newOutEdges.get(src).remove(out);
+
+		return new ImmutableGraphModel<>(locations, newEdges, newInEdges, newOutEdges);
+	}
+
+	private ImmutableGraphModel<T> generateFromAddition(int src, T value, int trg) {
+
+		// create new edges...
+		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
+		newEdges.set(src, new HashMap<>(this.edges.get(src)));
+		newEdges.get(src).put(trg, value);
+
+		// create new inEdges...
+		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
+		newInEdges.set(trg, new ArrayList<>(trg));
+		newInEdges.get(trg).add(new Pair<>(src,value));
+
+		// create new outEdges...
+		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
+		newOutEdges.set(src, new ArrayList<>(src));
+		newOutEdges.get(src).add(new Pair<>(trg,value));
+
+		return new ImmutableGraphModel<>(locations, newEdges, newInEdges, newOutEdges);
 	}
 
 }
