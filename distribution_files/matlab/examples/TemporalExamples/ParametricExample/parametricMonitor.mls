@@ -1,10 +1,4 @@
-monitor BooleanMonitorScript(real LB, real UB) {
 signal { real x; real y;}
 domain boolean;
-formula globally [LB, UB]  #[ x >= y ]# ;
-}
-monitor QuantitativeMonitorScript(real LB, real UB){
-signal { real x; real y;}
-domain minmax;
-formula globally [LB, UB] #[ x - y ]#;
-}
+formula phi1(real LB, real UB) = globally [LB, UB]  ( x >= y );
+formula phi2(real k) = globally [0, 1]  ( x >= k );

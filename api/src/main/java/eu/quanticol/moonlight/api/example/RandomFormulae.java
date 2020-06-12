@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.MoonLightTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
@@ -13,7 +14,7 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.HashMap;
 
-public class RandomFormulae extends MoonLightScript {
+public class RandomFormulae extends MoonLightTemporalScript {
 
 
     private final SignalDomain<Boolean> _domain_RandomFormulae = new BooleanDomain();
@@ -54,7 +55,7 @@ public class RandomFormulae extends MoonLightScript {
     private TemporalScriptComponent<Boolean> MONITOR_RandomFormulae = new TemporalScriptComponent<>(
             "RandomFormulae" ,
             RandomFormulae_signal_handler_ ,
-            RandomFormulae_output_data_handler_ ,
+            _domain_RandomFormulae ,
             RandomFormulae_parameters_handler_ ,
             r -> RandomFormulae_main( r )
     );
@@ -62,8 +63,6 @@ public class RandomFormulae extends MoonLightScript {
     public RandomFormulae() {
         super( new String[] {
                         "RandomFormulae"
-                },
-                new String[] {
                 });
     }
 
@@ -75,16 +74,8 @@ public class RandomFormulae extends MoonLightScript {
         return null;
     }
 
-    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
-        return null;
-    }
-
     public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
         return MONITOR_RandomFormulae;
-    }
-
-    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
-        return null;
     }
 
 

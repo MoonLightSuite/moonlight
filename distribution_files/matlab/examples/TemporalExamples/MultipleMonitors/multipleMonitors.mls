@@ -1,10 +1,4 @@
-monitor BooleanMonitorScript {
-signal { real x; real y;}
-domain boolean;
-formula globally [0, 0.2]  #[ x > y ]#;
-}
-monitor QuantitativeMonitorScript{
-signal { real x; real y;}
-domain minmax;
-formula globally [0, 0.2] #[ x - y ]#;
-}
+signal { real x; real y}
+domain boolean; 
+formula future = globally [0, 0.2]  (x > y);
+formula past = historically [0, 0.2]  (x > y);

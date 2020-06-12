@@ -13,37 +13,23 @@ import eu.quanticol.moonlight.xtext.ScriptLoader;
 class TestScriptLoader {
 
 	@Test
-	void testLoadScriptFromCode() throws IOException {
+	void testLoadScriptFromCodeQualitative() throws IOException {
 		ScriptLoader loader = new ScriptLoader();
 		MoonLightScript script = loader.compileScript("type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		\n" + 
-				"			\n" + 
-				"			monitor City {\n" + 
 				"				signal { bool taxi; int peole; }\n" + 
 				"				space { locations {poiType poi; }\n" + 
 				"				edges { real length; }\n" + 
 				"				}\n" + 
 				"				domain boolean;\n" + 
-				"				formula somewhere [0.0, 1.0] #[ taxi ]#;\n" + 
-				"			}\n" + 
-				"\n" + 
-				"			monitor City2 {\n" + 
-				"				signal { bool taxi; int peole; }\n" + 
-				"				space { locations {poiType poi; }\n" + 
-				"				edges { real length; }\n" + 
-				"				}\n" + 
-				"				domain boolean;\n" + 
-				"				formula somewhere [0.0, 1.0] #[ taxi ]#;\n" + 
-				"			}");
+				"				formula aFormula = somewhere [0.0, 1.0] ( taxi );\n");
 		assertNotNull(script);
 		
 	}
-	
+		
 	@Test
 	void testLoadScriptFromCodeWithParameters() throws IOException {
 		ScriptLoader loader = new ScriptLoader();
 		MoonLightScript script = loader.compileScript("type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		\n" + 
-				"			\n" + 
-				"			monitor City(real distance) {\n" + 
 				"				signal { bool taxi; int peole; }\n" + 
 				"				space { locations {poiType poi; }\n" + 
 				"				edges { real length; "
@@ -51,17 +37,7 @@ class TestScriptLoader {
 				+ "				}\n" + 
 				"				}\n" + 
 				"				domain boolean;\n" + 
-				"				formula somewhere(hop) [0, distance] #[ taxi ]#;\n" + 
-				"			}\n" + 
-				"\n" + 
-				"			monitor City2 {\n" + 
-				"				signal { bool taxi; int peole; }\n" + 
-				"				space { locations {poiType poi; }\n" + 
-				"				edges { real length; }\n" + 
-				"				}\n" + 
-				"				domain boolean;\n" + 
-				"				formula somewhere [0.0, 1.001] #[ taxi ]#;\n" + 
-				"			}");
+				"				formula aFormula(real distance) = somewhere(hop) [0, distance] ( taxi );\n");
 		assertNotNull(script);
 		
 	}

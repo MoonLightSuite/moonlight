@@ -25,20 +25,20 @@ class TestSensorScript {
 	private static RecordHandler signalRecordHandkler = new RecordHandler(DataHandler.INTEGER);
 	
 	
-	private static String code = "monitor MyFirstMonitor {\n" + 
-			"                signal { int nodeType; }\n" + 
+	private static String code = "signal { int nodeType; }\n" +
 			"             	space {\n" + 
 			"             	edges { int hop;}\n" + 
 			"             	}\n" + 
 			"             	domain boolean;\n" + 
-			"             	formula somewhere [0, 1] #[ nodeType==1 ]#;\n" + 
-			"             }";
+			"             	formula aFormula = somewhere [0, 1] ( nodeType==1 );";
 
 	@Test
 	void test() throws IOException {		
 		ScriptLoader sl = new ScriptLoader();
 		MoonLightScript script = sl.compileScript(code);
-		SpatialTemporalScriptComponent<?> stc = script.selectDefaultSpatialTemporalComponent();
+		assertTrue( script.isSpatialTemporal() );
+		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
+		SpatialTemporalScriptComponent<?> stc = spatialTemporalScript.selectDefaultSpatialTemporalComponent();
         List<Integer> typeNode = Arrays.asList( 1, 3, 3, 3, 3);
         SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
                 (t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));

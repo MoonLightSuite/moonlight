@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.DoubleDomain;
@@ -14,7 +15,7 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 import java.util.HashMap;
 
 
-public class Sensor extends MoonLightScript {
+public class Sensor extends MoonLightSpatialTemporalScript {
 
 
     private final SignalDomain<Double> _domain_SensorNetwork = new DoubleDomain();
@@ -69,32 +70,23 @@ public class Sensor extends MoonLightScript {
             "SensorNetwork",
             SensorNetwork_edge_handler_,
             SensorNetwork_signal_handler_,
-            SensorNetwork_output_data_handler_,
+            _domain_SensorNetwork,
             SensorNetwork_parameters_handler_,
             r -> SensorNetwork_main(r)
     );
 
     public Sensor() {
-        super(new String[]{
-                },
+        super(
                 new String[]{
                         "SensorNetwork"
                 });
     }
 
-    @Override
-    public TemporalScriptComponent<?> selectTemporalComponent(String name) {
-        return null;
-    }
 
     public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {
         if ("SensorNetwork".equals(name)) {
             return MONITOR_SensorNetwork;
         }
-        return null;
-    }
-
-    public TemporalScriptComponent<?> selectDefaultTemporalComponent() {
         return null;
     }
 

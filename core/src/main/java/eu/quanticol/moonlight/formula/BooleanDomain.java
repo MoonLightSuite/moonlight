@@ -19,6 +19,8 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.signal.DataHandler;
+
 /**
  *
  */
@@ -53,5 +55,45 @@ public class BooleanDomain implements SignalDomain<Boolean> {
     public Boolean max() {
         return true;
     }
+
+	@Override
+	public Boolean valueOf(boolean b) {
+		return b;
+	}
+
+	@Override
+	public Boolean valueOf(double v) {
+		return (v >= 0);
+	}
+
+	@Override
+	public Boolean computeLessThan(double v1, double v2) {
+		return (v1<v2);
+	}
+
+	@Override
+	public Boolean computeLessOrEqualThan(double v1, double v2) {
+		return (v1<=v2);
+	}
+
+	@Override
+	public Boolean computeEqualTo(double v1, double v2) {
+		return (v1==v2);
+	}
+
+	@Override
+	public Boolean computeGreaterThan(double v1, double v2) {
+		return (v1>v2);
+	}
+
+	@Override
+	public Boolean computeGreaterOrEqualThan(double v1, double v2) {
+		return (v1>=v2);
+	}
+
+	@Override
+	public DataHandler<Boolean> getDataHandler() {
+		return DataHandler.BOOLEAN;
+	}
 
 }

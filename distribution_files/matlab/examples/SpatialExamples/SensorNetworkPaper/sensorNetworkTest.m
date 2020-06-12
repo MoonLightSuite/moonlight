@@ -1,9 +1,9 @@
 clear
 % loading of the script
-monitor = MoonlightEngine.load("sensorScript");
+monitor = MoonlightEngine.load("test");
 
 % generation of the data
-numSteps        = 1;
+numSteps        = 3;
 num_nodes       = 5;
 framePlot = false; % to enable or disable the plot of the graph
 [spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
@@ -13,17 +13,12 @@ plotGraph(spatialModel, numframe , 'node');
 
 %%%%%% monitor  %%%%
 %%%%% phi 1 %%%%%%
-result1 = monitor.spatioTemporalMonitor("SomeWhereTest",spatialModel,time,signal);
+result1 = monitor.spatioTemporalMonitor("SomeWhereMon",spatialModel,time,signal);
 
 
-time=result1{1}(:,1);
-signalResult1= zeros(length(time), num_nodes);
- 
-for t=1:length(time)
-    for i = 1:num_nodes
-        signalResult1(t,i)=result1{i}(t,2);    
-    end
-end
+time=result1(1,:,1);
+signalResult1= result1(:,:,2);
+
 
 
 figure1 = figure('Colormap',...
@@ -31,9 +26,9 @@ figure1 = figure('Colormap',...
 Gvor = spatialModel{length(spatialModel)};
 A = adjacency(Gvor);
 G = graph(A);
-Gvor.Nodes.Results = signalResult1(length(signalResult1(:,1)),:)';
+Gvor.Nodes.results = signalResult1(:,1);
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
-p.NodeCData = Gvor.Nodes.Results;
+p.NodeCData = Gvor.Nodes.results;
 p.EdgeColor = 'black';
 p.MarkerSize = 10;
 set(gca,'FontSize',18);    

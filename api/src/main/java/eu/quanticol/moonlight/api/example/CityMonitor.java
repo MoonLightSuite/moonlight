@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.api.example;
 
 import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
@@ -13,7 +14,7 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.HashMap;
 
-public class CityMonitor extends MoonLightScript{
+public class CityMonitor extends MoonLightSpatialTemporalScript {
 
     public static enum poiType {
         BusStop,
@@ -114,7 +115,7 @@ public class CityMonitor extends MoonLightScript{
             "City" ,
             City_edge_handler_ ,
             City_signal_handler_ ,
-            City_output_data_handler_ ,
+            _domain_City ,
             City_parameters_handler_ ,
             r -> City_main( r )
     );
@@ -122,24 +123,18 @@ public class CityMonitor extends MoonLightScript{
             "City2" ,
             City2_edge_handler_ ,
             City2_signal_handler_ ,
-            City2_output_data_handler_ ,
+            _domain_City ,
             City2_parameters_handler_ ,
             r -> City2_main( r )
     );
 
     public CityMonitor() {
         super( new String[] {
-                },
-                new String[] {
                         "City",
                         "City2"
                 });
     }
 
-    @Override
-    public TemporalScriptComponent<?> selectTemporalComponent( String name ) {
-        return null;
-    }
 
     public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name ) {
         if ("City".equals( name ) ) {
@@ -148,10 +143,6 @@ public class CityMonitor extends MoonLightScript{
         if ("City2".equals( name ) ) {
             return 	MONITOR_City2;
         }
-        return null;
-    }
-
-    public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
         return null;
     }
 

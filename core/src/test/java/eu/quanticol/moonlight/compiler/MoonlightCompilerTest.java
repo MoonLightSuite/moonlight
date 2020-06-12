@@ -30,18 +30,19 @@ class MoonlightCompilerTest {
         String source = "package eu.quanticol.moonlight.test;\n" + 
         		"\n" + 
         		"\n" + 
-        		"import eu.quanticol.moonlight.MoonLightScript;\n" + 
-        		"import eu.quanticol.moonlight.SpatialTemporalScriptComponent;\n" + 
+        		"import eu.quanticol.moonlight.MoonLightScript;\n" +
+				"import eu.quanticol.moonlight.MoonLightTemporalScript;\n" +
+				"import eu.quanticol.moonlight.SpatialTemporalScriptComponent;\n" +
         		"import eu.quanticol.moonlight.TemporalScriptComponent;\n" + 
         		"\n" + 
         		"/**\n" + 
         		" * @author loreti\n" + 
         		" *\n" + 
         		" */\n" + 
-        		"public class TestScript extends MoonLightScript {\n" + 
+        		"public class TestScript extends MoonLightTemporalScript {\n" +
         		"\n" + 
         		"	public TestScript() {\n" + 
-        		"		super(new String[0], new String[0]);\n" + 
+        		"		super(new String[0]);\n" +
         		"	}\n" + 
         		"\n" + 
         		"	@Override\n" + 
@@ -50,25 +51,12 @@ class MoonlightCompilerTest {
         		"		return null;\n" + 
         		"	}\n" + 
         		"\n" + 
-        		"	@Override\n" + 
-        		"	public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {\n" + 
-        		"		// TODO Auto-generated method stub\n" + 
-        		"		return null;\n" + 
-        		"	}\n" + 
-        		"\n" + 
-        		"	@Override\n" + 
+        		"	@Override\n" +
         		"	public TemporalScriptComponent<?> selectDefaultTemporalComponent() {\n" + 
         		"		// TODO Auto-generated method stub\n" + 
         		"		return null;\n" + 
         		"	}\n" + 
-        		"\n" + 
-        		"	@Override\n" + 
-        		"	public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent() {\n" + 
-        		"		// TODO Auto-generated method stub\n" + 
-        		"		return null;\n" + 
-        		"	}\n" + 
-        		"\n" + 
-        		"\n" + 
+        		"\n" +
         		"}";
 
         MoonLightScript instance = comp.getIstance("eu.quanticol.moonlight.test", "TestScript", source, MoonLightScript.class);

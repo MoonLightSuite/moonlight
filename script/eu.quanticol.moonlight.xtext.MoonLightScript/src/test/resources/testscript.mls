@@ -1,20 +1,9 @@
 type poiType = BusStop|Hospital|MetroStop|MainSquare|Museum;		
 			
-			monitor City {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-				edges { real length; }
-				}
-				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
-			}
-
-			monitor City2 {
-				signal { bool taxi; int peole; }
-				space { locations {poiType poi; }
-				edges { real length; }
-				}
-				domain boolean;
-				formula somewhere [0.0, 1.0] #[ taxi ]#;
-			}
+signal { bool taxi; int peole; }
+space { locations {poiType poi; }
+edges { real length; }
+}
+domain boolean;
+formula aFormula = somewhere [0.0, 1.0] ( taxi );
 			

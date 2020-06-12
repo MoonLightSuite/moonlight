@@ -1,16 +1,16 @@
 function [robust_results] = monBreach (time, output, num_exp, omega, speed_threshold, T)
 
 
-fprintf('Monitoring with Breach\n');
+fprintf('Monitoring with Breach, omega=%f, speed_threshold=%f, T=%f\n', omega, speed_threshold, T);
 
 robust_results  = zeros(4,2);
 
 
 trace = [time'; output']; % trace is in column format, first column is time
 BrTrace = BreachTraceSystem({'v_speed','e_speed','gear'}, trace');
-figure; BrTrace.PlotSignals();
+%figure; BrTrace.PlotSignals();
 
-figure; BrTrace.PlotRobustSat(strcat('alw (e_speed[t] < ',num2str(omega),')'),1);
+%figure; BrTrace.PlotRobustSat(strcat('alw (e_speed[t] < ',num2str(omega),')'),1);
 
 for i=1:num_exp
     tElapsedSpec1Breach = 0;
