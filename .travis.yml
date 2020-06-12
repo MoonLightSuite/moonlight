@@ -1,8 +1,5 @@
 language: java
 
-git:
-  depth: 1000000
-
 addons:
   sonarcloud:
     organization: enniovisco
