@@ -13,7 +13,7 @@ script = [
 "formula past = historically [0, 0.2]  (x > y);"
 ];
 moonlightScript = ScriptLoader.loadFromText(script);
-quantitativeMonitor = moonlightScript.getMonitor("future");
+quantitativeMonitor = moonlightScript.getMonitor("pippo");
 moonlightScript.setBooleanDomain();
 booleanMonitor = moonlightScript.getMonitor("future");
 
