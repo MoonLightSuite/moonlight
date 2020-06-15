@@ -1,18 +1,19 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.GraphModel;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -273,8 +274,8 @@ class TestSpatialProperties {
     }
 
     @Test
-    void testReachOnSpatial2NodesInsufficientDistance3() {
-        int size = 3;
+    void testReachOnSpatial5NodesInsufficientDistance3() {
+        int size = 4;
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, 1.0, 1);
         city.add(1, 1.0, 2);
@@ -371,6 +372,66 @@ class TestSpatialProperties {
         assertEquals(1.0, ds.getDistance(0, 1), 0.0, "d(0,1)");
         assertEquals(1.0, ds.getDistance(0, 2), 0.0, "d(0,2)");
         assertEquals(2.0, ds.getDistance(0, 3), 0.0, "d(0,3)");
+
+    }
+
+    @Test
+    void testPropGraphBuildWithMaps2() {
+        int size = 5;
+        HashMap<Pair<Integer, Integer>, Double> map = new HashMap<>();
+        map.put(new Pair<>(0, 1), 1.0);
+        map.put(new Pair<>(0, 3), 1.0);
+        map.put(new Pair<>(0, 4), 1.0);
+        map.put(new Pair<>(1, 0), 1.0);
+        map.put(new Pair<>(1, 2), 1.0);
+        map.put(new Pair<>(1, 4), 1.0);
+        map.put(new Pair<>(2, 1), 1.0);
+        map.put(new Pair<>(2, 3), 1.0);
+        map.put(new Pair<>(2, 4), 1.0);
+        map.put(new Pair<>(3, 0), 1.0);
+        map.put(new Pair<>(3, 2), 1.0);
+        map.put(new Pair<>(3, 4), 1.0);
+        map.put(new Pair<>(4, 0), 1.0);
+        map.put(new Pair<>(4, 1), 1.0);
+        map.put(new Pair<>(4, 2), 1.0);
+        map.put(new Pair<>(4, 3), 1.0);
+
+        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        List<Integer> typeOfNode = Arrays.asList(1, 3, 3, 3, 3);
+
+        SpatialTemporalSignal<Integer> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 1.0,
+                (t, l) -> new Integer(typeOfNode.get(l)));
+        //// Loc Service Static ///
+        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 1,model);
+
+        System.out.println(signal.valuesatT(0));
+
+
+        HashMap<String, Function<Parameters, Function<Integer, Boolean>>> atomicFormulas = new HashMap<>();
+        atomicFormulas.put("type1", p -> (x -> x == 1));
+        atomicFormulas.put("type2", p -> (x -> x == 2));
+        atomicFormulas.put("type3", p -> (x -> x == 3));
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        distanceFunctions.put("dist", m -> new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
+
+        Formula reach = new ReachFormula(new AtomicFormula("type3"),"ciccia", "dist", new AtomicFormula("type1"));
+
+        //// MONITOR /////
+        SpatialTemporalMonitoring<Double, Integer, Boolean> monitor =
+                new SpatialTemporalMonitoring<>(
+                        atomicFormulas,
+                        distanceFunctions,
+                        new BooleanDomain(),
+                        true);
+
+        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach, null);
+        SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
+        List<Signal<Boolean>> signals = sout.getSignals();
+        for (int i = 0; i < size; i++) {
+            System.out.println(signals.get(i).valueAt(1));
+        }
+        assertEquals(false, signals.get(2).valueAt(1));
 
     }
 }

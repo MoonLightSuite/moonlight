@@ -1,14 +1,13 @@
 clear;
 close all;
-%generation of the data
-numSteps        = 1;
-num_nodes       = 10;
-framePlot = false; % to enable or disable the plot of the graph
-[spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
-
+% %generation of the data
+% numSteps        = 1;
+% num_nodes       = 5;
+% framePlot = false; % to enable or disable the plot of the graph
+% [spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
+load('testProp.mat');
 numframe = length(spatialModel);
 plotGraph(spatialModel, numframe , 'node');
-
 %%%%%% monitor  %%%%
 % loading of the script
 moonlightScript = ScriptLoader.loadFromFile("test");
