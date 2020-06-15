@@ -12,23 +12,25 @@ classdef SpatialTemporalScriptComponent
                 % array (i.e., [])
                 parameters = [];
             end
-            javaGraphModel = self.toJavaGraphModel(graph,length(values));
+            javaGraphModel = self.toJavaGraphModel(graph);
             javaSignal = self.toJavaSignal(values);
-            result=self.ScriptComponent.monitorToObjectArrayAdjacencyMatrix(time,javaGraphModel,time,javaSignal,parameters);
+            result=self.ScriptComponent.monitorToObjectArrayAdjacencyList(time,javaGraphModel,time,javaSignal,parameters);
         end
     end
     methods (Access = private)
-        function graph = toJavaGraphModel(~,diagram,locations)
+         function graph = toJavaGraphModel(~,diagram)
             element = diagram(1);
             graphWidth =  length(element{1}.Edges.Weights(1,:));
             for i = 1:length(diagram)
                 element = diagram(i);
                 elementEdges = element{1}.Edges;
                 for j = 1 : length(elementEdges.EndNodes)
+                    endNodes = elementEdges.EndNodes(j,:);
+                    weight = elementEdges.Weights(j,:);
+                    graph(i,j,1) =endNodes(1)-1;
+                    graph(i,j,2) =endNodes(2)-1;
                     for l = 1:graphWidth
-                        endNodes = elementEdges.EndNodes(j,:);
-                        weight = elementEdges.Weights(j,:);
-                        graph(i,endNodes(1),endNodes(2),l) =weight(l);
+                        graph(i,j,2+l)=weight(l);
                     end
                 end
             end

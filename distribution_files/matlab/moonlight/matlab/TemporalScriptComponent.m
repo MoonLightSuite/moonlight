@@ -6,6 +6,9 @@ classdef TemporalScriptComponent
         function self = TemporalScriptComponent(script)
             self.ScriptComponent = script;
         end
+        function result = getName(self)
+            result = self.ScriptComponent.getName();
+        end
         function result = monitor(self,time, values, parameters)
             if ~exist('parameters','var')
                 % third parameter does not exist. Default is the empty
