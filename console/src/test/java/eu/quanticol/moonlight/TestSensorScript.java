@@ -65,52 +65,52 @@ class TestSensorScript {
 		assertTrue( script.isSpatialTemporal() );
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
 		SpatialTemporalScriptComponent<?> stc = spatialTemporalScript.selectDefaultSpatialTemporalComponent();
-//		double[] locationTimeArray = new double[] { 0.0 };
-//		double[][][] graph = new double[][][] {
-//				new double[][] {
-//						new double[]{ 0, 1, 1.0 },
-//						new double[]{ 0, 3, 1.0 },
-//						new double[]{ 0, 4, 1.0 },
-//						new double[]{ 1, 0, 1.0 },
-//						new double[]{ 1, 4, 1.0 },
-//						new double[]{ 1, 2, 1.0 },
-//						new double[]{ 2, 1, 1.0 },
-//						new double[]{ 2, 4, 1.0 },
-//						new double[]{ 2, 3, 1.0 },
-//						new double[]{ 3, 0, 1.0 },
-//						new double[]{ 3, 2, 1.0 },
-//						new double[]{ 3, 4, 1.0 },
-//						new double[]{ 4, 0, 1.0 },
-//						new double[]{ 4, 1, 1.0 },
-//						new double[]{ 4, 2, 1.0 },
-//						new double[]{ 4, 3, 1.0 }
-//				}
-//		};
-//
-//		double[][][] signal = new double[][][] {
-//				new double[][]{
-//						new double[]{1}
-//				} ,
-//				new double[][] {
-//						new double[]{3}
-//				}  ,
-//				new double[][] {
-//						new double[]{3}
-//				}  ,
-//				new double[][] {
-//						new double[]{3}
-//				}  ,
-//				new double[][]{
-//						new double[]{3}
-//				}
-//		};
+		double[] locationTimeArray = new double[] { 0.0 };
+		double[][][] graph = new double[][][] {
+				new double[][] {
+						new double[]{ 0, 1, 1.0 },
+						new double[]{ 0, 3, 1.0 },
+						new double[]{ 0, 4, 1.0 },
+						new double[]{ 1, 0, 1.0 },
+						new double[]{ 1, 4, 1.0 },
+						new double[]{ 1, 2, 1.0 },
+						new double[]{ 2, 1, 1.0 },
+						new double[]{ 2, 4, 1.0 },
+						new double[]{ 2, 3, 1.0 },
+						new double[]{ 3, 0, 1.0 },
+						new double[]{ 3, 2, 1.0 },
+						new double[]{ 3, 4, 1.0 },
+						new double[]{ 4, 0, 1.0 },
+						new double[]{ 4, 1, 1.0 },
+						new double[]{ 4, 2, 1.0 },
+						new double[]{ 4, 3, 1.0 }
+				}
+		};
 
-		List<Integer> typeNode = Arrays.asList( 1, 3, 3, 3, 3);
-		SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 1.0,
-				(t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
+		double[][][] signal = new double[][][] {
+				new double[][]{
+						new double[]{1}
+				} ,
+				new double[][] {
+						new double[]{3}
+				}  ,
+				new double[][] {
+						new double[]{3}
+				}  ,
+				new double[][] {
+						new double[]{3}
+				}  ,
+				new double[][]{
+						new double[]{3}
+				}
+		};
 
-		double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 1.0, getGraphModel2()), signal);
-//		double[][][] oArray = stc.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,locationTimeArray,signal);
+//		List<Integer> typeNode = Arrays.asList( 1, 3, 3, 3, 3);
+//		SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 1.0,
+//		(t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
+
+//		double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 1.0, getGraphModel2()), signal);
+		double[][][] oArray = stc.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,locationTimeArray,signal);
 		System.out.println(oArray[0][0][1]);
 		System.out.println(oArray[1][0][1]);
 		System.out.println(oArray[2][0][1]);
