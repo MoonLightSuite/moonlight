@@ -254,6 +254,24 @@ class TestSpatialProperties {
     }
 
     @Test
+    void testReachOnSpatial2NodesInsufficientDistance2() {
+        int size = 2;
+        GraphModel<Double> city = new GraphModel<>(size);
+        city.add(0, 17.0, 1);
+        city.add(1, 17.0, 0);
+        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true));
+        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(true, true));
+        double range = 1;
+        DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+
+        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+
+        Boolean[] objects = results.toArray(new Boolean[0]);
+        assertArrayEquals(objects, new Boolean[]{true, true});
+    }
+
+
+    @Test
     void testEscapeAndViolationOfLowerBound() {
         //T -10 -> T
         int size = 2;
