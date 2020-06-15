@@ -1,38 +1,46 @@
 % Multiple Monitor Example
 clear
 
-%generate a signal [time, x, y]  where x= sin(t) and y = cos(t)
+%% data
+%generate a signal [time, values]  where values(:,1)= sin(t) and (:,2) = cos(t)
 trajFunction = @(t)[sin(t);cos(t)]';
 time = 0:0.1:3.1;
 values = trajFunction(time);
 
-
-%generate a monitor object from the script file multipleMonitors.mls (contained in this folder)
-%this object is an implementation of MoonlightEngine class, please refer to the doc of this class
-%for more details (ex. write in console "doc MoonlightEngine" )
+%% monitor
+%generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
+%this object is an implementation of ScriptLoader class, please refer to 
+%the doc of this class for more details (ex. write in console "doc ScriptLoader" )
 moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");
-moonlightScript.setBooleanDomain();
-%creating the Boolean monitor for formula future = globally [0, 0.2]  (x > y)
+
+% check the formulas in the monitor object
+% moonlightScript.getMonitors()
+% moonlightScript.getInfoDefaultMonitor()
+% moonlightScript.getInfoMonitor("future")
+
+%create the monitor for formula future = globally [0, 0.2]  (x > y)
 boolFutureMonitor = moonlightScript.getMonitor("future");
-%creating the Boolean monitor for formula  past = historically [0, 0.2]  (x > y);)
+
+% you can set (change) the semantics of the monitor from here using
+moonlightScript.setBooleanDomain();
+%create the monitor for formula  past = historically [0, 0.2]  (x > y);)
 boolPastMonitor = moonlightScript.getMonitor("past");
+
+% to set the quantitative semantics use
 moonlightScript.setMinMaxDomain();
-%creating the Quantitative monitor for formula future = globally [0, 0.2]  (x > y) 
+%create the Quantitative monitor for formula future = globally [0, 0.2]  (x > y) 
 quantFutureMonitor = moonlightScript.getMonitor("future");
 %creating the Quantitative monitor for formula past = historically [0, 0.2]  (x > y);)) 
 quantPastMonitor = moonlightScript.getMonitor("past");
 
-moonlightScript.getMonitors()
-% moonlightScript.getInfoDefaultMonitor()
-% moonlightScript.getInfoMonitor("future")
-
+%% evaluation
 %evaluating the monitors
 boolFutureMonitorResult = boolFutureMonitor.monitor(time,values);
 quantFutureMonitorResult = quantFutureMonitor.monitor(time,values);
 boolPastMonitorResult = boolPastMonitor.monitor(time,values);
 quantPastMonitorResult = quantPastMonitor.monitor(time,values);
 
-
+%% plot
 %Plotting result...
 figure,
 tiledlayout(2,1)
