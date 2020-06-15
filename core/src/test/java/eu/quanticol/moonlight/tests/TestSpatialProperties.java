@@ -255,19 +255,21 @@ class TestSpatialProperties {
 
     @Test
     void testReachOnSpatial2NodesInsufficientDistance2() {
-        int size = 2;
+        int size = 3;
         GraphModel<Double> city = new GraphModel<>(size);
-        city.add(0, 17.0, 1);
-        city.add(1, 17.0, 0);
-        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true));
-        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(true, true));
-        double range = 1;
+        city.add(0, 5.0, 1);
+        city.add(1, 5.0, 0);
+        city.add(1, 5.0, 2);
+        city.add(2, 5.0, 1);
+        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, false));
+        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, true));
+        double range = 10;
         DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
         List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
-        assertArrayEquals(objects, new Boolean[]{true, true});
+        assertArrayEquals(new Boolean[]{range>=10, range>=5,true}, objects);
     }
 
 

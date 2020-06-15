@@ -200,5 +200,25 @@ class TestCompiler {
 		val comp = new MoonlightCompiler();
 		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
 		Assertions.assertNotNull(script)
-	}		
+	}
+
+    @Test
+    def void testLoadSpatialProperty() {
+        val result = parseHelper.parse('''
+            signal { int nodeType; real battery; real temperature; }
+            space {
+                edges { int hop; real dist; }
+            }
+            domain boolean;
+            formula MyFirstFormula = ( nodeType==3 ) reach (hop)[0, 1] ( nodeType==1 );
+        ''')
+		val scriptToJava = new ScriptToJava();
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","CityMonitor")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","CityMonitor",generatedCode.toString,typeof(MoonLightSpatialTemporalScript))
+		Assertions.assertTrue(true);
+    }
+
+
 }
