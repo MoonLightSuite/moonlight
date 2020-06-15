@@ -175,7 +175,7 @@ public class SpatialTemporalScriptComponent<S> {
     }
 
     public String getInfo() {
-        return this.toString();
+        return getName();
     }
 
     public String[] getVariables() {

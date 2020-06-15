@@ -419,7 +419,7 @@ class TestSpatialProperties {
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         distanceFunctions.put("dist", m -> new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
 
-        Formula reach = new ReachFormula(new AtomicFormula("type3"),"ciccia", "dist", new AtomicFormula("type1"));
+        Formula reach = new ReachFormula(new AtomicFormula("type3"),"dist", new AtomicFormula("type1"));
 
         //// MONITOR /////
         SpatialTemporalMonitoring<Double, Integer, Boolean> monitor =
