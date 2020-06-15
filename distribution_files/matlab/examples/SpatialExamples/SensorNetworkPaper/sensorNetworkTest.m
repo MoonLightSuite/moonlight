@@ -1,10 +1,10 @@
-% clear all;
+clear;
 close all;
-% generation of the data
-% numSteps        = 1;
-% num_nodes       = 10;
-% framePlot = false; % to enable or disable the plot of the graph
-% [spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
+%generation of the data
+numSteps        = 1;
+num_nodes       = 10;
+framePlot = false; % to enable or disable the plot of the graph
+[spatialModel,time,signal]= sensorModel(num_nodes,numSteps, framePlot);
 
 numframe = length(spatialModel);
 plotGraph(spatialModel, numframe , 'node');
@@ -15,6 +15,7 @@ moonlightScript = ScriptLoader.loadFromFile("test");
 %moonlightScript.setMinMaxDomain();
 moonlightScript.setBooleanDomain();
 %creating the Boolean monitor for formula 
+% MyFirstFormula = ( nodeType==3 ) reach (hop)[0, 1] ( nodeType==1 );
 % SecondFormula = ( nodeType==3 ) || {( nodeType==3 ) reach (hop)[0, 2] ( nodeType==2 )};
 boolSpTempMonitor = moonlightScript.getMonitor("MyFirstFormula");
 %%%%% phi 1 %%%%%%
