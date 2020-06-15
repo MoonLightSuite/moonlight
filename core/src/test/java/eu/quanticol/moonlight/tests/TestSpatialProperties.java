@@ -1,5 +1,8 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
+import eu.quanticol.moonlight.compiler.MoonlightCompiler;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -9,6 +12,7 @@ import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -434,5 +438,10 @@ class TestSpatialProperties {
         assertEquals(false, signals.get(2).valueAt(1));
 
     }
+
+
+
+
 }
+
 
