@@ -263,13 +263,32 @@ class TestSpatialProperties {
         city.add(2, 5.0, 1);
         ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, false));
         ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, true));
-        double range = 10;
+        double range = 1;
         DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
         List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
         assertArrayEquals(new Boolean[]{range>=10, range>=5,true}, objects);
+    }
+
+    @Test
+    void testReachOnSpatial2NodesInsufficientDistance3() {
+        int size = 3;
+        GraphModel<Double> city = new GraphModel<>(size);
+        city.add(0, 1.0, 1);
+        city.add(1, 1.0, 2);
+        city.add(2, 1.0, 3);
+        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, true, false));
+        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, false, true));
+        double range = 1;
+        DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+
+        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+
+        Boolean[] objects = results.toArray(new Boolean[0]);
+        System.out.println(new Boolean[0]);
+        assertArrayEquals(new Boolean[]{range>2,range>1, range>0,true}, objects);
     }
 
 
