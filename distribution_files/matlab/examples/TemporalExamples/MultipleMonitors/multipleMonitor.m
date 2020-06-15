@@ -7,7 +7,7 @@ time = 0:0.1:3.1;
 values = trajFunction(time);
 
 
-%generate a monitor object from the script fine multipleMonitors.mls (contained in this folder)
+%generate a monitor object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of MoonlightEngine class, please refer to the doc of this class
 %for more details (ex. write in console "doc MoonlightEngine" )
 moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");

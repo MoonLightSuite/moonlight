@@ -13,7 +13,7 @@ plotGraph(spatialModel, numframe , 'node');
 
 %%%%%% monitor  %%%%
 %%%%% phi 1 %%%%%%
-result1 = monitor.spatioTemporalMonitor("MyFirstFormula",spatialModel,time,signal);
+result1 = monitor.spatioTemporalMonitor(spatialModel,time,signal);
 
 time=result1(1,:,1);
 signalResult= result1(:,:,2);
