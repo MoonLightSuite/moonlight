@@ -13,10 +13,8 @@ values = trajFunction(time);
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
 moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");
 
-% check the formulas in the monitor object
-% moonlightScript.getMonitors()
-% moonlightScript.getInfoDefaultMonitor()
-% moonlightScript.getInfoMonitor("future")
+% list of formulas in the monitor object
+moonlightScript.getMonitors()
 
 %create the monitor for formula future = globally [0, 0.2]  (x > y)
 boolFutureMonitor = moonlightScript.getMonitor("future");
