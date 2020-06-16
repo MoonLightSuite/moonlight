@@ -439,7 +439,29 @@ class TestSpatialProperties {
 
     }
 
+    @Test
+    void testLoadGraphFromAdiacenceList() {
+        double[][] graph = new double[][] {
+                new double[] {0, 1, 1, 297.683377582777},
+                new double[] {0, 2, 1, 696.654592727676},
+                new double[] {0, 3, 1, 362.022924952817},
+                new double[] {0, 4, 1, 443.026473778508},
+                new double[] {1, 0, 1, 297.683377582777},
+                new double[] {1, 2, 1, 667.669013033577},
+                new double[] {2, 0, 1, 696.654592727676},
+                new double[] {2, 1, 1, 667.669013033577},
+                new double[] {2, 4, 1, 759.655443722058},
+                new double[] {3, 0, 1, 362.022924952817},
+                new double[] {3, 4, 1, 135.113318099020},
+                new double[] {4, 0, 1, 443.026473778508},
+                new double[] {4, 2, 1, 759.655443722058},
+                new double[] {4, 3, 1, 135.113318099020}
+        };
+        RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
+        SpatialModel.buildSpatialModelFromAdjacencyList(6,rh,graph);
+        assertTrue(true);
 
+    }
 
 
 }
