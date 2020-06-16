@@ -26,6 +26,7 @@ import eu.quanticol.moonlight.signal.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
