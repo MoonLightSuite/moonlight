@@ -1,8 +1,0 @@
-signal { int nodeType; real battery; real temperature; }
-space { edges { int hop; real dist; } }
-domain boolean;
-formula MyFirstFormula = ( nodeType==3 ) reach (hop)[0, 1] ( nodeType==2 ) ;
-formula SomeWhereMon = somewhere(dist)[0,3] ( battery > 0.5);
-formula EscapeMon = escape(hop)[3, 5] ( nodeType==3) ;
-formula SensTemp = somewhere(hop)[0, 3]{globally [0, 0.2]  (  battery > 0.5 )};
-             

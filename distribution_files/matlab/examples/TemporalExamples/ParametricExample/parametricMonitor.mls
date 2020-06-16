@@ -1,4 +1,0 @@
-signal { real x; real y;}
-domain boolean;
-formula phi1(real LB, real UB) = globally [LB, UB]  ( x >= y );
-formula phi2(real k) = globally [0, 1]  ( x >= k );
