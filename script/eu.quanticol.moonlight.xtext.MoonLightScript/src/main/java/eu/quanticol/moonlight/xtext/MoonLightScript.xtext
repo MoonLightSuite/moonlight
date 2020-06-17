@@ -175,7 +175,7 @@ BasicExpression returns Expression:
 	| {NotExpression} '!' argument=BasicExpression
 	| {UnaryPlusExpression} '+' argument=BasicExpression
 	| {UnaryMinusExpression} '-' argument=BasicExpression
-	| {InfiniteLiteral} ('INF'|'inf')
+	| {InfiniteLiteral} 'inf'
 	| '(' Expression ({IfThenElseExpression.guard=current} '?' thenCase=BasicExpression ':' elseCase=BasicExpression)? ')'
 	| {ReferencedValue} reference=[VariableDeclaration]
 	| {UnaryMathFunction} fun=UnaryMathFunctionName '(' arg=Expression ')'
