@@ -15,9 +15,11 @@ Gvor.Nodes.results =  signalResult(:,1);
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
 p.NodeCData = Gvor.Nodes.results;
 p.EdgeColor = 'black';
-p.MarkerSize = 10;
+p.MarkerSize = 15;
+p.NodeFontSize = 20;
+p.EdgeFontSize = 20;
 set(gca,'FontSize',18);    
-colorbar('FontSize',18);
+%colorbar('FontSize',18);
 caxis([0, 1])
 box on;
 end

@@ -2,22 +2,22 @@
 clear
 
 %% generation of the data (spatial model, time, values)
-numSteps        = 1;   % number of frames
+numSteps        = 3;   % number of frames
 num_nodes       = 10;    % number of nodes
 framePlot = false; % to enable or disable the plot of the graph
 % see the sensorModel function for the description of the output
-[spatialModel, time, values]= sensorModel(num_nodes,numSteps, framePlot);
+[spatialModelv,spatialModelc, time, values]= sensorModel(num_nodes,numSteps, framePlot);
 
 % plot of the last frame
-numframe = 1;
-plotGraph(spatialModel, 1 , 'node');
+% numframe = 1;
+% plotGraph(spatialModelv, 1 , 'node');
 
 %% monitor
 % loading of the script
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
-moonlightScript = ScriptLoader.loadFromFile("sensorNetworkMonitorScript");
+moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript");
 
 % list of formulas in the monitor object
 moonlightScript.getMonitors()
@@ -35,13 +35,18 @@ parametricReachMonitor = moonlightScript.getMonitor("ParametricReachFormula");
 moonlightScript.setMinMaxDomain(); % for the quantitative semantics
 % formula SomeWhereFormula = somewhere(dist)[0,3] ( battery > 0.5);
 someWhereFormula = moonlightScript.getMonitor("SomeWhereFormula");
+% formula EscapeFormula (int k) = escape(hop)[3, k] ( nodeType==3) ;
+escapeFormula = moonlightScript.getMonitor("EscapeFormula");
 
+%% Results
 %evaluate ReachFormula
-resultReachMonitor = reachMonitor.monitor(spatialModel,time,values);
+resultReachMonitor = reachMonitor.monitor(spatialModelv,time,values);
 %evaluate the parametric ParametricReachFormula with k=1, type=2
-resultParamMonitor = parametricReachMonitor.monitor(spatialModel,time,values, [1,2]);
+resultParamMonitor = parametricReachMonitor.monitor(spatialModelv,time,values, [1,2]);
 %evaluate SomeWhereFormula
-resultSomeMonitor = someWhereFormula.monitor(spatialModel,time,values);
+resultSomeMonitor = someWhereFormula.monitor(spatialModelv,time,values);
+%evaluate escapeFormula
+resultEscapeMonitor = escapeFormula.monitor(spatialModelv,time,values,inf);
 
 %% plots
 % plotResults(spatialModel, resultReachMonitor, true);
