@@ -33,7 +33,7 @@ classdef ScriptLoader
             warning('on','all');
         end
     end
-    methods(Access = private)
+    methods(Static, Access = private)
         function loadInnerFromFile(filename)
             % class static constructor
             [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));
