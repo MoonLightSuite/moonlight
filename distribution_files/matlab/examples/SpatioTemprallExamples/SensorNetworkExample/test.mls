@@ -3,6 +3,5 @@ space {
     edges { int hop; real dist; }
 }
 domain boolean;
-formula MyFirstFormula = ( nodeType==3 ) reach (hop)[0, 1] ( nodeType==1 );
-formula MyFirstFormula2 = ( nodeType==1 );
+formula P1 = ( nodeType==2 ) reach (hop)[0, 5] ( nodeType==1 );
 formula ReachFormula = ( nodeType==3 ) reach (hop)[0, 2] ( nodeType==2 ) ;
