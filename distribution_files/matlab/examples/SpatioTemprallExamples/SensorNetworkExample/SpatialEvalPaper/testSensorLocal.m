@@ -4,7 +4,7 @@ close all;   %close all the open windows
 
 elapseTimeSeq = [];
 num_exp = 50;
-num_nodes_seq =[10, 50, 500, 1000];
+num_nodes_seq =[10, 100, 1000, 10000];
 
 % % increasing the number of nodes
 moonlight_sat_time_spec1 = [];
@@ -74,9 +74,9 @@ plot(num_nodes_seq,moonlight_sat_time_spec3,'y','LineWidth',2);
 plot(num_nodes_seq,moonlight_rob_time_spec3,'y--','LineWidth',2);
 plot(num_nodes_seq,moonlight_sat_time_spec4,'c','LineWidth',2);
 plot(num_nodes_seq,moonlight_rob_time_spec4,'c--','LineWidth',2);
-% plot(num_nodes_seq,moonlight_sat_time_spec5,'m','LineWidth',2);
-% plot(num_nodes_seq,moonlight_rob_time_spec5,'m--','LineWidth',2);
-% xlabel('number of nodes');
+plot(num_nodes_seq,moonlight_sat_time_spec5,'m','LineWidth',2);
+plot(num_nodes_seq,moonlight_rob_time_spec5,'m--','LineWidth',2);
+ xlabel('number of nodes');
 ylabel('time');
 legend('P1','P1q','P2','P2q','P3','P3q','P4','P4q','P5','P5q')
 set(gca,'FontSize',18); 

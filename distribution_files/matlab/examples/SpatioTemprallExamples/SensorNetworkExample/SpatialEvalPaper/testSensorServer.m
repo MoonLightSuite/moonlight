@@ -3,8 +3,8 @@ clear;       %clear all the memory
 close all;   %close all the open windows
 
 elapseTimeSeq = [];
-num_exp = 50;
-num_nodes_seq = [10, 100, 1000];
+num_exp = 1;
+num_nodes_seq = [10, 100, 1000, 10000];
 
 
 % % increasing the number of nodes

@@ -20,8 +20,8 @@ qMonitor3 = moonlightScript.getMonitor("P3");
 qMonitor4 = moonlightScript.getMonitor("P4");
 qMonitor5 = moonlightScript.getMonitor("P5");
 
-b_time_results = zeros(5,2);
-rob_time_results  = zeros(5,2);
+b_time_results = zeros(5,1);
+rob_time_results  = zeros(5,1);
 
 
 for i=1:num_exp
