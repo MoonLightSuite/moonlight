@@ -3,26 +3,27 @@ clear;       %clear all the memory
 close all;   %close all the open windows
 
 elapseTimeSeq = [];
-num_exp = 100;
-num_nodes_seq = 10: 50: 1000;
-
+num_exp = 50;
+num_nodes_seq =[10, 50, 500, 1000];
 
 % % increasing the number of nodes
 moonlight_sat_time_spec1 = [];
 moonlight_sat_time_spec2 = [];
 moonlight_sat_time_spec3 = [];
 moonlight_sat_time_spec4 = [];
+moonlight_sat_time_spec5 = [];
 moonlight_rob_time_spec1 = [];
 moonlight_rob_time_spec2 = [];
 moonlight_rob_time_spec3 = [];
 moonlight_rob_time_spec4 = [];
+moonlight_rob_time_spec5 = [];
 numSteps =1;
 currDate = strrep(datestr(datetime), ' ', '_');
 status = mkdir('testLocal',currDate);
 for num_nodes = num_nodes_seq
           
     %% Generating input signals
-    fprintf('Generating input signals\n');
+    fprintf('Generating input signals with %f \n', num_nodes);
     [spatialModel,time,signalInput]= sensorModel(num_nodes,numSteps, false);
 
   
@@ -31,13 +32,15 @@ for num_nodes = num_nodes_seq
     moonlight_sat_time_spec2 = [moonlight_sat_time_spec2, b_time_results(2)];
     moonlight_sat_time_spec3 = [moonlight_sat_time_spec3, b_time_results(3)];
     moonlight_sat_time_spec4 = [moonlight_sat_time_spec4, b_time_results(4)];
+    moonlight_sat_time_spec5 = [moonlight_sat_time_spec5, b_time_results(5)];
     moonlight_rob_time_spec1 = [moonlight_rob_time_spec1, rob_time_results(1)];
     moonlight_rob_time_spec2 = [moonlight_rob_time_spec2, rob_time_results(2)];
     moonlight_rob_time_spec3 = [moonlight_rob_time_spec3, rob_time_results(3)];
     moonlight_rob_time_spec4 = [moonlight_rob_time_spec4, rob_time_results(4)];
+    moonlight_rob_time_spec5 = [moonlight_rob_time_spec5, rob_time_results(5)];
     
-    fprintf('Specification (Satisfaction)  - Moonlight Times (sec): p1=%f, p2=%f, p3=%f, p4=%f  \n', b_time_results(1), b_time_results(2), b_time_results(3), b_time_results(4));
-    fprintf('Specification (Robustness)  - Moonlight Times (sec): p1=%f, p2=%f, p3=%f, p4=%f', rob_time_results(1), rob_time_results(2), rob_time_results(3), rob_time_results(4));
+    fprintf('Specification (Satisfaction)  - Moonlight Times (sec): p1=%f, p2=%f, p3=%f, p4=%f, p5=%f  \n', b_time_results(1), b_time_results(2), b_time_results(3), b_time_results(4), b_time_results(5));
+    fprintf('Specification (Robustness)  - Moonlight Times (sec): p1=%f, p2=%f, p3=%f, p4=%f, p5=%f  \n', rob_time_results(1), rob_time_results(2), rob_time_results(3), rob_time_results(4), rob_time_results(5));
 
 end
 
@@ -62,27 +65,21 @@ save (strcat('./testLocal/',currDate,'/moonlight_rob_times_stat.mat'), 'moonligh
 
 
 figure; % open a new figure window
-plot(num_nodes_seq,moonlight_sat_time_spec1,'b','LineWidth',2);
+%plot(num_nodes_seq,moonlight_sat_time_spec1,'r','LineWidth',2);
 hold on;
-plot(num_nodes_seq,moonlight_rob_time_spec1,'b--','LineWidth',2);
-plot(num_nodes_seq,moonlight_sat_time_spec2,'r','LineWidth',2);
-plot(num_nodes_seq,moonlight_rob_time_spec2,'r--','LineWidth',2);
+%plot(num_nodes_seq,moonlight_rob_time_spec1,'r--','LineWidth',2);
+plot(num_nodes_seq,moonlight_sat_time_spec2,'b','LineWidth',2);
+plot(num_nodes_seq,moonlight_rob_time_spec2,'b--','LineWidth',2);
+plot(num_nodes_seq,moonlight_sat_time_spec3,'y','LineWidth',2);
+plot(num_nodes_seq,moonlight_rob_time_spec3,'y--','LineWidth',2);
+plot(num_nodes_seq,moonlight_sat_time_spec4,'c','LineWidth',2);
+plot(num_nodes_seq,moonlight_rob_time_spec4,'c--','LineWidth',2);
+%plot(num_nodes_seq,moonlight_sat_time_spec5,'m','LineWidth',2);
+%plot(num_nodes_seq,moonlight_rob_time_spec5,'m--','LineWidth',2);
 xlabel('number of nodes');
 ylabel('time');
-legend('P1','P1q','P2','P2q')
+legend('P1','P1q','P2','P2q','P3','P3q','P4','P4q','P5','P5q')
 set(gca,'FontSize',18); 
-
-% 
-% figure; % open a new figure window
-% plot(num_nodes_seq,moonlight_sat_time_spec3,'g','LineWidth',2);
-% hold on;
-% plot(num_nodes_seq,moonlight_rob_time_spec3,'g--','LineWidth',2);
-% plot(num_nodes_seq,moonlight_sat_time_spec4,'y','LineWidth',2);
-% plot(num_nodes_seq,moonlight_rob_time_spec4,'y--','LineWidth',2);
-% xlabel('number of nodes');
-% ylabel('time');
-% legend('P3','P3q','P4','P4q')
-% set(gca,'FontSize',18); 
 
 
     

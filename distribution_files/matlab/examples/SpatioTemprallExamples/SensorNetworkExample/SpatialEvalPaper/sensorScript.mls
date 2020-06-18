@@ -2,12 +2,13 @@ signal { int nodeType; real battery; real temperature; }
 space {edges { int hop; real dist; }}
 domain boolean;
 formula atom = (battery > 0.5);
-formula P1 = (nodeType==3) reach (hop)[0, 2] (nodeType==2);
-formula P2 = escape(hop)[3, inf] ( nodeType==3) ;
+formula P1 = (nodeType==2) reach (hop)[0, 5] (nodeType==1);
+formula P2 = escape(hop)[5, inf] atom ;
 formula ReachQ = (temperature > 10)reach(hop)[0, 10] atom;
 formula SensNetk = somewhere(hop)[0, 3] atom;
-formula SensBool = everywhere(hop)[0.0, 5.0] (nodeType==2);
-formula P2bis = somewhere(hop)[0.0, 3] atom ;
+formula SensBool = everywhere(hop)[0, 5] (nodeType==2);
+formula P3 = somewhere(hop)[0, 3] atom ;
 formula Pbattery = !atom => {!atom reach (hop)[0, 2] atom};
-formula P3 = everywhere(dist)[0, inf]Pbattery;
-formula P4 = everywhere(dist)[0, inf]{somewhere(hop)[0.0, 3]Pbattery};
+formula PreachC = (nodeType==2) reach (hop)[0, inf] (nodeType==1);
+formula P4 = (nodeType==3) reach (hop)[0, 1]P1;
+formula P5 = everywhere(dist)[0, inf]P3;
