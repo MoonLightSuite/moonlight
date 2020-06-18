@@ -9,5 +9,5 @@ formula SensNetk = somewhere(hop)[0, 3] atom;
 formula SensBool = everywhere(hop)[0.0, 5.0] (nodeType==2);
 formula P2 = somewhere(hop)[0.0, 3] atom ;
 formula Pbattery = !atom => {!atom reach (hop)[0, 2] atom};
-formula P3 = everywhere(dist)[0, INF]P2;
-formula P4 = everywhere(dist)[0, INF]Pbattery;
+formula P3 = everywhere(dist)[0, INF]Pbattery;
+formula P4 = everywhere(dist)[0, INF]{somewhere(hop)[0.0, 3]Pbattery};

@@ -1,4 +1,4 @@
-function [boolean_results, robust_results] = monSpTempMon (spatialModel,time,signalInput, num_exp)
+function [b_time_results,rob_time_results] = monSpTempMon (spatialModel,time,signalInput, num_exp)
 %% Initializing the script
 
 % loading of the script
@@ -18,8 +18,8 @@ qMonitor2 = moonlightScript.getMonitor("P2");
 qMonitor3 = moonlightScript.getMonitor("P3");
 qMonitor4 = moonlightScript.getMonitor("P4");
 
-boolean_results = zeros(4,2);
-robust_results  = zeros(4,2);
+b_time_results = zeros(4,2);
+rob_time_results  = zeros(4,2);
 
 
 for i=1:num_exp
@@ -28,7 +28,7 @@ for i=1:num_exp
     bMonitorResult1 = bMonitor1.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightBoolean   = tElapsedSpec1MoonlightBoolean + toc(tStart);
 end
-boolean_results(1,:) = [bMonitorResult1(1,1,2), tElapsedSpec1MoonlightBoolean/num_exp];
+b_time_results(1) = tElapsedSpec1MoonlightBoolean/num_exp; 
 
 for i=1:num_exp
     tElapsedSpec1MoonlightQuant = 0;
@@ -36,10 +36,7 @@ for i=1:num_exp
     qMonitorResult1 = qMonitor1.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightQuant   = tElapsedSpec1MoonlightQuant + toc(tStart);
 end
-robust_results(1,:) = [qMonitorResult1(1,1,2), tElapsedSpec1MoonlightQuant/num_exp];
-
-
-
+rob_time_results(1) = tElapsedSpec1MoonlightQuant/num_exp;
 
 for i=1:num_exp
     tElapsedSpec1MoonlightBoolean = 0;
@@ -47,7 +44,7 @@ for i=1:num_exp
     bMonitorResult2 = bMonitor2.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightBoolean   = tElapsedSpec1MoonlightBoolean + toc(tStart);
 end
-boolean_results(2,:) = [bMonitorResult2(1,1,2), tElapsedSpec1MoonlightBoolean/num_exp];
+b_time_results(2) = tElapsedSpec1MoonlightBoolean/num_exp;
 
 for i=1:num_exp
     tElapsedSpec1MoonlightQuant = 0;
@@ -55,7 +52,7 @@ for i=1:num_exp
     qMonitorResult2 = qMonitor2.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightQuant   = tElapsedSpec1MoonlightQuant + toc(tStart);
 end
-robust_results(2,:) = [qMonitorResult2(1,1,2), tElapsedSpec1MoonlightQuant/num_exp];
+rob_time_results(2) = tElapsedSpec1MoonlightQuant/num_exp;
 
 
 for i=1:num_exp
@@ -64,7 +61,7 @@ for i=1:num_exp
     bMonitorResult3 = bMonitor3.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightBoolean   = tElapsedSpec1MoonlightBoolean + toc(tStart);
 end
-boolean_results(3,:) = [bMonitorResult3(1,1,2), tElapsedSpec1MoonlightBoolean/num_exp];
+b_time_results(3) = tElapsedSpec1MoonlightBoolean/num_exp;
 
 for i=1:num_exp
     tElapsedSpec1MoonlightQuant = 0;
@@ -72,7 +69,7 @@ for i=1:num_exp
     qMonitorResult3 = qMonitor3.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightQuant   = tElapsedSpec1MoonlightQuant + toc(tStart);
 end
-robust_results(3,:) = [qMonitorResult3(1,1,2), tElapsedSpec1MoonlightQuant/num_exp];
+rob_time_results(3) =  tElapsedSpec1MoonlightQuant/num_exp;
 
 
 for i=1:num_exp
@@ -81,7 +78,7 @@ for i=1:num_exp
     bMonitorResult4 = bMonitor4.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightBoolean   = tElapsedSpec1MoonlightBoolean + toc(tStart);
 end
-boolean_results(4,:) = [bMonitorResult4(1,1,2), tElapsedSpec1MoonlightBoolean/num_exp];
+b_time_results(4) =  tElapsedSpec1MoonlightBoolean/num_exp;
 
 for i=1:num_exp
     tElapsedSpec1MoonlightQuant = 0;
@@ -89,7 +86,7 @@ for i=1:num_exp
     qMonitorResult4 = qMonitor4.monitor(spatialModel,time,signalInput);
     tElapsedSpec1MoonlightQuant   = tElapsedSpec1MoonlightQuant + toc(tStart);
 end
-robust_results(4,:) = [qMonitorResult4(1,1,2), tElapsedSpec1MoonlightQuant/num_exp];
+rob_time_results(4) = tElapsedSpec1MoonlightQuant/num_exp;
 
 end
 
