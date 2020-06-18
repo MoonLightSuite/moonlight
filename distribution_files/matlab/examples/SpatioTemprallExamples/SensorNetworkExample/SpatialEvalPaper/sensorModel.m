@@ -160,7 +160,7 @@ for frameNr = time
    
    if plotFrames
       Gvor.Nodes.NodeColors = battery;
-      p = plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y)
+      p = plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
       p.MarkerSize = 8;
       %p.NodeCData = Gvor.Nodes.NodeColors;
       p.NodeCData = cell2mat(Gvor.Nodes.nodeType);
@@ -176,6 +176,6 @@ for frameNr = time
    end
    
 end
-save('data','vorSpTemModel','time','signal');
+%save('data','vorSpTemModel','time','signal');
 end
 
