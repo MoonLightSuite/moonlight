@@ -38,15 +38,16 @@ someWhereFormula = moonlightScript.getMonitor("SomeWhereFormula");
 % formula EscapeFormula (int k) = escape(hop)[3, k] ( nodeType==3) ;
 escapeFormula = moonlightScript.getMonitor("EscapeFormula");
 
+inputModel =spatialModelv;
 %% Results
 %evaluate ReachFormula
-resultReachMonitor = reachMonitor.monitor(spatialModelv,time,values);
+resultReachMonitor = reachMonitor.monitor(inputModel,time,values);
 %evaluate the parametric ParametricReachFormula with k=1, type=2
-resultParamMonitor = parametricReachMonitor.monitor(spatialModelv,time,values, [1,2]);
+resultParamMonitor = parametricReachMonitor.monitor(inputModel,time,values, [1,2]);
 %evaluate SomeWhereFormula
-resultSomeMonitor = someWhereFormula.monitor(spatialModelv,time,values);
+resultSomeMonitor = someWhereFormula.monitor(inputModel,time,values);
 %evaluate escapeFormula
-resultEscapeMonitor = escapeFormula.monitor(spatialModelv,time,values,inf);
+resultEscapeMonitor = escapeFormula.monitor(inputModel,time,values,inf);
 
 %% plots
 % plotResults(spatialModel, resultReachMonitor, true);

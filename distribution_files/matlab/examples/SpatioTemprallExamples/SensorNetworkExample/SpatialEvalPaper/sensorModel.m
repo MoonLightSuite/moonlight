@@ -1,7 +1,7 @@
-function [vorSpTemModel, time, signal] = sensorModel(num_nodes,numSteps,plotFrames)
+function [vorSpTemModel,conSpTemModel, time, signal] = sensorSystem(num_nodes,numSteps,plotFrames)
 % Simulation of MANETs with ZigBee protocols
 %
-%ß
+%
 % Parameters
 size            = 2000;
 nodes_positions = [size 2];
@@ -79,7 +79,7 @@ for i=1:num_nodes
 end
  
 vorSpTemModel = cell(numSteps,1);
-
+conSpTemModel = cell(numSteps,1);
 % SIGNAL 
 signal = cell(num_nodes,1);
 time = 1 : numSteps;
@@ -135,19 +135,32 @@ for frameNr = time
 
 
     end
-    %voronoi(nodes_positions(:,1),nodes_positions(:,2));
-    [v,c] = voronoin(nodes_positions);   
+    voronoi(nodes_positions(:,1),nodes_positions(:,2));
+    [v,c] = voronoin(nodes_positions);  
     vgraph = get_voronoi_graph(v,c);
-    [row,col] = find(vgraph==1);  
+    vgraph(vgraph~=1) = 0;
+    [rowV,colV] = find(vgraph==1);  
     
-    distEu = zeros(length(row),1);
-    for i=1:length(row)
-        distEu(i)= pdist([nodes{row(i)};nodes{col(i)}],'euclidean');
+    distEu = zeros(length(rowV),1);
+    for i=1:length(rowV)
+        distEu(i)= pdist([nodes{rowV(i)};nodes{colV(i)}],'euclidean');
     end
 
-    EdgeTable = table([row,col], [ones(length(row),1), distEu],...
+    EdgeTableV = table([rowV,colV], [ones(length(rowV),1), distEu],...
        'VariableNames',{'EndNodes','Weights'});
+   
+   cgraph = get_connectivity_graph(nodes, nodes_type, node_radius_type);
+   
+       [rowC,colC] = find(cgraph>0);  
     
+    distEu = zeros(length(rowC),1);
+    for i=1:length(rowC)
+        distEu(i)= pdist([nodes{rowC(i)};nodes{colC(i)}],'euclidean');
+    end
+
+    EdgeTableC = table([rowC,colC], [ones(length(rowC),1), distEu],...
+       'VariableNames',{'EndNodes','Weights'});
+   
    coord = cell2mat(nodes);
    x = coord(1:2:length(coord));
    y = coord(2:2:length(coord));
@@ -155,18 +168,26 @@ for frameNr = time
    temperature = rand(length(nodes),1)*20;
    NodeTable = table(nodes_type',x',y',battery,temperature,...
        'VariableNames',{'nodeType','x','y','battery','temperature'});
-   Gvor = digraph(EdgeTable, NodeTable);
+   Gvor = digraph(EdgeTableV, NodeTable);
    vorSpTemModel{frameNr} = Gvor;
    
+   Gcon = digraph(EdgeTableC, NodeTable);
+   conSpTemModel{frameNr} = Gcon;
    if plotFrames
-      Gvor.Nodes.NodeColors = battery;
-      p = plot(Gvor,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
-      p.MarkerSize = 8;
-      %p.NodeCData = Gvor.Nodes.NodeColors;
+      Gv = graph(vgraph);
+      Gc = graph(cgraph);
+      pv = plot(Gc,'r','XData',Gcon.Nodes.x,'YData',Gcon.Nodes.y,'EdgeColor','r','LineWidth',2.5);
+      hold on;
+      p = plot(Gv,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y,'EdgeColor','bl','LineWidth',1.5);
+      p.EdgeColor = 'black';
+      p.MarkerSize = 15;
+      set(gca,'FontSize',18);    
+      colorbar('FontSize',18);
       p.NodeCData = cell2mat(Gvor.Nodes.nodeType);
-      colorbar
+      %colorbar
       %Get the frame for the animation.
       frames(frameNr) = getframe;
+      hold off;
    end
     
    
@@ -176,6 +197,6 @@ for frameNr = time
    end
    
 end
-%save('data','vorSpTemModel','time','signal');
+save('data','vorSpTemModel','time','signal');
 end
 

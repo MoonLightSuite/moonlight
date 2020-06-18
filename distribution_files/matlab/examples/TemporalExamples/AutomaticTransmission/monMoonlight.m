@@ -5,7 +5,7 @@ function [boolean_results, robust_results] = monMoonlight (time, output, num_exp
 %this object is an implementation of ScriptLoader class, please 
 %refer to the doc of this class for more details (ex. write in console 
 %"doc ScriptLoader" ) please, open multiple_spec.mls 
-moonlightScript = ScriptLoader.load("multiple_spec");
+moonlightScript = ScriptLoader.FromFile("multiple_spec");
 
 moonlightScript.setBooleanDomain();
 booleanMonitor1 = moonlightScript.getMonitor("Spec1");
