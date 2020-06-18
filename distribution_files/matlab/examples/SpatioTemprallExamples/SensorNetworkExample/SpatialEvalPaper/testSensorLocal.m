@@ -4,7 +4,7 @@ close all;   %close all the open windows
 
 elapseTimeSeq = [];
 num_exp = 50;
-num_nodes_seq =[10, 100, 1000, 10000];
+num_nodes_seq =[10, 100, 1000];
 
 % % increasing the number of nodes
 moonlight_sat_time_spec1 = [];
