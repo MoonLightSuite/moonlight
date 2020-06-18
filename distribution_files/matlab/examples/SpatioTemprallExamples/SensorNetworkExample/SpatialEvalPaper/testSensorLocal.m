@@ -59,24 +59,24 @@ end
  %save (strcat('./test/',currDate,'/simulation.mat'), 'time', 'spatialModel,', 'num_exp', 'signalInput');
 
 save (strcat('./testLocal/',currDate,'/dataInput.mat'), 'time', 'spatialModel','signalInput','num_nodes_seq', 'num_exp', 'numSteps');
-save (strcat('./testLocal/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4');
-save (strcat('./testLocal/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4');
+save (strcat('./testLocal/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4', 'moonlight_sat_time_spec5');
+save (strcat('./testLocal/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4', 'moonlight_sat_time_spec5');
 %save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
 
 
 figure; % open a new figure window
-plot(num_nodes_seq,moonlight_sat_time_spec1,'r*','LineWidth',2);
+plot(num_nodes_seq,moonlight_sat_time_spec1,'r','LineWidth',2);
 hold on;
 plot(num_nodes_seq,moonlight_rob_time_spec1,'r--','LineWidth',2);
 plot(num_nodes_seq,moonlight_sat_time_spec2,'b','LineWidth',2);
-%plot(num_nodes_seq,moonlight_rob_time_spec2,'b--','LineWidth',2);
+plot(num_nodes_seq,moonlight_rob_time_spec2,'b--','LineWidth',2);
 plot(num_nodes_seq,moonlight_sat_time_spec3,'y','LineWidth',2);
 plot(num_nodes_seq,moonlight_rob_time_spec3,'y--','LineWidth',2);
 plot(num_nodes_seq,moonlight_sat_time_spec4,'c','LineWidth',2);
 plot(num_nodes_seq,moonlight_rob_time_spec4,'c--','LineWidth',2);
 % plot(num_nodes_seq,moonlight_sat_time_spec5,'m','LineWidth',2);
 % plot(num_nodes_seq,moonlight_rob_time_spec5,'m--','LineWidth',2);
-xlabel('number of nodes');
+% xlabel('number of nodes');
 ylabel('time');
 legend('P1','P1q','P2','P2q','P3','P3q','P4','P4q','P5','P5q')
 set(gca,'FontSize',18); 

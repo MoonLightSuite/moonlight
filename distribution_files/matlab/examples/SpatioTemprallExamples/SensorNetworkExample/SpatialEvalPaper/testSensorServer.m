@@ -4,7 +4,7 @@ close all;   %close all the open windows
 
 elapseTimeSeq = [];
 num_exp = 50;
-num_nodes_seq = [10, 50, 500, 1000];
+num_nodes_seq = [10, 100, 1000];
 
 
 % % increasing the number of nodes
@@ -61,8 +61,8 @@ end
 
 
 save (strcat('./testServer/',currDate,'/dataInput.mat'), 'time', 'spatialModel','signalInput','num_nodes_seq', 'num_exp', 'numSteps');
-save (strcat('./testServer/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4');
-save (strcat('./testServer/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4');
+save (strcat('./testServer/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4', 'moonlight_sat_time_spec5');
+save (strcat('./testServer/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4', 'moonlight_sat_time_spec5');
 %save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
 
 
