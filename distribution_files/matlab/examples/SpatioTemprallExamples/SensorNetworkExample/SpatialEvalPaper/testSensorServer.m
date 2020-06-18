@@ -3,7 +3,7 @@ clear;       %clear all the memory
 close all;   %close all the open windows
 
 elapseTimeSeq = [];
-num_exp = 1;
+num_exp = 50;
 num_nodes_seq = [10, 50, 500, 1000];
 
 
@@ -20,7 +20,7 @@ moonlight_rob_time_spec4 = [];
 moonlight_rob_time_spec5 = [];
 numSteps =1;
 currDate = strrep(datestr(datetime), ' ', '_');
-status = mkdir('testSever',currDate);
+status = mkdir('testServer',currDate);
 for num_nodes = num_nodes_seq
           
     %% Generating input signals
@@ -58,6 +58,7 @@ end
 % save (strcat('./test/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_max_time_spec1', 'moonlight_rob_min_time_spec1', 'moonlight_rob_median_time_spec1', 'moonlight_rob_var_time_spec1', 'moonlight_rob_mean_time_spec1', 'moonlight_rob_max_time_spec2', 'moonlight_rob_min_time_spec2', 'moonlight_rob_median_time_spec2', 'moonlight_rob_var_time_spec2', 'moonlight_rob_mean_time_spec2', 'moonlight_rob_max_time_spec3', 'moonlight_rob_min_time_spec3', 'moonlight_rob_median_time_spec3', 'moonlight_rob_var_time_spec3', 'moonlight_rob_mean_time_spec3', 'moonlight_rob_max_time_spec4', 'moonlight_rob_min_time_spec4', 'moonlight_rob_median_time_spec4', 'moonlight_rob_var_time_spec4', 'moonlight_rob_mean_time_spec4');
 % save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
  %save (strcat('./test/',currDate,'/simulation.mat'), 'time', 'spatialModel,', 'num_exp', 'signalInput');
+
 
 save (strcat('./testServer/',currDate,'/dataInput.mat'), 'time', 'spatialModel','signalInput','num_nodes_seq', 'num_exp', 'numSteps');
 save (strcat('./testServer/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4');
