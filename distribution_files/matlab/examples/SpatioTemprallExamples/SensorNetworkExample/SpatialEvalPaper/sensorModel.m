@@ -135,7 +135,7 @@ for frameNr = time
 
 
     end
-    voronoi(nodes_positions(:,1),nodes_positions(:,2));
+%     voronoi(nodes_positions(:,1),nodes_positions(:,2));
     [v,c] = voronoin(nodes_positions);  
     vgraph = get_voronoi_graph(v,c);
     vgraph(vgraph~=1) = 0;
