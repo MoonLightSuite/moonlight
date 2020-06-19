@@ -2,7 +2,7 @@
 clear
 close all
 %% generation of the data (spatial model, time, values)
-numSteps        = 10;   % number of frames
+numSteps        = 5;   % number of frames
 num_nodes       = 10;    % number of nodes
 framePlot = false; % to enable or disable the plot of the graph
 % see the sensorModel function for the description of the output
@@ -19,7 +19,7 @@ inputModel =spatialModelc;
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
 moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript");
 
-moonlightScript.setMinMaxDomain(); % for the quantitative semantics
-%moonlightScript.setBooleanDomain();
-P5Monitor = moonlightScript.getMonitor("P6");
+%moonlightScript.setMinMaxDomain(); % for the quantitative semantics
+moonlightScript.setBooleanDomain();
+P5Monitor = moonlightScript.getMonitor("PT2");
 P5Monitor = P5Monitor.monitor(inputModel,time,values);
