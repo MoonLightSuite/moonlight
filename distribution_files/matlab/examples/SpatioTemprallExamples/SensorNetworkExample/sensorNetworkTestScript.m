@@ -1,6 +1,9 @@
 clear;
 close all;
+%% STEP 1: define a spatial-temporal signal.
 load('dataInput.mat');
+
+
 script= [
 "signal { int nodeType; real battery; real temperature; }",...
 "space {edges { int hop; real dist; }}",...

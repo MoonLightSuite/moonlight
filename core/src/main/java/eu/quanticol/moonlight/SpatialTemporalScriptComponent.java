@@ -151,6 +151,10 @@ public class SpatialTemporalScriptComponent<S> {
     }
 
     public double[][][] monitorToObjectArrayAdjacencyList(double[] locationTimeArray, double[][][] graph, double[] signalTimeArray, double[][][] signalValues, double... parameters) {
+        System.out.println("Times: "+Arrays.toString(locationTimeArray));
+        System.out.println("Graph: "+Arrays.deepToString(graph));
+        System.out.println("signalTimeArray: "+Arrays.toString(signalTimeArray));
+        System.out.println("signalValues: "+Arrays.deepToString(signalValues));
         int locations = signalValues.length;
         SpatialTemporalSignal<Record> signal = RecordHandler.buildSpatioTemporalSignal(locations, signalRecordHandler, signalTimeArray, signalValues);
         LocationService<Record> locationService = LocationService.buildLocationServiceFromAdjacencyList(locations, edgeRecordHandler, locationTimeArray, graph);

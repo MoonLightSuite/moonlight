@@ -1,4 +1,4 @@
-function [vorSpTemModel,conSpTemModel, time, signal] = sensorSystem(num_nodes,numSteps,plotFrames)
+function [vorSpTemModel,conSpTemModel, time, signal] = sensorModel(num_nodes,numSteps,plotFrames)
 % Simulation of MANETs with ZigBee protocols
 %
 %
