@@ -30,6 +30,22 @@ classdef SpatialTemporalScriptComponent
             javaSignal = self.toJavaSignal(values);
             result=self.ScriptComponent.monitorToObjectArrayAdjacencyList(time,javaGraphModel,time,javaSignal,parameters);
         end
+        function result = monitorWithPrint(self, graph, time, values, parameters)
+            % monitor get the result of monitoring a spatial-temporal trajectory
+            %   monitor(graph, time, values, parameters)
+            %       - time: an array containing the trajectory timesteps
+            %       - values: a matrix containing the trajectory values
+            %       - parameters: (optional) an array containing the values
+            %                      of the formula paramters
+            if ~exist('parameters','var')
+                % third parameter does not exist. Default is the empty
+                % array (i.e., [])
+                parameters = [];
+            end
+            javaGraphModel = self.toJavaGraphModel(graph);
+            javaSignal = self.toJavaSignal(values);
+            result=self.ScriptComponent.monitorToObjectArrayAdjacencyListWithPrint(time,javaGraphModel,time,javaSignal,parameters);
+        end
     end
     methods (Access = private)
          function graph = toJavaGraphModel(~,diagram)
