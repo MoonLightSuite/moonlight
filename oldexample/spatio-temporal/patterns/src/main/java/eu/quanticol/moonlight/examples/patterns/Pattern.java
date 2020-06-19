@@ -90,10 +90,10 @@ public class Pattern {
         Formula notOr12 = new NegationFormula(or12);
 
         Formula reachF = new ReachFormula(
-                new AtomicFormula("LowValues"),"ciccia", "distReach", notOr12);
+                new AtomicFormula("LowValues"), "distReach", notOr12);
         Formula negReach = new NegationFormula(reachF);
 
-        Formula escapeLow = new EscapeFormula("ciccia", "distEscape", new AtomicFormula("LowValues"));
+        Formula escapeLow = new EscapeFormula("distEscape", new AtomicFormula("LowValues"));
 
 
         Formula negEsc = new NegationFormula(escapeLow);

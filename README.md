@@ -9,9 +9,4 @@ The tool supports two type of semantics (satisfaction), the Boolean and the quan
 Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, that tells at each time in each location if the trajectory satisfies or not the property, choosing instead the Quantitative semantics the tool returns a real-value signal that corresponds to the value of satisfaction of the property.
 -->
 
-- [Install](doc/install.md)
-- [Getting started](doc/getting_started.md)
-- [Examples](co/examples.md)
-
----- 
-## License
+For more information, please visit our [Wiki](https://github.com/MoonLightSuite/MoonLight/wiki) 

@@ -136,7 +136,7 @@ class ScriptToJava {
 					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
-				return null;
+				throw new IllegalArgumentException("Formula "+name+" is unknown!");				
 			}
 			
 			public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
@@ -150,7 +150,7 @@ class ScriptToJava {
 					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
-				return «generateReferenceToDefaultFormula(model.formulas)»;					
+				throw new IllegalArgumentException("Formula "+name+" is unknown!");				
 			}				
 
 			public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
