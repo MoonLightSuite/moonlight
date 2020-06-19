@@ -4,7 +4,7 @@ close all;   %close all the open windows
 
 elapseTimeSeq = [];
 num_exp = 1;
-num_nodes_seq =10000;
+num_nodes_seq =[10, 100, 1000];
 
 % % increasing the number of nodes
 moonlight_sat_time_spec1 = [];
@@ -17,7 +17,7 @@ moonlight_rob_time_spec2 = [];
 moonlight_rob_time_spec3 = [];
 moonlight_rob_time_spec4 = [];
 moonlight_rob_time_spec5 = [];
-numSteps =1;
+numSteps =3;
 currDate = strrep(datestr(datetime), ' ', '_');
 status = mkdir('testLocal',currDate);
 for num_nodes = num_nodes_seq

@@ -7,18 +7,18 @@ function [b_time_results,rob_time_results] = monSpTempMon (spatialModel,time,sig
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
 moonlightScript = ScriptLoader.loadFromFile("sensorScript");
 
-bMonitor1 = moonlightScript.getMonitor("P1");
-bMonitor2 = moonlightScript.getMonitor("P2");
-bMonitor3 = moonlightScript.getMonitor("P3");
-bMonitor4 = moonlightScript.getMonitor("P4");
-bMonitor5 = moonlightScript.getMonitor("P5");
+bMonitor1 = moonlightScript.getMonitor("P3");
+bMonitor2 = moonlightScript.getMonitor("P3bis");
+bMonitor3 = moonlightScript.getMonitor("P5");
+bMonitor4 = moonlightScript.getMonitor("PT1");
+bMonitor5 = moonlightScript.getMonitor("PT2");
 
 moonlightScript.setMinMaxDomain();
-qMonitor1 = moonlightScript.getMonitor("P1");
-qMonitor2 = moonlightScript.getMonitor("P2");
-qMonitor3 = moonlightScript.getMonitor("P3");
-qMonitor4 = moonlightScript.getMonitor("P4");
-qMonitor5 = moonlightScript.getMonitor("P5");
+qMonitor1 = moonlightScript.getMonitor("P3");
+qMonitor2 = moonlightScript.getMonitor("P3bis");
+qMonitor3 = moonlightScript.getMonitor("P5");
+qMonitor4 = moonlightScript.getMonitor("PT1");
+qMonitor5 = moonlightScript.getMonitor("PT2");
 
 b_time_results = zeros(5,1);
 rob_time_results  = zeros(5,1);
