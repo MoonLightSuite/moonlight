@@ -1,4 +1,4 @@
-gi%% Initializing the script
+%% Initializing the script
 
 
 function [currDate] = test_automatic (dt, stime, num_exp)
