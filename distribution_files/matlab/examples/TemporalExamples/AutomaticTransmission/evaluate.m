@@ -3,7 +3,7 @@ close all;   %close all the open windows
 
 NTest = 20;
 NExp  = 10;
-STime = 64;
+STime = 128;
 Dt    = 0.01;
 testdirs = {};
 
