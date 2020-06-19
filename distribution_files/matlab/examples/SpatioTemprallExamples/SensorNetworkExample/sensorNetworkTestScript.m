@@ -11,5 +11,5 @@ moonlightScript = ScriptLoader.loadFromText(script);
 
 boolSpTempMonitor = moonlightScript.getMonitor("P1");
 %%%%% phi 1 %%%%%%
-result = boolSpTempMonitor.monitor(spatialModel,time,values);
+result = boolSpTempMonitor.monitor(spatialModelc,time,values);
 

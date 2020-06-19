@@ -38,7 +38,7 @@ class TestSensorScript {
 			"    edges { int hop; }\n" +
 			"}\n" +
 			"domain boolean;\n" +
-			"formula MyFirstFormula = ( nodeType==3 ) reach(hop) [0, 1] ( nodeType==1 );";
+			"formula MyFirstFormula = globally{( nodeType==3 ) reach(hop) [0, 1] ( nodeType==1 )};";
 
 
 	@Test

@@ -3,8 +3,8 @@ clear;       %clear all the memory
 close all;   %close all the open windows
 
 elapseTimeSeq = [];
-num_exp = 50;
-num_nodes_seq =[10, 100, 1000];
+num_exp = 1;
+num_nodes_seq =10000;
 
 % % increasing the number of nodes
 moonlight_sat_time_spec1 = [];
@@ -24,10 +24,10 @@ for num_nodes = num_nodes_seq
           
     %% Generating input signals
     fprintf('Generating input signals with %f \n', num_nodes);
-    [spatialModel,time,signalInput]= sensorModel(num_nodes,numSteps, false);
+    [spatialModelv,spatialModelc,time,signalInput]= sensorModel(num_nodes,numSteps, false);
 
   
-    [b_time_results, rob_time_results] = monSpTempMon (spatialModel,time,signalInput, num_exp);
+    [b_time_results, rob_time_results] = monSpTempMon (spatialModelv,time,signalInput, num_exp);
     moonlight_sat_time_spec1 = [moonlight_sat_time_spec1, b_time_results(1)];
     moonlight_sat_time_spec2 = [moonlight_sat_time_spec2, b_time_results(2)];
     moonlight_sat_time_spec3 = [moonlight_sat_time_spec3, b_time_results(3)];
@@ -58,7 +58,7 @@ end
 % save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
  %save (strcat('./test/',currDate,'/simulation.mat'), 'time', 'spatialModel,', 'num_exp', 'signalInput');
 
-save (strcat('./testLocal/',currDate,'/dataInput.mat'), 'time', 'spatialModel','signalInput','num_nodes_seq', 'num_exp', 'numSteps');
+save (strcat('./testLocal/',currDate,'/dataInput.mat'), 'time', 'spatialModelv', 'spatialModelv','signalInput','num_nodes_seq', 'num_exp', 'numSteps');
 save (strcat('./testLocal/',currDate,'/moonlight_sat_times_stat.mat'), 'moonlight_sat_time_spec1', 'moonlight_sat_time_spec2', 'moonlight_sat_time_spec3', 'moonlight_sat_time_spec4', 'moonlight_sat_time_spec5');
 save (strcat('./testLocal/',currDate,'/moonlight_rob_times_stat.mat'), 'moonlight_rob_time_spec1', 'moonlight_rob_time_spec2', 'moonlight_rob_time_spec3', 'moonlight_rob_time_spec4', 'moonlight_sat_time_spec5');
 %save (strcat('./test/',currDate,'/monitoring_moonlight.mat'), 'moonlight_robust_spec1', 'moonlight_robust_spec2', 'moonlight_robust_spec3', 'moonlight_robust_spec4','moonlight_robust_time_spec1', 'moonlight_robust_time_spec2', 'moonlight_robust_time_spec3', 'moonlight_robust_time_spec4');
