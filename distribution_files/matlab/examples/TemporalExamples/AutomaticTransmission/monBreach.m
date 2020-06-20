@@ -47,7 +47,7 @@ for i=1:num_exp
     
     tStart              = tic;
     %disp(strcat('(ev_[0,', num2str(T), '] (v_speed[t] >= ',num2str(speed_threshold),')) and  (alw (e_speed[t] < ',num2str(omega),'))'));
-    spec7               = STL_Formula('Spec7', strcat('(ev_[0,', num2str(T), '] (v_speed[t] >= ',num2str(speed_threshold),')) and  (alw (e_speed[t] < ',num2str(omega),'))'));
+    spec7               = STL_Formula('Spec7', strcat('ev_[0,', num2str(T), '] ((v_speed[t] >= ',num2str(speed_threshold),')) and  (alw (e_speed[t] < ',num2str(omega),'))'));
     spec7_rob           = BrTrace.CheckSpec(spec7);
     tElapsedSpec7Breach = tElapsedSpec7Breach + toc(tStart);
 end

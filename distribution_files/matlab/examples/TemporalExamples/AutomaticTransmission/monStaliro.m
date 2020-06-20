@@ -76,9 +76,9 @@ end
 
 robust_results(3,:) = [rob6, tElapsedSpec6Staliro/num_exp];
 
-% (ev_[0,10] (v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))
+% ev_[0,10] ((v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))
 
-st_spec7 = strcat('(<>_[0,',num2str(T),'] (a1)) /\ ([] (a2))');
+st_spec7 = strcat('<>_[0,',num2str(T),'] ((a1)) /\ ([] (a2))');
 
 %a1: v_speed[t] > speed_threshold
 
