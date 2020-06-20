@@ -15,8 +15,9 @@ st_spec1_Pred(1).str = 'a1';
 st_spec1_Pred(1).A = [0 1 0];
 st_spec1_Pred(1).b = omega;
 
+tElapsedSpec1Staliro  = 0;
 for i=1:num_exp
-    tElapsedSpec1Staliro  = 0;
+    
     tStart                = tic;
     rob1                  = fw_taliro(st_spec1,st_spec1_Pred,output,time);
     tElapsedSpec1Staliro  = tElapsedSpec1Staliro + toc(tStart);
