@@ -5,15 +5,17 @@ formula atom = (nodeType==3) ;
 formula P1 = atom reach (hop)[0, 1] (nodeType==2 | nodeType==1);
 formula Ppar (int k) = atom reach (hop)[0, k] ( nodeType== 1) ;
 formula P2 = escape(hop)[5, inf] (battery > 0.5) ;
-formula P3 = somewhere(dist)[0, 300] (battery > 0.5) ;
+formula P3 = somewhere(dist)[0, 250] (battery > 0.5) ;
+formula P3s = somewhere(dist)[0, 50] (battery > 0.5) ;
 formula P3bis = somewhere(hop)[0, 3] (battery > 0.5) ;
 formula P4 = (nodeType==3) reach (hop)[0, 1]{(nodeType==2) reach (hop)[0, 5] (nodeType==1)};
 formula P5 = everywhere(dist)[0, inf]P4;
+formula PT1 = (battery <= 0.5)reach(hop)[0, 10] eventually(battery > 0.5)
+formula PT2 = globally P4
 formula Pnest = everywhere(dist)[0, inf]P3;
 formula ReachQ = (temperature > 10)reach(hop)[0, 10] (battery > 0.5);
 formula SensNetk = somewhere(hop)[0, 3] (battery > 0.5);
 formula SensBool = everywhere(hop)[0, 5] (nodeType==2);
 formula Pbattery = !atom => {!atom reach (hop)[0, 2] (battery > 0.5)};
 formula P6 = eventually(battery > 0.5)
-formula PT1 = globally P4
-formula PT2 = everywhere(dist)[0, inf]{eventually[0,5](battery > 0.5)}
+formula PT3 = everywhere(hop)[0, 5]{eventually[0,5](battery > 0.5)}

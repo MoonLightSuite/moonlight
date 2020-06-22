@@ -3,7 +3,11 @@ function [vorSpTemModel,conSpTemModel, time, signal] = sensorSystem(num_nodes,nu
 %
 %
 % Parameters
+
 size            = 2000;
+if num_nodes >= 1000 
+    size = 6000;
+end
 nodes_positions = [size 2];
 %numSteps        = 20;
 %num_nodes       = 50;
