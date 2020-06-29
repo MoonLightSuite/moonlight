@@ -59,11 +59,10 @@ domain minmax;
 formula hypoGlicemia = globally [0.0, 1400]  (y > 70);
 formula hyperGlicemia = globally [0.0, 1400]  (y < 180);
 """
-moonlight = Moonlight()
-moonlight.set_script(script)
+moonlightScript = ScriptLoader.loadFromText(script)
 
 # monitoring the properties
-monitor = moonlight.get_monitor("hypoGlicemia")
+monitor = moonlightScript.getMonitor("hypoGlicemia")
 y_signal = [[yy] for yy in y]
 result = monitor.monitor(list(t),y_signal)
 print('robustness:'+ str(result[0][1])) # robustness at time zero
