@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # to use java in python you need to specify the path where is Java 
 import os
-os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home"
+os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk-11.0.5.jdk/Contents/Home"
 from moonlight import *
 
 # importing the model, the simulation function
