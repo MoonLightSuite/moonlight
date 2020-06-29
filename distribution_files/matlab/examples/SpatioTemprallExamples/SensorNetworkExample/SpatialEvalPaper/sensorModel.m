@@ -201,6 +201,6 @@ for frameNr = time
    end
    
 end
-save('data','vorSpTemModel','time','signal');
+%save('data','vorSpTemModel','time','signal');
 end
 
