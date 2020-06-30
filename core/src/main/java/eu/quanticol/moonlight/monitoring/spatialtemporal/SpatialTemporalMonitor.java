@@ -15,6 +15,9 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 /**
  * @author loreti
  *
+ * @param <E> the type of values on edges of the spatial model.
+ * @param <S> the type of the signal trace considered
+ * @param <T> Semantic Interpretation Type
  */
 public interface SpatialTemporalMonitor<E,S,T> {
 	

@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
  * - multi-threaded monitoring of a property
  * - online monitoring
  *
+ * @see GraphModel
  */
 public class ImmutableGraphModel<T> implements SpatialModel<T> {
 

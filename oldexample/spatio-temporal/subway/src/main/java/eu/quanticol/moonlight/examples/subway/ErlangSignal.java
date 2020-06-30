@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
 import eu.quanticol.moonlight.examples.subway.parsing.SignalProcessor;
 import eu.quanticol.moonlight.util.Pair;
@@ -49,8 +49,8 @@ public class ErlangSignal implements SignalProcessor<Float> {
      * (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
      */
     @Override
-    public MultiValuedSignal generateSignal(Float[][] input) {
-        MultiValuedSignal signal = new MultiValuedSignal(size, length);
+    public MultiValuedTrace generateSignal(Float[][] input) {
+        MultiValuedTrace trace = new MultiValuedTrace(size, length);
 
         Boolean[][] devConn = new Boolean[size][length];
         GridDirection[][] devDir = new GridDirection[size][length];
@@ -66,7 +66,7 @@ public class ErlangSignal implements SignalProcessor<Float> {
             }
         }
 
-        signal
+        trace
                 .setDimension(devConn, DEV_CONNECTED)   // Device Position
                 .setDimension(devDir, DEV_DIRECTION)    // Device Direction
                 .setDimension(routerLoc, LOC_ROUTER)    // Location Router ID
@@ -74,7 +74,7 @@ public class ErlangSignal implements SignalProcessor<Float> {
                 .setDimension(outRouter, OUT_ROUTER)    // Output Router ID
                 .initialize();
 
-        return signal;
+        return trace;
     }
 
     // ------------- SIGNAL EXTRACTORS ------------- ////

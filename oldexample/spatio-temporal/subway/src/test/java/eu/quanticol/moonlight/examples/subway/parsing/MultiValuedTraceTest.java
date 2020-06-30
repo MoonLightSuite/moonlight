@@ -1,16 +1,16 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MultiValuedSignalTest {
+class MultiValuedTraceTest {
 
 
     @Test
     void emptySignal() {
-        MultiValuedSignal s = new MultiValuedSignal(0, 0);
+        MultiValuedTrace s = new MultiValuedTrace(0, 0);
 
         // We expect to have 0 dimensions
         assertEquals(0, s.dimensions());
@@ -21,8 +21,8 @@ class MultiValuedSignalTest {
 
     @Test
     void wrongDimensions() {
-        MultiValuedSignal s = new MultiValuedSignal(1, 1);
-        MultiValuedSignal s1 = new MultiValuedSignal(2, 1);
+        MultiValuedTrace s = new MultiValuedTrace(1, 1);
+        MultiValuedTrace s1 = new MultiValuedTrace(2, 1);
 
         Integer[][] dim1 = new Integer[1][1];
         Integer[][] dim2 = new Integer[2][1];
@@ -58,7 +58,7 @@ class MultiValuedSignalTest {
 
     @Test
     void simpleRightSignal() {
-        MultiValuedSignal s = new MultiValuedSignal(2, 1);
+        MultiValuedTrace s = new MultiValuedTrace(2, 1);
 
         Integer[][] dim1 = new Integer[2][1];
         Integer[][] dim2 = new Integer[2][1];

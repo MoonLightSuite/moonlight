@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Spatial-temporal signal that represents a generic signal of the kind
+ * Spatial-temporal signal that represents a generic trace of the kind
  * (s,t) -> (x1, ..., xn).
  * Note that x1, ..., xn must at least implement Comparable
  *
@@ -23,7 +23,7 @@ import java.util.List;
  * @see HashBiMap
  * @see SpatialTemporalSignal
  */
-public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable<?>>> {
+public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>> {
     private final int length;
     private int dimensions = 0;
     private final List<Comparable<?>[][]> data;
@@ -34,7 +34,7 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable<?>>
      * @param size the number of locations of the Spatial model.
      * @param length the time span of the temporal data.
      */
-    public MultiValuedSignal(int size, int length) {
+    public MultiValuedTrace(int size, int length) {
         super(size);
 
         this.length = length;
@@ -74,7 +74,7 @@ public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable<?>>
      * @param index ith dimension of the n-dimensional signal.
      * @return the MultiValuedSignal itself, so that the method can be chained.
      */
-    public MultiValuedSignal setDimension(
+    public MultiValuedTrace setDimension(
             Comparable<?>[][] dimData,
             int index) {
 

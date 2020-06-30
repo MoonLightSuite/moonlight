@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 
 /**
  * Generic interface that characterizes a signal factory
@@ -14,7 +14,7 @@ import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
  *
  * @param <T> the data structure that will be passed by the caller.
  *
- * @see MultiValuedSignal for info about the output format
+ * @see MultiValuedTrace for info about the output format
  */
 public interface SignalProcessor<T> {
 
@@ -30,6 +30,6 @@ public interface SignalProcessor<T> {
      * @param data the data used to generate the signal
      * @return a signal generated from the input data
      */
-    MultiValuedSignal generateSignal(T[][] data);
+    MultiValuedTrace generateSignal(T[][] data);
 
 }

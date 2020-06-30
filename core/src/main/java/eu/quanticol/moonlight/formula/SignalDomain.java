@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
  * Copyright (C) 2018 
  *
@@ -16,7 +16,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
+
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.signal.DataHandler;

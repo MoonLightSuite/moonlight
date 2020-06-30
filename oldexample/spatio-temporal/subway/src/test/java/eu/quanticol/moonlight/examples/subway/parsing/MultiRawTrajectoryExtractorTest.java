@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class MultiRawTrajectoryExtractorTest {
         // We expect a result list of 1 element (the space has size 2)
         assertEquals(1,t.result().size());
 
-        MultiValuedSignal data = t.result().iterator().next();
+        MultiValuedTrace data = t.result().iterator().next();
 
         // We expect a space size of 2
         assertEquals(2, data.size());
@@ -108,8 +108,8 @@ class MultiRawTrajectoryExtractorTest {
         }
 
         @Override
-        public MultiValuedSignal generateSignal(Float[][] data) {
-            MultiValuedSignal signal  = new MultiValuedSignal(space, time);
+        public MultiValuedTrace generateSignal(Float[][] data) {
+            MultiValuedTrace signal  = new MultiValuedTrace(space, time);
             signal.setDimension(data, 0).initialize();
 
             return signal;

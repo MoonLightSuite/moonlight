@@ -1,11 +1,11 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
 import eu.quanticol.moonlight.examples.subway.io.DataReader;
 import eu.quanticol.moonlight.examples.subway.io.FileType;
-import eu.quanticol.moonlight.examples.subway.parsing.*;
+import eu.quanticol.moonlight.examples.subway.parsing.MultiRawTrajectoryExtractor;
 import eu.quanticol.moonlight.examples.subway.statistics.StatisticalModelChecker;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
@@ -77,14 +77,14 @@ public class Erlang {
     //private static final RawTrajectoryExtractor singleTraj = new RawTrajectoryExtractor(network.size());
     private static final ErlangSignal processor = new ErlangSignal();
     private static final MultiRawTrajectoryExtractor multiTraj = new MultiRawTrajectoryExtractor(network.size(), processor);
-    private static final Collection<MultiValuedSignal> data =
+    private static final Collection<MultiValuedTrace> data =
             new DataReader<>(TRAJECTORY_SOURCE, FileType.CSV, multiTraj).read();
 
 
     public static void main(String[] argv) {
         System.out.println("The network size is: " + network.size());
 
-        MultiValuedSignal signal = data.iterator().next();
+        MultiValuedTrace signal = data.iterator().next();
 
         Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
 

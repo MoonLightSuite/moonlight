@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
 import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.List;
  * @see HashBiMap for more info about the internal data structure.
  * @see RawTrajectoryExtractor for importing a single trajectory from a file.
  */
-public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<MultiValuedSignal>> {
+public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<MultiValuedTrace>> {
     private final int spaceNodes;
     private int timePoints;
     private final SignalProcessor<Float> processor;
@@ -24,7 +24,7 @@ public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<M
     private int signalCount = 0;
 
     // List<[Space][Time]> signals
-    private List<MultiValuedSignal> signals;
+    private List<MultiValuedTrace> signals;
 
     // [Space][Time] signal
     private Float[][] singleSignal;
@@ -95,7 +95,7 @@ public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<M
      * @return the spatial-temporal signal containing the values added so far
      */
     @Override
-    public Collection<MultiValuedSignal> result() {
+    public Collection<MultiValuedTrace> result() {
         if(spaceIterator > 0)
             throw new IllegalArgumentException ("It seems the input file was " +
                     "missing parts of some trajectories. Please correct the "  +
