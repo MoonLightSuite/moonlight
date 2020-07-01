@@ -196,8 +196,10 @@ public class Signal<T> {
         SignalCursor<T> cursor = getIterator(false);
         R value = init;
         while (!cursor.completed()) {
-            value = f.apply(cursor.value(), value);
-            newSignal.addBefore(cursor.time(), value);
+            T sValue = cursor.value();
+            double t = cursor.time();
+            value = f.apply(sValue, value);
+            newSignal.addBefore(t, value);
             cursor.backward();
         }
         newSignal.end = end;

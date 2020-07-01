@@ -81,13 +81,10 @@ class TestFormulae {
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
         SignalCursor<Double> c = result.getIterator(true);
-        double time = 5.0;
         while (!c.completed()) {
             assertEquals(c.time() - 9, c.value(), 0.0, "Time: " + c.time());
             c.forward();
-            time += 0.25;
         }
-        assertEquals(10.25, time, 0.0);
     }
     
     @Test

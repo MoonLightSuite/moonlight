@@ -128,7 +128,6 @@ class TestSensorScript {
 	}
 
 	@Test
-	@Disabled
 	void test3() throws IOException {
 		ScriptLoader sl = new ScriptLoader();
 		MoonLightScript script = sl.compileScript(code3);

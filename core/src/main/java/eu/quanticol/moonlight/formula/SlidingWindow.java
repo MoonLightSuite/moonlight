@@ -107,7 +107,7 @@ public class SlidingWindow<R> {
 		
 		public void shift(double time) {
 			double nextTime = first.getSegmentEnd();
-			if (Double.isNaN(nextTime)) {//Window contains a single element!
+			if (first.getTime()==nextTime) { // Double.isNaN(nextTime)) {//Window contains a single element!
 				init( time-size , first.getValue() );
 			} else {
 				if (nextTime+size>time) {

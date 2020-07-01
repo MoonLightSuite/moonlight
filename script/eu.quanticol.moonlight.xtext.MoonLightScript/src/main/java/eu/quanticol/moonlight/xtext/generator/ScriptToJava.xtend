@@ -9,6 +9,7 @@ import eu.quanticol.moonlight.xtext.moonLightScript.Expression
 import eu.quanticol.moonlight.xtext.moonLightScript.FalseLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.FormulaDeclaration
 import eu.quanticol.moonlight.xtext.moonLightScript.IfThenElseExpression
+import eu.quanticol.moonlight.xtext.moonLightScript.InfiniteLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerType
 import eu.quanticol.moonlight.xtext.moonLightScript.MinMaxSemiring
@@ -705,7 +706,10 @@ class ScriptToJava {
 
 	def dispatch CharSequence getExpressionToJava(Expression expression) {
 		'''1.0'''
-		
+	}
+
+	def dispatch CharSequence getExpressionToJava(InfiniteLiteral expression) {
+		'''Double.POSITIVE_INFINITY'''
 	}
 
 	def dispatch CharSequence getExpressionToJava(OrExpression expression) {
