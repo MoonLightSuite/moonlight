@@ -2,7 +2,7 @@ language: java
 sudo: false
 env:
   global:
-    - CODECOV_TOKEN="979ee503-4267-430a-9cb5-63457d94fa38"
+    - CODECOV_TOKEN="e55b13c2-bff0-49c1-81e8-0fe254c2955e"
 install: true
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
