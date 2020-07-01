@@ -1,4 +1,5 @@
-# MoonLight
+# MoonLight [![Build Status](https://travis-ci.org/github/MoonLightSuite/MoonLight.svg?branch=master)](https://travis-ci.org/github/MoonLightSuite/MoonLight)
+
 MoonLight is a light-weight Java-tool for monitoring temporal, spatial and spatio-temporal properties of distributed complex systems, as *Cyber-Physical Systems* and *Collective Adaptive Systems*.
 
 It supports the specification of properties written with the *Reach and Escape Logic* ([STREL](https://dl.acm.org/citation.cfm?id=3127050)). STREL is a linear time temporal logic, in particular, it extends the *Signal Temporal Logic*
