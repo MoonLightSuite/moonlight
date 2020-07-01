@@ -1,4 +1,4 @@
-# MoonLight [![Build Status](https://api.travis-ci.org/MoonLightSuite/MoonLight.svg?branch=master)](https://travis-ci.org/github/MoonLightSuite/MoonLight)
+# MoonLight [![Build Status](https://api.travis-ci.org/MoonLightSuite/MoonLight.svg?branch=master)](https://travis-ci.org/github/MoonLightSuite/MoonLight) [![codecov](https://codecov.io/gh/MoonLightSuite/MoonLight/branch/master/graph/badge.svg)](https://codecov.io/gh/MoonLightSuite/MoonLight)
 
 MoonLight is a light-weight Java-tool for monitoring temporal, spatial and spatio-temporal properties of distributed complex systems, as *Cyber-Physical Systems* and *Collective Adaptive Systems*.
 
