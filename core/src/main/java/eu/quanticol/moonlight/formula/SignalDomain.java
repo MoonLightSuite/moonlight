@@ -22,15 +22,57 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
+/**
+ * This extension of Semiring introduces some elements that are key for
+ * signal interpretation.
+ * More precisely, (S, (-)) is a Signal domain when:
+ * <ul>
+ * <li> S is an idempotent Semiring </li>
+ * <li> (-) is a negation function</li>
+ * </ul>
+ * Moreover, we include:
+ * - Syntactic sugar for the implication connective
+ * - An accompanying DataHandler for data parsing
+ *
+ * @param <R> Set over which the Semiring (and the SignalDomain) is defined
+ *
+ * @see Semiring
+ * @see DataHandler
+ */
 public interface SignalDomain<R> extends Semiring<R> {
-	
+
+	/**
+	 * Negation function that s.t. De Morgan laws, double negation
+	 * and inversion of the idempotent elements hold.
+	 * @param x element to negate
+	 * @return the negation of the x element
+	 */
 	R negation(R x);
 
-	boolean equalTo(R x, R y);
-	
-	public default R  implies(R x, R y) {
+	/**
+	 * Shorthand for returning an operational implication
+	 * @param x the premise of the implication
+	 * @param y the conclusion of the implication
+	 * @return the element that results from the implication
+	 */
+	default R  implies(R x, R y) {
 		return disjunction(negation(x), y);
 	}
+
+	/**
+	 * @return an helper class to manage data parsing over the given type.
+	 */
+	DataHandler<R> getDataHandler();
+
+	/* TODO: Some doubts about the following methods. Precisely:
+	     - equalTo(x, y) seems useless (couldn't just use x.equals(y)?)
+	     - valueOf(.) seems to convert a boolean/numeric value to R, but
+	     			  what is this for? Doesn't it break the generalization?
+	     - compute*() these seems to be used by the script language.
+	     			  perhaps a refactoring is needed to move these somewhere else
+	 */
+
+	boolean equalTo(R x, R y);
 	
 	R valueOf(boolean b);
 	
@@ -49,6 +91,4 @@ public interface SignalDomain<R> extends Semiring<R> {
 	R computeGreaterThan(double v1, double v2);
 	
 	R computeGreaterOrEqualThan(double v1, double v2);
-
-	DataHandler<R> getDataHandler();
 }

@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.examples.subway.data;
+package eu.quanticol.moonlight.util.data;
 
 import eu.quanticol.moonlight.util.Pair;
 

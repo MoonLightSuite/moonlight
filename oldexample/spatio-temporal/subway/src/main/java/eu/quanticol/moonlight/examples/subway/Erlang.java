@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedTrace;
+import eu.quanticol.moonlight.util.data.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
 import eu.quanticol.moonlight.examples.subway.io.DataReader;

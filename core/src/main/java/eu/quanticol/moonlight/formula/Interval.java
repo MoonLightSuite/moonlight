@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
  * Copyright (C) 2018 
  *
@@ -16,49 +16,116 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
+
 package eu.quanticol.moonlight.formula;
 
+/**
+ * Immutable data type that represents an interval over
+ * the set of real numbers (here limited to doubles).
+ */
 public class Interval {
-
     private final double start;
-
     private final double end;
-
     private final boolean openOnRight;
+    private final boolean openOnLeft;
 
+    /**
+     * Constructs an interval defined of the kind [start, end]
+     * @param start left bound of the interval
+     * @param end right bound of the interval
+     */
     public Interval(double start, double end) {
-        this(start, end, false);
+        this(start, end, false, false);
     }
 
+    /**
+     * Constructs an interval defined of the kind [start, end) or [start, end]
+     * @param start left bound of the interval
+     * @param end right bound of the interval
+     * @param openOnRight marks whether the right bound is included or not
+     */
     public Interval(double start, double end, boolean openOnRight) {
+        this(start, end, false, openOnRight);
+    }
+
+    /**
+     * Constructs an interval of any kind between start and end
+     * @param start left bound of the interval
+     * @param end right bound of the interval
+     * @param openOnLeft marks whether the left bound is included or not
+     * @param openOnRight marks whether the right bound is included or not
+     */
+    public Interval(double start, double end, boolean openOnLeft, boolean openOnRight) {
         this.start = start;
         this.end = end;
+        this.openOnLeft = openOnLeft;
         this.openOnRight = openOnRight;
     }
 
     /**
-     * @return the start
+     * Constructs a singleton interval that contains only the provided number
+     * @param number the only number included in the interval
+     * @return an interval of the kind [number, number]
+     */
+    public static Interval fromDouble(Double number) {
+        return new Interval(number, number);
+    }
+
+    /**
+     * @return an empty Interval
+     */
+    public static Interval empty() {
+        return new Interval(0, 0, true);
+    }
+
+    /**
+     * @return the left bound of the interval
      */
     public double getStart() {
         return start;
     }
 
     /**
-     * @return the end
+     * @return the right bound of the interval
      */
     public double getEnd() {
         return end;
     }
 
     /**
-     * @return the openOnRight
+     * Checks whether the passed value belongs to the interval
+     * @param value the value to be checked
+     * @return true if the value belongs to the interval, false otherwise.
+     */
+    public boolean contains(double value) {
+        return  (value > start && value < end)  ||
+                (value == start && !openOnLeft) ||
+                (value == end && !openOnRight);
+    }
+
+    /**
+     * @return tells whether the interval is empty or not
+     */
+    public boolean isEmpty() {
+        return start == end && (openOnLeft || openOnRight);
+    }
+
+    /**
+     * @return tells whether the right bound is included in the interval or not
      */
     public boolean isOpenOnRight() {
         return openOnRight;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @return tells whether the left bound is included in the interval or not
+     */
+    public boolean isOpenOnLeft() {
+        return openOnLeft;
+    }
+
+    /**
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -74,7 +141,7 @@ public class Interval {
         return result;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -95,12 +162,25 @@ public class Interval {
         return true;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "Interval [start=" + start + ", end=" + end + ", openOnRight=" + openOnRight + "]";
-    }
+        String output = "Interval: ";
 
+        if(openOnLeft)
+            output += "(";
+        else
+            output += "[";
+
+        output += start + "," + end;
+
+        if(openOnRight)
+            output += ")";
+        else
+            output += "]";
+
+        return output;
+    }
 }
