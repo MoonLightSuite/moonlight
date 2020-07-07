@@ -21,74 +21,74 @@
 package eu.quanticol.moonlight.formula;
 
 /**
- * Visitor interface to interpret a formula and, recursively, its subformulas.
+ * Visitor interface to interpret a formula and, recursively, its subformulae.
  *
- * @param <T> Signal Trace Type
- * @param <R> Semantic Interpretation Semiring Type
+ * @param <P> Monitoring parameters Type
+ * @param <M> Monitoring type, based on some semantic interpretation type
  *
  * @see Formula implementations to see how the visitor is accepted
  *
  * @author loreti
  */
-public interface FormulaVisitor<T, R> {
+public interface FormulaVisitor<P, M> {
 	
 	static IllegalArgumentException generateException( Class<?> c ) {
 		return new IllegalArgumentException(c.getName() + " is not supported by this visitor!");
 	}
 
-	default R visit(AtomicFormula atomicFormula, T parameters) {
+	default M visit(AtomicFormula atomicFormula, P parameters) {
 		throw generateException(atomicFormula.getClass());
 	}
 
-	default R visit(AndFormula andFormula, T parameters) {
+	default M visit(AndFormula andFormula, P parameters) {
 		throw generateException(andFormula.getClass());
 	}
 
-	default R visit(NegationFormula negationFormula, T parameters) {
+	default M visit(NegationFormula negationFormula, P parameters) {
 		throw generateException(negationFormula.getClass());
 	}
 
-	default R visit(OrFormula orFormula, T parameters) {
+	default M visit(OrFormula orFormula, P parameters) {
 		throw generateException(orFormula.getClass());
 	}
 
-	default R visit(EventuallyFormula eventuallyFormula, T parameters) {
+	default M visit(EventuallyFormula eventuallyFormula, P parameters) {
 		throw generateException(eventuallyFormula.getClass());
 	}
 
-	default R visit(GloballyFormula globallyFormula, T parameters) {
+	default M visit(GloballyFormula globallyFormula, P parameters) {
 		throw generateException(globallyFormula.getClass());
 	}
 
-	default R visit(UntilFormula untilFormula, T parameters) {
+	default M visit(UntilFormula untilFormula, P parameters) {
 		throw generateException(untilFormula.getClass());
 	}
 
-	default R visit(SinceFormula sinceFormula, T parameters) {
+	default M visit(SinceFormula sinceFormula, P parameters) {
 		throw generateException(sinceFormula.getClass());
 	}
 
-	default R visit(HistoricallyFormula historicallyFormula, T parameters) {
+	default M visit(HistoricallyFormula historicallyFormula, P parameters) {
 		throw generateException(historicallyFormula.getClass());
 	}
 
-	default R visit(OnceFormula onceFormula, T parameters) {
+	default M visit(OnceFormula onceFormula, P parameters) {
 		throw generateException(onceFormula.getClass());
 	}
 	
-	default R visit(SomewhereFormula somewhereFormula, T parameters ) {
+	default M visit(SomewhereFormula somewhereFormula, P parameters ) {
 		throw generateException(somewhereFormula.getClass());
 	}
 
-	default R visit(EverywhereFormula everywhereFormula, T parameters) {
+	default M visit(EverywhereFormula everywhereFormula, P parameters) {
 		throw generateException(everywhereFormula.getClass());		
 	}
 	
-	default R visit(ReachFormula reachFormula, T parameters) {
+	default M visit(ReachFormula reachFormula, P parameters) {
 		throw generateException(reachFormula.getClass());		
 	}
 
-	default R visit(EscapeFormula escapeFormula, T parameters) {
+	default M visit(EscapeFormula escapeFormula, P parameters) {
 		throw generateException(escapeFormula.getClass());		
 	}
 

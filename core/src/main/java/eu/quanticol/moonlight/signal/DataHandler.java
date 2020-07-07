@@ -147,7 +147,7 @@ public interface DataHandler<S> {
             try {
                 return Double.parseDouble(str);
             } catch (NumberFormatException e) {
-                throw  new IllegalValueException(e);
+                throw new IllegalValueException(e);
             }
         }
 
@@ -354,16 +354,18 @@ public interface DataHandler<S> {
          */
         @Override
         public Interval fromObject(Object value) {
+            Interval _interval = new Interval(0.0, 0.0);
             if(value == null) {
-                return Interval.empty();
+                throw new IllegalValueException("Expected a number or an interval. "
+                                               + "Received: null");
             }
-            if(value instanceof Double) {
-                return Interval.fromDouble((Double) value);
+            if (value instanceof Double) {
+                return _interval.fromValue((Double) value);
             }
-            if(value instanceof Number) {
-                return Interval.fromDouble(((Number) value).doubleValue());
+            if (value instanceof Number) {
+                return _interval.fromValue(((Number) value).doubleValue());
             }
-            if(value instanceof Interval) {
+            if (value instanceof Interval) {
                 return (Interval) value;
             }
 
@@ -373,8 +375,9 @@ public interface DataHandler<S> {
 
         @Override
         public Interval fromString(String str) {
+            Interval _interval = new Interval(0.0, 0.0);
             try {
-                return Interval.fromDouble(Double.parseDouble(str));
+                return _interval.fromValue(Double.parseDouble(str));
             } catch (NumberFormatException e) {
                 throw  new IllegalValueException(e);
             }
@@ -382,7 +385,7 @@ public interface DataHandler<S> {
 
         @Override
         public Interval fromDouble(double value) {
-            return Interval.fromDouble(value);
+            return (new Interval(0.0, 0.0)).fromValue(value);
         }
 
         @Override
@@ -392,7 +395,8 @@ public interface DataHandler<S> {
 
         @Override
         public double doubleOf(Interval interval) {
-            if(interval.getStart() == interval.getEnd() && !interval.isOpenOnRight())
+            if(interval.getStart().equals(interval.getEnd())
+                    && !interval.isOpenOnRight())
                 return interval.getStart();
             else
                 throw new IllegalValueException("Expected a valid interval. " +

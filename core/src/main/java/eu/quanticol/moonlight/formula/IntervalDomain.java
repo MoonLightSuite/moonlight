@@ -44,7 +44,7 @@ public class IntervalDomain implements SignalDomain<Interval> {
     @Override
     public Interval disjunction(Interval x, Interval y) {
         return new Interval(Math.max(x.getStart(), y.getStart()),
-                Math.max(x.getEnd(), y.getEnd()));
+                            Math.max(x.getEnd(), y.getEnd()));
     }
 
     @Override

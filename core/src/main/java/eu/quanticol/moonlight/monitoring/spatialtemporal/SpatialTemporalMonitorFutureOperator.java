@@ -4,6 +4,7 @@
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOperator;
@@ -18,12 +19,12 @@ public class SpatialTemporalMonitorFutureOperator<E,S,T> implements SpatialTempo
 
 	private SpatialTemporalMonitor<E, S, T> m;
 	private Interval interval;
-	private BiFunction<T,T,T> op;
+	private BinaryOperator<T> op;
 	private T init;
 
 	public SpatialTemporalMonitorFutureOperator(SpatialTemporalMonitor<E, S, T> m,
 												Interval interval,
-												BiFunction<T, T, T> op,
+												BinaryOperator<T> op,
 												T init) {
 		this.m = m;
 		this.interval = interval;

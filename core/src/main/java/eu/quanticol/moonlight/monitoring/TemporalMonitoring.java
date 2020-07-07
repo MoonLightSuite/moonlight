@@ -45,8 +45,9 @@ import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor.*;
 
 /**
  * Alternative interface to perform monitoring.
- * The key difference is that it is based on a visitor design pattern over the
- * formula tree which resorts to TemporalMonitor methods for the implementation.
+ * The key difference is that it is based on a visitor
+ * design pattern over the formula tree which resorts
+ * to TemporalMonitor methods for the implementation.
  *
  * Note: Particularly useful in static environment.
  *
@@ -85,7 +86,7 @@ public class TemporalMonitoring<T, R> implements
 	/**
 	 * Adds an atomic property to the monitored ones.
 	 * @param name identifier of the atomic property
-	 * @param atomicFunction the function that corrisponds to the property
+	 * @param atomicFunction the function that corresponds to the property
 	 */
 	public void addProperty(String name,
 			Function<Parameters, Function<T, R>> atomicFunction) {
@@ -110,7 +111,8 @@ public class TemporalMonitoring<T, R> implements
 		Function<Parameters, Function<T, R>> f = atoms.get(atomicFormula.getAtomicId());
 
 		if (f == null) {
-			throw new IllegalArgumentException("Unknown atomic ID " + atomicFormula.getAtomicId());
+			throw new IllegalArgumentException("Unknown atomic ID " +
+												atomicFormula.getAtomicId());
 		}
 		Function<T, R> atomic = f.apply(parameters);
 

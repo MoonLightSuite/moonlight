@@ -65,7 +65,7 @@ public class Signal<T> {
     }
 
     /**
-     * @returns true if the signal is empty
+     * @return true if the signal is empty
      */
     public boolean isEmpty() {
         return (size == 0);
@@ -76,7 +76,6 @@ public class Signal<T> {
      *
      * @param t
      * @param value
-     * @return last time step
      */
     public void add(double t, T value) {
         Segment<T> oldLast = last;
@@ -106,7 +105,6 @@ public class Signal<T> {
      *
      * @param t
      * @param value
-     * @return last time step
      */
     public void addBefore(double t, T value) {
         Segment<T> oldFirst = first;

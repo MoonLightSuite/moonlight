@@ -23,20 +23,18 @@ package eu.quanticol.moonlight.formula;
 /**
  * Immutable data type that represents an interval over
  * the set of real numbers (here limited to doubles).
+ *
+ * @see AbstractInterval
  */
-public class Interval {
-    private final double start;
-    private final double end;
-    private final boolean openOnRight;
-    private final boolean openOnLeft;
+public class Interval extends AbstractInterval<Double> {
 
     /**
      * Constructs an interval defined of the kind [start, end]
      * @param start left bound of the interval
      * @param end right bound of the interval
      */
-    public Interval(double start, double end) {
-        this(start, end, false, false);
+    public Interval(Number start, Number end) {
+        super(start.doubleValue(), end.doubleValue(), false, false);
     }
 
     /**
@@ -45,8 +43,8 @@ public class Interval {
      * @param end right bound of the interval
      * @param openOnRight marks whether the right bound is included or not
      */
-    public Interval(double start, double end, boolean openOnRight) {
-        this(start, end, false, openOnRight);
+    public Interval(Number start, Number end, boolean openOnRight) {
+        super(start.doubleValue(), end.doubleValue(), false, openOnRight);
     }
 
     /**
@@ -56,131 +54,43 @@ public class Interval {
      * @param openOnLeft marks whether the left bound is included or not
      * @param openOnRight marks whether the right bound is included or not
      */
-    public Interval(double start, double end, boolean openOnLeft, boolean openOnRight) {
-        this.start = start;
-        this.end = end;
-        this.openOnLeft = openOnLeft;
-        this.openOnRight = openOnRight;
+    public Interval(Number start, Number end, boolean openOnLeft, boolean openOnRight) {
+        super(start.doubleValue(), end.doubleValue(), openOnLeft, openOnRight);
     }
 
     /**
-     * Constructs a singleton interval that contains only the provided number
+     * @param offset numerical value to translate the interval
+     * @return a new Interval translated on the right by offset
+     */
+    public Interval translate(Double offset) {
+        return new Interval(getStart() + offset, getEnd() + offset,
+                isOpenOnLeft(), isOpenOnRight());
+    }
+
+    /**
+     * Constructs a degenerated interval that contains only the provided number
      * @param number the only number included in the interval
      * @return an interval of the kind [number, number]
      */
-    public static Interval fromDouble(Double number) {
+    @Override
+    public Interval fromValue(Double number) {
         return new Interval(number, number);
     }
 
     /**
-     * @return an empty Interval
-     */
-    public static Interval empty() {
-        return new Interval(0, 0, true);
-    }
-
-    /**
-     * @return the left bound of the interval
-     */
-    public double getStart() {
-        return start;
-    }
-
-    /**
-     * @return the right bound of the interval
-     */
-    public double getEnd() {
-        return end;
-    }
-
-    /**
-     * Checks whether the passed value belongs to the interval
-     * @param value the value to be checked
-     * @return true if the value belongs to the interval, false otherwise.
-     */
-    public boolean contains(double value) {
-        return  (value > start && value < end)  ||
-                (value == start && !openOnLeft) ||
-                (value == end && !openOnRight);
-    }
-
-    /**
-     * @return tells whether the interval is empty or not
-     */
-    public boolean isEmpty() {
-        return start == end && (openOnLeft || openOnRight);
-    }
-
-    /**
-     * @return tells whether the right bound is included in the interval or not
-     */
-    public boolean isOpenOnRight() {
-        return openOnRight;
-    }
-
-    /**
-     * @return tells whether the left bound is included in the interval or not
-     */
-    public boolean isOpenOnLeft() {
-        return openOnLeft;
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
+     * @return an empty interval
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(end);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (openOnRight ? 1231 : 1237);
-        temp = Double.doubleToLongBits(start);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+    public Interval empty() {
+        return new Interval(0.0, 0.0, true);
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @return the widest possible interval
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Interval other = (Interval) obj;
-        if (Double.doubleToLongBits(end) != Double.doubleToLongBits(other.end))
-            return false;
-        if (openOnRight != other.openOnRight)
-            return false;
-        if (Double.doubleToLongBits(start) != Double.doubleToLongBits(other.start))
-            return false;
-        return true;
+    public Interval any() {
+        return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        String output = "Interval: ";
-
-        if(openOnLeft)
-            output += "(";
-        else
-            output += "[";
-
-        output += start + "," + end;
-
-        if(openOnRight)
-            output += ")";
-        else
-            output += "]";
-
-        return output;
-    }
 }
