@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.util.data.MultiValuedTrace;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -32,6 +33,7 @@ class RoSIBerkeleyTest {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
+    @Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT2() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -47,6 +49,7 @@ class RoSIBerkeleyTest {
 
     }
 
+    @Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT3() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -173,13 +176,11 @@ class RoSIBerkeleyTest {
         Formula atomX = new AtomicFormula("positiveX");
         Formula atomY = new AtomicFormula("positiveY");
 
-        
         return new GloballyFormula(
                     new OrFormula(new EventuallyFormula(atomX,
                                                         new Interval(B, C)),
                                   atomY),
                     new Interval(0, A));
-
 
         //formula for simpler testing, invert the comments for real tests
         //return new GloballyFormula(atomX, new Interval(0, T_MAX));

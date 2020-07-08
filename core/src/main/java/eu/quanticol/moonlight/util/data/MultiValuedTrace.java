@@ -84,17 +84,7 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
         if(!data.isEmpty() && dimData[0].length != length)
             throw new IllegalArgumentException("Mismatching time length");
 
-        /*
-        // We check if all required values exist
-        for(int l = 0; l < size(); l++) {
-            for(int t = 0; t < length; t++) {
-                // When we find a missing value, we throw an exception!
-                if(null == dimData[l][t])
-                    throw new IllegalArgumentException(
-                                                    "Missing time/space data");
-            }
-        }*/
-
+        // Perhaps we should check if all required values exist
         data.add(index, dimData);
 
         return this;

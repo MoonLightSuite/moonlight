@@ -29,7 +29,16 @@ package eu.quanticol.moonlight.formula;
 public class Interval extends AbstractInterval<Double> {
 
     /**
-     * Constructs an interval defined of the kind [start, end]
+     * Constructs a degenerated interval of the kind [value, value]
+     * @param value the only element of the interval
+     */
+    public Interval(Number value) {
+        super(value.doubleValue(), value.doubleValue(),
+                false, false);
+    }
+
+    /**
+     * Constructs an interval of the kind [start, end]
      * @param start left bound of the interval
      * @param end right bound of the interval
      */
@@ -38,7 +47,7 @@ public class Interval extends AbstractInterval<Double> {
     }
 
     /**
-     * Constructs an interval defined of the kind [start, end) or [start, end]
+     * Constructs an interval of the kind [start, end) or [start, end]
      * @param start left bound of the interval
      * @param end right bound of the interval
      * @param openOnRight marks whether the right bound is included or not
@@ -60,7 +69,7 @@ public class Interval extends AbstractInterval<Double> {
 
     /**
      * @param offset numerical value to translate the interval
-     * @return a new Interval translated on the right by offset
+     * @return a new Interval translated on the right by {@code offset}
      */
     public Interval translate(Double offset) {
         return new Interval(getStart() + offset, getEnd() + offset,

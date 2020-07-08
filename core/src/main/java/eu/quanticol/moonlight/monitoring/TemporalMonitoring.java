@@ -77,8 +77,10 @@ public class TemporalMonitoring<T, R> implements
 	 * @param interpretation signal interpretation domain
 	 */
 	public TemporalMonitoring(Map<String,
-			Function<Parameters, Function<T, R>>> atomicPropositions,
-							  SignalDomain<R> interpretation) {
+							  Function<Parameters,
+							  Function<T, R>>> atomicPropositions,
+							  SignalDomain<R> interpretation)
+	{
 		this.atoms = atomicPropositions;
 		this.module = interpretation;
 	}
@@ -89,8 +91,8 @@ public class TemporalMonitoring<T, R> implements
 	 * @param atomicFunction the function that corresponds to the property
 	 */
 	public void addProperty(String name,
-			Function<Parameters, Function<T, R>> atomicFunction) {
-
+							Function<Parameters, Function<T, R>> atomicFunction)
+	{
 		atoms.put(name, atomicFunction);
 	}
 
