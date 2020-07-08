@@ -27,8 +27,15 @@ package eu.quanticol.moonlight.formula;
  * total ordering relation defined over that set.
  * For this reason, I am requiring Intervals to be defined over a type T
  * that implements a Comparable interface (of any extension of that).
- * The Comparable interface is slightly stricter than the general Interval
- * interface, as it requires the
+ * The Comparable interface is slightly stricter than the previous interval
+ * definition, as it also requires some (integer) metric to assess the distance
+ * between the objects compared.
+ * However, I believe this seems coherent with the approach adopted
+ * by Moonlight, and being implemented by all numeric types, it provides a
+ * fairly general support out of the box.
+ *
+ * For the reason why AbstractInterval implements Comparable itself,
+ * see {@link AbstractInterval#compareTo(AbstractInterval)}.
  *
  * @param <T> Type of the interval (currently only numbers make sense)
  *
@@ -124,30 +131,35 @@ public abstract class AbstractInterval<T extends Comparable<T>>
 
     /**
      * Note that in classical interval arithmetic no total ordering
-     * relation is defined over intervals. Nevertheless
-     * 1 - o is null => error
-     * 2 - o is empty => 0 (?)
-     * 3 - [o,o] => translate & compare //removed
-     * 4 - [o.inf, o.sup] => this.inf > o.sup
-     * @param i target interval for the comparison
+     * relation is defined over intervals.
+     * Nevertheless, a strict partial ordering does exist,
+     * so I decided to support it, and to "totalize" the function by
+     * failing at runtime when a comparison cannot be made.
+     *
+     * A summary of the logic is the following:
+     * - this.sup < o.inf => compare
+     * - this.inf > o.sup => compare
+     * - o is null || o is contained in this => error
+     *
+     * @param o target interval of the comparison
      * @return a number corresponding to the result of the comparison
      */
     @Override
-    public int compareTo(AbstractInterval<T> i) {
-        if(i == null) {
+    public int compareTo(AbstractInterval<T> o) {
+        if(o == null) {
             throw new UnsupportedOperationException("Comparing Interval " +
                                                     "to null");
         }
-        if(i.getStart() == i.getEnd() &&
-                (isOpenOnLeft() || isOpenOnRight())) {
-            return 0;
+        if(getEnd().compareTo(o.getStart()) < 0) {
+            return getEnd().compareTo(o.getStart());
         }
-        if(this.contains(i.getStart())) {
-            return getStart().compareTo(i.getEnd());
+        if(getStart().compareTo(o.getEnd()) > 0) {
+            return getStart().compareTo(o.getEnd());
         }
 
-        throw new UnsupportedOperationException("Unable to compare Interval " +
-                                                "with " + i.toString());
+        throw new UnsupportedOperationException("Unable to compare interval " +
+                                                toString() +
+                                                "with " + o.toString());
     }
 
     /**
