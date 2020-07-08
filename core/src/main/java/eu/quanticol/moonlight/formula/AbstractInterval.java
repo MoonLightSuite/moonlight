@@ -21,11 +21,22 @@
 package eu.quanticol.moonlight.formula;
 
 /**
- * Immutable data type that represents an interval over parameter T
+ * Abstract immutable data type that represents an interval over parameter T.
+ *
+ * In general, to define an interval over a set, we only need a
+ * total ordering relation defined over that set.
+ * For this reason, I am requiring Intervals to be defined over a type T
+ * that implements a Comparable interface (of any extension of that).
+ * The Comparable interface is slightly stricter than the general Interval
+ * interface, as it requires the
  *
  * @param <T> Type of the interval (currently only numbers make sense)
+ *
+ * @see Interval for the implementation on Doubles
  */
-public abstract class AbstractInterval<T extends Comparable<T>> {
+public abstract class AbstractInterval<T extends Comparable<T>>
+        implements Comparable<AbstractInterval<T>>
+{
     private final T start;
     private final T end;
     private final boolean openOnRight;
@@ -109,6 +120,34 @@ public abstract class AbstractInterval<T extends Comparable<T>> {
      */
     public boolean isOpenOnLeft() {
         return openOnLeft;
+    }
+
+    /**
+     * Note that in classical interval arithmetic no total ordering
+     * relation is defined over intervals. Nevertheless
+     * 1 - o is null => error
+     * 2 - o is empty => 0 (?)
+     * 3 - [o,o] => translate & compare //removed
+     * 4 - [o.inf, o.sup] => this.inf > o.sup
+     * @param i target interval for the comparison
+     * @return a number corresponding to the result of the comparison
+     */
+    @Override
+    public int compareTo(AbstractInterval<T> i) {
+        if(i == null) {
+            throw new UnsupportedOperationException("Comparing Interval " +
+                                                    "to null");
+        }
+        if(i.getStart() == i.getEnd() &&
+                (isOpenOnLeft() || isOpenOnRight())) {
+            return 0;
+        }
+        if(this.contains(i.getStart())) {
+            return getStart().compareTo(i.getEnd());
+        }
+
+        throw new UnsupportedOperationException("Unable to compare Interval " +
+                                                "with " + i.toString());
     }
 
     /**
