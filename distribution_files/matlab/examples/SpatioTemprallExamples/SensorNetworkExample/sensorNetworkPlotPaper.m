@@ -31,7 +31,7 @@ boolSpTempMonitor = moonlightScript.getMonitor("P4");
 
 result2 = boolSpTempMonitor.monitor(inputModel,time,values);
 
-tiledlayout(2,1) % Requires R2019b or later
+%tiledlayout(2,1) % Requires R2019b or later
 
 
 plotResults(inputModel, result1, true)

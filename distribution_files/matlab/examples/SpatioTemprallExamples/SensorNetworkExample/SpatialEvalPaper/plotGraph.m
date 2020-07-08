@@ -1,5 +1,4 @@
 function plotGraph(spatialModel, numFrame, s)
-figure1 = figure('Name','Spatial Model')
 Gvor = spatialModel{numFrame};
 A = adjacency(Gvor);
 G = graph(A);

@@ -58,9 +58,9 @@ class Moonlight:
     def get_monitor(self,monitor_name):
         loader = autoclass('eu.quanticol.moonlight.MoonlightScriptFactory')()
         if(self.compiled_script.isTemporal()):
-            return TemporalMonitor(loader.getTemporalScript(self.compiled_script).selectTemporalComponent(monitor_name))
+            return TemporalScriptComponent(loader.getTemporalScript(self.compiled_script).selectTemporalComponent(monitor_name))
         else:
-            return SpatialTemporalMonitor(loader.getSpatialTemporalScript(compiled_script))
+            return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(compiled_script))
             
     
 class TemporalScriptComponent():

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import eu.quanticol.moonlight.compiler.MoonlightCompiler;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import eu.quanticol.moonlight.signal.DataHandler;
@@ -40,6 +41,12 @@ class TestSensorScript {
 			"domain boolean;\n" +
 			"formula MyFirstFormula = globally{( nodeType==3 ) reach(hop) [0, 1] ( nodeType==1 )};";
 
+	private static String code3 = "signal { int nodeType; }\n" +
+			"space {\n" +
+			"    edges { int hop; }\n" +
+			"}\n" +
+			"domain boolean;\n" +
+			"formula MyFirstFormula =  escape(hop) [2, inf] ( nodeType==3 )};";
 
 	@Test
 	void test() throws IOException {		
@@ -117,6 +124,22 @@ class TestSensorScript {
 		System.out.println(oArray[3][0][1]);
 		System.out.println(oArray[4][0][1]);
 //		assertEquals(1.0, oArray[0][0][1]);
+//		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
+	}
+
+	@Test
+	void test3() throws IOException {
+		ScriptLoader sl = new ScriptLoader();
+		MoonLightScript script = sl.compileScript(code3);
+		assertTrue( script.isSpatialTemporal() );
+		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
+		SpatialTemporalScriptComponent<?> stc = spatialTemporalScript.selectDefaultSpatialTemporalComponent();
+		List<Integer> typeNode = Arrays.asList( 3, 3, 3, 3, 3);
+		SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 1.0,
+				(t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
+		SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 1.0, getGraphModel()), signal);
+		double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 1.0, getGraphModel()), signal);
+		assertEquals(1.0, oArray[0][0][1]);
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
 	}
 	
