@@ -66,6 +66,7 @@ class RoSIBerkeleyTest {
         assertEquals(anyValue, test(T3, xValues, yValues));
     }
 
+    @Disabled("Under Investigation")
     @Test
     void berkleyTestT4() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();

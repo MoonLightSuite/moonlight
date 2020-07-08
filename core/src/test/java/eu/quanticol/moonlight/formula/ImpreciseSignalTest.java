@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.data.MultiValuedTrace;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ class ImpreciseSignalTest {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
+    @Disabled("Under Investigation")
     @Test
     void berkleyTestT4() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();
