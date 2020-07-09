@@ -1,12 +1,29 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.Iterator;
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
@@ -15,40 +32,53 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
- * @author loreti
+ * Strategy to interpret the Escape spatial logic operator.
  *
+ * @param <S> Spatial Graph Edge Type
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitorEscape<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorEscape<S, T, R>
+		implements SpatialTemporalMonitor<S, T, R>
+{
+	private final SpatialTemporalMonitor<S, T, R> m;
+	private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+	private final SignalDomain<R> domain;
 
-	private SpatialTemporalMonitor<E, S, T> m;
-	private Function<SpatialModel<E>, DistanceStructure<E, ?>> distance;
-	private SignalDomain<T> domain;
-
-	public SpatialTemporalMonitorEscape(SpatialTemporalMonitor<E, S, T> m,
-										Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SignalDomain<T> domain) {
+	public SpatialTemporalMonitorEscape(SpatialTemporalMonitor<S, T, R> m,
+										Function<SpatialModel<S>,
+										DistanceStructure<S, ?>> distance,
+										SignalDomain<R> domain)
+	{
 		this.m = m;
 		this.distance = distance;
 		this.domain = domain;
 	}
 
 	@Override
-	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
+	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+											SpatialTemporalSignal<T> signal)
+	{
 		return computeEscapeDynamic(locationService, m.monitor(locationService, signal));
 	}
 
-    private SpatialTemporalSignal<T> computeEscapeDynamic(LocationService<E> l,
-														  SpatialTemporalSignal<T> s) {
+    private SpatialTemporalSignal<R> computeEscapeDynamic(
+    		LocationService<S> l,
+			SpatialTemporalSignal<R> s)
+	{
     	
-    	SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s.getNumberOfLocations());
+    	SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<>(s.getNumberOfLocations());
     	if (l.isEmpty()) {
     		return toReturn;
     	}
 
-    	ParallelSignalCursor<T> cursor = s.getSignalCursor(true);
+    	ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
 
-    	Iterator<Pair<Double, SpatialModel<E>>> locationServiceIterator = l.times();
-    	Pair<Double, SpatialModel<E>> current = locationServiceIterator.next();
-    	Pair<Double, SpatialModel<E>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+    	Iterator<Pair<Double, SpatialModel<S>>> locationServiceIterator = l.times();
+    	Pair<Double, SpatialModel<S>> current = locationServiceIterator.next();
+    	Pair<Double, SpatialModel<S>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
     	double time = cursor.getTime();
     	while ((next != null)&&(next.getFirst()<=time)) {
     		current = next;
@@ -56,9 +86,9 @@ public class SpatialTemporalMonitorEscape<E,S,T> implements SpatialTemporalMonit
     	}
     	//Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
     	while (!cursor.completed() && !Double.isNaN(time)) {
-    		Function<Integer, T> spatialSignal = cursor.getValue();
-    		SpatialModel<E> sm = current.getSecond();
-    		DistanceStructure<E, ?> f = distance.apply(sm);
+    		Function<Integer, R> spatialSignal = cursor.getValue();
+    		SpatialModel<S> sm = current.getSecond();
+    		DistanceStructure<S, ?> f = distance.apply(sm);
     		toReturn.add(time, f.escape(domain, spatialSignal));
     		double nextTime = cursor.forward();
     		while ((next != null)&&(next.getFirst()<nextTime)) {
@@ -74,6 +104,5 @@ public class SpatialTemporalMonitorEscape<E,S,T> implements SpatialTemporalMonit
     	}
     	//TODO: Manage end of signal!
     	return toReturn;
-    }	
-	
+    }
 }

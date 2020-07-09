@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.SignalDomain;
 
 public interface MoonLightScript {
 

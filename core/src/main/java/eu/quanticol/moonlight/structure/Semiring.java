@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.structure;
 
 import java.util.ArrayList;
 import java.util.function.BiFunction;

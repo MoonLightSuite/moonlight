@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.structure;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
@@ -31,9 +31,9 @@ import eu.quanticol.moonlight.signal.DataHandler;
  */
 public class IntervalDomain implements SignalDomain<Interval> {
     private static final Interval NEGATIVE_INFINITY =
-            new Interval(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+            new Interval(Double.NEGATIVE_INFINITY);
     private static final Interval POSITIVE_INFINITY =
-            new Interval(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+            new Interval(Double.POSITIVE_INFINITY);
 
     @Override
     public Interval conjunction(Interval x, Interval y) {
@@ -67,47 +67,56 @@ public class IntervalDomain implements SignalDomain<Interval> {
         return POSITIVE_INFINITY;
     }
 
+    @Override
+    public DataHandler<Interval> getDataHandler() {
+        return DataHandler.INTERVAL;
+    }
 
 
     /* NOT IMPLEMENTED METHODS */
 
     @Override
     public Interval valueOf(boolean b) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not used.");
     }
 
     @Override
     public Interval valueOf(double v) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DataHandler<Interval> getDataHandler() {
-        return DataHandler.INTERVAL;
+        throw new UnsupportedOperationException("Not implemented as not used.");
     }
 
     @Override
     public Interval computeLessThan(double v1, double v2) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not in " +
+                                                "the original scope of the " +
+                                                "class development.");
     }
 
     @Override
     public Interval computeLessOrEqualThan(double v1, double v2) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not in " +
+                                                "the original scope of the " +
+                                                "class development.");
     }
 
     @Override
     public Interval computeEqualTo(double v1, double v2) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not in " +
+                                                "the original scope of the " +
+                                                "class development.");
     }
 
     @Override
     public Interval computeGreaterThan(double v1, double v2) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not in " +
+                                                "the original scope of the " +
+                                                "class development.");
     }
 
     @Override
     public Interval computeGreaterOrEqualThan(double v1, double v2) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Not implemented as not in " +
+                                                "the original scope of the " +
+                                                "class development.");
     }
 }

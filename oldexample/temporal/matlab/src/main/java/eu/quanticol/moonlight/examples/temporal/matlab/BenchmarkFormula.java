@@ -9,11 +9,10 @@ import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
-import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import eu.quanticol.moonlight.util.FormulaGenerator;
-import eu.quanticol.moonlight.util.FutureFormulaGenerator;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.utility.matlab.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;
@@ -23,9 +22,7 @@ import org.n52.matlab.control.extensions.MatlabTypeConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
 
 public class BenchmarkFormula {

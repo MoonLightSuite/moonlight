@@ -1,9 +1,9 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
+ * Copyright (C) 2018
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+ */
+
+package eu.quanticol.moonlight.structure;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
 /**
+ * Signal domain to support booleans (i.e. classical satisfaction).
  *
+ * @see SignalDomain
  */
 public class BooleanDomain implements SignalDomain<Boolean> {
 

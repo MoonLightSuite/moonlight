@@ -2,8 +2,11 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.structure.AbstractInterval;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.IntervalDomain;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.data.MultiValuedTrace;
+import eu.quanticol.moonlight.util.MultiValuedTrace;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -91,14 +94,14 @@ class ImpreciseSignalTest {
      * @param yValues     values for the second input signal
      * @return an Interval corresponding to the final result of the monitoring
      */
-    private static Interval test(int traceLength,
-                                 List<Pair<Interval, Interval>> xValues,
-                                 List<Pair<Interval, Interval>> yValues) {
+    private static AbstractInterval<?> test(int traceLength,
+                                            List<Pair<Interval, Interval>> xValues,
+                                            List<Pair<Interval, Interval>> yValues) {
         try {
             // Signals generator...
             Signal<List<Comparable<?>>> trace = traceGenerator(traceLength,
-                    xValues,
-                    yValues);
+                                                               xValues,
+                                                               yValues);
             // Formula selection...
             Formula formula = testFormula();
 
@@ -157,9 +160,11 @@ class ImpreciseSignalTest {
      * @return a MultiValuedTrace
      * @see MultiValuedTrace
      */
-    private static Signal<List<Comparable<?>>> traceGenerator(int traceLength,
-                                                              List<Pair<Interval, Interval>> xValues,
-                                                              List<Pair<Interval, Interval>> yValues) {
+    private static Signal<List<Comparable<?>>> traceGenerator(
+                                    int traceLength,
+                                    List<Pair<Interval, Interval>> xValues,
+                                    List<Pair<Interval, Interval>> yValues)
+    {
         Interval[][] xSignal = new Interval[1][traceLength]; // 1 location
         xSignal[0] = valuesFromIntervals(xValues);
 

@@ -18,31 +18,25 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.monitoring.temporal;
-
-import java.util.function.Function;
-
-import eu.quanticol.moonlight.signal.Signal;
+package eu.quanticol.moonlight.structure;
 
 /**
- * Strategy to interpret an atomic predicate on the signal of interest.
+ * @author loreti
  *
- * @param <T> Signal Trace Type
- * @param <R> Semantic Interpretation Semiring Type
- *
- * @see TemporalMonitor
  */
-public class TemporalMonitorAtomic<T, R> implements TemporalMonitor<T, R> {
+public interface DistanceDomain<R> {
 
-	private final Function<T, R> atomic;
+    R zero();
 
-	public TemporalMonitorAtomic(Function<T, R> atomic) {
-		this.atomic = atomic;
-	}
+    R infinity();
 
-	@Override
-	public Signal<R> monitor(Signal<T> signal) {
-		return signal.apply(atomic);
-	}
+    boolean lessOrEqual(R x, R y);
+
+    boolean less(R x, R y);
+
+    R sum(R x, R y);
+
+    boolean equalTo(R x, R y);
+
 
 }

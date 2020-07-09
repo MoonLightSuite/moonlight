@@ -1,29 +1,55 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorPastOperator;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
+import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorPastOperator.computeSignal;
+
 /**
- * @author loreti
+ * Strategy to interpret temporal logic operators on the past (except Since).
  *
+ * @param <S> Spatial Graph Edge Type
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitorPastOperator<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorPastOperator<S, T, R>
+		implements SpatialTemporalMonitor<S, T, R>
+{
+	private final SpatialTemporalMonitor<S, T, R> m;
+	private final Interval interval;
+	private final BinaryOperator<R> op;
+	private final R init;
 
-	private SpatialTemporalMonitor<E, S, T> m;
-	private Interval interval;
-	private BinaryOperator<T> op;
-	private T init;
-
-	public SpatialTemporalMonitorPastOperator(SpatialTemporalMonitor<E, S, T> m, Interval interval, BinaryOperator<T> op,
-                                              T init) {
+	public SpatialTemporalMonitorPastOperator(SpatialTemporalMonitor<S, T, R> m,
+											  Interval interval,
+											  BinaryOperator<R> op,
+											  R init)
+	{
 		this.m = m;
 		this.interval = interval;
 		this.op = op;
@@ -31,8 +57,11 @@ public class SpatialTemporalMonitorPastOperator<E,S,T> implements SpatialTempora
 	}
 
 	@Override
-	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
-		return m.monitor(locationService, signal).applyToSignal(s -> TemporalMonitorPastOperator.computeSignal(s, interval, op,init));
+	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+											SpatialTemporalSignal<T> signal)
+	{
+		return m.monitor(locationService, signal).applyToSignal(
+				s -> computeSignal(s, interval, op,init));
 	}
 
 }

@@ -22,13 +22,12 @@ package eu.quanticol.moonlight.monitoring.temporal;
 
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
  * Primary Monitoring interface
- * TODO: there is no reason for this to be an abstract class -> change to interface!
  * It is based on a strategy design pattern, where each kind of operators
  * has a specific strategy implementation.
  *
@@ -41,82 +40,82 @@ import eu.quanticol.moonlight.signal.Signal;
  *
  * For specific implementation of the different logic operators:
  * @see TemporalMonitorAtomic
- * @see TemporalMonitorUnary
- * @see TemporalMonitorBinary
+ * @see TemporalMonitorUnaryOperator
+ * @see TemporalMonitorBinaryOperator
  * @see TemporalMonitorFutureOperator
  * @see TemporalMonitorUntil
  * @see TemporalMonitorPastOperator
  * @see TemporalMonitorSince
  */
-public abstract class TemporalMonitor<T, R> {
+public interface TemporalMonitor<T, R> {
 
-	public abstract Signal<R> monitor(Signal<T> signal);
+	Signal<R> monitor(Signal<T> signal);
 
-	public static <T, R> TemporalMonitor<T, R> atomicMonitor(Function<T, R> atomic) {
+	static <T, R> TemporalMonitor<T, R> atomicMonitor(Function<T, R> atomic) {
 		return new TemporalMonitorAtomic<>(atomic);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> andMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
-		return new TemporalMonitorBinary<>(m1, domain::conjunction, m2);
+	static <T, R> TemporalMonitor<T, R> andMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
+		return new TemporalMonitorBinaryOperator<>(m1, domain::conjunction, m2);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> orMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
-		return new TemporalMonitorBinary<>(m1, domain::disjunction, m2);
+	static <T, R> TemporalMonitor<T, R> orMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
+		return new TemporalMonitorBinaryOperator<>(m1, domain::disjunction, m2);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> impliesMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
-		return new TemporalMonitorBinary<>(m1, domain::implies, m2);
+	static <T, R> TemporalMonitor<T, R> impliesMonitor(TemporalMonitor<T, R> m1, SignalDomain<R> domain, TemporalMonitor<T, R> m2) {
+		return new TemporalMonitorBinaryOperator<>(m1, domain::implies, m2);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> notMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
-		return new TemporalMonitorUnary<>(m, domain::negation);
+	static <T, R> TemporalMonitor<T, R> notMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
+		return new TemporalMonitorUnaryOperator<>(m, domain::negation);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> eventuallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> eventuallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
 		return new TemporalMonitorFutureOperator<>(m, domain::disjunction, domain.min());
 	}
 
-	public static <T, R> TemporalMonitor<T, R> eventuallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
+	static <T, R> TemporalMonitor<T, R> eventuallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
 		return new TemporalMonitorFutureOperator<>(m, domain::disjunction, domain.min(), interval);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> globallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> globallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
 		return new TemporalMonitorFutureOperator<>(m, domain::conjunction, domain.max());
 	}
 
-	public static <T, R> TemporalMonitor<T, R> globallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
+	static <T, R> TemporalMonitor<T, R> globallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
 		return new TemporalMonitorFutureOperator<>(m, domain::conjunction, domain.max(), interval);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> untilMonitor(TemporalMonitor<T, R> m1, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> untilMonitor(TemporalMonitor<T, R> m1, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
 		return new TemporalMonitorUntil<>(m1, m2, domain);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> untilMonitor(TemporalMonitor<T, R> m1, Interval interval, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> untilMonitor(TemporalMonitor<T, R> m1, Interval interval, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
 		return new TemporalMonitorUntil<>(m1, interval, m2, domain);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> historicallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> historicallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
 		return new TemporalMonitorPastOperator<>(m, domain::conjunction, domain.max());
 	}
 
-	public static <T, R> TemporalMonitor<T, R> historicallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
+	static <T, R> TemporalMonitor<T, R> historicallyMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
 		return new TemporalMonitorPastOperator<>(m, domain::conjunction, domain.max(), interval);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> onceMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> onceMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain) {
 		return new TemporalMonitorPastOperator<>(m, domain::disjunction, domain.min());
 	}
 
-	public static <T, R> TemporalMonitor<T, R> onceMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
+	static <T, R> TemporalMonitor<T, R> onceMonitor(TemporalMonitor<T, R> m, SignalDomain<R> domain, Interval interval) {
 		return new TemporalMonitorPastOperator<>(m, domain::disjunction, domain.min(), interval);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> sinceMonitor(TemporalMonitor<T, R> m1, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> sinceMonitor(TemporalMonitor<T, R> m1, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
 		return new TemporalMonitorSince<>(m1, m2, domain);
 	}
 
-	public static <T, R> TemporalMonitor<T, R> sinceMonitor(TemporalMonitor<T, R> m1, Interval interval, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
+	static <T, R> TemporalMonitor<T, R> sinceMonitor(TemporalMonitor<T, R> m1, Interval interval, TemporalMonitor<T, R> m2, SignalDomain<R> domain) {
 		return new TemporalMonitorSince<>(m1, interval, m2, domain);
 	}
 }

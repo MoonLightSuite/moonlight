@@ -18,34 +18,43 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.monitoring.temporal;
-
-import java.util.function.UnaryOperator;
-import eu.quanticol.moonlight.signal.Signal;
+package eu.quanticol.moonlight.structure;
 
 /**
- * Strategy to interpret an unary logic operator
+ * @author loreti
  *
- * @param <T> Signal Trace Type
- * @param <R> Semantic Interpretation Semiring Type
- *
- * @see TemporalMonitor
  */
-public class TemporalMonitorUnary<T, R> extends TemporalMonitor<T, R> {
+public class DoubleDistance implements DistanceDomain<Double> {
+    private static final double TOLERANCE = 1E-12;
 
-	private final TemporalMonitor<T, R> m;
-	private final UnaryOperator<R> op;
+    @Override
+    public Double zero() {
+        return 0.0;
+    }
 
-	public TemporalMonitorUnary(TemporalMonitor<T, R> m, UnaryOperator<R> op) {
-		this.m = m;
-		this.op = op;
-	}
+    @Override
+    public Double infinity() {
+        return Double.POSITIVE_INFINITY;
+    }
 
-	@Override
-	public Signal<R> monitor(Signal<T> signal) {
-		return m.monitor(signal).apply(op);
-	}
-	
-	
+    @Override
+    public boolean lessOrEqual(Double x, Double y) {
+        return x < y || equalTo(x, y);
+    }
+
+    @Override
+    public Double sum(Double x, Double y) {
+        return x + y;
+    }
+
+    @Override
+    public boolean equalTo(Double x, Double y) {
+        return Math.abs(x - y) < TOLERANCE;
+    }
+
+    @Override
+    public boolean less(Double x, Double y) {
+        return x < y;
+    }
 
 }

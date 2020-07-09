@@ -1,15 +1,15 @@
 package eu.quanticol.moonlight.examples.subway;
 
-import eu.quanticol.moonlight.util.data.MultiValuedTrace;
+import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
 import eu.quanticol.moonlight.examples.subway.io.DataReader;
 import eu.quanticol.moonlight.examples.subway.io.FileType;
 import eu.quanticol.moonlight.examples.subway.parsing.MultiRawTrajectoryExtractor;
 import eu.quanticol.moonlight.examples.subway.statistics.StatisticalModelChecker;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;

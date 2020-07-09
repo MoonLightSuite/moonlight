@@ -20,29 +20,35 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import java.util.function.Function;
-
 import eu.quanticol.moonlight.signal.Signal;
+import java.util.function.BinaryOperator;
 
 /**
- * Strategy to interpret an atomic predicate on the signal of interest.
+ * Strategy to interpret a binary logic operator
  *
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorAtomic<T, R> implements TemporalMonitor<T, R> {
+public class TemporalMonitorBinaryOperator<T, R> implements TemporalMonitor<T, R> {
 
-	private final Function<T, R> atomic;
+	private final TemporalMonitor<T, R> m1;
+	private final BinaryOperator<R> op;
+	private final TemporalMonitor<T, R> m2;
 
-	public TemporalMonitorAtomic(Function<T, R> atomic) {
-		this.atomic = atomic;
+	public TemporalMonitorBinaryOperator(TemporalMonitor<T, R> m1,
+										 BinaryOperator<R> op,
+										 TemporalMonitor<T, R> m2)
+	{
+		this.m1 = m1;
+		this.op = op;
+		this.m2 = m2;
 	}
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return signal.apply(atomic);
+		return Signal.apply(m1.monitor(signal), op, m2.monitor(signal));
 	}
 
 }

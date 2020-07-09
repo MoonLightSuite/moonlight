@@ -20,22 +20,22 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
 import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorPastOperator.computeSignal;
 
 /**
- * Strategy to interpret the Since operator
+ * Strategy to interpret the Since temporal logic operator.
  *
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorSince<T, R> extends TemporalMonitor<T, R> {
+public class TemporalMonitorSince<T, R> implements TemporalMonitor<T, R> {
 
 	private final TemporalMonitor<T, R> m1;
 	private final Interval interval;

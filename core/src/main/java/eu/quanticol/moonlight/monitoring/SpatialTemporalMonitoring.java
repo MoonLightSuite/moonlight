@@ -1,32 +1,65 @@
-/**
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
  *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.monitoring;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.structure.SignalDomain;
 
 import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * Alternative interface to perform (spatial) monitoring.
+ * The key difference is that it is based on a visitor
+ * design pattern over the formula tree which resorts
+ * to {@code SpatialTemporalMonitor} methods for the implementation.
  *
+ * Note: Particularly useful in static environment.
+ *
+ * @param <S> Spatial Graph Edge Type
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see FormulaVisitor
+ * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitoring<V, T, R> implements
-        FormulaVisitor<Parameters, SpatialTemporalMonitor<V,T,R>> {
+public class SpatialTemporalMonitoring<S, T, R> implements
+        FormulaVisitor<Parameters, SpatialTemporalMonitor<S, T, R>>
+{
 
     private final Map<String, Function<Parameters, Function<T, R>>> atomicPropositions;
 
-    private final Map<String, Function<SpatialModel<V>, DistanceStructure<V, ?>>> distanceFunctions;
+    private final Map<String, Function<SpatialModel<S>, DistanceStructure<S, ?>>> distanceFunctions;
 
     private final SignalDomain<R> module;
 
     private final boolean staticSpace;
 
 
-    public SpatialTemporalMonitor<V,T,R> monitor(Formula f, Parameters parameters) {
+    public SpatialTemporalMonitor<S, T, R> monitor(Formula f,
+                                                   Parameters parameters)
+    {
         return f.accept(this, parameters);
     }
 
@@ -36,9 +69,11 @@ public class SpatialTemporalMonitoring<V, T, R> implements
      */
     public SpatialTemporalMonitoring(
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
-            Map<String, Function<SpatialModel<V>, DistanceStructure<V, ?>>> distanceFunctions,
+            Map<String, Function<SpatialModel<S>,
+            DistanceStructure<S, ?>>> distanceFunctions,
             SignalDomain<R> module,
-            boolean staticSpace) {
+            boolean staticSpace)
+    {
         super();
         this.atomicPropositions = atomicPropositions;
         this.module = module;
@@ -46,11 +81,11 @@ public class SpatialTemporalMonitoring<V, T, R> implements
         this.staticSpace = staticSpace;
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.AtomicFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(AtomicFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             AtomicFormula atomicFormula, Parameters parameters) {
         Function<Parameters, Function<T, R>> f = atomicPropositions.get(atomicFormula.getAtomicId());
         if (f == null) {
@@ -60,142 +95,142 @@ public class SpatialTemporalMonitoring<V, T, R> implements
         return SpatialTemporalMonitor.atomicMonitor(atomic);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.AndFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(AndFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(AndFormula andFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<V,T,R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
+    public SpatialTemporalMonitor<S,T,R> visit(AndFormula andFormula, Parameters parameters) {
+        SpatialTemporalMonitor<S,T,R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.andMonitor(leftMonitoring, module, rightMonitoring);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.NegationFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(NegationFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             NegationFormula negationFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> m = negationFormula.getArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> m = negationFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.notMonitor(m, module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.OrFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(OrFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(OrFormula orFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<V,T,R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
+    public SpatialTemporalMonitor<S,T,R> visit(OrFormula orFormula, Parameters parameters) {
+        SpatialTemporalMonitor<S,T,R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.orMonitor(leftMonitoring, module, rightMonitoring);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EventuallyFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(EventuallyFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             EventuallyFormula eventuallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> m = eventuallyFormula.getArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> m = eventuallyFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.eventuallyMonitor(m,eventuallyFormula.getInterval(),module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.GloballyFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(GloballyFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             GloballyFormula globallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> m = globallyFormula.getArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> m = globallyFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.globallyMonitor(m, globallyFormula.getInterval(),module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.UntilFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(UntilFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             UntilFormula untilFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<V,T,R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.SinceFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(SinceFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             SinceFormula sinceFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<V,T,R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.HistoricallyFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(HistoricallyFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             HistoricallyFormula historicallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.historicallyMonitor(argumentMonitoring, historicallyFormula.getInterval(),module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.OnceFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(OnceFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             OnceFormula onceFormula, Parameters parameters) {
-        SpatialTemporalMonitor<V,T,R> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.onceMonitor(argumentMonitoring, onceFormula.getInterval(), module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.SomewhereFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(SomewhereFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             SomewhereFormula somewhereFormula, Parameters parameters) {
-        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<V,T,R> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
+        SpatialTemporalMonitor<S,T,R> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.somewhereMonitor(argumentMonitor, distanceFunction, module);
     }
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EverywhereFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(EverywhereFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             EverywhereFormula everywhereFormula, Parameters parameters) {
-        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<V,T,R> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
+        SpatialTemporalMonitor<S,T,R> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.everywhereMonitor(argumentMonitor, distanceFunction, module);
     }
 
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.ReachFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(ReachFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             ReachFormula reachFormula, Parameters parameters) {
-        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<V,T,R> m1 = reachFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<V,T,R> m2 = reachFormula.getSecondArgument().accept(this, parameters);
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
+        SpatialTemporalMonitor<S,T,R> m1 = reachFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S,T,R> m2 = reachFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.reachMonitor(m1, distanceFunction, m2, module);
     }
 
 
-    /* (non-Javadoc)
-     * @see eu.quanticol.moonlight.formula.FormulaVisitor#visit(eu.quanticol.moonlight.formula.EscapeFormula, java.lang.Object)
+    /**
+     * @see FormulaVisitor#visit(EscapeFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<V,T,R> visit(
+    public SpatialTemporalMonitor<S,T,R> visit(
             EscapeFormula escapeFormula, Parameters parameters) {
-        Function<SpatialModel<V>, DistanceStructure<V, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<V,T,R> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
+        SpatialTemporalMonitor<S,T,R> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.escapeMonitor(argumentMonitor, distanceFunction, module);
     }
 

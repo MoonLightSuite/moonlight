@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.structure.DoubleDistance;
 
 class TestDoubleDistance {
 

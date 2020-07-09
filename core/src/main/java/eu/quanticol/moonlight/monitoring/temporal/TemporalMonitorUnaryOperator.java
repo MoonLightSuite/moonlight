@@ -20,32 +20,32 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
+import java.util.function.UnaryOperator;
 import eu.quanticol.moonlight.signal.Signal;
-import java.util.function.BinaryOperator;
 
 /**
- * Strategy to interpret a binary logic operator
+ * Strategy to interpret an unary logic operator
  *
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorBinary<T, R> extends TemporalMonitor<T, R> {
+public class TemporalMonitorUnaryOperator<T, R> implements TemporalMonitor<T, R> {
 
-	private final TemporalMonitor<T, R> m1;
-	private final BinaryOperator<R> op;
-	private final TemporalMonitor<T, R> m2;
+	private final TemporalMonitor<T, R> m;
+	private final UnaryOperator<R> op;
 
-	public TemporalMonitorBinary(TemporalMonitor<T, R> m1, BinaryOperator<R> op, TemporalMonitor<T, R> m2) {
-		this.m1 = m1;
+	public TemporalMonitorUnaryOperator(TemporalMonitor<T, R> m, UnaryOperator<R> op) {
+		this.m = m;
 		this.op = op;
-		this.m2 = m2;
 	}
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return Signal.apply(m1.monitor(signal), op, m2.monitor(signal));
+		return m.monitor(signal).apply(op);
 	}
+	
+	
 
 }

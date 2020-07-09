@@ -4,6 +4,8 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.structure.DoubleDomain;
 import eu.quanticol.moonlight.util.ObjectSerializer;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;

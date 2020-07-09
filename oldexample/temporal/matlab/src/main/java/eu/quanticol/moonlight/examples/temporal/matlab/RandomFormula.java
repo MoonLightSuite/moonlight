@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
-import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.io.FormulaToBreach;
@@ -11,7 +11,6 @@ import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
-import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;

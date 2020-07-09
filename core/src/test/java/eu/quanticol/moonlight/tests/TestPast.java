@@ -6,9 +6,10 @@ import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

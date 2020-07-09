@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.structure;
 
 /**
  * Abstract immutable data type that represents an interval over parameter T.
@@ -147,8 +147,7 @@ public abstract class AbstractInterval<T extends Comparable<T>>
     @Override
     public int compareTo(AbstractInterval<T> o) {
         if(o == null) {
-            throw new UnsupportedOperationException("Comparing Interval " +
-                                                    "to null");
+            throw new IllegalArgumentException("Comparing Interval to null");
         }
         if(getEnd().compareTo(o.getStart()) < 0) {
             return getEnd().compareTo(o.getStart());

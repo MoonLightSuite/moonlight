@@ -3,9 +3,9 @@
  */
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.formula.DistanceDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.DistanceDomain;
+import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Triple;
 

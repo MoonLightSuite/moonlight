@@ -1,15 +1,13 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.SignalGenerator;
 import eu.quanticol.moonlight.util.TestUtils;
 import eu.quanticol.moonlight.util.Triple;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
 import eu.quanticol.moonlight.formula.HistoricallyFormula;
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;

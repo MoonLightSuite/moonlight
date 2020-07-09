@@ -36,6 +36,7 @@ public interface FormulaVisitor<P, M> {
 		return new IllegalArgumentException(c.getName() + " is not supported by this visitor!");
 	}
 
+	/* CLASSICAL LOGIC OPERATORS */
 	default M visit(AtomicFormula atomicFormula, P parameters) {
 		throw generateException(atomicFormula.getClass());
 	}
@@ -51,6 +52,10 @@ public interface FormulaVisitor<P, M> {
 	default M visit(OrFormula orFormula, P parameters) {
 		throw generateException(orFormula.getClass());
 	}
+
+	//TODO: shouldn't it also have a visit(ImpliesFormula f)??
+
+	/* TEMPORAL LOGIC OPERATORS */
 
 	default M visit(EventuallyFormula eventuallyFormula, P parameters) {
 		throw generateException(eventuallyFormula.getClass());
@@ -75,6 +80,8 @@ public interface FormulaVisitor<P, M> {
 	default M visit(OnceFormula onceFormula, P parameters) {
 		throw generateException(onceFormula.getClass());
 	}
+
+	/* SPATIAL LOGIC OPERATORS */
 	
 	default M visit(SomewhereFormula somewhereFormula, P parameters ) {
 		throw generateException(somewhereFormula.getClass());

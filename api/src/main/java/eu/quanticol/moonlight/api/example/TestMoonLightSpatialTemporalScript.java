@@ -1,13 +1,10 @@
 package eu.quanticol.moonlight.api.example;
 
-import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
-import eu.quanticol.moonlight.TemporalScriptComponent;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDomain;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;

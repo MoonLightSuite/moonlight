@@ -1,29 +1,57 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
- * @author loreti
+ * Strategy to interpret unary logic operators on the signal of interest.
  *
+ * @param <S> Spatial Graph Edge Type
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitorUnaryOperator<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorUnaryOperator<S, T, R>
+		implements SpatialTemporalMonitor<S, T, R>
+{
+	private final SpatialTemporalMonitor<S, T, R> m;
+	private final UnaryOperator<R> op;
 
-	private SpatialTemporalMonitor<E, S, T> m;
-	private Function<T, T> op;
-
-	public SpatialTemporalMonitorUnaryOperator(SpatialTemporalMonitor<E, S, T> m, Function<T, T> op) {
+	public SpatialTemporalMonitorUnaryOperator(
+			SpatialTemporalMonitor<S, T, R> m,
+			UnaryOperator<R> op)
+	{
 		this.m = m;
 		this.op = op;
 	}
 
 	@Override
-	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
+	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+											SpatialTemporalSignal<T> signal)
+	{
 		return m.monitor(locationService, signal).apply(op);
 	}
 

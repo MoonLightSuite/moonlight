@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import eu.quanticol.moonlight.formula.Interval;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
@@ -35,7 +35,7 @@ import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOp
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorUntil<T, R> extends TemporalMonitor<T, R> {
+public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 
 	private final TemporalMonitor<T, R> m1;
 	private final Interval interval;

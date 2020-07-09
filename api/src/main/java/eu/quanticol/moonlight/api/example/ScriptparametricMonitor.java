@@ -4,7 +4,10 @@ package eu.quanticol.moonlight.api.example; /**
 import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.monitoring.temporal.*;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.SignalDomain;
 
 import java.util.HashMap;
 

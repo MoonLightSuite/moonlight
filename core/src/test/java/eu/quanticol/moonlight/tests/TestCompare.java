@@ -29,6 +29,9 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.DataHandler;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.util.Pair;
 
 import org.junit.jupiter.api.Test;

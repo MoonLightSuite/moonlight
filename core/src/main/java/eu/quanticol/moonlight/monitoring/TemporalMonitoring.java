@@ -31,12 +31,12 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
 import eu.quanticol.moonlight.formula.HistoricallyFormula;
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;
 import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.UntilFormula;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
@@ -58,7 +58,8 @@ import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor.*;
  * @see TemporalMonitor
  */
 public class TemporalMonitoring<T, R> implements
-		FormulaVisitor<Parameters, TemporalMonitor<T, R>> {
+		FormulaVisitor<Parameters, TemporalMonitor<T, R>>
+{
 	private final Map<String, Function<Parameters, Function<T, R>>> atoms;
 	private final SignalDomain<R> module;
 
@@ -109,7 +110,9 @@ public class TemporalMonitoring<T, R> implements
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(AtomicFormula atomicFormula, Parameters parameters) {
+	public TemporalMonitor<T, R> visit(AtomicFormula atomicFormula,
+									   Parameters parameters)
+	{
 		Function<Parameters, Function<T, R>> f = atoms.get(atomicFormula.getAtomicId());
 
 		if (f == null) {
@@ -122,7 +125,9 @@ public class TemporalMonitoring<T, R> implements
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(AndFormula andFormula, Parameters parameters) {
+	public TemporalMonitor<T, R> visit(AndFormula andFormula,
+									   Parameters parameters)
+	{
 		TemporalMonitor<T, R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
 		TemporalMonitor<T, R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
 
@@ -130,35 +135,48 @@ public class TemporalMonitoring<T, R> implements
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(NegationFormula negationFormula, Parameters parameters) {
+	public TemporalMonitor<T, R> visit(NegationFormula negationFormula,
+									   Parameters parameters)
+	{
 		TemporalMonitor<T, R> argumentMonitoring = negationFormula.getArgument().accept(this, parameters);
 
 		return notMonitor(argumentMonitoring, module );
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(OrFormula orFormula, Parameters parameters) {
+	public TemporalMonitor<T, R> visit(OrFormula orFormula,
+									   Parameters parameters)
+	{
 		TemporalMonitor<T, R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
 		TemporalMonitor<T, R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
 
+		//TODO: shouldn't this invoke the orMonitor?
 		return andMonitor(leftMonitoring, module , rightMonitoring);
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(EventuallyFormula eventuallyFormula, Parameters parameters) {
-		TemporalMonitor<T, R> argumentMonitoring = eventuallyFormula.getArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(EventuallyFormula eventuallyFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> monitoringArg = eventuallyFormula
+											 .getArgument()
+											 .accept(this, parameters);
 
 		if (eventuallyFormula.isUnbounded()) {
-			return eventuallyMonitor(argumentMonitoring, module);
+			return eventuallyMonitor(monitoringArg, module);
 		} else {
 			Interval interval = eventuallyFormula.getInterval();
-			return eventuallyMonitor(argumentMonitoring, module, interval);
+			return eventuallyMonitor(monitoringArg, module, interval);
 		}
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(GloballyFormula globallyFormula, Parameters parameters) {
-		TemporalMonitor<T, R> monitoringArg = globallyFormula.getArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(GloballyFormula globallyFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> monitoringArg = globallyFormula
+											 .getArgument()
+											 .accept(this, parameters);
 
 		if (globallyFormula.isUnbounded()) {
 			return globallyMonitor(monitoringArg, module);
@@ -169,43 +187,66 @@ public class TemporalMonitoring<T, R> implements
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(UntilFormula untilFormula, Parameters parameters) {
-		TemporalMonitor<T, R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
-		TemporalMonitor<T, R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(UntilFormula untilFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> firstMonitoring = untilFormula
+											   .getFirstArgument()
+											   .accept(this, parameters);
+		TemporalMonitor<T, R> secondMonitoring = untilFormula
+												.getSecondArgument()
+												.accept(this, parameters);
 
 		if (untilFormula.isUnbounded()) {
 			return untilMonitor(firstMonitoring, secondMonitoring, module);
 		} else {
-			return untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, module);
+			return untilMonitor(firstMonitoring, untilFormula.getInterval(),
+								secondMonitoring, module);
 		}
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(SinceFormula sinceFormula, Parameters parameters) {
-		TemporalMonitor<T, R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
-		TemporalMonitor<T, R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(SinceFormula sinceFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> firstMonitoring = sinceFormula
+											   .getFirstArgument()
+											   .accept(this, parameters);
+		TemporalMonitor<T, R> secondMonitoring = sinceFormula
+												.getSecondArgument()
+												.accept(this, parameters);
 
 		if (sinceFormula.isUnbounded()) {
 			return sinceMonitor(firstMonitoring, secondMonitoring, module);
 		} else {
-			return sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, module);
+			return sinceMonitor(firstMonitoring, sinceFormula.getInterval(),
+								secondMonitoring, module);
 		}
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(HistoricallyFormula historicallyFormula, Parameters parameters) {
-		TemporalMonitor<T, R> monitoringArg = historicallyFormula.getArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(HistoricallyFormula historicallyFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> monitoringArg = historicallyFormula
+											 .getArgument()
+											 .accept(this, parameters);
 
 		if (historicallyFormula.isUnbounded()) {
 			return historicallyMonitor(monitoringArg, module);
 		} else {
-			return historicallyMonitor(monitoringArg, module, historicallyFormula.getInterval());
+			return historicallyMonitor(monitoringArg, module,
+									   historicallyFormula.getInterval());
 		}
 	}
 
 	@Override
-	public TemporalMonitor<T, R> visit(OnceFormula onceFormula, Parameters parameters) {
-		TemporalMonitor<T, R> monitoringArg = onceFormula.getArgument().accept(this, parameters);
+	public TemporalMonitor<T, R> visit(OnceFormula onceFormula,
+									   Parameters parameters)
+	{
+		TemporalMonitor<T, R> monitoringArg = onceFormula
+										     .getArgument()
+											 .accept(this, parameters);
 
 		if (onceFormula.isUnbounded()) {
 			return onceMonitor(monitoringArg, module);

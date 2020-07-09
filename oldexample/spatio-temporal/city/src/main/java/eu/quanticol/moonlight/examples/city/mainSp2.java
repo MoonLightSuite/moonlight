@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.city;
 
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDistance;
 import eu.quanticol.moonlight.signal.*;
 
 import java.util.ArrayList;

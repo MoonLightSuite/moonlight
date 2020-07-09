@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.util.data.MultiValuedTrace;
+import eu.quanticol.moonlight.util.MultiValuedTrace;
 
 /**
  * Generic interface that characterizes a signal factory

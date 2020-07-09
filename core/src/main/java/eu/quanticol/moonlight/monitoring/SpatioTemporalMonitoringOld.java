@@ -9,6 +9,8 @@ import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;
@@ -18,7 +20,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- *
+ * TODO: this class doesn't seem to be used anymore. Can we remove it?
+ * 		 After all it can always be restored from git history.
  */
 public class SpatioTemporalMonitoringOld<V, T, R> implements
         FormulaVisitor<Parameters, BiFunction<

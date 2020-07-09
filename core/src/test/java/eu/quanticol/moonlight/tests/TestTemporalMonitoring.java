@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
-import java.util.stream.DoubleStream;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
@@ -32,12 +31,12 @@ import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
-import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.util.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

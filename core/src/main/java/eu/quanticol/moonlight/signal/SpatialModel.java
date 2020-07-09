@@ -17,6 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.util.Pair;
@@ -35,25 +36,25 @@ import java.util.Set;
 public interface SpatialModel<T> {
 
     /**
-     * Returns the value of the edge connecting <code>src</code> to <code>trg</code>. The value <code>null</code>
-     * is returned when the is not any edge connecting the two nodes.
+     * Returns the value of the edge connecting <code>src</code> to
+     * <code>trg</code>. The value <code>null</code> is returned when
+     * there is not any edge connecting the two nodes.
      *
      * @param src source node.
      * @param trg end node.
-     * @return the value associated with the edge between src and trg, or null if it does not exist.
+     * @return the value associated with the edge between src and trg,
+     *         or null if it does not exist.
      */
     T get(int src, int trg);
 
     /**
-     * Returns the number of locations in the model.
-     *
      * @return the number of locations in the model.
      */
     int size();
 
     /**
-     * Returns the list of exiting edges from <code>l</code>. This is represented as a list of
-     * {@link Pair}.
+     * Returns the list of exiting edges from <code>l</code>.
+     * This is represented as a list of {@link Pair}.
      *
      * @param l a location.
      * @return the list of exiting edges from <code>l</code>.
@@ -61,8 +62,8 @@ public interface SpatialModel<T> {
     List<Pair<Integer, T>> next(int l);
 
     /**
-     * Returns the list of incoming edges in <code>l</code>. This is represented as a list of
-     * {@link Pair}.
+     * Returns the list of incoming edges in <code>l</code>.
+     * This is represented as a list of {@link Pair}.
      *
      * @param l a location.
      * @return the list of incoming edges in <code>l</code>.
@@ -70,8 +71,6 @@ public interface SpatialModel<T> {
     List<Pair<Integer, T>> previous(int l);
 
     /**
-     * Returns the set of locations in the model.
-     *
      * @return the set of locations in the model.
      */
     Set<Integer> getLocations();

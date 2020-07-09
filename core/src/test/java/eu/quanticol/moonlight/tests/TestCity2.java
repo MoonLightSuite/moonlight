@@ -7,15 +7,17 @@ import java.util.List;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.structure.BooleanDomain;
+import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.structure.Interval;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import eu.quanticol.moonlight.signal.DistanceStructure;

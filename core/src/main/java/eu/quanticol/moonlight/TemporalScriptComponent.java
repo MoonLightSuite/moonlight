@@ -19,19 +19,17 @@
  */
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Record;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**

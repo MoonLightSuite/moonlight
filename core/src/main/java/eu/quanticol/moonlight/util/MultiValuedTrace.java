@@ -1,5 +1,24 @@
-package eu.quanticol.moonlight.util.data;
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
@@ -17,10 +36,7 @@ import java.util.List;
  * Moreover, it performs some input checks to make sure the generated signal
  * is correct in terms of the spatial-temporal domain.
  *
- * Based on HashBiMap for the internal structure.
- *
  * @see Comparable
- * @see HashBiMap
  * @see SpatialTemporalSignal
  */
 public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>> {
@@ -67,7 +83,6 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
      * Given some Comparable data, it performs some checks and prepares it
      * to be later added as the index dimension of the n-dimensional signal.
      *
-     * @see HashBiMap to learn more about the kind of data it processes.
      * @see Comparable to learn more about the minimum data requirements
      *
      * @param dimData data to be set as the provided dimension

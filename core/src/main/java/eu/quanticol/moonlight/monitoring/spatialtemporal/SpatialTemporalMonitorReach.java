@@ -1,13 +1,30 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.formula.SignalDomain;
+import eu.quanticol.moonlight.structure.SignalDomain;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
@@ -16,19 +33,28 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
- * @author loreti
+ * Strategy to interpret the Reach spatial logic operator.
  *
+ * @param <S> Spatial Graph Edge Type
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorReach<S, T, R>
+        implements SpatialTemporalMonitor<S, T, R>
+{
+	private final SpatialTemporalMonitor<S, T, R> m1;
+	private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+	private final SpatialTemporalMonitor<S, T, R> m2;
+	private final SignalDomain<R> domain;
 
-	private SpatialTemporalMonitor<E, S, T> m1;
-	private Function<SpatialModel<E>, DistanceStructure<E, ?>> distance;
-	private SpatialTemporalMonitor<E, S, T> m2;
-	private SignalDomain<T> domain;
-
-	public SpatialTemporalMonitorReach(SpatialTemporalMonitor<E, S, T> m1,
-                                       Function<SpatialModel<E>, DistanceStructure<E, ?>> distance, SpatialTemporalMonitor<E, S, T> m2,
-                                       SignalDomain<T> domain) {
+	public SpatialTemporalMonitorReach(SpatialTemporalMonitor<S, T, R> m1,
+                                       Function<SpatialModel<S>,
+                                       DistanceStructure<S, ?>> distance,
+                                       SpatialTemporalMonitor<S, T, R> m2,
+                                       SignalDomain<R> domain)
+    {
 		this.m1 = m1;
 		this.distance = distance;
 		this.m2 = m2;
@@ -36,20 +62,28 @@ public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonito
 	}
 
 	@Override
-	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
-		return computeReachDynamic(locationService, m1.monitor(locationService, signal), m2.monitor(locationService, signal));
+	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+                                            SpatialTemporalSignal<T> signal)
+    {
+		return computeReachDynamic(locationService,
+                                   m1.monitor(locationService, signal),
+                                   m2.monitor(locationService, signal));
 	}
 	
-	private SpatialTemporalSignal<T> computeReachDynamic(LocationService<E> locationService, SpatialTemporalSignal<T> s1, SpatialTemporalSignal<T> s2) {
-        SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s1.getNumberOfLocations());
+	private SpatialTemporalSignal<R> computeReachDynamic(
+	        LocationService<S> locationService,
+            SpatialTemporalSignal<R> s1,
+            SpatialTemporalSignal<R> s2)
+    {
+        SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<R>(s1.getNumberOfLocations());
         if (locationService.isEmpty()) {
             return toReturn;
         }
-        ParallelSignalCursor<T> c1 = s1.getSignalCursor(true);
-        ParallelSignalCursor<T> c2 = s2.getSignalCursor(true);
-        Iterator<Pair<Double, SpatialModel<E>>> locationServiceIterator = locationService.times();
-        Pair<Double, SpatialModel<E>> current = locationServiceIterator.next();
-        Pair<Double, SpatialModel<E>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+        ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
+        ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
+        Iterator<Pair<Double, SpatialModel<S>>> locationServiceIterator = locationService.times();
+        Pair<Double, SpatialModel<S>> current = locationServiceIterator.next();
+        Pair<Double, SpatialModel<S>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
         double time = Math.max(s1.start(), s2.start());
         while ((next != null)&&(next.getFirst()<=time)) {
             current = next;
@@ -59,11 +93,11 @@ public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonito
         c1.move(time);
         c2.move(time);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
-            Function<Integer, T> spatialSignal1 = c1.getValue();
-            Function<Integer, T> spatialSignal2 = c2.getValue();
-            SpatialModel<E> sm = current.getSecond();
-            DistanceStructure<E, ?> f = distance.apply(sm);
-            ArrayList<T> values =  f.reach(domain, spatialSignal1, spatialSignal2);
+            Function<Integer, R> spatialSignal1 = c1.getValue();
+            Function<Integer, R> spatialSignal2 = c2.getValue();
+            SpatialModel<S> sm = current.getSecond();
+            DistanceStructure<S, ?> f = distance.apply(sm);
+            ArrayList<R> values =  f.reach(domain, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(nextTime);

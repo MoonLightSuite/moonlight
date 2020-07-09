@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.monitoring.temporal;
 
 import java.util.function.BinaryOperator;
 
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.structure.Interval;
 import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.signal.Signal;
 
@@ -34,7 +34,7 @@ import eu.quanticol.moonlight.signal.Signal;
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorFutureOperator<T, R> extends TemporalMonitor<T, R> {
+public class TemporalMonitorFutureOperator<T, R> implements TemporalMonitor<T, R> {
 
 	private final TemporalMonitor<T, R> m;
 	private final BinaryOperator<R>  op;
@@ -65,12 +65,13 @@ public class TemporalMonitorFutureOperator<T, R> extends TemporalMonitor<T, R> {
 	public static <T> Signal<T> computeSignal(Signal<T> signal,
 											  Interval interval,
 											  BinaryOperator<T> op,
-											  T init ) {
+											  T init) {
 		if (interval == null) {
 			return signal.iterateBackward(op, init);
 		} else {
 			SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
-										interval.getEnd(), op, true);
+													  interval.getEnd(),
+													  op, true);
 			return sw.apply(signal);
 		}
 	}

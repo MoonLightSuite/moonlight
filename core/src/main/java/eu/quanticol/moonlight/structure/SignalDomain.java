@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.structure;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
