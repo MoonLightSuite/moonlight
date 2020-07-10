@@ -52,7 +52,8 @@ public class TemporalMonitorFutureOperator<T, R> implements TemporalMonitor<T, R
 	}
 
 	public TemporalMonitorFutureOperator(TemporalMonitor<T, R> m,
-										 BinaryOperator<R> op, R min) {
+										 BinaryOperator<R> op, R min)
+	{
 		this(m, op, min, null);
 	}
 
@@ -65,7 +66,8 @@ public class TemporalMonitorFutureOperator<T, R> implements TemporalMonitor<T, R
 	public static <T> Signal<T> computeSignal(Signal<T> signal,
 											  Interval interval,
 											  BinaryOperator<T> op,
-											  T init) {
+											  T init)
+	{
 		if (interval == null) {
 			return signal.iterateBackward(op, init);
 		} else {
@@ -75,5 +77,4 @@ public class TemporalMonitorFutureOperator<T, R> implements TemporalMonitor<T, R
 			return sw.apply(signal);
 		}
 	}
-	
 }

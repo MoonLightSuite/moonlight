@@ -75,5 +75,4 @@ public class TemporalMonitorPastOperator<T, R> implements TemporalMonitor<T, R> 
 			return sw.apply(signal);
 		}
 	}
-	
 }

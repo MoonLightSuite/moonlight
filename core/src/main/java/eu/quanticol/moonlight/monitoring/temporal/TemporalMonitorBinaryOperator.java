@@ -31,8 +31,9 @@ import java.util.function.BinaryOperator;
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorBinaryOperator<T, R> implements TemporalMonitor<T, R> {
-
+public class TemporalMonitorBinaryOperator<T, R>
+		implements TemporalMonitor<T, R>
+{
 	private final TemporalMonitor<T, R> m1;
 	private final BinaryOperator<R> op;
 	private final TemporalMonitor<T, R> m2;

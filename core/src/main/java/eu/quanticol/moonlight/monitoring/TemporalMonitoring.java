@@ -77,10 +77,9 @@ public class TemporalMonitoring<T, R> implements
 	 * @param atomicPropositions atomic propositions of interest
 	 * @param interpretation signal interpretation domain
 	 */
-	public TemporalMonitoring(Map<String,
-							  Function<Parameters,
-							  Function<T, R>>> atomicPropositions,
-							  SignalDomain<R> interpretation)
+	public TemporalMonitoring(
+		Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
+		SignalDomain<R> interpretation)
 	{
 		this.atoms = atomicPropositions;
 		this.module = interpretation;
@@ -102,11 +101,11 @@ public class TemporalMonitoring<T, R> implements
 	 * it launches the monitoring process over the formula f.
 	 *
 	 * @param f the formula to monitor
-	 * @param parameters monitoring optional parameters
+	 * @param params monitoring optional parameters
 	 * @return the result of the monitoring process.
 	 */
-	public TemporalMonitor<T, R> monitor(Formula f, Parameters parameters) {
-		return f.accept(this, parameters);
+	public TemporalMonitor<T, R> monitor(Formula f, Parameters params) {
+		return f.accept(this, params);
 	}
 
 	@Override
@@ -140,7 +139,7 @@ public class TemporalMonitoring<T, R> implements
 	{
 		TemporalMonitor<T, R> argumentMonitoring = negationFormula.getArgument().accept(this, parameters);
 
-		return notMonitor(argumentMonitoring, module );
+		return notMonitor(argumentMonitoring, module);
 	}
 
 	@Override
