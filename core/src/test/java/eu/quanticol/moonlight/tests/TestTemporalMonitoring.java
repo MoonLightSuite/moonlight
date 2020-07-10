@@ -33,8 +33,8 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import eu.quanticol.moonlight.structure.DoubleDomain;
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.util.*;
 
 import org.junit.jupiter.api.Test;

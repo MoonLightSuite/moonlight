@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.structure;
+package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.util.Pair;
 

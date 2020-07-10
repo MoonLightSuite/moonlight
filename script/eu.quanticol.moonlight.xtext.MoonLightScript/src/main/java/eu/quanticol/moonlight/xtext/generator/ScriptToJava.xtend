@@ -71,7 +71,7 @@ class ScriptToJava {
 		import eu.quanticol.moonlight.*;
 		import eu.quanticol.moonlight.monitoring.temporal.*;
 		import eu.quanticol.moonlight.monitoring.spatialtemporal.*;
-		import eu.quanticol.moonlight.structure.*;
+		import eu.quanticol.moonlight.domain.*;
 		import eu.quanticol.moonlight.signal.*;
 		import eu.quanticol.moonlight.util.*;
 		import eu.quanticol.moonlight.*;

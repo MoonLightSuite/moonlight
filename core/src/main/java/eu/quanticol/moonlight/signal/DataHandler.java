@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 
 /**
  * A <code>DataHandler</code> is used to manage input/output of a signal value

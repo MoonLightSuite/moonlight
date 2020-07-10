@@ -9,8 +9,8 @@ import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.structure.Interval;
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;

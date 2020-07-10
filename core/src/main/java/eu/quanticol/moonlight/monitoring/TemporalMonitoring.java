@@ -31,12 +31,12 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
 import eu.quanticol.moonlight.formula.HistoricallyFormula;
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;
 import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.SinceFormula;
 import eu.quanticol.moonlight.formula.UntilFormula;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
@@ -127,8 +127,12 @@ public class TemporalMonitoring<T, R> implements
 	public TemporalMonitor<T, R> visit(AndFormula andFormula,
 									   Parameters parameters)
 	{
-		TemporalMonitor<T, R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
-		TemporalMonitor<T, R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
+		TemporalMonitor<T, R> leftMonitoring = andFormula
+											  .getFirstArgument()
+											  .accept(this, parameters);
+		TemporalMonitor<T, R> rightMonitoring = andFormula
+											   .getSecondArgument()
+											   .accept(this, parameters);
 
 		return andMonitor(leftMonitoring, module , rightMonitoring);
 	}

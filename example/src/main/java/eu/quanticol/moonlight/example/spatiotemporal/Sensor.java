@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.example.spatiotemporal;
 
-import eu.quanticol.moonlight.structure.BooleanDomain;
-import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;

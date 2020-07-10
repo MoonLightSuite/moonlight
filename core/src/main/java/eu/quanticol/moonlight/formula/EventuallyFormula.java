@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 
 /**
  *

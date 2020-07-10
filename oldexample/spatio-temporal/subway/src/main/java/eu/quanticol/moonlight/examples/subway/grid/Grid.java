@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.examples.subway.io.DataReader;
 import eu.quanticol.moonlight.examples.subway.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.examples.subway.io.FileType;
 import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
-import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.ImmutableGraphModel;
 import eu.quanticol.moonlight.signal.SpatialModel;

@@ -19,7 +19,7 @@
  */
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.io.SpatialTemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.LocationService;

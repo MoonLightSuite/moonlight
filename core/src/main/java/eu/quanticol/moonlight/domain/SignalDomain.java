@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.structure;
+package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
@@ -68,7 +68,7 @@ public interface SignalDomain<R> extends Semiring<R> {
 	     - equalTo(x, y) seems useless (couldn't just use x.equals(y)?)
 	     - valueOf(.) seems to convert a boolean/numeric value to R, but
 	     			  what is this for? Doesn't it break the generalization?
-	     - compute*() these seems to be used by the script language.
+	     - compute*() these seem to be used by the scripting language.
 	     			  perhaps a refactoring is needed to move these somewhere else
 	 */
 

@@ -23,7 +23,8 @@ import java.util.Map;
 
 /**
  * @author loreti
- *
+ * TODO: this interface seems to be old work for some experiment.
+ * 		 Perhaps it can be removed?
  */
 public interface ParametricExpression {
 

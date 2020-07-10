@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.examples.city;
 
-import eu.quanticol.moonlight.structure.BooleanDomain;
-import eu.quanticol.moonlight.structure.DoubleDistance;
-import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;

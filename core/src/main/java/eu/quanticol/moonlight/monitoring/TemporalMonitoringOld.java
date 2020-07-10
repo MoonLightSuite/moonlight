@@ -9,13 +9,13 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.EventuallyFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.GloballyFormula;
 import eu.quanticol.moonlight.formula.HistoricallyFormula;
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.formula.NegationFormula;
 import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;

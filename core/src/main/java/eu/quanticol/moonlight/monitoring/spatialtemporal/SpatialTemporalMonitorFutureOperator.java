@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.function.BinaryOperator;
 
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 

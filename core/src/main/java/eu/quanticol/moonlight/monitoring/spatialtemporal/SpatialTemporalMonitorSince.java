@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
-import eu.quanticol.moonlight.structure.Interval;
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorSince.computeSince;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;

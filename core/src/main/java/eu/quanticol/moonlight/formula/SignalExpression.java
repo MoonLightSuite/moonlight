@@ -19,6 +19,10 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+/**
+ * TODO: this interface seems to be old work for some experiment.
+ * 		 Perhaps it can be removed?
+ */
 public interface SignalExpression {
 
 	double eval(double... variables);

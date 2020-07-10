@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.Map;
 import java.util.function.Function;

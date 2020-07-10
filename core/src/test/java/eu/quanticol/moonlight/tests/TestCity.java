@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.structure.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;

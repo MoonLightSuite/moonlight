@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.structure;
+package eu.quanticol.moonlight.domain;
 
 /**
  * Immutable data type that represents an interval over

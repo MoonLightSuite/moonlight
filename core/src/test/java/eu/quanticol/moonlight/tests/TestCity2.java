@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.structure.BooleanDomain;
-import eu.quanticol.moonlight.structure.DoubleDistance;
-import eu.quanticol.moonlight.structure.DoubleDomain;
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;

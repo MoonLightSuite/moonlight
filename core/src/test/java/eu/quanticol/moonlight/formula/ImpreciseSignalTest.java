@@ -2,9 +2,9 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.structure.AbstractInterval;
-import eu.quanticol.moonlight.structure.Interval;
-import eu.quanticol.moonlight.structure.IntervalDomain;
+import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.domain.IntervalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import org.junit.jupiter.api.Disabled;

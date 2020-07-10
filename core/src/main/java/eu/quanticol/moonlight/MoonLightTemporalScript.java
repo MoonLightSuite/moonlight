@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.structure.SignalDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
 

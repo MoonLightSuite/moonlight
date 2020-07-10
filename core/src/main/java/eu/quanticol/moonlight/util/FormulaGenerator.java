@@ -5,7 +5,7 @@ package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaType;
-import eu.quanticol.moonlight.structure.Interval;
+import eu.quanticol.moonlight.domain.Interval;
 
 import java.util.Random;
 

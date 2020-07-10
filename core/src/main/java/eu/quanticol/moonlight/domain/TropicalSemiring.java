@@ -18,43 +18,32 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.structure;
+package eu.quanticol.moonlight.domain;
 
 /**
+ * TODO: this class seems not to be used
  * @author loreti
- *
  */
-public class DoubleDistance implements DistanceDomain<Double> {
-    private static final double TOLERANCE = 1E-12;
+public class TropicalSemiring implements Semiring<Double> {
 
-    @Override
-    public Double zero() {
-        return 0.0;
-    }
+	@Override
+	public Double conjunction(Double x, Double y) {
+		return x + y;
+	}
 
-    @Override
-    public Double infinity() {
-        return Double.POSITIVE_INFINITY;
-    }
+	@Override
+	public Double disjunction(Double x, Double y) {
+		return Math.min(x, y);
+	}
 
-    @Override
-    public boolean lessOrEqual(Double x, Double y) {
-        return x < y || equalTo(x, y);
-    }
+	@Override
+	public Double min() {
+		return 0.0;
+	}
 
-    @Override
-    public Double sum(Double x, Double y) {
-        return x + y;
-    }
-
-    @Override
-    public boolean equalTo(Double x, Double y) {
-        return Math.abs(x - y) < TOLERANCE;
-    }
-
-    @Override
-    public boolean less(Double x, Double y) {
-        return x < y;
-    }
+	@Override
+	public Double max() {
+		return Double.POSITIVE_INFINITY;
+	}
 
 }

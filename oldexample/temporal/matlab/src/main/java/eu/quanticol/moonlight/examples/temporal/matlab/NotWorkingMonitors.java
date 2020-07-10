@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
-import eu.quanticol.moonlight.structure.DoubleDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
