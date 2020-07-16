@@ -150,8 +150,12 @@ public class TemporalMonitoring<T, R> implements
 	public TemporalMonitor<T, R> visit(OrFormula orFormula,
 									   Parameters parameters)
 	{
-		TemporalMonitor<T, R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
-		TemporalMonitor<T, R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
+		TemporalMonitor<T, R> leftMonitoring = orFormula
+											  .getFirstArgument()
+											  .accept(this, parameters);
+		TemporalMonitor<T, R> rightMonitoring = orFormula
+											   .getSecondArgument()
+											   .accept(this, parameters);
 
 		//TODO: shouldn't this invoke the orMonitor?
 		return andMonitor(leftMonitoring, module , rightMonitoring);

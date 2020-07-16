@@ -34,8 +34,9 @@ import eu.quanticol.moonlight.signal.Signal;
  *
  * @see TemporalMonitor
  */
-public class TemporalMonitorFutureOperator<T, R> implements TemporalMonitor<T, R> {
-
+public class TemporalMonitorFutureOperator<T, R>
+		implements TemporalMonitor<T, R>
+{
 	private final TemporalMonitor<T, R> m;
 	private final BinaryOperator<R>  op;
 	private final R min;

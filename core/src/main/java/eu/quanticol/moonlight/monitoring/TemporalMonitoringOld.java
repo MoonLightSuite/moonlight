@@ -5,6 +5,7 @@ package eu.quanticol.moonlight.monitoring;
 
 import java.util.HashMap;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.formula.AndFormula;
@@ -166,7 +167,7 @@ public class TemporalMonitoringOld<T,R> implements
 
 	
 
-	public static <R> Signal<R> temporalMonitoring( Signal<R> signal , BiFunction<R, R, R> aggregator , Interval i , boolean future) {
+	public static <R> Signal<R> temporalMonitoring(Signal<R> signal , BinaryOperator<R> aggregator , Interval i , boolean future) {
 		SlidingWindow<R> sw = new SlidingWindow<>(i.getStart(), i.getEnd(), aggregator,future);
 		return sw.apply(signal);
 	}

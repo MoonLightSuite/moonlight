@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.formula;
 
-
 /**
  * Interface implemented by any logic formula.
  * It is required to support the visit-based monitoring.
@@ -30,7 +29,7 @@ package eu.quanticol.moonlight.formula;
 public interface Formula {
 
     /**
-     *
+     * Primary entry point for the monitoring of a formula.
      * @param visitor the visiting monitoring program
      * @param parameters optional parameters of the monitoring process.
      * @param <T> Signal Trace Type
@@ -38,5 +37,4 @@ public interface Formula {
      * @return a value corresponding to the value of the formula on R.
      */
     <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters);
-
  }

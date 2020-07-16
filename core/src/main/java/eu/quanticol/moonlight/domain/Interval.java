@@ -87,19 +87,35 @@ public class Interval extends AbstractInterval<Double> {
     }
 
     /**
-     * @return an empty interval
+     * @return an empty interval, i.e. the smallest possible interval
      */
-    @Override
-    public Interval empty() {
+    public static Interval empty() {
         return new Interval(0.0, 0.0, true);
     }
 
     /**
      * @return the widest possible interval
      */
-    @Override
-    public Interval any() {
+    public static Interval any() {
         return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    /**
+     * Generates a new interval by combining two of them
+     * @param i1 first interval (a1, b1)
+     * @param i2 second interval (a2, b2)
+     * @return a new interval of the kind (a1 + a2, b1 + b2)
+     * @throws NullPointerException when any of the two is null
+     */
+    public static Interval combine(Interval i1, Interval i2) {
+        if(i1.isEmpty())
+            return i2;
+
+        if(i2.isEmpty())
+            return i1;
+
+        return new Interval(i1.getStart() + i2.getStart(),
+                            i1.getEnd() + i2.getEnd());
     }
 
 }

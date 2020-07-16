@@ -184,7 +184,7 @@ public class Segment<T> {
 		}
 	}
 
-	public void isFirst() {
+	public void setFirst() {
 		this.previous = null;
 	}
 

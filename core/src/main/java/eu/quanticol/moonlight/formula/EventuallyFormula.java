@@ -30,7 +30,7 @@ public class EventuallyFormula implements Formula {
     private final Interval interval;
 
     public EventuallyFormula(Formula argument) {
-        this(argument, null);
+        this(argument, Interval.empty());
     }
 
     public EventuallyFormula(Formula argument, Interval interval) {

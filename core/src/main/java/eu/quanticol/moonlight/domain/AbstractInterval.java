@@ -71,16 +71,6 @@ public abstract class AbstractInterval<T extends Comparable<T>>
     public abstract AbstractInterval<T> fromValue(T value);
 
     /**
-     * @return an empty interval, i.e. the smallest possible interval
-     */
-    public abstract AbstractInterval<T> empty();
-
-    /**
-     * @return the widest possible interval
-     */
-    public abstract AbstractInterval<T> any();
-
-    /**
      * @return the left bound of the interval
      */
     public T getStart() {
