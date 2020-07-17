@@ -152,6 +152,8 @@ public class Segment<T> {
 		this.end = end;
 	}
 
+	//TODO: this method mutates the Segment (very dangerous!)
+	//		and doesn't do what it says it does!!!!!
 	public Segment<T> splitAt(double time) {
 		if (this.time>=time) {
 			throw new IllegalArgumentException();

@@ -28,12 +28,14 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
 /**
- * Core of the temporal operators,
- * TODO: finish docs
+ * Core of the temporal operators.
+ *
+ *
+ * Alternative implementations (e.g. online version) might simply
+ * override the {@link #apply(Signal)} method.
  *
  * For the original sliding window algorithm from Lemire:
  * https://dl.acm.org/doi/10.5555/1324123.1324129
- *
  *
  * Note that, except for methods explicitly marked by
  * <i>DIRECTION-AWARE METHOD</i>
@@ -53,6 +55,8 @@ public class SlidingWindow<R> {
 	 * - commutative: f(a,b) = f(b,a)
 	 * - idempotent in one of the two arguments:
 	 * 				for any a,b: f(a,b) = a || f(a,b) = b
+	 * TODO: this is not what `idempotent' means
+	 *
 	 * TODO: instead of specifying valid aggregators here,
 	 * 		 we should develop an interface that enforces these constraints.
 	 */
@@ -83,7 +87,7 @@ public class SlidingWindow<R> {
 	public Signal<R> apply(Signal<R> s) {
 		// If the signal is empty or shorter than the time horizon,
 		// we return an empty signal
-		// NOTE: this assumes offline usage (i.e. signal is complete)
+		// NOTE: this assumes offline usage (i.e. the signal is complete)
 		if (s.isEmpty() || (s.end() - s.start() < size)) {
 			return new Signal<>();
 		}
@@ -102,6 +106,13 @@ public class SlidingWindow<R> {
 	}
 
 	/**
+	 * @return the size (i.e. relative horizon) of the Sliding Window
+	 */
+	public double size() {
+		return size;
+	}
+
+	/**
 	 * Actual logic of the sliding process
 	 * @param iterator signal cursor initialized at the beginning of the window
 	 * @param window an empty window
@@ -116,9 +127,11 @@ public class SlidingWindow<R> {
 			R value = iterator.value();
 
 			// We try to add the segment's starting instant to the window,
-			// if we fail, the window must be shifted.
-			while (!window.add(time, value)) {
-				// TODO: why do we add the beginning of the window to results?
+			// if we fail, we are exceeding window's limit, so we must shift it.
+			// Before doing that, we save the current beginning of the monotonic
+			// edge set, as it still is the correct value, up to the
+			// previous time instant
+			while (!window.tryAdd(time, value)) {
 				result.add(timeOf(window.firstTime()), window.firstValue());
 				window.shift(time);
 			}
@@ -146,11 +159,20 @@ public class SlidingWindow<R> {
 		} else {
 			result.add(window.end, window.firstValue());
 			//TODO: why window.END & window.FIRST?
+			// 		this should still be timeOf(window.firstTime())
+			//		but perhaps there are some degenerated cases I cannot
+			//		think of, where the window doesn't reach the maximum
+			//		size, and in which
+			//		timeOf(window.firstTime()) =/= window.end
+			//		if this is the case, a proper test should be in place
 		}
 	}
 
-	// initializing a Signal Cursor
-	// at the beginning of the horizon
+	/**
+	 * This method retrieves a Signal Cursor at the beginning of the horizon.
+	 * @param signal the Signal from which the cursor will be extracted
+	 * @return a SignalCursor starting at the beginning of the horizon
+	 */
 	private SignalCursor<R> iteratorInit(Signal<R> signal) {
 		SignalCursor<R> iterator = signal.getIterator(true);
 		iterator.move(signal.start() + a);
@@ -171,12 +193,8 @@ public class SlidingWindow<R> {
 		}
 	}
 
-	public double size() {
-		return size;
-	}
-
 	/**
-	 * Actual Sliding Window
+	 * This class implements the Monotonic Edge Set of the Sliding Window.
 	 *
 	 * @see Segment for the primary data structure used both by the
 	 * 				Sliding Window and by the Signal.
@@ -193,15 +211,15 @@ public class SlidingWindow<R> {
 		 */
 		void shift(double time) {
 			double nextTime = first.getSegmentEnd();
-
 			// If the first segment of the window has only one time instant,
 			// we restart the window at the given time with the previous value
 			// TODO: why the previous value? shouldn't we get a new value?
 			if (firstTime() == nextTime) {
 				init(time - size, first.getValue());
 			} else if (nextTime + size > time) {
-				// If instead segment end plus the horizon exceeds
-				// the current time point, we split the segment at current time
+				// If the current segment goes beyond the current time point,
+				// we cut it and just take the part that starts at the current
+				// time point
 				first = first.splitAt(time - size);
 			} else {
 				// Otherwise we just remove the first Segment and make
@@ -214,23 +232,25 @@ public class SlidingWindow<R> {
 		}
 
 		/**
-		 * It adds the given value at the given time in the window,
+		 * It adds the given value at the given time to the window,
 		 * unless it exceeds the window's size, in which case, it returns false.
 		 *
 		 * @param time time instant to add to the window
 		 * @param value value the window will have at that time instant
 		 * @return true if the value is added, false if exceeding window's size
 		 */
-		boolean add(double time, R value ) {
+		boolean tryAdd(double time, R value ) {
 			// If the window is empty, we initialize it
 			// at the current time, with the current value
 			if (first == null) {
 				init(time, value);
 			} else {
-				// If the window started before the current time
-				// (shifted backwards by the horizon) TODO: not sure about this
-				// or, equivalently, if the window should end before the current
-				// time, the value cannot be added and we return to the caller.
+				// If the first time point of the window exceeds the maximum
+				// size of the window w.r.t the current time point, or,
+				// if the current time is beyond the maximum size of the window,
+				// the window must be shifted before adding it, and we
+				// therefore immediately return to the caller.
+
 				// NOTE: we could also check whether the window has
 				// a negligible size and makes any sense,
 				// i.e. Math.abs(first.getTime() + size - time) < EPSILON
@@ -238,12 +258,33 @@ public class SlidingWindow<R> {
 						&&(firstTime() + size < time)) {
 					return false;
 				} else {
-					// Otherwise, we must update the Sliding Window
+					// Otherwise, we update the Sliding Window
 					update(time, value);
 					this.end = time;
 				}
 			}
 			return true;
+		}
+
+		/**
+		 * @return the first time instant of the Sliding Window
+		 */
+		double firstTime() {
+			return first.getTime();
+		}
+
+		/**
+		 * @return the value at the first time instant of the Sliding Window
+		 */
+		R firstValue() {
+			return first.getValue();
+		}
+
+		/**
+		 * @return the current size (i.e. horizon) of the Window
+		 */
+		double size() {
+			return (first == null ? 0.0 : end - firstTime());
 		}
 
 		/**
@@ -287,27 +328,6 @@ public class SlidingWindow<R> {
 			// In this case, we restart the Sliding Window from here.
 			init(insertTime, aggregatedValue);
 			end = time;
-		}
-
-		/**
-		 * @return the first time instant of the Sliding Window
-		 */
-		double firstTime() {
-			return first.getTime();
-		}
-
-		/**
-		 * @return the value at the first time instant of the Sliding Window
-		 */
-		R firstValue() {
-			return first.getValue();
-		}
-
-		/**
-		 * TODO: Is this related to some old implementation?
-		 */
-		double size() {
-			return (first == null ? 0.0 : end - firstTime());
 		}
 
 		/**
