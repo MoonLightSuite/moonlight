@@ -41,6 +41,8 @@ public class OnlineTemporalMonitoring<T, R> implements
     private final Map<String, Function<Parameters, Function<T, R>>> atoms;
     private final SignalDomain<R> domain;
 
+    private final Map<String, TemporalMonitor<T, R>> monitors;
+
     /**
      * Initializes a monitoring process over the given interpretation domain.
      * @param interpretation signal interpretation domain
@@ -61,6 +63,19 @@ public class OnlineTemporalMonitoring<T, R> implements
     {
         this.atoms = atomicPropositions;
         this.domain = interpretation;
+        this.monitors = new HashMap<>();
+    }
+
+    public String debug() {
+        StringBuilder output = new StringBuilder();
+        for(Map.Entry<String, TemporalMonitor<T, R>> e: monitors.entrySet()) {
+            output.append("Monitor ").append(e.getKey()).append(":\n");
+            output.append(((OnlineTemporalMonitor<T, R>) e.getValue())
+                                                          .getWorklist());
+            output.append("\n");
+        }
+
+        return output.toString();
     }
 
     /**
@@ -93,71 +108,86 @@ public class OnlineTemporalMonitoring<T, R> implements
     public TemporalMonitor<T, R> visit(AtomicFormula atomicFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(atomicFormula.toString());
+
         Function<Parameters, Function<T, R>> f = fetchAtom(atomicFormula);
         Function<T, R> atomic = f.apply(parameters);
 
-        return new OnlineMonitorAtomic<>(atomic, getHorizon(parameters));
+        if(m == null) {
+            m = new OnlineMonitorAtomic<>(atomic, getHorizon(parameters));
+            monitors.put(atomicFormula.toString(), m);
+        }
+        return m;
     }
 
     @Override
     public TemporalMonitor<T, R> visit(NegationFormula negationFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(negationFormula.toString());
+
         TemporalMonitor<T, R> monitoringArg = negationFormula.getArgument()
                                              .accept(this, parameters);
 
-        return new OnlineMonitorUnaryOperator<>(monitoringArg,
-                                                domain::negation,
-                                                getHorizon(parameters));
+        if(m == null) {
+            m = new OnlineMonitorUnaryOperator<>(monitoringArg,
+                                                 domain::negation,
+                                                 getHorizon(parameters));
+            monitors.put(negationFormula.toString(), m);
+        }
+        return m;
     }
 
     @Override
     public TemporalMonitor<T, R> visit(AndFormula andFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(andFormula.toString());
+
         TemporalMonitor<T, R> leftMonitoring = andFormula
                                               .getFirstArgument()
                                               .accept(this, parameters);
         TemporalMonitor<T, R> rightMonitoring = andFormula
                                                .getSecondArgument()
                                                .accept(this, parameters);
-
-        return new OnlineMonitorBinaryOperator<>(leftMonitoring,
-                                                 domain::conjunction,
-                                                 rightMonitoring,
-                                                 getHorizon(parameters));
+        if(m == null) {
+            m = new OnlineMonitorBinaryOperator<>(leftMonitoring,
+                                                  domain::conjunction,
+                                                  rightMonitoring,
+                                                  getHorizon(parameters));
+            monitors.put(andFormula.toString(), m);
+        }
+        return m;
     }
 
     @Override
     public TemporalMonitor<T, R> visit(OrFormula orFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(orFormula.toString());
+
         TemporalMonitor<T, R> leftMonitoring = orFormula
                                               .getFirstArgument()
                                               .accept(this, parameters);
         TemporalMonitor<T, R> rightMonitoring = orFormula
                                                .getSecondArgument()
                                                .accept(this, parameters);
-
-        return new OnlineMonitorBinaryOperator<>(leftMonitoring,
-                                                 domain::disjunction,
-                                                 rightMonitoring,
-                                                 getHorizon(parameters));
-    }
-
-    private Interval getHorizon(Parameters params) {
-        if(params instanceof HorizonParameter) {
-            return ((HorizonParameter) params).getHorizon();
+        if(m == null) {
+            m = new OnlineMonitorBinaryOperator<>(leftMonitoring,
+                                                  domain::disjunction,
+                                                  rightMonitoring,
+                                                  getHorizon(parameters));
+            monitors.put(orFormula.toString(), m);
         }
-
-        throw new InvalidParameterException("Monitoring parameters are " +
-                                            "incorrect: " + params.toString());
+        return m;
     }
 
     @Override
     public TemporalMonitor<T, R> visit(EventuallyFormula eventuallyFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(eventuallyFormula.toString());
+
         Interval horizon = getHorizon(parameters);
         Interval interval = eventuallyFormula.getInterval();
         horizon = Interval.combine(horizon, interval);
@@ -166,24 +196,30 @@ public class OnlineTemporalMonitoring<T, R> implements
                                              .getArgument()
                                              .accept(this, parameters);
 
-        if (eventuallyFormula.isUnbounded()) {
-            return new OnlineMonitorFutureOperator<>(monitoringArg,
-                                                     domain::disjunction,
-                                                     domain.min(),
-                                                     horizon);
-        } else {
-            return new OnlineMonitorFutureOperator<>(monitoringArg,
-                                                     domain::disjunction,
-                                                     domain.min(),
-                                                     interval,
-                                                     horizon);
+        if(m == null) {
+            if (eventuallyFormula.isUnbounded()) {
+                m = new OnlineMonitorFutureOperator<>(monitoringArg,
+                                                      domain::disjunction,
+                                                      domain.min(),
+                                                      horizon);
+            } else {
+                m = new OnlineMonitorFutureOperator<>(monitoringArg,
+                                                      domain::disjunction,
+                                                      domain.min(),
+                                                      interval,
+                                                      horizon);
+            }
+            monitors.put(eventuallyFormula.toString(), m);
         }
+        return m;
     }
 
     @Override
     public TemporalMonitor<T, R> visit(GloballyFormula globallyFormula,
                                        Parameters parameters)
     {
+        TemporalMonitor<T, R> m = monitors.get(globallyFormula.toString());
+
         Interval horizon = getHorizon(parameters);
         Interval interval = globallyFormula.getInterval();
         horizon = Interval.combine(horizon, interval);
@@ -192,18 +228,22 @@ public class OnlineTemporalMonitoring<T, R> implements
                                              .getArgument()
                                              .accept(this, parameters);
 
-        if (globallyFormula.isUnbounded()) {
-            return new OnlineMonitorFutureOperator<>(monitoringArg,
-                                                     domain::conjunction,
-                                                     domain.max(),
-                                                     horizon);
-        } else {
-            return new OnlineMonitorFutureOperator<>(monitoringArg,
-                                                     domain::conjunction,
-                                                     domain.max(),
-                                                     interval,
-                                                     horizon);
+        if(m == null) {
+            if (globallyFormula.isUnbounded()) {
+                m = new OnlineMonitorFutureOperator<>(monitoringArg,
+                                                      domain::conjunction,
+                                                      domain.max(),
+                                                      horizon);
+            } else {
+                m = new OnlineMonitorFutureOperator<>(monitoringArg,
+                                                      domain::conjunction,
+                                                      domain.max(),
+                                                      interval,
+                                                      horizon);
+            }
+            monitors.put(globallyFormula.toString(), m);
         }
+        return m;
     }
 
 /*
@@ -277,6 +317,16 @@ public class OnlineTemporalMonitoring<T, R> implements
         }
     }
      */
+
+
+    private Interval getHorizon(Parameters params) {
+        if(params instanceof HorizonParameter) {
+            return ((HorizonParameter) params).getHorizon();
+        }
+
+        throw new InvalidParameterException("Monitoring parameters are " +
+                "incorrect: " + params.toString());
+    }
 
     private Function<Parameters, Function<T, R>> fetchAtom(AtomicFormula f){
         Function<Parameters, Function<T, R>> atom = atoms.get(f.getAtomicId());

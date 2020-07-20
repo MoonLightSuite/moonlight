@@ -118,7 +118,7 @@ public class SlidingWindow<R> {
 	 * @param window an empty window
 	 * @return the final result of the sliding
 	 */
-	private Signal<R> doSlide(SignalCursor<R> iterator, Window window) {
+	protected Signal<R> doSlide(SignalCursor<R> iterator, Window window) {
 		Signal<R> result = new Signal<>();
 
 		// We loop over all the Segments of the Signal
@@ -149,7 +149,7 @@ public class SlidingWindow<R> {
 	 * @param result output Signal to update
 	 * @param window the Sliding Window we used
 	 */
-	private void storeEnding(Signal<R> result, Window window) {
+	protected void storeEnding(Signal<R> result, Window window) {
 		// If we are sliding to the future,
 		// we add the beginning of the Sliding Window to the output.
 		// On the contrary, if we are sliding to the past,
@@ -173,7 +173,7 @@ public class SlidingWindow<R> {
 	 * @param signal the Signal from which the cursor will be extracted
 	 * @return a SignalCursor starting at the beginning of the horizon
 	 */
-	private SignalCursor<R> iteratorInit(Signal<R> signal) {
+	protected SignalCursor<R> iteratorInit(Signal<R> signal) {
 		SignalCursor<R> iterator = signal.getIterator(true);
 		iterator.move(signal.start() + a);
 		return iterator;

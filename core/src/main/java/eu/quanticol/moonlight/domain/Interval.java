@@ -81,24 +81,24 @@ public class Interval extends AbstractInterval<Double> {
      * @param number the only number included in the interval
      * @return an interval of the kind [number, number]
      */
-    @Override
-    public Interval fromValue(Double number) {
+    public static Interval fromValue(Double number) {
         return new Interval(number, number);
     }
 
     /**
      * @return an empty interval, i.e. the smallest possible interval
      */
-    public static Interval empty() {
+    @Override
+    public Interval empty() {
         return new Interval(0.0, 0.0, true);
     }
 
     /**
      * @return the widest possible interval
-     */
+     *//*
     public static Interval any() {
         return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-    }
+    }*/
 
     /**
      * Generates a new interval by combining two of them
@@ -118,4 +118,8 @@ public class Interval extends AbstractInterval<Double> {
                             i1.getEnd() + i2.getEnd());
     }
 
+    @Override
+    public Interval any() {
+        return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
 }

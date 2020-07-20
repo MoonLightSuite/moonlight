@@ -79,6 +79,7 @@ public class OnlineMonitorBinaryOperator<T, R>
     }
 
     //TODO: for debugging purposes mainly
+    @Override
     public List<R> getWorklist() {
         List<R> lastValues = new ArrayList<>();
         for(Signal<R> item: worklist) {

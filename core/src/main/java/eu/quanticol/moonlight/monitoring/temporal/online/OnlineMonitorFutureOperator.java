@@ -21,6 +21,7 @@
 package eu.quanticol.moonlight.monitoring.temporal.online;
 
 import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.formula.OnlineSlidingWindow;
 import eu.quanticol.moonlight.formula.SlidingWindow;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
@@ -82,10 +83,21 @@ public class OnlineMonitorFutureOperator<T, R>
             throw new UnsupportedOperationException("Not Implemented Yet!");
             //return signal.iterateBackward(op, init);
         } else {
-            SlidingWindow<R> sw = new SlidingWindow<>(interval.getStart(),
+            SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
                                                       interval.getEnd(),
                                                       op, true);
             return sw.apply(signal);
         }
+    }
+
+    //TODO: for debugging purposes mainly
+    @Override
+    public List<R> getWorklist() {
+        List<R> lastValues = new ArrayList<>();
+        for(Signal<R> item: worklist) {
+            lastValues.add(item.valueAt(0));
+        }
+
+        return lastValues;
     }
 }

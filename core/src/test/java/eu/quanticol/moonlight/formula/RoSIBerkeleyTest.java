@@ -2,6 +2,8 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.IntervalDomain;
+import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitoring;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.signal.*;
@@ -46,8 +48,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(0, 4, true)));
         yValues.add(new Pair<>(2, new Interval(4, T2)));
 
-        Interval anyValue = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        assertEquals(anyValue, test(T2, xValues, yValues));
+        assertEquals(new Interval(0).any(), test(T2, xValues, yValues));
 
     }
 
@@ -64,11 +65,10 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(2, new Interval(4, 8, true)));
         yValues.add(new Pair<>(-1, new Interval(8, T3)));
 
-        Interval anyValue = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        assertEquals(anyValue, test(T3, xValues, yValues));
+        assertEquals(new Interval(0).any(), test(T3, xValues, yValues));
     }
 
-    @Disabled("Under Investigation")
+    //@Disabled("Under Investigation")
     @Test
     void berkleyTestT4() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -83,7 +83,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T4)));
 
-        assertEquals(new Interval(0, 0).fromValue(-2.0), test(T4, xValues, yValues));
+        assertEquals(new Interval(0).fromValue(-2.0), test(T4, xValues, yValues));
     }
 
     @Test
@@ -101,7 +101,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T5)));
 
-        assertEquals(new Interval(0, 0).fromValue(-2.0), test(T5, xValues, yValues));
+        assertEquals(new Interval(0).fromValue(-2.0), test(T5, xValues, yValues));
     }
 
     @Test
@@ -120,7 +120,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T_MAX)));
 
-        assertEquals(new Interval(0, 0).fromValue(-2.0), test(T_MAX, xValues, yValues));
+        assertEquals(Interval.fromValue(-2.0), test(T_MAX, xValues, yValues));
     }
 
     /**
@@ -169,10 +169,13 @@ class RoSIBerkeleyTest {
         atoms.put("positiveY", ps -> trc ->
                                     toInterval((Integer) trc.get(Y_SIGNAL)));
 
-        TemporalMonitoring<List<Comparable<?>>, Interval> monitoring =
-                new TemporalMonitoring<>(atoms, new IntervalDomain());
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> monitoring =
+                new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());
 
-        return monitoring.monitor(formula, null).monitor(trace);
+        Signal<Interval> monitor = monitoring.monitor(formula, null).monitor(trace);
+
+        System.out.print(monitoring.debug());
+        return monitor;
     }
 
     private static Formula testFormula() {
@@ -181,12 +184,15 @@ class RoSIBerkeleyTest {
 
         return new GloballyFormula(
                     new OrFormula(new EventuallyFormula(atomX,
-                                                        new Interval(B, C)),
-                                  atomY),
+                                                   new Interval(B, C)),
+                                  new NegationFormula(atomY)),
                     new Interval(0, A));
 
         //formula for simpler testing, invert the comments for real tests
-        //return new GloballyFormula(atomX, new Interval(0, T_MAX));
+        /*return new OrFormula(new EventuallyFormula(atomX,
+                                                   new Interval(B, C)),
+                             new NegationFormula(atomY));
+                             */
     }
 
     /**

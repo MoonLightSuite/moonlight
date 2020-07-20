@@ -24,6 +24,8 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.monitoring.temporal.*;
 import eu.quanticol.moonlight.signal.Signal;
 
+import java.util.List;
+
 /**
  * Primary Monitoring interface
  * It is based on a strategy design pattern, where each kind of operators
@@ -56,4 +58,6 @@ public interface OnlineTemporalMonitor<T, R> extends TemporalMonitor<T, R> {
      * @param parentHorizon
      */
     //void setHorizon(AbstractInterval<?> parentHorizon);
+
+    List<R> getWorklist();
 }
