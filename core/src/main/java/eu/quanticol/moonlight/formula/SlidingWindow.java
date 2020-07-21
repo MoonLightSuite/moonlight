@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.formula;
 
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
 import eu.quanticol.moonlight.signal.Segment;
@@ -60,7 +59,7 @@ public class SlidingWindow<R> {
 	 * TODO: instead of specifying valid aggregators here,
 	 * 		 we should develop an interface that enforces these constraints.
 	 */
-	private final BiFunction<R, R, R> aggregator;
+	private final  BinaryOperator<R> aggregator;
 
 	/**
 	 * Constructs a Sliding Window on the given aggregator and time interval.
@@ -112,6 +111,14 @@ public class SlidingWindow<R> {
 		return size;
 	}
 
+	protected BinaryOperator<R> getAggregator() {
+		return aggregator;
+	}
+
+	protected double getA() {
+		return a;
+	}
+
 	/**
 	 * Actual logic of the sliding process
 	 * @param iterator signal cursor initialized at the beginning of the window
@@ -139,7 +146,6 @@ public class SlidingWindow<R> {
 			// We go over to the next Segment of the Signal
 			iterator.forward();
 		}
-
 		return result;
 	}
 

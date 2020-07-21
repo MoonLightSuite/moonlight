@@ -34,6 +34,8 @@ public class IntervalDomain implements SignalDomain<Interval> {
             new Interval(Double.NEGATIVE_INFINITY);
     private static final Interval POSITIVE_INFINITY =
             new Interval(Double.POSITIVE_INFINITY);
+    private static final Interval TOTAL_INTERVAL =
+            new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     @Override
     public Interval conjunction(Interval x, Interval y) {
@@ -53,8 +55,8 @@ public class IntervalDomain implements SignalDomain<Interval> {
     }
 
     @Override
-    public boolean equalTo(Interval x, Interval y) {
-        return x.equals(y);
+    public Interval neutral() {
+        return TOTAL_INTERVAL;
     }
 
     @Override
@@ -72,8 +74,12 @@ public class IntervalDomain implements SignalDomain<Interval> {
         return DataHandler.INTERVAL;
     }
 
+    /* NOT IMPLEMENTED/USED METHODS */
 
-    /* NOT IMPLEMENTED METHODS */
+    @Override
+    public boolean equalTo(Interval x, Interval y) {
+        return x.equals(y);
+    }
 
     @Override
     public Interval valueOf(boolean b) {

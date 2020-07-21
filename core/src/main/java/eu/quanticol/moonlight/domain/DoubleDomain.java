@@ -31,6 +31,11 @@ public class DoubleDomain implements SignalDomain<Double> {
 	private static final double TOLERANCE = 1E-12;
 
 	@Override
+	public Double neutral() {
+		return 0.0;
+	}
+
+	@Override
 	public Double conjunction(Double x, Double y) {
 		return Math.min(x, y);
 	}

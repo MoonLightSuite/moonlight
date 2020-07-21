@@ -190,22 +190,24 @@ public class OnlineTemporalMonitoring<T, R> implements
 
         Interval horizon = getHorizon(parameters);
         Interval interval = eventuallyFormula.getInterval();
-        horizon = Interval.combine(horizon, interval);
+        //horizon = ;
 
         TemporalMonitor<T, R> monitoringArg = eventuallyFormula
                                              .getArgument()
-                                             .accept(this, parameters);
+                                             .accept(this, new HorizonParameter(Interval.combine(horizon, interval)));
 
         if(m == null) {
             if (eventuallyFormula.isUnbounded()) {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::disjunction,
                                                       domain.min(),
+                                                      domain.neutral(),
                                                       horizon);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::disjunction,
                                                       domain.min(),
+                                                      domain.neutral(),
                                                       interval,
                                                       horizon);
             }
@@ -222,22 +224,24 @@ public class OnlineTemporalMonitoring<T, R> implements
 
         Interval horizon = getHorizon(parameters);
         Interval interval = globallyFormula.getInterval();
-        horizon = Interval.combine(horizon, interval);
+        //horizon = Interval.combine(horizon, interval);
 
         TemporalMonitor<T, R> monitoringArg = globallyFormula
                                              .getArgument()
-                                             .accept(this, parameters);
+                                             .accept(this, new HorizonParameter(Interval.combine(horizon, interval)));
 
         if(m == null) {
             if (globallyFormula.isUnbounded()) {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::conjunction,
                                                       domain.max(),
+                                                      domain.neutral(),
                                                       horizon);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::conjunction,
                                                       domain.max(),
+                                                      domain.neutral(),
                                                       interval,
                                                       horizon);
             }

@@ -41,28 +41,31 @@ public class OnlineMonitorFutureOperator<T, R>
     private final TemporalMonitor<T, R> m;
     private final BinaryOperator<R> op;
     private final R min;
+    private final R neutral;
     private final Interval interval;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
-                                       BinaryOperator<R> op, R min,
+                                       BinaryOperator<R> op, R min, R neutral,
                                        Interval definitionInterval,
                                        Interval parentHorizon)
     {
         this.m = m;
         this.op = op;
         this.min = min;
+        this.neutral = neutral;
         this.interval = definitionInterval;
         horizon = Interval.combine(definitionInterval, parentHorizon);
         worklist = new ArrayList<>();
+        //System.out.println("Future (" + op.toString() + "): " + horizon.toString());
     }
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
-                                       BinaryOperator<R> op, R min,
+                                       BinaryOperator<R> op, R min, R neutral,
                                        Interval parentHorizon)
     {
-        this(m, op, min, null, parentHorizon);
+        this(m, op, min, neutral, null, parentHorizon);
     }
 
     @Override
@@ -71,6 +74,8 @@ public class OnlineMonitorFutureOperator<T, R>
             //update result
             worklist.add(computeSignal(m.monitor(signal), interval, op, min));
         }
+
+        System.out.println("Future: " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
@@ -83,9 +88,11 @@ public class OnlineMonitorFutureOperator<T, R>
             throw new UnsupportedOperationException("Not Implemented Yet!");
             //return signal.iterateBackward(op, init);
         } else {
+            R baseline = op.apply(min, neutral);
             SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
-                                                      interval.getEnd(),
-                                                      op, true);
+                                                            interval.getEnd(),
+                                                            op, true,
+                                                            baseline);
             return sw.apply(signal);
         }
     }

@@ -37,7 +37,7 @@ class RoSIBerkeleyTest {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
-    @Disabled("Only meaningful for Online Monitoring")
+    //@Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT2() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -52,7 +52,7 @@ class RoSIBerkeleyTest {
 
     }
 
-    @Disabled("Only meaningful for Online Monitoring")
+    //@Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT3() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -68,7 +68,7 @@ class RoSIBerkeleyTest {
         assertEquals(new Interval(0).any(), test(T3, xValues, yValues));
     }
 
-    //@Disabled("Under Investigation")
+    @Disabled("Under Investigation")
     @Test
     void berkleyTestT4() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -83,7 +83,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T4)));
 
-        assertEquals(new Interval(0).fromValue(-2.0), test(T4, xValues, yValues));
+        assertEquals(new Interval(-2.0), test(T4, xValues, yValues));
     }
 
     @Test
@@ -101,7 +101,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T5)));
 
-        assertEquals(new Interval(0).fromValue(-2.0), test(T5, xValues, yValues));
+        assertEquals(new Interval(-2.0), test(T5, xValues, yValues));
     }
 
     @Test
@@ -120,7 +120,7 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(8, 13, true)));
         yValues.add(new Pair<>(1, new Interval(13, T_MAX)));
 
-        assertEquals(Interval.fromValue(-2.0), test(T_MAX, xValues, yValues));
+        assertEquals(new Interval(-2.0), test(T_MAX, xValues, yValues));
     }
 
     /**
@@ -165,9 +165,9 @@ class RoSIBerkeleyTest {
                 atoms = new HashMap<>();
 
         atoms.put("positiveX", ps -> trc ->
-                                    toInterval((Integer) trc.get(X_SIGNAL)));
+                                    new Interval((Integer) trc.get(X_SIGNAL)));
         atoms.put("positiveY", ps -> trc ->
-                                    toInterval((Integer) trc.get(Y_SIGNAL)));
+                                    new Interval((Integer) trc.get(Y_SIGNAL)));
 
         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> monitoring =
                 new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());

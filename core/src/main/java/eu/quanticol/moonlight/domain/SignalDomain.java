@@ -41,6 +41,8 @@ import eu.quanticol.moonlight.signal.DataHandler;
  */
 public interface SignalDomain<R> extends Semiring<R> {
 
+	R neutral();
+
 	/**
 	 * Negation function that s.t. De Morgan laws, double negation
 	 * and inversion of the idempotent elements hold.
