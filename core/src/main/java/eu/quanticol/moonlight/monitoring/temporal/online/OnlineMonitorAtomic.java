@@ -55,10 +55,6 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
         atom = atomicFunction;
         horizon = parentHorizon;
         worklist = new ArrayList<>();
-        //TODO: an alternative to explicit horizon passing can be a method
-        //      to update the horizon. This would have to be called always
-        //      by the caller, so it should be defined in a common interface
-        //      for all the online monitors.
     }
 
 

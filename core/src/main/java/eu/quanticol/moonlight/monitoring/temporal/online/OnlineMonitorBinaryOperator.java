@@ -66,6 +66,8 @@ public class OnlineMonitorBinaryOperator<T, R>
             worklist.add(Signal.apply(m1.monitor(signal),
                                       op,
                                       m2.monitor(signal)));
+            System.out.println("[DEBUG] Binary Operator worklist:");
+            System.out.println(getWorklist().toString());
         }
 
         return worklist.get(worklist.size() - 1); //return last computed value

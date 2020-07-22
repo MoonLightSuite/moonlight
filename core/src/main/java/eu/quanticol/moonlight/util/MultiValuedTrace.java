@@ -107,7 +107,7 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
 
 
     /**
-     * It returns an n-dimensional list, for the given space-time element,
+     * It generates an n-dimensional list, for the given space-time element,
      * based on the dimensions data stored, s.t.
      * (t1, l1) |-> (x1, ..., xn)
      *

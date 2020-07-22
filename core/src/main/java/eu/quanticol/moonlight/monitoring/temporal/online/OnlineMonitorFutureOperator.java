@@ -75,7 +75,7 @@ public class OnlineMonitorFutureOperator<T, R>
             worklist.add(computeSignal(m.monitor(signal), interval, op, min));
         }
 
-        System.out.println("Future: " + worklist.get(worklist.size() - 1).toString());
+        System.out.println("FutureOperator Result: " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

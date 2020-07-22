@@ -23,12 +23,15 @@ package eu.quanticol.moonlight.monitoring.temporal.online;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.signal.Signal;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,6 +45,8 @@ public class OnlineTemporalMonitoring<T, R> implements
     private final SignalDomain<R> domain;
 
     private final Map<String, TemporalMonitor<T, R>> monitors;
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Initializes a monitoring process over the given interpretation domain.
@@ -68,13 +73,14 @@ public class OnlineTemporalMonitoring<T, R> implements
 
     public String debug() {
         StringBuilder output = new StringBuilder();
+        output.append("The stored monitors have the following values:\n");
         for(Map.Entry<String, TemporalMonitor<T, R>> e: monitors.entrySet()) {
-            output.append("Monitor ").append(e.getKey()).append(":\n");
-            output.append(((OnlineTemporalMonitor<T, R>) e.getValue())
+            output.append("\t Monitor <").append(e.getKey()).append(">:\n");
+            output.append("\t\t Worklist:").append(((OnlineTemporalMonitor<T, R>) e.getValue())
                                                           .getWorklist());
             output.append("\n");
         }
-
+        LOGGER.info(output.toString());
         return output.toString();
     }
 
@@ -103,6 +109,22 @@ public class OnlineTemporalMonitoring<T, R> implements
 
         return f.accept(this, horizon);
     }
+
+    /*public Signal<R> monitor(Formula f,
+                             Parameters params)
+    {
+        HorizonParameter horizon;
+
+        try {
+            getHorizon(params);
+            horizon = (HorizonParameter) params;
+        }
+        catch(Exception e) {
+            horizon = new HorizonParameter(new Interval(0));
+        }
+
+        return f.accept(this, horizon).monitor();
+    }*/
 
     @Override
     public TemporalMonitor<T, R> visit(AtomicFormula atomicFormula,

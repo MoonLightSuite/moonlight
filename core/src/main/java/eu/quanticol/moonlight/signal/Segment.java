@@ -96,8 +96,8 @@ public class Segment<T> {
 			throw new IllegalArgumentException("Time: "+time+" Expexted: >="+this.time); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
-			this.next = new Segment<T>(this, time, value);
-			this.end = Double.NaN;
+			this.next = new Segment<>(this, time, value);
+			this.end = Double.NaN; //TODO: Why?!
 			return this.next;
 		} else {
 			this.end = time;
