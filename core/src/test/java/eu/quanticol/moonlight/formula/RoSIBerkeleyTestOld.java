@@ -37,7 +37,7 @@ class RoSIBerkeleyTestOld {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
-    //@Disabled("Only meaningful for Online Monitoring")
+    @Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT2() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -52,7 +52,7 @@ class RoSIBerkeleyTestOld {
 
     }
 
-    //@Disabled("Only meaningful for Online Monitoring")
+    @Disabled("Only meaningful for Online Monitoring")
     @Test
     void berkleyTestT3() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -172,7 +172,7 @@ class RoSIBerkeleyTestOld {
         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> monitoring =
                 new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());
 
-        Signal<Interval> monitor = monitoring.monitor(formula, null).monitor(trace);
+        Signal<Interval> monitor = monitoring.monitor(formula, null, trace.getEnd()).monitor(trace);
 
         System.out.print(monitoring.debug());
         return monitor;

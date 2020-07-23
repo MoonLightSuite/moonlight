@@ -40,7 +40,7 @@ class RoSIBerkeleyTest {
 
     @Disabled("Only meaningful for Online Monitoring")
     @Test
-    void berkleyTest() {
+    void berkleyTestT2() {
         // Trace generation...
         Signal<List<Comparable<?>>> trace = init();
 
@@ -48,24 +48,141 @@ class RoSIBerkeleyTest {
         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         //Test at T2!
-        //assertEquals(new Interval(0).any(), test(trace, m));
+        assertEquals(new Interval(0).any(), test(trace, m));
+    }
+
+    @Disabled("Only meaningful for Online Monitoring")
+    @Test
+    void berkleyTestT3() {
+        // Trace generation...
+        Signal<List<Comparable<?>>> trace;
+
+        // Monitor Instrumentation...
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
         List<Pair<Integer, Interval>> yValues = new ArrayList<>();
         xValues.add(new Pair<>(-1, new Interval(T2, T3)));
         yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        update(trace, xValues, yValues);
+        trace = update(xValues, yValues);
 
         //Test at T3!
         assertEquals(new Interval(0).any(), test(trace, m));
+    }
+
+    @Disabled("Only meaningful for Online Monitoring")
+    @Test
+    void berkleyTestT4() {
+        // Trace generation...
+        Signal<List<Comparable<?>>> trace;
+
+        // Monitor Instrumentation...
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+
+        // Update with data up to T3...
+        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
+        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
+        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
+        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
+
+        // Update with data up to T4...
+        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
+        yValues.add(new Pair<>(1, new Interval(T3, T4)));
+        trace = update(xValues, yValues);
+
+        //Test at T4!
+        assertEquals(new Interval(-2.0), test(trace, m));
+    }
+
+    @Disabled("Only meaningful for Online Monitoring")
+    @Test
+    void berkleyTestT5() {
+        // Trace generation...
+        Signal<List<Comparable<?>>> trace;
+
+        // Monitor Instrumentation...
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        // Update with data up to T3...
+        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
+        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
+        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
+        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
+
+        // Update with data up to T4...
+        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
+        yValues.add(new Pair<>(1, new Interval(T3, T4)));
+
+        // Update with data up to T5...
+        xValues.add(new Pair<>(2, new Interval(T4, T5)));
+        yValues.add(new Pair<>(1, new Interval(T4, T5)));
+        trace = update(xValues, yValues);
+
+        //Test at T5!
+        assertEquals(new Interval(-2.0), test(trace, m));
+    }
+
+    @Disabled("Only meaningful for Online Monitoring")
+    @Test
+    void berkleyTestTMax() {
+        // Trace generation...
+        Signal<List<Comparable<?>>> trace;
+
+        // Monitor Instrumentation...
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+
+        // Update with data up to T3...
+        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
+        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
+        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
+        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
+
+        // Update with data up to T4...
+        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
+        yValues.add(new Pair<>(1, new Interval(T3, T4)));
+
+        // Update with data up to T5...
+        xValues.add(new Pair<>(2, new Interval(T4, T5)));
+        yValues.add(new Pair<>(1, new Interval(T4, T5)));
+
+        // Update with data up to the end...
+        xValues.add(new Pair<>(-1, new Interval(T5, T_MAX)));
+        yValues.add(new Pair<>(1, new Interval(T5, T_MAX)));
+        trace = update(xValues, yValues);
+
+        //Test at end of time!
+        assertEquals(new Interval(-2.0), test(trace, m));
+
+    }
+
+    @Disabled("Only meaningful for Online Monitoring")
+    @Test
+    void berkleyTestAllTogether() {
+        // Trace generation...
+        Signal<List<Comparable<?>>> trace = init();
+
+        // Monitor Instrumentation...
+        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+
+        //Test at T2!
+        assertEquals(new Interval(-2, Double.POSITIVE_INFINITY), test(trace, m));
+
+        // Update with data up to T3...
+        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
+        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
+        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
+        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
+        trace = update(xValues, yValues);
+
+        //Test at T3!
+        //assertEquals(new Interval(-2, Double.POSITIVE_INFINITY), test(trace, m));
 
         // Update with data up to T4...
         //xValues = new ArrayList<>();
         //yValues = new ArrayList<>();
         xValues.add(new Pair<>(-2, new Interval(T3, T4)));
         yValues.add(new Pair<>(1, new Interval(T3, T4)));
-        //update(trace, xValues, yValues);
+        trace = update(xValues, yValues);
 
         //Test at T4!
         //assertEquals(new Interval(-2.0), test(trace, m));
@@ -75,7 +192,7 @@ class RoSIBerkeleyTest {
         //yValues = new ArrayList<>();
         xValues.add(new Pair<>(2, new Interval(T4, T5)));
         yValues.add(new Pair<>(1, new Interval(T4, T5)));
-        update(trace, xValues, yValues);
+        trace = update(xValues, yValues);
 
         //Test at T5!
         assertEquals(new Interval(-2.0), test(trace, m));
@@ -85,13 +202,16 @@ class RoSIBerkeleyTest {
         yValues = new ArrayList<>();
         xValues.add(new Pair<>(-1, new Interval(T5, T_MAX)));
         yValues.add(new Pair<>(1, new Interval(T5, T_MAX)));
-        update(trace, xValues, yValues);
+        trace = update(xValues, yValues);
 
         //Test at end of time!
         assertEquals(new Interval(-2.0), test(trace, m));
+
     }
 
-    private Signal<List<Comparable<?>>> init() {
+
+
+    private static Signal<List<Comparable<?>>> init() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
         xValues.add(new Pair<>(1, new Interval(0, 4, true)));
         xValues.add(new Pair<>(2, new Interval(4, T2)));
@@ -125,7 +245,7 @@ class RoSIBerkeleyTest {
             //OnlineTemporalMonitoring<List<Comparable<?>>, Interval> p =
             // instrument(formula, trace);
 
-            Signal<Interval> m = p.monitor(formula, null).monitor(trace);
+            Signal<Interval> m = p.monitor(formula, null, trace.getEnd()).monitor(trace);
             //System.out.print(p.debug());
             return m.getIterator(true).value();
         } catch (Exception ex) {
@@ -134,12 +254,12 @@ class RoSIBerkeleyTest {
         }
     }
 
-    private static void update(
-            Signal<List<Comparable<?>>> signal,
+    private static Signal<List<Comparable<?>>> update(
             List<Pair<Integer, Interval>> xValues,
             List<Pair<Integer, Interval>> yValues)
     {
-        double init = xValues.get(0).getSecond().getEnd();
+        Signal<List<Comparable<?>>> signal = init();
+        double init = xValues.get(0).getSecond().getStart();
         double length = xValues.get(xValues.size() - 1).getSecond().getEnd();
         for(double t = init; t < length; t ++) {
             List<Comparable<?>> values = new ArrayList<>();
@@ -158,7 +278,10 @@ class RoSIBerkeleyTest {
             }
 
             signal.add(t, values);
+            signal.endAt(t);
         }
+
+        return signal;
     }
 
     /**

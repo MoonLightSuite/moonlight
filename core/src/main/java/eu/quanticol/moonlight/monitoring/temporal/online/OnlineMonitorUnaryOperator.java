@@ -44,23 +44,27 @@ public class OnlineMonitorUnaryOperator<T, R>
     private final UnaryOperator<R> op;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
+    private double signalEnd;
 
     public OnlineMonitorUnaryOperator(TemporalMonitor<T, R> m,
                                       UnaryOperator<R> op,
-                                      Interval parentHorizon)
+                                      Interval parentHorizon,
+                                      double end)
     {
         this.m = m;
         this.op = op;
         horizon = parentHorizon;
+        signalEnd = end;
         worklist = new ArrayList<>();
     }
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        if(horizon.contains(signal.getEnd()) || worklist.isEmpty()) {
+        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
             //update result
             worklist.add(m.monitor(signal).apply(op));
-        }
+        //}
+        signalEnd =  signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

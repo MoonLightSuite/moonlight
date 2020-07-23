@@ -45,37 +45,42 @@ public class OnlineMonitorFutureOperator<T, R>
     private final Interval interval;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
+    private double signalEnd;
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
                                        BinaryOperator<R> op, R min, R neutral,
                                        Interval definitionInterval,
-                                       Interval parentHorizon)
+                                       Interval parentHorizon,
+                                       double end)
     {
         this.m = m;
         this.op = op;
         this.min = min;
         this.neutral = neutral;
         this.interval = definitionInterval;
-        horizon = Interval.combine(definitionInterval, parentHorizon);
+        horizon = parentHorizon;
+        signalEnd = end;
         worklist = new ArrayList<>();
         //System.out.println("Future (" + op.toString() + "): " + horizon.toString());
     }
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
                                        BinaryOperator<R> op, R min, R neutral,
-                                       Interval parentHorizon)
+                                       Interval parentHorizon,
+                                       double end)
     {
-        this(m, op, min, neutral, null, parentHorizon);
+        this(m, op, min, neutral, null, parentHorizon, end);
     }
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        if(horizon.contains(signal.getEnd()) || worklist.isEmpty()) {
+        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
             //update result
             worklist.add(computeSignal(m.monitor(signal), interval, op, min));
-        }
+        //}
 
-        System.out.println("FutureOperator Result: " + worklist.get(worklist.size() - 1).toString());
+        signalEnd =  signal.getEnd();
+        System.out.println("FutureOperator Result Signal@maxT= " + signalEnd + " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
@@ -88,11 +93,10 @@ public class OnlineMonitorFutureOperator<T, R>
             throw new UnsupportedOperationException("Not Implemented Yet!");
             //return signal.iterateBackward(op, init);
         } else {
-            R baseline = op.apply(min, neutral);
             SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
                                                             interval.getEnd(),
                                                             op, true,
-                                                            baseline);
+                                                            neutral);
             return sw.apply(signal);
         }
     }

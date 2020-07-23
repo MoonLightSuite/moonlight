@@ -46,6 +46,8 @@ public class OnlineTemporalMonitoring<T, R> implements
 
     private final Map<String, TemporalMonitor<T, R>> monitors;
 
+    private double end = 0;
+
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
@@ -80,6 +82,7 @@ public class OnlineTemporalMonitoring<T, R> implements
                                                           .getWorklist());
             output.append("\n");
         }
+
         LOGGER.info(output.toString());
         return output.toString();
     }
@@ -95,10 +98,17 @@ public class OnlineTemporalMonitoring<T, R> implements
      * @return the result of the monitoring process.
      */
     public TemporalMonitor<T, R> monitor(Formula f,
-                                         Parameters params)
+                                         Parameters params, double end)
     {
         HorizonParameter horizon;
 
+        if(end >= this.end) {
+            this.end = end;
+        }
+        else {
+            throw new UnsupportedOperationException("Backward monitoring is " +
+                                                    "not allowed!");
+        }
         try {
             getHorizon(params);
             horizon = (HorizonParameter) params;
@@ -136,7 +146,7 @@ public class OnlineTemporalMonitoring<T, R> implements
         Function<T, R> atomic = f.apply(parameters);
 
         if(m == null) {
-            m = new OnlineMonitorAtomic<>(atomic, getHorizon(parameters));
+            m = new OnlineMonitorAtomic<>(atomic, getHorizon(parameters), end);
             monitors.put(atomicFormula.toString(), m);
         }
         return m;
@@ -154,7 +164,8 @@ public class OnlineTemporalMonitoring<T, R> implements
         if(m == null) {
             m = new OnlineMonitorUnaryOperator<>(monitoringArg,
                                                  domain::negation,
-                                                 getHorizon(parameters));
+                                                 getHorizon(parameters),
+                                                 end);
             monitors.put(negationFormula.toString(), m);
         }
         return m;
@@ -176,7 +187,8 @@ public class OnlineTemporalMonitoring<T, R> implements
             m = new OnlineMonitorBinaryOperator<>(leftMonitoring,
                                                   domain::conjunction,
                                                   rightMonitoring,
-                                                  getHorizon(parameters));
+                                                  getHorizon(parameters),
+                                                  end);
             monitors.put(andFormula.toString(), m);
         }
         return m;
@@ -198,7 +210,7 @@ public class OnlineTemporalMonitoring<T, R> implements
             m = new OnlineMonitorBinaryOperator<>(leftMonitoring,
                                                   domain::disjunction,
                                                   rightMonitoring,
-                                                  getHorizon(parameters));
+                                                  getHorizon(parameters), end);
             monitors.put(orFormula.toString(), m);
         }
         return m;
@@ -224,14 +236,16 @@ public class OnlineTemporalMonitoring<T, R> implements
                                                       domain::disjunction,
                                                       domain.min(),
                                                       domain.neutral(),
-                                                      horizon);
+                                                      horizon,
+                                                      end);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::disjunction,
                                                       domain.min(),
                                                       domain.neutral(),
                                                       interval,
-                                                      horizon);
+                                                      horizon,
+                                                      end);
             }
             monitors.put(eventuallyFormula.toString(), m);
         }
@@ -258,14 +272,16 @@ public class OnlineTemporalMonitoring<T, R> implements
                                                       domain::conjunction,
                                                       domain.max(),
                                                       domain.neutral(),
-                                                      horizon);
+                                                      horizon,
+                                                      end);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::conjunction,
                                                       domain.max(),
                                                       domain.neutral(),
                                                       interval,
-                                                      horizon);
+                                                      horizon,
+                                                      end);
             }
             monitors.put(globallyFormula.toString(), m);
         }

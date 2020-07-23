@@ -43,6 +43,7 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
     private final Function<T, R> atom;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
+    private double signalEnd;
 
     /**
      *
@@ -50,20 +51,23 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
      * @param parentHorizon
      */
     public OnlineMonitorAtomic(Function<T, R> atomicFunction,
-                               Interval parentHorizon)
+                               Interval parentHorizon,
+                               double end)
     {
         atom = atomicFunction;
         horizon = parentHorizon;
         worklist = new ArrayList<>();
+        signalEnd = end;
     }
 
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        if(horizon.contains(signal.getEnd()) || worklist.isEmpty()) {
+        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
             //update result
             worklist.add(signal.apply(atom));
-        }
+        //}
+        signalEnd =  signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

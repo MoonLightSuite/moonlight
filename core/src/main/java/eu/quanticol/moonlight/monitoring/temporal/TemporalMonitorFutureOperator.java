@@ -75,7 +75,11 @@ public class TemporalMonitorFutureOperator<T, R>
 			SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
 													  interval.getEnd(),
 													  op, true);
-			return sw.apply(signal);
+			Signal<T> result = sw.apply(signal);
+			System.out.println("FutureOperator Result Signal@maxT= " +
+							    signal.getEnd() + ": " +
+								result.toString());
+			return result;
 		}
 	}
 }

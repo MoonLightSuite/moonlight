@@ -45,31 +45,35 @@ public class OnlineMonitorBinaryOperator<T, R>
     private final TemporalMonitor<T, R> m2;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
+    private double signalEnd;
 
 
     public OnlineMonitorBinaryOperator(TemporalMonitor<T, R> m1,
                                        BinaryOperator<R> op,
                                        TemporalMonitor<T, R> m2,
-                                       Interval parentHorizon)
+                                       Interval parentHorizon,
+                                       double end)
     {
         this.m1 = m1;
         this.op = op;
         this.m2 = m2;
         horizon = parentHorizon;
+        signalEnd = end;
         worklist = new ArrayList<>();
     }
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        if(horizon.contains(signal.getEnd()) || worklist.isEmpty()) {
+        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
             //update result
             worklist.add(Signal.apply(m1.monitor(signal),
                                       op,
                                       m2.monitor(signal)));
-            System.out.println("[DEBUG] Binary Operator worklist:");
-            System.out.println(getWorklist().toString());
-        }
+            //System.out.println("[DEBUG] Binary Operator worklist:");
+            //System.out.println(getWorklist().toString());
+        //}
 
+        signalEnd =  signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

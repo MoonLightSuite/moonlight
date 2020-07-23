@@ -40,7 +40,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
 
         if(s.isEmpty()) {
             Signal<R> o = new Signal<>();
-            o.add(s.start() + getA(), undefined);
+            o.add(s.start(), undefined);
+            o.endAt(s.end());
             return o;
         }
 
@@ -55,7 +56,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         // beginning
         if(result.isEmpty()) {
             Signal<R> o = new Signal<>();
-            o.add(s.start() + getA(), undefined);
+            o.add(s.start(), undefined);
+            o.endAt(s.end());
             return o;
         }
 
