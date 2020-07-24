@@ -23,9 +23,7 @@ package eu.quanticol.moonlight.monitoring.temporal.online;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Signal;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -235,14 +233,14 @@ public class OnlineTemporalMonitoring<T, R> implements
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::disjunction,
                                                       domain.min(),
-                                                      domain.neutral(),
+                                                      domain.unknown(),
                                                       horizon,
                                                       end);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::disjunction,
                                                       domain.min(),
-                                                      domain.neutral(),
+                                                      domain.unknown(),
                                                       interval,
                                                       horizon,
                                                       end);
@@ -271,14 +269,14 @@ public class OnlineTemporalMonitoring<T, R> implements
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::conjunction,
                                                       domain.max(),
-                                                      domain.neutral(),
+                                                      domain.unknown(),
                                                       horizon,
                                                       end);
             } else {
                 m = new OnlineMonitorFutureOperator<>(monitoringArg,
                                                       domain::conjunction,
                                                       domain.max(),
-                                                      domain.neutral(),
+                                                      domain.unknown(),
                                                       interval,
                                                       horizon,
                                                       end);

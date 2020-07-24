@@ -229,7 +229,7 @@ public class SlidingWindow<R> {
 				first = first.splitAt(time - size);
 			} else {
 				// Otherwise we just remove the first Segment and make
-				// the window start from the succeeding one
+				// the window start from the next one
 				first = first.getNext();
 				if (first != null) {
 					first.setFirst();
@@ -245,7 +245,7 @@ public class SlidingWindow<R> {
 		 * @param value value the window will have at that time instant
 		 * @return true if the value is added, false if exceeding window's size
 		 */
-		boolean tryAdd(double time, R value ) {
+		boolean tryAdd(double time, R value) {
 			// If the window is empty, we initialize it
 			// at the current time, with the current value
 			if (first == null) {
@@ -254,7 +254,7 @@ public class SlidingWindow<R> {
 				// If the first time point of the window exceeds the maximum
 				// size of the window w.r.t the current time point, or,
 				// if the current time is beyond the maximum size of the window,
-				// the window must be shifted before adding it, and we
+				// the window must be shifted before adding new points, and we
 				// therefore immediately return to the caller.
 
 				// NOTE: we could also check whether the window has
@@ -327,6 +327,9 @@ public class SlidingWindow<R> {
 					insertTime =  current.getTime();
 					aggregatedValue = newValue;
 					current = current.getPrevious();
+					//TODO: because we have to shrink the window!
+					last = current;
+					end = insertTime;
 				}
 			}
 
@@ -356,8 +359,8 @@ public class SlidingWindow<R> {
 				return "<>";
 			} else {
 				return "< " + first.toString() +
-						"-" + last.toString() +
-						":" + end + ">";
+						" - " + last.toString() +
+						" : " + end + ">";
 			}
 		}
 	}

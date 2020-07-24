@@ -8,6 +8,9 @@ import java.util.function.BinaryOperator;
 public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
     private final R undefined;
 
+    private SignalCursor<R> previousCursor;
+    private Window previousWindow;
+
     /**
      * Constructs a Sliding Window on the given aggregator and time interval.
      *
@@ -38,7 +41,7 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         //    return new Signal<>();
         //}
 
-        if(s.isEmpty()) {
+        if(s.isEmpty() || (s.end() - s.start() < size())) {
             Signal<R> o = new Signal<>();
             o.add(s.start(), undefined);
             o.endAt(s.end());
@@ -46,14 +49,14 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         }
 
         // We prepare the Sliding Window
-        SignalCursor<R> cursor = iteratorInit(s);
-        Window window = new Window();
+        SignalCursor<R> cursor = loadCursor(s);
+        Window window = loadWindow();
 
         // We actually slide the window
         Signal<R> result = doSlide(cursor, window);
 
-        // If we have no results, we slided to an undefined area from the very
-        // beginning
+        // If we have no results, we slided to an undefined area
+        // from the very beginning
         if(result.isEmpty()) {
             Signal<R> o = new Signal<>();
             o.add(s.start(), undefined);
@@ -65,5 +68,19 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         storeEnding(result, window);
 
         return result;
+    }
+
+    private Window loadWindow() {
+        if(previousWindow ==  null)
+            previousWindow = new Window();
+
+        return previousWindow;
+    }
+
+    private SignalCursor<R> loadCursor(Signal<R> s) {
+        if(previousCursor == null)
+            previousCursor = iteratorInit(s);
+
+        return previousCursor;
     }
 }

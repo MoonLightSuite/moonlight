@@ -315,16 +315,16 @@ class RoSIBerkeleyTest {
         Formula atomX = new AtomicFormula("positiveX");
         Formula atomY = new AtomicFormula("positiveY");
 
-        return new GloballyFormula(
+        /*return new GloballyFormula(
                     new OrFormula(new EventuallyFormula(atomX,
                                                    new Interval(B, C)),
                                   new NegationFormula(atomY)),
-                    new Interval(0, A));
+                    new Interval(0, A));*/
 
         //formula for simpler testing, invert the comments for real tests
-        /*return new OrFormula(new EventuallyFormula(atomX,
+        return new OrFormula(new EventuallyFormula(atomX,
                                                    new Interval(B, C)),
-                             new NegationFormula(atomY));*/
+                             new NegationFormula(atomY));
 
         //return new NegationFormula(atomY);
     }
