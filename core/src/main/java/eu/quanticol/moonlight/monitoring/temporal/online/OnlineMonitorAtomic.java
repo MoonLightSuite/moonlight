@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.monitoring.temporal.online;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
@@ -43,7 +42,7 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
     private final Function<T, R> atom;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
-    private double signalEnd;
+    private final R undefined;
 
     /**
      *
@@ -52,12 +51,12 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
      */
     public OnlineMonitorAtomic(Function<T, R> atomicFunction,
                                Interval parentHorizon,
-                               double end)
+                               R unknown)
     {
         atom = atomicFunction;
         horizon = parentHorizon;
         worklist = new ArrayList<>();
-        signalEnd = end;
+        undefined = unknown;
     }
 
 
@@ -65,9 +64,8 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
     public Signal<R> monitor(Signal<T> signal) {
         //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
             //update result
-            worklist.add(signal.apply(atom));
+            worklist.add(signal.applyHorizon(atom, undefined, horizon.getStart(), horizon.getEnd()));
         //}
-        signalEnd =  signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

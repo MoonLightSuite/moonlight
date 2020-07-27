@@ -144,7 +144,7 @@ public class OnlineTemporalMonitoring<T, R> implements
         Function<T, R> atomic = f.apply(parameters);
 
         if(m == null) {
-            m = new OnlineMonitorAtomic<>(atomic, getHorizon(parameters), end);
+            m = new OnlineMonitorAtomic<>(atomic, getHorizon(parameters), domain.unknown());
             monitors.put(atomicFormula.toString(), m);
         }
         return m;

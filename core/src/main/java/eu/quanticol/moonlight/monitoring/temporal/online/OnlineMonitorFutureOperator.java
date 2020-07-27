@@ -61,7 +61,6 @@ public class OnlineMonitorFutureOperator<T, R>
         horizon = parentHorizon;
         signalEnd = end;
         worklist = new ArrayList<>();
-        //System.out.println("Future (" + op.toString() + "): " + horizon.toString());
     }
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
@@ -80,7 +79,7 @@ public class OnlineMonitorFutureOperator<T, R>
         //}
 
         signalEnd =  signal.getEnd();
-        System.out.println("FutureOperator Result Signal@maxT= " + signalEnd + " : " + worklist.get(worklist.size() - 1).toString());
+        //System.out.println("FutureOperator Result Signal@maxT= " + signalEnd + " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
@@ -96,12 +95,15 @@ public class OnlineMonitorFutureOperator<T, R>
             SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
                                                             interval.getEnd(),
                                                             op, true,
-                                                            neutral);
+                                                            neutral,
+                                                            horizon.getEnd());
             return sw.apply(signal);
         }
     }
 
-    //TODO: for debugging purposes mainly
+    /**
+     * [Debugging method] Retrieved the list of monitored results
+     */
     @Override
     public List<R> getWorklist() {
         List<R> lastValues = new ArrayList<>();

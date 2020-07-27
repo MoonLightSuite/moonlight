@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 /**
@@ -131,6 +132,41 @@ public class Signal<T> {
         newSignal.endAt(end);
         return newSignal;
     }
+
+    /**
+     * return a signal, given a signal and a function
+     */
+    public <R> Signal<R> applyHorizon(Function<T, R> f,
+                                      R undefined,
+                                      double horizonStart,
+                                      double horizonEnd)
+    {
+        Signal<R> newSignal = new Signal<>();
+        SignalCursor<T> cursor = getIterator(true);
+
+        double lastTime = 0;
+        while (!cursor.completed()) {
+            // we want to check the intersection between the signal piece
+            // and the horizon is not empty, i.e.
+            // we want the horizon to start before the current segment
+            // or to end after
+            //TODO: we should break the signal here
+            if(cursor.time() >= horizonStart ||
+                    cursor.nextTime() <= horizonEnd) {
+                newSignal.add(cursor.time(), f.apply(cursor.value()));
+            }
+            lastTime = cursor.time();
+            cursor.forward();
+        }
+        if(lastTime < horizonEnd) {
+            newSignal.add(lastTime, undefined);
+            newSignal.endAt(horizonEnd);
+        } else {
+            newSignal.endAt(end);
+        }
+        return newSignal;
+    }
+
 
     /**
      *

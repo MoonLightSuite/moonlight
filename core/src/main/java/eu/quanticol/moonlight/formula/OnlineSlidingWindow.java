@@ -10,6 +10,7 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
 
     private SignalCursor<R> previousCursor;
     private Window previousWindow;
+    private double horizon;
 
     /**
      * Constructs a Sliding Window on the given aggregator and time interval.
@@ -22,10 +23,12 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
     public OnlineSlidingWindow(double a, double b,
                                BinaryOperator<R> aggregator,
                                boolean isFuture,
-                               R undefined)
+                               R undefined,
+                               double horizon)
     {
         super(a, b, aggregator, isFuture);
         this.undefined = undefined;
+        this.horizon = horizon;
     }
 
     /**
@@ -41,12 +44,13 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         //    return new Signal<>();
         //}
 
-        if(s.isEmpty() || (s.end() - s.start() < size())) {
+        /*if(s.isEmpty() ) {
+                //|| (s.end() - s.start() < size())) {
             Signal<R> o = new Signal<>();
             o.add(s.start(), undefined);
             o.endAt(s.end());
             return o;
-        }
+        }*/
 
         // We prepare the Sliding Window
         SignalCursor<R> cursor = loadCursor(s);
@@ -60,12 +64,17 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         if(result.isEmpty()) {
             Signal<R> o = new Signal<>();
             o.add(s.start(), undefined);
-            o.endAt(s.end());
+            o.endAt(Math.max(s.end(), horizon));
             return o;
         }
 
         // We store the final value of the window
         storeEnding(result, window);
+
+        if (result.getEnd() < horizon) {
+            result.add(result.getEnd(), undefined);
+            result.endAt(horizon);
+        }
 
         return result;
     }
