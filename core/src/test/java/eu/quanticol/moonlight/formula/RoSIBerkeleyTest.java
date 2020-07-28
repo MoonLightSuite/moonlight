@@ -3,9 +3,6 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.IntervalDomain;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.HorizonParameter;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitoring;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.signal.*;
@@ -48,7 +45,7 @@ class RoSIBerkeleyTest {
         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         //Test at T2!
-        assertEquals(new Interval(0).any(), test(trace, m));
+        assertEquals(Interval.any(), test(trace, m));
     }
 
     @Test
@@ -67,7 +64,7 @@ class RoSIBerkeleyTest {
         trace = update(xValues, yValues);
 
         //Test at T3!
-        assertEquals(new Interval(0).any(), test(trace, m));
+        assertEquals(Interval.any(), test(trace, m));
     }
 
     @Disabled("This seems to be a corner case and requires investigation.")
@@ -161,7 +158,7 @@ class RoSIBerkeleyTest {
         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         //Test at T2!
-        assertEquals(new Interval(0).any(), test(trace, m));
+        assertEquals(Interval.any(), test(trace, m));
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -171,7 +168,7 @@ class RoSIBerkeleyTest {
         trace = update(xValues, yValues);
 
         //Test at T3!
-        assertEquals(new Interval(0).any(), test(trace, m));
+        assertEquals(Interval.any(), test(trace, m));
 
         // Update with data up to T4...
         xValues.add(new Pair<>(-2, new Interval(T3, T4)));
@@ -200,7 +197,9 @@ class RoSIBerkeleyTest {
     }
 
 
-
+    /**
+     * @return an input trace, up to T2
+     */
     private static Signal<List<Comparable<?>>> init() {
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
         xValues.add(new Pair<>(1, new Interval(0, 4, true)));
@@ -210,27 +209,23 @@ class RoSIBerkeleyTest {
         yValues.add(new Pair<>(-1, new Interval(0, 4, true)));
         yValues.add(new Pair<>(2, new Interval(4, T2)));
 
-        // Signals generator...
-        Signal<List<Comparable<?>>> trace = traceGenerator(T2,
-                                                           xValues,
-                                                           yValues);
-        return trace;
+        // We generate a signal and return it...
+        return traceGenerator(T2, xValues, yValues);
     }
 
     /**
      * Actual parametric test runner.
-     * @param traceLength length of the input trace
-     * @param xValues values for the first input signal
-     * @param yValues values for the second input signal
+     * @param trace input trace
+     * @param p monitoring process to use
      * @return an Interval corresponding to the final result of the monitoring
      */
     private static Interval test(Signal<List<Comparable<?>>> trace,
-                                 OnlineTemporalMonitoring<List<Comparable<?>>, Interval> p)
+         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> p)
     {
         try {
-            // Formula selection...
+            // We select the formula to test...
             Formula formula = testFormula();
-            Signal<Interval> m = p.monitor(formula, null, trace.getEnd())
+            Signal<Interval> m = p.monitor(formula, null)
                                   .monitor(trace);
 
             return m.getIterator(true).value();
@@ -240,6 +235,12 @@ class RoSIBerkeleyTest {
         }
     }
 
+    /**
+     * Generates a new trace by attaching new data to the previous one
+     * @param xValues list of values for the X signal
+     * @param yValues list of values for the Y signal
+     * @return a new traces that combines this data with the old one
+     */
     private static Signal<List<Comparable<?>>> update(
             List<Pair<Integer, Interval>> xValues,
             List<Pair<Integer, Interval>> yValues)
@@ -249,19 +250,9 @@ class RoSIBerkeleyTest {
         double length = xValues.get(xValues.size() - 1).getSecond().getEnd();
         for(double t = init; t < length; t ++) {
             List<Comparable<?>> values = new ArrayList<>();
+            updateValues(xValues, values, t);
+            updateValues(yValues, values, t);
 
-            for(Pair<Integer, Interval> p : xValues) {
-                if(p.getSecond().contains(t)) {
-                    values.add(p.getFirst());
-                    break;
-                }
-            }
-            for(Pair<Integer, Interval> p : yValues) {
-                if(p.getSecond().contains(t)) {
-                    values.add(p.getFirst());
-                    break;
-                }
-            }
             signal.add(t, values);
             signal.endAt(t);
         }
@@ -269,32 +260,45 @@ class RoSIBerkeleyTest {
     }
 
     /**
-     * Runs a temporal monitor on the given input.
-     * @param formula input formula to monitor
-     * @param trace input data over which the formula is monitored
-     * @return a signal corresponding to the result of the monitoring.
+     * Adds the input data to the given output
+     * @param input input data
+     * @param output output list
+     * @param time time instant of interest
+     */
+    private static void updateValues(List<Pair<Integer, Interval>> input,
+                                     List<Comparable<?>> output,
+                                     double time)
+    {
+        for(Pair<Integer, Interval> p : input) {
+            if(p.getSecond().contains(time)) {
+                output.add(p.getFirst());
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * @return a Monitoring object, ready to run
      */
     private static OnlineTemporalMonitoring<List<Comparable<?>>, Interval> instrument()
     {
-        //a is the atomic proposition: a >= 0
         HashMap<String,
                 Function<Parameters, Function<List<Comparable<?>>, Interval>>>
                 atoms = new HashMap<>();
 
+        //positiveX is the atomic proposition: x >= 0
         atoms.put("positiveX", ps -> trc ->
                                     new Interval((Integer) trc.get(X_SIGNAL)));
         atoms.put("positiveY", ps -> trc ->
                                     new Interval((Integer) trc.get(Y_SIGNAL)));
 
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> monitoring =
-                new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());
-
-        //Signal<Interval> monitor = monitoring.monitor(formula, null).monitor(trace);
-
-        //System.out.print(monitoring.debug());
-        return monitoring;
+        return new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());
     }
 
+    /**
+     * @return we return the formula from the paper example
+     */
     private static Formula testFormula() {
         Formula atomX = new AtomicFormula("positiveX");
         Formula atomY = new AtomicFormula("positiveY");
@@ -304,20 +308,10 @@ class RoSIBerkeleyTest {
                                                    new Interval(B, C)),
                                   new NegationFormula(atomY)),
                     new Interval(0, A));
-
-        //return new GloballyFormula(new NegationFormula(atomY),  new Interval(0, A));
-
-        //formula for simpler testing, invert the comments for real tests
-        /*return new OrFormula(new EventuallyFormula(atomX,
-                                                   new Interval(B, C)),
-                             new NegationFormula(atomY));*/
-
-        //return new NegationFormula(atomY);
-        //return new EventuallyFormula(atomX, new Interval(B, A + C));
     }
 
     /**
-     * Given two list of values, generates a multivalued trace.
+     * Given two list of values, generates a Multivalued spatial-temporal trace.
      * @param traceLength length of the trace
      * @param xValues values for the first coordinate
      * @param yValues values for the second coordinate
@@ -350,7 +344,8 @@ class RoSIBerkeleyTest {
      */
     private static Integer[] valuesFromIntervals(List<Pair<Integer, Interval>>
                                                                     function) {
-        int end = (int) Math.round(function.get(function.size() - 1).getSecond().getEnd());
+        int end = (int) Math.round(function.get(function.size() - 1)
+                                           .getSecond().getEnd());
 
         Integer[] data = new Integer[end + 1];
 

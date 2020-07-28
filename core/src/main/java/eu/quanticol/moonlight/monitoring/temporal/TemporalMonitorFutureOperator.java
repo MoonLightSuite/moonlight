@@ -39,28 +39,28 @@ public class TemporalMonitorFutureOperator<T, R>
 {
 	private final TemporalMonitor<T, R> m;
 	private final BinaryOperator<R>  op;
-	private final R min;
+	private final R init;
 	private final Interval interval;
 
 	public TemporalMonitorFutureOperator(TemporalMonitor<T, R> m,
-										 BinaryOperator<R> op, R min,
+										 BinaryOperator<R> op, R init,
 										 Interval interval)
 	{
 		this.m = m;
 		this.op = op;
-		this.min = min;
+		this.init = init;
 		this.interval = interval;
 	}
 
 	public TemporalMonitorFutureOperator(TemporalMonitor<T, R> m,
-										 BinaryOperator<R> op, R min)
+										 BinaryOperator<R> op, R init)
 	{
-		this(m, op, min, null);
+		this(m, op, init, null);
 	}
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return computeSignal(m.monitor(signal), interval, op, min);
+		return computeSignal(m.monitor(signal), interval, op, init);
 	}
 
 	//TODO: this should be at most protected

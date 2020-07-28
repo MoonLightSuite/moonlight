@@ -33,7 +33,8 @@ package eu.quanticol.moonlight.formula;
 public interface FormulaVisitor<P, M> {
 	
 	static IllegalArgumentException generateException( Class<?> c ) {
-		return new IllegalArgumentException(c.getName() + " is not supported by this visitor!");
+		return new IllegalArgumentException(c.getName() +
+										  " is not supported by this visitor!");
 	}
 
 	/* CLASSICAL LOGIC OPERATORS */

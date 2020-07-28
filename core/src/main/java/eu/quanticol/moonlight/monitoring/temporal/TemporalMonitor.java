@@ -35,6 +35,8 @@ import eu.quanticol.moonlight.signal.Signal;
  * called recursively until the atomic subformulae apply the given functions
  * on the signals.
  *
+ * Note that the static methods can only be used in offline monitoring
+ *
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *

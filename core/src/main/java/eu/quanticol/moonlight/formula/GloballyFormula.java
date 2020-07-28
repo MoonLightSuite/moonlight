@@ -24,10 +24,10 @@ import eu.quanticol.moonlight.domain.Interval;
 /**
  *
  */
-public class GloballyFormula implements Formula {
+public class GloballyFormula implements UnaryFormula, TemporalFormula {
 
     private final Formula argument;
-    private Interval interval;
+    private final Interval interval;
 
     public GloballyFormula(Formula argument) {
         this(argument, null);
@@ -46,6 +46,7 @@ public class GloballyFormula implements Formula {
     /**
      * @return the argument
      */
+    @Override
     public Formula getArgument() {
         return argument;
     }
@@ -53,6 +54,7 @@ public class GloballyFormula implements Formula {
     /**
      * @return the interval
      */
+    @Override
     public Interval getInterval() {
         return interval;
     }
@@ -102,6 +104,7 @@ public class GloballyFormula implements Formula {
         return "GloballyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
+    @Override
     public boolean isUnbounded() {
         return interval == null;
     }

@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-public class OrFormula implements Formula {
+public class OrFormula implements BinaryFormula {
 
     private final Formula firstArgument;
     private final Formula secondArgument;

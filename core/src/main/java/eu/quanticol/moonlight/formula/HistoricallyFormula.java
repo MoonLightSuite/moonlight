@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.domain.Interval;
 /**
  *
  */
-public class HistoricallyFormula implements Formula {
+public class HistoricallyFormula implements UnaryFormula, TemporalFormula {
 
     private final Formula argument;
     private Interval interval;
@@ -47,6 +47,7 @@ public class HistoricallyFormula implements Formula {
     /**
      * @return the argument
      */
+    @Override
     public Formula getArgument() {
         return argument;
     }
@@ -54,10 +55,12 @@ public class HistoricallyFormula implements Formula {
     /**
      * @return the interval
      */
+    @Override
     public Interval getInterval() {
         return interval;
     }
 
+    @Override
     public boolean isUnbounded() {
         return interval == null;
     }

@@ -37,7 +37,7 @@ import java.util.function.UnaryOperator;
  * @see TemporalMonitor
  */
 public class OnlineMonitorUnaryOperator<T, R>
-        implements OnlineTemporalMonitor<T, R>
+        implements TemporalMonitor<T, R>
 {
     private final TemporalMonitor<T, R> m;
     private final UnaryOperator<R> op;
@@ -47,14 +47,15 @@ public class OnlineMonitorUnaryOperator<T, R>
 
     public OnlineMonitorUnaryOperator(TemporalMonitor<T, R> m,
                                       UnaryOperator<R> op,
-                                      Interval parentHorizon,
-                                      double end)
+                                      Interval parentHorizon)
     {
         this.m = m;
         this.op = op;
         horizon = parentHorizon;
-        signalEnd = end;
         worklist = new ArrayList<>();
+
+        // By convention we assume that previous monitoring stopped at time 0
+        signalEnd = 0;
     }
 
     @Override
@@ -63,6 +64,7 @@ public class OnlineMonitorUnaryOperator<T, R>
             //update result
             worklist.add(m.monitor(signal).apply(op));
         //}
+
         signalEnd =  signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
@@ -72,16 +74,5 @@ public class OnlineMonitorUnaryOperator<T, R>
      */
     public Interval getHorizon() {
         return horizon;
-    }
-
-    //TODO: for debugging purposes mainly
-    @Override
-    public List<R> getWorklist() {
-        List<R> lastValues = new ArrayList<>();
-        for(Signal<R> item: worklist) {
-            lastValues.add(item.valueAt(0));
-        }
-
-        return lastValues;
     }
 }

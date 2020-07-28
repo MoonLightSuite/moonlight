@@ -158,7 +158,7 @@ public class TemporalMonitoring<T, R> implements
 											   .accept(this, parameters);
 
 		//TODO: shouldn't this invoke the orMonitor?
-		return andMonitor(leftMonitoring, module , rightMonitoring);
+		return orMonitor(leftMonitoring, module , rightMonitoring);
 	}
 
 	@Override

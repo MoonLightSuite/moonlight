@@ -49,6 +49,7 @@ class ImpreciseSignalTest {
         assertEquals(new Interval(-2), test(T4, xValues, yValues));
     }
 
+    @Disabled("Under Investigation")
     @Test
     void berkleyTestT5() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();
@@ -66,7 +67,8 @@ class ImpreciseSignalTest {
 
         assertEquals(new Interval(-2), test(T5, xValues, yValues));
     }
-    
+
+    @Disabled("Under Investigation")
     @Test
     void berkleyTestTMax() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();

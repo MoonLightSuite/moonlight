@@ -37,35 +37,47 @@ import java.util.function.Function;
  * @see OnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
+public class OnlineMonitorAtomic<T, R> implements TemporalMonitor<T, R> {
 
-    private final Function<T, R> atom;
+    private final Function<T, R> atomicFunction;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
-    private final R undefined;
+    private final R unknown;
+    private double signalEnd;
 
     /**
-     *
-     * @param atomicFunction
-     * @param parentHorizon
+     * Prepares an atomic online (temporal) monitor.
+     * @param atomicFunction The function evaluated by the atomic predicate
+     * @param parentHorizon The temporal horizon of the parent formula
+     * @param unknown The element of the domain that represents no information
      */
     public OnlineMonitorAtomic(Function<T, R> atomicFunction,
                                Interval parentHorizon,
                                R unknown)
     {
-        atom = atomicFunction;
-        horizon = parentHorizon;
-        worklist = new ArrayList<>();
-        undefined = unknown;
+        this.atomicFunction = atomicFunction;
+        this.horizon = parentHorizon;
+        this.unknown = unknown;
+        this.worklist = new ArrayList<>();
+
+        // By convention we assume that previous monitoring stopped at time 0
+        this.signalEnd = 0;
     }
 
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
+        // If the previous signal end falls within the formula horizon,
+        // we must recompute the monitoring.
+        // We store each monitoring result in a list.
+        // Whether updated or not, we can just return the last computed result.
+        if(horizon.contains(signalEnd) || signalEnd == 0) {
             //update result
-            worklist.add(signal.applyHorizon(atom, undefined, horizon.getStart(), horizon.getEnd()));
-        //}
+            worklist.add(signal.applyHorizon(atomicFunction, unknown,
+                                         horizon.getStart(), horizon.getEnd()));
+        }
+
+        signalEnd = signal.getEnd();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
@@ -74,16 +86,5 @@ public class OnlineMonitorAtomic<T, R> implements OnlineTemporalMonitor<T, R> {
      */
     public Interval getHorizon() {
         return horizon;
-    }
-
-    //TODO: for debugging purposes mainly
-    @Override
-    public List<R> getWorklist() {
-        List<R> lastValues = new ArrayList<>();
-        for(Signal<R> item: worklist) {
-            lastValues.add(item.valueAt(0));
-        }
-
-        return lastValues;
     }
 }

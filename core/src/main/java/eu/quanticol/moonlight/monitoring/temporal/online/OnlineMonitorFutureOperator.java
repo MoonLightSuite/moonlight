@@ -31,86 +31,66 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 
 /**
+ * Strategy to interpret online temporal operators on the future (except Until)
  *
- * @param <T>
- * @param <R>
+ * @param <T> Signal Trace Type
+ * @param <R> Semantic Interpretation Semiring Type
+ *
+ * @see TemporalMonitor
  */
 public class OnlineMonitorFutureOperator<T, R>
-        implements OnlineTemporalMonitor<T, R>
+        implements TemporalMonitor<T, R>
 {
     private final TemporalMonitor<T, R> m;
     private final BinaryOperator<R> op;
-    private final R min;
-    private final R neutral;
+    private final R init;
+    private final R unknown;
     private final Interval interval;
     private final Interval horizon;
     private final List<Signal<R>> worklist;
-    private double signalEnd;
+    private double signalEnd = 0;
+    private SlidingWindow<R> sw;
 
     public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
-                                       BinaryOperator<R> op, R min, R neutral,
+                                       BinaryOperator<R> op, R init, R unknown,
                                        Interval definitionInterval,
-                                       Interval parentHorizon,
-                                       double end)
+                                       Interval parentHorizon)
     {
         this.m = m;
         this.op = op;
-        this.min = min;
-        this.neutral = neutral;
+        this.init = init;
+        this.unknown = unknown;
         this.interval = definitionInterval;
-        horizon = parentHorizon;
-        signalEnd = end;
-        worklist = new ArrayList<>();
-    }
-
-    public OnlineMonitorFutureOperator(TemporalMonitor<T, R> m,
-                                       BinaryOperator<R> op, R min, R neutral,
-                                       Interval parentHorizon,
-                                       double end)
-    {
-        this(m, op, min, neutral, null, parentHorizon, end);
+        this.horizon = parentHorizon;
+        this.worklist = new ArrayList<>();
     }
 
     @Override
     public Signal<R> monitor(Signal<T> signal) {
-        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
+        //if(horizon.contains(signal.getEnd()) || signal.getEnd() > signalEnd) {
             //update result
-            worklist.add(computeSignal(m.monitor(signal), interval, op, min));
+            worklist.add(computeSignal(m.monitor(signal)));
         //}
 
         signalEnd =  signal.getEnd();
-        //System.out.println("FutureOperator Result Signal@maxT= " + signalEnd + " : " + worklist.get(worklist.size() - 1).toString());
+        //System.out.println("FutureOperator Result Signal@maxT= " + signalEnd +
+        //                " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
-    protected Signal<R> computeSignal(Signal<R> signal,
-                                      Interval interval,
-                                      BinaryOperator<R> op,
-                                      R init)
+    protected Signal<R> computeSignal(Signal<R> signal)
     {
         if (interval ==  null || interval.isEmpty()) {
             throw new UnsupportedOperationException("Not Implemented Yet!");
             //return signal.iterateBackward(op, init);
         } else {
+            //TODO: sw should be loaded from state
             SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
                                                             interval.getEnd(),
                                                             op, true,
-                                                            neutral,
+                                                            unknown,
                                                             horizon.getEnd());
             return sw.apply(signal);
         }
-    }
-
-    /**
-     * [Debugging method] Retrieved the list of monitored results
-     */
-    @Override
-    public List<R> getWorklist() {
-        List<R> lastValues = new ArrayList<>();
-        for(Signal<R> item: worklist) {
-            lastValues.add(item.valueAt(0));
-        }
-
-        return lastValues;
     }
 }

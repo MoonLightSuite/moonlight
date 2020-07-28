@@ -111,14 +111,6 @@ public class SlidingWindow<R> {
 		return size;
 	}
 
-	protected BinaryOperator<R> getAggregator() {
-		return aggregator;
-	}
-
-	protected double getA() {
-		return a;
-	}
-
 	/**
 	 * Actual logic of the sliding process
 	 * @param iterator signal cursor initialized at the beginning of the window
@@ -327,9 +319,10 @@ public class SlidingWindow<R> {
 					insertTime =  current.getTime();
 					aggregatedValue = newValue;
 					current = current.getPrevious();
-					//TODO: because we have to shrink the window!
-					last = current;
-					end = insertTime;
+					// We will re-use the window in the future, so we have to
+					// update window's ending to the correct one
+					//last = current;
+					//end = insertTime;
 				}
 			}
 

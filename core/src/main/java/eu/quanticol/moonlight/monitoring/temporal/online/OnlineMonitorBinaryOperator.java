@@ -38,7 +38,7 @@ import java.util.function.BinaryOperator;
  * @see TemporalMonitor
  */
 public class OnlineMonitorBinaryOperator<T, R>
-        implements OnlineTemporalMonitor<T, R>
+        implements TemporalMonitor<T, R>
 {
     private final TemporalMonitor<T, R> m1;
     private final BinaryOperator<R> op;
@@ -51,15 +51,14 @@ public class OnlineMonitorBinaryOperator<T, R>
     public OnlineMonitorBinaryOperator(TemporalMonitor<T, R> m1,
                                        BinaryOperator<R> op,
                                        TemporalMonitor<T, R> m2,
-                                       Interval parentHorizon,
-                                       double end)
+                                       Interval parentHorizon)
     {
         this.m1 = m1;
         this.op = op;
         this.m2 = m2;
         horizon = parentHorizon;
-        signalEnd = end;
         worklist = new ArrayList<>();
+        signalEnd = 0;
     }
 
     @Override
@@ -82,16 +81,5 @@ public class OnlineMonitorBinaryOperator<T, R>
      */
     public Interval getHorizon() {
         return horizon;
-    }
-
-    //TODO: for debugging purposes mainly
-    @Override
-    public List<R> getWorklist() {
-        List<R> lastValues = new ArrayList<>();
-        for(Signal<R> item: worklist) {
-            lastValues.add(item.valueAt(0));
-        }
-
-        return lastValues;
     }
 }

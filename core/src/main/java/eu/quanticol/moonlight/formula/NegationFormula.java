@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.formula;
 /**
  *
  */
-public class NegationFormula implements Formula {
+public class NegationFormula implements UnaryFormula {
 
     private final Formula argument;
 
@@ -30,6 +30,7 @@ public class NegationFormula implements Formula {
         this.argument = argument;
     }
 
+    @Override
     public Formula getArgument() {
         return this.argument;
     }

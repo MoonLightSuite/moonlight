@@ -24,13 +24,13 @@ import eu.quanticol.moonlight.domain.Interval;
 /**
  *
  */
-public class EventuallyFormula implements Formula {
+public class EventuallyFormula implements UnaryFormula, TemporalFormula {
 
     private final Formula argument;
     private final Interval interval;
 
     public EventuallyFormula(Formula argument) {
-        this(argument, new Interval());
+        this(argument, null);
     }
 
     public EventuallyFormula(Formula argument, Interval interval) {
@@ -46,6 +46,7 @@ public class EventuallyFormula implements Formula {
     /**
      * @return the argument
      */
+    @Override
     public Formula getArgument() {
         return argument;
     }
@@ -53,6 +54,7 @@ public class EventuallyFormula implements Formula {
     /**
      * @return the interval
      */
+    @Override
     public Interval getInterval() {
         return interval;
     }
@@ -102,6 +104,7 @@ public class EventuallyFormula implements Formula {
         return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
+    @Override
     public boolean isUnbounded() {
         return interval == null;
     }

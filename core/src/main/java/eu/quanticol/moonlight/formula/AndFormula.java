@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
-public class AndFormula implements Formula {
+public class AndFormula implements BinaryFormula {
 
     private final Formula firstArgument;
     private final Formula secondArgument;
