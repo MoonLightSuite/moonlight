@@ -20,7 +20,6 @@
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.domain.IntervalExtremes;
 
 /**
  *
@@ -31,7 +30,7 @@ public class EventuallyFormula implements Formula {
     private final Interval interval;
 
     public EventuallyFormula(Formula argument) {
-        this(argument, new Interval(0).empty());
+        this(argument, new Interval());
     }
 
     public EventuallyFormula(Formula argument, Interval interval) {

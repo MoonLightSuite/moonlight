@@ -1,9 +1,9 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
+ * Copyright (C) 2018
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,13 @@ package eu.quanticol.moonlight.domain;
  * @see AbstractInterval
  */
 public class Interval extends AbstractInterval<Double> {
+
+    /**
+     * Constructs an empty Interval
+     */
+    public Interval() {
+        super(0.0, 0.0,false, false);
+    }
 
     /**
      * Constructs a degenerated interval of the kind [value, value]
@@ -63,7 +70,9 @@ public class Interval extends AbstractInterval<Double> {
      * @param openOnLeft marks whether the left bound is included or not
      * @param openOnRight marks whether the right bound is included or not
      */
-    public Interval(Number start, Number end, boolean openOnLeft, boolean openOnRight) {
+    public Interval(Number start, Number end,
+                    boolean openOnLeft, boolean openOnRight)
+    {
         super(start.doubleValue(), end.doubleValue(), openOnLeft, openOnRight);
     }
 
@@ -73,32 +82,8 @@ public class Interval extends AbstractInterval<Double> {
      */
     public Interval translate(Double offset) {
         return new Interval(getStart() + offset, getEnd() + offset,
-                isOpenOnLeft(), isOpenOnRight());
+                             isOpenOnLeft(), isOpenOnRight());
     }
-
-    /**
-     * Constructs a degenerated interval that contains only the provided number
-     * @param number the only number included in the interval
-     * @return an interval of the kind [number, number]
-     */
-    public static Interval fromValue(Double number) {
-        return new Interval(number, number);
-    }
-
-    /**
-     * @return an empty interval, i.e. the smallest possible interval
-     */
-    @Override
-    public Interval empty() {
-        return new Interval(0.0, 0.0, true);
-    }
-
-    /**
-     * @return the widest possible interval
-     *//*
-    public static Interval any() {
-        return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-    }*/
 
     /**
      * Generates a new interval by combining two of them
@@ -115,11 +100,13 @@ public class Interval extends AbstractInterval<Double> {
             return i1;
 
         return new Interval(i1.getStart() + i2.getStart(),
-                            i1.getEnd() + i2.getEnd());
+                i1.getEnd() + i2.getEnd());
     }
 
-    @Override
-    public Interval any() {
+    /**
+     * @return the widest possible Interval
+     */
+    public static Interval any() {
         return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 }

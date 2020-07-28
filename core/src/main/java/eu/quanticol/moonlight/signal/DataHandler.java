@@ -354,16 +354,15 @@ public interface DataHandler<S> {
          */
         @Override
         public Interval fromObject(Object value) {
-            Interval _interval = new Interval(0.0, 0.0);
             if(value == null) {
                 throw new IllegalValueException("Expected a number or an interval. "
                                                + "Received: null");
             }
             if (value instanceof Double) {
-                return _interval.fromValue((Double) value);
+                return new Interval((Double) value);
             }
             if (value instanceof Number) {
-                return _interval.fromValue(((Number) value).doubleValue());
+                return new Interval(((Number) value).doubleValue());
             }
             if (value instanceof Interval) {
                 return (Interval) value;
@@ -375,9 +374,8 @@ public interface DataHandler<S> {
 
         @Override
         public Interval fromString(String str) {
-            Interval _interval = new Interval(0.0, 0.0);
             try {
-                return _interval.fromValue(Double.parseDouble(str));
+                return new Interval(Double.parseDouble(str));
             } catch (NumberFormatException e) {
                 throw  new IllegalValueException(e);
             }
@@ -385,7 +383,7 @@ public interface DataHandler<S> {
 
         @Override
         public Interval fromDouble(double value) {
-            return (new Interval(0.0, 0.0)).fromValue(value);
+            return new Interval(value);
         }
 
         @Override

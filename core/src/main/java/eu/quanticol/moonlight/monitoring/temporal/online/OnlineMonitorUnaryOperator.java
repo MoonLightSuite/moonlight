@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.monitoring.temporal.online;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;

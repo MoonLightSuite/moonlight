@@ -42,7 +42,7 @@ package eu.quanticol.moonlight.domain;
  * @see Interval for the implementation on Doubles
  */
 public abstract class AbstractInterval<T extends Comparable<T>>
-        implements Comparable<AbstractInterval<T>>, IntervalExtremes<T>
+        implements Comparable<AbstractInterval<T>>
 {
     private final T start;
     private final T end;
@@ -62,24 +62,6 @@ public abstract class AbstractInterval<T extends Comparable<T>>
         this.openOnLeft = openOnLeft;
         this.openOnRight = openOnRight;
     }
-
-    /**
-     * Constructs a full interval, regardless of the value passed.
-     * @param any
-     */
-    /*public AbstractInterval(T any) {
-        this.start = any.min();
-        this.end = any.max();
-        this.openOnLeft = false;
-        this.openOnRight = false;
-    }*/
-
-    /**
-     * Constructs a degenerated interval that contains only the provided number
-     * @param value the only number included in the interval
-     * @return an interval of the kind [value, value]
-     */
-    //public abstract AbstractInterval<T> fromValue(T value);
 
     /**
      * @return the left bound of the interval
@@ -194,9 +176,7 @@ public abstract class AbstractInterval<T extends Comparable<T>>
             return false;
         if (openOnLeft != other.openOnLeft || openOnRight != other.openOnRight)
             return false;
-        if (!start.equals(other.start))
-            return false;
-        return true;
+        return start.equals(other.start);
     }
 
     /**

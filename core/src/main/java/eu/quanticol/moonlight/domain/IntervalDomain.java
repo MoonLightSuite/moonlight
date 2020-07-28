@@ -30,12 +30,6 @@ import eu.quanticol.moonlight.signal.DataHandler;
  * @see SignalDomain
  */
 public class IntervalDomain implements SignalDomain<Interval> {
-    private static final Interval NEGATIVE_INFINITY =
-            new Interval(Double.NEGATIVE_INFINITY);
-    private static final Interval POSITIVE_INFINITY =
-            new Interval(Double.POSITIVE_INFINITY);
-    private static final Interval TOTAL_INTERVAL =
-            new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     @Override
     public Interval conjunction(Interval x, Interval y) {
@@ -55,11 +49,6 @@ public class IntervalDomain implements SignalDomain<Interval> {
     }
 
     @Override
-    public Interval unknown() {
-        return TOTAL_INTERVAL;
-    }
-
-    @Override
     public Interval min() {
         return NEGATIVE_INFINITY;
     }
@@ -67,6 +56,20 @@ public class IntervalDomain implements SignalDomain<Interval> {
     @Override
     public Interval max() {
         return POSITIVE_INFINITY;
+    }
+
+
+    private static final Interval NEGATIVE_INFINITY =
+            new Interval(Double.NEGATIVE_INFINITY);
+    private static final Interval POSITIVE_INFINITY =
+            new Interval(Double.POSITIVE_INFINITY);
+    private static final Interval TOTAL_INTERVAL =
+            new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+
+    @Override
+    public Interval unknown() {
+        return TOTAL_INTERVAL;
     }
 
     @Override

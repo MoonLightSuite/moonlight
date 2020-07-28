@@ -41,6 +41,13 @@ import eu.quanticol.moonlight.signal.DataHandler;
  */
 public interface SignalDomain<R> extends Semiring<R> {
 
+	/**
+	 * Unknown element: this is an element of the set that represents
+	 * undefined areas of the signal.
+	 * Examples of this could be 0 for real numbers,
+	 * a third value for booleans, or the total interval for intervals.
+	 * @return the element of the set representing absence of knowledge
+	 */
 	R unknown();
 
 	/**

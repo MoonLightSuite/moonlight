@@ -1,3 +1,23 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.signal.Signal;
@@ -10,7 +30,7 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
 
     private SignalCursor<R> previousCursor;
     private Window previousWindow;
-    private double horizon;
+    private final double horizon;
 
     /**
      * Constructs a Sliding Window on the given aggregator and time interval.
@@ -38,20 +58,6 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
      */
     @Override
     public Signal<R> apply(Signal<R> s) {
-        // If the signal is empty or shorter than the time horizon,
-        // we return an empty signal
-        //if (s.isEmpty()) {
-        //    return new Signal<>();
-        //}
-
-        /*if(s.isEmpty() ) {
-                //|| (s.end() - s.start() < size())) {
-            Signal<R> o = new Signal<>();
-            o.add(s.start(), undefined);
-            o.endAt(s.end());
-            return o;
-        }*/
-
         // We prepare the Sliding Window
         SignalCursor<R> cursor = loadCursor(s);
         Window window = loadWindow();
@@ -71,6 +77,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         // We store the final value of the window
         storeEnding(result, window);
 
+        // If the signal is shorter than the time horizon,
+        // we return a Signal containing "undefined" information
         if (result.getEnd() < horizon) {
             result.add(result.getEnd(), undefined);
             result.endAt(horizon);
