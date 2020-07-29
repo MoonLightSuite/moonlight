@@ -32,7 +32,7 @@ public class Interval extends AbstractInterval<Double> {
      * Constructs an empty Interval
      */
     public Interval() {
-        super(0.0, 0.0,false, false);
+        super(0.0, 0.0, true, true);
     }
 
     /**

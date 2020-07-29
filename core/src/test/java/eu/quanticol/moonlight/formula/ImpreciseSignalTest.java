@@ -31,7 +31,7 @@ class ImpreciseSignalTest {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
-    @Disabled("Under Investigation")
+    @Disabled("This seems to be a corner case and requires investigation.")
     @Test
     void berkleyTestT4() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();
@@ -49,7 +49,6 @@ class ImpreciseSignalTest {
         assertEquals(new Interval(-2), test(T4, xValues, yValues));
     }
 
-    @Disabled("Under Investigation")
     @Test
     void berkleyTestT5() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();
@@ -68,7 +67,6 @@ class ImpreciseSignalTest {
         assertEquals(new Interval(-2), test(T5, xValues, yValues));
     }
 
-    @Disabled("Under Investigation")
     @Test
     void berkleyTestTMax() {
         List<Pair<Interval, Interval>> xValues = new ArrayList<>();
@@ -149,7 +147,7 @@ class ImpreciseSignalTest {
         return new GloballyFormula(
                     new OrFormula(new EventuallyFormula(atomX,
                                                         new Interval(B, C)),
-                                  atomY),
+                                  new NegationFormula(atomY)),
                     new Interval(0, A));
     }
 
