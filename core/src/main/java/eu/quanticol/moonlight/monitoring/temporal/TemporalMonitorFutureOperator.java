@@ -77,7 +77,7 @@ public class TemporalMonitorFutureOperator<T, R>
 													  op, true);
 			Signal<T> result = sw.apply(signal);
 			System.out.println("FutureOperator Result Signal@maxT= " +
-							    signal.getEnd() + ": " +
+							    signal.end() + ": " +
 								result.toString());
 			return result;
 		}

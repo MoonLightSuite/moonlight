@@ -83,7 +83,7 @@ public class RandomFormula {
             double[] time = signalCreator.generateTime(0, endTime, timeStep);
             double[][] values = generateValues(time,functions);
             VariableArraySignal signal = signalCreator.generate(0, endTime, timeStep);
-            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
+            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
             Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
             //System.out.println(generatedFormula.toString());
             //System.out.println(toTaliro.toTaliro(generatedFormula));

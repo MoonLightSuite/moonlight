@@ -79,8 +79,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
 
         // If the signal is shorter than the time horizon,
         // we return a Signal containing "undefined" information
-        if (result.getEnd() < horizon) {
-            result.add(result.getEnd(), undefined);
+        if (result.end() < horizon) {
+            result.add(result.end(), undefined);
             result.endAt(horizon);
         }
 

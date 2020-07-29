@@ -65,7 +65,7 @@ public class OnlineMonitorUnaryOperator<T, R>
             worklist.add(m.monitor(signal).apply(op));
         //}
 
-        signalEnd =  signal.getEnd();
+        signalEnd =  signal.end();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

@@ -72,7 +72,7 @@ public class OnlineMonitorBinaryOperator<T, R>
             //System.out.println(getWorklist().toString());
         //}
 
-        signalEnd =  signal.getEnd();
+        signalEnd =  signal.end();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

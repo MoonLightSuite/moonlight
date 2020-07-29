@@ -68,7 +68,7 @@ public class RoSIRandomTest {
         String[] vars = trace.getSecond();
 
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(random,
-                                                        signal.getEnd(), vars);
+                                                        signal.end(), vars);
 
         Formula f = formulaGenerator.getFormula(FORMULA_LENGTH);
 

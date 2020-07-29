@@ -96,7 +96,7 @@ class TestTemporalMonitoring {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 1, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
         HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
         //a is the atomic proposition: a>=0

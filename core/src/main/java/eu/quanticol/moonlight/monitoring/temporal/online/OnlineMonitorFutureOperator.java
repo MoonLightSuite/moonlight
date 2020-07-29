@@ -72,7 +72,7 @@ public class OnlineMonitorFutureOperator<T, R>
             worklist.add(computeSignal(m.monitor(signal)));
         //}
 
-        signalEnd =  signal.getEnd();
+        signalEnd =  signal.end();
         //System.out.println("FutureOperator Result Signal@maxT= " + signalEnd +
         //                " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
@@ -85,11 +85,13 @@ public class OnlineMonitorFutureOperator<T, R>
             //return signal.iterateBackward(op, init);
         } else {
             //TODO: sw should be loaded from state
-            SlidingWindow<R> sw = new OnlineSlidingWindow<>(interval.getStart(),
-                                                            interval.getEnd(),
-                                                            op, true,
-                                                            unknown,
-                                                            horizon.getEnd());
+            //if(sw == null) {
+                sw = new OnlineSlidingWindow<>(interval.getStart(),
+                        interval.getEnd(),
+                        op, true,
+                        unknown,
+                        horizon.getEnd());
+           // }
             return sw.apply(signal);
         }
     }

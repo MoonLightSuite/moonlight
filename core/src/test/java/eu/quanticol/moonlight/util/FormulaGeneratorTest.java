@@ -41,7 +41,7 @@ class FormulaGeneratorTest {
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
-            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), "a");
+            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.end(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
             System.out.println(toTaliro.toTaliro(generatedFormula));
@@ -81,7 +81,7 @@ class FormulaGeneratorTest {
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
             Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
-            FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1), signal.getEnd(), "a");
+            FormulaGenerator formulaGenerator = new BothFormulaGenerator(new Random(1), signal.end(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
             //System.out.println(toTaliro.toTaliro( generatedFormula ));

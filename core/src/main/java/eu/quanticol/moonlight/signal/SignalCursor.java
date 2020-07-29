@@ -32,6 +32,8 @@ public interface SignalCursor<T> {
 
 	void backward();
 
+	void revert();
+
 	void move(double t);
 	
 	double nextTime();

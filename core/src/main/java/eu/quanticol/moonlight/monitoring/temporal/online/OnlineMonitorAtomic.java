@@ -77,7 +77,7 @@ public class OnlineMonitorAtomic<T, R> implements TemporalMonitor<T, R> {
                                          horizon.getStart(), horizon.getEnd()));
         }
 
-        signalEnd = signal.getEnd();
+        signalEnd = signal.end();
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 

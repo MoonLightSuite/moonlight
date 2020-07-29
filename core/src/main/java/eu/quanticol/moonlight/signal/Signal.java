@@ -36,19 +36,14 @@ public class Signal<T> {
     private Segment<T> first;
     private Segment<T> last;
     private int size = 0;
-
-
-    private double end = 0.0;
+    private double end = 0.0; //TODO: we should just take this from last segment
+                              // (unnecessary logic duplication)
 
     public Signal() {
         this.first = null;
         this.last = null;
         this.size = 0;
         this.end = Double.NaN;
-    }
-
-    public double getEnd() {
-        return end;
     }
 
     /**
@@ -149,7 +144,7 @@ public class Signal<T> {
             // we want to check the intersection between the signal piece
             // and the horizon is not empty, i.e.
             // we want the horizon to start before the current segment
-            // or to end after
+            // or to end after it
             //TODO: we should break the signal here
             if(cursor.time() >= horizonStart ||
                     cursor.nextTime() <= horizonEnd) {
@@ -277,6 +272,7 @@ public class Signal<T> {
 
             private Segment<T> current = (forward ? first : last);
             private double time = (current != null ? (forward ? current.getTime() : current.getSegmentEnd()) : Double.NaN);
+            private Segment<T> previous = null;
 
             @Override
             public double time() {
@@ -291,6 +287,7 @@ public class Signal<T> {
             @Override
             public void forward() {
                 if (current != null) {
+                    previous = current;
                     if ((!current.isRightClosed()) || (current.doEndAt(time))) {
                         current = current.getNext();
                         time = (current != null ? current.getTime() : Double.NaN);
@@ -303,6 +300,7 @@ public class Signal<T> {
             @Override
             public void backward() {
                 if (current != null) {
+                    previous = current;
                     if (time>current.getTime()) {
                         time = current.getTime();
                     } else {
@@ -310,6 +308,16 @@ public class Signal<T> {
                         time = (current != null ? current.getTime() : Double.NaN);
                     }
                 }
+            }
+
+            //TODO: this method is really a workaround, it's not needed to
+            //      always store the previous segment
+            @Override
+            public void revert() {
+                if(previous != null) {
+                    current = previous;
+                } else
+                    throw new UnsupportedOperationException("Nothing to revert");
             }
 
             @Override

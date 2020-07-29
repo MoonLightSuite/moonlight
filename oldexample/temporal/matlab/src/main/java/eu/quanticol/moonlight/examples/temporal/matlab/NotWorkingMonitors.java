@@ -62,7 +62,7 @@ public class NotWorkingMonitors {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
         System.out.println(toTaliro.toTaliro(generatedFormula));
         HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();

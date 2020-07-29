@@ -107,7 +107,7 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 		} 
 		result.endAt(end);
 		System.out.println("FutureOperator Result Signal@maxT= " +
-							"<" + s1.getEnd() + "," + s2.getEnd() + "> : " +
+							"<" + s1.end() + "," + s2.end() + "> : " +
 							result.toString());
 		return result;
 	}

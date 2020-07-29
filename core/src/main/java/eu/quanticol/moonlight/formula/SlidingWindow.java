@@ -134,10 +134,13 @@ public class SlidingWindow<R> {
 				result.add(timeOf(window.firstTime()), window.firstValue());
 				window.shift(time);
 			}
-
 			// We go over to the next Segment of the Signal
 			iterator.forward();
 		}
+		// We need to get back to the last segment, so that future iteration
+		// can continue from here
+		iterator.revert();
+
 		return result;
 	}
 
@@ -321,8 +324,8 @@ public class SlidingWindow<R> {
 					current = current.getPrevious();
 					// We will re-use the window in the future, so we have to
 					// update window's ending to the correct one
-					//last = current;
-					//end = insertTime;
+					last = current;
+					end = insertTime;
 				}
 			}
 
