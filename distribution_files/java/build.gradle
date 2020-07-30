@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":console")
+    compile files('moonlight.jar')
+    compile fileTree(dir: "lib", include: ['*.jar'])
+}
