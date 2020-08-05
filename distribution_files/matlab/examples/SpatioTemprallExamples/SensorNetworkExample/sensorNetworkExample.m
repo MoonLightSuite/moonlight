@@ -2,7 +2,7 @@
 clear
 close all
 %% generation of the data (spatial model, time, values)
-numSteps        = 1;   % number of frames
+numSteps        = 5;   % number of frames
 num_nodes       = 50;    % number of nodes
 framePlot = false; % to enable or disable the plot of the graph
 % see the sensorModel function for the description of the output
