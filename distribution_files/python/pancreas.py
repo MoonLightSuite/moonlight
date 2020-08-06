@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # to use java in python you need to specify the path where is Java 
 import os
-os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk-11.0.5.jdk/Contents/Home"
+os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home"
 from moonlight import *
 
 # importing the model, the simulation function
@@ -59,10 +59,11 @@ domain minmax;
 formula hypoGlicemia = globally [0.0, 1400]  (y > 70);
 formula hyperGlicemia = globally [0.0, 1400]  (y < 180);
 """
-moonlightScript = ScriptLoader.loadFromText(script)
+moonlight = Moonlight()
+moonlight.set_script(script)
 
 # monitoring the properties
-monitor = moonlightScript.getMonitor("hypoGlicemia")
+monitor = moonlight.get_monitor("hypoGlicemia")
 y_signal = [[yy] for yy in y]
 result = monitor.monitor(list(t),y_signal)
 print('robustness:'+ str(result[0][1])) # robustness at time zero

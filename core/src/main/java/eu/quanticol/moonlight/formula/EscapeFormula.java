@@ -9,16 +9,19 @@ package eu.quanticol.moonlight.formula;
  */
 public class EscapeFormula implements Formula {
 
+	private final String intervalId;
 	private final String distanceFunctionId;
 	private final Formula argument;
 	
 
 	/**
+	 * @param intervalId
 	 * @param distanceFunctionId
-	 * @param argument
+	 * @param formula
 	 */
-	public EscapeFormula(String distanceFunctionId, Formula argument) {
+	public EscapeFormula(String intervalId, String distanceFunctionId, Formula argument) {
 		super();
+		this.intervalId = intervalId;
 		this.distanceFunctionId = distanceFunctionId;
 		this.argument = argument;
 	}
@@ -26,6 +29,13 @@ public class EscapeFormula implements Formula {
 	@Override
 	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
 		return visitor.visit(this, parameters);
+	}
+
+	/**
+	 * @return the intervalId
+	 */
+	public String getIntervalId() {
+		return intervalId;
 	}
 
 	/**

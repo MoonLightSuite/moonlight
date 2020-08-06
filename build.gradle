@@ -9,7 +9,6 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'distribution'
-    apply plugin: 'jacoco'
     apply from: rootDir.absolutePath + '/module.gradle'
 
     sourceCompatibility = 8
@@ -33,8 +32,8 @@ subprojects {
         println "deleating jars in  ${rootDir}/output/"
         delete "${rootDir}/distribution/"
         println "deleating jars in  ${rootDir}/distribution/"
-        delete "${rootDir}/distribution_files/java/lib/moonlight.jar"
-        println "deleating ${rootDir}/distribution_files/java/lib/moonlight.jar"
+        delete "${rootDir}/distribution_files/java/"
+        println "deleating jars in  ${rootDir}/distribution_files/java/"
         delete "${rootDir}/distribution_files/matlab/moonlight/jar/"
         println "deleating jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/"
         delete "${rootDir}/distribution_files/python/jar/"
@@ -53,13 +52,4 @@ subprojects {
             }
         }
     }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-            html.enabled false
-        }
-    }
-
-    check.dependsOn jacocoTestReport
 }

@@ -9,7 +9,6 @@ import eu.quanticol.moonlight.xtext.moonLightScript.Expression
 import eu.quanticol.moonlight.xtext.moonLightScript.FalseLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.FormulaDeclaration
 import eu.quanticol.moonlight.xtext.moonLightScript.IfThenElseExpression
-import eu.quanticol.moonlight.xtext.moonLightScript.InfiniteLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerLiteral
 import eu.quanticol.moonlight.xtext.moonLightScript.IntegerType
 import eu.quanticol.moonlight.xtext.moonLightScript.MinMaxSemiring
@@ -137,7 +136,7 @@ class ScriptToJava {
 					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
-				throw new IllegalArgumentException("Formula "+name+" is unknown!");				
+				return null;
 			}
 			
 			public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent( ) {
@@ -151,7 +150,7 @@ class ScriptToJava {
 					return 	getMONITOR_«f.name»(getMonitoringDomain()); 
 				}
 				«ENDFOR»
-				throw new IllegalArgumentException("Formula "+name+" is unknown!");				
+				return «generateReferenceToDefaultFormula(model.formulas)»;					
 			}				
 
 			public TemporalScriptComponent<?> selectDefaultTemporalComponent( ) {
@@ -706,10 +705,7 @@ class ScriptToJava {
 
 	def dispatch CharSequence getExpressionToJava(Expression expression) {
 		'''1.0'''
-	}
-
-	def dispatch CharSequence getExpressionToJava(InfiniteLiteral expression) {
-		'''Double.POSITIVE_INFINITY'''
+		
 	}
 
 	def dispatch CharSequence getExpressionToJava(OrExpression expression) {

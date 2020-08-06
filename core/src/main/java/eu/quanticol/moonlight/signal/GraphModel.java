@@ -63,8 +63,7 @@ public class GraphModel<T> implements SpatialModel<T> {
 
 	public void add( int src, T value , int trg ) {
 		if (src == trg) {
-			//throw new IllegalArgumentException("Self-loops are not allowed ("+src+"- "+value.toString()+" -> "+ trg+"!");
-			return;//TODO: fix it!
+			throw new IllegalArgumentException("Self-loops are not allowed!");
 		}
 		if (this.edges.get(src).containsKey(trg)) {
 			throw new IllegalArgumentException("Duplicated edge!");

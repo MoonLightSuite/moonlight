@@ -125,9 +125,6 @@ public class Segment<T> {
 
 	public double getSegmentEnd() {
 		if (next == null) {
-			if (Double.isNaN(this.end)) {
-				return this.time;
-			}
 			return this.end;
 		}
 		return next.getTime();

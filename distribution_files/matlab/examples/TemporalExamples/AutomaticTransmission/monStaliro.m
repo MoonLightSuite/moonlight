@@ -15,9 +15,8 @@ st_spec1_Pred(1).str = 'a1';
 st_spec1_Pred(1).A = [0 1 0];
 st_spec1_Pred(1).b = omega;
 
-tElapsedSpec1Staliro  = 0;
 for i=1:num_exp
-    
+    tElapsedSpec1Staliro  = 0;
     tStart                = tic;
     rob1                  = fw_taliro(st_spec1,st_spec1_Pred,output,time);
     tElapsedSpec1Staliro  = tElapsedSpec1Staliro + toc(tStart);
@@ -42,8 +41,8 @@ st_spec2_Pred(2).str = 'a2';
 st_spec2_Pred(2).A = [1 0 0];
 st_spec2_Pred(2).b = speed_threshold;
 
-tElapsedSpec2Staliro  = 0;
 for i=1:num_exp
+    tElapsedSpec2Staliro  = 0;
     tStart                = tic;
     rob2                  = fw_taliro(st_spec2,st_spec2_Pred,output,time);
     tElapsedSpec2Staliro  = tElapsedSpec2Staliro + toc(tStart);
@@ -67,8 +66,8 @@ st_spec6_Pred(2).str = 'a2';
 st_spec6_Pred(2).A = [0 1 0];
 st_spec6_Pred(2).b = omega;
 
-tElapsedSpec6Staliro  = 0;
 for i=1:num_exp
+    tElapsedSpec6Staliro  = 0;
     tStart                = tic;
     rob6                  = fw_taliro(st_spec6,st_spec6_Pred,output,time);
     tElapsedSpec6Staliro  = tElapsedSpec6Staliro + toc(tStart);
@@ -76,9 +75,9 @@ end
 
 robust_results(3,:) = [rob6, tElapsedSpec6Staliro/num_exp];
 
-% ev_[0,10] ((v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))
+% (ev_[0,10] (v_speed[t] >= 120)) and  (alw (e_speed[t] < 3000))
 
-st_spec7 = strcat('<>_[0,',num2str(T),'] ((a1)) /\ ([] (a2))');
+st_spec7 = strcat('(<>_[0,',num2str(T),'] (a1)) /\ ([] (a2))');
 
 %a1: v_speed[t] > speed_threshold
 
@@ -92,8 +91,8 @@ st_spec7_Pred(2).str = 'a2';
 st_spec7_Pred(2).A = [0 1 0];
 st_spec7_Pred(2).b = omega;
 
-tElapsedSpec7Staliro  = 0;
 for i=1:num_exp
+    tElapsedSpec7Staliro  = 0;
     tStart                = tic;
     rob7                  = fw_taliro(st_spec7,st_spec7_Pred,output,time);
     tElapsedSpec7Staliro  = tElapsedSpec7Staliro + toc(tStart);

@@ -212,7 +212,8 @@ public class TemporalScriptComponent<S> {
     }
 
     public String getInfo() {
-       return getName();
+        //TODO: Complete!
+        return this.toString();
     }
 
     public String[] getVariables() {

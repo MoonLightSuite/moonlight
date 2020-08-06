@@ -49,8 +49,8 @@ class TestSpatialTemporalProperties {
         atomic.put("simpleAtomich", p -> (x -> (x - 0.5)));
 
         Formula somewhere = new SomewhereFormula("dist6", new AtomicFormula("simpleAtomicl"));
-        Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "dist6", new AtomicFormula("simpleAtomich"));
-        Formula escape = new EscapeFormula( "dist6", new AtomicFormula("simpleAtomicl"));
+        Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "ciccia", "dist6", new AtomicFormula("simpleAtomich"));
+        Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
 
 
         SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
@@ -85,8 +85,8 @@ class TestSpatialTemporalProperties {
         atomic.put("simpleAtomich", p -> (x -> (x - 0.5)));
 
         Formula somewhere = new SomewhereFormula("dist6", new AtomicFormula("simpleAtomicl"));
-        Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "dist6", new AtomicFormula("simpleAtomich"));
-        Formula escape = new EscapeFormula("dist6", new AtomicFormula("simpleAtomicl"));
+        Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "ciccia", "dist6", new AtomicFormula("simpleAtomich"));
+        Formula escape = new EscapeFormula("ciccia", "dist6", new AtomicFormula("simpleAtomicl"));
 
         SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);

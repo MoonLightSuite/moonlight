@@ -55,10 +55,10 @@ public class SpatialTemporalMonitorEscape<E,S,T> implements SpatialTemporalMonit
     		next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
     	}
     	//Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
-		SpatialModel<E> sm = current.getSecond();
-		DistanceStructure<E, ?> f = distance.apply(sm);
     	while (!cursor.completed() && !Double.isNaN(time)) {
     		Function<Integer, T> spatialSignal = cursor.getValue();
+    		SpatialModel<E> sm = current.getSecond();
+    		DistanceStructure<E, ?> f = distance.apply(sm);
     		toReturn.add(time, f.escape(domain, spatialSignal));
     		double nextTime = cursor.forward();
     		while ((next != null)&&(next.getFirst()<nextTime)) {
