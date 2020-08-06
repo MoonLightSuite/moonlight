@@ -1,16 +1,30 @@
 classdef ScriptLoader
+    % This class contains methods to load the MoonLight scripts  
     methods(Static)
         function  moonlightScript = loadFromFile(filename)
+            % loadFromFile  load a moonLightScript from file.
+            %   loadFromFile(filename) load a script from a file named
+            %   filename
             ScriptLoader.loadInnerFromFile(filename);
             warning('off','all');
             moonlightScript=MoonlightScript(eval("moonlight.script.Script"+filename));
             warning('on','all');
         end
-        function moonlightScript = loadFromText(script)
+        function moonlightScript = loadFromText(stringArray)
+            % loadFromText  load a moonLightScript from a stringArray.
+            %   loadFromText(stringArray) load a script from a script saved
+            %   as a stringArray as follows:
+            %
+            %   stringArray = [
+            %   "signal { real x; real y}",...
+            %   "domain minmax;",... 
+            %   "formula future = globally [0, 0.2]  (x > y);"...
+            %   "formula past = historically [0, 0.2]  (x > y);"
+            %   ];
             fileName = strcat("moonlight",extractBefore(char(java.util.UUID.randomUUID),"-"));
             monlightScriptPath=fullfile(tempdir,"moonlight",fileName+".mls");
             monlightScriptFile = fopen(monlightScriptPath,'w');
-            for line = script
+            for line = stringArray
                 fprintf(monlightScriptFile, strcat(line,"\n"));
             end
             ScriptLoader.loadInnerFromText(fileName,monlightScriptPath);
@@ -18,6 +32,8 @@ classdef ScriptLoader
             moonlightScript=MoonlightScript(eval("moonlight.script.Script"+fileName));
             warning('on','all');
         end
+    end
+    methods(Static, Access = private)
         function loadInnerFromFile(filename)
             % class static constructor
             [status, out] = system("java -jar "+fullfile(getenv("MOONLIGHT_FOLDER"),"moonlight","jar","moonlight.jar "+filename+".mls "+tempdir));

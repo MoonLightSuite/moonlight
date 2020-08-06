@@ -196,8 +196,10 @@ public class Signal<T> {
         SignalCursor<T> cursor = getIterator(false);
         R value = init;
         while (!cursor.completed()) {
-            value = f.apply(cursor.value(), value);
-            newSignal.addBefore(cursor.time(), value);
+            T sValue = cursor.value();
+            double t = cursor.time();
+            value = f.apply(sValue, value);
+            newSignal.addBefore(t, value);
             cursor.backward();
         }
         newSignal.end = end;
@@ -385,7 +387,8 @@ public class Signal<T> {
 
     public double[][] arrayOf(double[] timePoints, FunctionToDouble<T> f) {
         if (size == 0) {
-            throw new IllegalStateException("No array can be generated from an empty signal is empty!");
+            return new double[][] {};
+            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         double[][] toReturn = new double[timePoints.length][2];
         Segment<T> current = first;

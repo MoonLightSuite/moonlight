@@ -52,7 +52,7 @@ task distribution(type: Copy, dependsOn:[jar]) {
     println "exec distribution Task!"
     copy {
         from jar
-        into rootProject.file("distribution_files/java")
+        into rootProject.file("distribution_files/java/lib/")
     }
     copy {
         from jar

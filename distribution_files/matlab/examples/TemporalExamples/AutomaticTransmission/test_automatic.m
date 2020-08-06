@@ -78,7 +78,7 @@ fprintf('Plotting simulation \n');
 
 %% Plotting the simulation
 % plotting (input, output, input_labels, output_labels);
-run('../../../init.m');
+%run('../../../init.m');
 addpath(genpath('../../../externalsw/breach'));
 addpath(genpath('../../../externalsw/s-taliro_public'));
 InitBreach;

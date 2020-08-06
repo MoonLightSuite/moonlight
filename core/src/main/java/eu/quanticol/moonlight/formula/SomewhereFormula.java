@@ -14,9 +14,8 @@ public class SomewhereFormula implements Formula {
 	
 
 	/**
-	 * @param intervalId
 	 * @param distanceFunctionId
-	 * @param formula
+	 * @param argument
 	 */
 	public SomewhereFormula(String distanceFunctionId, Formula argument) {
 		super();
