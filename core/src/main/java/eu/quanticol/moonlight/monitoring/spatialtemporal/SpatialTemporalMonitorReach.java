@@ -58,11 +58,11 @@ public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonito
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
         c1.move(time);
         c2.move(time);
+        SpatialModel<E> sm = current.getSecond();
+        DistanceStructure<E, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             Function<Integer, T> spatialSignal1 = c1.getValue();
             Function<Integer, T> spatialSignal2 = c2.getValue();
-            SpatialModel<E> sm = current.getSecond();
-            DistanceStructure<E, ?> f = distance.apply(sm);
             ArrayList<T> values =  f.reach(domain, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
