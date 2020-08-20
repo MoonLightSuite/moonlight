@@ -21,7 +21,7 @@ moonlightScript = ScriptLoader.loadFromFile("patternMonitorScript");
 moonlightScript.setMinMaxDomain();
 
 %% STEP 4: getting the monitor associated with a target formula
-spTempMonitor = moonlightScript.getMonitor("surround");
+spTempMonitor = moonlightScript.getMonitor("reachability");
 
 %% STEP 5: monitor the signal 
 tic
