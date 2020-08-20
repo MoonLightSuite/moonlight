@@ -20,7 +20,7 @@ classdef SpatialTemporalScriptComponent
             %       - time: an array containing the trajectory timesteps
             %       - values: a matrix containing the trajectory values
             %       - parameters: (optional) an array containing the values
-            %                      of the formula paramters
+            %                      of the formula parameters
             if ~exist('parameters','var')
                 % third parameter does not exist. Default is the empty
                 % array (i.e., [])
