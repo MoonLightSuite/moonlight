@@ -1,6 +1,5 @@
-import TutorialUtilities.SStats;
-import TutorialUtilities.SimHyAWrapper;
-import eu.quanticol.jsstl.core.formula.SignalStatistics;
+import tutorial_utilities.SStats;
+import tutorial_utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
@@ -47,17 +46,6 @@ public class Bikes {
     private static final double d = 0.3;    // Max distance we want to consider
 
     public static void main(String[] args) {
-        SStats<SpatialTemporalSignal<Boolean>> stats = new SStats<>();
-        SpatialTemporalSignal<Boolean> result = stats.record(Bikes::execute);
-
-        // We show the output
-        List<Signal<Boolean>> signals = result.getSignals();
-        System.out.print("\nThe monitoring result of the phi1 property is: ");
-        System.out.println(signals.get(0).valueAt(0));
-        System.out.println("Execution stats:" + stats.analyze());
-    }
-
-    private static SpatialTemporalSignal<Boolean> execute() {
         // ****************************** INPUT ***************************** //
         // We generate a trajectory by simulating a bike sharing model
         // Powered by SimHyA...
@@ -112,28 +100,39 @@ public class Bikes {
 
         Formula phi1 = new GloballyFormula(andBS, new Interval(0, T_end));
 
-
         // *************************** MONITORING *************************** //
-        // We setup the monitoring process
-        SpatialTemporalMonitoring<Double, Pair<Double,Double>, Boolean>
-                monitor = new SpatialTemporalMonitoring<>(atomicFormulas,
-                distanceFunctions,
-                new BooleanDomain(),
-                true);
 
-        // We instantiate the monitor on the formula of our interest
-        SpatialTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
-                monitor.monitor(phi1, null);
+        SStats<SpatialTemporalSignal<Boolean>> stats = new SStats<>();
+        SpatialTemporalSignal<Boolean> result = stats.record(
+            () ->
+            {
+                // We setup the monitoring process
+                SpatialTemporalMonitoring<Double, Pair<Double,Double>, Boolean>
+                        monitor = new SpatialTemporalMonitoring<>(atomicFormulas,
+                        distanceFunctions,
+                        new BooleanDomain(),
+                        true);
 
-        // We actually perform the monitoring, and save the output result
-        return m.monitor(locService, trajectory);
+                // We instantiate the monitor on the formula of our interest
+                SpatialTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
+                        monitor.monitor(phi1, null);
+
+                // We actually perform the monitoring, and save the output result
+                return m.monitor(locService, trajectory);
+            });
+
+        // We show the output
+        List<Signal<Boolean>> signals = result.getSignals();
+        System.out.print("\nThe monitoring result of the phi1 property is: ");
+        System.out.println(signals.get(0).valueAt(0));
+        System.out.println("Execution stats:" + stats.analyze());
     }
 
     /**
      * Instantiates and runs the SimHyA simulator.
      * @return the result of the simulation.
      */
-    private static double[][] simulatorSetup() {
+    public static double[][] simulatorSetup() {
         SimHyAWrapper model = new SimHyAWrapper();
         String modelPath = Bikes.class.getResource(SIMHYA_MODEL_FILE).getPath();
         model.loadModel(modelPath);

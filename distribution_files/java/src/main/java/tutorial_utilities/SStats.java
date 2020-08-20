@@ -1,4 +1,4 @@
-package TutorialUtilities;
+package tutorial_utilities;
 
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 
-public class SStats<T extends SpatialTemporalSignal> {
+public class SStats<T> {
     private final Collection<T> results = Collections.synchronizedCollection(new ArrayList<>());
     private final Collection<Float> durations = new ArrayList<>();
 
@@ -58,15 +58,20 @@ public class SStats<T extends SpatialTemporalSignal> {
     private float computeAverage() {
         float value = 0;
 
-        for (SpatialTemporalSignal<?> result : results) {
-            Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Float) {
-                value += (Float) s.valueAt(0);
-            } else if (s.valueAt(0) instanceof Boolean) {
-                value += (Boolean) s.valueAt(0) ? 1 : 0;
+        for (T result : results) {
+            try{
+                SpatialTemporalSignal<?> r = (SpatialTemporalSignal<?>) result;
+                Signal<?> s = r.getSignals().get(0);
+                if (s.valueAt(0) instanceof Float) {
+                    value += (Float) s.valueAt(0);
+                } else if (s.valueAt(0) instanceof Boolean) {
+                    value += (Boolean) s.valueAt(0) ? 1 : 0;
+                }
+                else
+                    throw new InvalidParameterException("Unknown Signal Output");
+            } catch(ClassCastException  e) {
+                return 0;  // Not supported on other types
             }
-            else
-                throw new InvalidParameterException("Unknown Signal Output");
         }
 
         return value / results.size();
@@ -85,17 +90,21 @@ public class SStats<T extends SpatialTemporalSignal> {
     private float computeVariance(float avg) {
         float value = 0;
 
-        for (SpatialTemporalSignal<?> result : results) {
-            Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Float) {
-                float v = (Float) s.valueAt(0);
-                value += Math.pow((v - avg), 2);
-            } else if (s.valueAt(0) instanceof Boolean) {
-                float v = (Boolean) s.valueAt(0) ? 1 : 0;
-                value += Math.pow((v - avg), 2);
+        for (T result : results) {
+            try {
+                SpatialTemporalSignal<?> r = (SpatialTemporalSignal<?>) result;
+                Signal<?> s = r.getSignals().get(0);
+                if (s.valueAt(0) instanceof Float) {
+                    float v = (Float) s.valueAt(0);
+                    value += Math.pow((v - avg), 2);
+                } else if (s.valueAt(0) instanceof Boolean) {
+                    float v = (Boolean) s.valueAt(0) ? 1 : 0;
+                    value += Math.pow((v - avg), 2);
+                } else
+                    throw new InvalidParameterException("Unknown Signal Output");
+            } catch(ClassCastException  e) {
+                return 0; // Not supported on other types
             }
-            else
-                throw new InvalidParameterException("Unknown Signal Output");
         }
 
         return value / (results.size());

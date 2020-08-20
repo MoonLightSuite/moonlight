@@ -1,4 +1,4 @@
-package TutorialUtilities;
+package tutorial_utilities;
 
 import simhya.dataprocessing.DataCollector;
 import simhya.dataprocessing.HybridDataCollector;
