@@ -75,7 +75,7 @@ public class RecordHandler implements DataHandler<Record> {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
         }
-        Object[] data = new Object[values.length];
+        Object[] data = new Object[handlers.length];
         for (int i=0 ; i<handlers.length ; i++) {
             data[i] = handlers[i].fromDouble(values[i+from]);
         }

@@ -94,15 +94,15 @@ class TestCity2 {
 
         Formula somewhereTaxi = new SomewhereFormula("distX", new AtomicFormula("isThereATaxi"));
         Formula stopReacMainsquare = new ReachFormula(
-                new AtomicFormula("isThereAStop"),"ciccia", "dist10", new AtomicFormula("isMainSquare") );
+                new AtomicFormula("isThereAStop"), "dist10", new AtomicFormula("isMainSquare") );
         Formula taxiReachStop = new ReachFormula(
-                new AtomicFormula("isThereATaxi"),"ciccia", "dist3", stopReacMainsquare );
+                new AtomicFormula("isThereATaxi"), "dist3", stopReacMainsquare );
         Formula iftaxiReachStop = new OrFormula(new NegationFormula(new AtomicFormula("isThereATaxi")), taxiReachStop);
         Formula evTaxi = new EventuallyFormula( new AtomicFormula("isThereATaxi"), new Interval(0,20));
-        Formula escpCroud = new EscapeFormula("ciccia", "dist10", new AtomicFormula("isMainSquare"));
+        Formula escpCroud = new EscapeFormula("dist10", new AtomicFormula("isMainSquare"));
 
         Formula reachQuant = new ReachFormula(
-                new AtomicFormula("FewPeople"),"ciccia", "distH", new AtomicFormula("ManyPeople") );
+                new AtomicFormula("FewPeople"),"distH", new AtomicFormula("ManyPeople") );
 
         //// MONITOR /////
         SpatialTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Boolean> monitor =

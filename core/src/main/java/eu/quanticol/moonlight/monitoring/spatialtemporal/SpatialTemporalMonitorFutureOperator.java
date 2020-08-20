@@ -28,6 +28,7 @@ public class SpatialTemporalMonitorFutureOperator<E,S,T> implements SpatialTempo
 		this.m = m;
 		this.interval = interval;
 		this.op = op;
+		this.init = init;
 	}
 
 	@Override

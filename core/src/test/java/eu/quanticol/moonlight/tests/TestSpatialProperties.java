@@ -1,18 +1,23 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.GraphModel;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
+import eu.quanticol.moonlight.compiler.MoonlightCompiler;
+import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -254,6 +259,45 @@ class TestSpatialProperties {
     }
 
     @Test
+    void testReachOnSpatial2NodesInsufficientDistance2() {
+        int size = 3;
+        GraphModel<Double> city = new GraphModel<>(size);
+        city.add(0, 5.0, 1);
+        city.add(1, 5.0, 0);
+        city.add(1, 5.0, 2);
+        city.add(2, 5.0, 1);
+        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, false));
+        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, true));
+        double range = 1;
+        DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+
+        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+
+        Boolean[] objects = results.toArray(new Boolean[0]);
+        assertArrayEquals(new Boolean[]{range>=10, range>=5,true}, objects);
+    }
+
+    @Test
+    void testReachOnSpatial5NodesInsufficientDistance3() {
+        int size = 4;
+        GraphModel<Double> city = new GraphModel<>(size);
+        city.add(0, 1.0, 1);
+        city.add(1, 1.0, 2);
+        city.add(2, 1.0, 3);
+        ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, true, false));
+        ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, false, true));
+        double range = 1;
+        DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+
+        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+
+        Boolean[] objects = results.toArray(new Boolean[0]);
+        System.out.println(new Boolean[0]);
+        assertArrayEquals(new Boolean[]{range>2,range>1, range>0,true}, objects);
+    }
+
+
+    @Test
     void testEscapeAndViolationOfLowerBound() {
         //T -10 -> T
         int size = 2;
@@ -334,5 +378,92 @@ class TestSpatialProperties {
         assertEquals(2.0, ds.getDistance(0, 3), 0.0, "d(0,3)");
 
     }
+
+    @Test
+    void testPropGraphBuildWithMaps2() {
+        int size = 5;
+        HashMap<Pair<Integer, Integer>, Double> map = new HashMap<>();
+        map.put(new Pair<>(0, 1), 1.0);
+        map.put(new Pair<>(0, 3), 1.0);
+        map.put(new Pair<>(0, 4), 1.0);
+        map.put(new Pair<>(1, 0), 1.0);
+        map.put(new Pair<>(1, 2), 1.0);
+        map.put(new Pair<>(1, 4), 1.0);
+        map.put(new Pair<>(2, 1), 1.0);
+        map.put(new Pair<>(2, 3), 1.0);
+        map.put(new Pair<>(2, 4), 1.0);
+        map.put(new Pair<>(3, 0), 1.0);
+        map.put(new Pair<>(3, 2), 1.0);
+        map.put(new Pair<>(3, 4), 1.0);
+        map.put(new Pair<>(4, 0), 1.0);
+        map.put(new Pair<>(4, 1), 1.0);
+        map.put(new Pair<>(4, 2), 1.0);
+        map.put(new Pair<>(4, 3), 1.0);
+
+        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        List<Integer> typeOfNode = Arrays.asList(1, 3, 3, 3, 3);
+
+        SpatialTemporalSignal<Integer> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 1.0,
+                (t, l) -> new Integer(typeOfNode.get(l)));
+        //// Loc Service Static ///
+        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 1,model);
+
+        System.out.println(signal.valuesatT(0));
+
+
+        HashMap<String, Function<Parameters, Function<Integer, Boolean>>> atomicFormulas = new HashMap<>();
+        atomicFormulas.put("type1", p -> (x -> x == 1));
+        atomicFormulas.put("type2", p -> (x -> x == 2));
+        atomicFormulas.put("type3", p -> (x -> x == 3));
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        distanceFunctions.put("dist", m -> new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
+
+        Formula reach = new ReachFormula(new AtomicFormula("type3"),"dist", new AtomicFormula("type1"));
+
+        //// MONITOR /////
+        SpatialTemporalMonitoring<Double, Integer, Boolean> monitor =
+                new SpatialTemporalMonitoring<>(
+                        atomicFormulas,
+                        distanceFunctions,
+                        new BooleanDomain(),
+                        true);
+
+        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach, null);
+        SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
+        List<Signal<Boolean>> signals = sout.getSignals();
+        for (int i = 0; i < size; i++) {
+            System.out.println(signals.get(i).valueAt(1));
+        }
+        assertEquals(false, signals.get(2).valueAt(1));
+
+    }
+
+    @Test
+    void testLoadGraphFromAdiacenceList() {
+        double[][] graph = new double[][] {
+                new double[] {0, 1, 1, 297.683377582777},
+                new double[] {0, 2, 1, 696.654592727676},
+                new double[] {0, 3, 1, 362.022924952817},
+                new double[] {0, 4, 1, 443.026473778508},
+                new double[] {1, 0, 1, 297.683377582777},
+                new double[] {1, 2, 1, 667.669013033577},
+                new double[] {2, 0, 1, 696.654592727676},
+                new double[] {2, 1, 1, 667.669013033577},
+                new double[] {2, 4, 1, 759.655443722058},
+                new double[] {3, 0, 1, 362.022924952817},
+                new double[] {3, 4, 1, 135.113318099020},
+                new double[] {4, 0, 1, 443.026473778508},
+                new double[] {4, 2, 1, 759.655443722058},
+                new double[] {4, 3, 1, 135.113318099020}
+        };
+        RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
+        SpatialModel.buildSpatialModelFromAdjacencyList(6,rh,graph);
+        assertTrue(true);
+
+    }
+
+
 }
+
 
