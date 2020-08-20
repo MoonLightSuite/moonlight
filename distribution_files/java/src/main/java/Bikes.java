@@ -1,4 +1,6 @@
+import TutorialUtilities.SStats;
 import TutorialUtilities.SimHyAWrapper;
+import eu.quanticol.jsstl.core.formula.SignalStatistics;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
@@ -45,6 +47,17 @@ public class Bikes {
     private static final double d = 0.3;    // Max distance we want to consider
 
     public static void main(String[] args) {
+        SStats<SpatialTemporalSignal<Boolean>> stats = new SStats<>();
+        SpatialTemporalSignal<Boolean> result = stats.record(Bikes::execute);
+
+        // We show the output
+        List<Signal<Boolean>> signals = result.getSignals();
+        System.out.print("\nThe monitoring result of the phi1 property is: ");
+        System.out.println(signals.get(0).valueAt(0));
+        System.out.println("Execution stats:" + stats.analyze());
+    }
+
+    private static SpatialTemporalSignal<Boolean> execute() {
         // ****************************** INPUT ***************************** //
         // We generate a trajectory by simulating a bike sharing model
         // Powered by SimHyA...
@@ -113,12 +126,7 @@ public class Bikes {
                 monitor.monitor(phi1, null);
 
         // We actually perform the monitoring, and save the output result
-        SpatialTemporalSignal<Boolean> sout = m.monitor(locService, trajectory);
-
-        // We show the output
-        List<Signal<Boolean>> signals = sout.getSignals();
-        System.out.print("\nThe monitoring result of the phi1 property is: ");
-        System.out.println(signals.get(0).valueAt(0));
+        return m.monitor(locService, trajectory);
     }
 
     /**
