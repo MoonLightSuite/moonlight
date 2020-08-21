@@ -29,8 +29,8 @@ public class Bikes {
     /**
      * The files containing the data to run the experiment
      */
-    private static final String SIMHYA_MODEL_FILE = "simulation/733bike.txt";
-    private static final String GRAPH_FILE = "simulation/733stationsGraph.tra";
+    private static final String SIMHYA_MODEL_FILE = "733bike.txt";
+    private static final String GRAPH_FILE = "733stationsGraph.tra";
 
     /**
      * Experiment General Constants
@@ -70,10 +70,17 @@ public class Bikes {
         HashMap<String,
                 Function<Parameters, Function<Pair<Double, Double>, Boolean>>>
                 atomicFormulas = new HashMap<>();
+        /*
         // First atomic property:  B > 0
         atomicFormulas.put("B > 0", p -> (x -> x.getFirst() > 0));
         // Second atomic property: S > 0
         atomicFormulas.put("S > 0", p -> (x -> x.getSecond() > 0));
+        */
+
+        // First atomic property:  B > 0
+        atomicFormulas.put("B < 1", p -> (x -> x.getFirst() < 1));
+        // Second atomic property: S > 0
+        atomicFormulas.put("B > 0", p -> (x -> x.getFirst() > 0));
 
 
         // We define a spatial distance function
@@ -87,18 +94,23 @@ public class Bikes {
                         spatialModel);
         distanceFunctions.put("dist", x -> dist);
 
+        DistanceStructure<Double, Double> dist_spot =
+                new DistanceStructure<>(x -> x,
+                        new DoubleDistance(),
+                        0.0, 1.0,
+                        spatialModel);
+        distanceFunctions.put("dist_spot", x -> dist_spot);
+
         // We want to check the phi1 property, informally stated here:
         // if I don't find a bike (resp. free slot),
         // can I find another station close enough
         // (i.e. within distance threshold d)
         // where I can find a bike (resp. free slot)?
-        Formula atomB = new AtomicFormula("B > 0");
-        Formula atomS = new AtomicFormula("S > 0");
-        Formula somewhereB = new SomewhereFormula("dist", atomB);
-        Formula somewhereS = new SomewhereFormula("dist", atomS);
-        Formula andBS = new AndFormula(somewhereB, somewhereS);
+        //Formula phi1 = getPhi1Property();
 
-        Formula phi1 = new GloballyFormula(andBS, new Interval(0, T_end));
+        Formula phi1 = getSpotProperty();
+
+
 
         // *************************** MONITORING *************************** //
 
@@ -216,5 +228,28 @@ public class Bikes {
             signal.add(t, values);
         }
         return signal;
+    }
+
+    private static Formula getPhi1Property() {
+        Formula atomB = new AtomicFormula("B > 0");
+        Formula atomS = new AtomicFormula("S > 0");
+        Formula somewhereB = new SomewhereFormula("dist", atomB);
+        Formula somewhereS = new SomewhereFormula("dist", atomS);
+        Formula andBS = new AndFormula(somewhereB, somewhereS);
+
+        return new GloballyFormula(andBS, new Interval(0, T_end));
+    }
+
+    private static Formula getSpotProperty() {
+        Formula lowValues = new AtomicFormula("B < 1");
+        Formula highValues = new AtomicFormula("B > 0");
+
+        Formula mediumValues = new NegationFormula(
+                new OrFormula(lowValues, highValues));
+
+        Formula reachP = new ReachFormula(lowValues,
+                                      "dist_spot", mediumValues);
+
+        return new AndFormula(lowValues, new NegationFormula(reachP));
     }
 }
