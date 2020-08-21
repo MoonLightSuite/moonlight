@@ -28,9 +28,7 @@ public class SpatialTemporalSimHyA {
         model.setGB();
         if(graphFile != null) {
             try {
-                GraphModel g = new TraGraphModelReader().read(graphFile);
-                g.dMcomputation();
-                this.graph = g;
+                this.graph = new TraGraphModelReader().read(graphFile);
             } catch (IOException | SyntaxErrorExpection e) {
                 System.out.println("Unable to load the Spatial Graph");
                 e.printStackTrace();
@@ -39,6 +37,10 @@ public class SpatialTemporalSimHyA {
             locations = model.getFlatModel().getVariablesValues().length;
             this.graph = createGraphForGrid(locations, 1);
         }
+    }
+
+    public void computeGraph() {
+        graph.dMcomputation();
     }
 
     public GraphModel getGraphModel() {

@@ -47,8 +47,11 @@ public class JSSTLBikes {
         // *************************** MONITORING *************************** //
 
         SStats<SpatialBooleanSignal> stats = new SStats<>();
-        SpatialBooleanSignal b = stats.record(() ->
-                phi1.booleanCheck(null, g, s));
+        SpatialBooleanSignal b = stats.record(() -> {
+            model.computeGraph();
+            return phi1.booleanCheck(null, g, s);
+        });
+
 
         BooleanSignal bt = b.spatialBoleanSignal.get(g.getLocation(0));
 
