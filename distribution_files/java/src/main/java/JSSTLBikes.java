@@ -1,3 +1,4 @@
+import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import tutorial_utilities.SStats;
 import tutorial_utilities.SpatialTemporalSimHyA;
 import eu.quanticol.jsstl.core.formula.*;
@@ -40,20 +41,23 @@ public class JSSTLBikes {
 
         GraphModel g = model.getGraphModel();
 
-        Formula phi1 = surroundProperty();
+        Formula phi1 = loadProperty();
 
         Signal s = model.simulate(SIMULATION_TIME, SIMULATION_STEPS);
 
         // *************************** MONITORING *************************** //
 
         SStats<SpatialBooleanSignal> stats = new SStats<>();
-        SpatialBooleanSignal b = stats.record(() -> {
-            model.computeGraph();
-            return phi1.booleanCheck(null, g, s);
-        });
+        SpatialBooleanSignal result = null;
+        for(int i = 0; i < 100; i++) {
+            result = stats.record(() -> {
+                model.computeGraph();
+                return phi1.booleanCheck(null, g, s);
+            });
+        }
 
 
-        BooleanSignal bt = b.spatialBoleanSignal.get(g.getLocation(0));
+        BooleanSignal bt = result.spatialBoleanSignal.get(g.getLocation(0));
 
         System.out.println("Boolean signal:" + bt);
         System.out.println("Satisfied: " + bt.getValueAt(0));

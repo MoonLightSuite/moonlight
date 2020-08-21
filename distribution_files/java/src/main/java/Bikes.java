@@ -70,17 +70,19 @@ public class Bikes {
         HashMap<String,
                 Function<Parameters, Function<Pair<Double, Double>, Boolean>>>
                 atomicFormulas = new HashMap<>();
-        /*
+
         // First atomic property:  B > 0
         atomicFormulas.put("B > 0", p -> (x -> x.getFirst() > 0));
         // Second atomic property: S > 0
         atomicFormulas.put("S > 0", p -> (x -> x.getSecond() > 0));
-        */
 
+
+        /*
         // First atomic property:  B > 0
         atomicFormulas.put("B < 1", p -> (x -> x.getFirst() < 1));
         // Second atomic property: S > 0
         atomicFormulas.put("B > 0", p -> (x -> x.getFirst() > 0));
+        */
 
 
         // We define a spatial distance function
@@ -106,32 +108,35 @@ public class Bikes {
         // can I find another station close enough
         // (i.e. within distance threshold d)
         // where I can find a bike (resp. free slot)?
-        //Formula phi1 = getPhi1Property();
+        Formula phi1 = getPhi1Property();
 
-        Formula phi1 = getSpotProperty();
+        //Formula phi1 = getSpotProperty();
 
 
 
         // *************************** MONITORING *************************** //
 
         SStats<SpatialTemporalSignal<Boolean>> stats = new SStats<>();
-        SpatialTemporalSignal<Boolean> result = stats.record(
-            () ->
-            {
-                // We setup the monitoring process
-                SpatialTemporalMonitoring<Double, Pair<Double,Double>, Boolean>
-                        monitor = new SpatialTemporalMonitoring<>(atomicFormulas,
-                        distanceFunctions,
-                        new BooleanDomain(),
-                        true);
+        SpatialTemporalSignal<Boolean> result = null;
+        for(int i = 0; i < 100; i++) {
+            result = stats.record(
+                    () ->
+                    {
+                        // We setup the monitoring process
+                        SpatialTemporalMonitoring<Double, Pair<Double, Double>, Boolean>
+                                monitor = new SpatialTemporalMonitoring<>(atomicFormulas,
+                                distanceFunctions,
+                                new BooleanDomain(),
+                                true);
 
-                // We instantiate the monitor on the formula of our interest
-                SpatialTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
-                        monitor.monitor(phi1, null);
+                        // We instantiate the monitor on the formula of our interest
+                        SpatialTemporalMonitor<Double, Pair<Double, Double>, Boolean> m =
+                                monitor.monitor(phi1, null);
 
-                // We actually perform the monitoring, and save the output result
-                return m.monitor(locService, trajectory);
-            });
+                        // We actually perform the monitoring, and save the output result
+                        return m.monitor(locService, trajectory);
+                    });
+        }
 
         // We show the output
         List<Signal<Boolean>> signals = result.getSignals();

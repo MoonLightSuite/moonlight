@@ -1,5 +1,7 @@
 package tutorial_utilities;
 
+import eu.quanticol.jsstl.core.monitor.SpatialBooleanSignal;
+import eu.quanticol.jsstl.core.signal.BooleanSignal;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
@@ -70,7 +72,7 @@ public class SStats<T> {
                 else
                     throw new InvalidParameterException("Unknown Signal Output");
             } catch(ClassCastException  e) {
-                return 0;  // Not supported on other types
+                return 0; // Unsupported for other types
             }
         }
 
