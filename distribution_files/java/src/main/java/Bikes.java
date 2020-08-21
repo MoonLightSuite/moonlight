@@ -29,8 +29,8 @@ public class Bikes {
     /**
      * The files containing the data to run the experiment
      */
-    private static final String SIMHYA_MODEL_FILE = "simulation/733bike.txt";
-    private static final String GRAPH_FILE = "simulation/733stationsGraph.tra";
+    private static final String SIMHYA_MODEL_FILE = "733bike.txt";
+    private static final String GRAPH_FILE = "733stationsGraph.tra";
 
     /**
      * Experiment General Constants

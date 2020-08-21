@@ -1,4 +1,3 @@
-import eu.quanticol.moonlight.util.FormulaGenerator;
 import tutorial_utilities.SStats;
 import tutorial_utilities.SpatialTemporalSimHyA;
 import eu.quanticol.jsstl.core.formula.*;
@@ -10,8 +9,8 @@ public class JSSTLBikes {
     /**
      * The files containing the data to run the experiment
      */
-    private static final String SIMHYA_MODEL_FILE = "simulation/733bike.txt";
-    private static final String GRAPH_FILE = "simulation/733stationsGraph.tra";
+    private static final String SIMHYA_MODEL_FILE = "733bike.txt";
+    private static final String GRAPH_FILE = "733stationsGraph.tra";
 
     /**
      * Experiment General Constants
