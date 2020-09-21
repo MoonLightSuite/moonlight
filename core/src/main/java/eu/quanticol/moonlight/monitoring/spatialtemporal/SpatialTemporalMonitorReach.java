@@ -92,11 +92,11 @@ public class SpatialTemporalMonitorReach<S, T, R>
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
         c1.move(time);
         c2.move(time);
+        SpatialModel<S> sm = current.getSecond();
+        DistanceStructure<S, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             Function<Integer, R> spatialSignal1 = c1.getValue();
             Function<Integer, R> spatialSignal2 = c2.getValue();
-            SpatialModel<S> sm = current.getSecond();
-            DistanceStructure<S, ?> f = distance.apply(sm);
             ArrayList<R> values =  f.reach(domain, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());

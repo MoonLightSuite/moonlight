@@ -13,6 +13,11 @@ cache:
     - $HOME/.gradle/wrapper/
 before_install:
   - chmod +x gradlew
+script:
+  - ./gradlew clean
+  - ./gradlew distribution
+  - ./gradlew distribution
+  - ./gradlew check
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 notifications:
