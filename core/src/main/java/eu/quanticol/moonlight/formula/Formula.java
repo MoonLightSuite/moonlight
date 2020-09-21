@@ -24,7 +24,13 @@ package eu.quanticol.moonlight.formula;
  * Interface implemented by any logic formula.
  * It is required to support the visit-based monitoring.
  *
- * @see FormulaVisitor implementations to understand how the formula is visited.
+ * The following specialized versions have been defined to generalize access
+ * to some operators when monitoring:
+ * @see UnaryFormula
+ * @see BinaryFormula
+ * @see TemporalFormula
+ *
+ * @see FormulaVisitor implementations for understand how the formula is visited
  */
 public interface Formula {
 

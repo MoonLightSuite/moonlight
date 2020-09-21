@@ -157,7 +157,6 @@ public class TemporalMonitoring<T, R> implements
 											   .getSecondArgument()
 											   .accept(this, parameters);
 
-		//TODO: shouldn't this invoke the orMonitor?
 		return orMonitor(leftMonitoring, module , rightMonitoring);
 	}
 

@@ -184,7 +184,7 @@ public class SlidingWindow<R> {
 	 * <i>DIRECTION-AWARE METHOD</i>: returns the direction and horizon-aware
 	 * version of the current time instant.
 	 * @param t the time instant of interest
-	 * @return the context-aware version of the time instant
+	 * @return the non-relative version of the time instant
 	 */
 	private double timeOf(double t) {
 		if (isFuture) {
@@ -338,7 +338,7 @@ public class SlidingWindow<R> {
 		/**
 		 * Initialization procedure of the Sliding Window:
 		 * we add a degenerated segment with a given value
-		 * and which is long exactly the time instant provided
+		 * and which is long exactly the provided time instant
 		 * @param time the first (and last) time instant
 		 * @param value the first (and only) value of the window
 		 */
@@ -354,7 +354,7 @@ public class SlidingWindow<R> {
 			if (first == null) {
 				return "<>";
 			} else {
-				return "< " + first.toString() +
+				return  "< " + first.toString() +
 						" - " + last.toString() +
 						" : " + end + ">";
 			}
