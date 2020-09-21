@@ -223,14 +223,14 @@ public class Subway {
 
     private static <T> SpatialTemporalSignal<T>
     createSTSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
-        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(size);
 
         for(double t = start; t < end; t += dt) {
             double finalTime = t;
-            s.add(t, (i) -> f.apply(finalTime, i));
+            s.add(t, i -> f.apply(finalTime, i));
         }
 
-        s.add(end, (i) ->  f.apply(end, i));
+        s.add(end, i ->  f.apply(end, i));
         return s;
     }
 

@@ -50,7 +50,7 @@ public class Sensor {
     }
 
     private static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
-        SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(size);
 
         for(double time = start; time < end; time += dt) {
             double finalTime = time;
