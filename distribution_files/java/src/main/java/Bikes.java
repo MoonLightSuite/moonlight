@@ -3,6 +3,7 @@ import tutorial_utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;

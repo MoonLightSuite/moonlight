@@ -1,4 +1,4 @@
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+
 import tutorial_utilities.SStats;
 import tutorial_utilities.SpatialTemporalSimHyA;
 import eu.quanticol.jsstl.core.formula.*;

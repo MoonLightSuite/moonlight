@@ -1,5 +1,5 @@
 dependencies {
-    compile files("moonlight.jar", "lib/SimHyA.jar", "lib/jsstl.core.jar")
+    compile files("lib/moonlight.jar", "lib/SimHyA.jar", "lib/jsstl.core.jar")
 
     /* JSSTL Dependencies */
     compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'

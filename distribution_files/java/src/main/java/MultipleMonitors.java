@@ -1,8 +1,8 @@
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
