@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 /**
  * Primary entry point to perform online monitoring.
@@ -52,8 +51,6 @@ public class OnlineTemporalMonitoring<T, R>
     private final SignalDomain<R> domain;
 
     private final Map<String, TemporalMonitor<T, R>> monitors;
-
-    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Initializes a monitoring process over the given interpretation domain.
@@ -91,15 +88,13 @@ public class OnlineTemporalMonitoring<T, R>
     public TemporalMonitor<T, R> monitor(Formula f,
                                          Parameters params)
     {
-/*
-        if(end >= this.end) {
+        /*
+        if(end >= this.end)
             this.end = end;
-        }
-        else {
+        else
             throw new UnsupportedOperationException("Backward monitoring is " +
                                                     "not allowed!");
-        }
-*/
+        */
         HorizonParameter horizon;
         try {
             getHorizon(params);

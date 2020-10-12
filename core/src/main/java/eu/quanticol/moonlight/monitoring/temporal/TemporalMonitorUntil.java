@@ -98,7 +98,7 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 		c1.move(time);
 		c2.move(time);
 		while (!c1.completed()&&!c2.completed()) {
-			current = domain.disjunction(c2.value(),
+			current = domain.disjunction(c2.value(), //TODO: should also domain.conjunction(c1.value())
 									domain.conjunction(c1.value(), current));
 			result.addBefore(time, current);
 			time = Math.max(c1.previousTime(), c2.previousTime());
