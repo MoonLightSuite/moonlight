@@ -20,47 +20,52 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal.online;
 
+import eu.quanticol.moonlight.algorithms.ReachOperator;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.signal.DistanceStructure;
+import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 /**
- * Strategy to interpret online a binary logic operator
+ * Strategy to interpret the Reach spatial logic operator.
  *
  * @param <S> Spatial Graph Edge Type
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see TemporalMonitor
+ * @see SpatialTemporalMonitor
  */
-public class OnlineSTMonitorBinaryOperator<S, T, R>
+public class OnlineSTMonitorReachOperator<S, T, R>
         implements SpatialTemporalMonitor<S, T, R>
 {
     private final SpatialTemporalMonitor<S, T, R> m1;
-    private final BinaryOperator<R> op;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
     private final SpatialTemporalMonitor<S, T, R> m2;
+    private final SignalDomain<R> domain;
     private final Interval horizon;
+    private double signalEnd = 0;
     private final List<SpatialTemporalSignal<R>> worklist;
-    private double signalEnd;
 
-
-    public OnlineSTMonitorBinaryOperator(SpatialTemporalMonitor<S, T, R> m1,
-                                         BinaryOperator<R> op,
-                                         SpatialTemporalMonitor<S, T, R> m2,
-                                         Interval parentHorizon)
+    public OnlineSTMonitorReachOperator(SpatialTemporalMonitor<S, T, R> m1,
+                                        Function<SpatialModel<S>,
+                                        DistanceStructure<S, ?>> distance,
+                                        SpatialTemporalMonitor<S, T, R> m2,
+                                        SignalDomain<R> domain,
+                                        Interval parentHorizon)
     {
         this.m1 = m1;
-        this.op = op;
+        this.distance = distance;
         this.m2 = m2;
-        horizon = parentHorizon;
-        worklist = new ArrayList<>();
-        signalEnd = 0;
+        this.domain = domain;
+        this.horizon = parentHorizon;
+        this.worklist = new ArrayList<>();
     }
 
     @Override
@@ -69,9 +74,9 @@ public class OnlineSTMonitorBinaryOperator<S, T, R>
     {
         //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
         //update result
-        worklist.add(SpatialTemporalSignal.apply(m1.monitor(locServ, signal),
-                                                 op,
-                                                 m2.monitor(locServ, signal)));
+        worklist.add(ReachOperator.computeDynamic(locServ, distance, domain,
+                                                  m1.monitor(locServ, signal),
+                                                  m2.monitor(locServ, signal)));
         //System.out.println("[DEBUG] Binary Operator worklist:");
         //System.out.println(getWorklist().toString());
         //}
@@ -80,11 +85,4 @@ public class OnlineSTMonitorBinaryOperator<S, T, R>
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
-    /**
-     * @return the definition horizon of the formula
-     */
-    public Interval getHorizon() {
-        return horizon;
-    }
 }
-

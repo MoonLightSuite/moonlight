@@ -12,6 +12,7 @@ import eu.quanticol.moonlight.util.Triple;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -320,8 +321,8 @@ public class DistanceStructure<T, A> {
     }
 
     public static <T, A, R> List<R> somewhere(SignalDomain<R> dModule,
-                                               Function<Integer, R> s,
-                                               DistanceStructure<T, A> ds)
+                                              Function<Integer, R> s,
+                                              DistanceStructure<T, A> ds)
     {
         ArrayList<R> values = dModule.createArray(ds.getModelSize());
         for (int i = 0; i < ds.getModelSize(); i++) {

@@ -20,16 +20,14 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
-import java.util.Iterator;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.algorithms.EscapeOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.util.Pair;
 
 /**
  * Strategy to interpret the Escape spatial logic operator.
@@ -61,48 +59,10 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
-		return computeEscapeDynamic(locationService, m.monitor(locationService, signal));
+		return EscapeOperator
+				.computeDynamic(locationService,
+							    distance,
+								domain,
+								m.monitor(locationService, signal));
 	}
-
-    private SpatialTemporalSignal<R> computeEscapeDynamic(
-    		LocationService<S> l,
-			SpatialTemporalSignal<R> s)
-	{
-    	
-    	SpatialTemporalSignal<R> toReturn = new SpatialTemporalSignal<>(s.getNumberOfLocations());
-    	if (l.isEmpty()) {
-    		return toReturn;
-    	}
-
-    	ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
-
-    	Iterator<Pair<Double, SpatialModel<S>>> locationServiceIterator = l.times();
-    	Pair<Double, SpatialModel<S>> current = locationServiceIterator.next();
-    	Pair<Double, SpatialModel<S>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-    	double time = cursor.getTime();
-    	while ((next != null)&&(next.getFirst()<=time)) {
-    		current = next;
-    		next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-    	}
-    	//Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
-		SpatialModel<S> sm = current.getSecond();
-		DistanceStructure<S, ?> f = distance.apply(sm);
-    	while (!cursor.completed() && !Double.isNaN(time)) {
-    		Function<Integer, R> spatialSignal = cursor.getValue();
-    		toReturn.add(time, f.escape(domain, spatialSignal));
-    		double nextTime = cursor.forward();
-    		while ((next != null)&&(next.getFirst()<nextTime)) {
-    			current = next;	
-    			time = current.getFirst();
-    			next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-    			f = distance.apply(current.getSecond());
-    			toReturn.add(time, f.escape(domain, spatialSignal));
-    		}
-    		time = nextTime;
-            current = (next!=null?next:current);
-            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-    	}
-    	//TODO: Manage end of signal!
-    	return toReturn;
-    }
 }

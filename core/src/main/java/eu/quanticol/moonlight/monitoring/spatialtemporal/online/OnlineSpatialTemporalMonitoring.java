@@ -245,11 +245,25 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(SomewhereFormula somewhere,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(somewhere.getDistanceFunctionId());
-        SpatialTemporalMonitor<S, T, R> argumentMonitor = somewhere.getArgument().accept(this, parameters);
-        return somewhereMonitor(argumentMonitor, distanceFunction, domain);
+        SpatialTemporalMonitor<S, T, R> m = monitors.get(somewhere.toString());
+
+        SpatialTemporalMonitor<S, T, R> monitoringArg =
+                somewhere.getArgument().accept(this, parameters);
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction =
+                    distanceFunctions.get(somewhere.getDistanceFunctionId());
+
+        if(m == null) {
+            m = new OnlineSTMonitorSomewhereOperator<>(monitoringArg,
+                    distanceFunction,
+                    domain,
+                    getHorizon(parameters));
+            monitors.put(somewhere.toString(), m);
+        }
+
+        return m;
     }
 
     /**
@@ -257,11 +271,25 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(EverywhereFormula everywhere,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(everywhere.getDistanceFunctionId());
-        SpatialTemporalMonitor<S, T, R> argumentMonitor = everywhere.getArgument().accept(this, parameters);
-        return everywhereMonitor(argumentMonitor, distanceFunction, domain);
+        SpatialTemporalMonitor<S, T, R> m = monitors.get(everywhere.toString());
+
+        SpatialTemporalMonitor<S, T, R> monitoringArg =
+                everywhere.getArgument().accept(this, parameters);
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction =
+                distanceFunctions.get(everywhere.getDistanceFunctionId());
+
+        if(m == null) {
+            m = new OnlineSTMonitorEverywhereOperator<>(monitoringArg,
+                    distanceFunction,
+                    domain,
+                    getHorizon(parameters));
+            monitors.put(everywhere.toString(), m);
+        }
+
+        return m;
     }
 
 
@@ -270,12 +298,30 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(ReachFormula reachFormula,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S, T, R> m1 = reachFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S, T, R> m2 = reachFormula.getSecondArgument().accept(this, parameters);
-        return reachMonitor(m1, distanceFunction, m2, domain);
+        SpatialTemporalMonitor<S, T, R> m = monitors
+                                                .get(reachFormula.toString());
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction =
+                distanceFunctions.get(reachFormula.getDistanceFunctionId());
+
+        SpatialTemporalMonitor<S, T, R> m1 = reachFormula
+                                                .getFirstArgument()
+                                                .accept(this, parameters);
+        SpatialTemporalMonitor<S, T, R> m2 = reachFormula
+                                                .getSecondArgument()
+                                                .accept(this, parameters);
+
+        if(m == null) {
+            m = new OnlineSTMonitorReachOperator<>(m1,
+                                                   distanceFunction,
+                                                   m2,
+                                                   domain,
+                                                   getHorizon(parameters));
+            monitors.put(reachFormula.toString(), m);
+        }
+        return m;
     }
 
 
@@ -284,11 +330,27 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(EscapeFormula escapeFormula,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S, T, R> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
-        return escapeMonitor(argumentMonitor, distanceFunction, domain);
+        SpatialTemporalMonitor<S, T, R> m = monitors
+                                                .get(escapeFormula.toString());
+
+        SpatialTemporalMonitor<S, T, R> monitoringArg = escapeFormula
+                                                .getArgument()
+                                                .accept(this, parameters);
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction =
+                distanceFunctions.get(escapeFormula.getDistanceFunctionId());
+
+        if(m == null) {
+            m = new OnlineSTMonitorEscapeOperator<>(monitoringArg,
+                                                    distanceFunction,
+                                                    domain,
+                                                    getHorizon(parameters));
+            monitors.put(escapeFormula.toString(), m);
+        }
+
+        return m;
     }
 
     private Interval getHorizon(Parameters params) {

@@ -20,71 +20,69 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal.online;
 
+import eu.quanticol.moonlight.algorithms.EscapeOperator;
+import eu.quanticol.moonlight.algorithms.WhereOperator;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.signal.DistanceStructure;
+import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 /**
- * Strategy to interpret online a binary logic operator
+ * Strategy to interpret the Escape spatial logic operator.
  *
  * @param <S> Spatial Graph Edge Type
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see TemporalMonitor
+ * @see SpatialTemporalMonitor
  */
-public class OnlineSTMonitorBinaryOperator<S, T, R>
+public class OnlineSTMonitorEscapeOperator<S, T, R>
         implements SpatialTemporalMonitor<S, T, R>
 {
-    private final SpatialTemporalMonitor<S, T, R> m1;
-    private final BinaryOperator<R> op;
-    private final SpatialTemporalMonitor<S, T, R> m2;
+    private final SpatialTemporalMonitor<S, T, R> m;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+    private final SignalDomain<R> domain;
     private final Interval horizon;
+    private double signalEnd = 0;
     private final List<SpatialTemporalSignal<R>> worklist;
-    private double signalEnd;
 
-
-    public OnlineSTMonitorBinaryOperator(SpatialTemporalMonitor<S, T, R> m1,
-                                         BinaryOperator<R> op,
-                                         SpatialTemporalMonitor<S, T, R> m2,
+    public OnlineSTMonitorEscapeOperator(SpatialTemporalMonitor<S, T, R> m,
+                                         Function<SpatialModel<S>,
+                                         DistanceStructure<S, ?>> distance,
+                                         SignalDomain<R> domain,
                                          Interval parentHorizon)
     {
-        this.m1 = m1;
-        this.op = op;
-        this.m2 = m2;
-        horizon = parentHorizon;
-        worklist = new ArrayList<>();
-        signalEnd = 0;
+        this.m = m;
+        this.distance = distance;
+        this.domain = domain;
+        this.horizon = parentHorizon;
+        this.worklist = new ArrayList<>();
     }
 
     @Override
-    public SpatialTemporalSignal<R> monitor(LocationService<S> locServ,
-                                            SpatialTemporalSignal<T> signal)
-    {
+    public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+                                            SpatialTemporalSignal<T> signal) {
         //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
         //update result
-        worklist.add(SpatialTemporalSignal.apply(m1.monitor(locServ, signal),
-                                                 op,
-                                                 m2.monitor(locServ, signal)));
+        worklist.add(EscapeOperator.computeDynamic(locationService,
+                distance,
+                domain,
+                m.monitor(locationService,
+                        signal)));
         //System.out.println("[DEBUG] Binary Operator worklist:");
         //System.out.println(getWorklist().toString());
         //}
 
-        signalEnd =  signal.end();
+        signalEnd = signal.end();
+        //System.out.println("SpaceOperator Result Signal@maxT= " + signalEnd +
+        //                " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
-
-    /**
-     * @return the definition horizon of the formula
-     */
-    public Interval getHorizon() {
-        return horizon;
-    }
 }
-
