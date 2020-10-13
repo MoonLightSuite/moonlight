@@ -4,7 +4,6 @@
 package eu.quanticol.moonlight.monitoring;
 
 import java.util.HashMap;
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
@@ -22,7 +21,7 @@ import eu.quanticol.moonlight.formula.OnceFormula;
 import eu.quanticol.moonlight.formula.OrFormula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.SinceFormula;
-import eu.quanticol.moonlight.formula.SlidingWindow;
+import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.formula.UntilFormula;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;

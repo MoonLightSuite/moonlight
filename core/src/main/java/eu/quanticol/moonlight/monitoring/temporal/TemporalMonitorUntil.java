@@ -20,10 +20,10 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
+import eu.quanticol.moonlight.algorithms.UnboundedUntil;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalCursor;
 
 import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOperator.computeSignal;
 
@@ -72,7 +72,7 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 											 Signal<T> s1,
 											 Interval interval,
 											 Signal<T> s2) {
-		Signal<T> unboundedMonitoring = computeUntil(domain, s1, s2);
+		Signal<T> unboundedMonitoring = UnboundedUntil.compute(domain, s1, s2);
 		if (interval == null) {
 			return unboundedMonitoring;
 		}
@@ -82,34 +82,6 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 
 		return Signal.apply(unboundedMonitoring, domain::conjunction,
 				eventuallyMonitoring);
-	}
-
-	//TODO: this should be at most protected
-	public static <T> Signal<T> computeUntil(SignalDomain<T> domain,
-											 Signal<T> s1 , Signal<T> s2) {
-		Signal<T> result = new Signal<>();
-		SignalCursor<T> c1 = s1.getIterator(false);
-		SignalCursor<T> c2 = s2.getIterator(false);
-		double t1 = c1.time();
-		double t2 = c2.time();
-		double end = Math.min( t1 , t2 );
-		double time = end;
-		T current = domain.min();
-		c1.move(time);
-		c2.move(time);
-		while (!c1.completed()&&!c2.completed()) {
-			current = domain.disjunction(c2.value(), //TODO: should also domain.conjunction(c1.value())
-									domain.conjunction(c1.value(), current));
-			result.addBefore(time, current);
-			time = Math.max(c1.previousTime(), c2.previousTime());
-			c1.move(time);
-			c2.move(time);
-		} 
-		result.endAt(end);
-		System.out.println("FutureOperator Result Signal@maxT= " +
-							"<" + s1.end() + "," + s2.end() + "> : " +
-							result.toString());
-		return result;
 	}
 
 }

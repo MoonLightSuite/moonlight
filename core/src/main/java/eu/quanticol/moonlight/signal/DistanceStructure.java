@@ -9,13 +9,11 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Triple;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -46,6 +44,13 @@ public class DistanceStructure<T, A> {
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.model = model;
+    }
+
+    public int getModelSize() {
+        if(model != null)
+            return model.size();
+
+        throw new UnsupportedOperationException("Requesting size of empty model");
     }
 
     public A getLowerBound() {
@@ -297,12 +302,15 @@ public class DistanceStructure<T, A> {
 //		return toReturn;
 //	}
 
-    public <R> ArrayList<R> everywhere(SignalDomain<R> dModule, Function<Integer, R> s) {
-        ArrayList<R> values = dModule.createArray(model.size());
-        for (int i = 0; i < model.size(); i++) {
+    public static <T, A, R> List<R> everywhere(SignalDomain<R> dModule,
+                                               Function<Integer, R> s,
+                                               DistanceStructure<T, A> ds)
+    {
+        ArrayList<R> values = dModule.createArray(ds.getModelSize());
+        for (int i = 0; i < ds.getModelSize(); i++) {
             R v = dModule.max();
-            for (int j = 0; j < model.size(); j++) {
-                if (this.checkDistance(i, j)) {
+            for (int j = 0; j < ds.getModelSize(); j++) {
+                if (ds.checkDistance(i, j)) {
                     v = dModule.conjunction(v, s.apply(j));
                 }
             }
@@ -310,13 +318,16 @@ public class DistanceStructure<T, A> {
         }
         return values;
     }
-    
-    public <R> ArrayList<R> somewhere(SignalDomain<R> dModule, Function<Integer, R> s) {
-        ArrayList<R> values = dModule.createArray(model.size());
-        for (int i = 0; i < model.size(); i++) {
+
+    public static <T, A, R> List<R> somewhere(SignalDomain<R> dModule,
+                                               Function<Integer, R> s,
+                                               DistanceStructure<T, A> ds)
+    {
+        ArrayList<R> values = dModule.createArray(ds.getModelSize());
+        for (int i = 0; i < ds.getModelSize(); i++) {
             R v = dModule.min();
-            for (int j = 0; j < model.size(); j++) {
-                if (this.checkDistance(i, j)) {
+            for (int j = 0; j < ds.getModelSize(); j++) {
+                if (ds.checkDistance(i, j)) {
                     v = dModule.disjunction(v, s.apply(j));
                 }
             }

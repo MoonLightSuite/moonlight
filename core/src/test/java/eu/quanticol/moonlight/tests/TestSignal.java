@@ -19,7 +19,7 @@
  */
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.formula.SlidingWindow;
+import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;

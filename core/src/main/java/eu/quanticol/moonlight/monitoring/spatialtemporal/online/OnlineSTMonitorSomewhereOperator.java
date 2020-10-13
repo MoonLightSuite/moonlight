@@ -20,20 +20,21 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal.online;
 
+import eu.quanticol.moonlight.algorithms.WhereOperator;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.algorithms.OnlineSlidingWindow;
-import eu.quanticol.moonlight.algorithms.SlidingWindow;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 /**
- * Strategy to interpret online temporal operators on the future (except Until)
+ * Strategy to interpret the Somewhere spatial logic operator.
  *
  * @param <S> Spatial Graph Edge Type
  * @param <T> Signal Trace Type
@@ -41,29 +42,25 @@ import java.util.function.BinaryOperator;
  *
  * @see SpatialTemporalMonitor
  */
-public class OnlineSTMonitorFutureOperator<S, T, R>
+public class OnlineSTMonitorSomewhereOperator<S, T, R>
         implements SpatialTemporalMonitor<S, T, R>
 {
     private final SpatialTemporalMonitor<S, T, R> m;
-    private final BinaryOperator<R> op;
-    private final R init;
-    private final R unknown;
-    private final Interval interval;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+    private final SignalDomain<R> domain;
     private final Interval horizon;
-    private final List<SpatialTemporalSignal<R>> worklist;
     private double signalEnd = 0;
-    private SlidingWindow<R> sw;
+    private final List<SpatialTemporalSignal<R>> worklist;
 
-    public OnlineSTMonitorFutureOperator(SpatialTemporalMonitor<S, T, R> m,
-                                        BinaryOperator<R> op, R init, R unknown,
-                                        Interval definitionInterval,
-                                        Interval parentHorizon)
+    public OnlineSTMonitorSomewhereOperator(SpatialTemporalMonitor<S, T, R> m,
+                                            Function<SpatialModel<S>,
+                                             DistanceStructure<S, ?>> distance,
+                                            SignalDomain<R> domain,
+                                            Interval parentHorizon)
     {
         this.m = m;
-        this.op = op;
-        this.init = init;
-        this.unknown = unknown;
-        this.interval = definitionInterval;
+        this.distance = distance;
+        this.domain = domain;
         this.horizon = parentHorizon;
         this.worklist = new ArrayList<>();
     }
@@ -72,34 +69,26 @@ public class OnlineSTMonitorFutureOperator<S, T, R>
     public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
-        //if(horizon.contains(signal.getEnd()) || signal.getEnd() > signalEnd) {
+        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
         //update result
-        worklist.add(m.monitor(locationService, signal)
-                      .applyToSignal(this::computeSignal));
+        worklist.add(WhereOperator.computeDynamic(locationService,
+                                                  distance,
+                                                  this::somewhereOp,
+                                                  m.monitor(locationService,
+                                                            signal)));
+        //System.out.println("[DEBUG] Binary Operator worklist:");
+        //System.out.println(getWorklist().toString());
         //}
 
         signalEnd =  signal.end();
-        //System.out.println("FutureOperator Result Signal@maxT= " + signalEnd +
+        //System.out.println("SpaceOperator Result Signal@maxT= " + signalEnd +
         //                " : " + worklist.get(worklist.size() - 1).toString());
         return worklist.get(worklist.size() - 1); //return last computed value
     }
 
-    protected Signal<R> computeSignal(Signal<R> signal)
+    private List<R> somewhereOp(Function<Integer, R> spatialSignal,
+                                DistanceStructure<S, ?> ds)
     {
-        if (interval ==  null || interval.isEmpty()) {
-            throw new UnsupportedOperationException("Not Implemented Yet!");
-            //return signal.iterateBackward(op, init);
-        } else {
-            //TODO: sw should be loaded from state
-            //if(sw == null) {
-            sw = new OnlineSlidingWindow<>(interval.getStart(),
-                                           interval.getEnd(),
-                                           op, true,
-                                           unknown,
-                                           horizon.getEnd());
-            // }
-            return sw.apply(signal);
-        }
+        return DistanceStructure.somewhere(domain, spatialSignal, ds);
     }
-
 }

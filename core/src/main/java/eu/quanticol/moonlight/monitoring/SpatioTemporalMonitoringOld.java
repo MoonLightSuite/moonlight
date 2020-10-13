@@ -248,14 +248,14 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
             Function<Integer, R> spatialSignal = cursor.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
-            toReturn.add(time, f.somewhere(module, spatialSignal));
+            toReturn.add(time, DistanceStructure.somewhere(module, spatialSignal, f));
             double nextTime = cursor.forward();
             while ((next != null)&&(next.getFirst()<nextTime)) {
                 current = next;
                 time = current.getFirst();
                 next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
                 f = distanceFunction.apply(current.getSecond());
-                toReturn.add(time, f.somewhere(module, spatialSignal));
+                toReturn.add(time, DistanceStructure.somewhere(module, spatialSignal, f));
             }
             time = nextTime;
         }
@@ -272,7 +272,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         SpatialModel<V> sm = l.get(time);
         DistanceStructure<V, ?> f = distanceFunction.apply(sm);
         while (!cursor.completed() && !Double.isNaN(time)) {
-            toReturn.add(time, f.somewhere(module, cursor.getValue()));
+            toReturn.add(time, DistanceStructure.somewhere(module, cursor.getValue(), f));
             time = cursor.forward();
         }
         //TODO: Manage end of signal!
@@ -320,14 +320,14 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
             Function<Integer, R> spatialSignal = cursor.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
-            toReturn.add(time, f.everywhere(module, spatialSignal));
+            toReturn.add(time, DistanceStructure.everywhere(module, spatialSignal, f));
             double nextTime = cursor.forward();
             while ((next != null)&&(next.getFirst()<nextTime)) {
                 current = next;
                 time = current.getFirst();
                 next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
                 f = distanceFunction.apply(current.getSecond());
-                toReturn.add(time, f.everywhere(module, spatialSignal));
+                toReturn.add(time, DistanceStructure.everywhere(module, spatialSignal, f));
             }
             time = nextTime;
         }
@@ -343,7 +343,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         SpatialModel<V> sm = l.get(time);
         DistanceStructure<V, ?> f = distanceFunction.apply(sm);
         while (!cursor.completed() && !Double.isNaN(time)) {
-            toReturn.add(time, f.everywhere(module, cursor.getValue()));
+            toReturn.add(time, DistanceStructure.everywhere(module, cursor.getValue(), f));
             time = cursor.forward();
         }
         //TODO: Manage end of signal!

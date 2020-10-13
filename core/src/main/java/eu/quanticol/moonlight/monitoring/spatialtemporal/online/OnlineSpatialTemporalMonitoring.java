@@ -300,7 +300,8 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
                 "incorrect: " + params.toString());
     }
 
-    private SpatialTemporalMonitor<S, T, R> binaryMonitor(BinaryFormula f,                                                                 Parameters ps,
+    private SpatialTemporalMonitor<S, T, R> binaryMonitor(BinaryFormula f,
+                                                          Parameters ps,
                                                           BinaryOperator<R> op)
     {
         SpatialTemporalMonitor<S, T, R> m = monitors.get(f.toString());

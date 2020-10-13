@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.monitoring.temporal.online;
 
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.formula.OnlineSlidingWindow;
-import eu.quanticol.moonlight.formula.SlidingWindow;
+import eu.quanticol.moonlight.algorithms.OnlineSlidingWindow;
+import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 

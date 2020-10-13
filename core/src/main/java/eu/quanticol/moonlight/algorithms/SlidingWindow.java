@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.algorithms;
 
 import java.util.function.BinaryOperator;
 

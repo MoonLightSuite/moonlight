@@ -141,9 +141,10 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> 1.0, new DoubleDistance(), 0.0, range, model);
-        ArrayList<Boolean> result = ds.somewhere(
+        List<Boolean> result = DistanceStructure.somewhere(
                 new BooleanDomain(),
-                (i) -> i == TestUtils.gridIndexOf(relevantR, relevantC, columns)
+                (i) -> i == TestUtils.gridIndexOf(relevantR, relevantC, columns),
+                ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -161,9 +162,10 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
-        ArrayList<Boolean> result = ds.everywhere(
+        List<Boolean> result = DistanceStructure.everywhere(
                 new BooleanDomain(),
-                (i) -> i != TestUtils.gridIndexOf(relevantR, relevantC, columns)
+                (i) -> i != TestUtils.gridIndexOf(relevantR, relevantC, columns),
+                ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
