@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.formula.AndFormula;
+import eu.quanticol.moonlight.formula.FormulaVisitor;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;
@@ -91,6 +93,19 @@ public class SpatialTemporalSignal<T> {
 
 	public <R> SpatialTemporalSignal<R> apply(Function<T,R> f ) {
 		return new SpatialTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
+	}
+
+	/**
+	 * @see Signal#applyHorizon(Function, Object, double, double)
+	 */
+	public <R> SpatialTemporalSignal<R> applyHorizon(Function<T,R> f,
+													 R undefined,
+													 double horizonStart,
+													 double horizonEnd)
+	{
+		return new SpatialTemporalSignal<>(this.size,
+				(i -> signals.get(i).applyHorizon(f, undefined,
+												  horizonStart, horizonEnd)));
 	}
 	
 	public static <T,R> SpatialTemporalSignal<R> apply(SpatialTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatialTemporalSignal<T> s2 ) {

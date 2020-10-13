@@ -129,7 +129,13 @@ public class Signal<T> {
     }
 
     /**
-     * return a signal, given a signal and a function
+     *
+     * @param f function to apply to a given signal
+     * @param undefined fallback elements when reaching undefined signal areas
+     * @param horizonStart start of the horizon of the formula
+     * @param horizonEnd end of the horizon of the formula
+     * @param <R> signal interpretation domain
+     * @return a signal resulting from the application of f on it.
      */
     public <R> Signal<R> applyHorizon(Function<T, R> f,
                                       R undefined,

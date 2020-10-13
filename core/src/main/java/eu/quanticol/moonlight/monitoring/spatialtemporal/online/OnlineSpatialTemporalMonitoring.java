@@ -26,15 +26,14 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.HorizonParameter;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineMonitorAtomic;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineMonitorUnaryOperator;
+import eu.quanticol.moonlight.monitoring.temporal.online.*;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
@@ -121,7 +120,7 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(AtomicFormula atomicF,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
         SpatialTemporalMonitor<S, T, R> m = monitors.get(atomicF.toString());
         
@@ -165,23 +164,17 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
     public SpatialTemporalMonitor<S, T, R> visit(AndFormula andFormula,
                                                  Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S, T, R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
-        return andMonitor(leftMonitoring, domain, rightMonitoring);
+        return binaryMonitor(andFormula, parameters, domain::conjunction);
     }
-
-
 
     /**
      * @see FormulaVisitor#visit(OrFormula, Object)
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(OrFormula orFormula,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S, T, R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
-        return orMonitor(leftMonitoring, domain, rightMonitoring);
+        return binaryMonitor(orFormula, parameters, domain::disjunction);
     }
 
     /**
@@ -189,54 +182,32 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(EventuallyFormula eventually,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> m = eventually.getArgument().accept(this, parameters);
-        return eventuallyMonitor(m,eventually.getInterval(), domain);
+        return unaryTemporalMonitor(eventually, parameters,
+                                    domain::disjunction, domain.min());
     }
 
     /**
      * @see FormulaVisitor#visit(GloballyFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<S, T, R> visit(
-            GloballyFormula globallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S, T, R> m = globallyFormula.getArgument().accept(this, parameters);
-        return globallyMonitor(m, globallyFormula.getInterval(), domain);
-    }
-
-    /**
-     * @see FormulaVisitor#visit(UntilFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S, T, R> visit(UntilFormula untilFormula,
-                                               Parameters parameters)
+    public SpatialTemporalMonitor<S, T, R> visit(GloballyFormula globally,
+                                                 Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S, T, R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
-        return untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, domain);
-    }
-
-    /**
-     * @see FormulaVisitor#visit(SinceFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S, T, R> visit(SinceFormula sinceFormula,
-                                               Parameters parameters) {
-        SpatialTemporalMonitor<S, T, R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S, T, R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
-        return sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, domain);
+        return unaryTemporalMonitor(globally, parameters,
+                                    domain::conjunction, domain.max());
     }
 
     /**
      * @see FormulaVisitor#visit(HistoricallyFormula, Object)
      */
     @Override
-    public SpatialTemporalMonitor<S, T, R> visit(HistoricallyFormula historically,
+    public SpatialTemporalMonitor<S, T, R> visit(HistoricallyFormula historicF,
                                                Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> argumentMonitoring = historically.getArgument().accept(this, parameters);
-        return historicallyMonitor(argumentMonitoring, historically.getInterval(), domain);
+        return unaryTemporalMonitor(historicF, parameters,
+                                    domain::conjunction, domain.max());
     }
 
     /**
@@ -244,11 +215,30 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
      */
     @Override
     public SpatialTemporalMonitor<S, T, R> visit(OnceFormula onceFormula,
-                                               Parameters parameters)
+                                                 Parameters parameters)
     {
-        SpatialTemporalMonitor<S, T, R> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
-        return onceMonitor(argumentMonitoring, onceFormula.getInterval(), domain);
+        return unaryTemporalMonitor(onceFormula, parameters,
+                                    domain::disjunction, domain.min());
     }
+
+    /*
+    @Override
+    public SpatialTemporalMonitor<S, T, R> visit(UntilFormula untilFormula,
+                                                 Parameters parameters)
+    {
+        SpatialTemporalMonitor<S, T, R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S, T, R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
+        return untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, domain);
+    }
+
+    @Override
+    public SpatialTemporalMonitor<S, T, R> visit(SinceFormula sinceFormula,
+                                               Parameters parameters) {
+        SpatialTemporalMonitor<S, T, R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
+        SpatialTemporalMonitor<S, T, R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
+        return sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, domain);
+    }
+    */
 
     /**
      * @see FormulaVisitor#visit(SomewhereFormula, Object)
@@ -308,6 +298,52 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
 
         throw new InvalidParameterException("Monitoring parameters are " +
                 "incorrect: " + params.toString());
+    }
+
+    private SpatialTemporalMonitor<S, T, R> binaryMonitor(BinaryFormula f,                                                                 Parameters ps,
+                                                          BinaryOperator<R> op)
+    {
+        SpatialTemporalMonitor<S, T, R> m = monitors.get(f.toString());
+
+        SpatialTemporalMonitor<S, T, R> leftMonitoring = f.getFirstArgument()
+                .accept(this, ps);
+        SpatialTemporalMonitor<S, T, R> rightMonitoring = f.getSecondArgument()
+                .accept(this, ps);
+
+        if(m == null) {
+            m = new OnlineSTMonitorBinaryOperator<>(leftMonitoring,
+                                                    op,
+                                                    rightMonitoring,
+                                                    getHorizon(ps));
+            monitors.put(f.toString(), m);
+        }
+        return m;
+    }
+
+    private SpatialTemporalMonitor<S, T, R> unaryTemporalMonitor(
+                                                        TemporalFormula f,
+                                                        Parameters ps,
+                                                        BinaryOperator<R> op,
+                                                        R min)
+    {
+        SpatialTemporalMonitor<S, T, R> m = monitors.get(f.toString());
+
+        Interval horizon = getHorizon(ps);
+        Interval interval = f.getInterval();
+        Parameters childPars = new HorizonParameter(
+                                           Interval.combine(horizon, interval));
+
+        SpatialTemporalMonitor<S, T, R> monitoringArg = ((UnaryFormula) f)
+                                                .getArgument()
+                                                .accept(this, childPars);
+
+        if(m == null) {
+            m = new OnlineSTMonitorFutureOperator<>(monitoringArg,
+                                                    op, min, domain.unknown(),
+                                                    interval, horizon);
+            monitors.put(f.toString(), m);
+        }
+        return m;
     }
 
     private Function<Parameters, Function<T, R>> fetchAtom(AtomicFormula f){

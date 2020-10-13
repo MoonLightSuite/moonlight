@@ -178,7 +178,7 @@ public class OnlineTemporalMonitoring<T, R>
                                        Parameters parameters)
     {
         return unaryTemporalMonitor(historicallyFormula, parameters,
-                domain::conjunction, domain.max());
+                                    domain::conjunction, domain.max());
     }
 
     @Override
@@ -186,7 +186,7 @@ public class OnlineTemporalMonitoring<T, R>
                                        Parameters parameters)
     {
         return unaryTemporalMonitor(onceFormula, parameters,
-                domain::disjunction, domain.min());
+                                    domain::disjunction, domain.min());
     }
 
 /*

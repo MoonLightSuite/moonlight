@@ -60,7 +60,7 @@ public class SpatialTemporalMonitorFutureOperator<S, T, R>
 											SpatialTemporalSignal<T> signal)
 	{
 		return m.monitor(locationService, signal).applyToSignal(
-				s -> computeSignal(s, interval, op,init));
+				s -> computeSignal(s, interval, op, init));
 	}
 
 }
