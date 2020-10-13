@@ -56,13 +56,13 @@ public class ReachOperator {
         Pair<Double, SpatialModel<S>> next = getNext(locSvcIterator);
 
         double time = Math.max(s1.start(), s2.start());
-        while ((next != null)&&(next.getFirst()<=time)) {
+        while ((next != null) && (next.getFirst() <= time)) {
             current = next;
             next = getNext(locSvcIterator);
         }
 
-        //Loop invariant: (current.getFirst()<=time) &&
-        //                ((next==null)||(time<next.getFirst()))
+        //Loop invariant: (current.getFirst() <= time) &&
+        //                ((next == null) || (time < next.getFirst()))
         c1.move(time);
         c2.move(time);
         SpatialModel<S> sm = current.getSecond();

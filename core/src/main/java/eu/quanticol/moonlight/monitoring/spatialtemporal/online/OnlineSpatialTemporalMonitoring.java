@@ -25,8 +25,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.*;
+import eu.quanticol.moonlight.monitoring.temporal.online.HorizonParameter;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
 
@@ -35,8 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-
-import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 
 /**
  * Primary entry point to perform online (spatial) monitoring.
@@ -62,12 +59,10 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
     private final SignalDomain<R> domain;
     private final Map<String, Function<SpatialModel<S>,
                               DistanceStructure<S, ?>>> distanceFunctions;
+
     private final boolean staticSpace;
 
     private final Map<String, SpatialTemporalMonitor<S, T, R>> monitors;
-
-
-
 
     /**
      * Initializes a monitoring process over the given interpretation domain,
