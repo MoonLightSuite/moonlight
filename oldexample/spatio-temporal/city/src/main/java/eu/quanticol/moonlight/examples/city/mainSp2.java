@@ -7,12 +7,13 @@ import eu.quanticol.moonlight.signal.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class mainSp2 {
     public static void main(String[] argv) {
-        Integer size = 7;
-        GraphModel<Double> city = new GraphModel<Double>(size);
+        int size = 7;
+        GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, 2.0, 1);
         city.add(1, 2.0, 0);
         city.add(0, 2.0, 5);
@@ -37,32 +38,32 @@ public class mainSp2 {
 
 
         //// Stop property
-        ArrayList<Boolean> stop = new ArrayList<>();
+        List<Boolean> stop = new ArrayList<>();
         place.forEach(i -> stop.add(i.equals("BusStop") || i.equals("MetroStop")));
         System.out.println(stop);
 
         //// MainSquare property
-        ArrayList<Boolean> mainsquare = new ArrayList<Boolean>();
+        List<Boolean> mainsquare = new ArrayList<>();
         place.forEach(i -> mainsquare.add(i.equals("MainSquare")));
 
         //// notHospital property
-        ArrayList<Boolean> notHospital = new ArrayList<Boolean>();
+        List<Boolean> notHospital = new ArrayList<>();
         place.forEach(i -> notHospital.add(!i.equals("Hospital")));
 
         //// Somewere Taxi property
         double range = 10;
         DistanceStructure<Double, Double> minutes = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
-        ArrayList<Boolean> somewhereTaxy = minutes.somewhere(new BooleanDomain(), taxi::get);
+        List<Boolean> somewhereTaxy = DistanceStructure.somewhere(new BooleanDomain(), taxi::get, minutes);
 
         //// (R1) Hospital -> Somewere Taxi property
-        ArrayList<Boolean> r1 = new ArrayList<Boolean>(size);
+        List<Boolean> r1 = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             r1.add(notHospital.get(i) || somewhereTaxy.get(i));
         }
         System.out.println(r1);
 
         /// stop reach_{<=10} mainsquare
-        ArrayList<Boolean> reacmainsquare = minutes.reach(new BooleanDomain(), taxi::get, mainsquare::get);
+        List<Boolean> reacmainsquare = minutes.reach(new BooleanDomain(), taxi::get, mainsquare::get);
 
 
         System.out.println(reacmainsquare);
