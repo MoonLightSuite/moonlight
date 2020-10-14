@@ -64,10 +64,10 @@ public class OnlineSTMonitorUnaryOperator<S, T, R>
     public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
-        //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
+        if(horizon.contains(signalEnd) || worklist.isEmpty()) {
         //update result
         worklist.add(m.monitor(locationService, signal).apply(op));
-        //}
+        }
 
         signalEnd =  signal.end();
         return worklist.get(worklist.size() - 1); //return last computed value
