@@ -145,7 +145,14 @@ public class SpatialTemporalSignal<T> {
 		}
 		return end;
 	}
-	
+
+	public void endAt(double end) {
+		for (Signal<T> signal : signals) {
+			signal.endAt(end);
+		}
+	}
+
+
 	public double[][][] toArray(FunctionToDouble<T> f) {
 		double[] timePoints = getTimeArray();
 		double[][][] toReturn = new double[size][][];

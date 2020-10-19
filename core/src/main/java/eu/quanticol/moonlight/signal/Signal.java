@@ -147,23 +147,55 @@ public class Signal<T> {
 
         double lastTime = 0;
         while (!cursor.completed()) {
-            // we want to check the intersection between the signal piece
-            // and the horizon is not empty, i.e.
-            // we want the horizon to start before the current segment
-            // or to end after it
-            //TODO: we should break the signal here
-            if(cursor.time() >= horizonStart ||
-                    cursor.nextTime() <= horizonEnd) {
+
+            if(checkHorizon(cursor, horizonStart, horizonEnd)) {
                 newSignal.add(cursor.time(), f.apply(cursor.value()));
             }
             lastTime = cursor.time();
             cursor.forward();
         }
-        if(lastTime < horizonEnd) {
+        /*if(lastTime < horizonEnd) {
             newSignal.add(lastTime, undefined);
             newSignal.endAt(horizonEnd);
-        } else {
+        } else {*/
             newSignal.endAt(end);
+        //}
+        return newSignal;
+    }
+
+    /**
+     * We want to check the intersection between the signal piece
+     * and the horizon is not empty, i.e. we want the horizon to start
+     * before the current segment or to end after it.
+     *
+     * TODO: we should break the signal here
+     */
+    private static <T> boolean checkHorizon(SignalCursor<T> cursor,
+                                            double start, double end)
+    {
+        return cursor.time() >= start || cursor.nextTime() <= end;
+    }
+
+    /**
+     * return a signal, given two signals and a bifunction
+     */
+    public static <T, R> Signal<R> applyHorizon(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
+        Signal<R> newSignal = new Signal<>();
+        if (!s1.isEmpty() && !s2.isEmpty()) {
+            SignalCursor<T> c1 = s1.getIterator(true);
+            SignalCursor<T> c2 = s2.getIterator(true);
+            double time = Math.max(s1.start(), s2.start());
+            c1.move(time);
+            c2.move(time);
+            while (!c1.completed() && !c2.completed()) {
+                newSignal.add(time, f.apply(c1.value(), c2.value()));
+                time = Math.min(c1.nextTime(), c2.nextTime());
+                c1.move(time);
+                c2.move(time);
+            }
+            if (!newSignal.isEmpty()) {
+                newSignal.endAt(Math.min(s1.end, s2.end));
+            }
         }
         return newSignal;
     }

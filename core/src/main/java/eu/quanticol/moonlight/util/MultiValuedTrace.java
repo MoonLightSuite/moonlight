@@ -124,7 +124,6 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
 
         return signal;
     }
-
     /**
      * @return the number of dimensions of the signal
      */

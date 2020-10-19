@@ -77,11 +77,11 @@ public class OnlineSTMonitorAtomic<S, T, R>
         // we must recompute the monitoring.
         // We store each monitoring result in a list.
         // Whether updated or not, we can just return the last computed result.
-        if(horizon.contains(signalEnd) || signalEnd == 0) {
+        //if(horizon.contains(signalEnd) || signalEnd == 0) {
             //update result
             worklist.add(signal.applyHorizon(atomicFunction, unknown,
                     horizon.getStart(), horizon.getEnd()));
-        }
+        //}
 
         signalEnd = signal.end();
         return worklist.get(worklist.size() - 1); //return last computed value

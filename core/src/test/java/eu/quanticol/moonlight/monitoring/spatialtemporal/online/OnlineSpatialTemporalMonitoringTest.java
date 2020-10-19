@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * The formula of this example comes from:
  * https://doi.org/10.1007/978-3-642-39799-8_19
  */
-class OnlineSpatialTemporalMonitoringTest {
+class SpatialTemporalMonitoringTest {
     private static final int X_SIGNAL = 0;
     private static final int Y_SIGNAL = 1;
 
@@ -103,7 +103,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(Interval.any(), test(trace, m));
     }
 
-    @Disabled("This seems to be a corner case and requires investigation.")
+    //@Disabled("This seems to be a corner case and requires investigation.")
     @Test
     void berkleyTestT4() {
         // Trace generation...
@@ -198,6 +198,7 @@ class OnlineSpatialTemporalMonitoringTest {
                                                             m = instrument();
 
         //Test at T2!
+        test(trace, m);
         assertEquals(Interval.any(), test(trace, m));
 
         // Update with data up to T3...
@@ -297,7 +298,7 @@ class OnlineSpatialTemporalMonitoringTest {
     {
         double init = xValues.get(0).getSecond().getStart();
         double length = xValues.get(xValues.size() - 1).getSecond().getEnd();
-        for(double t = init; t < length; t ++) {
+        for(double t = init; t <= length; t ++) {
             List<Comparable<?>> values = new ArrayList<>();
             updateValues(xValues, values, t);
             updateValues(yValues, values, t);
@@ -307,7 +308,7 @@ class OnlineSpatialTemporalMonitoringTest {
                 data.add(values);
             }
             signal.add(t, data);
-            //signal.endAt(t);
+            signal.endAt(t);
         }
     }
 
@@ -356,7 +357,6 @@ class OnlineSpatialTemporalMonitoringTest {
     private static Map<String, Function<SpatialModel<Double>,
             DistanceStructure<Double, ?>>> spatialModel()
     {
-
         double range = 10;
         DistanceStructure<Double, Double> trivial =
                 new DistanceStructure<>(x -> x,
@@ -379,14 +379,18 @@ class OnlineSpatialTemporalMonitoringTest {
         Formula atomX = new AtomicFormula("positiveX");
         Formula atomY = new AtomicFormula("positiveY");
 
-        return new EverywhereFormula("trivial",
-                new GloballyFormula(
-                                new OrFormula(new EventuallyFormula(atomX,
-                                                        new Interval(B, C)),
-                                              new NegationFormula(atomY)),
-                                    new Interval(0, A))
-        )
-        ;
+        return //new EverywhereFormula("trivial",
+                //new GloballyFormula(
+                        //new OrFormula(
+                                        new EventuallyFormula(atomX,
+                                                            new Interval(B, C)) //;
+                                        //,
+                                //new NegationFormula(atomY))
+                ;
+                                //atomY);
+                        //, new Interval(0, A));
+        //)
+        //;
     }
 
     /**

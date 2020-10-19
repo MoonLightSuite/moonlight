@@ -139,7 +139,7 @@ public class SlidingWindow<R> {
 		}
 		// We need to get back to the last segment, so that future iteration
 		// can continue from here
-		iterator.revert();
+		//iterator.revert();
 
 		return result;
 	}
@@ -186,7 +186,7 @@ public class SlidingWindow<R> {
 	 * @param t the time instant of interest
 	 * @return the non-relative version of the time instant
 	 */
-	private double timeOf(double t) {
+	protected double timeOf(double t) {
 		if (isFuture) {
 			return t - a;
 		} else {
@@ -204,7 +204,7 @@ public class SlidingWindow<R> {
 		private static final double EPSILON = 0.000001;
 		private Segment<R> first;
 		private Segment<R> last;
-		private double end;
+		protected double end;
 
 		/**
 		 * We shift the window to the given time instant
@@ -217,7 +217,7 @@ public class SlidingWindow<R> {
 			// TODO: why the previous value? shouldn't we get a new value?
 			if (firstTime() == nextTime) {
 				init(time - size, first.getValue());
-			} else if (nextTime + size > time) {
+			} else if (nextTime + size >= time) {
 				// If the current segment goes beyond the current time point,
 				// we cut it and just take the part that starts at the current
 				// time point

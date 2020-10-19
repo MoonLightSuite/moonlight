@@ -27,10 +27,11 @@ import java.util.function.BinaryOperator;
 
 public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
     private final R undefined;
-
+    private final BinaryOperator<R> aggregator;
     private SignalCursor<R> previousCursor;
     private Window previousWindow;
     private final double horizon;
+    private final boolean isFuture;
 
     /**
      * Constructs a Sliding Window on the given aggregator and time interval.
@@ -47,6 +48,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
                                double horizon)
     {
         super(a, b, aggregator, isFuture);
+        this.isFuture = isFuture;
+        this.aggregator = aggregator;
         this.undefined = undefined;
         this.horizon = horizon;
     }
@@ -60,28 +63,30 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
     public Signal<R> apply(Signal<R> s) {
         // We prepare the Sliding Window
         SignalCursor<R> cursor = loadCursor(s);
-        Window window = loadWindow();
+         Window window = loadWindow();
 
         // We actually slide the window
         Signal<R> result = doSlide(cursor, window);
 
         // If we have no results, we slided to an undefined area
         // from the very beginning
-        if(result.isEmpty()) {
+        /*if(result.isEmpty()) {
             Signal<R> o = new Signal<>();
             o.add(s.start(), undefined);
-            o.endAt(Math.max(s.end(), horizon));
+            o.endAt(s.end());
             return o;
-        }
+        }*/
 
         // We store the final value of the window
         storeEnding(result, window);
 
         // If the signal is shorter than the time horizon,
         // we return a Signal containing "undefined" information
-        if (result.end() < horizon) {
-            result.add(result.end(), undefined);
-            result.endAt(horizon);
+        if (result.end() < s.end()) {
+            double newEnd = result.end();
+            result.endAt(Double.NaN);
+            result.add(newEnd, undefined);
+            result.endAt(s.end());
         }
 
         return result;
@@ -99,5 +104,29 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
             previousCursor = iteratorInit(s);
 
         return previousCursor;
+    }
+
+    /**
+     * @see SlidingWindow#storeEnding(Signal, Window)
+     */
+    @Override
+    protected void storeEnding(Signal<R> result, Window window) {
+        // If we are sliding to the future,
+        // we add the beginning of the Sliding Window to the output.
+        // On the contrary, if we are sliding to the past,
+        // we add the end of the Sliding Window to the output.
+        R value = aggregator.apply(undefined, window.firstValue());
+        if (isFuture) {
+            result.add(timeOf(window.firstTime()), value);
+        } else {
+            result.add(window.end, window.firstValue());
+            //TODO: why window.END & window.FIRST?
+            // 		this should still be timeOf(window.firstTime())
+            //		but perhaps there are some degenerated cases I cannot
+            //		think of, where the window doesn't reach the maximum
+            //		size, and in which
+            //		timeOf(window.firstTime()) =/= window.end
+            //		if this is the case, a proper test should be in place
+        }
     }
 }
