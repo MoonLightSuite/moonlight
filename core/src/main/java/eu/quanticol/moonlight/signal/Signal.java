@@ -303,7 +303,9 @@ public class Signal<T> {
     }
 
     /**
-     * @return
+     * @return a new <code>SignalCursor</code>
+     *
+     * @see SignalCursor
      */
     public SignalCursor<T> getIterator(boolean forward) {
         return new SignalCursor<T>() {

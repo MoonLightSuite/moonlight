@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
@@ -16,10 +17,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAfterSignalEnd {
+class TestAfterSignalEnd {
 
 
     /**
@@ -31,7 +31,7 @@ public class TestAfterSignalEnd {
     private static final double O = 70;     // departure offset
 
     private static final BooleanDomain SATISFACTION = new BooleanDomain();
-    private static SpatialModel<Double> network = getModel();
+    private static final SpatialModel<Double> network = getModel();
 
     /**
      * Signal Dimensions (i.e. signal domain)
@@ -45,7 +45,7 @@ public class TestAfterSignalEnd {
 
 
     @Test
-    public void untilExceeding() {
+    void untilExceeding() {
                 SpatialTemporalSignal<Boolean> result = init(until());
                 List<Signal<Boolean>> signals = result.getSignals();
                 Signal<Boolean> onesignal = signals.get(0);
@@ -54,7 +54,7 @@ public class TestAfterSignalEnd {
 
 
     @Test
-    public void eventuallyExceeding() {
+    void eventuallyExceeding() {
         SpatialTemporalSignal<Boolean> result = init(peopleLeave());
         List<Signal<Boolean>> signals = result.getSignals();
         Signal<Boolean> onesignal = signals.get(0);
@@ -63,7 +63,7 @@ public class TestAfterSignalEnd {
     }
 
     @Test
-    public void globallyExceeding() {
+    void globallyExceeding() {
         SpatialTemporalSignal<Boolean> result = init(peopleLeave2());
         List<Signal<Boolean>> signals = result.getSignals();
         Signal<Boolean> onesignal = signals.get(0);
@@ -86,7 +86,7 @@ public class TestAfterSignalEnd {
      *  In symbols:(tooManyPeople U_[0,M] rightStation)
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> until() {
-        return SpatialTemporalMonitor.untilMonitor(
+        return untilMonitor(
                 tooManyPeople(), new Interval(0,M+O), rightStation(), // a Until b...
                         SATISFACTION);
     }
@@ -96,8 +96,8 @@ public class TestAfterSignalEnd {
      * In symbols: F_[0,M+O] !tooManyPeople
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
-        return SpatialTemporalMonitor.eventuallyMonitor(   // Eventually...
-                SpatialTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
+        return eventuallyMonitor(   // Eventually...
+                notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
                 , new Interval(0, M + O), SATISFACTION);
     }
 
@@ -105,8 +105,8 @@ public class TestAfterSignalEnd {
      * In symbols: G_[0,M+O] !tooManyPeople
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave2() {
-        return SpatialTemporalMonitor.globallyMonitor(   // Eventually...
-                SpatialTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
+        return globallyMonitor(   // Eventually...
+                notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
                 , new Interval(0, M + O), SATISFACTION);
     }
 
@@ -118,7 +118,7 @@ public class TestAfterSignalEnd {
      * @return an AtmoicMonitor for the property
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> tooManyPeople() {
-        return SpatialTemporalMonitor.atomicMonitor((x -> x.getThird().doubleValue() >= P));
+        return atomicMonitor((x -> x.getThird().doubleValue() >= P));
     }
 
     /**
@@ -127,7 +127,7 @@ public class TestAfterSignalEnd {
      * @return an AtomicMonitor for the property
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> atLeastATrain() {
-        return SpatialTemporalMonitor.atomicMonitor((x -> x.getFirst() > 0));
+        return atomicMonitor((x -> x.getFirst() > 0));
     }
 
 
@@ -137,7 +137,7 @@ public class TestAfterSignalEnd {
      * @return an AtmoicMonitor for the property
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> rightStation() {
-        return SpatialTemporalMonitor.atomicMonitor(Triple::getSecond);
+        return atomicMonitor(Triple::getSecond);
     }
 
     // --------- HELPERS --------- //

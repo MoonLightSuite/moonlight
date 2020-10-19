@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * The formula of this example comes from:
  * https://doi.org/10.1007/978-3-642-39799-8_19
  */
-class SpatialTemporalMonitoringTest {
+class OnlineSpatialTemporalMonitoringTest {
     private static final int X_SIGNAL = 0;
     private static final int Y_SIGNAL = 1;
 
