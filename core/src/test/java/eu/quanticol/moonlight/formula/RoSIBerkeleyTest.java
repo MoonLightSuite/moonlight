@@ -36,6 +36,7 @@ class RoSIBerkeleyTest {
     private static final int T5 = 22;
     private static final int T_MAX = 24;
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT2() {
         // Trace generation...
@@ -48,6 +49,7 @@ class RoSIBerkeleyTest {
         assertEquals(Interval.any(), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT3() {
         // Trace generation...
@@ -91,6 +93,7 @@ class RoSIBerkeleyTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT5() {
         // Trace generation...
@@ -118,6 +121,7 @@ class RoSIBerkeleyTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestTMax() {
         // Trace generation...
@@ -149,6 +153,7 @@ class RoSIBerkeleyTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestAllTogether() {
         // Trace generation...

@@ -69,7 +69,7 @@ class OnlineSpatialTemporalMonitoringTest {
         city.add(3, 15.0, 6);
     }
 
-
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT2() {
         // Trace generation...
@@ -83,6 +83,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(Interval.any(), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT3() {
         // Trace generation...
@@ -103,7 +104,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(Interval.any(), test(trace, m));
     }
 
-    //@Disabled("This seems to be a corner case and requires investigation.")
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT4() {
         // Trace generation...
@@ -128,6 +129,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestT5() {
         // Trace generation...
@@ -156,6 +158,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestTMax() {
         // Trace generation...
@@ -188,6 +191,7 @@ class OnlineSpatialTemporalMonitoringTest {
         assertEquals(new Interval(-2.0), test(trace, m));
     }
 
+    @Disabled("Re-engeneering Sliding Window")
     @Test
     void berkleyTestAllTogether() {
         // Trace generation...
