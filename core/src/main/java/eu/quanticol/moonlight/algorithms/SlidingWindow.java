@@ -137,11 +137,21 @@ public class SlidingWindow<R> {
 			// We go over to the next Segment of the Signal
 			iterator.forward();
 		}
-		// We need to get back to the last segment, so that future iteration
-		// can continue from here
-		//iterator.revert();
+		registerLastValidTime(iterator, window);
 
 		return result;
+	}
+
+	protected void registerLastValidTime(SignalCursor<R> iter, Window wnd) {
+		if(iter.completed() && iter.hasPrevious()) {
+			double lastTime;
+			// We need to get back to the last segment, so that future iteration
+			// can continue from here
+			iter.revert();
+			lastTime = iter.nextTime();
+			R lastValue = iter.value();
+			wnd.tryAdd(lastTime, lastValue);
+		}
 	}
 
 	/**
@@ -217,7 +227,7 @@ public class SlidingWindow<R> {
 			// TODO: why the previous value? shouldn't we get a new value?
 			if (firstTime() == nextTime) {
 				init(time - size, first.getValue());
-			} else if (nextTime + size >= time) {
+			} else if (nextTime + size > time) {
 				// If the current segment goes beyond the current time point,
 				// we cut it and just take the part that starts at the current
 				// time point

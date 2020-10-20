@@ -68,17 +68,19 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         // We actually slide the window
         Signal<R> result = doSlide(cursor, window);
 
-        // If we have no results, we slided to an undefined area
-        // from the very beginning
-        /*if(result.isEmpty()) {
-            Signal<R> o = new Signal<>();
-            o.add(s.start(), undefined);
-            o.endAt(s.end());
-            return o;
-        }*/
-
-        // We store the final value of the window
-        storeEnding(result, window);
+        try {
+            // We store the final value of the window
+            storeEnding(result, window);
+        } catch(NullPointerException e) {
+            // If we have no results, we slided to an undefined area
+            // from the very beginning
+            if(result.isEmpty()) {
+                Signal<R> o = new Signal<>();
+                o.add(s.start(), undefined);
+                o.endAt(s.end());
+                return o;
+            }
+        }
 
         // If the signal is shorter than the time horizon,
         // we return a Signal containing "undefined" information
@@ -115,6 +117,8 @@ public class OnlineSlidingWindow<R> extends SlidingWindow<R> {
         // we add the beginning of the Sliding Window to the output.
         // On the contrary, if we are sliding to the past,
         // we add the end of the Sliding Window to the output.
+
+
         R value = aggregator.apply(undefined, window.firstValue());
         if (isFuture) {
             result.add(timeOf(window.firstTime()), value);
