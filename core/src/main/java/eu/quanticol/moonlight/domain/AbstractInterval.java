@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.domain;
 
+import java.util.function.Function;
+
 /**
  * Abstract immutable data type that represents an interval over parameter T.
  *
@@ -41,7 +43,7 @@ package eu.quanticol.moonlight.domain;
  *
  * @see Interval for the implementation on Doubles
  */
-public abstract class AbstractInterval<T extends Comparable<T>>
+public class AbstractInterval<T extends Comparable<T>>
         implements Comparable<AbstractInterval<T>>
 {
     private final T start;
@@ -61,6 +63,10 @@ public abstract class AbstractInterval<T extends Comparable<T>>
         this.end = end;
         this.openOnLeft = openOnLeft;
         this.openOnRight = openOnRight;
+    }
+
+    public AbstractInterval(T start, T end) {
+        this(start,end,false,false);
     }
 
     /**
@@ -199,5 +205,9 @@ public abstract class AbstractInterval<T extends Comparable<T>>
             output += "]";
 
         return output;
+    }
+
+    public <R extends Comparable<R>> AbstractInterval<R> apply(Function<T, R> f) {
+        return new AbstractInterval<>(f.apply(this.start),f.apply(this.end),this.openOnLeft,this.openOnRight);
     }
 }
