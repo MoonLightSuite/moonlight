@@ -7,7 +7,7 @@ package eu.quanticol.moonlight.signal;
  * @author loreti
  *
  */
-public class Segment<T> {
+public class Segment<T> implements SegmentInterface<T> {
 	
 	private double time;
 	private final T value;
@@ -32,6 +32,7 @@ public class Segment<T> {
 		return time;
 	}
 	
+	@Override
 	public T getValue() {
 		return value;
 	}
@@ -48,7 +49,8 @@ public class Segment<T> {
 		this.next = next;
 	}
 	
-	public T getValueAt( double t ) {
+	@Override
+	public T getValueAt(double t) {
 		Segment<T> selected = jump( t );
 		return (selected==null?null:selected.value);
 	}
