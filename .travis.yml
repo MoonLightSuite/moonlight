@@ -23,6 +23,10 @@ after_success:
 notifications:
   email:
     recipients:
+      - simone.silvetti@gmail.com
+      - michele.loreti@unicam.it
+      - lauranenzi@gmail.com
       - ennio.visconti@gmail.com
+      - ezio.bartocci@gmail.com
     on_success: change
     on_failure: always
