@@ -92,20 +92,21 @@ public class Erlang {
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         // Now we can monitor the system for the satisfaction of our properties
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> safety = neighbourSafety();
+        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> safety = phi1();
         SpatialTemporalSignal<Boolean> result = safety.monitor(locService, signal);
 
         Signal<Boolean> output = result.getSignals().get(0);
 
         System.out.println("The safety monitoring result is: " + output.valueAt(0));
 
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = communicationLiveness();
+        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi3();
         result = liveness.monitor(locService, signal);
         output = result.getSignals().get(0);
 
 
         System.out.println("The liveness monitoring result is: " + output.valueAt(0));
 
+        /*
         //Statistical Model Checking
         StatisticalModelChecker<Double, List<Comparable<?>>, Boolean> smc =
                 new StatisticalModelChecker<>(safety, data, locService);
@@ -115,9 +116,36 @@ public class Erlang {
             System.out.println("SMC Safety result: " + r.getSignals().get(0).valueAt(0));
         }
         System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
+        */
     }
 
     // --------- FORMULAE --------- //
+
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> phi1() {
+        return globallyMonitor(
+                locationCrowdedness()
+                , new Interval(0, TH), SATISFACTION);
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> phi2() {
+        return globallyMonitor(
+                reachMonitor(locationCrowdedness(),
+                             Grid.distance(1, LH),
+                             locationCrowdedness(),
+                             SATISFACTION)
+                , new Interval(0, TH), SATISFACTION);
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> phi3() {
+        return somewhereMonitor(
+                impliesMonitor(
+                        notMonitor(locationCrowdedness(), SATISFACTION),
+                        SATISFACTION,
+                        everywhereMonitor(locationCrowdedness(),
+                                          Grid.distance(0, LH), SATISFACTION))
+                , Grid.distance(0, LH), SATISFACTION);
+    }
 
     /**
      * The minimum requirement for the feature to be right, is that
