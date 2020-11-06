@@ -51,8 +51,10 @@ public class Erlang {
      */
     //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectories_100.csv").getPath();
     //private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
-    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("100_trajectory_grid_25x25_T_336.csv").getPath();
-    private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_25x25.txt").getPath();
+    //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("100_trajectory_grid_25x25_T_336.csv").getPath();
+    private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("001_trajectory_grid_35x35_T_144.csv").getPath();
+    //private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_25x25.txt").getPath();
+    private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_35x35.txt").getPath();
 
     /**
      * Numeric constants of the problem
