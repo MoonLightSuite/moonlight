@@ -62,7 +62,9 @@ public class DataReader<T> {
      * @param fileReader buffer to the file to read
      * @throws IOException when a new line can't be read
      */
-    private BufferedReader readHeader(BufferedReader fileReader) throws IOException {
+    private BufferedReader readHeader(BufferedReader fileReader)
+            throws IOException
+    {
         String header = fileReader.readLine();
 
         strategy.initialize(splitLine(header));
@@ -90,6 +92,11 @@ public class DataReader<T> {
         }
     }
 
+    /**
+     *
+     * @param line
+     * @return
+     */
     private String[] splitLine(String line) {
         String[] data;
         if (FileType.CSV == type)

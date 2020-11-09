@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.io;
 
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.examples.subway.parsing.PrintingStrategy;
 
 import java.io.*;
 
@@ -11,21 +11,23 @@ import java.io.*;
  *
  * @param <T> type to which the data read is converted
  *
- * @see ParsingStrategy
+ * @see PrintingStrategy
  */
 public class DataWriter<T> {
 
     private final FileType type;
     private final String path;
-    private final ParsingStrategy<T> strategy;
+    private final PrintingStrategy<T> strategy;
 
     /**
      * Writer initialization
      * @param path the path to the data source file
      * @param type the file type of source
-     * @param strategy the parsing strategy to execute
+     * @param strategy the printing strategy to execute
      */
-    public DataWriter(String path, FileType type, ParsingStrategy<T> strategy) {
+    public DataWriter(String path,
+                      FileType type,
+                      PrintingStrategy<T> strategy) {
         this.path = path;
         this.type = type;
         this.strategy = strategy;
@@ -39,8 +41,11 @@ public class DataWriter<T> {
         try {
             BufferedWriter outWriter = new BufferedWriter(new FileWriter(path));
 
+            // Write the header
+            writeHeader(outWriter, data);
+
             // Write the data
-            writeData(outWriter, data);
+            writeLines(outWriter, data);
 
             outWriter.close();
         } catch (IOException e) {
@@ -48,7 +53,24 @@ public class DataWriter<T> {
         }
     }
 
-    private void writeData(BufferedWriter outWriter, T data) {
-        outWriter.write("");
+    private void writeHeader(BufferedWriter outWriter, T header)
+            throws IOException
+    {
+        outWriter.write(strategy.initialize(header));
+    }
+
+    private void writeLines(BufferedWriter outWriter, T data)
+            throws IOException
+    {
+
+        String output = strategy.print(data, getWordBreak());
+        while(null != output) {
+            outWriter.write(output + "\n");
+            output = strategy.print(data, getWordBreak());
+        }
+    }
+
+    private String getWordBreak() {
+        return FileType.CSV == type ? "," : " ";
     }
 }

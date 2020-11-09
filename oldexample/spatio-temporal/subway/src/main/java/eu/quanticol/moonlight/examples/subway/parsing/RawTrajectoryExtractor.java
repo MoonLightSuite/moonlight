@@ -7,7 +7,9 @@ package eu.quanticol.moonlight.examples.subway.parsing;
  * @see MultiRawTrajectoryExtractor for importing multiple trajectories from the
  * same file.
  */
-public class RawTrajectoryExtractor implements ParsingStrategy<double[][]> {
+public class RawTrajectoryExtractor
+        implements ParsingStrategy<double[][]>, PrintingStrategy<double[][]>
+{
     private final int spaceNodes;
     private int timePoints;
     private double[][] signal;  // [Space][Time] signal
@@ -50,6 +52,24 @@ public class RawTrajectoryExtractor implements ParsingStrategy<double[][]> {
         }
 
         spaceIterator++;
+    }
+
+
+    @Override
+    public String initialize(double[][] header) {
+        String string;
+
+        return null;
+    }
+
+    @Override
+    public String print(double[][] data, String wordBreak) {
+        return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 
     /**
