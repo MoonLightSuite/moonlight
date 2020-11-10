@@ -85,10 +85,11 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
 
             float duration = (float)((end - start) / 1000.0);
 
-            durations.add(duration);
-            results.add(result);
             int tps = (int) result.getSignals().get(0).end();
             timePoints = Math.min(tps, timePoints);
+
+            durations.add(duration);
+            results.add(result);
             return result;
         } catch(Exception e) {
             System.out.println("ERROR: Statistics computation failed");
