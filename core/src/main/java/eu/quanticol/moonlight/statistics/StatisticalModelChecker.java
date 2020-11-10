@@ -71,7 +71,11 @@ public class StatisticalModelChecker<S, T, R> {
         samples = trajectorySamples;
         locService = locationService;
 
-        stats =  new SignalStatistics<>();
+        SpatialTemporalSignal<T> s  = trajectorySamples.iterator().next();
+        int locations = s.getNumberOfLocations();
+        int timePoints = s.getSignals().get(0).getTimeSet().size();
+
+        stats =  new SignalStatistics<>(locations, timePoints);
         results = new ArrayList<>();
     }
 
@@ -102,7 +106,7 @@ public class StatisticalModelChecker<S, T, R> {
     /**
      * @return The results collected, following a <code>compute</code> execution
      */
-    public Statistics getStats() {
+    public Statistics[][] getStats() {
         return stats.analyze();
     }
 

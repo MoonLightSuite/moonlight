@@ -12,6 +12,7 @@ public class RawTrajectoryExtractor
 {
     private final int spaceNodes;
     private int timePoints;
+    private int spaceLocations;
     private double[][] signal;  // [Space][Time] signal
 
     private int spaceIterator;
@@ -31,8 +32,8 @@ public class RawTrajectoryExtractor
      */
     @Override
     public void initialize(String[] header) {
-        this.timePoints = header.length;
-        this.spaceIterator = 0;
+        timePoints = header.length;
+        spaceIterator = 0;
         signal = new double[spaceNodes][timePoints];
     }
 
@@ -45,7 +46,8 @@ public class RawTrajectoryExtractor
     public void process(String[] data) {
         if (spaceIterator >= spaceNodes)
             throw new UnsupportedOperationException
-                    ("Trajectory bigger than spatial dimension. Are you importing multiple trajectories?");
+                    ("Trajectory bigger than spatial dimension. " +
+                     "Are you importing multiple trajectories?");
 
         for (int i = 0; i < data.length; i++) {
             signal[spaceIterator][i] = Double.parseDouble(data[i]);
@@ -56,20 +58,34 @@ public class RawTrajectoryExtractor
 
 
     @Override
-    public String initialize(double[][] header) {
-        String string;
+    public String initialize(double[][] header, String wordBreak) {
+        spaceIterator = 0;
+        spaceLocations = header.length;
 
-        return null;
+        StringBuilder head = new StringBuilder("\"Space\"" + wordBreak);
+        for(int i = 0; i < header[0].length; i++) {
+            head.append("\"T").append(i).append("\"").append(wordBreak);
+        }
+
+        return head.toString();
     }
 
     @Override
     public String print(double[][] data, String wordBreak) {
-        return null;
+        StringBuilder line = new StringBuilder("\"S" + spaceIterator +
+                                               "\"" + wordBreak);
+
+        for(int i = 0; i < data[spaceIterator].length; i++) {
+            line.append(data[spaceIterator][i]).append(wordBreak);
+        }
+
+        spaceIterator++;
+        return line.toString();
     }
 
     @Override
     public boolean isComplete() {
-        return false;
+        return spaceIterator == spaceLocations;
     }
 
     /**

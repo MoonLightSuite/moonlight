@@ -1,5 +1,9 @@
 package eu.quanticol.moonlight.examples.subway;
 
+import eu.quanticol.moonlight.examples.subway.io.DataWriter;
+import eu.quanticol.moonlight.examples.subway.parsing.PrintingStrategy;
+import eu.quanticol.moonlight.examples.subway.parsing.RawTrajectoryExtractor;
+import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
 import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
@@ -55,6 +59,7 @@ public class Erlang {
     private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("001_trajectory_grid_35x35_T_144.csv").getPath();
     //private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_25x25.txt").getPath();
     private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_35x35.txt").getPath();
+    private static final String RESULT = "milan_35x35_result.txt";
 
     /**
      * Numeric constants of the problem
@@ -99,27 +104,34 @@ public class Erlang {
 
         Signal<Boolean> output = result.getSignals().get(0);
 
-        System.out.println("The safety monitoring result is: " + output.valueAt(0));
-
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi3();
+        /*SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi2();
         result = liveness.monitor(locService, signal);
-        output = result.getSignals().get(0);
+        output = result.getSignals().get(0);*/
 
 
-        System.out.println("The liveness monitoring result is: " + output.valueAt(0));
-
-        /*
         //Statistical Model Checking
         StatisticalModelChecker<Double, List<Comparable<?>>, Boolean> smc =
                 new StatisticalModelChecker<>(safety, data, locService);
         smc.compute();
+        double[][] sat = filterAverage(smc.getStats());
 
-        for (SpatialTemporalSignal<Boolean> r : smc.getResults()) {
-            System.out.println("SMC Safety result: " + r.getSignals().get(0).valueAt(0));
-        }
-        System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
-        */
+        PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
+        new DataWriter<>(RESULT, FileType.CSV, str).write(sat);
+
+        //System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
     }
+
+    private static double[][] filterAverage(SignalStatistics.Statistics[][] stats) {
+        double[][] output = new double[stats.length][stats[0].length];
+        for(int l = 0; l < stats.length; l++) {
+            for(int t = 0; t < stats[0].length; t++) {
+                output[l][t] = stats[l][t].average;
+            }
+        }
+        return output;
+    }
+
+
 
     // --------- FORMULAE --------- //
 

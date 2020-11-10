@@ -15,7 +15,7 @@ public interface PrintingStrategy<T> {
      * Hook to execute the initialization of the printer, when needed.
      * @param header an array of data containing the data to process
      */
-    String initialize(T header);
+    String initialize(T header, String wordBreak);
 
     /**
      * Parses the input data. Might be reiterated

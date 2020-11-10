@@ -55,12 +55,16 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
     private final Collection<Float> durations = new ArrayList<>();
 
     private final long startingTime;
+    private final int locations;
+    private int timePoints;
 
     /**
      * Initializes the internal timer(s) for the statistics
      */
-    public SignalStatistics() {
+    public SignalStatistics(int locations, int timePoints) {
         startingTime = System.currentTimeMillis();
+        this.locations = locations;
+        this.timePoints = timePoints;
     }
 
     /**
@@ -83,6 +87,8 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
 
             durations.add(duration);
             results.add(result);
+            int tps = (int) result.getSignals().get(0).end();
+            timePoints = Math.min(tps, timePoints);
             return result;
         } catch(Exception e) {
             System.out.println("ERROR: Statistics computation failed");
@@ -99,37 +105,56 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
      *
      * @return a DTO containing the final statistics
      */
-    public Statistics analyze() {
-        float avg = computeAverage();
-        float var = computeVariance(avg);
-        float stdDev = (float) Math.sqrt(var);
-        float execTime = computeAvgExecTime();
-        int cnt = results.size();
+    public Statistics[][] analyze() {
+        Statistics[][] stats = new Statistics[locations][timePoints];
+        for(int t = 0; t < timePoints; t++) {
+            float[] avg = generateAverages(t);
+            float[] var = generateVariances(avg, t);
+            float execTime = computeAvgExecTime();
+            int cnt = results.size();
 
-        long endingTime = System.currentTimeMillis();
-        float totalTime = (float) ((endingTime - startingTime) / 1000.0);
+            long endingTime = System.currentTimeMillis();
+            float totalTime = (float) ((endingTime - startingTime) / 1000.0);
 
-        return new Statistics(avg, execTime, stdDev, var, cnt, totalTime);
+            for(int l = 0; l < locations; l++) {
+                float stdDev = (float) Math.sqrt(var[l]);
+                stats[l][t] = new Statistics(avg[l], execTime, stdDev,
+                        var[l], cnt, totalTime);
+            }
+
+        }
+        return stats;
     }
 
     /**
      * @return the average result over the analyzed traces.
      */
-    private float computeAverage() {
-        float value = 0;
+    private float[] generateAverages(double t) {
+        float[] outputs = new float[locations];
 
-        for (SpatialTemporalSignal<?> result : results) {
-            Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Float) {
-                value += (Float) s.valueAt(0);
-            } else if (s.valueAt(0) instanceof Boolean) {
-                value += (Boolean) s.valueAt(0) ? 1 : 0;
+        for(int l = 0; l < locations; l++) {
+            float value = 0;
+            for (SpatialTemporalSignal<?> r : results) {
+                Signal<?> s = r.getSignals().get(l);
+                value = computeAverage(s, value, t);
             }
-            else
-                throw new InvalidParameterException("Unknown Signal Output");
+            outputs[l] = value / results.size();
         }
 
-        return value / results.size();
+        return outputs;
+    }
+
+    private float computeAverage(Signal<?> s, float value,
+                                 double t)
+    {
+        if (s.valueAt(t) instanceof Double) {
+            value += (Float) s.valueAt(t);
+        } else if (s.valueAt(t) instanceof Boolean) {
+            value += (Boolean) s.valueAt(t) ? 1 : 0;
+        } else
+            throw new InvalidParameterException("Unknown Signal Domain");
+
+        return value;
     }
 
     /**
@@ -148,23 +173,34 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
     /**
      * @return the result variance over the analyzed traces.
      */
-    private float computeVariance(float avg) {
-        float value = 0;
+    private float[] generateVariances(float[] avg, double t) {
+        float[] outputs = new float[locations];
 
-        for (SpatialTemporalSignal<?> result : results) {
-            Signal<?> s = result.getSignals().get(0);
-            if (s.valueAt(0) instanceof Float) {
-                float v = (Float) s.valueAt(0);
-                value += Math.pow((v - avg), 2);
-            } else if (s.valueAt(0) instanceof Boolean) {
-                float v = (Boolean) s.valueAt(0) ? 1 : 0;
-                value += Math.pow((v - avg), 2);
+        for(int l = 0; l < locations; l++) {
+            float value = 0;
+            for (SpatialTemporalSignal<?> r : results) {
+                Signal<?> s = r.getSignals().get(l);
+                value = computeVariance(s, avg[l], value, t);
             }
-            else
-                throw new InvalidParameterException("Unknown Signal Output");
+            outputs[l] = value / (results.size());
         }
 
-        return value / (results.size());
+        return outputs;
+    }
+
+    private float computeVariance(Signal<?> s, float avg, float value,
+                                  double t)
+    {
+        if (s.valueAt(t) instanceof Double) {
+            float v = (Float) s.valueAt(0);
+            value += Math.pow((v - avg), 2);
+        } else if (s.valueAt(t) instanceof Boolean) {
+            float v = (Boolean) s.valueAt(t) ? 1 : 0;
+            value += Math.pow((v - avg), 2);
+        } else
+            throw new InvalidParameterException("Unknown Signal Domain");
+
+        return value;
     }
 
 
