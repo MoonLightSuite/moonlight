@@ -110,4 +110,11 @@ public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<M
     public int getTimePoints() {
         return timePoints;
     }
+
+    /**
+     * @return the number of space nodes expected to be in each trajectory
+     */
+    public int getSpaceNodes() {
+        return spaceNodes;
+    }
 }

@@ -53,19 +53,22 @@ public class Erlang {
     /**
      * Source files location
      */
+    private static final String DATA_DIR = "trajectories/";
+    private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_35x35.txt";
+    private static final String TRAJECTORY_FILE_PART = "_trajectory_grid_35x35_T_144.csv";
+    private static final String RESULT = "_k100_smc_milan_grid_35x35_T_133.csv";
     //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectories_100.csv").getPath();
     //private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
     //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("100_trajectory_grid_25x25_T_336.csv").getPath();
     private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("001_trajectory_grid_35x35_T_144.csv").getPath();
     //private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_25x25.txt").getPath();
     private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_35x35.txt").getPath();
-    private static final String RESULT = "milan_35x35_result.txt";
 
     /**
      * Numeric constants of the problem
      */
     private static final int LH = 1;       // location horizon (neighbourhood)
-    private static final double C = 5;     // crowdedness threshold
+    private static final double K = 100;     // crowdedness threshold
     private static final double TH = 10;   // properties time horizon
     private static final double T2 = 7;    // properties time horizon
     private static final double T3 = 1;    // output signal reaction time
@@ -98,19 +101,80 @@ public class Erlang {
         //// We are considering a dynamic Location Service ///
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
-        // Now we can monitor the system for the satisfaction of our properties
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> safety = phi1();
-        SpatialTemporalSignal<Boolean> result = safety.monitor(locService, signal);
+        Collection<MultiValuedTrace> trajectories = loadTrajectories();
+        smc(phi1(), "p1", trajectories, locService);
+        smc(phi2(), "p2", trajectories, locService);
+        smc(phi3(), "p3", trajectories, locService);
 
-        Signal<Boolean> output = result.getSignals().get(0);
+        System.out.println("Saving output in :" + RESULT);
 
-        /*SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi2();
-        result = liveness.monitor(locService, signal);
-        output = result.getSignals().get(0);*/
+        //System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
+    }
 
-
+    private static void smc(
+            SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> p,
+            String id,
+            Collection<MultiValuedTrace> trajectories,
+            LocationService<Double> locService)
+    {
         //Statistical Model Checking
         StatisticalModelChecker<Double, List<Comparable<?>>, Boolean> smc =
+                new StatisticalModelChecker<>(p, trajectories, locService);
+        smc.compute();
+        double[][] avg = filterAverage(smc.getStats());
+        double[][] var = filterVariance(smc.getStats());
+
+        PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
+        new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
+        new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
+    }
+
+    private static Collection<MultiValuedTrace> loadTrajectories() {
+        Collection<MultiValuedTrace> trajectories = new ArrayList<>();
+        for(int i = 1; i <= 100; i++) {
+            String t = "100";
+            if(i < 10)
+                t = "00".concat(String.valueOf(i));
+            else if(i < 100)
+                t = "0".concat(String.valueOf(i));
+            trajectories.addAll(loadTrajectory(t));
+            System.out.println("Trajectory " + i + " loaded successfully!");
+        }
+        return trajectories;
+    }
+
+    private static Collection<MultiValuedTrace> loadTrajectory(String i) {
+        MultiRawTrajectoryExtractor trajectory =
+                    new MultiRawTrajectoryExtractor(network.size(), processor);
+        String path = Erlang.class
+                     .getResource(DATA_DIR + i + TRAJECTORY_FILE_PART)
+                     .getPath();
+        return new DataReader<>(path, FileType.CSV, trajectory).read();
+    }
+
+    /*
+    public static void oldmain(String[] argv) {
+        System.out.println("The network size is: " + network.size());
+
+        MultiValuedTrace signal = data.iterator().next();
+
+        Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
+
+        //// We are considering a dynamic Location Service ///
+        LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
+
+        // Now we can monitor the system for the satisfaction of our properties
+        SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> safety = phi1();
+        SpatialTemporalSignal<Double> result = safety.monitor(locService, signal);
+
+        Signal<Double> output = result.getSignals().get(0);
+
+        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi2();
+        result = liveness.monitor(locService, signal);
+        output = result.getSignals().get(0);
+
+        //Statistical Model Checking
+        StatisticalModelChecker<Double, List<Comparable<?>>, Double> smc =
                 new StatisticalModelChecker<>(safety, data, locService);
         smc.compute();
         double[][] sat = filterAverage(smc.getStats());
@@ -118,7 +182,16 @@ public class Erlang {
         PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
         new DataWriter<>(RESULT, FileType.CSV, str).write(sat);
 
+        System.out.println("Saving output in :" + RESULT);
+
         //System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
+    }*/
+
+    private static String outputFile(String path, String ext1, String ext2) {
+        String trace = ext1 + "_" + ext2;
+        String newpath = Erlang.class.getResource("/").getPath() + trace + path;
+        return newpath.replace("build/classes/java/main",
+                "src/main/resources/eu/quanticol/moonlight/examples/subway");
     }
 
     private static double[][] filterAverage(SignalStatistics.Statistics[][] stats) {
@@ -126,6 +199,16 @@ public class Erlang {
         for(int l = 0; l < stats.length; l++) {
             for(int t = 0; t < stats[0].length; t++) {
                 output[l][t] = stats[l][t].average;
+            }
+        }
+        return output;
+    }
+
+    private static double[][] filterVariance(SignalStatistics.Statistics[][] stats) {
+        double[][] output = new double[stats.length][stats[0].length];
+        for(int l = 0; l < stats.length; l++) {
+            for(int t = 0; t < stats[0].length; t++) {
+                output[l][t] = stats[l][t].variance;
             }
         }
         return output;
@@ -147,7 +230,7 @@ public class Erlang {
                 reachMonitor(locationCrowdedness(),
                              Grid.distance(1, LH),
                              locationCrowdedness(),
-                             SATISFACTION)
+                        SATISFACTION)
                 , new Interval(0, TH), SATISFACTION);
     }
 
@@ -156,9 +239,29 @@ public class Erlang {
                 impliesMonitor(
                         notMonitor(locationCrowdedness(), SATISFACTION),
                         SATISFACTION,
-                        everywhereMonitor(locationCrowdedness(),
-                                          Grid.distance(0, LH), SATISFACTION))
+                        surroundPhi(notMonitor(locationCrowdedness(), SATISFACTION)
+                                   ,locationCrowdedness()))
                 , Grid.distance(0, LH), SATISFACTION);
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+        surroundPhi(SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> p1,
+                    SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> p2)
+    {
+        return andMonitor(p1, SATISFACTION,
+                notMonitor(
+                        andMonitor(
+                                reachMonitor(p1, Grid.distance(1, 1),
+                                    notMonitor(
+                                            orMonitor(p1, SATISFACTION, p2),
+                                            SATISFACTION),
+                                SATISFACTION),
+                                SATISFACTION,
+                                notMonitor(
+                                        escapeMonitor(p2, Grid.distance(1, 1),
+                                                                SATISFACTION),
+                                        SATISFACTION))
+                        , SATISFACTION));
     }
 
     /**
@@ -169,10 +272,10 @@ public class Erlang {
      *
      * @return a GloballyMonitor for the property
      */
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> neighbourSafety() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> neighbourSafety() {
         return globallyMonitor(   // Globally in TH...
-                    impliesMonitor(request(), SATISFACTION, eligibleLoc())
-                , new Interval(0, TH), SATISFACTION);
+                    impliesMonitor(request(), ROBUSTNESS, eligibleLoc())
+                , new Interval(0, TH), ROBUSTNESS);
     }
 
     /**
@@ -184,48 +287,56 @@ public class Erlang {
      *
      * @return an EventuallyMonitor for the property
      */
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> communicationLiveness() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> communicationLiveness() {
         return eventuallyMonitor(   // Eventually in T2...
-                andMonitor(request(), SATISFACTION,
-                        eventuallyMonitor(response(), new Interval(0, T3), SATISFACTION))
-                , new Interval(0, T2), SATISFACTION);
+                andMonitor(request(), ROBUSTNESS,
+                        eventuallyMonitor(response(), new Interval(0, T3), ROBUSTNESS))
+                , new Interval(0, T2), ROBUSTNESS);
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> request() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> request() {
         return devConnected();
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> eligibleLoc() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> eligibleLoc() {
         return somewhereMonitor(
-                andMonitor(locationCrowdedness(), SATISFACTION, locationRouter())
-                , Grid.distance(0, LH), SATISFACTION);
+                andMonitor(locationCrowdednessDouble(), ROBUSTNESS, locationRouter())
+                , Grid.distance(0, LH), ROBUSTNESS);
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> response() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> response() {
         return outputRouter(); //some quality metrics may be added here...
     }
 
 
     // --------- ATOMIC PREDICATES --------- //
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> devConnected() {
-        return atomicMonitor((s -> (Boolean) s.get(DEV_CONNECTED)));
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> devConnected() {
+        return atomicMonitor((s -> (Double) s.get(DEV_CONNECTED)));
     }
 
     private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> devMoving() {
         return atomicMonitor((s -> s.get(DEV_DIRECTION) != GridDirection.HH));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> locationRouter() {
-        return atomicMonitor((s -> (Integer) s.get(LOC_ROUTER) >= 0));
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> locationRouter() {
+        //return atomicMonitor((s -> (Integer) s.get(LOC_ROUTER) >= 0));
+        return atomicMonitor((s -> (Double) s.get(LOC_ROUTER)));
     }
 
     private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> locationCrowdedness() {
-        return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) < C));
+        return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) < K));
+        //return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) - C));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> outputRouter() {
-        return atomicMonitor((s -> (Integer) s.get(OUT_ROUTER) >= -1));
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> locationCrowdednessDouble() {
+        //return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) < C));
+        return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) - K));
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> outputRouter() {
+        //return atomicMonitor((s -> (Integer) s.get(OUT_ROUTER) >= -1));
+        return atomicMonitor((s -> (Double) s.get(OUT_ROUTER) - 1));
     }
 
 

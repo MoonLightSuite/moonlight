@@ -75,6 +75,9 @@ public class RawTrajectoryExtractor
         StringBuilder line = new StringBuilder("\"S" + spaceIterator +
                                                "\"" + wordBreak);
 
+        if(spaceIterator == spaceLocations)
+            return null;
+
         for(int i = 0; i < data[spaceIterator].length; i++) {
             line.append(data[spaceIterator][i]).append(wordBreak);
         }

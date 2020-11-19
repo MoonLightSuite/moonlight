@@ -149,7 +149,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
                                  double t)
     {
         if (s.valueAt(t) instanceof Double) {
-            value += (Float) s.valueAt(t);
+            value += ((Double) s.valueAt(t)).floatValue();
         } else if (s.valueAt(t) instanceof Boolean) {
             value += (Boolean) s.valueAt(t) ? 1 : 0;
         } else
@@ -193,7 +193,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
                                   double t)
     {
         if (s.valueAt(t) instanceof Double) {
-            float v = (Float) s.valueAt(0);
+            float v = ((Double) s.valueAt(t)).floatValue();;
             value += Math.pow((v - avg), 2);
         } else if (s.valueAt(t) instanceof Boolean) {
             float v = (Boolean) s.valueAt(t) ? 1 : 0;
