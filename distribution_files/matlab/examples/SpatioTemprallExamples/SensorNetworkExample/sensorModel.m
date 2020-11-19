@@ -1,4 +1,4 @@
-function [vorSpTemModel,conSpTemModel, time, signal] = sensorModel(num_nodes,numSteps,plotFrames)
+function [vorSpTemModel,conSpTemModel, time, signal, frames] = sensorModel(num_nodes,numSteps,plotFrames)
 % Simulation of MANETs with ZigBee protocols
 %
 %
@@ -69,9 +69,7 @@ for i=1:num_nodes
             enddevice{num_enddevice}  = i;
         end
     end
-    nodes_speed{i}        = normrnd(mean_speed,sigma_speed);
-    nodes_dir_avg{i}      = random('Uniform',0,2*pi);
-    nodes_dir{i}          = random('Uniform',0,2*pi);
+
     
     nodes_destination {i} = [rand * size * 2/3  rand * size * 2/3 ];
     nodes_wdest_times {i} = T_p * rand;
@@ -176,18 +174,19 @@ for frameNr = time
    if plotFrames
       Gv = graph(vgraph);
       Gc = graph(cgraph);
-      pv = plot(Gc,'r','XData',Gcon.Nodes.x,'YData',Gcon.Nodes.y,'EdgeColor','r','LineWidth',2.5);
-      hold on;
-      p = plot(Gv,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y,'EdgeColor','bl','LineWidth',1.5);
+      %p = plot(Gv,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y,'EdgeColor','bl','LineWidth',1);
+      %hold on;
+      p = plot(Gc,'r','XData',Gcon.Nodes.x,'YData',Gcon.Nodes.y,'EdgeColor','bl','LineWidth',1);
       p.EdgeColor = 'black';
       p.MarkerSize = 15;
       set(gca,'FontSize',18);    
-      colorbar('FontSize',18);
+      %colorbar('FontSize',18);
       p.NodeCData = cell2mat(Gvor.Nodes.nodeType);
       %colorbar
       %Get the frame for the animation.
       frames(frameNr) = getframe;
       hold off;
+   else frames=0;
    end
     
    

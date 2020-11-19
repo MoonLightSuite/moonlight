@@ -4,9 +4,9 @@ close all;
 %% STEP 1: define a spatial-temporal signal.
 patternSize = 32;   % number of frames
 num_nodes = patternSize*patternSize;    % number of nodes
-framePlot = true; % to enable or disable the plot of the graph
+plotFrames = true; % to enable or disable the plot of the graph
 % see the sensorModel function for the description of the output
-[SpTempModel, time, values]  = TuringDataGenerator(patternSize, framePlot);
+[SpTempModel, time, values]  = TuringDataGenerator(patternSize, plotFrames);
 
 
 %% STEP 2: loading the Moonlight Script for a stringArray variable (i.e., script)

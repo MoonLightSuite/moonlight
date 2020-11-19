@@ -29,7 +29,7 @@ function[SpTemModel, time, signal] = TuringDataGeneretor(patternSize,plotFrames)
             colormap jet
             colorbar('FontSize',18);
             axis([1 patternSize 1 patternSize]);
-            pause(0.01);
+            pause(0.02);
         end
     end
 

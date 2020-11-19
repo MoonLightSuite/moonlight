@@ -5,9 +5,9 @@ A = adjacency(Gvor);
 G = graph(A);
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
 p.EdgeColor = 'black';
-p.MarkerSize = 15;
+p.MarkerSize = 25;
 p.NodeFontSize = 20;
-p.EdgeFontSize = 20;
+p.EdgeFontSize = 25;
 set(gca,'FontSize',18);    
 %colorbar('FontSize',20);
 if s == 'node'
