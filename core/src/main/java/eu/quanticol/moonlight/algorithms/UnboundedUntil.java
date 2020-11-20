@@ -57,9 +57,9 @@ public class UnboundedUntil {
             c2.move(time);
         }
         result.endAt(end);
-        System.out.println("FutureOperator Result Signal@maxT= " +
+        /*System.out.println("FutureOperator Result Signal@maxT= " +
                 "<" + s1.end() + "," + s2.end() + "> : " +
-                result.toString());
+                result.toString());*/
         return result;
     }
 }
