@@ -56,7 +56,7 @@ public class DataWriter<T> {
     private void writeHeader(BufferedWriter outWriter, T header)
             throws IOException
     {
-        outWriter.write(strategy.initialize(header, getWordBreak()));
+        outWriter.write(strategy.initialize(header, getWordBreak()) + "\n");
     }
 
     private void writeLines(BufferedWriter outWriter, T data)
