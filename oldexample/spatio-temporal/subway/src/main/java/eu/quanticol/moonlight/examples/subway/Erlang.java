@@ -53,7 +53,7 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String DATA_DIR = "CARar_rhoS_0_rhoT_0/";
+    private static final String DATA_DIR = "CARanova_rhoS_0_rhoT_0/";
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
@@ -69,7 +69,7 @@ public class Erlang {
      * Numeric constants of the problem
      */
     private static final int LH = 1;       // location horizon (neighbourhood)
-    private static final double K = 2500;     // crowdedness threshold
+    private static final double K = 1000;     // crowdedness threshold
     private static final double TH = 10;   // properties time horizon
     private static final double T2 = 7;    // properties time horizon
     private static final double T3 = 1;    // output signal reaction time
@@ -106,9 +106,9 @@ public class Erlang {
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
-        smc(phi1(ROBUSTNESS), "p1", trajectories, locService);
-        smc(phi2(ROBUSTNESS), "p2", trajectories, locService);
-        smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
+        smc(phi1(SATISFACTION), "p1", trajectories, locService);
+        smc(phi2(SATISFACTION), "p2", trajectories, locService);
+        smc(phi3(SATISFACTION), "p3", trajectories, locService);
 
         System.out.println("Saving output in :" + RESULT);
 
@@ -224,7 +224,14 @@ public class Erlang {
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi1(SignalDomain<D> d) {
         return globallyMonitor(
-                locationCrowdedness(d)
+                impliesMonitor(
+                    notMonitor(locationCrowdedness(d), d),
+                    d,
+                    eventuallyMonitor(
+                            locationCrowdedness(d),
+                            new Interval(0, TH), d
+                        )
+                    )
                 , d);
     }
 
@@ -238,10 +245,11 @@ public class Erlang {
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi3(SignalDomain<D> d) {
-        return globallyMonitor(
+        return //globallyMonitor(
                         surroundPhi(notMonitor(locationCrowdedness(d), d)
                                    ,locationCrowdedness(d), d)
-                , d);
+                //, d)
+        ;
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>

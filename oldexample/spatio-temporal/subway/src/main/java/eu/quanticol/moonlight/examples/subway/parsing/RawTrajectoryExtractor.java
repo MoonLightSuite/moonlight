@@ -63,8 +63,9 @@ public class RawTrajectoryExtractor
         spaceLocations = header.length;
 
         StringBuilder head = new StringBuilder("\"Space\"" + wordBreak);
-        for(int i = 0; i < header[0].length; i++) {
-            head.append("\"T").append(i).append("\"").append(wordBreak);
+        head.append("\"T").append(0).append("\"");
+        for(int i = 1; i < header[0].length; i++) {
+            head.append(wordBreak).append("\"T").append(i).append("\"");
         }
 
         return head.toString();
@@ -78,8 +79,9 @@ public class RawTrajectoryExtractor
         if(spaceIterator == spaceLocations)
             return null;
 
-        for(int i = 0; i < data[spaceIterator].length; i++) {
-            line.append(data[spaceIterator][i]).append(wordBreak);
+        line.append(data[spaceIterator][0]);
+        for(int i = 1; i < data[spaceIterator].length; i++) {
+            line.append(wordBreak).append(data[spaceIterator][i]);
         }
 
         spaceIterator++;
