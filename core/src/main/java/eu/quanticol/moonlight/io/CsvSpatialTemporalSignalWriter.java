@@ -26,7 +26,6 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.stream.IntStream;
 
 public class CsvSpatialTemporalSignalWriter implements SpatialTemporalSignalWriter {
 
@@ -44,15 +43,15 @@ public class CsvSpatialTemporalSignalWriter implements SpatialTemporalSignalWrit
     }
 
     private String combine(int size, double[] timePoints, String[][] elements) {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         for( int i=0 ; i<timePoints.length ; i++ ) {
-            String row = timePoints[i]+"";
+            StringBuilder row = new StringBuilder(timePoints[i] + "");
             for( int j=0 ; j<size ; j++ ) {
-                row += ";"+elements[j][i];
+                row.append(";").append(elements[j][i]);
             }
-            toReturn += row+"\n";
+            toReturn.append(row).append("\n");
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
 
