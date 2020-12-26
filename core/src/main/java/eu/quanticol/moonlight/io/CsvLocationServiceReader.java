@@ -20,8 +20,9 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.*;
 
+import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.Record;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
