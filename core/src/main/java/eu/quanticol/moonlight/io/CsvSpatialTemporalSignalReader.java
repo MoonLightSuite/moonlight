@@ -27,33 +27,56 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * This class is used to read a spatial-temporal signal either from a file or from a string. The first line of the
+ * file must contain the declaration of the number of locations in the model:
+ *
+ * <code>LOCATIONS n</code>
+ *
+ * After that the values of the signal at each location for each time separated by a semicolon:
+ *
+ * <code>time;loc_1_v_1;...;loc_1_v_k;..;loc_n_v_1;...;loc_n_v_k;</code>
+ *
+ * Empty lines and extra spaces are ignored in the file.
+ */
 public class CsvSpatialTemporalSignalReader extends AbstractFileByRowReader implements SpatialTemporalSignalReader {
 
     @Override
-    public SpatialTemporalSignal<Record> load(int size, RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
-        return load(size,handler, getRows(input));
+    public SpatialTemporalSignal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
+        return load(handler, getRows(input));
     }
 
     @Override
-    public SpatialTemporalSignal<Record> load(int size, RecordHandler handler, String input) throws IllegalFileFormatException {
-        return load(size,handler, getRows(input));
+    public SpatialTemporalSignal<Record> load(RecordHandler handler, String input) throws IllegalFileFormatException {
+        return load(handler, getRows(input));
     }
 
-    public SpatialTemporalSignal<Record> load(int size, RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
-        checkData(size,handler,data);
+    private SpatialTemporalSignal<Record> load(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
+        int size = checkData(handler,data);
+        Iterator<Row> dataIterator = data.iterator();
+        dataIterator.next();
         SpatialTemporalSignal<Record> toReturn = new SpatialTemporalSignal<>(size);
-        for (Row row: data) {
+        while (dataIterator.hasNext()) {
+            Row row = dataIterator.next();
             row.addValueToSpatioTemporalSignal(size,handler,toReturn);
         }
         return toReturn;
     }
 
-    private void checkData(int size, RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
-        for (Row row: data) {
-            int expected = 1+size*handler.size();
+    private int checkData(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
+        int size = 0;
+        Iterator<Row> dataIterator = data.iterator();
+        if (dataIterator.hasNext()) {
+            size = parseSize(dataIterator.next());
+        }
+        int expected = 1+size*handler.size();
+        while (dataIterator.hasNext()) {
+            Row row = dataIterator.next();
+            row.split(";");
             if (row.elements.length != expected) {
                 throw new IllegalFileFormatException(row.index, "Expected "+expected+" columns at row "+row.index+" are "+row.elements.length+"!");
             }
@@ -62,10 +85,23 @@ public class CsvSpatialTemporalSignalReader extends AbstractFileByRowReader impl
             }
             for( int i=0 ; i<size; i++) {
                 int index = 1+handler.size()*i;
-                if (!row.checkRecord(handler,index,handler.size())) {
+                if (!row.checkRecord(handler,index,index+handler.size())) {
                     throw new IllegalFileFormatException(row.index,"Input data error!");
                 }
             }
+        }
+        return size;
+    }
+
+    private int parseSize(Row row) throws IllegalFileFormatException {
+        if (row.getRow().startsWith("LOCATIONS")) {
+            row.split(" ");
+            if ((row.elements.length != 2)||(!row.isInteger(1))) {
+                throw new IllegalFileFormatException(row.index, "LOCATIONS <num> is expected in the first line!");
+            }
+            return Integer.parseInt(row.get(1));
+        } else {
+            throw new IllegalFileFormatException(row.index, "Number of locations is expected in the first line!");
         }
     }
 

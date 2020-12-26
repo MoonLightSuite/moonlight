@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * This class is used to
+ */
 public class CsvSpatialTemporalSignalWriter implements SpatialTemporalSignalWriter {
 
     @Override
@@ -44,6 +47,7 @@ public class CsvSpatialTemporalSignalWriter implements SpatialTemporalSignalWrit
 
     private String combine(int size, double[] timePoints, String[][] elements) {
         StringBuilder toReturn = new StringBuilder();
+        toReturn.append("LOCATIONS "+size+"\n");
         for( int i=0 ; i<timePoints.length ; i++ ) {
             StringBuilder row = new StringBuilder(timePoints[i] + "");
             for( int j=0 ; j<size ; j++ ) {
