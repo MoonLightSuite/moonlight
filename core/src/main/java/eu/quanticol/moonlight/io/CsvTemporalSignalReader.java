@@ -54,6 +54,7 @@ public class CsvTemporalSignalReader extends AbstractFileByRowReader implements 
 
     private void checkData(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
         for (Row row: data) {
+            row.split(";");
             if (!row.isEmpty()) {
                 if (!row.isDouble(0)) {
                     throw new IllegalFileFormatException(row.index, "First element of each row must be a double!");

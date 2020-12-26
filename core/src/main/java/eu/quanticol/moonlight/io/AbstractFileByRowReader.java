@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 public class AbstractFileByRowReader {
 
-    protected List<Row> getRows( File input ) throws IOException {
+    protected List<Row> getRows(File input) throws IOException {
         return collectDataRows(Files.lines(input.toPath()));
     }
 
@@ -42,24 +42,30 @@ public class AbstractFileByRowReader {
         return collectDataRows(Stream.of(input.split("\n")));
     }
 
-    protected List<Row> collectDataRows(Stream<String> lines ) {
-        List<Row> data = lines.map(s -> new Row(s)).collect(Collectors.toList());
+    protected List<Row> collectDataRows(Stream<String> lines) {
+        List<Row> data = lines.map(Row::new).collect(Collectors.toList());
         int line = 1;
         for (Row r: data) {
             r.setLineNumber(line++);
         }
-        return data;
+        return data.stream().filter(r -> !r.isEmpty()).collect(Collectors.toList());
     }
 
     public class Row {
         int index;
+        String row;
         String[] elements;
 
         public Row(String row) {
+            this.row = row;
+            this.elements = new String[] { row };
+        }
+
+        public void split(String regex) {
             if (row.trim().isEmpty()) {
                 elements = null;
             } else {
-                elements = row.split(";");
+                elements = row.split(regex);
             }
         }
 
@@ -131,6 +137,10 @@ public class AbstractFileByRowReader {
                 return elements[i];
             }
             throw new IllegalStateException();
+        }
+
+        public String getRow() {
+            return row;
         }
 
         public int getLine() {

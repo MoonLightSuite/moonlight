@@ -2,7 +2,7 @@ function plot2Results(inputModel, result1,result2, boolean)
 numFrame= 1;
 s = 'node';
 
-tiledlayout(1,3) % Requires R2019b or later
+tiledlayout(1,2) % Requires R2019b or later
 nexttile
 Gvor = inputModel{numFrame};
 A = adjacency(Gvor);
@@ -35,7 +35,7 @@ Gvor.Nodes.results =  signalResult(:,1);
 p = plot(G,'r','XData',Gvor.Nodes.x,'YData',Gvor.Nodes.y);
 p.NodeCData = Gvor.Nodes.results;
 p.EdgeColor = 'black';
-p.MarkerSize = 15;
+p.MarkerSize = 20;
 p.NodeFontSize = 20;
 p.EdgeFontSize = 20;
 set(gca,'FontSize',18);    
