@@ -80,7 +80,7 @@ public class AbstractFileByRowReader {
         public boolean isDouble( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Double.parseDouble(elements[idx]);
+                    Double.parseDouble(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -92,7 +92,7 @@ public class AbstractFileByRowReader {
         public boolean isInteger( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Integer.parseInt(elements[idx]);
+                    Integer.parseInt(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -134,7 +134,7 @@ public class AbstractFileByRowReader {
 
         public String get(int i) {
             if (elements != null) {
-                return elements[i];
+                return elements[i].trim();
             }
             throw new IllegalStateException();
         }

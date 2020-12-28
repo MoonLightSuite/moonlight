@@ -3,6 +3,11 @@ package eu.quanticol.moonlight.io;
 import eu.quanticol.moonlight.signal.*;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CsvLocationServiceReaderTest {
@@ -16,7 +21,7 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        assertNotNull(reader.read(rh,input));
+        assertNotNull(reader.read(rh, input));
     }
 
     @Test
@@ -28,33 +33,33 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh,input);
+        LocationService<Record> ls = reader.read(rh, input);
         SpatialModel<Record> model = ls.get(100.0);
         Record record;
-        record = model.get(0,1);
-        assertEquals(1,record.get(0));
-        assertEquals(1.0,record.get(1));
-        assertEquals(true,record.get(2));
-        record = model.get(1,0);
-        assertEquals(1,record.get(0));
-        assertEquals(1.0,record.get(1));
-        assertEquals(true,record.get(2));
-        record = model.get(1,2);
-        assertEquals(2,record.get(0));
-        assertEquals(2.0,record.get(1));
-        assertEquals(false,record.get(2));
-        record = model.get(2,1);
-        assertEquals(2,record.get(0));
-        assertEquals(2.0,record.get(1));
-        assertEquals(false,record.get(2));
-        record = model.get(2,0);
-        assertEquals(3,record.get(0));
-        assertEquals(3.0,record.get(1));
-        assertEquals(true,record.get(2));
-        record = model.get(0,2);
-        assertEquals(3,record.get(0));
-        assertEquals(3.0,record.get(1));
-        assertEquals(true,record.get(2));
+        record = model.get(0, 1);
+        assertEquals(1, record.get(0));
+        assertEquals(1.0, record.get(1));
+        assertEquals(true, record.get(2));
+        record = model.get(1, 0);
+        assertEquals(1, record.get(0));
+        assertEquals(1.0, record.get(1));
+        assertEquals(true, record.get(2));
+        record = model.get(1, 2);
+        assertEquals(2, record.get(0));
+        assertEquals(2.0, record.get(1));
+        assertEquals(false, record.get(2));
+        record = model.get(2, 1);
+        assertEquals(2, record.get(0));
+        assertEquals(2.0, record.get(1));
+        assertEquals(false, record.get(2));
+        record = model.get(2, 0);
+        assertEquals(3, record.get(0));
+        assertEquals(3.0, record.get(1));
+        assertEquals(true, record.get(2));
+        record = model.get(0, 2);
+        assertEquals(3, record.get(0));
+        assertEquals(3.0, record.get(1));
+        assertEquals(true, record.get(2));
     }
 
     @Test
@@ -67,24 +72,24 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh,input);
+        LocationService<Record> ls = reader.read(rh, input);
         SpatialModel<Record> model = ls.get(100.0);
         Record record;
-        record = model.get(0,1);
-        assertEquals( 1,record.get(0));
-        assertEquals(1.0,record.get(1));
-        assertEquals(true,record.get(2));
-        assertNull( model.get(1,0) );
-        record = model.get(1,2);
-        assertEquals(2,record.get(0));
-        assertEquals(2.0,record.get(1));
-        assertEquals(false,record.get(2));
-        assertNull( model.get(2,1) );
-        record = model.get(2,0);
-        assertEquals(3,record.get(0));
-        assertEquals(3.0,record.get(1));
-        assertEquals(true,record.get(2));
-        assertNull( model.get(0,2) );
+        record = model.get(0, 1);
+        assertEquals(1, record.get(0));
+        assertEquals(1.0, record.get(1));
+        assertEquals(true, record.get(2));
+        assertNull(model.get(1, 0));
+        record = model.get(1, 2);
+        assertEquals(2, record.get(0));
+        assertEquals(2.0, record.get(1));
+        assertEquals(false, record.get(2));
+        assertNull(model.get(2, 1));
+        record = model.get(2, 0);
+        assertEquals(3, record.get(0));
+        assertEquals(3.0, record.get(1));
+        assertEquals(true, record.get(2));
+        assertNull(model.get(0, 2));
     }
 
     @Test
@@ -101,7 +106,7 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        assertNotNull(reader.read(rh,input));
+        assertNotNull(reader.read(rh, input));
     }
 
     @Test
@@ -118,20 +123,28 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh,input);
+        LocationService<Record> ls = reader.read(rh, input);
         SpatialModel<Record> model = ls.get(0.0);
-        assertEquals(rh.fromString("1;1.0;true"),model.get(0,1));
-        assertNull(model.get(1,2));
-        assertNull(model.get(2,0));
+        assertEquals(rh.fromString("1;1.0;true"), model.get(0, 1));
+        assertNull(model.get(1, 2));
+        assertNull(model.get(2, 0));
         model = ls.get(1.0);
-        assertEquals(rh.fromString("1;1.0;true"),model.get(0,1));
-        assertEquals(rh.fromString("2;2.0;false"),model.get(1,2));
-        assertNull(model.get(2,0));
+        assertEquals(rh.fromString("1;1.0;true"), model.get(0, 1));
+        assertEquals(rh.fromString("2;2.0;false"), model.get(1, 2));
+        assertNull(model.get(2, 0));
         model = ls.get(2.5);
-        assertEquals(rh.fromString("1;1.0;true"),model.get(0,1));
-        assertEquals(rh.fromString("2;2.0;false"),model.get(1,2));
-        assertEquals(rh.fromString("3;3.0;true"),model.get(2,0));
+        assertEquals(rh.fromString("1;1.0;true"), model.get(0, 1));
+        assertEquals(rh.fromString("2;2.0;false"), model.get(1, 2));
+        assertEquals(rh.fromString("3;3.0;true"), model.get(2, 0));
     }
 
-
+    @Test
+    public void loadLocationServiceFromFile() throws IllegalFileFormatException, URISyntaxException, IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource("epidemic_simulation_network_0.txt");
+        File file = new File(resource.toURI());
+        CsvLocationServiceReader reader =  new CsvLocationServiceReader();
+        RecordHandler rh = new RecordHandler(DataHandler.REAL);
+        assertNotNull(reader.read(rh,file));
+    }
 }
