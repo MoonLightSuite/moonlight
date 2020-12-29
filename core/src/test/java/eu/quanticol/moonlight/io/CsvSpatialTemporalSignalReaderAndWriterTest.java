@@ -3,10 +3,14 @@ package eu.quanticol.moonlight.io;
 import eu.quanticol.moonlight.signal.*;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CsvSpatialTemporalSignalReaderAndWriterTest {
 
@@ -61,6 +65,21 @@ public class CsvSpatialTemporalSignalReaderAndWriterTest {
         CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
         String output = writer.stringOf(rh,s);
         assertEquals(data,output);
+    }
+
+    @Test
+    public void ReadCSVtraj() throws IllegalFileFormatException, URISyntaxException, IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource("epidemic_simulation_trajectory_0.txt");
+        File file = new File(resource.toURI());
+        //List<String> lines = Files.readAllLines(file.toPath(), );
+        //lines.forEach(System.out::println);
+        RecordHandler rh = new RecordHandler(DataHandler.REAL);
+        CsvSpatialTemporalSignalReader reader = new CsvSpatialTemporalSignalReader();
+        SpatialTemporalSignal<Record> s = reader.load(rh, file);
+        CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
+        //String output = writer.stringOf(rh, s);
+        assertNotNull(reader.load(rh, file));
     }
 
 }
