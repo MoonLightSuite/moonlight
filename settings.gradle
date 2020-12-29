@@ -19,5 +19,4 @@ include 'examples:spatio-temporal:subway'
 include 'examples:spatio-temporal:epidemic'
 include 'example'
 include 'distribution_files:java'
-include 'epidemic'
 
