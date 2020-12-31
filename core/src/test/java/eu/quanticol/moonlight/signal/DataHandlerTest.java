@@ -100,8 +100,8 @@ class DataHandlerTest {
     @Test
     public void testRecordEquals() {
         RecordHandler rh = new RecordHandler(DataHandler.REAL,DataHandler.INTEGER,DataHandler.BOOLEAN);
-        Record r1 = rh.fromObjectArray(4.440193097192868,4,false);
-        Record r2 = rh.fromObjectArray(4.440193097192868,4,false);
+        MoonLightRecord r1 = rh.fromObjectArray(4.440193097192868,4,false);
+        MoonLightRecord r2 = rh.fromObjectArray(4.440193097192868,4,false);
         assertEquals(r1,r2);
     }
 }

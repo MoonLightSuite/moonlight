@@ -40,18 +40,18 @@ public class MainSp {
 
         //// SpatioTemporalSignal
         RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray),DataHandler.BOOLEAN,DataHandler.INTEGER);
-        ArrayList<Record> signalSP = new ArrayList<Record>();
+        ArrayList<MoonLightRecord> signalSP = new ArrayList<MoonLightRecord>();
         for (int i = 0; i < size; i++) {
             signalSP.add(factory.fromObjectArray(place.get(i), taxi.get(i), people.get(i)));
         }
-        SpatialTemporalSignal<Record> citySignal = new SpatialTemporalSignal<>(size);
+        SpatialTemporalSignal<MoonLightRecord> citySignal = new SpatialTemporalSignal<>(size);
         citySignal.add(0, signalSP);
         citySignal.add(1, signalSP);
         citySignal.add(3, signalSP);
 
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 3,city);
 
-        HashMap<String, Function<Parameters, Function<Record, Boolean>>> atomicPropositions = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<MoonLightRecord, Boolean>>> atomicPropositions = new HashMap<>();
         atomicPropositions.put("thereIsATaxi", par -> a -> a.get(1, Boolean.class));
         atomicPropositions.put("thereIsAStop", par -> a -> a.get(0, String.class).equals("BusStop") || a.get(0, String.class).equals("MetroStop"));
         atomicPropositions.put("thereIsaMainSquare", par -> a -> a.get(0, String.class).equals("MainSquare"));
@@ -73,8 +73,8 @@ public class MainSp {
 
 
         SignalDomain<Boolean> module = new BooleanDomain();
-        SpatialTemporalMonitoring<Double, Record, Boolean> monitorFactory = new SpatialTemporalMonitoring<Double, Record, Boolean>(atomicPropositions, distanceFunctions, module, true);
-        SpatialTemporalMonitor<Double, Record, Boolean> m = monitorFactory.monitor(someT, null);
+        SpatialTemporalMonitoring<Double, MoonLightRecord, Boolean> monitorFactory = new SpatialTemporalMonitoring<Double, MoonLightRecord, Boolean>(atomicPropositions, distanceFunctions, module, true);
+        SpatialTemporalMonitor<Double, MoonLightRecord, Boolean> m = monitorFactory.monitor(someT, null);
 
         SpatialTemporalSignal<Boolean> out = m.monitor(locService, citySignal);
 

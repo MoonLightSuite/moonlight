@@ -1,14 +1,11 @@
 package eu.quanticol.moonlight.api.example;
 
-import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightTemporalScript;
-import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.function.Function;
@@ -20,9 +17,9 @@ public class TestMoonLightTemporalScript extends MoonLightTemporalScript {
     private DoubleDomain domain = new DoubleDomain();
 
     //TEMPORAL
-    private TemporalMonitor<Record, Double> atomicTemporal = TemporalMonitor.atomicMonitor(r -> r.get(0, Double.class) - 10);
+    private TemporalMonitor<MoonLightRecord, Double> atomicTemporal = TemporalMonitor.atomicMonitor(r -> r.get(0, Double.class) - 10);
 
-    private Function<Record, TemporalMonitor<Record, Double>> temporalBuilder = r ->
+    private Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, Double>> temporalBuilder = r ->
             TemporalMonitor.globallyMonitor(atomicTemporal, domain );
 
     private TemporalScriptComponent<?> temporalMonitor = new TemporalScriptComponent<Double>(TEMPORAL[0],

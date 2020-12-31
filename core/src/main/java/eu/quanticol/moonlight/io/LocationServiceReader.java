@@ -20,7 +20,7 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public interface LocationServiceReader {
      * @throws IOException if I/O error occurs while reading the file
      * @throws IllegalFileFormatException if the file is not well formatted
      */
-    LocationService<Record> read(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
+    LocationService<MoonLightRecord> read(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
 
     /**
      * Reads a location service from a file.
@@ -51,7 +51,7 @@ public interface LocationServiceReader {
      * @return a location service
      * @throws IllegalFileFormatException if the file is not well formatted
      */
-    LocationService<Record> read(RecordHandler handler, String input) throws IllegalFileFormatException;
+    LocationService<MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException;
 
 
 }

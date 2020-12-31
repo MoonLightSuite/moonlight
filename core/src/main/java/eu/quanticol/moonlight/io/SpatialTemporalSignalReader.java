@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.io;
 import java.io.File;
 import java.io.IOException;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
@@ -44,7 +44,7 @@ public interface SpatialTemporalSignalReader {
 	 * @throws IOException if an I/O error occurs while accessing the file
 	 * @throws IllegalFileFormatException if the file is not well formatted
 	 */
-	SpatialTemporalSignal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
+	SpatialTemporalSignal<MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
 
 	/**
 	 * Reades a spatiotemporal signal from a string
@@ -54,6 +54,6 @@ public interface SpatialTemporalSignalReader {
 	 * @return the read spatial-temporal signal
 	 * @throws IllegalFileFormatException is the string is not well formatted
 	 */
-	SpatialTemporalSignal<Record> load( RecordHandler handler, String input) throws IllegalFileFormatException;
+	SpatialTemporalSignal<MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormatException;
 
 }

@@ -80,12 +80,12 @@ public class mainSp2 {
         // variableArraySignal.add(0, place.get(j), taxi.get(j), people.get(j));
 
 
-        ArrayList<Record> signalSP = new ArrayList<Record>();
+        ArrayList<MoonLightRecord> signalSP = new ArrayList<MoonLightRecord>();
         for (int i = 0; i < size; i++) {
             signalSP.add(factory.fromObjectArray(place.get(i), taxi.get(i), people.get(i)));
         }
 
-        SpatialTemporalSignal<Record> citySignal = new SpatialTemporalSignal<>(size);
+        SpatialTemporalSignal<MoonLightRecord> citySignal = new SpatialTemporalSignal<>(size);
         citySignal.add(0, signalSP);
 
 

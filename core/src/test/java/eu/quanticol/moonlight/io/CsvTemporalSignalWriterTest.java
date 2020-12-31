@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.SignalGenerator;
@@ -43,7 +43,7 @@ class CsvTemporalSignalWriterTest {
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
 
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record> signal = reader.load(rh,input);
+        Signal<MoonLightRecord> signal = reader.load(rh,input);
         CsvTemporalSignalWriter writer = new CsvTemporalSignalWriter();
         String output = writer.stringOf(rh,signal);
 
@@ -65,14 +65,14 @@ class CsvTemporalSignalWriterTest {
         DoubleFunction<Integer> intGenerator = SignalGenerator.integerGenerator(r,-10,10);
         DoubleFunction<Boolean> boolGenerator = SignalGenerator.booleanGenerator(r,0.5);
 
-        Record[] data = new Record[size];
-        DoubleFunction<Record> generateFunction = d -> rh.fromObjectArray(
+        MoonLightRecord[] data = new MoonLightRecord[size];
+        DoubleFunction<MoonLightRecord> generateFunction = d -> rh.fromObjectArray(
                 realGenerator.apply(d), intGenerator.apply(d),boolGenerator.apply(d)
         );
         SignalGenerator.fillArray(timePoints,data, generateFunction,0.0,d -> 0.3);
         String csv = generateCSV(size,i->timePoints[i]+";"+data[i]+"\n");
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record>  signal = reader.load(rh,csv);
+        Signal<MoonLightRecord>  signal = reader.load(rh,csv);
         CsvTemporalSignalWriter writer = new CsvTemporalSignalWriter();
         String output = writer.stringOf(rh,signal);
         assertEquals(csv,output);

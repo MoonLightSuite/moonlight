@@ -7,11 +7,10 @@ import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
-import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
@@ -127,13 +126,13 @@ public class RandomFormula {
             System.out.println("Breach Robustness: " + Z[0]);
             System.out.println("Breach Avg. Time (msec) (" + nReps + " repetitions): " + (after - before) / 1000.);
 
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(0, Double.class));
             mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
             mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(generatedFormula, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);

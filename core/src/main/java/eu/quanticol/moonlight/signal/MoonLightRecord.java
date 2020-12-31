@@ -20,7 +20,6 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,12 +27,12 @@ import java.util.stream.IntStream;
 /**
  *
  */
-public class Record {
+public class MoonLightRecord {
 	
 	private Object[] values;
 	private Function<Integer,DataHandler<?>> handlers;
 
-	public Record( Function<Integer,DataHandler<?>> handlers , Object[] values ) {
+	public MoonLightRecord(Function<Integer,DataHandler<?>> handlers , Object[] values ) {
 		this.values = values;
 		this.handlers = handlers;
 	}
@@ -57,8 +56,8 @@ public class Record {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof Record)) return false;
-		Record record = (Record) o;
+		if (!(o instanceof MoonLightRecord)) return false;
+		MoonLightRecord record = (MoonLightRecord) o;
 		return Arrays.equals(values, record.values);
 	}
 

@@ -5,15 +5,12 @@ import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCreator;
-import eu.quanticol.moonlight.signal.SignalCreatorDouble;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
-import eu.quanticol.moonlight.util.FormulaGenerator;
-import eu.quanticol.moonlight.util.FutureFormulaGenerator;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.utility.matlab.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;
@@ -23,9 +20,7 @@ import org.n52.matlab.control.extensions.MatlabTypeConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
 
 public class BenchmarkFormula {
@@ -127,13 +122,13 @@ public class BenchmarkFormula {
             System.out.println("Breach Robustness: " + Z[0]);
             System.out.println("Breach Avg. Time (msec) (" + nReps + " repetitions): " + (after - before) / 1000.);
 
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(0, Double.class));
             mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
             mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(phi, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(phi, null);
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);

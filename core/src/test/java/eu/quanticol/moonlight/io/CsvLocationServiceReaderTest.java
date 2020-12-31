@@ -16,7 +16,7 @@ class CsvLocationServiceReaderTest {
     public void loadStaticLocationService() throws IllegalFileFormatException {
         String input = "LOCATIONS 3\n" +
                 "STATIC\n" +
-                "0;1;1;1.0;true\n" +
+                "0; 1; 1; 1.0 ; true\n" +
                 "1;2;2;2.0;false\n" +
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
@@ -33,9 +33,9 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh, input);
-        SpatialModel<Record> model = ls.get(100.0);
-        Record record;
+        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        SpatialModel<MoonLightRecord> model = ls.get(100.0);
+        MoonLightRecord record;
         record = model.get(0, 1);
         assertEquals(1, record.get(0));
         assertEquals(1.0, record.get(1));
@@ -72,9 +72,9 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh, input);
-        SpatialModel<Record> model = ls.get(100.0);
-        Record record;
+        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        SpatialModel<MoonLightRecord> model = ls.get(100.0);
+        MoonLightRecord record;
         record = model.get(0, 1);
         assertEquals(1, record.get(0));
         assertEquals(1.0, record.get(1));
@@ -123,8 +123,8 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<Record> ls = reader.read(rh, input);
-        SpatialModel<Record> model = ls.get(0.0);
+        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        SpatialModel<MoonLightRecord> model = ls.get(0.0);
         assertEquals(rh.fromString("1;1.0;true"), model.get(0, 1));
         assertNull(model.get(1, 2));
         assertNull(model.get(2, 0));

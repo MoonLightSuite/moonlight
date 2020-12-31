@@ -15,7 +15,7 @@ public class ScriptparametricMonitor extends MoonLightTemporalScript {
     private final SignalDomain<Boolean> _domain_BooleanMonitorScript = new BooleanDomain();
     private final SignalDomain<Double> _domain_QuantitativeMonitorScript = new DoubleDomain();
 
-    private TemporalMonitor<Record,Boolean> BooleanMonitorScript_main ( Record parameters ) {
+    private TemporalMonitor<MoonLightRecord,Boolean> BooleanMonitorScript_main (MoonLightRecord parameters ) {
         return TemporalMonitor.globallyMonitor(
                 TemporalMonitor.atomicMonitor(
                         signal -> ((((signal.get(0,Double.class))-(signal.get(1,Double.class))))>(0))
@@ -26,7 +26,7 @@ public class ScriptparametricMonitor extends MoonLightTemporalScript {
         )
                 ;
     }
-    private TemporalMonitor<Record,Double> QuantitativeMonitorScript_main ( Record parameters ) {
+    private TemporalMonitor<MoonLightRecord,Double> QuantitativeMonitorScript_main (MoonLightRecord parameters ) {
         return TemporalMonitor.globallyMonitor(
                 TemporalMonitor.atomicMonitor(
                         signal -> ((signal.get(0,Double.class))-(signal.get(1,Double.class)))

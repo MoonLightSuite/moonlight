@@ -7,15 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import eu.quanticol.moonlight.compiler.MoonlightCompiler;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.LocationServiceList;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -56,7 +54,7 @@ class TestSensorScript {
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
 		SpatialTemporalScriptComponent<?> stc = spatialTemporalScript.selectDefaultSpatialTemporalComponent();
         List<Integer> typeNode = Arrays.asList( 1, 3, 3, 3, 3);
-        SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
+        SpatialTemporalSignal<MoonLightRecord> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
                 (t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
         SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
         assertEquals(true, res.getSignals().get(0).valueAt(0.0));        
@@ -135,7 +133,7 @@ class TestSensorScript {
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
 		SpatialTemporalScriptComponent<?> stc = spatialTemporalScript.selectDefaultSpatialTemporalComponent();
 		List<Integer> typeNode = Arrays.asList( 3, 3, 3, 3, 3);
-		SpatialTemporalSignal<Record> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 1.0,
+		SpatialTemporalSignal<MoonLightRecord> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 1.0,
 				(t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
 		SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 1.0, getGraphModel()), signal);
 		double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 1.0, getGraphModel()), signal);
@@ -143,8 +141,8 @@ class TestSensorScript {
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
 	}
 	
-	private LocationService<Record> createLocService(double start, double dt, double end,SpatialModel<Record> graph) {
-        LocationServiceList<Record> locService = new LocationServiceList<Record>();
+	private LocationService<MoonLightRecord> createLocService(double start, double dt, double end, SpatialModel<MoonLightRecord> graph) {
+        LocationServiceList<MoonLightRecord> locService = new LocationServiceList<MoonLightRecord>();
         double time = start;
         while (time < end) {
             double current = time;
@@ -155,8 +153,8 @@ class TestSensorScript {
         return locService;
     }
 	
-	private SpatialModel<Record> getGraphModel() { //metto alla fine tutti i metodi privati di servizio.
-		GraphModel<Record> m = new GraphModel<>(5);
+	private SpatialModel<MoonLightRecord> getGraphModel() { //metto alla fine tutti i metodi privati di servizio.
+		GraphModel<MoonLightRecord> m = new GraphModel<>(5);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 2);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 4);
 		m.add(1, edgeRecordHandler.fromDoubleArray(1.0), 2);
@@ -174,8 +172,8 @@ class TestSensorScript {
 		return m;
     }
 
-	private SpatialModel<Record> getGraphModel2() { //metto alla fine tutti i metodi privati di servizio.
-		GraphModel<Record> m = new GraphModel<>(5);
+	private SpatialModel<MoonLightRecord> getGraphModel2() { //metto alla fine tutti i metodi privati di servizio.
+		GraphModel<MoonLightRecord> m = new GraphModel<>(5);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 1);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 3);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 4);

@@ -1,15 +1,13 @@
 package eu.quanticol.moonlight.api.example;
 
-import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightTemporalScript;
-import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.HashMap;
@@ -19,7 +17,7 @@ public class RandomFormulae extends MoonLightTemporalScript {
 
     private final SignalDomain<Boolean> _domain_RandomFormulae = new BooleanDomain();
 
-    private TemporalMonitor<Record,Boolean> RandomFormulae_main ( Record parameters ) {
+    private TemporalMonitor<MoonLightRecord,Boolean> RandomFormulae_main (MoonLightRecord parameters ) {
         return TemporalMonitor.globallyMonitor(
                 TemporalMonitor.atomicMonitor(
                         signal -> ((signal.get(0,Double.class))>=(0))

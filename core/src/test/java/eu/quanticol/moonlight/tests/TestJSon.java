@@ -23,12 +23,11 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.Pair;
@@ -36,9 +35,6 @@ import eu.quanticol.moonlight.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 
 class TestJSon {
@@ -78,15 +74,15 @@ class TestJSon {
         		new Pair<String,DataHandler<?>>("y",DataHandler.REAL),
         		new Pair<String,DataHandler<?>>("z",DataHandler.INTEGER)
         	);
-        Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(code);
+        Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(code);
         assertNotNull(signal);
         assertEquals(0, factory.getVariableIndex("x"));
         assertEquals(1, factory.getVariableIndex("y"));
         assertEquals(2, factory.getVariableIndex("z"));
-        SignalCursor<Record> iterator = signal.getIterator(true);
+        SignalCursor<MoonLightRecord> iterator = signal.getIterator(true);
         for (int i = 0; i < times.length; i++) {
             assertFalse(iterator.completed());
-            Record next = iterator.value();
+            MoonLightRecord next = iterator.value();
             assertEquals(times[i], iterator.time(), 0.0);
             for (int j = 0; j < 3; j++) {
                 assertEquals(values[i][j], next.get(j, types[j]));

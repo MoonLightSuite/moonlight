@@ -76,17 +76,17 @@ import java.util.Optional;
  */
 public class CsvLocationServiceReader extends AbstractFileByRowReader implements LocationServiceReader {
     @Override
-    public LocationService<Record> read(RecordHandler handler, File input)
+    public LocationService<MoonLightRecord> read(RecordHandler handler, File input)
             throws IOException, IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
     @Override
-    public LocationService<Record> read(RecordHandler handler, String input) throws IllegalFileFormatException {
+    public LocationService<MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
-    private LocationService<Record> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormatException {
+    private LocationService<MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormatException {
         int size = getModelSize(rows);
         boolean isStatic = checkStatic(rows);
         boolean isDirected = checkDirected(rows);
@@ -97,13 +97,13 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         }
     }
 
-    private LocationService<Record> loadDynamicLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
+    private LocationService<MoonLightRecord> loadDynamicLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
         Iterator<Row> rowIterator = rows.iterator();
         Row current = shiftToFirstTimeDeclaration(rowIterator);
-        LocationServiceList<Record> locationService = new LocationServiceList<>();
+        LocationServiceList<MoonLightRecord> locationService = new LocationServiceList<>();
         while (current != null) {
             double time = extractTimeFromRow(current);
-            GraphModel<Record> model = new GraphModel<>(size);
+            GraphModel<MoonLightRecord> model = new GraphModel<>(size);
             current = (rowIterator.hasNext()?rowIterator.next():null);
             while ((current != null)&&(!current.getRow().startsWith("TIME"))) {
                 addEdgeToModel(handler,model,size,isDirected,current);
@@ -143,8 +143,8 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         return rows.stream().anyMatch(r -> r.getRow().startsWith("DIRECTED"));
     }
 
-    private LocationService<Record> loadStaticLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
-        GraphModel<Record> model = new GraphModel<>(size);
+    private LocationService<MoonLightRecord> loadStaticLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
+        GraphModel<MoonLightRecord> model = new GraphModel<>(size);
         Iterator<Row> rowIterator = rows.iterator();
         shiftToStatic(rowIterator);
         while (rowIterator.hasNext()) {
@@ -153,18 +153,18 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         return new StaticLocationService<>(model);
     }
 
-    private void addEdgeToModel(RecordHandler handler, GraphModel<Record> model, int size, boolean isDirected, Row row) throws IllegalFileFormatException {
+    private void addEdgeToModel(RecordHandler handler, GraphModel<MoonLightRecord> model, int size, boolean isDirected, Row row) throws IllegalFileFormatException {
         row.split(";");
         int src = getSource(row,size);
         int trg = getTarget(row,size);
-        Record record = getRecord(handler,row);
+        MoonLightRecord record = getRecord(handler,row);
         model.add(src,record,trg);
         if (!isDirected) {
             model.add(trg,record,src);
         }
     }
 
-    private Record getRecord(RecordHandler handler, Row row) throws IllegalFileFormatException {
+    private MoonLightRecord getRecord(RecordHandler handler, Row row) throws IllegalFileFormatException {
         if (row.elements.length != handler.size()+2) {
             throw new IllegalFileFormatException(row.getLine(),"Wrong number of data!");
         }

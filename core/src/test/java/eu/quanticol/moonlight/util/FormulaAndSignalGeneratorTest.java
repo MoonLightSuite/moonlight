@@ -35,22 +35,22 @@ class FormulaAndSignalGeneratorTest {
         Formula generatedFormula = formulaGenerator.getFormula(3);
         System.out.println(generatedFormula.toString());
         long timeInit = System.currentTimeMillis();
-        HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
         int index_of_x = 0;
         //a is the atomic proposition: a>=0
         mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(index_of_x, Double.class));
-        TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<Record, Double> m = monitoring.monitor(generatedFormula, null);
+        TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);
         long timeEnd = System.currentTimeMillis();
-        SignalCursor<Record> expected = signal.getIterator(true);
+        SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);
         while (!actual.completed()) {
             assertFalse(expected.completed());
             Double valueActual = actual.value();
-            Record valueExpected = expected.value();
+            MoonLightRecord valueExpected = expected.value();
             // assertEquals(valueExpected.get(0, Double.class), valueActual);
             expected.forward();
             actual.forward();

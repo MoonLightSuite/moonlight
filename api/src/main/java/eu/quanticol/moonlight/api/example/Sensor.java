@@ -1,15 +1,13 @@
 package eu.quanticol.moonlight.api.example;
 
-import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
-import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.HashMap;
@@ -20,7 +18,7 @@ public class Sensor extends MoonLightSpatialTemporalScript {
 
     private final SignalDomain<Double> _domain_SensorNetwork = new DoubleDomain();
 
-    private SpatialTemporalMonitor<Record, Record, Double> SensorNetwork_main(Record parameters) {
+    private SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, Double> SensorNetwork_main(MoonLightRecord parameters) {
         return SpatialTemporalMonitor.everywhereMonitor(
                 SpatialTemporalMonitor.atomicMonitor(
                         signal -> Math.min((((signal.get(1, Double.class)) - (0.5))), (((signal.get(2, Double.class)) - (20))))

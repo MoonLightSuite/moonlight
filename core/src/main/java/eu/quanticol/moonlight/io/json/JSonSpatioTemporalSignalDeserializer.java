@@ -17,7 +17,7 @@ import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoringInput;
 import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.LocationServiceList;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialModel;
@@ -38,13 +38,13 @@ public class JSonSpatioTemporalSignalDeserializer {
 	}
 	
 	
-	public SpatialTemporalMonitoringInput<Record, Record> load(String str ) throws IllegalFileFormat {
+	public SpatialTemporalMonitoringInput<MoonLightRecord, MoonLightRecord> load(String str ) throws IllegalFileFormat {
 		JsonParser parser = new JsonParser();
 		JsonObject root = getRoot( parser.parse(str) );
 		checkTypes( root );
 		Map<String,Integer> locationIndex = getLocationIndex( root );
-		SpatialTemporalSignal<Record> signal = loadSignal( locationIndex, root );
-		LocationService<Record> locationService = loadLocationService( locationIndex, root );
+		SpatialTemporalSignal<MoonLightRecord> signal = loadSignal( locationIndex, root );
+		LocationService<MoonLightRecord> locationService = loadLocationService( locationIndex, root );
 		return new SpatialTemporalMonitoringInput<>(signal, locationService,null);
 	}
 
@@ -112,7 +112,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 		return toReturn;
 	}
 
-	private LocationService<Record> loadLocationService(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
+	private LocationService<MoonLightRecord> loadLocationService(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
 		if (!root.has(JSONUtils.SPACE_TAG)) {
 			throw new IllegalFileFormat("Tag "+JSONUtils.SPACE_TAG+" is missing!");						
 		}
@@ -120,7 +120,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 			throw new IllegalFileFormat("Tag "+JSONUtils.SPACE_TAG+" should be an array!");						
 		}
 		JsonArray spatialModels = root.get(JSONUtils.SPACE_TAG).getAsJsonArray();
-		LocationServiceList<Record> toReturn = new LocationServiceList<>();
+		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i< spatialModels.size() ; i++ ) {
 			if (!spatialModels.get(i).isJsonObject()) {
 				throw new IllegalFileFormat("An object is expected as element "+i+" of tag"+JSONUtils.SPACE_TAG+"!");						
@@ -135,8 +135,8 @@ public class JSonSpatioTemporalSignalDeserializer {
 	}
 
 
-	private SpatialModel<Record> getModel(Map<String, Integer> locationIndex, JsonArray edges) throws IllegalFileFormat {
-		GraphModel<Record> model = new GraphModel<>(locationIndex.size());
+	private SpatialModel<MoonLightRecord> getModel(Map<String, Integer> locationIndex, JsonArray edges) throws IllegalFileFormat {
+		GraphModel<MoonLightRecord> model = new GraphModel<>(locationIndex.size());
 		for( int i=0 ; i<edges.size(); i++ ) {
 			JsonObject edge = edges.get(i).getAsJsonObject();
 			if ((!edge.has(JSONUtils.SRC_TAG))||(!edge.has(JSONUtils.TRG_TAG))||(!edge.has(JSONUtils.VALUES_TAG))) {
@@ -150,7 +150,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 	}
 
 
-	private Record getEdgeValues(JsonElement jsonElement) throws IllegalFileFormat {
+	private MoonLightRecord getEdgeValues(JsonElement jsonElement) throws IllegalFileFormat {
 		if (!jsonElement.isJsonObject()) {
 			throw new IllegalFileFormat("Tag "+JSONUtils.VALUES_TAG+" in edge definitions should be an object!");
 		}
@@ -170,7 +170,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 	}
 
 
-	private SpatialTemporalSignal<Record> loadSignal(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
+	private SpatialTemporalSignal<MoonLightRecord> loadSignal(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
 		if (!root.has(JSONUtils.SIGNAL_TAG)) {
 			throw new IllegalFileFormat("Tag "+JSONUtils.SIGNAL_TAG+" is missing!");			
 		}
@@ -185,8 +185,8 @@ public class JSonSpatioTemporalSignalDeserializer {
 		return new SpatialTemporalSignal<>(locations.length, i -> getSignal(time,locations[i],data.get(locations[i]).getAsJsonObject()));
 	}
 
-	private Signal<Record> getSignal(double[] time, String string, JsonObject locationData) {
-		Signal<Record> record = new Signal<Record>();
+	private Signal<MoonLightRecord> getSignal(double[] time, String string, JsonObject locationData) {
+		Signal<MoonLightRecord> record = new Signal<MoonLightRecord>();
 		IntStream.range(0, time.length).sequential().forEach(i -> record.add(time[i], signalRecordHandler.fromStringArray(getRecordStringMap(i,locationData,signalRecordHandler))));
 		return record;
 	}

@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
@@ -61,16 +61,16 @@ class TestCompare {
         	);
         	
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
-            HashMap<String, Function<Parameters, Function<Record, Boolean>>> mappa = new HashMap<>();
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Boolean>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: G>2
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) > 2);
             //a is the atomic proposition: G<5
             mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class) < 5);
             //TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<Assignment, Double>(mappa, new DoubleDomain());
-            TemporalMonitoring<Record, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
-            TemporalMonitor<Record,Boolean> m = monitoring.monitor(aeb, null);
+            TemporalMonitoring<MoonLightRecord, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
+            TemporalMonitor<MoonLightRecord,Boolean> m = monitoring.monitor(aeb, null);
             Signal<Boolean> outputSignal = m.monitor(signal);
             assertFalse(outputSignal.valueAt(0.0));
         } catch (IOException e) {
@@ -95,15 +95,15 @@ class TestCompare {
             		new Pair<String,DataHandler<?>>("y",DataHandler.REAL)
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) + 30);
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record,Double> m = monitoring.monitor(aeb, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord,Double> m = monitoring.monitor(aeb, null);
             Signal<Double> outputSignal = m.monitor(signal);
             assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
         } catch (IOException e) {
@@ -130,16 +130,16 @@ class TestCompare {
             		new Pair<String,DataHandler<?>>("y",DataHandler.REAL)
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
             long timeInit = System.currentTimeMillis();
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: y>=-30
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class) + 30);
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(eventually, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
@@ -168,22 +168,22 @@ class TestCompare {
             		new Pair<String,DataHandler<?>>("b",DataHandler.REAL)
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
             long timeInit = System.currentTimeMillis();
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(globallyFormula, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(globallyFormula, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<Record> expected = signal.getIterator(true);
+            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double valueActual = actual.value();
-                Record valueExpected = expected.value();
+                MoonLightRecord valueExpected = expected.value();
                 assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -212,21 +212,21 @@ class TestCompare {
             		new Pair<String,DataHandler<?>>("b",DataHandler.REAL)
             	);
         	String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(notEventuallyNotA, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notEventuallyNotA, null);
             Signal<Double> outputSignal = m.monitor(signal);
-            SignalCursor<Record> expected = signal.getIterator(true);
+            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             assertEquals(500.0, outputSignal.end());
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double nextActual = actual.value();
-                Record nextExpected = expected.value();
+                MoonLightRecord nextExpected = expected.value();
                 double time = expected.time();
 //                if (time > 500) {
 //                    break;
