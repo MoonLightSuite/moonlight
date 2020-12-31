@@ -20,13 +20,10 @@
 
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.signal.Record;
-import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
 import java.util.Random;
 import java.util.function.DoubleFunction;
-import java.util.function.IntFunction;
 
 /**
  * Utility class used to generate different kind of signals.

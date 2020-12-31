@@ -20,16 +20,14 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This class is used to read a spatial-temporal signal either from a file or from a string. The first line of the
@@ -46,20 +44,20 @@ import java.util.stream.Stream;
 public class CsvSpatialTemporalSignalReader extends AbstractFileByRowReader implements SpatialTemporalSignalReader {
 
     @Override
-    public SpatialTemporalSignal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
+    public SpatialTemporalSignal<MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
     @Override
-    public SpatialTemporalSignal<Record> load(RecordHandler handler, String input) throws IllegalFileFormatException {
+    public SpatialTemporalSignal<MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
-    private SpatialTemporalSignal<Record> load(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
+    private SpatialTemporalSignal<MoonLightRecord> load(RecordHandler handler, List<Row> data) throws IllegalFileFormatException {
         int size = checkData(handler,data);
         Iterator<Row> dataIterator = data.iterator();
         dataIterator.next();
-        SpatialTemporalSignal<Record> toReturn = new SpatialTemporalSignal<>(size);
+        SpatialTemporalSignal<MoonLightRecord> toReturn = new SpatialTemporalSignal<>(size);
         while (dataIterator.hasNext()) {
             Row row = dataIterator.next();
             row.addValueToSpatioTemporalSignal(size,handler,toReturn);
@@ -86,7 +84,8 @@ public class CsvSpatialTemporalSignalReader extends AbstractFileByRowReader impl
             for( int i=0 ; i<size; i++) {
                 int index = 1+handler.size()*i;
                 if (!row.checkRecord(handler,index,index+handler.size())) {
-                    throw new IllegalFileFormatException(row.index,"Input data error!");
+                    System.err.println("Line: "+row.getLine()+" "+i);
+                    throw new IllegalFileFormatException(row.index,"Input data error! (Line "+row.getLine()+"@"+i);
                 }
             }
         }

@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
@@ -38,13 +38,13 @@ import java.util.stream.Stream;
 public class CsvTemporalSignalReader extends AbstractFileByRowReader implements TemporalSignalReader {
 
     @Override
-    public Signal<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
+    public Signal<MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormatException {
         return load(handler, collectDataRows(Files.lines(input.toPath())));
     }
 
-    private Signal<Record> load(RecordHandler handler, List<Row> data ) throws IllegalFileFormatException {
+    private Signal<MoonLightRecord> load(RecordHandler handler, List<Row> data ) throws IllegalFileFormatException {
         checkData(handler,data);
-        Signal<Record> s = new Signal<>();
+        Signal<MoonLightRecord> s = new Signal<>();
         for (Row row: data) {
             row.addValueToSignal(handler,s);
         }
@@ -67,7 +67,7 @@ public class CsvTemporalSignalReader extends AbstractFileByRowReader implements 
     }
 
     @Override
-    public Signal<Record> load(RecordHandler handler, String input) throws IllegalFileFormatException {
+    public Signal<MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormatException {
         return load(handler,collectDataRows(Stream.of(input.split("\n"))));
     }
 

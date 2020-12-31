@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -66,6 +66,9 @@ public class AbstractFileByRowReader {
                 elements = null;
             } else {
                 elements = row.split(regex);
+                for(int i=0; i<elements.length; i++) {
+                    elements[i] = elements[i].trim();
+                }
             }
         }
 
@@ -80,7 +83,7 @@ public class AbstractFileByRowReader {
         public boolean isDouble( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Double.parseDouble(elements[idx]);
+                    Double.parseDouble(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -92,7 +95,7 @@ public class AbstractFileByRowReader {
         public boolean isInteger( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Integer.parseInt(elements[idx]);
+                    Integer.parseInt(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -112,18 +115,18 @@ public class AbstractFileByRowReader {
             return (elements == null)||handler.checkValuesFromStrings(elements,from,to);
         }
 
-        public void addValueToSignal(RecordHandler handler, Signal<Record> s) {
+        public void addValueToSignal(RecordHandler handler, Signal<MoonLightRecord> s) {
             if (elements != null) {
                 double t = Double.parseDouble(elements[0]);
-                Record r = handler.fromStringArray(elements,1,elements.length);
+                MoonLightRecord r = handler.fromStringArray(elements,1,elements.length);
                 s.add(t,r);
             }
         }
 
-        public void addValueToSpatioTemporalSignal(int size, RecordHandler handler, SpatialTemporalSignal<Record> s) {
+        public void addValueToSpatioTemporalSignal(int size, RecordHandler handler, SpatialTemporalSignal<MoonLightRecord> s) {
             if (elements != null) {
                 double t = Double.parseDouble(elements[0]);
-                Record[] data = new Record[size];
+                MoonLightRecord[] data = new MoonLightRecord[size];
                 for( int i=0 ; i<size ; i++ ) {
                     int first = 1+i*handler.size();
                     data[i] = handler.fromStringArray(elements,first,first+handler.size());
@@ -134,7 +137,7 @@ public class AbstractFileByRowReader {
 
         public String get(int i) {
             if (elements != null) {
-                return elements[i];
+                return elements[i].trim();
             }
             throw new IllegalStateException();
         }

@@ -24,9 +24,8 @@ import eu.quanticol.moonlight.util.Pair;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
-public class RecordHandler implements DataHandler<Record> {
+public class RecordHandler implements DataHandler<MoonLightRecord> {
 
     private DataHandler<?>[] handlers;
 
@@ -56,7 +55,7 @@ public class RecordHandler implements DataHandler<Record> {
         return new RecordHandler(variableIndex, dataHandlers);
     }
 
-    public Record fromObjectArray(Object ... values) {
+    public MoonLightRecord fromObjectArray(Object ... values) {
         if (values.length != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + values.length);
         }
@@ -67,11 +66,11 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromDoubleArray(double ... values) {
+    public MoonLightRecord fromDoubleArray(double ... values) {
         return fromDoubleArray(values,0,values.length);
     }
 
-    public Record fromDoubleArray(double[] values, int from, int to) {
+    public MoonLightRecord fromDoubleArray(double[] values, int from, int to) {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
         }
@@ -83,18 +82,18 @@ public class RecordHandler implements DataHandler<Record> {
     }
 
 
-    private Record build(Object[] values) {
+    private MoonLightRecord build(Object[] values) {
         if (values.length != handlers.length) {
             throw new IllegalArgumentException();
         }
-        return new Record(i -> handlers[i], values);
+        return new MoonLightRecord(i -> handlers[i], values);
     }
 
-    public Record fromStringArray(String... values) {
+    public MoonLightRecord fromStringArray(String... values) {
         return fromStringArray(values,0,values.length);
     }
 
-    public Record fromStringArray(String[] values, int from, int to) {
+    public MoonLightRecord fromStringArray(String[] values, int from, int to) {
         if ((to-from) != handlers.length) {
             throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from) + ")");
         }
@@ -105,7 +104,7 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromObjectArray(Map<String, Object> values) throws IllegalValueException {
+    public MoonLightRecord fromObjectArray(Map<String, Object> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -137,7 +136,7 @@ public class RecordHandler implements DataHandler<Record> {
         return variables.getOrDefault(v, -1);
     }
 
-    public Record fromStringArray(Map<String, String> values) throws IllegalValueException {
+    public MoonLightRecord fromStringArray(Map<String, String> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, String> entry : values.entrySet()) {
@@ -153,7 +152,7 @@ public class RecordHandler implements DataHandler<Record> {
         return build(data);
     }
 
-    public Record fromDoubleArray(Map<String, Double> values) throws IllegalValueException {
+    public MoonLightRecord fromDoubleArray(Map<String, Double> values) throws IllegalValueException {
         checkNumberOfVariables(values.size());
         Object[] data = new Object[handlers.length];
         for (Map.Entry<String, Double> entry : values.entrySet()) {
@@ -222,49 +221,56 @@ public class RecordHandler implements DataHandler<Record> {
         if ((to-from) != handlers.length) {
             return false;
         }
-        return IntStream.range(0,handlers.length).allMatch(i -> handlers[i].checkStringValue(values[i+from]));
+        for( int i=0 ; i<handlers.length; i++) {
+            if (!handlers[i].checkStringValue(values[i+from])) {
+                System.out.println(Arrays.toString(values));
+                return false;
+            }
+        }
+        return true;
+//        return IntStream.range(0,handlers.length).allMatch(i -> handlers[i].checkStringValue(values[i+from]));
     }
 
-    public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
-                                                     String[][] signal) throws IllegalValueException {
-        Signal<Record> toReturn = new Signal<>();
+    public static Signal<MoonLightRecord> buildTemporalSignal(RecordHandler handler, double[] time,
+                                                              String[][] signal) throws IllegalValueException {
+        Signal<MoonLightRecord> toReturn = new Signal<>();
         for (int i = 0; i < time.length; i++) {
             toReturn.add(time[i], handler.fromStringArray(signal[i]));
         }
         return toReturn;
     }
 
-    public static Signal<Record> buildTemporalSignal(RecordHandler handler, double[] time,
-                                                     double[][] signal) {
-        Signal<Record> toReturn = new Signal<>();
+    public static Signal<MoonLightRecord> buildTemporalSignal(RecordHandler handler, double[] time,
+                                                              double[][] signal) {
+        Signal<MoonLightRecord> toReturn = new Signal<>();
         for (int i = 0; i < time.length; i++) {
             toReturn.add(time[i], handler.fromDoubleArray(signal[i]));
         }
         return toReturn;
     }
 
-    public static SpatialTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-                                                                          String[][][] signal) {
+    public static SpatialTemporalSignal<MoonLightRecord> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+                                                                                   String[][][] signal) {
         return new SpatialTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
-    public static SpatialTemporalSignal<Record> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
-                                                                          double[][][] signal) {
+    public static SpatialTemporalSignal<MoonLightRecord> buildSpatioTemporalSignal(int size, RecordHandler handler, double[] time,
+                                                                                   double[][][] signal) {
     	return new SpatialTemporalSignal<>(size, i -> buildTemporalSignal(handler, time, signal[i]));
     }
 
     @Override
-    public Class<Record> getTypeOf() {
-        return Record.class;
+    public Class<MoonLightRecord> getTypeOf() {
+        return MoonLightRecord.class;
     }
 
     @Override
-    public Record fromObject(Object o) {
+    public MoonLightRecord fromObject(Object o) {
         if (o == null) {
             throw new NullPointerException();
         }
-        if (o instanceof Record) {
-            Record r = (Record) o;
+        if (o instanceof MoonLightRecord) {
+            MoonLightRecord r = (MoonLightRecord) o;
             Object[] values = r.getValues();
             if (this.checkValues(values)) {
                 return build(values);
@@ -287,30 +293,30 @@ public class RecordHandler implements DataHandler<Record> {
     }
 
     @Override
-    public Record fromString(String str) {
+    public MoonLightRecord fromString(String str) {
         String[] data = str.split(";");
         return fromStringArray(data);
     }
 
     @Override
-    public Record fromDouble(double value) {
+    public MoonLightRecord fromDouble(double value) {
         throw new IllegalValueException("A record cannot be built from a double!");
     }
 
     @Override
-    public String stringOf(Record record) {
+    public String stringOf(MoonLightRecord record) {
         return record.toString();
     }
 
     @Override
-    public double doubleOf(Record record) {
+    public double doubleOf(MoonLightRecord record) {
         throw new IllegalArgumentException();
     }
 
     @Override
     public boolean checkObjectValue(Object o) {
-        if (o instanceof Record) {
-            Record r = (Record) o;
+        if (o instanceof MoonLightRecord) {
+            MoonLightRecord r = (MoonLightRecord) o;
             Object[] values = r.getValues();
             return (this.checkValues(values));
             }

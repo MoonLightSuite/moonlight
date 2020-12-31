@@ -1,0 +1,6 @@
+signal { int nodeType;}
+space { edges { int hop; real dist; } }
+domain minmax;
+formula atom = (nodeType==3) ;
+formula P1 = atom reach (hop)[0, 1] (nodeType==2 | nodeType==1);
+             

@@ -62,23 +62,23 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
     private static final String TRANSITIONS_KEY = "TRANSITIONS";
 
     @Override
-    public LocationService<Record> load(RecordHandler handler, File input) throws IOException, IllegalFileFormat {
+    public LocationService<MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormat {
         return load(handler,getRows(input));
     }
 
     @Override
-    public LocationService<Record> load(RecordHandler handler, String input) throws IllegalFileFormat {
+    public LocationService<MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormat {
         return load(handler,getRows(input));
     }
 
-    private LocationService<Record> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormat {
+    private LocationService<MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormat {
         Iterator<Row> iterator = rows.iterator();
         int size = parseSize( iterator );
         return parseLocationService(size,handler,iterator);
     }
 
-    private LocationService<Record> parseLocationService(int size, RecordHandler handler, Iterator<Row> iterator) throws IllegalFileFormat {
-        LocationServiceList<Record> loc = new LocationServiceList<>();
+    private LocationService<MoonLightRecord> parseLocationService(int size, RecordHandler handler, Iterator<Row> iterator) throws IllegalFileFormat {
+        LocationServiceList<MoonLightRecord> loc = new LocationServiceList<>();
         Row row = nextNotEmpty(iterator);
         if (isTimeRow(row)) {
             do {
@@ -97,8 +97,8 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
         return loc;
     }
 
-    private SpatialModel<Record> parseGraph(RecordHandler handler, int size, int numberOfTransitions, Iterator<Row> iterator) throws IllegalFileFormat {
-        GraphModel<Record> model = new GraphModel<>(size);
+    private SpatialModel<MoonLightRecord> parseGraph(RecordHandler handler, int size, int numberOfTransitions, Iterator<Row> iterator) throws IllegalFileFormat {
+        GraphModel<MoonLightRecord> model = new GraphModel<>(size);
         for( int i=0 ; i<numberOfTransitions ; i++ ) {
             Row row = nextNotEmpty(iterator);
             addTransition(row,model,handler);
@@ -106,13 +106,13 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
         return model;
     }
 
-    private void addTransition(Row row, GraphModel<Record> model, RecordHandler handler) throws IllegalFileFormat {
+    private void addTransition(Row row, GraphModel<MoonLightRecord> model, RecordHandler handler) throws IllegalFileFormat {
         String[] elements = row.get(0).trim().split(" ");
         if (elements.length > 2) {
             try {
                 int src = Integer.parseInt(elements[0])-1;
                 int trg = Integer.parseInt(elements[1])-1;
-                Record v = handler.fromStringArray(elements,2,elements.length);
+                MoonLightRecord v = handler.fromStringArray(elements,2,elements.length);
                 model.add(src,v,trg);
                 return ;
             } catch (NumberFormatException e) {
