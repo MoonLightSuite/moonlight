@@ -39,7 +39,7 @@ init_dist = CategoricalDistribution(["1","2","3","4"],[0.99,0.0,0.01,0.0])
 #Beta distribution with mean 0.05
 infection_probability_distribution = BetaDistribution(2,38)
 
-node_number = 100
+node_number = 500
 
 state_model = StateTransitionModel(states = ["1","2","3","4"],
                                    susceptible = {"1":True,"2":False, "3":False, "4":False},
@@ -71,7 +71,7 @@ print("Network of {0:d} nodes created in {1:.6f} seconds".format(node_number,t))
 
 
 max_steps = 100
-runs=1
+runs=3
 outfile = "strelsim.png"
 
 t = time.process_time()  
@@ -79,7 +79,7 @@ sim = NetworkSimulator(network,save_full_network = True)
 out = sim.simulate(runs=runs,max_steps=max_steps)
 t = time.process_time() - t
 print("Simulation of {0:d} runs of {1:d} steps in {2:.6f} seconds".format(runs,max_steps,t))
-out.plot_trajectory(0,file=outfile)
+#out.plot_trajectory(0,file=outfile)
 x = out.peak_distribution()
 x = x[out.mask_only_explosive]
 print("mean size of infection peak is {0:.5f}".format(np.mean(x)/node_number))
