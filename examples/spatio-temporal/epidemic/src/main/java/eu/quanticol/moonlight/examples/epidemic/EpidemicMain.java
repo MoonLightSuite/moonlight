@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -70,18 +71,18 @@ public class EpidemicMain {
                 MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
                 spatialTemporalScript.setBooleanDomain();
                 SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("aFormula");
-                SpatialTemporalSignal<?> results = monitScript.getMonitor(new String[]{}).monitor(ls, s);
+                SpatialTemporalSignal<Boolean> results = (SpatialTemporalSignal<Boolean>) monitScript.getMonitor(new String[]{}).monitor(ls, s);
                 List<? extends Signal<?>> signals = results.getSignals();
                 System.out.println(signals.get(0).valueAt(0));
                 outputs.add(i, results);
 
-//                URL resource = classLoader.getResource("results.txt");
-//                File fileResults = new File(resource.toURI());
-//                CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
-//                RecordHandler rh = new RecordHandler(DataHandler.BOOLEAN);
-//                SpatialTemporalSignal<MoonLightRecord> resultsScript = (SpatialTemporalSignal<MoonLightRecord>) results;
-//                //writer.write(rh, resultsScript,fileResults);
-//                String o = writer.stringOf(rh,resultsScript);
+                URL resource = classLoader.getResource("results.txt");
+                File fileResults = new File(resource.toURI());
+                CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
+                writer.write(DataHandler.BOOLEAN, results,fileResults);
+                String o = writer.stringOf(DataHandler.BOOLEAN,results);
+                System.out.println(o);
+                Files.write(fileResults.toPath(),o.getBytes());
             }
 
 
