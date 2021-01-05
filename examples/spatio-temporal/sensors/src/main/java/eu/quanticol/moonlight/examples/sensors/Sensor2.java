@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.example.spatiotemporal;
+package eu.quanticol.moonlight.examples.sensors;
 
 import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class Sensor {
+public class Sensor2 {
 
     private static SpatialModel<Double> sensor = buildingSensorNetwork();
     private static final double range = 40;

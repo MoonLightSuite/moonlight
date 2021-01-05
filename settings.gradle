@@ -19,4 +19,6 @@ include 'examples:spatio-temporal:subway'
 include 'examples:spatio-temporal:epidemic'
 include 'example'
 include 'distribution_files:java'
+include 'examples:temporal:simpleTemporal'
+findProject(':examples:temporal:simpleTemporal')?.name = 'simpleTemporal'
 

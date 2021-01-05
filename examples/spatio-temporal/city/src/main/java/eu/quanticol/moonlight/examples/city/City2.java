@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.example.spatiotemporal;
+package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
-public class City {
+public class City2 {
 
     private static SpatialModel<Double> city = buildingCity();
     private static final double range = 40;

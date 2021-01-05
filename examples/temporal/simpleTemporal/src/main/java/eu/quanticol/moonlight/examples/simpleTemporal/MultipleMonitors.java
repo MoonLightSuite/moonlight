@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.example.temporal;
+package eu.quanticol.moonlight.examples.simpleTemporal;
 
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
