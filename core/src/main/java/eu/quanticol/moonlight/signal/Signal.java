@@ -392,10 +392,16 @@ public class Signal<T> {
         }
         double[][] toReturn = new double[timePoints.length][2];
         Segment<T> current = first;
+        double value = Double.NaN;
         for (int i = 0; i < timePoints.length; i++) {
-            current = current.jump(timePoints[i]);
+            if (current != null) {
+                current = current.jump(timePoints[i]);
+            }
+            if (current != null) {
+                value = f.apply(current.getValue());
+            }
             toReturn[i][0] = timePoints[i];
-            toReturn[i][1] = f.apply(current.getValue());
+            toReturn[i][1] = value;
         }
         return toReturn;
     }

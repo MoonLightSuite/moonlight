@@ -143,7 +143,9 @@ public class SpatialTemporalSignal<T> {
 		for (Signal<T> s : this.signals) {
 			timeSet.addAll(s.getTimeSet());
 		}
-		return timeSet.stream().sorted().distinct().mapToDouble(d -> d.doubleValue()).toArray();
+		return timeSet.stream().
+				sorted().distinct().
+				mapToDouble(d -> d.doubleValue()).toArray();
 	}
 
 	public <R> void fill( double[] timePoints, R[][] data, Function<T,R> f) {
