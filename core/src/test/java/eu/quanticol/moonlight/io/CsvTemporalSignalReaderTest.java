@@ -39,7 +39,7 @@ class CsvTemporalSignalReaderTest {
         String simple = "0.0;1;2;\n0.4;1;2;\n0.8;1;2;\n1.0;1;2;\n";
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record> signal = reader.load(rh,simple);
+        Signal<MoonLightRecord> signal = reader.load(rh,simple);
 
         assertTrue(true);
     }
@@ -58,7 +58,7 @@ class CsvTemporalSignalReaderTest {
         String simple = "0.0;1;2;\n\n\n   \n\n0.4;1;2;\n0.8;1;2;\n1.0;1;2;\n";
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record> signal = reader.load(rh,simple);
+        Signal<MoonLightRecord> signal = reader.load(rh,simple);
 
         assertTrue(true);
     }
@@ -77,8 +77,8 @@ class CsvTemporalSignalReaderTest {
                 "2.6999999999999997;-7.764289161127127;5;true\n";
         RecordHandler rh = new RecordHandler(DataHandler.REAL,DataHandler.INTEGER,DataHandler.BOOLEAN);
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record>  signal = reader.load(rh,csv);
-        Record r = signal.valueAt(0.0);
+        Signal<MoonLightRecord>  signal = reader.load(rh,csv);
+        MoonLightRecord r = signal.valueAt(0.0);
         System.out.println(r);
         assertEquals(4.440193097192868,r.get(0,Double.class));
         assertEquals(4,r.get(1,Integer.class));
@@ -100,17 +100,17 @@ class CsvTemporalSignalReaderTest {
         DoubleFunction<Integer> intGenerator = SignalGenerator.integerGenerator(r,-10,10);
         DoubleFunction<Boolean> boolGenerator = SignalGenerator.booleanGenerator(r,0.5);
 
-        Record[] data = new Record[size];
-        DoubleFunction<Record> generateFunction = d -> rh.fromObjectArray(
+        MoonLightRecord[] data = new MoonLightRecord[size];
+        DoubleFunction<MoonLightRecord> generateFunction = d -> rh.fromObjectArray(
                 realGenerator.apply(d), intGenerator.apply(d),boolGenerator.apply(d)
         );
         SignalGenerator.fillArray(timePoints,data, generateFunction,0.0,d -> 0.3);
         String csv = generateCSV(size,i->timePoints[i]+";"+data[i]+"\n");
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
-        Signal<Record>  signal = reader.load(rh,csv);
+        Signal<MoonLightRecord>  signal = reader.load(rh,csv);
         for( int i=0 ; i<size ; i++ ) {
-            Record expected = data[i];
-            Record actual = signal.valueAt(timePoints[i]);
+            MoonLightRecord expected = data[i];
+            MoonLightRecord actual = signal.valueAt(timePoints[i]);
             System.out.println(expected);
             System.out.println(actual);
             assertEquals(expected.get(0),actual.get(0));

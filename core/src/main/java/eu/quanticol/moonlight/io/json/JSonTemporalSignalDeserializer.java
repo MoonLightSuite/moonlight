@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
@@ -27,14 +27,14 @@ public class JSonTemporalSignalDeserializer {
 	}
 	
 	
-	public Signal<Record> load( String str ) throws IllegalFileFormat {
+	public Signal<MoonLightRecord> load(String str ) throws IllegalFileFormat {
 		JsonParser parser = new JsonParser();
 		JsonElement tree = parser.parse(str);
 		return fromJSon( tree );
 	}
 
 
-	private Signal<Record> fromJSon(JsonElement tree) throws IllegalFileFormat {
+	private Signal<MoonLightRecord> fromJSon(JsonElement tree) throws IllegalFileFormat {
 		if (!tree.isJsonObject()) {
 			throw new IllegalFileFormat("A JSON object is expected!");
 		}
@@ -46,9 +46,9 @@ public class JSonTemporalSignalDeserializer {
 	}
 
 
-	private Signal<Record> createSignal(double[] times, JsonArray signals) {
+	private Signal<MoonLightRecord> createSignal(double[] times, JsonArray signals) {
 		String[] variables = recordHandler.getVariables();
-		Signal<Record> toReturn = new Signal<Record>();
+		Signal<MoonLightRecord> toReturn = new Signal<MoonLightRecord>();
 		for( int i=0 ; i<times.length ; i++ ) {
 			toReturn.add(times[i],recordHandler.fromStringArray( JSONUtils.getAssignmentMap(variables, i, signals)) );
 		}

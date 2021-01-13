@@ -7,7 +7,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class CityMonitor extends MoonLightSpatialTemporalScript {
     private final SignalDomain<Boolean> _domain_City = new BooleanDomain();
     private final SignalDomain<Boolean> _domain_City2 = new BooleanDomain();
 
-    private SpatialTemporalMonitor<Record,Record,Boolean> City_main(Record parameters ) {
+    private SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord,Boolean> City_main(MoonLightRecord parameters ) {
         return SpatialTemporalMonitor.somewhereMonitor(
                 SpatialTemporalMonitor.atomicMonitor(
                         signal -> signal.get(0,Boolean.class)
@@ -39,7 +39,7 @@ public class CityMonitor extends MoonLightSpatialTemporalScript {
         )
                 ;
     }
-    private SpatialTemporalMonitor<Record,Record,Boolean> City2_main(Record parameters ) {
+    private SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord,Boolean> City2_main(MoonLightRecord parameters ) {
         return SpatialTemporalMonitor.somewhereMonitor(
                 SpatialTemporalMonitor.atomicMonitor(
                         signal -> signal.get(0,Boolean.class)

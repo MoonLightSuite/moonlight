@@ -26,15 +26,15 @@ public class RoSIRandomTest {
     private static void test() {
         try {
             // Signals generator...
-            Pair<Signal<Record>, String[]> trace = traceGenerator();
+            Pair<Signal<MoonLightRecord>, String[]> trace = traceGenerator();
 
             // Formula selection...
             Formula formula = testFormula(trace);
 
             // Generate Monitors...
-            TemporalMonitor<Record, Interval> m = generateMonitoring(formula);
+            TemporalMonitor<MoonLightRecord, Interval> m = generateMonitoring(formula);
 
-            Signal<Record> signal = trace.getFirst();
+            Signal<MoonLightRecord> signal = trace.getFirst();
             int nReps = 20;
             for (int i = 0; i < nReps; i++) {
                 Signal<Interval> outputSignal = m.monitor(signal);
@@ -49,22 +49,22 @@ public class RoSIRandomTest {
         }
     }
 
-    private static TemporalMonitor<Record, Interval> generateMonitoring(Formula formula) {
+    private static TemporalMonitor<MoonLightRecord, Interval> generateMonitoring(Formula formula) {
         //a is the atomic proposition: a >= 0
-        HashMap<String, Function<Parameters, Function<Record, Interval>>> atoms = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<MoonLightRecord, Interval>>> atoms = new HashMap<>();
         atoms.put("a", y -> assignment -> assignment.get(0, Interval.class));
         atoms.put("b", y -> assignment -> assignment.get(1, Interval.class));
         atoms.put("c", y -> assignment -> assignment.get(2, Interval.class));
 
-        TemporalMonitoring<Record, Interval> monitoring =
+        TemporalMonitoring<MoonLightRecord, Interval> monitoring =
                 new TemporalMonitoring<>(atoms, new IntervalDomain());
 
         return monitoring.monitor(formula, null);
     }
 
-    private static Formula testFormula(Pair<Signal<Record>, String[]> trace) {
+    private static Formula testFormula(Pair<Signal<MoonLightRecord>, String[]> trace) {
         Random random = new Random(RANDOMNESS_SEED);
-        Signal<Record> signal = trace.getFirst();
+        Signal<MoonLightRecord> signal = trace.getFirst();
         String[] vars = trace.getSecond();
 
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(random,
@@ -75,7 +75,7 @@ public class RoSIRandomTest {
         return new UntilFormula(new NegationFormula(f), f);
     }
 
-    private static Pair<Signal<Record>, String[]> traceGenerator() {
+    private static Pair<Signal<MoonLightRecord>, String[]> traceGenerator() {
         Map<String, Function<Double, ?>> functionalMap = new HashMap<>();
         functionalMap.put("a", t -> toInterval(Math.pow(t, 2.)));
         functionalMap.put("b", t-> toInterval(Math.cos(t)));

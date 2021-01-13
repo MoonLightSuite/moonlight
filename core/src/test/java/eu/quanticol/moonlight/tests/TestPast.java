@@ -37,23 +37,23 @@ class TestPast {
                     new Pair<String, DataHandler<?>>("b", DataHandler.REAL)
             );
             String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+            Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
             long timeInit = System.currentTimeMillis();
-            HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+            HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
-            TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<Record, Double> m = monitoring.monitor(historicallyFormula, null);
+            TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(historicallyFormula, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<Record> expected = signal.getIterator(true);
+            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
             System.out.println(actual);
             while (!actual.completed()) {
                 assertFalse(expected.completed());
                 Double valueActual = actual.value();
-                Record valueExpected = expected.value();
+                MoonLightRecord valueExpected = expected.value();
                 assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -75,27 +75,27 @@ class TestPast {
                 new Pair<String, DataHandler<?>>("b", DataHandler.REAL)
         );
         String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
-        Signal<Record> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
+        Signal<MoonLightRecord> signal = new JSonTemporalSignalDeserializer(factory).load(contents);
         Formula a = new AtomicFormula("a");
         Formula notA = new NegationFormula(a);
         Formula once = new OnceFormula(notA, new Interval(onceStart, onceEnd));
         Formula notOnceNotA = new NegationFormula(once);
         //signal
-        HashMap<String, Function<Parameters, Function<Record, Double>>> mappa = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
         int index_of_x = 0;
         //a is the atomic proposition: a>=0
         mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
-        TemporalMonitoring<Record, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<Record, Double> m = monitoring.monitor(notOnceNotA, null);
+        TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notOnceNotA, null);
         Signal<Double> outputSignal = m.monitor(signal);
-        SignalCursor<Record> expected = signal.getIterator(true);
+        SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);
         assertEquals(signal.start() + onceEnd, outputSignal.start(), 0.0);
         assertEquals(signal.end(), outputSignal.end(), 0.0);
         while (!actual.completed()) {
             assertFalse(expected.completed());
             Double nextActual = actual.value();
-            Record nextExpected = expected.value();
+            MoonLightRecord nextExpected = expected.value();
             double time = expected.time();
 //                if (time > 500) {
 //                    break;

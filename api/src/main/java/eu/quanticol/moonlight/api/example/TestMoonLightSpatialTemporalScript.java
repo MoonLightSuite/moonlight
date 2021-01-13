@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.function.Function;
@@ -18,7 +18,7 @@ public class TestMoonLightSpatialTemporalScript extends MoonLightSpatialTemporal
     private DoubleDomain domain = new DoubleDomain();
 
     //SPATIO-TEMPORAL
-    private Function<Record, SpatialTemporalMonitor<Record, Record, Boolean>> spatialBuilder = r -> SpatialTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
+    private Function<MoonLightRecord, SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, Boolean>> spatialBuilder = r -> SpatialTemporalMonitor.atomicMonitor(a -> a.get(0, Boolean.class));
 
     private SpatialTemporalScriptComponent<?> spatioTemporalMonitor = new SpatialTemporalScriptComponent<Boolean>(SPATIAL[0],
             new RecordHandler(DataHandler.REAL), new RecordHandler(DataHandler.BOOLEAN, DataHandler.INTEGER),

@@ -495,4 +495,7 @@ public class Signal<T> {
         return timeSet;
     }
 
+    public double getEnd() {
+        return end;
+    }
 }

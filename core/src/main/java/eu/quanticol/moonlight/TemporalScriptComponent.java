@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
@@ -40,7 +40,7 @@ public class TemporalScriptComponent<S> {
     private final String name;
     private final RecordHandler signalRecordHandler;
     private final RecordHandler parameters;
-    private final Function<Record, TemporalMonitor<Record, S>> builder;
+    private final Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder;
     private final SignalDomain<S> domain;
 
     /**
@@ -54,7 +54,7 @@ public class TemporalScriptComponent<S> {
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
                                    SignalDomain<S> domain,
                                    RecordHandler parameters,
-                                   Function<Record, TemporalMonitor<Record, S>> builder) {
+                                   Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder) {
         super();
         this.name = name;
         this.signalRecordHandler = signalRecordHandler;
@@ -65,7 +65,7 @@ public class TemporalScriptComponent<S> {
 
     public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
                                    SignalDomain<S> domain,
-                                   Function<Record, TemporalMonitor<Record, S>> builder) {
+                                   Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder) {
         this(name,signalRecordHandler,domain,null,builder);
     }
 
@@ -78,7 +78,7 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return a monitor.
      */
-    public TemporalMonitor<Record, S> getMonitorFromString(String ... values) {
+    public TemporalMonitor<MoonLightRecord, S> getMonitorFromString(String ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromStringArray(values));
         } else {
@@ -91,7 +91,7 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return a monitor.
      */
-    public TemporalMonitor<Record, S> getMonitorFromDouble(double ... values) {
+    public TemporalMonitor<MoonLightRecord, S> getMonitorFromDouble(double ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromDoubleArray(values));
         } else {
@@ -104,7 +104,7 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return a monitor.
      */
-    public TemporalMonitor<Record, S> getMonitorFromObject(Object ... values) {
+    public TemporalMonitor<MoonLightRecord, S> getMonitorFromObject(Object ... values) {
         if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
             return builder.apply(parameters.fromObjectArray(values));
         } else {
@@ -120,8 +120,8 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return monitor result.
      */
-    public Signal<S> monitor(Signal<Record> input, String ... values) {
-        TemporalMonitor<Record, S> monitor = getMonitorFromString(values);
+    public Signal<S> monitor(Signal<MoonLightRecord> input, String ... values) {
+        TemporalMonitor<MoonLightRecord, S> monitor = getMonitorFromString(values);
         return monitor.monitor(input);
     }
 
@@ -133,8 +133,8 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return monitor result.
      */
-    public Signal<S> monitor(Signal<Record> input, Object ... values) {
-        TemporalMonitor<Record, S> monitor = getMonitorFromObject(values);
+    public Signal<S> monitor(Signal<MoonLightRecord> input, Object ... values) {
+        TemporalMonitor<MoonLightRecord, S> monitor = getMonitorFromObject(values);
         return monitor.monitor(input);
     }
 
@@ -146,8 +146,8 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return monitor result.
      */
-    public Signal<S> monitor(Signal<Record> input, double ... values) {
-        TemporalMonitor<Record, S> monitor = getMonitorFromDouble(values);
+    public Signal<S> monitor(Signal<MoonLightRecord> input, double ... values) {
+        TemporalMonitor<MoonLightRecord, S> monitor = getMonitorFromDouble(values);
         return monitor.monitor(input);
     }
 
@@ -159,7 +159,7 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return monitor result.
      */
-    public double[][] monitorToArray(Signal<Record> input, String ... values) {
+    public double[][] monitorToArray(Signal<MoonLightRecord> input, String ... values) {
         return monitor(input, values).arrayOf(domain.getDataHandler()::doubleOf);
     }
 
@@ -171,7 +171,7 @@ public class TemporalScriptComponent<S> {
      * @param values parameters.
      * @return monitor result.
      */
-    public double[][] monitorToArray(Signal<Record> input, double ... values) {
+    public double[][] monitorToArray(Signal<MoonLightRecord> input, double ... values) {
         return monitor(input, values).arrayOf(domain.getDataHandler()::doubleOf);
     }
 
@@ -200,7 +200,7 @@ public class TemporalScriptComponent<S> {
         return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
     }
 
-    public void monitorToFile(TemporalSignalWriter writer, File output, Signal<Record> input, String ... values) throws IOException {
+    public void monitorToFile(TemporalSignalWriter writer, File output, Signal<MoonLightRecord> input, String ... values) throws IOException {
         Signal<S> signal = monitor(input, values);
         writer.write(domain.getDataHandler(), signal, output);
     }

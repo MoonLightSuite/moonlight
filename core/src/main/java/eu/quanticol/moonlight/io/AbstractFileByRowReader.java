@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.Record;
+import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 public class AbstractFileByRowReader {
 
-    protected List<Row> getRows( File input ) throws IOException {
+    protected List<Row> getRows(File input) throws IOException {
         return collectDataRows(Files.lines(input.toPath()));
     }
 
@@ -42,24 +42,33 @@ public class AbstractFileByRowReader {
         return collectDataRows(Stream.of(input.split("\n")));
     }
 
-    protected List<Row> collectDataRows(Stream<String> lines ) {
-        List<Row> data = lines.map(s -> new Row(s)).collect(Collectors.toList());
+    protected List<Row> collectDataRows(Stream<String> lines) {
+        List<Row> data = lines.map(Row::new).collect(Collectors.toList());
         int line = 1;
         for (Row r: data) {
             r.setLineNumber(line++);
         }
-        return data;
+        return data.stream().filter(r -> !r.isEmpty()).collect(Collectors.toList());
     }
 
     public class Row {
         int index;
+        String row;
         String[] elements;
 
         public Row(String row) {
+            this.row = row;
+            this.elements = new String[] { row };
+        }
+
+        public void split(String regex) {
             if (row.trim().isEmpty()) {
                 elements = null;
             } else {
-                elements = row.split(";");
+                elements = row.split(regex);
+                for(int i=0; i<elements.length; i++) {
+                    elements[i] = elements[i].trim();
+                }
             }
         }
 
@@ -74,7 +83,7 @@ public class AbstractFileByRowReader {
         public boolean isDouble( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Double.parseDouble(elements[idx]);
+                    Double.parseDouble(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -86,7 +95,7 @@ public class AbstractFileByRowReader {
         public boolean isInteger( int idx ) {
             if (!isEmpty()&&(0<=idx)&&(idx<elements.length)) {
                 try {
-                    Integer.parseInt(elements[idx]);
+                    Integer.parseInt(get(idx));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -106,18 +115,18 @@ public class AbstractFileByRowReader {
             return (elements == null)||handler.checkValuesFromStrings(elements,from,to);
         }
 
-        public void addValueToSignal(RecordHandler handler, Signal<Record> s) {
+        public void addValueToSignal(RecordHandler handler, Signal<MoonLightRecord> s) {
             if (elements != null) {
                 double t = Double.parseDouble(elements[0]);
-                Record r = handler.fromStringArray(elements,1,elements.length);
+                MoonLightRecord r = handler.fromStringArray(elements,1,elements.length);
                 s.add(t,r);
             }
         }
 
-        public void addValueToSpatioTemporalSignal(int size, RecordHandler handler, SpatialTemporalSignal<Record> s) {
+        public void addValueToSpatioTemporalSignal(int size, RecordHandler handler, SpatialTemporalSignal<MoonLightRecord> s) {
             if (elements != null) {
                 double t = Double.parseDouble(elements[0]);
-                Record[] data = new Record[size];
+                MoonLightRecord[] data = new MoonLightRecord[size];
                 for( int i=0 ; i<size ; i++ ) {
                     int first = 1+i*handler.size();
                     data[i] = handler.fromStringArray(elements,first,first+handler.size());
@@ -128,9 +137,13 @@ public class AbstractFileByRowReader {
 
         public String get(int i) {
             if (elements != null) {
-                return elements[i];
+                return elements[i].trim();
             }
             throw new IllegalStateException();
+        }
+
+        public String getRow() {
+            return row;
         }
 
         public int getLine() {

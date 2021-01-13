@@ -242,8 +242,8 @@ class ScriptToJava {
 	def  generateGenerateFormulaBuilderDeclaration(FormulaDeclaration f, Model model) {
 		if (model.isIsSpatial) {
 			'''
-			//private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( Record parameters ) {				
-			private <S> SpatialTemporalMonitor<Record,Record,S> «monitorSubFormulaName(f.name)»( SignalDomain<S> «signalDomain», Record parameters ) {				
+			//private SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( MoonLightRecord parameters ) {
+			private <S> SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,S> «monitorSubFormulaName(f.name)»( SignalDomain<S> «signalDomain», MoonLightRecord parameters ) {
 				return «monitorSubFormulaName(f.name)»( 
 					«signalDomain»
 					«FOR p:f.parameters»
@@ -252,8 +252,8 @@ class ScriptToJava {
 				);				
 			}
 			
-			//private SpatialTemporalMonitor<Record,Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
-			private <S> SpatialTemporalMonitor<Record,Record,S> «monitorSubFormulaName(f.name)»( 
+			//private SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»(
+			private <S> SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,S> «monitorSubFormulaName(f.name)»(
 				SignalDomain<S> «signalDomain»
 				«FOR p:f.parameters»
 				, «p.type.basicTypeOf» «p.name»
@@ -264,8 +264,8 @@ class ScriptToJava {
 			'''
 		} else {
 			'''
-			//private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)» ( Record parameters ) {
-			private <S> TemporalMonitor<Record,S> «monitorSubFormulaName(f.name)» ( SignalDomain<S> «signalDomain» , Record parameters ) {
+			//private TemporalMonitor<MoonLightRecord,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)» ( MoonLightRecord parameters ) {
+			private <S> TemporalMonitor<MoonLightRecord,S> «monitorSubFormulaName(f.name)» ( SignalDomain<S> «signalDomain» , MoonLightRecord parameters ) {
 				return «monitorSubFormulaName(f.name)»( 
 					«signalDomain»
 					«FOR p:f.parameters»
@@ -274,8 +274,8 @@ class ScriptToJava {
 				);				
 			}
 						
-			//private TemporalMonitor<Record,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»( 
-			private <S> TemporalMonitor<Record,S> «monitorSubFormulaName(f.name)»( 
+			//private TemporalMonitor<MoonLightRecord,«model.semiring.javaTypeOf»> «monitorSubFormulaName(f.name)»(
+			private <S> TemporalMonitor<MoonLightRecord,S> «monitorSubFormulaName(f.name)»(
 				SignalDomain<S> «signalDomain» 
 				«FOR p:f.parameters»
 				, «p.type.basicTypeOf» «p.name»

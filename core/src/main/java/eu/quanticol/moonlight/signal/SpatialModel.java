@@ -80,15 +80,15 @@ public interface SpatialModel<T> {
      * an array of String. Each row in <code>data</code> describes an edge and consists of an array of the
      * form <code>[s0;s1;s2;...;sn]</code> where <code>s0</code> and <code>s1</code> are the
      * (string representation) of the source and target of the edge, while <code>[s2;...;sn]</code> represents
-     * the values on the edge that is converted to a {@link Record} via the provided {@link RecordHandler}.
+     * the values on the edge that is converted to a {@link MoonLightRecord} via the provided {@link RecordHandler}.
      *
      * @param locations number of locations.
      * @param edgeRecordHandler handler for edges data type.
      * @param data adjacency list.
      * @return a SpatialModel.
      */
-    static SpatialModel<Record> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, String[][] data) {
-        GraphModel<Record> toReturn = new GraphModel<>(locations);
+    static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, String[][] data) {
+        GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for( int i=0 ; i<data.length ; i++ ) {
             String[] row = data[i];
             int src = Integer.parseInt(row[0]);
@@ -103,15 +103,15 @@ public interface SpatialModel<T> {
      * an array of doubles. Each row in <code>data</code> describes an edge and consists of an array of the
      * form <code>[d0;d1;d2;...;dn]</code> where <code>d0</code> and <code>d1</code> are the
      * (double representation) of the source and target of the edge, while <code>[d2;...;dn]</code> represents
-     * the values on the edge that is converted to a {@link Record} via the provided {@link RecordHandler}.
+     * the values on the edge that is converted to a {@link MoonLightRecord} via the provided {@link RecordHandler}.
      *
      * @param locations number of locations.
      * @param edgeRecordHandler handler for edges data type.
      * @param data adjacency list.
      * @return a SpatialModel.
      */
-    static SpatialModel<Record> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[][] data) {
-        GraphModel<Record> toReturn = new GraphModel<>(locations);
+    static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[][] data) {
+        GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for( int i=0 ; i<data.length ; i++ ) {
             double[] row = data[i];
             int src = (int) row[0];
@@ -126,16 +126,16 @@ public interface SpatialModel<T> {
      * This is an utility method that builds a SpatialModel from an adjacency matrix represented as
      * an array of doubles. The element <code>data[i][j]</code> of the matrix contains an array of String
      * <code>[d0;...;dn]</code> representing the values on the edge between i and j, or null if this edge
-     * does not exist. This array is converted to a {@link Record} via the provided {@link RecordHandler}.
+     * does not exist. This array is converted to a {@link MoonLightRecord} via the provided {@link RecordHandler}.
      *
      * @param locations number of locations.
      * @param edgeRecordHandler handler for edges data type.
      * @param data adjacency matrix.
      * @return a SpatialModel.
      */
-    static SpatialModel<Record> buildSpatialModelFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler,
-                                                                     String[][][] data) {
-        GraphModel<Record> toReturn = new GraphModel<>(locations);
+    static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler,
+                                                                              String[][][] data) {
+        GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
                 if (i != j && isFull(data[i][j])) {
@@ -150,16 +150,16 @@ public interface SpatialModel<T> {
      * This is an utility method that builds a SpatialModel from an adjacency matrix represented as
      * an array of doubles. The element <code>data[i][j]</code> of the matrix contains an array of String
      * <code>[d0;...;dn]</code> representing the values on the edge between i and j, or null if this edge
-     * does not exist. This array is converted to a {@link Record} via the provided {@link RecordHandler}.
+     * does not exist. This array is converted to a {@link MoonLightRecord} via the provided {@link RecordHandler}.
      *
      * @param locations number of locations.
      * @param edgeRecordHandler handler for edges data type.
      * @param data adjacency matrix.
      * @return a SpatialModel.
      */
-    static SpatialModel<Record> buildSpatialModelFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler,
-                                                                     double[][][] objects) {
-        GraphModel<Record> toReturn = new GraphModel<>(locations);
+    static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler,
+                                                                              double[][][] objects) {
+        GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for (int i = 0; i < objects.length; i++) {
             for (int j = 0; j < objects[i].length; j++) {
                 if (i != j && isFull(objects[i][j])) {

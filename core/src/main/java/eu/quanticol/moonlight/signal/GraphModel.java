@@ -66,9 +66,9 @@ public class GraphModel<T> implements SpatialModel<T> {
 			//throw new IllegalArgumentException("Self-loops are not allowed ("+src+"- "+value.toString()+" -> "+ trg+"!");
 			return;//TODO: fix it!
 		}
-		if (this.edges.get(src).containsKey(trg)) {
-			throw new IllegalArgumentException("Duplicated edge!");
-		}
+		//if (this.edges.get(src).containsKey(trg)) {
+		//	throw new IllegalArgumentException("Duplicated edge!");
+		//} TODO: check if the above test can be removed.
 		this.edges.get(src).put(trg,value);
 		this.outEdges.get(src).add(new Pair<Integer,T>(trg,value));
 		this.inEdges.get(trg).add(new Pair<Integer,T>(src,value));

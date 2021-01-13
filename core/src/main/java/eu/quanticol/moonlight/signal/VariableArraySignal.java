@@ -25,7 +25,7 @@ import java.util.Map;
  * @author loreti
  *
  */
-public class VariableArraySignal extends Signal<Record>{
+public class VariableArraySignal extends Signal<MoonLightRecord>{
 	
 	private RecordHandler factory;
 	
