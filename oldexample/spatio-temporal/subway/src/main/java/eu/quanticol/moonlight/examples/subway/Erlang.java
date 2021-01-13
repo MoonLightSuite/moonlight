@@ -53,7 +53,7 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String DATA_DIR = "CARanova_rhoS_0_rhoT_0/";
+    private static final String DATA_DIR = "CARar_TODO/";
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
@@ -69,8 +69,8 @@ public class Erlang {
      * Numeric constants of the problem
      */
     private static final int LH = 1;       // location horizon (neighbourhood)
-    private static final double K = 1000;     // crowdedness threshold
-    private static final double TH = 10;   // properties time horizon
+    private static final double K = 500;     // crowdedness threshold
+    private static final double TH = 3;   // properties time horizon
     private static final double T2 = 7;    // properties time horizon
     private static final double T3 = 1;    // output signal reaction time
 
@@ -106,8 +106,8 @@ public class Erlang {
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
-        smc(phi1(SATISFACTION), "p1", trajectories, locService);
-        smc(phi2(SATISFACTION), "p2", trajectories, locService);
+        //smc(phi1(SATISFACTION), "p1", trajectories, locService);
+        //smc(phi2(SATISFACTION), "p2", trajectories, locService);
         smc(phi3(SATISFACTION), "p3", trajectories, locService);
 
         System.out.println("Saving output in :" + RESULT);
@@ -223,32 +223,32 @@ public class Erlang {
     // --------- FORMULAE --------- //
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi1(SignalDomain<D> d) {
-        return globallyMonitor(
-                impliesMonitor(
+        return  impliesMonitor(
                     notMonitor(locationCrowdedness(d), d),
                     d,
                     eventuallyMonitor(
                             locationCrowdedness(d),
                             new Interval(0, TH), d
                         )
-                    )
-                , d);
+                    );
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi2(SignalDomain<D> d) {
-        return globallyMonitor(
-                reachMonitor(locationCrowdedness(d),
+        return escapeMonitor(locationCrowdedness(d),
                              Grid.distance(0, LH),
-                             locationCrowdedness(d),
-                        d)
-                , d);
+                        d);
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi3(SignalDomain<D> d) {
-        return //globallyMonitor(
-                        surroundPhi(notMonitor(locationCrowdedness(d), d)
-                                   ,locationCrowdedness(d), d)
-                //, d)
+        return impliesMonitor(
+                    notMonitor(locationCrowdedness(d), d),
+                    d,
+                    //surroundPhi(notMonitor(locationCrowdedness(d), d),
+                    //            locationCrowdedness(d), d)
+                    //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
+                    reachMonitor(notMonitor(locationCrowdedness(d), d), Grid.distance(1,2),
+                                locationCrowdedness(d), d)
+                    )
         ;
     }
 
@@ -260,7 +260,7 @@ public class Erlang {
         return andMonitor(p1, d,
                         andMonitor(
                             notMonitor(
-                                reachMonitor(p1, Grid.distance(0, 1),
+                                reachMonitor(p1, Grid.distance(0, 2),
                                     notMonitor(
                                         orMonitor(p1, d, p2),
                                     d),
@@ -268,7 +268,7 @@ public class Erlang {
                             d),
                                 d,
                                 notMonitor(
-                                        escapeMonitor(p2, Grid.distance(1, Double.POSITIVE_INFINITY),
+                                        escapeMonitor(p2, Grid.distance(2, Double.POSITIVE_INFINITY),
                                                                 d),
                                         d))
                         );
