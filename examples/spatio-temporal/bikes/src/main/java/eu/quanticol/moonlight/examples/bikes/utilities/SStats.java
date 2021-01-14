@@ -1,4 +1,4 @@
-package tutorial_utilities;
+package eu.quanticol.moonlight.examples.bikes.utilities;
 
 import eu.quanticol.jsstl.core.monitor.SpatialBooleanSignal;
 import eu.quanticol.jsstl.core.signal.BooleanSignal;

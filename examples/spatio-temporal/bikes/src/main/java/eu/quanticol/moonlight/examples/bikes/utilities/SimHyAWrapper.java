@@ -1,4 +1,4 @@
-package tutorial_utilities;
+package eu.quanticol.moonlight.examples.bikes.utilities;
 
 import simhya.dataprocessing.DataCollector;
 import simhya.dataprocessing.HybridDataCollector;
