@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.signal;
 
-import com.sun.tools.javac.util.List;
+import java.util.List;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;

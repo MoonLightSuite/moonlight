@@ -220,5 +220,19 @@ class TestCompiler {
 		Assertions.assertTrue(true);
     }
 
-
+    @Test
+    def void testTemporalMonitor_FromMatLab() {
+        val result = parseHelper.parse('''
+            signal { real x; real y}
+            domain boolean;
+            formula future = globally [0, 0.2]  (x > y);
+            formula past = historically [0, 0.2]  (x > y);
+        ''')
+		val scriptToJava = new ScriptToJava();
+		val generatedCode = scriptToJava.getJavaCode(result,"moonlight.test","ScriptmultipleMonitors")
+		System.out.println(generatedCode);
+		val comp = new MoonlightCompiler();
+		val script = comp.getIstance("moonlight.test","ScriptmultipleMonitors",generatedCode.toString,typeof(MoonLightTemporalScript))
+		Assertions.assertTrue(true);
+    }
 }

@@ -5,6 +5,14 @@ subprojects {
         compile project(":console")
         compile project(":utility")
         compile fileTree(dir: buildCommonDir + '/lib', include: ['*.jar'])
+
+        /* JSSTL Dependencies */
         compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'
+
+        /* SimHyA Dependencies */
+        compile group: 'org.sbml.jsbml', name: 'jsbml', version: '1.5'
+        compile group: 'org.jfree', name: 'jfreechart', version: '1.5.0'
+        compile group: 'colt', name: 'colt', version: '1.2.0'
+        compile group: 'org.apache.commons', name: 'commons-math', version: '2.2'
     }
 }

@@ -36,6 +36,7 @@ public class MoonLightConsole {
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
+
 			throw new IllegalArgumentException("Expected: <scriptfile> <outputdir>");
 		}
 		MoonLightConsole mlc = new MoonLightConsole(new MoonlightCompiler(args[1]));

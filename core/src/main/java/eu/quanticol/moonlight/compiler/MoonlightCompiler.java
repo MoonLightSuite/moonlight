@@ -57,7 +57,7 @@ public class MoonlightCompiler {
         File sourceFile = new File(sourceDir, className + ".java");
         Files.write(sourceFile.toPath(), source.getBytes(StandardCharsets.UTF_8));
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        int success = compiler.run(null, null, null, sourceFile.getPath());
+        int success = compiler.run(null, null, null, "-source", "8", "-target", "8", sourceFile.getPath());
         if(success!=0){
             throw new IOException("Failed compilation");
         }
