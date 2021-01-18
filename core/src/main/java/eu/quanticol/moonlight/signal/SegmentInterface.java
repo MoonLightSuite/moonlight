@@ -4,6 +4,4 @@ public interface SegmentInterface<T> {
 
     T getValue();
 
-    T getValueAt(double t);
-
 }

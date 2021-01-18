@@ -47,9 +47,9 @@ public class SpatialTemporalMonitorSomewhere<S, T, R>
 	private final SignalDomain<R> domain;
 
 	public SpatialTemporalMonitorSomewhere(SpatialTemporalMonitor<S, T, R> m,
-                                           Function<SpatialModel<S>,
+										   Function<SpatialModel<S>,
                                            DistanceStructure<S, ?>> distance,
-                                           SignalDomain<R> domain)
+										   SignalDomain<R> domain)
     {
 		this.m = m;
 		this.distance = distance;

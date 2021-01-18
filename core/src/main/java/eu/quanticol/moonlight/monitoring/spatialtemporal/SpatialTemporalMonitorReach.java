@@ -47,10 +47,10 @@ public class SpatialTemporalMonitorReach<S, T, R>
 	private final SignalDomain<R> domain;
 
 	public SpatialTemporalMonitorReach(SpatialTemporalMonitor<S, T, R> m1,
-                                       Function<SpatialModel<S>,
+									   Function<SpatialModel<S>,
                                        DistanceStructure<S, ?>> distance,
-                                       SpatialTemporalMonitor<S, T, R> m2,
-                                       SignalDomain<R> domain)
+									   SpatialTemporalMonitor<S, T, R> m2,
+									   SignalDomain<R> domain)
     {
 		this.m1 = m1;
 		this.distance = distance;

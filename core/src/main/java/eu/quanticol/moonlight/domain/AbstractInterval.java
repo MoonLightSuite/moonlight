@@ -69,6 +69,8 @@ public class AbstractInterval<T extends Comparable<T>>
         this(start,end,false,false);
     }
 
+    //public abstract AbstractInterval<T> from(T start, T end);
+
     /**
      * @return the left bound of the interval
      */
@@ -94,6 +96,29 @@ public class AbstractInterval<T extends Comparable<T>>
                 || (value.equals(start) && !openOnLeft)
                 || (value.equals(end) && !openOnRight);
 
+        return false;
+    }
+
+    /**
+     * Non-strict set containment between intervals
+     * @param interval interval to be checked
+     * @return true if the argument interval is contained, false otherwise
+     */
+    public boolean contains(AbstractInterval<T> interval) {
+        if (interval != null) {
+            return  // same object
+                    this.equals(interval)                                ||
+                    // strictly contained
+                    (contains(interval.start) && contains(interval.end)) ||
+                    // contained on the right
+                    (start == interval.start &&
+                     openOnLeft == interval.openOnLeft &&
+                     contains(interval.end))                             ||
+                    // contained on the left
+                    (end == interval.end &&
+                     openOnRight == interval.openOnRight &&
+                     contains(interval.end));
+        }
         return false;
     }
 
@@ -175,7 +200,7 @@ public class AbstractInterval<T extends Comparable<T>>
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != obj.getClass()) //TODO: this can be problematic with subclasses
             return false;
         AbstractInterval<T> other = (AbstractInterval<T>) obj;
         if (!end.equals(other.end))

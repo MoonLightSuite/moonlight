@@ -21,7 +21,6 @@
 package eu.quanticol.moonlight.monitoring.spatialtemporal.online;
 
 import eu.quanticol.moonlight.algorithms.EscapeOperator;
-import eu.quanticol.moonlight.algorithms.WhereOperator;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;

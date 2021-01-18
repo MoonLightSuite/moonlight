@@ -48,8 +48,7 @@ public class Segment<T> implements SegmentInterface<T> {
 	public void setNext( Segment<T> next ) {
 		this.next = next;
 	}
-	
-	@Override
+
 	public T getValueAt(double t) {
 		Segment<T> selected = jump( t );
 		return (selected==null?null:selected.value);

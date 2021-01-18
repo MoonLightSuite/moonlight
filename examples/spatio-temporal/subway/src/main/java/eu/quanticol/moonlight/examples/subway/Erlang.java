@@ -24,7 +24,6 @@ import eu.quanticol.moonlight.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * General idea of this scenario:

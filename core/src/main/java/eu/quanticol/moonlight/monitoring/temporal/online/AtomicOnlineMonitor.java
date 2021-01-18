@@ -23,7 +23,7 @@ public class AtomicOnlineMonitor<T extends Comparable<T>, R extends Comparable<R
     public List<ImmutableSegment<AbstractInterval<R>>> monitor(List<ImmutableSegment<AbstractInterval<T>>> updates) {
         List<ImmutableSegment<AbstractInterval<R>>> results = new LinkedList<>();
         for(ImmutableSegment<AbstractInterval<T>> i: updates) {
-            results.addAll(outputSignal.update(i.start(),i.end(),i.getValue().apply(atomicProposition)));
+            //results.addAll(outputSignal.refine(i.getStart(),i.end(),i.getValue().apply(atomicProposition)));
         }
         return results;
     }
