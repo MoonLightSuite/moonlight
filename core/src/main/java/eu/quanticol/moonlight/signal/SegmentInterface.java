@@ -4,4 +4,6 @@ public interface SegmentInterface<T> {
 
     T getValue();
 
+    double getStart();
+
 }

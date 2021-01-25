@@ -31,6 +31,10 @@ public class Segment<T> implements SegmentInterface<T> {
 	public double getTime() {
 		return time;
 	}
+
+	public double getStart() {
+		return time;
+	}
 	
 	@Override
 	public T getValue() {
