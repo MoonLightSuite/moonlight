@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.monitoring.temporal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.signal.ImmutableSegment;
-import eu.quanticol.moonlight.signal.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.ImmutableSegment;
+import eu.quanticol.moonlight.signal.online.OnlineSignal;
 
 import java.util.LinkedList;
 import java.util.List;

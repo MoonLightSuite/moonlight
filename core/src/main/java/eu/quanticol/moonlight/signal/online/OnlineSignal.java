@@ -18,27 +18,26 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 
 import java.util.List;
 
-public class OnlineSignal<T extends Comparable<T>> {
+/**
+ *
+ * @param <D>
+ */
+public class OnlineSignal<D extends Comparable<D>>
+        implements SignalInterface<Double, AbstractInterval<D>> {
+    private final SegmentChain<Double, AbstractInterval<D>> segments;
 
-    // An invariant of the segments list is the fact that all segments
-    // start at strictly monotonic increasing times
-    // TODO: It should be enforced by mutators and it is trivially
-    //  satisfied at the beginning, i.e. with one segment
-    private final SegmentChain<AbstractInterval<T>> segments;
 
-
-    public OnlineSignal(T minValue, T maxValue) {
-        this.segments = new SegmentChain<>();
-        AbstractInterval<T> value = new AbstractInterval<>(minValue, maxValue);
-        this.segments.add(new ImmutableSegment<>(0, value));
+    public OnlineSignal(D minValue, D maxValue) {
+        this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
+        AbstractInterval<D> value = new AbstractInterval<>(minValue, maxValue);
+        this.segments.add(new ImmutableSegment<>(0.0, value));
     }
-
 
     /**
      * @return the time point where the signal starts.
@@ -48,49 +47,49 @@ public class OnlineSignal<T extends Comparable<T>> {
         return segments.peekFirst().getStart();
     }
 
-
-
     /**
-     * Refines the current signal given the arguments' update data
+     * Refines the current signal given the arguments' update data by setting
+     * the value <code>value</code> in the time interval <code>[from,to)</code>.
+     * An {@link UnsupportedOperationException} is thrown whenever the value
+     * <code>value</code> is not in the current intervals
+     * in the time interval <code>[from,to)</code>.
+     *
      * Requires: !segments.isEmpty()
-     * @param from time instant at which the update starts
-     * @param to time instant at which the update ends
+     *
+     * @param from time instant at which the update starts.
+     * @param to time instant at which the update ends.
      * @param i value of the refinement update
+     * @return the list of updated segments.
      */
-    public List<SegmentInterface<AbstractInterval<T>>>
-        refine(double from, double to, AbstractInterval<T> i)
+    public List<SegmentInterface<Double, AbstractInterval<D>>>
+        refine(double from, double to, AbstractInterval<D> i)
     {
         if(from > to) {
             throw new UnsupportedOperationException("Invalid update time span");
         }
-        DiffIterator<SegmentInterface<AbstractInterval<T>>> itr =
-                segments.listIterator();
-        SegmentInterface<AbstractInterval<T>> current = itr.next();
+        DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr =
+                segments.diffIterator();
+        SegmentInterface<Double, AbstractInterval<D>> current = itr.next();
 
         while (itr.hasNext()) {
-            // We peek the next starting time
-            double tNext = itr.next().getStart();
-            // But we bring back the iterator to the current segment
-            itr.previous();
-
-            if(doRefine(itr, current, tNext, from, to, i))
+            if(doRefine(itr, current, from, to, i))
                 break;
 
             // Save the "next" as the next "current".
             current = itr.next();
         }
 
-        doRefine(itr, current, Double.POSITIVE_INFINITY, from, to, i);
+        doRefine(itr, current, from, to, i);
 
         return itr.getChanges();
     }
+
 
     /**
      * Refinement logic
      *
      * @param itr segment iterator
      * @param curr current segment
-     * @param tNext starting time of next segment
      * @param from starting time of the update
      * @param to ending time of the update
      * @param vNew new value of the update
@@ -98,12 +97,19 @@ public class OnlineSignal<T extends Comparable<T>> {
      *         false otherwise.
      */
     private boolean doRefine(
-            DiffIterator<SegmentInterface<AbstractInterval<T>>> itr,
-            SegmentInterface<AbstractInterval<T>> curr,
-            double tNext, double from, double to, AbstractInterval<T> vNew)
+            DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr,
+            SegmentInterface<Double, AbstractInterval<D>> curr,
+            double from, double to, AbstractInterval<D> vNew)
     {
         double t = curr.getStart();
-        AbstractInterval<T> v = curr.getValue();
+        double tNext = Double.POSITIVE_INFINITY;
+        try {
+            tNext = itr.peekNext().getStart();
+        } catch(NullPointerException ignored) {
+            // Exception handled by default value of tNext
+        }
+
+        AbstractInterval<D> v = curr.getValue();
 
         // Case 1 - from in (t, tNext):
         //          This means the update starts in the current segment
@@ -149,9 +155,9 @@ public class OnlineSignal<T extends Comparable<T>> {
      * @param vNew new value from the update
      */
     private void update(
-            DiffIterator<SegmentInterface< AbstractInterval<T>>> itr,
-            double t, AbstractInterval<T> v,
-            AbstractInterval<T> vNew)
+            DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr,
+            double t, AbstractInterval<D> v,
+            AbstractInterval<D> vNew)
     {
         if(v.contains(vNew)) {
             itr.set(new ImmutableSegment<>(t, vNew));
@@ -167,13 +173,12 @@ public class OnlineSignal<T extends Comparable<T>> {
      * first.
      * @param itr iterator to update
      */
-    private void remove(DiffIterator<SegmentInterface<AbstractInterval<T>>> itr)
+    private void remove(
+            DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr)
     {
         itr.previous();
         itr.remove();
     }
-
-
 
     /**
      * Returns the interval of valid signal values at time <code>t</code>. An {@link IllegalArgumentException}
@@ -182,10 +187,10 @@ public class OnlineSignal<T extends Comparable<T>> {
      * @param t time instant.
      * @return the interval of valid signal values at time <code>t</code>.
      */
-    public AbstractInterval<T> getValueAt(double t) {
-        DiffIterator<SegmentInterface<AbstractInterval<T>>> itr =
-                segments.listIterator();
-        SegmentInterface<AbstractInterval<T>> current = null;
+    public AbstractInterval<D> getValueAt(Double t) {
+        DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr =
+                segments.diffIterator();
+        SegmentInterface<Double, AbstractInterval<D>> current = null;
 
         while (itr.hasNext()) {
             current = itr.next();
@@ -205,40 +210,16 @@ public class OnlineSignal<T extends Comparable<T>> {
     }
 
     @Override
+    public boolean refine(Update<Double, AbstractInterval<D>> u) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "OnlineSignal{" + "segments=" + segments + "}";
     }
 
 
-
-    /*public OnlineSignal(double start, double end,
-                        T minValue, T maxValue)
-    {
-        this.segments = new LinkedList<>();
-        AbstractInterval<T> value = new AbstractInterval<>(minValue, maxValue);
-        this.segments.add(new ImmutableSegment<>(start, value));
-    }*/
-    /**
-     * Set the value <code>value</code> in the time interval <code>[from,to)</code>. An {@link IllegalArgumentException}
-     * is thrown whenever the value <code>i</code> is not in the current intervals in the time interval
-     * <code>[from,to)</code>.
-     *
-     * @param from the initial time of the update.
-     * @param to the ending time of the update.
-     * @param value new value
-     * @return the list of updated segments.
-     */
-    /*public List<ImmutableSegment<AbstractInterval<T>>> refine(double from, double to, T value) {
-        return refine(from, to, new AbstractInterval<>(value,value));
-    }*/
-    /**
-     * Returns the time point where the signal ends.
-     *
-     * @return the time point where the signal ends.
-     */
-    /*public double end() {
-        return segments.peekLast().end();
-    }*/
 
     /**
      * Updates the content of the signal in the time interval <code>[from,to)</code> with new interval value

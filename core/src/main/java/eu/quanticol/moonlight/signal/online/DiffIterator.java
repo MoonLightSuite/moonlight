@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.online;
+
+import eu.quanticol.moonlight.signal.online.SegmentChain;
 
 import java.util.*;
 
@@ -26,7 +28,7 @@ import java.util.*;
  * Interface that extends the ListIterator interface to also retrieve
  * a list of changes that should be updated on mutators invocation.
  *
- * @see SegmentChain#listIterator()
+ * @see SegmentChain#diffIterator()
  */
 public interface DiffIterator<E> extends ListIterator<E> {
 
@@ -34,5 +36,17 @@ public interface DiffIterator<E> extends ListIterator<E> {
      * @return A list of changes generated from list mutators
      */
     List<E> getChanges();
+
+    /**
+     * @return the next element of the iterator by keeping current position
+     * @throws NoSuchElementException when there is no such element
+     */
+    E peekNext() throws NoSuchElementException;
+
+    /**
+     * @return the previous element of the iterator by keeping current position
+     * @throws NoSuchElementException when there is no such element
+     */
+    E peekPrevious() throws NoSuchElementException;
 }
 

@@ -3,16 +3,18 @@
  */
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.signal.online.SegmentInterface;
+
 /**
  * @author loreti
  *
  */
-public class Segment<T> implements SegmentInterface<T> {
+public class Segment<T> {
 	
 	private double time;
 	private final T value;
-	private Segment<T> next;
-	private Segment<T> previous;
+	private Segment next;
+	private Segment previous;
 	private double end = Double.NaN;
 	
 	public Segment( double time , T value ) {
@@ -21,7 +23,7 @@ public class Segment<T> implements SegmentInterface<T> {
 		this.previous = null;
 	}
 	
-	private Segment(Segment<T> previous, double time, T value) {
+	private Segment(Segment previous, double time, T value) {
 		this.previous = previous;
 		this.time = time;
 		this.value = value;
@@ -35,21 +37,20 @@ public class Segment<T> implements SegmentInterface<T> {
 	public double getStart() {
 		return time;
 	}
-	
-	@Override
+
 	public T getValue() {
 		return value;
 	}
 	
-	public Segment<T> getNext() {
+	public Segment getNext() {
 		return next;
 	}
 	
-	public Segment<T> getPrevious() {
+	public Segment getPrevious() {
 		return previous;
 	}
 	
-	public void setNext( Segment<T> next ) {
+	public void setNext( Segment next ) {
 		this.next = next;
 	}
 
@@ -58,7 +59,7 @@ public class Segment<T> implements SegmentInterface<T> {
 		return (selected==null?null:selected.value);
 	}
 	
-	public Segment<T> jump( double t ) {
+	public Segment jump(double t ) {
 		if (t<time) {
 			return backwardTo( this, t );
 		} else {
@@ -66,8 +67,8 @@ public class Segment<T> implements SegmentInterface<T> {
 		}
 	}
 	
-	public static <T> Segment<T> forwardTo(Segment<T> segment, double t) {
-		Segment<T> cursor = segment;
+	public static <T> Segment forwardTo(Segment segment, double t) {
+		Segment cursor = segment;
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
@@ -77,8 +78,8 @@ public class Segment<T> implements SegmentInterface<T> {
 		return null;	
 	}
 
-	public static <T> Segment<T> backwardTo(Segment<T> segment, double t) {
-		Segment<T> cursor = segment;
+	public static <T> Segment backwardTo(Segment segment, double t) {
+		Segment cursor = segment;
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
@@ -92,16 +93,16 @@ public class Segment<T> implements SegmentInterface<T> {
 		return (time==t)||((time<=t)&&((Double.isFinite(end)&&(t<=end))||(next!=null)&&(t<next.time)));
 	}
 
-	public static double getTime(Segment<?> s) {
+	public static double getTime(Segment s) {
 		return (s==null?Double.NaN:s.getTime());
 	}
 
-	public Segment<T> addAfter(double time, T value) {
+	public Segment addAfter(double time, T value) {
 		if (this.time>=time) {
 			throw new IllegalArgumentException("Time: "+time+" Expexted: >="+this.time); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
-			this.next = new Segment<>(this, time, value);
+			this.next = new Segment(this, time, value);
 			this.end = Double.NaN; //TODO: Why?!
 			return this.next;
 		} else {
@@ -111,12 +112,12 @@ public class Segment<T> implements SegmentInterface<T> {
 		}
 	}
 
-	public Segment<T> addBefore(double time, T value) {
+	public Segment addBefore(double time, T value) {
 		if (this.time<=time) {
 			throw new IllegalArgumentException(); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
-			this.previous = new Segment<T>(this, time, value);
+			this.previous = new Segment(this, time, value);
 			this.previous.next = this;
 			return this.previous;
 		} else {
@@ -159,7 +160,7 @@ public class Segment<T> implements SegmentInterface<T> {
 
 	//TODO: this method mutates the Segment (very dangerous!)
 	//		and doesn't do what it says it does!!!!!
-	public Segment<T> splitAt(double time) {
+	public Segment splitAt(double time) {
 		if (this.time>=time) {
 			throw new IllegalArgumentException();
 		}

@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,10 +20,10 @@ class OnlineSignalTest {
 
         signal.refine(0, 10, data);
 
-        assertEquals(data, signal.getValueAt(0));
-        assertEquals(data, signal.getValueAt(5));
-        assertEquals(any, signal.getValueAt(10));
-        assertEquals(any, signal.getValueAt(600));
+        assertEquals(data, signal.getValueAt(0.0));
+        assertEquals(data, signal.getValueAt(5.0));
+        assertEquals(any, signal.getValueAt(10.0));
+        assertEquals(any, signal.getValueAt(600.0));
 
         System.out.println(signal);
     }
@@ -42,11 +42,11 @@ class OnlineSignalTest {
         AbstractInterval<Double> data1 = new AbstractInterval<>(10.0, 10.0);
         signal.refine(5, 10, data1);
 
-        assertEquals(data, signal.getValueAt(0));
-        assertEquals(data1, signal.getValueAt(5));
-        assertEquals(data1, signal.getValueAt(9));
-        assertEquals(any, signal.getValueAt(10));
-        assertEquals(any, signal.getValueAt(600));
+        assertEquals(data, signal.getValueAt(0.0));
+        assertEquals(data1, signal.getValueAt(5.0));
+        assertEquals(data1, signal.getValueAt(9.0));
+        assertEquals(any, signal.getValueAt(10.0));
+        assertEquals(any, signal.getValueAt(600.0));
 
         System.out.println(signal);
     }
@@ -68,11 +68,11 @@ class OnlineSignalTest {
         AbstractInterval<Double> data2 = new AbstractInterval<>(10.0, 10.0);
         signal.refine(3, 8, data2);
 
-        assertEquals(data, signal.getValueAt(0));
-        assertEquals(data2, signal.getValueAt(5));
-        assertEquals(data1, signal.getValueAt(9));
-        assertEquals(any, signal.getValueAt(10));
-        assertEquals(any, signal.getValueAt(600));
+        assertEquals(data, signal.getValueAt(0.0));
+        assertEquals(data2, signal.getValueAt(5.0));
+        assertEquals(data1, signal.getValueAt(9.0));
+        assertEquals(any, signal.getValueAt(10.0));
+        assertEquals(any, signal.getValueAt(600.0));
 
         System.out.println(signal);
     }

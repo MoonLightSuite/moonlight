@@ -1,16 +1,18 @@
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.online;
 
 import java.util.Objects;
 
-public class ImmutableSegment<T> implements SegmentInterface<T> {
+public class ImmutableSegment<V extends Comparable<V>>
+        implements SegmentInterface<Double, V>
+{
 
     private final double start;
     //private final double end;
 
-    private final T value;
+    private final V value;
 
     //public ImmutableSegment(double start, double end, T value) {
-    public ImmutableSegment(double start, T value) {
+    public ImmutableSegment(Double start, V value) {
         this.start = start;
         //this.end = end;
         this.value = value;
@@ -18,12 +20,12 @@ public class ImmutableSegment<T> implements SegmentInterface<T> {
 
 
     @Override
-    public T getValue() {
+    public V getValue() {
         return value;
     }
 
 
-    public double getStart() {
+    public Double getStart() {
         return start;
     }
 
