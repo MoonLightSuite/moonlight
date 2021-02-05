@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import java.io.Serializable;
+
 /**
  * General interface that represents a Signal used by the monitoring processes
  *
@@ -28,7 +30,9 @@ package eu.quanticol.moonlight.signal.online;
  *
  * @see OnlineSignal for a concrete implementation
  */
-public interface SignalInterface<T extends Comparable<T>, V extends Comparable<V>> {
+public interface SignalInterface<T extends Comparable<T> & Serializable,
+                                 V extends Comparable<V>>
+{
 
     /**
      * @param time the time instant of interest for looking at the signal value
@@ -45,4 +49,14 @@ public interface SignalInterface<T extends Comparable<T>, V extends Comparable<V
      *         <code>false</code> otherwise
      */
     boolean refine(Update<T, V> u);
+
+    /**
+     * Temporal projection operation that selects a sub-part of the signal
+     * delimited by the time instants provided by the input parameters.
+     *
+     * @param start beginning of the time frame of interest
+     * @param end ending of the time frame of interest
+     * @return the chain of segments of the signal delimited by the input
+     */
+    SegmentChain<T,V> select(T start, T end);
 }

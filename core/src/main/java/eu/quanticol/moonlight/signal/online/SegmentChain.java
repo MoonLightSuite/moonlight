@@ -70,6 +70,19 @@ public class SegmentChain
         this.end = end;
     }
 
+    private SegmentChain(List<SegmentInterface<T,V>> segments, T end) {
+        this.end = end;
+        // TODO: instead of addAll a more efficient solution could be to
+        //       generate a SubChain in the same way SubLists are generated.
+        this.addAll(segments);
+    }
+
+    public SegmentChain<T,V> subChain(int from, int to, T end) {
+        //TODO: should check relation between 'end' and 'to'
+        List<SegmentInterface<T,V>> segments = subList(from, to);
+        return new SegmentChain<>(segments, end);
+    }
+
     @Override
     public void addFirst(SegmentInterface<T, V> e) {
         if(getFirst().getStart().compareTo(e.getStart()) > 0)
@@ -136,12 +149,12 @@ public class SegmentChain
          */
         @Override
         public SegmentInterface<T, V> peekNext() {
-            SegmentInterface<T, V> e = null;
             if (itr.hasNext()) {
-                e = itr.next();
+                SegmentInterface<T, V> e = itr.next();
                 itr.previous();
-            }
-            return e;
+                return e;
+            } else
+                throw new NoSuchElementException("There is no next element!");
         }
 
         /**
@@ -150,12 +163,13 @@ public class SegmentChain
          */
         @Override
         public SegmentInterface<T, V> peekPrevious() {
-            SegmentInterface<T, V> e = null;
             if (itr.hasPrevious()) {
-                e = itr.previous();
+                SegmentInterface<T, V> e = itr.previous();
                 itr.next();
-            }
-            return e;
+                return e;
+            } else
+                throw new NoSuchElementException("There is no previous " +
+                                                                    "element!");
         }
 
         // ---------------------------- MUTATORS ---------------------------- //

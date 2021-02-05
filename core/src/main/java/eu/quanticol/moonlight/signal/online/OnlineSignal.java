@@ -22,11 +22,11 @@ package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 
-import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
- *
- * @param <D>
+ * Class to represent online signals. Work in progress
+ * @param <D> Signal domain of interest
  */
 public class OnlineSignal<D extends Comparable<D>>
         implements SignalInterface<Double, AbstractInterval<D>> {
@@ -48,40 +48,45 @@ public class OnlineSignal<D extends Comparable<D>>
     }
 
     /**
-     * Refines the current signal given the arguments' update data by setting
-     * the value <code>value</code> in the time interval <code>[from,to)</code>.
-     * An {@link UnsupportedOperationException} is thrown whenever the value
+     * Refines the current signal given the argument's update data by setting
+     * the signal <em>value</em> in the time interval:
+     * [<code>u.getStart()</code>, <code>u.getEnd()</code>).
+     *
+     * <p>
+     * An {@link IllegalArgumentException} is thrown whenever the value
      * <code>value</code> is not in the current intervals
      * in the time interval <code>[from,to)</code>.
      *
-     * Requires: !segments.isEmpty()
+     * <p>
+     * Requires: <code>!segments.isEmpty()</code>
      *
-     * @param from time instant at which the update starts.
-     * @param to time instant at which the update ends.
-     * @param i value of the refinement update
+     * @param u update data, containing the time instants at which the update
+     *          starts and ends, and the new value.
      * @return the list of updated segments.
+     * @see Update
      */
-    public List<SegmentInterface<Double, AbstractInterval<D>>>
-        refine(double from, double to, AbstractInterval<D> i)
+    @Override
+    public boolean
+        refine(Update<Double,AbstractInterval<D>> u)
     {
-        if(from > to) {
-            throw new UnsupportedOperationException("Invalid update time span");
+        if(u.getStart() > u.getEnd()) {
+            throw new IllegalArgumentException("Invalid update time span");
         }
         DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr =
                 segments.diffIterator();
         SegmentInterface<Double, AbstractInterval<D>> current = itr.next();
 
         while (itr.hasNext()) {
-            if(doRefine(itr, current, from, to, i))
+            if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue()))
                 break;
 
             // Save the "next" as the next "current".
             current = itr.next();
         }
 
-        doRefine(itr, current, from, to, i);
+        doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue());
 
-        return itr.getChanges();
+        return !itr.getChanges().isEmpty();
     }
 
 
@@ -105,7 +110,7 @@ public class OnlineSignal<D extends Comparable<D>>
         double tNext = Double.POSITIVE_INFINITY;
         try {
             tNext = itr.peekNext().getStart();
-        } catch(NullPointerException ignored) {
+        } catch(NoSuchElementException ignored) {
             // Exception handled by default value of tNext
         }
 
@@ -115,6 +120,7 @@ public class OnlineSignal<D extends Comparable<D>>
         //          This means the update starts in the current segment
         if(t < from && tNext > from) {
             itr.add(new ImmutableSegment<>(from, vNew));
+            return false;
         }
         // Case 2 - from  == t:
         //          This means the current segment starts exactly at
@@ -203,15 +209,35 @@ public class OnlineSignal<D extends Comparable<D>>
             }
         }
 
-        if(current != null)
+        if(current != null) // Single-segment signal
             return current.getValue();
         else
             throw new UnsupportedOperationException("Empty signal provided");
     }
 
     @Override
-    public boolean refine(Update<Double, AbstractInterval<D>> u) {
-        return false;
+    public SegmentChain<Double, AbstractInterval<D>> select(Double from,
+                                                            Double to)
+    {
+        int start = 0;
+        int end = 1;
+
+        DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr =
+                segments.diffIterator();
+        SegmentInterface<Double, AbstractInterval<D>> current;
+
+        while (itr.hasNext()) {
+            current = itr.next();
+            if (current.getStart() > from && start == 0) {
+                start = itr.previousIndex();
+            }
+            if(current.getStart() > to) {
+                end = itr.previousIndex();
+                break;
+            }
+        }
+
+        return segments.subChain(start, end, to);
     }
 
     @Override
@@ -221,42 +247,5 @@ public class OnlineSignal<D extends Comparable<D>>
 
 
 
-    /**
-     * Updates the content of the signal in the time interval <code>[from,to)</code> with new interval value
-     * <code>i</code>. An {@link IllegalArgumentException} is thrown whenever the new interval is not a subset of
-     * the currents ones in the time interval  <code>[from,to)</code>.
-     *
-     * @param from the initial time of the update.
-     * @param to the ending time of the update.
-     * @param i the new value interval.
-     * @return the list of updated segments.
-     */
-   /* public List<ImmutableSegment<AbstractInterval<T>>> refine(double from, double to, AbstractInterval<T> i) {
-        if(from > to) {
-            throw new UnsupportedOperationException("Invalid update time span");
-        }
 
-        ImmutableSegment<AbstractInterval<T>> next;
-        ImmutableSegment<AbstractInterval<T>> curr = null;
-        DiffIterator<ImmutableSegment<AbstractInterval<T>>> itr =
-                segments.DiffIterator();
-
-        while (itr.hasNext()) {
-            next = itr.next();
-            if (curr != null) { // Passed the first iteration
-               if(doRefine(curr.getStart(), next.getStart(), curr.getValue(),
-                           from, to, i, itr))
-                   break;
-            }
-            curr = next; // Save what was the "next" as the next "current".
-        }
-
-        if(curr == null)
-            throw new UnsupportedOperationException("Empty signal provided");
-        else
-            doRefine(curr.getStart(), Double.POSITIVE_INFINITY, curr.getValue(),
-                    from, to, i, itr);
-
-        return null;
-    }*/
 }

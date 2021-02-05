@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.signal;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.Update;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +19,7 @@ class OnlineSignalTest {
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain.min(), domain.max());
 
-        signal.refine(0, 10, data);
+        signal.refine(new Update<>(0.0, 10.0, data));
 
         assertEquals(data, signal.getValueAt(0.0));
         assertEquals(data, signal.getValueAt(5.0));
@@ -37,10 +38,10 @@ class OnlineSignalTest {
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain.min(), domain.max());
 
-        signal.refine(0, 10, data);
+        signal.refine(new Update<>(0.0, 10.0, data));
 
         AbstractInterval<Double> data1 = new AbstractInterval<>(10.0, 10.0);
-        signal.refine(5, 10, data1);
+        signal.refine(new Update<>(5.0, 10.0, data1));
 
         assertEquals(data, signal.getValueAt(0.0));
         assertEquals(data1, signal.getValueAt(5.0));
@@ -60,13 +61,13 @@ class OnlineSignalTest {
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain.min(), domain.max());
 
-        signal.refine(0, 10, data);
+        signal.refine(new Update<>(0.0, 10.0, data));
 
         AbstractInterval<Double> data1 = new AbstractInterval<>(20.0, 10.0);
-        signal.refine(5, 10, data1);
+        signal.refine(new Update<>(5.0, 10.0, data1));
 
         AbstractInterval<Double> data2 = new AbstractInterval<>(10.0, 10.0);
-        signal.refine(3, 8, data2);
+        signal.refine(new Update<>(3.0, 8.0, data2));
 
         assertEquals(data, signal.getValueAt(0.0));
         assertEquals(data2, signal.getValueAt(5.0));

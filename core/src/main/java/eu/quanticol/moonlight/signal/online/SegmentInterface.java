@@ -33,7 +33,6 @@ package eu.quanticol.moonlight.signal.online;
 public interface SegmentInterface
         <T extends Comparable<T>, V extends Comparable<V>>
 {
-
     /**
      * @return the value of the segment
      */

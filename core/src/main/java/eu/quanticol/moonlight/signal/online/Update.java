@@ -31,21 +31,21 @@ public class Update<T extends Comparable<T>, V extends Comparable<V>>  {
     private final T end;
     private final V value;
 
-    Update(T start, T end, V value) {
+    public Update(T start, T end, V value) {
         this.start = start;
         this.end = end;
         this.value = value;
     }
 
-    T getStart() {
+    public T getStart() {
         return start;
     }
 
-    T getEnd() {
+    public T getEnd() {
         return end;
     }
 
-    V getValue() {
+    public V getValue() {
         return value;
     }
 
