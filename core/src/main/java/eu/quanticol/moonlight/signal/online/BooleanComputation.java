@@ -7,10 +7,22 @@ import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class OnlineComputation {
+/**
+ *
+ */
+public class BooleanComputation {
 
-    private OnlineComputation() {}
+    private BooleanComputation() {}
 
+    /**
+     *
+     * @param u update of the operand
+     * @param op  operation to be performed
+     * @param <T> Time domain, usually expressed in Numbers
+     * @param <V> Input signal domain
+     * @param <R> Output robustness domain
+     * @return an update of the robustness signal in input
+     */
     public static
     <T extends Comparable<T>, V extends Comparable<V>, R extends Comparable<R>>
     Update<T, R> unary(Update<T, V> u, Function<V, R> op)
@@ -18,59 +30,29 @@ public class OnlineComputation {
         return new Update<>(u.getStart(), u.getEnd(), op.apply(u.getValue()));
     }
 
-    public static
-    <T extends Comparable<T> & Serializable, V extends Comparable<V>, R extends Comparable<R>>
-    List<Update<T, R>> binary(SignalInterface<T, V> s,
-                                   Update<T, V> u1, Update<T, V> u2,
-                                   BiFunction<V, V, R> op)
-    {
-        List<Update<T, R>> updates = new ArrayList<>();
-
-        // [u1.start, u1.end) < [u2.start, u2.end)
-        //                    or
-        // [u2.start, u2.end) < [u1.start, u1.end)
-        if(u1.getEnd().compareTo(u2.getStart()) < 0 ||
-           u2.getEnd().compareTo(u1.getStart()) < 0)
-        {
-            R value1 = op.apply(s.getValueAt(u1.getStart()), u1.getValue());
-            Update<T, R> r1 = new Update<>(u1.getStart(), u1.getEnd(), value1);
-            R value2 = op.apply(s.getValueAt(u2.getStart()), u2.getValue());
-            Update<T, R> r2 = new Update<>(u2.getStart(), u2.getEnd(), value2);
-            updates.add(r1);
-            updates.add(r2);
-
-        } else if(u1.getStart().compareTo(u2.getStart()) <= 0) { // overlapping
-            if(u1.getEnd().compareTo(u2.getEnd()) <= 0) {
-                SegmentChain<T, V> signal = s.select(u1.getStart(), u1.getEnd());
-                R value1 = op.apply(s.getValueAt(u1.getStart()), u1.getValue());
-            }
-
-        }
-
-        return updates;
-    }
-
     /**
-    * 1 - if not overlapping, execute in parallel
-    * 2 - if overlapping:
-    *      2.1 - update the intersection with:
-    *              U = (intersect.t_min, intersect.t_max, OP(u1,u2)
-    *      2.2 - foreach segment as sss1 in s1.select:
-    *              if sss1.start < u2.end:
-    *                  try:
-    *                      end = s1.select.peekNext();
-    *                  ups.add(sss1.start, min(end, u2.end), OP(u1, sss1))
-    *      2.2 - same for s2
-    *
-     * @param s1
-     * @param s2
-     * @param u1
-     * @param u2
-     * @param op
-     * @param <T>
-     * @param <V>
-     * @param <R>
-     * @return
+     * Computes a list of updates to the robustness signal of a binary operator.
+     *
+     * 1 - if not overlapping, execute in parallel
+     * 2 - if overlapping:
+     *      2.1 - update the intersection with:
+     *              U = (intersect.t_min, intersect.t_max, OP(u1,u2)
+     *      2.2 - foreach segment as sss1 in s1.select:
+     *              if sss1.start < u2.end:
+     *                  try:
+     *                      end = s1.select.peekNext();
+     *                  ups.add(sss1.start, min(end, u2.end), OP(u1, sss1))
+     *      2.2 - same for s2
+     *
+     * @param s1 robustness signal of the first operand
+     * @param s2 robustness signal of the second operand
+     * @param u1 update of the first operand
+     * @param u2 update of the second operand
+     * @param op operation to be performed
+     * @param <T> Time domain, usually expressed in Numbers
+     * @param <V> Input signal domain
+     * @param <R> Output robustness domain
+     * @return a list of updates for the robustness signal in input
      */
     public static
     <T extends Comparable<T> & Serializable, V extends Comparable<V>, R extends Comparable<R>>
