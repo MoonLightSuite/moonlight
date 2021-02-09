@@ -36,7 +36,6 @@ public class EpidemicMain {
 
     private static final DoubleDomain doubleDomain = new DoubleDomain();
     private static final BooleanDomain booleanDomain = new BooleanDomain();
-
     private static final double S = 3;    // state, S=1,E=2,I=3,R=4
 
     private static String code = "signal { int nodeType; }\n" +
@@ -48,9 +47,9 @@ public class EpidemicMain {
 
     public static void main(String[] argv) {
         try {
-//            Runtime run = Runtime.getRuntime();
-//            Runtime.getRuntime().exec(cmd, null, dir);
-//            Process pr = run.exec(cmd);
+            Runtime run = Runtime.getRuntime();
+            Runtime.getRuntime().exec(cmd, null, dir);
+            Process pr = run.exec(cmd);
 
             for(int i = 0; i <=nRuns; i++) {
                 // space model
@@ -101,7 +100,7 @@ public class EpidemicMain {
     }
 
     private static SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, Boolean> isInfected() {
-        return SpatialTemporalMonitor.atomicMonitor(p -> p.get(0,Integer.class).intValue()== 3);
+        return SpatialTemporalMonitor.atomicMonitor(p -> p.get(0,Integer.class).intValue()== S);
     }
 
     private static Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>> distance(double from, double to) {
