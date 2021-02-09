@@ -51,7 +51,7 @@ public class EpidemicMain {
             Runtime.getRuntime().exec(cmd, null, dir);
             Process pr = run.exec(cmd);
 
-            for(int i = 0; i <=nRuns; i++) {
+            for(int i = 0; i <nRuns; i++) {
                 // space model
                 URL TRAJECTORY_SOURCE = classLoader.getResource("epidemic_simulation_network_" + i + ".txt");
                 File fileL = new File(TRAJECTORY_SOURCE.toURI());
@@ -80,8 +80,8 @@ public class EpidemicMain {
                 CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
                 writer.write(DataHandler.BOOLEAN, results,fileResults);
                 String o = writer.stringOf(DataHandler.BOOLEAN,results);
-                System.out.println(o);
                 Files.write(fileResults.toPath(),o.getBytes());
+                System.out.println(o);
             }
 
 

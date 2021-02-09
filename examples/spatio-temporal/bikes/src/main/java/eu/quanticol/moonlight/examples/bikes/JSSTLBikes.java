@@ -1,6 +1,7 @@
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import tutorial_utilities.SStats;
-import tutorial_utilities.SpatialTemporalSimHyA;
+package eu.quanticol.moonlight.examples.bikes;
+
+import eu.quanticol.moonlight.examples.bikes.utilities.SStats;
+import eu.quanticol.moonlight.examples.bikes.utilities.SpatialTemporalSimHyA;
 import eu.quanticol.jsstl.core.formula.*;
 import eu.quanticol.jsstl.core.monitor.*;
 import eu.quanticol.jsstl.core.space.GraphModel;

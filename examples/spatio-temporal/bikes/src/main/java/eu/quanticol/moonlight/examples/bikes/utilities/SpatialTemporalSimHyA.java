@@ -1,9 +1,10 @@
-package tutorial_utilities;
+package eu.quanticol.moonlight.examples.bikes.utilities;
 
 import eu.quanticol.jsstl.core.formula.Signal;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.jsstl.core.space.GraphModel;
+import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 
 import java.io.IOException;
 

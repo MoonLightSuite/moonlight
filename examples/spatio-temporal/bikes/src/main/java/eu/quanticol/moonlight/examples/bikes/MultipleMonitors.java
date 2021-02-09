@@ -1,3 +1,5 @@
+package eu.quanticol.moonlight.examples.bikes;
+
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.formula.BooleanDomain;
