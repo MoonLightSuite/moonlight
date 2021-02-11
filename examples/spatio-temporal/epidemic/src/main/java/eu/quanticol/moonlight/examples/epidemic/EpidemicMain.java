@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -31,25 +32,32 @@ public class EpidemicMain {
     private static final ClassLoader classLoader = EpidemicMain.class.getClassLoader();
     private static final RecordHandler rhL = new RecordHandler(DataHandler.REAL);
     private static final RecordHandler rhT = new RecordHandler(DataHandler.INTEGER);
-    private static final int nRuns = 1;
+    private static final int nRuns = 3;
     private static final List<SpatialTemporalSignal<?>>  outputs = new ArrayList<SpatialTemporalSignal<?>>();
-
     private static final DoubleDomain doubleDomain = new DoubleDomain();
     private static final BooleanDomain booleanDomain = new BooleanDomain();
     private static final double S = 3;    // state, S=1,E=2,I=3,R=4
+    private static final double d = 3;
+    private static final double t = 4;
 
     private static String code = "signal { int nodeType; }\n" +
             "             	space {\n" +
             "             	edges { real length;}\n" +
             "             	}\n" +
             "             	domain boolean;\n" +
-            "             	formula aFormula = somewhere (1.0) [0, 1] ( nodeType==1 );";
+            "               formula suscettible = ( nodeType== 1 );\n" +
+            "               formula infected = ( nodeType==3 );\n" +
+            "               formula ev_inf (real t) = eventually [0 t] infected;\n" +
+            "               formula evw_inf (real d) = everywhere(length)[0 d] {!infected};\n" +
+            "               formula g_notinf = globally [0 3]{!infected};\n" +
+            "               formula safe_radius (real d, real t) = globally { {!{everywhere(length)[0 d] {!infected}}} | {globally [0 t]{!infected}} } ;\n" +
+            "             	formula reach_inf = eventually [0 1] infected;";
 
     public static void main(String[] argv) {
         try {
-            Runtime run = Runtime.getRuntime();
-            Runtime.getRuntime().exec(cmd, null, dir);
-            Process pr = run.exec(cmd);
+//            Runtime run = Runtime.getRuntime();
+//            Runtime.getRuntime().exec(cmd, null, dir);
+//            Process pr = run.exec(cmd);
 
             for(int i = 0; i <nRuns; i++) {
                 // space model
@@ -69,19 +77,31 @@ public class EpidemicMain {
                 MoonLightScript script = sl.compileScript(code);
                 MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
                 spatialTemporalScript.setBooleanDomain();
-                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("aFormula");
-                SpatialTemporalSignal<Boolean> results = (SpatialTemporalSignal<Boolean>) monitScript.getMonitor(new String[]{}).monitor(ls, s);
-                List<? extends Signal<?>> signals = results.getSignals();
-                System.out.println(signals.get(0).valueAt(0));
-                outputs.add(i, results);
-
-                URL resource = classLoader.getResource("results.txt");
-                File fileResults = new File(resource.toURI());
-                CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
-                writer.write(DataHandler.BOOLEAN, results,fileResults);
-                String o = writer.stringOf(DataHandler.BOOLEAN,results);
-                Files.write(fileResults.toPath(),o.getBytes());
-                System.out.println(o);
+                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("safe_radius");
+                double[] radius = new double[]{5,6,7,8,9,10,11,12,13,14,15};
+                for (int j = 0; j <radius.length; j++) {
+                    SpatialTemporalSignal<Boolean> results = (SpatialTemporalSignal<Boolean>) monitScript.getMonitor(radius[j], t).monitor(ls, s);
+                    List<? extends Signal<?>> signals = results.getSignals();
+                    List<Boolean> result_zero = results.valuesatT(0);
+                    int n = 0;
+                    int l = result_zero.size();
+                    int[] int_result = new int[l];
+                    for (int k = 0; k < l; ++k) {
+                        int_result[k] = (result_zero.get(k) ? 1 : 0);
+                        n = n + int_result[k];
+                    }
+                    //System.out.println(Arrays.toString(int_result));
+                    System.out.println(n);
+                    //System.out.println(signals.get(0).valueAt(0));
+                    //outputs.add(i, results);
+                }
+//                URL resource = classLoader.getResource("results.txt");
+//                File fileResults = new File(resource.toURI());
+//                CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();
+//                writer.write(DataHandler.BOOLEAN, results,fileResults);
+//                String o = writer.stringOf(DataHandler.BOOLEAN,results);
+//                Files.write(fileResults.toPath(),o.getBytes());
+                //System.out.println(o);
             }
 
 

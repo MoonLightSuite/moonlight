@@ -71,7 +71,7 @@ print("Network of {0:d} nodes created in {1:.6f} seconds".format(node_number,t))
 
 
 max_steps = 100
-runs=1
+runs=5
 outfile = "strelsim.png"
 
 t = time.process_time()  
