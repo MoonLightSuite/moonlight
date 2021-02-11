@@ -10,8 +10,6 @@ class BooleanComputationTest {
 
     @Test
     void unary() {
-        OnlineSignal<Double> s = new OnlineSignal<>(Double.NEGATIVE_INFINITY,
-                                                    Double.POSITIVE_INFINITY);
         AbstractInterval<Double> i1 = new AbstractInterval<>(4.0, 6.0);
         Update<Double, AbstractInterval<Double>> u = new Update<>(2.0, 3.0, i1);
 

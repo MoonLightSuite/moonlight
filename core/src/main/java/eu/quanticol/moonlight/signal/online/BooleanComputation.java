@@ -12,7 +12,7 @@ import java.util.function.Function;
  */
 public class BooleanComputation {
 
-    private BooleanComputation() {}
+    private BooleanComputation() {}     // hidden constructor
 
     /**
      *

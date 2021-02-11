@@ -40,6 +40,14 @@ public class OnlineSignal<D extends Comparable<D>>
     }
 
     /**
+     * //TODO: hide this
+     * @return the internal list of segments;
+     */
+    public SegmentChain<Double, AbstractInterval<D>> getSegments() {
+        return segments;
+    }
+
+    /**
      * @return the time point where the signal starts.
      */
     public double getStart() {
