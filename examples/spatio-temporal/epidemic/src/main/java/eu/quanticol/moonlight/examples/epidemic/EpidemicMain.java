@@ -32,7 +32,7 @@ public class EpidemicMain {
     private static final ClassLoader classLoader = EpidemicMain.class.getClassLoader();
     private static final RecordHandler rhL = new RecordHandler(DataHandler.REAL);
     private static final RecordHandler rhT = new RecordHandler(DataHandler.INTEGER);
-    private static final int nRuns = 3;
+    private static final int nRuns = 1;
     private static final List<SpatialTemporalSignal<?>>  outputs = new ArrayList<SpatialTemporalSignal<?>>();
     private static final DoubleDomain doubleDomain = new DoubleDomain();
     private static final BooleanDomain booleanDomain = new BooleanDomain();
@@ -55,9 +55,9 @@ public class EpidemicMain {
 
     public static void main(String[] argv) {
         try {
-//            Runtime run = Runtime.getRuntime();
-//            Runtime.getRuntime().exec(cmd, null, dir);
-//            Process pr = run.exec(cmd);
+            Runtime run = Runtime.getRuntime();
+            Runtime.getRuntime().exec(cmd, null, dir);
+            Process pr = run.exec(cmd);
 
             for(int i = 0; i <nRuns; i++) {
                 // space model
