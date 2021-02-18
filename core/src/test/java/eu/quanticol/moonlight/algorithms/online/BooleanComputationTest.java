@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.signal.online;
 
+import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import org.junit.jupiter.api.Test;
 import java.util.List;

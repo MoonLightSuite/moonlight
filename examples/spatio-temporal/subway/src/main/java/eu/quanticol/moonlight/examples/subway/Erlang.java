@@ -52,7 +52,7 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String DATA_DIR = "CARar_TODO/";
+    private static final String DATA_DIR = "CARar_TODO/norm/";
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
@@ -105,9 +105,10 @@ public class Erlang {
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
-        //smc(phi1(SATISFACTION), "p1", trajectories, locService);
-        //smc(phi2(SATISFACTION), "p2", trajectories, locService);
-        smc(phi3(SATISFACTION), "p3", trajectories, locService);
+        smc(phi1(ROBUSTNESS), "p1", trajectories, locService);
+        smc(phi2(ROBUSTNESS), "p2", trajectories, locService);
+        smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
+        smc(phi4(ROBUSTNESS), "p4", trajectories, locService);
 
         System.out.println("Saving output in :" + RESULT);
 
@@ -239,16 +240,31 @@ public class Erlang {
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi3(SignalDomain<D> d) {
-        return impliesMonitor(
-                    notMonitor(locationCrowdedness(d), d),
-                    d,
+        return //orMonitor(       // Crowd > K => Everywhere[1,2] Crowd < k)
+                    //locationCrowdedness(d), /// Crowd < K
+                    //d,
                     //surroundPhi(notMonitor(locationCrowdedness(d), d),
                     //            locationCrowdedness(d), d)
                     //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                    reachMonitor(notMonitor(locationCrowdedness(d), d), Grid.distance(1,2),
-                                locationCrowdedness(d), d)
-                    )
+                    everywhereMonitor(locationCrowdedness(d), Grid.distance(1,2)
+                                , d)
+                    //)
         ;
+    }
+
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi4(SignalDomain<D> d) {
+        return orMonitor(
+                globallyMonitor(locationCrowdedness(d), new Interval(0,3),d)
+                , d,
+        //return impliesMonitor(
+        //        notMonitor(locationCrowdedness(d), d),
+                //d,
+                //surroundPhi(notMonitor(locationCrowdedness(d), d),
+                //            locationCrowdedness(d), d)
+                //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
+                somewhereMonitor(globallyMonitor(locationCrowdedness(d), new Interval(0,3),d), Grid.distance(0,1), d)
+                )
+                ;
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>

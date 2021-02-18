@@ -1,9 +1,9 @@
 package eu.quanticol.moonlight.signal.online;
 
+import eu.quanticol.moonlight.algorithms.online.TemporalComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import org.junit.jupiter.api.Test;
 
-import java.time.temporal.Temporal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
