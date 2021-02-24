@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.signal.online.ImmutableSegment;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.SignalInterface;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class FutureOnlineMonitor<T extends Comparable<T>, R extends Comparable<R
     }
 
     @Override
-    public OnlineSignal<R> getResult() {
+    public SignalInterface<Double, AbstractInterval<R>> getResult() {
         return null;
     }
 }

@@ -2,8 +2,7 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.IntervalDomain;
-import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
@@ -43,7 +42,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         //Test at T2!
         assertEquals(Interval.any(), test(trace, m));
@@ -56,7 +55,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -76,7 +75,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -100,7 +99,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -128,7 +127,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         // Update with data up to T3...
         List<Pair<Integer, Interval>> xValues = new ArrayList<>();
@@ -160,7 +159,7 @@ class RoSIBerkeleyTest {
         Signal<List<Comparable<?>>> trace = init();
 
         // Monitor Instrumentation...
-        OnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
 
         //Test at T2!
         assertEquals(Interval.any(), test(trace, m));
@@ -231,7 +230,7 @@ class RoSIBerkeleyTest {
      * @return an Interval corresponding to the final result of the monitoring
      */
     private static Interval test(Signal<List<Comparable<?>>> trace,
-         OnlineTemporalMonitoring<List<Comparable<?>>, Interval> p)
+         LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> p)
     {
         try {
             // We select the formula to test...
@@ -293,7 +292,7 @@ class RoSIBerkeleyTest {
     /**
      * @return a Monitoring object, ready to run
      */
-    private static OnlineTemporalMonitoring<List<Comparable<?>>, Interval> instrument()
+    private static LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> instrument()
     {
         HashMap<String,
                 Function<Parameters, Function<List<Comparable<?>>, Interval>>>
@@ -305,7 +304,7 @@ class RoSIBerkeleyTest {
         atoms.put("positiveY", ps -> trc ->
                                     new Interval((Integer) trc.get(Y_SIGNAL)));
 
-        return new OnlineTemporalMonitoring<>(atoms, new IntervalDomain());
+        return new LegacyOnlineTemporalMonitoring<>(atoms, new IntervalDomain());
     }
 
     /**

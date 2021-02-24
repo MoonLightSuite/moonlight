@@ -34,7 +34,7 @@ import java.util.function.Function;
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see OnlineTemporalMonitoring
+ * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
 public class OnlineMonitorAtomic<T, R> implements TemporalMonitor<T, R> {

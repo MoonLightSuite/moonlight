@@ -210,9 +210,6 @@ public class SegmentChain
 
         @Override
         public SegmentInterface<T, V> next() {
-            if (!hasNext())
-                throw new NoSuchElementException();
-
             return itr.next();
         }
 

@@ -107,7 +107,7 @@ public class Erlang {
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
         smc(phi1(ROBUSTNESS), "p1", trajectories, locService);
         smc(phi2(ROBUSTNESS), "p2", trajectories, locService);
-        smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
+        //smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
         smc(phi4(ROBUSTNESS), "p4", trajectories, locService);
 
         System.out.println("Saving output in :" + RESULT);
@@ -247,7 +247,7 @@ public class Erlang {
                     //            locationCrowdedness(d), d)
                     //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
                     everywhereMonitor(locationCrowdedness(d), Grid.distance(1,2)
-                                , d)
+                            , d)
                     //)
         ;
     }

@@ -48,30 +48,4 @@ public class Update<T extends Comparable<T>, V extends Comparable<V>>  {
     public V getValue() {
         return value;
     }
-
-    /**
-     * @return an update signal, given a signal and a function
-     */
-    /*
-    public <R extends Comparable<R>> Update<AbstractInterval<R>> apply(
-            Function<AbstractInterval<V>, AbstractInterval<R>> f,
-            Update<AbstractInterval<V>> u)
-    {
-        AbstractInterval<R> v = f.apply(u.getValue());
-        return new Update<>(u.getStart(), u.getEnd(), v);
-    }*/
-
-    /**
-     * @return an update signal, given a signal and a function
-     */
-    /*
-    public <R extends Comparable<R>> Update<AbstractInterval<R>> apply(
-            Function<AbstractInterval<V>, AbstractInterval<R>> f,
-            Update<AbstractInterval<V>> u1, Update<AbstractInterval<V>> u2)
-    {
-        AbstractInterval<R> v = f.apply(u1.getValue());
-        return new Update<>(u1.getStart(), u1.getEnd(), v);
-    }
-    */
-
 }

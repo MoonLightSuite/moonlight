@@ -20,8 +20,6 @@
 
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.signal.online.SegmentChain;
-
 import java.util.*;
 
 /**

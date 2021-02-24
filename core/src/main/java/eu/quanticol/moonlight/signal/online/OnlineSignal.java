@@ -21,6 +21,7 @@
 package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.NoSuchElementException;
 
@@ -33,10 +34,12 @@ public class OnlineSignal<D extends Comparable<D>>
     private final SegmentChain<Double, AbstractInterval<D>> segments;
 
 
-    public OnlineSignal(D minValue, D maxValue) {
+    /**
+     * @param domain The signal domain to consider
+     */
+    public OnlineSignal(SignalDomain<AbstractInterval<D>> domain) {
         this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
-        AbstractInterval<D> value = new AbstractInterval<>(minValue, maxValue);
-        this.segments.add(new ImmutableSegment<>(0.0, value));
+        this.segments.add(new ImmutableSegment<>(0.0, domain.unknown()));
     }
 
     /**
@@ -124,7 +127,7 @@ public class OnlineSignal<D extends Comparable<D>>
 
         AbstractInterval<D> v = curr.getValue();
 
-        // Case 1 - from in (t, tNext):
+        // Case 1 - `from` in (t, tNext):
         //          This means the update starts in the current segment
         if(t < from && tNext > from) {
             itr.add(new ImmutableSegment<>(from, vNew));
@@ -154,7 +157,7 @@ public class OnlineSignal<D extends Comparable<D>>
             return true;
         }
 
-        // Case 4 - t  > to:
+        // Case 4 - t  >= to:
         //          The current segment is beyond the update horizon,
         //          from now on, the signal will not change.
         return t >= to;

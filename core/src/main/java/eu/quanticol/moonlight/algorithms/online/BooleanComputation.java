@@ -1,11 +1,14 @@
-package eu.quanticol.moonlight.signal.online;
+package eu.quanticol.moonlight.algorithms.online;
+
+import eu.quanticol.moonlight.signal.online.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  *
@@ -16,18 +19,39 @@ public class BooleanComputation {
 
     /**
      *
-     * @param u update of the operand
+     * @param u update of the input signal
      * @param op  operation to be performed
-     * @param <T> Time domain, usually expressed in Numbers
+     * @param <T> Time domain, usually expressed as a {@link Number}
      * @param <V> Input signal domain
      * @param <R> Output robustness domain
      * @return an update of the robustness signal in input
      */
     public static
     <T extends Comparable<T>, V extends Comparable<V>, R extends Comparable<R>>
-    Update<T, R> unary(Update<T, V> u, Function<V, R> op)
+    Update<T, R> atom(Update<T, V> u, Function<V, R> op)
     {
-        return new Update<>(u.getStart(), u.getEnd(), op.apply(u.getValue()));
+        return new Update<>(u.getStart(), u.getEnd(),
+                                           op.apply(u.getValue()));
+    }
+
+    /**
+     *
+     * @param u update of the operand
+     * @param op  operation to be performed
+     * @param <T> Time domain, usually expressed as a {@link Number}
+     * @param <R> Output robustness domain
+     * @return an update of the robustness signal in input
+     */
+    public static
+    <T extends Comparable<T>, R extends Comparable<R>>
+    List<Update<T, R>> unary(Update<T, R> u, UnaryOperator<R> op)
+    {
+        Update<T, R> result = new Update<>(u.getStart(), u.getEnd(),
+                op.apply(u.getValue()));
+        List<Update<T, R>> results = new ArrayList<>();
+        results.add(result);
+
+        return results;
     }
 
     /**
@@ -44,32 +68,33 @@ public class BooleanComputation {
      *                  ups.add(sss1.start, min(end, u2.end), OP(u1, sss1))
      *      2.2 - same for s2
      *
+     *
      * @param s1 robustness signal of the first operand
      * @param s2 robustness signal of the second operand
      * @param u1 update of the first operand
      * @param u2 update of the second operand
      * @param op operation to be performed
-     * @param <T> Time domain, usually expressed in Numbers
-     * @param <V> Input signal domain
+     * @param <T> Time domain, usually expressed as a {@link Number}
      * @param <R> Output robustness domain
      * @return a list of updates for the robustness signal in input
      */
     public static
-    <T extends Comparable<T> & Serializable, V extends Comparable<V>, R extends Comparable<R>>
-    List<Update<T, R>> binary(SignalInterface<T, V> s1, SignalInterface<T, V> s2,
-                              Update<T, V> u1, Update<T, V> u2,
-                              BiFunction<V, V, R> op)
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    List<Update<T, R>> binary(SignalInterface<T, R> s1,
+                              SignalInterface<T, R> s2,
+                              Update<T, R> u1, Update<T, R> u2,
+                              BinaryOperator<R> op)
     {
         List<Update<T, R>> updates = new ArrayList<>();
-        SegmentChain<T, V> p1 = s1.select(u2.getStart(), u2.getEnd());
-        SegmentChain<T, V> p2 = s2.select(u1.getStart(), u1.getEnd());
+        SegmentChain<T, R> p1 = s1.select(u2.getStart(), u2.getEnd());
+        SegmentChain<T, R> p2 = s2.select(u1.getStart(), u1.getEnd());
         T tMin = max(u1.getStart(), u2.getStart());
         T tMax = min(u1.getEnd(), u2.getEnd());
 
         if(tMin.compareTo(tMax) > 0) {  // u1 and u2 are not overlapping
             parallelExec(p1, updates, op, u2);
             parallelExec(p2, updates, op, u1);
-        } else {    // u1 and u2 are overlapping
+        } else {                        // u1 and u2 are overlapping
             updates.add(new Update<>(tMin, tMax,
                                      op.apply(u1.getValue(),u2.getValue())));
 
@@ -77,39 +102,68 @@ public class BooleanComputation {
             if(u1.getStart().compareTo(tMin) < 0)
                 overlappingBefore(p2, updates, op, u1, tMin);
 
-            // u1 ends after the intersection
+            // ... u1 ends after the intersection
             if(u1.getEnd().compareTo(tMax) > 0)
                 overlappingAfter(p2, updates, op, u1, tMax);
 
-            // u2 starts before intersection ...
+            // u2 starts before the intersection ...
             if(u2.getStart().compareTo(tMin) < 0)
                 overlappingBefore(p1, updates, op, u2, tMin);
 
+            // ... u2 end after the intersection
             if(u2.getEnd().compareTo(tMax) > 0)
                 overlappingAfter(p1, updates, op, u2, tMax);
 
-            
         }
 
         return updates;
     }
 
-    private static
-    <T extends Comparable<T> & Serializable,
-     V extends Comparable<V>,
-     R extends Comparable<R>>
-    void overlappingBefore(SegmentChain<T, V> s,
-                         List<Update<T, R>> updates,
-                         BiFunction<V, V, R> op,
-                         Update<T, V> u, T tMin)
+    public static
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    List<Update<T, R>> binaryLeft(SignalInterface<T, R> s2,
+                                  Update<T, R> u1,
+                                  BinaryOperator<R> op)
     {
-        DiffIterator<SegmentInterface<T, V>> itr = s.diffIterator();
-        SegmentInterface<T, V> curr;
+        List<Update<T, R>> updates = new ArrayList<>();
+        SegmentChain<T, R> p2 = s2.select(u1.getStart(), u1.getEnd());
+        T tMin = u1.getStart();
+        T tMax = u1.getEnd();
+
+        parallelExec(p2, updates, op, u1);
+
+        return updates;
+    }
+
+    public static
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    List<Update<T, R>> binaryUp(SignalInterface<T, R> s,
+                                Update<T, R> u,
+                                BinaryOperator<R> op)
+    {
+        List<Update<T, R>> updates = new ArrayList<>();
+        SegmentChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
+
+        parallelExec(p1, updates, op, u);  // TODO: this should be different for
+                                           //       left and right operands
+
+        return updates;
+    }
+
+    private static
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    void overlappingBefore(SegmentChain<T, R> s,
+                         List<Update<T, R>> updates,
+                         BinaryOperator<R> op,
+                         Update<T, R> u, T tMin)
+    {
+        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        SegmentInterface<T, R> curr;
 
         while(itr.hasNext()) {
             curr = itr.next();
             if(curr.getStart().compareTo(tMin) < 0) {
-                T nextStart = tryPeekNext(itr, s.getEnd());
+                T nextStart = tryPeekNextStart(itr, s.getEnd());
 
                 T end = min(nextStart, tMin);
                 T start = max(curr.getStart(), u.getStart());
@@ -121,20 +175,18 @@ public class BooleanComputation {
     }
 
     private static
-    <T extends Comparable<T> & Serializable,
-            V extends Comparable<V>,
-            R extends Comparable<R>>
-    void overlappingAfter(SegmentChain<T, V> s,
-                           List<Update<T, R>> updates,
-                           BiFunction<V, V, R> op,
-                           Update<T, V> u, T tMax)
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    void overlappingAfter(SegmentChain<T, R> s,
+                          List<Update<T, R>> updates,
+                          BinaryOperator<R> op,
+                          Update<T, R> u, T tMax)
     {
-        DiffIterator<SegmentInterface<T, V>> itr = s.diffIterator();
-        SegmentInterface<T, V> curr;
+        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        SegmentInterface<T, R> curr;
 
         while(itr.hasNext()) {
             curr = itr.next();
-            T nextStart = tryPeekNext(itr, s.getEnd());
+            T nextStart = tryPeekNextStart(itr, s.getEnd());
 
             if(curr.getStart().compareTo(tMax) > 0 ||
                nextStart.compareTo(tMax) > 0)
@@ -149,21 +201,19 @@ public class BooleanComputation {
     }
 
     private static
-    <T extends Comparable<T> & Serializable,
-     V extends Comparable<V>,
-     R extends Comparable<R>>
-    void parallelExec(SegmentChain<T, V> s,
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    void parallelExec(SegmentChain<T, R> s,
                       List<Update<T, R>> updates,
-                      BiFunction<V, V, R> op,
-                      Update<T, V> u)
+                      BinaryOperator<R> op,
+                      Update<T, R> u)
     {
-        DiffIterator<SegmentInterface<T, V>> itr = s.diffIterator();
-        SegmentInterface<T, V> curr;
+        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        SegmentInterface<T, R> curr;
 
         while(itr.hasNext()) {
             curr = itr.next();
             if(curr.getStart().compareTo(u.getEnd()) < 0) {
-                T nextStart = tryPeekNext(itr, s.getEnd());
+                T nextStart = tryPeekNextStart(itr, s.getEnd());
 
                 T end = min(nextStart, u.getEnd());
                 T start = max(curr.getStart(), u.getStart());
@@ -174,21 +224,30 @@ public class BooleanComputation {
         }
     }
 
-    private static <T extends Comparable<T>> T max(T a, T b) {
+    private static <R extends Comparable<R>> R max(R a, R b) {
         return a.compareTo(b) >= 0 ? a : b;
     }
 
-    private static <T extends Comparable<T>> T min(T a, T b) {
+    private static <R extends Comparable<R>> R min(R a, R b) {
         return a.compareTo(b) <= 0 ? a : b;
     }
 
-    private static
-    <T extends Comparable<T> & Serializable, V extends Comparable<V>>
-    T tryPeekNext(DiffIterator<SegmentInterface<T, V>> itr, T oldValue) {
+    /**
+     * Fail-safe method for fetching data from next element (if exists).
+     *
+     * @param itr iterator to use for looking forward
+     * @param defaultValue value to return in case of failure
+     * @param <T> time domain of interest, usually a <code>Number</code>
+     * @param <V> domain of the returned value
+     * @return the next time value if present, otherwise the default one.
+     */
+    static <T extends Comparable<T> & Serializable, V extends Comparable<V>>
+    T tryPeekNextStart(DiffIterator<SegmentInterface<T, V>> itr, T defaultValue)
+    {
         try {
             return itr.peekNext().getStart();
         } catch (NoSuchElementException ignored) {
-            return oldValue;
+            return defaultValue;
         }
     }
 }

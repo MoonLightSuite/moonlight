@@ -3,8 +3,6 @@
  */
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-
 /**
  * @author loreti
  *

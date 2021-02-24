@@ -44,7 +44,7 @@ import java.util.function.Function;
  * @see FormulaVisitor
  * @see TemporalMonitor
  */
-public class OnlineTemporalMonitoring<T, R>
+public class LegacyOnlineTemporalMonitoring<T, R>
         implements FormulaVisitor<Parameters, TemporalMonitor<T, R>>
 {
     private final Map<String, Function<Parameters, Function<T, R>>> atoms;
@@ -56,7 +56,7 @@ public class OnlineTemporalMonitoring<T, R>
      * Initializes a monitoring process over the given interpretation domain.
      * @param interpretation signal interpretation domain
      */
-    public OnlineTemporalMonitoring(SignalDomain<R> interpretation) {
+    public LegacyOnlineTemporalMonitoring(SignalDomain<R> interpretation) {
         this(new HashMap<>(), interpretation);
     }
 
@@ -66,7 +66,7 @@ public class OnlineTemporalMonitoring<T, R>
      * @param atomicPropositions atomic propositions of interest
      * @param interpretation signal interpretation domain
      */
-    public OnlineTemporalMonitoring(
+    public LegacyOnlineTemporalMonitoring(
            Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
            SignalDomain<R> interpretation)
     {

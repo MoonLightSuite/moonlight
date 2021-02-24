@@ -1,11 +1,28 @@
-package eu.quanticol.moonlight.signal.online;
+package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.signal.online.DiffIterator;
+import eu.quanticol.moonlight.signal.online.SegmentChain;
+import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.signal.online.Update;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BinaryOperator;
 
+import static eu.quanticol.moonlight.algorithms.online.BooleanComputation.tryPeekNextStart;
+
+/**
+ * Note that the methods in this class require explicit time declaration to deal
+ * with numeric operations which cannot be defined on Generic types, not even
+ * on the <code>Number</code> class.
+ *
+ * That's because numeric operations (such as +, -, *, /, %) are defined on
+ * primitive types, and Generic types do not support instantiations based on
+ * primitive types.
+ *
+ * @see <a href="https://docs.oracle.com/javase/tutorial/java/generics/restrictions.html">Java Generics Restrictions</a>
+ */
 public class TemporalComputation {
 
     private TemporalComputation() {}    // hidden constructor
@@ -38,9 +55,9 @@ public class TemporalComputation {
                                       u.getValue(), itr));
 
             //2 - if current value is the relative max/min than previous
-            if(op.apply(curr.getValue(),
-                        prev.getValue()).equals(curr.getValue()) &&
-               !curr.equals(prev))
+            if(op.apply(curr.getValue(), prev.getValue())
+                 .equals(curr.getValue())
+               && !curr.equals(prev))
                clearWindow(window, curr.getValue(), op);
 
             window.addLast(curr);
@@ -57,9 +74,9 @@ public class TemporalComputation {
                                 R newValue,
                                 DiffIterator<SegmentInterface<Double, R>> itr)
     {
-        Double currStart = Math.min(start, hStart);
+        double currStart = Math.min(start, hStart);
         Double newStart = Math.max(0.0, currStart);
-        Double currEnd = tryPeekNext(itr, Double.POSITIVE_INFINITY);
+        Double currEnd = tryPeekNextStart(itr, Double.POSITIVE_INFINITY);
         Double newEnd = Math.min(currEnd, hEnd);
 
         return new Update<>(newStart, newEnd, newValue);
@@ -79,26 +96,24 @@ public class TemporalComputation {
     }
 
 
-    private static
-    <T extends Comparable<T> & Serializable, V extends Comparable<V>>
+    /**
+     * Fail-safe method for fetching data from previous element (if exists).
+     *
+     * @param itr iterator to use for looking back
+     * @param defaultValue value to return in case of failure
+     * @param <T> time domain of interest, usually a <code>Number</code>
+     * @param <V> domain of the returned value
+     * @return the previous value if present, otherwise the default one.
+     */
+    static <T extends Comparable<T> & Serializable, V extends Comparable<V>>
     SegmentInterface<T, V> tryPeekPrevious(
             DiffIterator<SegmentInterface<T, V>> itr,
-            SegmentInterface<T, V> old)
+            SegmentInterface<T, V> defaultValue)
     {
         try {
             return itr.peekPrevious();
         } catch (NoSuchElementException e) {
-            return old;
-        }
-    }
-
-    private static
-    <T extends Comparable<T> & Serializable, V extends Comparable<V>>
-    T tryPeekNext(DiffIterator<SegmentInterface<T, V>> itr, T oldValue) {
-        try {
-            return itr.peekNext().getStart();
-        } catch (NoSuchElementException ignored) {
-            return oldValue;
+            return defaultValue;
         }
     }
 
