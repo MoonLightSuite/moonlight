@@ -26,6 +26,11 @@ public class ErlangSignal implements SignalProcessor<Float> {
      */
     public static final int OUT_ROUTER = 4;
 
+    /**
+     * POI Signals
+     */
+    public static final int IS_HOSPITAL = 5;
+
 
     private int size;
     private int length;
@@ -56,6 +61,7 @@ public class ErlangSignal implements SignalProcessor<Float> {
         GridDirection[][] devDir = new GridDirection[size][length];
         Integer[][] routerLoc = new Integer[size][length];
         Integer[][] outRouter = new Integer[size][length];
+        Boolean[][] isHospital = new Boolean[size][length];
 
         for(int l = 0; l < size; l++) {
             for(int t = 0; t < length; t++) {
@@ -63,6 +69,7 @@ public class ErlangSignal implements SignalProcessor<Float> {
                 devDir[l][t] = getDeviceDirection(l, t);
                 routerLoc[l][t] = getRouterLocation(l);
                 outRouter[l][t] = getOutputRouter(l, t);
+                isHospital[l][t] = isHospital(l, t);
             }
         }
 
@@ -72,6 +79,7 @@ public class ErlangSignal implements SignalProcessor<Float> {
                 .setDimension(routerLoc, LOC_ROUTER)    // Location Router ID
                 .setDimension(input, LOC_CROWDEDNESS)   // Location Crowdedness
                 .setDimension(outRouter, OUT_ROUTER)    // Output Router ID
+                .setDimension(isHospital, IS_HOSPITAL)  // POI ID boolean
                 .initialize();
 
         return trace;
@@ -112,6 +120,12 @@ public class ErlangSignal implements SignalProcessor<Float> {
         }
 
         return new Pair<>(positions, directions);
+    }
+
+    private Boolean isHospital(int l, int t) {
+        // Starting from (0,0)
+        // Hospitals: (4,10) | (12,8) | (10,17)
+        return l == 4 + 10 * 21 || l == 12 + 8 * 21 || l == 10 + 17 * 21;
     }
 
     //TODO: dynamize these methods...

@@ -32,10 +32,11 @@ public class AdjacencyExtractor implements ParsingStrategy<ImmutableGraphModel<D
         for(int i = 0; i < data.length; i++) {
             double v = Double.parseDouble(data[i]);
             if(v == 1)
-                graph.add(row, weight, i);
+                graph = graph.add(row, weight, i);
         }
 
         row++;
+        //System.out.println("Processed row:" + row);
     }
 
     /**

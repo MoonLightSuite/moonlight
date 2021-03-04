@@ -61,7 +61,7 @@ public class AtomicMonitor<V extends Comparable<V>, R extends Comparable<R>>
      */
     public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
                          //Interval parentHorizon,
-                         SignalDomain<AbstractInterval<R>> interpretation)
+                         SignalDomain<R> interpretation)
     {
         this.atomicFunction = atomicFunction;
         //this.horizon = parentHorizon;

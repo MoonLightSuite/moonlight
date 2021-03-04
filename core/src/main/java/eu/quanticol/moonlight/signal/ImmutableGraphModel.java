@@ -49,7 +49,6 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 		this.edges = edges;
 		this.inEdges = inEdges;
 		this.outEdges = outEdges;
-		init();
 	}
 	
 	private void init() {
@@ -60,7 +59,7 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 		}
 	}
 	
-	public ImmutableGraphModel<T> remove( int src, int trg ) {
+	public ImmutableGraphModel<T> remove(int src, int trg ) {
 		if (src >= locations || trg >= locations) {
 			throw new ArrayIndexOutOfBoundsException("Unable to remove the edge");
 		}
@@ -72,7 +71,7 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 		return generateFromRemoval(src, trg);
 	}
 
-	public ImmutableGraphModel<T> add( int src, T value , int trg ) {
+	public ImmutableGraphModel<T> add(int src, T value , int trg ) {
 		if (src == trg) {
 			throw new IllegalArgumentException("Self-loops are not allowed!");
 		}
@@ -108,22 +107,22 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 		return IntStream.range(0, locations).boxed().collect(Collectors.toSet());
 	}
 
-	private ImmutableGraphModel<T> generateFromRemoval( int src, int trg) {
-		Pair<Integer,T> out = this.outEdges.get(src).get(trg);
-		Pair<Integer,T> in = this.inEdges.get(src).get(trg);
+	private ImmutableGraphModel<T> generateFromRemoval(int src, int trg) {
+		Pair<Integer,T> out = outEdges.get(src).get(trg);
+		Pair<Integer,T> in = inEdges.get(src).get(trg);
 
 		// create new edges...
-		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
-		newEdges.set(src, new HashMap<>(this.edges.get(src)));
+		List<HashMap<Integer,T>> newEdges = new ArrayList<>(edges);
+		newEdges.set(src, new HashMap<>(edges.get(src)));
 		newEdges.get(src).remove(trg);
 
 		// create new inEdges...
-		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
+		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(inEdges);
 		newInEdges.set(trg, new ArrayList<>(trg));
 		newInEdges.get(trg).remove(in);
 
 		// create new outEdges...
-		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
+		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(outEdges);
 		newOutEdges.set(src, new ArrayList<>(src));
 		newOutEdges.get(src).remove(out);
 
@@ -133,19 +132,19 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 	private ImmutableGraphModel<T> generateFromAddition(int src, T value, int trg) {
 
 		// create new edges...
-		List<HashMap<Integer,T>> newEdges = new ArrayList<>(this.edges);
-		newEdges.set(src, new HashMap<>(this.edges.get(src)));
+		List<HashMap<Integer,T>> newEdges = new ArrayList<>(edges);
+		newEdges.set(src, new HashMap<>(edges.get(src)));
 		newEdges.get(src).put(trg, value);
 
 		// create new inEdges...
-		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(this.inEdges);
-		newInEdges.set(trg, new ArrayList<>(trg));
-		newInEdges.get(trg).add(new Pair<>(src,value));
+		List<List<Pair<Integer,T>>> newInEdges = new ArrayList<>(inEdges);
+		newInEdges.set(trg, new ArrayList<>(inEdges.get(trg)));
+		newInEdges.get(trg).add(new Pair<>(src, value));
 
 		// create new outEdges...
-		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(this.outEdges);
-		newOutEdges.set(src, new ArrayList<>(src));
-		newOutEdges.get(src).add(new Pair<>(trg,value));
+		List<List<Pair<Integer,T>>> newOutEdges = new ArrayList<>(outEdges);
+		newOutEdges.set(src, new ArrayList<>(outEdges.get(src)));
+		newOutEdges.get(src).add(new Pair<>(trg, value));
 
 		return new ImmutableGraphModel<>(locations, newEdges, newInEdges, newOutEdges);
 	}

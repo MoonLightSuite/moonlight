@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.SegmentChain;
@@ -13,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TemporalComputationTest {
-    /*
+
     @Test
     void slidingWindow() {
         OnlineSignal<Double> s = init();
@@ -22,7 +23,7 @@ class TemporalComputationTest {
         AbstractInterval<Double> i1 = new AbstractInterval<>(3.0, 3.0);
         Update<Double, AbstractInterval<Double>> u = new Update<>(2.0, 4.0, i1);
 
-        AbstractInterval<Double> opInterval = new AbstractInterval<>(3.0, 5.0);
+        Interval opInterval = new Interval(3.0, 5.0);
         List<Update<Double, AbstractInterval<Double>>> r =
                 TemporalComputation.slidingWindow(chain, u, opInterval,
                                                   TemporalComputationTest::max);
@@ -49,7 +50,6 @@ class TemporalComputationTest {
 
         return s;
     }
-    */
 
     private static AbstractInterval<Double> max(AbstractInterval<Double> x,
                                                 AbstractInterval<Double> y)

@@ -35,13 +35,13 @@ public class OnlineTimeMonitoring
 {
 
     private final Formula formula;
-    private final SignalDomain<AbstractInterval<R>> interpretation;
+    private final SignalDomain<R> interpretation;
     private final Map<String, OnlineMonitor<Double, V, AbstractInterval<R>>> monitors;
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
     public OnlineTimeMonitoring(
         Formula formula,
-        SignalDomain<AbstractInterval<R>> interpretation,
+        SignalDomain<R> interpretation,
         Map<String, Function<V, AbstractInterval<R>>> atomicPropositions)
     {
         this.atoms = atomicPropositions;
@@ -57,7 +57,8 @@ public class OnlineTimeMonitoring
 
         OnlineMonitor<Double, V, AbstractInterval<R>> m = formula.accept(this, param);
 
-        m.monitor(update);
+        if(update != null)
+            m.monitor(update);
 
         return m.getResult();
     }
@@ -82,7 +83,7 @@ public class OnlineTimeMonitoring
 
         return fetchMonitor(formula.toString(),
                 () -> new UnaryMonitor<>(argumentMonitor,
-                          interpretation::negation, interpretation));
+                        v -> negation(v, interpretation), interpretation));
     }
 
 
@@ -96,20 +97,83 @@ public class OnlineTimeMonitoring
         OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
                 formula.getSecondArgument().accept(this, parameters);
 
-        /*return fetchMonitor(this.formula.toString(),
+        return fetchMonitor(this.formula.toString(),
                 () -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
-                        interpretation::negation, interpretation));*/
-        return null;
+                        (v1, v2) -> conjunction(v1, v2, interpretation),
+                                                        interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+            OrFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, V, AbstractInterval<R>> firstArgMonitor =
+                formula.getFirstArgument().accept(this, parameters);
+
+        OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
+                formula.getSecondArgument().accept(this, parameters);
+
+        return fetchMonitor(this.formula.toString(),
+                () -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
+                        (v1, v2) -> disjunction(v1, v2, interpretation),
+                        interpretation));
+    }
+
+
+    private AbstractInterval<R> negation(AbstractInterval<R> value,
+                                         SignalDomain<R> domain)
+    {
+        return new AbstractInterval<>(domain.negation(value.getEnd()),
+                domain.negation(value.getStart()));
+    }
+
+    private AbstractInterval<R> conjunction(AbstractInterval<R> firstValue,
+                                            AbstractInterval<R> secondValue,
+                                            SignalDomain<R> domain)
+    {
+        return new AbstractInterval<>(
+            domain.conjunction(firstValue.getStart(), secondValue.getStart()),
+            domain.conjunction(firstValue.getEnd(), secondValue.getEnd()));
+    }
+
+    private AbstractInterval<R> disjunction(AbstractInterval<R> firstValue,
+                                            AbstractInterval<R> secondValue,
+                                            SignalDomain<R> domain)
+    {
+        return new AbstractInterval<>(
+            domain.disjunction(firstValue.getStart(), secondValue.getStart()),
+            domain.disjunction(firstValue.getEnd(), secondValue.getEnd()));
+    }
+
+    @Override
+    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+            EventuallyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return fetchMonitor(formula.toString(),
+                () -> new TemporalOpMonitor<>(argumentMonitor,
+                        (v1, v2) -> disjunction(v1, v2, interpretation),
+                                                        formula.getInterval(),
+                                                        interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+            GloballyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return fetchMonitor(formula.toString(),
+                () -> new TemporalOpMonitor<>(argumentMonitor,
+                        (v1, v2) -> conjunction(v1, v2, interpretation),
+                                                        formula.getInterval(),
+                                                        interpretation));
     }
 
     /*
-    @Override
-    public TemporalMonitor<V, R> visit(OrFormula orFormula,
-                                       Parameters parameters)
-    {
-        return binaryMonitor(orFormula, parameters,
-                             interpretation::disjunction);
-    }
 
     @Override
     public TemporalMonitor<V, R> visit(EventuallyFormula eventuallyFormula,

@@ -37,9 +37,9 @@ public class OnlineSignal<D extends Comparable<D>>
     /**
      * @param domain The signal domain to consider
      */
-    public OnlineSignal(SignalDomain<AbstractInterval<D>> domain) {
+    public OnlineSignal(SignalDomain<D> domain) {
         this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new ImmutableSegment<>(0.0, domain.unknown()));
+        this.segments.add(new ImmutableSegment<>(0.0, new AbstractInterval<>(domain.min(), domain.max())));
     }
 
     /**
@@ -78,7 +78,7 @@ public class OnlineSignal<D extends Comparable<D>>
      */
     @Override
     public boolean
-        refine(Update<Double,AbstractInterval<D>> u)
+        refine(Update<Double, AbstractInterval<D>> u)
     {
         if(u.getStart() > u.getEnd()) {
             throw new IllegalArgumentException("Invalid update time span");
@@ -180,7 +180,8 @@ public class OnlineSignal<D extends Comparable<D>>
             itr.set(new ImmutableSegment<>(t, vNew));
         } else {
             throw new UnsupportedOperationException(
-                    "Refining interval is wider than the original");
+                    "Refining interval: " + vNew +
+                    "is wider than the original:" + v);
         }
     }
 

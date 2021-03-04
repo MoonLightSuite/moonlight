@@ -52,7 +52,7 @@ public class Erlang {
     /**
      * Source files location
      */
-    private static final String DATA_DIR = "CARar_TODO/norm/";
+    private static final String DATA_DIR = "CARar_TODO/";
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
@@ -105,10 +105,17 @@ public class Erlang {
         LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
-        smc(phi1(ROBUSTNESS), "p1", trajectories, locService);
-        smc(phi2(ROBUSTNESS), "p2", trajectories, locService);
-        //smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
-        smc(phi4(ROBUSTNESS), "p4", trajectories, locService);
+        smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
+        smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
+        smc(phi11(SATISFACTION), "s_p11", trajectories, locService);
+        smc(phi11(ROBUSTNESS), "r_p11", trajectories, locService);
+        smc(phi2(SATISFACTION), "s_p2", trajectories, locService);
+        smc(phi2(ROBUSTNESS), "r_p2", trajectories, locService);
+        smc(poiReach(SATISFACTION), "s_poi", trajectories, locService);
+        smc(poiReach(ROBUSTNESS), "r_poi", trajectories, locService);
+        smc(phi3(SATISFACTION), "p3", trajectories, locService);
+        smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
+        //smc(isHospital(SATISFACTION), "h", trajectories, locService);
 
         System.out.println("Saving output in :" + RESULT);
 
@@ -135,7 +142,7 @@ public class Erlang {
 
     private static Collection<MultiValuedTrace> loadTrajectories() {
         Collection<MultiValuedTrace> trajectories = new ArrayList<>();
-        for(int i = 1; i <= 100; i++) {
+        for(int i = 1; i <= 10; i++) {
             String t = "100";
             if(i < 10)
                 t = "00".concat(String.valueOf(i));
@@ -222,39 +229,55 @@ public class Erlang {
 
     // --------- FORMULAE --------- //
 
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> poiReach(SignalDomain<D> d) {
+        return reachMonitor(notMonitor(isNotCrowded(d), d),
+                              d,
+                              somewhereMonitor(isHospital(d),
+                                               Grid.distance(0, 3),
+                                               d))
+        ;
+    }
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi0(SignalDomain<D> d) {
+        return  notMonitor(isNotCrowded(d), d);
+    }
+
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi11(SignalDomain<D> d) {
+        return globallyMonitor(phi1(d), d);
+    }
+
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi1(SignalDomain<D> d) {
         return  impliesMonitor(
-                    notMonitor(locationCrowdedness(d), d),
+                    notMonitor(isNotCrowded(d), d),
                     d,
                     eventuallyMonitor(
-                            locationCrowdedness(d),
+                            isNotCrowded(d),
                             new Interval(0, TH), d
                         )
                     );
     }
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi2(SignalDomain<D> d) {
-        return escapeMonitor(locationCrowdedness(d),
+        return escapeMonitor(isNotCrowded(d),
                              Grid.distance(0, LH),
                         d);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi3(SignalDomain<D> d) {
-        return //orMonitor(       // Crowd > K => Everywhere[1,2] Crowd < k)
-                    //locationCrowdedness(d), /// Crowd < K
-                    //d,
-                    //surroundPhi(notMonitor(locationCrowdedness(d), d),
-                    //            locationCrowdedness(d), d)
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> old_phi3(SignalDomain<D> d) {
+        return orMonitor(       // Crowd > K => Everywhere[1,2] Crowd < k)
+                    locationCrowdedness(d), /// Crowd < K
+                    d,
+                    surroundPhi(notMonitor(locationCrowdedness(d), d),
+                                locationCrowdedness(d), d)
                     //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                    everywhereMonitor(locationCrowdedness(d), Grid.distance(1,2)
-                            , d)
-                    //)
+                    //everywhereMonitor(isNotCrowded(d), Grid.distance(1,2)
+                    //        , d)
+                    )
         ;
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi4(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi3(SignalDomain<D> d) {
         return orMonitor(
-                globallyMonitor(locationCrowdedness(d), new Interval(0,3),d)
+                globallyMonitor(isNotCrowded(d), new Interval(0,3),d)
                 , d,
         //return impliesMonitor(
         //        notMonitor(locationCrowdedness(d), d),
@@ -262,7 +285,7 @@ public class Erlang {
                 //surroundPhi(notMonitor(locationCrowdedness(d), d),
                 //            locationCrowdedness(d), d)
                 //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                somewhereMonitor(globallyMonitor(locationCrowdedness(d), new Interval(0,3),d), Grid.distance(0,1), d)
+                somewhereMonitor(globallyMonitor(isNotCrowded(d), new Interval(0,3),d), Grid.distance(0,1), d)
                 )
                 ;
     }
@@ -325,7 +348,7 @@ public class Erlang {
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> eligibleLoc(SignalDomain<D> d) {
         return somewhereMonitor(
-                andMonitor(locationCrowdedness(d), d, locationRouter(d))
+                andMonitor(isNotCrowded(d), d, locationRouter(d))
                 , Grid.distance(0, LH), d);
     }
 
@@ -356,7 +379,7 @@ public class Erlang {
             throw new UnsupportedOperationException("Unsupported Signal Domain!");
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> locationCrowdedness(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> isNotCrowded(SignalDomain<D> d) {
         if(d instanceof DoubleDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) lcDouble();
         } else if(d instanceof BooleanDomain) {
@@ -370,6 +393,15 @@ public class Erlang {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) orDouble();
         } else if(d instanceof BooleanDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) orBoolean();
+        } else
+            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+    }
+
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> isHospital(SignalDomain<D> d) {
+        if(d instanceof DoubleDomain) {
+            return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) isHDouble();
+        } else if(d instanceof BooleanDomain) {
+            return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) isHBoolean();
         } else
             throw new UnsupportedOperationException("Unsupported Signal Domain!");
     }
@@ -396,6 +428,17 @@ public class Erlang {
 
     private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> orDouble() {
         return atomicMonitor((s -> (Double) s.get(OUT_ROUTER) - 1));
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> isHBoolean()
+    {
+        return atomicMonitor((s -> s.get(IS_HOSPITAL) == Boolean.TRUE));
+    }
+
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> isHDouble()
+    {
+        return atomicMonitor((s -> s.get(IS_HOSPITAL) == Boolean.TRUE ?
+                        Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY));
     }
 
 

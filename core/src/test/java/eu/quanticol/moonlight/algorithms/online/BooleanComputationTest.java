@@ -1,9 +1,8 @@
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -27,11 +26,10 @@ class BooleanComputationTest {
         assertEquals(new AbstractInterval<>(-6.0, -4.0), r.get(0).getValue());
     }
 
-    @Disabled("Reworking types")
     @Test
     void binary() {
         SignalDomain<Double> domain = new DoubleDomain();
-        /*OnlineSignal<Double> s1 = new OnlineSignal<>(domain);
+        SignalInterface<Double, AbstractInterval<Double>> s1 = new OnlineSignal<>(domain);
 
         OnlineSignal<Double> s2 = new OnlineSignal<>(domain);
 
@@ -42,6 +40,7 @@ class BooleanComputationTest {
         AbstractInterval<Double> i2 = new AbstractInterval<>(8.0, 8.0);
         Update<Double, AbstractInterval<Double>> u2 =
                                         new Update<>(2.0, 5.0, i2);
+
 
 
         List<Update<Double, AbstractInterval<Double>>> ups =
@@ -59,7 +58,7 @@ class BooleanComputationTest {
         assertEquals(3, ups.get(1).getStart());
         assertEquals(5, ups.get(1).getEnd());
         assertEquals(new AbstractInterval<>(8.0, Double.POSITIVE_INFINITY),
-                     ups.get(1).getValue()); */
+                     ups.get(1).getValue());
     }
 
     private static AbstractInterval<Double> or(AbstractInterval<Double> x,

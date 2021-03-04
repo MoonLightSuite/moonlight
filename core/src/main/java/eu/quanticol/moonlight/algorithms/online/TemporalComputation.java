@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.signal.online.DiffIterator;
 import eu.quanticol.moonlight.signal.online.SegmentChain;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
@@ -30,15 +31,15 @@ public class TemporalComputation {
     public static <R extends Comparable<R>>
     List<Update<Double, R>> slidingWindow(SegmentChain<Double, R> s,
                                           Update<Double, R> u,
-                                          AbstractInterval<Double> i,
+                                          Interval opHorizon,
                                           BinaryOperator<R> op)
     {
         List<Update<Double, R>> updates = new ArrayList<>();
         DiffIterator<SegmentInterface<Double, R>> itr = s.diffIterator();
 
 
-        Double hStart = u.getStart() - i.getEnd();                              // Numeric OP
-        Double hEnd = u.getEnd() - i.getStart();                                // Numeric OP
+        Double hStart = u.getStart() - opHorizon.getEnd();         // Numeric OP
+        Double hEnd = u.getEnd() - opHorizon.getStart();           // Numeric OP
 
         Deque<SegmentInterface<Double, R>> window = new ArrayDeque<>();
 
@@ -50,9 +51,13 @@ public class TemporalComputation {
                 break;                         // nothing will change from here
 
             //1 - when the window gets full, push output
-            if(curr.getStart() >= hStart)
-                updates.add(genUpdate(curr.getStart(), hStart, hEnd,
-                                      u.getValue(), itr));
+            if(curr.getStart() >= hStart) {
+                R newVal = //op.apply(curr.getValue(), u.getValue());
+                            u.getValue();
+                if(!newVal.equals(curr.getValue()))
+                    updates.add(genUpdate(curr.getStart(), hStart, hEnd,
+                                          newVal, itr));
+            }
 
             //2 - if current value is the relative max/min than previous
             if(op.apply(curr.getValue(), prev.getValue())
@@ -63,7 +68,8 @@ public class TemporalComputation {
             window.addLast(curr);
 
             // 3 - if the current item is at the ending edge of the window
-            if(curr.getStart() == window.getFirst().getStart() + i.getEnd())    // Numeric OP
+            if(curr.getStart() == window.getFirst().getStart()
+                                         + opHorizon.getEnd())     // Numeric OP
                 window.removeFirst();
         }
         return updates;
@@ -74,8 +80,8 @@ public class TemporalComputation {
                                 R newValue,
                                 DiffIterator<SegmentInterface<Double, R>> itr)
     {
-        double currStart = Math.min(start, hStart);
-        Double newStart = Math.max(0.0, currStart);
+        double currStart = Math.max(0.0, hStart);
+        Double newStart = Math.max(start, currStart);
         Double currEnd = tryPeekNextStart(itr, Double.POSITIVE_INFINITY);
         Double newEnd = Math.min(currEnd, hEnd);
 

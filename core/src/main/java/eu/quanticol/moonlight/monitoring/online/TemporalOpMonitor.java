@@ -20,21 +20,19 @@
 
 package eu.quanticol.moonlight.monitoring.online;
 
-import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
+import eu.quanticol.moonlight.algorithms.online.TemporalComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.BinaryOperator;
 
 /**
  * Strategy to interpret (online) an atomic predicate on the signal of interest.
@@ -45,29 +43,31 @@ import java.util.function.UnaryOperator;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class UnaryMonitor<V extends Comparable<V>, R extends Comparable<R>>
+public class TemporalOpMonitor<V extends Comparable<V>, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 
-    private final UnaryOperator<AbstractInterval<R>> atomicFunction;
-    //private final Interval horizon;
-    private final SignalInterface<Double, AbstractInterval<R>> rho;
+    private final BinaryOperator<AbstractInterval<R>> op;
+    private final Interval horizon;
+    private final OnlineSignal<R> rho;
     private final OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor;
 
 
     /**
      * Prepares an atomic online (temporal) monitor.
-     * @param unaryOp The function evaluated by the atomic predicate
+     * @param binaryOp The function evaluated by the atomic predicate
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public UnaryMonitor(OnlineMonitor<Double, V, AbstractInterval<R>> argument,
-                        UnaryOperator<AbstractInterval<R>> unaryOp,
-                         //Interval parentHorizon,
+    public TemporalOpMonitor(
+                        OnlineMonitor<Double, V, AbstractInterval<R>> argument,
+                        BinaryOperator<AbstractInterval<R>> binaryOp,
+                        Interval timeHorizon,
+                        //Interval parentHorizon,
                         SignalDomain<R> interpretation)
     {
-        this.atomicFunction = unaryOp;
-        //this.horizon = parentHorizon;
+        this.op = binaryOp;
+        this.horizon = timeHorizon;
         this.rho = new OnlineSignal<>(interpretation);
         this.argumentMonitor = argument;
     }
@@ -77,15 +77,18 @@ public class UnaryMonitor<V extends Comparable<V>, R extends Comparable<R>>
             Update<Double, V> signalUpdate)
     {
         List<Update<Double, AbstractInterval<R>>> argUpdates =
-                                        argumentMonitor.monitor(signalUpdate);
+                argumentMonitor.monitor(signalUpdate);
 
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
         for(Update<Double, AbstractInterval<R>> argU : argUpdates) {
-            updates.addAll(BooleanComputation.unary(argU, atomicFunction));
+            updates.addAll(TemporalComputation.slidingWindow(rho.getSegments(),
+                                                             argU,
+                                                             horizon,
+                                                             op));
         }
 
-        for(Update<Double, AbstractInterval<R>> u : updates) {
+        for(Update<Double, AbstractInterval<R>> u: updates) {
             rho.refine(u);
         }
 
