@@ -59,6 +59,8 @@ public class StatisticalModelChecker<S, T, R> {
     private final List<SpatialTemporalSignal<R>> results;
     private final SignalStatistics<SpatialTemporalSignal<R>> stats;
 
+    private final Collection<Thread> threads = new ArrayList<>();
+
     /**
      * Instantiating a Statistical Model Checker requires the following:
      * @param propertyMonitor a monitor for the property of interest
@@ -104,12 +106,21 @@ public class StatisticalModelChecker<S, T, R> {
                 }
                 ));
 
-            LOG.fine("Thread starting");
+            threads.add(t);
+            LOG.fine("Thread starting.");
             t.start();
 
             i++;
         }
-        results.addAll(stats.getResults());
+        try {
+            for (Thread thread : threads) {
+                thread.join();
+            }
+            results.addAll(stats.getResults());
+        } catch(InterruptedException e) {
+            LOG.severe("Thread crashed! " + e.getMessage());
+        }
+
     }
 
 

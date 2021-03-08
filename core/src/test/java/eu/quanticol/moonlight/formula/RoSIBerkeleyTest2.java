@@ -61,6 +61,7 @@ class RoSIBerkeleyTest2 {
         assertEquals(ANY, test(null, m, T0));
     }
 
+    @Disabled("Temporarily disabled as still in development")
     @Test
     void berkleyTestAtT2() {
         // Trace generation...
