@@ -52,7 +52,7 @@ import static java.util.Collections.synchronizedCollection;
  */
 public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
     private final Collection<T> results = synchronizedCollection(new ArrayList<>());
-    private final Collection<Float> durations = new ArrayList<>();
+    private final Collection<Float> durations = synchronizedCollection(new ArrayList<>());
 
     private final long startingTime;
     private final int locations;
@@ -87,7 +87,6 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
 
             int tps = (int) result.getSignals().get(0).end();
             timePoints = Math.min(tps, timePoints);
-
             durations.add(duration);
             results.add(result);
             return result;
@@ -204,6 +203,9 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         return value;
     }
 
+    public Collection<T> getResults() {
+        return results;
+    }
 
     /**
      * DTO that contains the computed statistics

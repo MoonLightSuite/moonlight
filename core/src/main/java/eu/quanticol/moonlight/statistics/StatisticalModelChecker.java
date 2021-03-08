@@ -28,6 +28,7 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The StatisticalModelChecker is a class for evaluating a property over
@@ -43,6 +44,8 @@ import java.util.List;
  * @see Statistics for info about the result format
  */
 public class StatisticalModelChecker<S, T, R> {
+    private static final Logger LOG = Logger.getLogger(StatisticalModelChecker.class.getName());
+
     /**
      * Input Parameters
      */
@@ -91,15 +94,22 @@ public class StatisticalModelChecker<S, T, R> {
         int i = 0;
         for (SpatialTemporalSignal<T> s : samples) {
 
-            SpatialTemporalSignal<R> result = stats.record(
-                                        () -> monitor.monitor(locService, s));
-            if (result != null) {
-                results.add(result);
-                i++;
-                System.out.println("Monitoring " + i + " finished with: " +
-                                   result.getSignals().get(0).valueAt(0));
-            }
+            final int n = i;
+            Thread t = new Thread(() -> stats.record(
+                () ->
+                {
+                    SpatialTemporalSignal<R> r = monitor.monitor(locService, s);
+                    LOG.info("Monitoring " + n + " finished!");
+                    return r;
+                }
+                ));
+
+            LOG.fine("Thread starting");
+            t.start();
+
+            i++;
         }
+        results.addAll(stats.getResults());
     }
 
 

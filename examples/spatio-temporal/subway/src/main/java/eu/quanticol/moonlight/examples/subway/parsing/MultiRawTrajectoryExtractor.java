@@ -84,7 +84,7 @@ public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<M
             spaceIterator = 0;
             singleSignal = new Float[spaceNodes][timePoints];
 
-            System.out.println("Completed Processing of Signal " + signalCount);
+            System.out.println("Completed Processing of " + signalCount + " signal.");
         }
     }
 

@@ -24,6 +24,7 @@ import eu.quanticol.moonlight.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * General idea of this scenario:
@@ -48,6 +49,7 @@ import java.util.List;
  *
  */
 public class Erlang {
+    private static final Logger LOG = Logger.getLogger(Erlang.class.getName());
 
     /**
      * Source files location
@@ -56,11 +58,6 @@ public class Erlang {
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
-    //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("trajectories_100.csv").getPath();
-    //private static final String NETWORK_SOURCE = Erlang.class.getResource("adj_matrix.txt").getPath();
-    //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("100_trajectory_grid_25x25_T_336.csv").getPath();
-    //private static final String TRAJECTORY_SOURCE = Erlang.class.getResource("_trajectory_grid_35x35_T_144.csv").getPath();
-    //private static final String NETWORK_SOURCE = Erlang.class.getResource("adjacent_matrix_milan_grid_25x25.txt").getPath();
     private static final String NETWORK_SOURCE =
             Erlang.class.getResource(DATA_DIR + NETWORK_FILE).getPath();
 
@@ -95,9 +92,7 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        System.out.println("The network size is: " + network.size());
-
-        //MultiValuedTrace signal = data.iterator().next();
+        LOG.info("The network size is: " + network.size());
 
         Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
 
@@ -106,20 +101,22 @@ public class Erlang {
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
         smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
-        smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
+        /*smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
         smc(phi11(SATISFACTION), "s_p11", trajectories, locService);
         smc(phi11(ROBUSTNESS), "r_p11", trajectories, locService);
         smc(phi2(SATISFACTION), "s_p2", trajectories, locService);
         smc(phi2(ROBUSTNESS), "r_p2", trajectories, locService);
-        smc(poiReach(SATISFACTION), "s_poi", trajectories, locService);
-        smc(poiReach(ROBUSTNESS), "r_poi", trajectories, locService);
         smc(phi3(SATISFACTION), "p3", trajectories, locService);
         smc(phi3(ROBUSTNESS), "p3", trajectories, locService);
+        //smc(poiReach(SATISFACTION), "s_poi", trajectories, locService);
+        //smc(poiReach(ROBUSTNESS), "r_poi", trajectories, locService);
+        smc(phi33(SATISFACTION), "s_p33", trajectories, locService);
+        smc(phi33(ROBUSTNESS), "r_p33", trajectories, locService);*/
         //smc(isHospital(SATISFACTION), "h", trajectories, locService);
 
-        System.out.println("Saving output in :" + RESULT);
+        LOG.info("Saving output in :" + RESULT);
 
-        //System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
+        //LOG.info("SMC Average Satisfiability: " + smc.getStats().toString());
     }
 
     private static <D> void smc(
@@ -142,14 +139,14 @@ public class Erlang {
 
     private static Collection<MultiValuedTrace> loadTrajectories() {
         Collection<MultiValuedTrace> trajectories = new ArrayList<>();
-        for(int i = 1; i <= 10; i++) {
+        for(int i = 1; i <= 100; i++) {
             String t = "100";
             if(i < 10)
                 t = "00".concat(String.valueOf(i));
             else if(i < 100)
                 t = "0".concat(String.valueOf(i));
             trajectories.addAll(loadTrajectory(t));
-            System.out.println("Trajectory " + i + " loaded successfully!");
+            LOG.info("Trajectory " + i + " loaded successfully!");
         }
         return trajectories;
     }
@@ -165,7 +162,7 @@ public class Erlang {
 
     /*
     public static void oldmain(String[] argv) {
-        System.out.println("The network size is: " + network.size());
+        LOG.info("The network size is: " + network.size());
 
         MultiValuedTrace signal = data.iterator().next();
 
@@ -193,9 +190,9 @@ public class Erlang {
         PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
         new DataWriter<>(RESULT, FileType.CSV, str).write(sat);
 
-        System.out.println("Saving output in :" + RESULT);
+        LOG.info("Saving output in :" + RESULT);
 
-        //System.out.println("SMC Average Satisfiability: " + smc.getStats().toString());
+        //LOG.info("SMC Average Satisfiability: " + smc.getStats().toString());
     }*/
 
     private static String outputFile(String path, String ext1, String ext2) {
@@ -230,11 +227,19 @@ public class Erlang {
     // --------- FORMULAE --------- //
 
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> poiReach(SignalDomain<D> d) {
-        return reachMonitor(notMonitor(isNotCrowded(d), d),
-                              d,
-                              somewhereMonitor(isHospital(d),
-                                               Grid.distance(0, 3),
-                                               d))
+        return //impliesMonitor(notMonitor(isNotCrowded(d), d), d,
+                    reachMonitor(
+                                //orMonitor(
+                                        isNotCrowded(d)
+                                        //, d,
+                                        //isHospital(d))
+                                , Grid.distance(0, 6),
+                                isHospital(d)
+                                //somewhereMonitor(isHospital(d),
+                                //                 Grid.distance(0, 3),
+                                //                 d)
+                                , d)
+                //)
         ;
     }
     private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi0(SignalDomain<D> d) {
@@ -262,15 +267,15 @@ public class Erlang {
                         d);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> old_phi3(SignalDomain<D> d) {
-        return orMonitor(       // Crowd > K => Everywhere[1,2] Crowd < k)
-                    locationCrowdedness(d), /// Crowd < K
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> phi33(SignalDomain<D> d) {
+        return impliesMonitor(       // Crowd > K => Everywhere[1,2] Crowd < k)
+                    notMonitor(isNotCrowded(d), d), /// Crowd > K
                     d,
-                    surroundPhi(notMonitor(locationCrowdedness(d), d),
-                                locationCrowdedness(d), d)
+                    //surroundPhi(notMonitor(isNotCrowded(d), d),
+                    //            isNotCrowded(d), d)
                     //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                    //everywhereMonitor(isNotCrowded(d), Grid.distance(1,2)
-                    //        , d)
+                    somewhereMonitor(isNotCrowded(d), Grid.distance(0,1)
+                            , d)
                     )
         ;
     }
@@ -285,7 +290,7 @@ public class Erlang {
                 //surroundPhi(notMonitor(locationCrowdedness(d), d),
                 //            locationCrowdedness(d), d)
                 //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                somewhereMonitor(globallyMonitor(isNotCrowded(d), new Interval(0,3),d), Grid.distance(0,1), d)
+                somewhereMonitor(globallyMonitor(isNotCrowded(d), new Interval(0,3),d), Grid.distance(1,2), d)
                 )
                 ;
     }
