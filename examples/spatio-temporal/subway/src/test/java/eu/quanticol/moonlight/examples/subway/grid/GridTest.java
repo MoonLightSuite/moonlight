@@ -10,11 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GridTest {
 
-
-    private static final String DATA_DIR = "CARar_TODO/";
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String NETWORK_SOURCE =
-            Erlang.class.getResource(DATA_DIR + NETWORK_FILE).getPath();
+            Erlang.class.getResource(NETWORK_FILE).getPath();
 
     @Test
     void distance() {
