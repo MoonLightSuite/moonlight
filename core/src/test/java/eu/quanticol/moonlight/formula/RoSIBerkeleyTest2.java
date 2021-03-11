@@ -7,9 +7,7 @@ import eu.quanticol.moonlight.domain.IntervalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.util.Pair;
 import org.junit.jupiter.api.Disabled;
@@ -44,9 +42,11 @@ class RoSIBerkeleyTest2 {
     private static final double T5 = 22;
     private static final double T_MAX = 24;
 
+    private static final Double P_INF = Double.POSITIVE_INFINITY;
+    private static final Double N_INF = Double.NEGATIVE_INFINITY;
+
     private static final AbstractInterval<Double> ANY =
-            new AbstractInterval<>(Double.NEGATIVE_INFINITY,
-                                 Double.POSITIVE_INFINITY);
+            new AbstractInterval<>(N_INF, P_INF);
 
     @Test
     void berkleyTestEmpty() {
@@ -109,6 +109,46 @@ class RoSIBerkeleyTest2 {
 
     @Test
     void berkleyTestAtT4() {
+        OnlineSignal<Double> result;
+        AbstractInterval<Double> expected;
+
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<Double, Double> m =
+                instrument(testFormula());
+
+        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, 2.0);
+        test(u, m);
+        //Update at T3...
+        u = new Update<>(T2, T3, -1.0);
+        test(u, m);
+
+        //Test at T4!
+        u = new Update<>(T3, T4, -2.0);
+        Object[] sgms = test(u, m).getSegments().toArray();
+        ImmutableSegment<AbstractInterval<Double>> s0 =
+                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, -1.0));
+        ImmutableSegment<AbstractInterval<Double>> s1 =
+                new ImmutableSegment<>(3.0, new AbstractInterval<>(-2.0, -2.0));
+        ImmutableSegment<AbstractInterval<Double>> s2 =
+                new ImmutableSegment<>(5.0, new AbstractInterval<>(-2.0, P_INF));
+        ImmutableSegment<AbstractInterval<Double>> s3 =
+                new ImmutableSegment<>(9.0, new AbstractInterval<>(N_INF, P_INF));
+        assertEquals(s0, sgms[0]);
+        assertEquals(s1, sgms[1]);
+        assertEquals(s2, sgms[2]);
+        assertEquals(s3, sgms[3]);
+
+        //Test at T5!
+        //result = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
+        //assertEquals(result, test(u, m, T0));
+    }
+
+    @Test
+    void berkleyTestAtT5() {
         SignalInterface<Double, AbstractInterval<Double>> result;
         AbstractInterval<Double> expected;
 
@@ -128,13 +168,27 @@ class RoSIBerkeleyTest2 {
 
         //Test at T4!
         u = new Update<>(T3, T4, -2.0);
-        expected = new AbstractInterval<>(-1.0, -1.0);
-        result = test(u, m);
-        assertEquals(expected, result.getValueAt(T0));
+        test(u, m);
 
         //Test at T5!
-        //result = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
-        //assertEquals(result, test(u, m, T0));
+        u = new Update<>(T4, T5, 2.0);
+
+        Object[] sgms = test(u, m).getSegments().toArray();
+        ImmutableSegment<AbstractInterval<Double>> s0 =
+                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, -1.0));
+        ImmutableSegment<AbstractInterval<Double>> s1 =
+                new ImmutableSegment<>(3.0, new AbstractInterval<>(-2.0, -2.0));
+        ImmutableSegment<AbstractInterval<Double>> s2 =
+                new ImmutableSegment<>(5.0, new AbstractInterval<>(2.0, 2.0));
+        ImmutableSegment<AbstractInterval<Double>> s3 =
+                new ImmutableSegment<>(8.0, new AbstractInterval<>(2.0, P_INF));
+        ImmutableSegment<AbstractInterval<Double>> s4 =
+                new ImmutableSegment<>(12.0, new AbstractInterval<>(N_INF, P_INF));
+        assertEquals(s0, sgms[0]);
+        assertEquals(s1, sgms[1]);
+        assertEquals(s2, sgms[2]);
+        assertEquals(s3, sgms[3]);
+        assertEquals(s4, sgms[4]);
     }
 
 /*
@@ -316,13 +370,13 @@ class RoSIBerkeleyTest2 {
      * @param m monitoring process to use
      * @return an Interval corresponding to the final result of the monitoring
      */
-    private static SignalInterface<Double, AbstractInterval<Double>> test(
+    private static OnlineSignal<Double> test(
             Update<Double, Double> u,
             OnlineTimeMonitoring<Double, Double> m)
     {
         try {
-            SignalInterface<Double, AbstractInterval<Double>> r =
-                    m.monitor(u);
+            OnlineSignal<Double> r =
+                    (OnlineSignal<Double>) m.monitor(u);
 
             return r;
         } catch (Exception ex) {

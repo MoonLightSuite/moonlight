@@ -65,10 +65,14 @@ public class TemporalComputation {
             // of the window and we can propagate the related updates
             while(!w.isEmpty() && t - w.getFirst().getStart() > wSize) {
                 updates.add(pushUp(w, hEnd));
-                /*if(w.getFirst().getStart() < wSize){
-                    Update<Double, R> oldFirst = w.removeFirst();
-                    w.addFirst(new Update<>(oldFirst.getStart() - wSize, null, oldFirst.getValue()));
-                }*/
+            }
+
+
+            if(!w.isEmpty() && curr.getStart() - opHor.getEnd() > w.getFirst().getStart()){
+                Update<Double, R> oldFirst = pushUp(w, hEnd);
+                updates.add(oldFirst);
+                w.addFirst(new Update<>(curr.getStart() - opHor.getEnd(),
+                        null, oldFirst.getValue()));
             }
 
             double lastT = t;
