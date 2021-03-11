@@ -27,6 +27,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.SegmentChain;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -79,10 +80,13 @@ public class TemporalOpMonitor<V extends Comparable<V>, R extends Comparable<R>>
         List<Update<Double, AbstractInterval<R>>> argUpdates =
                 argumentMonitor.monitor(signalUpdate);
 
+        SegmentChain<Double, AbstractInterval<R>> s =
+                ((OnlineSignal<R>) argumentMonitor.getResult()).getSegments();
+
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
         for(Update<Double, AbstractInterval<R>> argU : argUpdates) {
-            updates.addAll(TemporalComputation.slidingWindow(rho.getSegments(),
+            updates.addAll(TemporalComputation.slidingWindow(s,
                                                              argU,
                                                              horizon,
                                                              op));

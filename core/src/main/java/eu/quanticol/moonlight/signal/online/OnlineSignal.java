@@ -181,7 +181,7 @@ public class OnlineSignal<D extends Comparable<D>>
         } else {
             throw new UnsupportedOperationException(
                     "Refining interval: " + vNew +
-                    "is wider than the original:" + v);
+                    " is wider than the original:" + v);
         }
     }
 

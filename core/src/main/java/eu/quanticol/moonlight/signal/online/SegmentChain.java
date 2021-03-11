@@ -152,6 +152,8 @@ public class SegmentChain
             if (itr.hasNext()) {
                 SegmentInterface<T, V> e = itr.next();
                 itr.previous();
+                itr.previous();     // This repetition is done to also bring
+                itr.next();         // the pointer to lastReturned
                 return e;
             } else
                 throw new NoSuchElementException("There is no next element!");

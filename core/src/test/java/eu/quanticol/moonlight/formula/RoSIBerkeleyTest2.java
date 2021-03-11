@@ -58,10 +58,9 @@ class RoSIBerkeleyTest2 {
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
 
-        assertEquals(ANY, test(null, m, T0));
+        assertEquals(ANY, test(null, m).getValueAt(T0));
     }
 
-    @Disabled("Temporarily disabled as still in development")
     @Test
     void berkleyTestAtT2() {
         // Trace generation...
@@ -72,25 +71,66 @@ class RoSIBerkeleyTest2 {
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
 
-        AbstractInterval<Double> result;
+        AbstractInterval<Double> expected;
 
         Update<Double, Double> u = new Update<>(T0, T1, 1.0);
         m.monitor(u);   //Signal init
 
         //Test at T2!
         u = new Update<>(T1, T2, 2.0);
-        result = ANY;
-        assertEquals(result, test(u, m, T0));
+        expected = ANY;
+        assertEquals(expected, test(u, m).getValueAt(T0));
+    }
+
+    @Test
+    void berkleyTestAtT3() {
+        // Trace generation...
+        SignalInterface<Double, AbstractInterval<Double>> trace =
+                new OnlineSignal<>(new DoubleDomain());
+
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<Double, Double> m =
+                instrument(testFormula());
+
+        AbstractInterval<Double> expected;
+
+        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, 2.0);
+        test(u, m);
 
         //Test at T3!
         u = new Update<>(T2, T3, -1.0);
-        result = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
-        assertEquals(result, test(u, m, T0));
+        expected = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
+        assertEquals(expected, test(u, m).getValueAt(T0));
+    }
+
+    @Test
+    void berkleyTestAtT4() {
+        SignalInterface<Double, AbstractInterval<Double>> result;
+        AbstractInterval<Double> expected;
+
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<Double, Double> m =
+                instrument(testFormula());
+
+        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, 2.0);
+        test(u, m);
+        //Update at T3...
+        u = new Update<>(T2, T3, -1.0);
+        test(u, m);
 
         //Test at T4!
         u = new Update<>(T3, T4, -2.0);
-        result = new AbstractInterval<>(-1.0, -1.0);
-        assertEquals(result, test(u, m, T0));
+        expected = new AbstractInterval<>(-1.0, -1.0);
+        result = test(u, m);
+        assertEquals(expected, result.getValueAt(T0));
 
         //Test at T5!
         //result = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
@@ -276,15 +316,15 @@ class RoSIBerkeleyTest2 {
      * @param m monitoring process to use
      * @return an Interval corresponding to the final result of the monitoring
      */
-    private static AbstractInterval<Double> test(
+    private static SignalInterface<Double, AbstractInterval<Double>> test(
             Update<Double, Double> u,
-            OnlineTimeMonitoring<Double, Double> m, Double t)
+            OnlineTimeMonitoring<Double, Double> m)
     {
         try {
             SignalInterface<Double, AbstractInterval<Double>> r =
                     m.monitor(u);
 
-            return r.getValueAt(t);
+            return r;
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
