@@ -22,7 +22,6 @@ public class SlidingWindow<R extends Comparable<R>> {
     private final BinaryOperator<R> op;
     private final double hEnd;
     private final double hStart;
-    private final Update<Double, R> u;
     private final Deque<Node<Double, R>> w = new ArrayDeque<>();
     private final List<Update<Double, R>> updates = new ArrayList<>();
 
@@ -32,7 +31,6 @@ public class SlidingWindow<R extends Comparable<R>> {
         this.s = s;
         h = opHorizon;
         hEnd = update.getEnd() - opHorizon.getStart();
-        u = update;
         hStart = update.getStart() - h.getEnd();
         this.op = op;
     }
@@ -70,12 +68,11 @@ public class SlidingWindow<R extends Comparable<R>> {
                 t = min(t, abs(curr.getStart() - h.getStart()));
 
 
-            // t >= next.start - op.horizon.start:
-            //   We can skip this segment safely
-            if(t >= next.getStart() - h.getStart()
-               ||
-               next.getStart() - h.getEnd() < hStart
-              )
+            // `t >= next.start - op.horizon.start` or
+            // `next.start - op.horizon.end < hStart`:
+            //   We can skip this segment
+            if(t >= next.getStart() - h.getStart() ||
+               next.getStart() - h.getEnd() < hStart)
                 continue;
 
             // We are exceeding the window size, we must pop left sides
@@ -90,7 +87,7 @@ public class SlidingWindow<R extends Comparable<R>> {
             // We clear the monotonic edge
             Node<Double, R> newNode = makeMonotonic(t, curr.getValue());
 
-            // We can add to the Window the pair (lastT, currV)
+            // We can add to the window the pair (lastT, currV)
             w.addLast(newNode);
         }
     }

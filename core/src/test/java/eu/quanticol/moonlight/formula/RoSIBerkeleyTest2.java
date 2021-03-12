@@ -3,14 +3,11 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.domain.IntervalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.util.Pair;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The formula of this example comes from:
@@ -50,23 +48,21 @@ class RoSIBerkeleyTest2 {
 
     @Test
     void berkleyTestEmpty() {
-        // Trace generation...
-        SignalInterface<Double, AbstractInterval<Double>> trace =
-                new OnlineSignal<>(new DoubleDomain());
-
         // Monitor Instrumentation...
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
 
-        assertEquals(ANY, test(null, m).getValueAt(T0));
+        Object[] ss = exec(null, m);
+
+        if(ss != null) {
+            assertValue(0.0, ANY, ss[0]);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
 
     @Test
     void berkleyTestAtT2() {
-        // Trace generation...
-        SignalInterface<Double, AbstractInterval<Double>> trace =
-                new OnlineSignal<>(new DoubleDomain());
-
         // Monitor Instrumentation...
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
@@ -78,16 +74,17 @@ class RoSIBerkeleyTest2 {
 
         //Test at T2!
         u = new Update<>(T1, T2, 2.0);
-        expected = ANY;
-        assertEquals(expected, test(u, m).getValueAt(T0));
+        Object[] ss = exec(u, m);
+
+        if(ss != null) {
+            assertValue(0.0, ANY, ss[0]);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
 
     @Test
     void berkleyTestAtT3() {
-        // Trace generation...
-        SignalInterface<Double, AbstractInterval<Double>> trace =
-                new OnlineSignal<>(new DoubleDomain());
-
         // Monitor Instrumentation...
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
@@ -99,24 +96,22 @@ class RoSIBerkeleyTest2 {
 
         //Update at T2...
         u = new Update<>(T1, T2, 2.0);
-        test(u, m);
+        exec(u, m);
 
         //Test at T3!
         u = new Update<>(T2, T3, -1.0);
-        Object[] sgms = test(u, m).getSegments().toArray();
-        ImmutableSegment<AbstractInterval<Double>> s0 =
-                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, P_INF));
-        ImmutableSegment<AbstractInterval<Double>> s1 =
-                new ImmutableSegment<>(3.0, new AbstractInterval<>(N_INF, P_INF));
-        assertEquals(s0, sgms[0]);
-        assertEquals(s1, sgms[1]);
+        Object[] ss = exec(u, m);
+
+        if(ss != null) {
+            assertValue(0.0, new AbstractInterval<>(-1.0, P_INF), ss[0]);
+            assertValue(3.0, new AbstractInterval<>(N_INF, P_INF), ss[1]);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
 
     @Test
     void berkleyTestAtT4() {
-        OnlineSignal<Double> result;
-        AbstractInterval<Double> expected;
-
         // Monitor Instrumentation...
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
@@ -126,33 +121,27 @@ class RoSIBerkeleyTest2 {
 
         //Update at T2...
         u = new Update<>(T1, T2, 2.0);
-        test(u, m);
+        exec(u, m);
         //Update at T3...
         u = new Update<>(T2, T3, -1.0);
-        test(u, m);
+        exec(u, m);
 
         //Test at T4!
         u = new Update<>(T3, T4, -2.0);
-        Object[] sgms = test(u, m).getSegments().toArray();
-        ImmutableSegment<AbstractInterval<Double>> s0 =
-                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, -1.0));
-        ImmutableSegment<AbstractInterval<Double>> s1 =
-                new ImmutableSegment<>(3.0, new AbstractInterval<>(-2.0, -2.0));
-        ImmutableSegment<AbstractInterval<Double>> s2 =
-                new ImmutableSegment<>(5.0, new AbstractInterval<>(-2.0, P_INF));
-        ImmutableSegment<AbstractInterval<Double>> s3 =
-                new ImmutableSegment<>(9.0, new AbstractInterval<>(N_INF, P_INF));
-        assertEquals(s0, sgms[0]);
-        assertEquals(s1, sgms[1]);
-        assertEquals(s2, sgms[2]);
-        assertEquals(s3, sgms[3]);
+        Object[] ss = exec(u, m);
+
+        if(ss != null) {
+            assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
+            assertValue(3.0, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(5.0, new AbstractInterval<>(-2.0, P_INF), ss[2]);
+            assertValue(9.0, new AbstractInterval<>(N_INF, P_INF), ss[3]);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
 
     @Test
     void berkleyTestAtT5() {
-        SignalInterface<Double, AbstractInterval<Double>> result;
-        AbstractInterval<Double> expected;
-
         // Monitor Instrumentation...
         OnlineTimeMonitoring<Double, Double> m =
                 instrument(testFormula());
@@ -162,34 +151,29 @@ class RoSIBerkeleyTest2 {
 
         //Update at T2...
         u = new Update<>(T1, T2, 2.0);
-        test(u, m);
+        exec(u, m);
         //Update at T3...
         u = new Update<>(T2, T3, -1.0);
-        test(u, m);
+        exec(u, m);
 
-        //Test at T4!
+        //Update at T4...
         u = new Update<>(T3, T4, -2.0);
-        test(u, m);
+        exec(u, m);
 
         //Test at T5!
         u = new Update<>(T4, T5, 2.0);
 
-        Object[] sgms = test(u, m).getSegments().toArray();
-        ImmutableSegment<AbstractInterval<Double>> s0 =
-                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, -1.0));
-        ImmutableSegment<AbstractInterval<Double>> s1 =
-                new ImmutableSegment<>(3.0, new AbstractInterval<>(-2.0, -2.0));
-        ImmutableSegment<AbstractInterval<Double>> s2 =
-                new ImmutableSegment<>(5.0, new AbstractInterval<>(2.0, 2.0));
-        ImmutableSegment<AbstractInterval<Double>> s3 =
-                new ImmutableSegment<>(8.0, new AbstractInterval<>(2.0, P_INF));
-        ImmutableSegment<AbstractInterval<Double>> s4 =
-                new ImmutableSegment<>(12.0, new AbstractInterval<>(N_INF, P_INF));
-        assertEquals(s0, sgms[0]);
-        assertEquals(s1, sgms[1]);
-        assertEquals(s2, sgms[2]);
-        assertEquals(s3, sgms[3]);
-        assertEquals(s4, sgms[4]);
+        Object[] ss = exec(u, m);
+
+        if(ss != null) {
+            assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
+            assertValue(3.0, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(5.0, new AbstractInterval<>(2.0, 2.0), ss[2]);
+            assertValue(8.0, new AbstractInterval<>(2.0, P_INF), ss[3]);
+            assertValue(12.0, new AbstractInterval<>(N_INF, P_INF), ss[4]);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
 
 /*
@@ -329,7 +313,6 @@ class RoSIBerkeleyTest2 {
         update(trace, xValues, yValues);
 
         //Test at T4!
-        //TODO: disabled for same issue as in berkeleyTestT4()
         //assertEquals(new Interval(-2.0), test(trace, m));
 
         // Update with data up to T5...
@@ -371,15 +354,12 @@ class RoSIBerkeleyTest2 {
      * @param m monitoring process to use
      * @return an Interval corresponding to the final result of the monitoring
      */
-    private static OnlineSignal<Double> test(
-            Update<Double, Double> u,
-            OnlineTimeMonitoring<Double, Double> m)
+    private static Object[] exec(Update<Double, Double> u,
+                                 OnlineTimeMonitoring<Double, Double> m)
     {
         try {
-            OnlineSignal<Double> r =
-                    (OnlineSignal<Double>) m.monitor(u);
-
-            return r;
+            OnlineSignal<Double> r = (OnlineSignal<Double>) m.monitor(u);
+            return r.getSegments().toArray();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -510,5 +490,14 @@ class RoSIBerkeleyTest2 {
             }
         }
         return data;
+    }
+
+
+
+    private static void assertValue(double start,
+                                    AbstractInterval<Double> value,
+                                    Object segment)
+    {
+        assertEquals(new ImmutableSegment<>(start, value), segment);
     }
 }
