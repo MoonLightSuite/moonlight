@@ -46,5 +46,21 @@ public interface DiffIterator<E> extends ListIterator<E> {
      * @throws NoSuchElementException when there is no such element
      */
     E peekPrevious() throws NoSuchElementException;
+
+    /**
+     * Fail-safe method for fetching data from next element (if exists).
+     *
+     * @param other default value in case of failure
+     * @return the next value if present, otherwise the other one.
+     */
+    E tryPeekNext(E other);
+
+    /**
+     * Fail-safe method for fetching data from previous element (if exists).
+     *
+     * @param other default value in case of failure
+     * @return the previous value if present, otherwise the other one.
+     */
+    E tryPeekPrevious(E other);
 }
 

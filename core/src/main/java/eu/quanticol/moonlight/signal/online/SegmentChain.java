@@ -174,6 +174,38 @@ public class SegmentChain
                                                                     "element!");
         }
 
+        /**
+         * Fail-safe method for fetching data from next element (if exists).
+         *
+         * @param other default value in case of failure
+         * @return the next value if present, otherwise the default one.
+         */
+        @Override
+        public SegmentInterface<T, V> tryPeekNext(SegmentInterface<T, V> other)
+        {
+            try {
+                return peekNext();
+            } catch (NoSuchElementException e) {
+                return other;
+            }
+        }
+
+        /**
+         * Fail-safe method for fetching data from previous element (if exists).
+         *
+         * @param other default value in case of failure
+         * @return the previous value if present, otherwise the default one.
+         */
+        @Override
+        public SegmentInterface<T, V> tryPeekPrevious(
+                SegmentInterface<T, V> other) {
+            try {
+                return peekPrevious();
+            } catch (NoSuchElementException e) {
+                return other;
+            }
+        }
+
         // ---------------------------- MUTATORS ---------------------------- //
         @Override
         public void remove() {

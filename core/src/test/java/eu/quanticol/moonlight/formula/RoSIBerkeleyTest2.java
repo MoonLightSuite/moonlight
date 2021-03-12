@@ -103,8 +103,13 @@ class RoSIBerkeleyTest2 {
 
         //Test at T3!
         u = new Update<>(T2, T3, -1.0);
-        expected = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
-        assertEquals(expected, test(u, m).getValueAt(T0));
+        Object[] sgms = test(u, m).getSegments().toArray();
+        ImmutableSegment<AbstractInterval<Double>> s0 =
+                new ImmutableSegment<>(0.0, new AbstractInterval<>(-1.0, P_INF));
+        ImmutableSegment<AbstractInterval<Double>> s1 =
+                new ImmutableSegment<>(3.0, new AbstractInterval<>(N_INF, P_INF));
+        assertEquals(s0, sgms[0]);
+        assertEquals(s1, sgms[1]);
     }
 
     @Test
@@ -141,10 +146,6 @@ class RoSIBerkeleyTest2 {
         assertEquals(s1, sgms[1]);
         assertEquals(s2, sgms[2]);
         assertEquals(s3, sgms[3]);
-
-        //Test at T5!
-        //result = new AbstractInterval<>(-1.0, Double.POSITIVE_INFINITY);
-        //assertEquals(result, test(u, m, T0));
     }
 
     @Test
