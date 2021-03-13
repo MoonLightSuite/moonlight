@@ -71,7 +71,7 @@ public class SlidingWindow<R extends Comparable<R>> {
             // `t >= next.start - op.horizon.start` or
             // `next.start - op.horizon.end < hStart`:
             //   We can skip this segment
-            if(t >= next.getStart() - h.getStart() ||
+            if(next != curr && t >= next.getStart() - h.getStart() ||
                next.getStart() - h.getEnd() < hStart)
                 continue;
 

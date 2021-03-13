@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.SegmentChain;
 import eu.quanticol.moonlight.signal.online.Update;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TemporalComputationTest {
 
+    @Disabled("Doesn't make much sense anymore")
     @Test
     void slidingWindow() {
         OnlineSignal<Double> s = init();
