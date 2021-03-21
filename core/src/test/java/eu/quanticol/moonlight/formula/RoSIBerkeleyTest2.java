@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitoring;
 import eu.quanticol.moonlight.signal.online.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ class RoSIBerkeleyTest2 {
 
         if(ss != null) {
             assertValue(0.0, ANY, ss[0]);
+
+            // Exactly one segment
+            assertEquals(1, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -62,6 +66,9 @@ class RoSIBerkeleyTest2 {
 
         if(ss != null) {
             assertValue(0.0, ANY, ss[0]);
+
+            // Exactly three segments
+            assertEquals(1, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -76,7 +83,7 @@ class RoSIBerkeleyTest2 {
             assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
             assertValue(T2, ANY, ss[2]);
 
-            // Exactly three updates
+            // Exactly three segments
             assertEquals(3, ss.length);
         }
         else
@@ -90,7 +97,7 @@ class RoSIBerkeleyTest2 {
         if(ss != null) {
             assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
             assertValue(T1, new AbstractInterval<>(-2.0, P_INF), ss[1]);
-            assertValue(A, ANY, ss[2]);
+            assertValue(T2, ANY, ss[2]);
 
             // Exactly three updates
             assertEquals(3, ss.length);
@@ -106,6 +113,9 @@ class RoSIBerkeleyTest2 {
         if(ss != null) {
             assertValue(0.0, new AbstractInterval<>(-1.0, P_INF), ss[0]);
             assertValue(3.0, new AbstractInterval<>(N_INF, P_INF), ss[1]);
+
+            // Exactly two segments
+            assertEquals(2, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -121,8 +131,25 @@ class RoSIBerkeleyTest2 {
             assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
             assertValue(T3, ANY, ss[3]);
 
-            // Exactly two updates
-            assertEquals(2, ss.length);
+            // Exactly four segments
+            assertEquals(4, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
+    void testWholeFormulaAtT3() {
+        Object[] ss = testAtUpdate3(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, P_INF), ss[1]);
+            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[2]);
+            assertValue(T3, ANY, ss[3]);
+
+            // Exactly three updates
+            assertEquals(4, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -137,6 +164,9 @@ class RoSIBerkeleyTest2 {
             assertValue(3.0, new AbstractInterval<>(-2.0, -2.0), ss[1]);
             assertValue(5.0, new AbstractInterval<>(-2.0, P_INF), ss[2]);
             assertValue(9.0, new AbstractInterval<>(N_INF, P_INF), ss[3]);
+
+            // Exactly four segments
+            assertEquals(4, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -153,8 +183,27 @@ class RoSIBerkeleyTest2 {
             assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
             assertValue(T4, ANY, ss[4]);
 
-            // Exactly two updates
-            assertEquals(2, ss.length);
+            // Exactly five segments
+            assertEquals(5, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+
+    @Disabled("Work in Progress")
+    @Test
+    void testWholeFormulaAtT4() {
+        Object[] ss = testAtUpdate4(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[2]);
+            assertValue(T4, ANY, ss[3]);
+
+            // Exactly four updates
+            assertEquals(4, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -170,6 +219,9 @@ class RoSIBerkeleyTest2 {
             assertValue(5.0, new AbstractInterval<>(2.0, 2.0), ss[2]);
             assertValue(8.0, new AbstractInterval<>(2.0, P_INF), ss[3]);
             assertValue(12.0, new AbstractInterval<>(N_INF, P_INF), ss[4]);
+
+            // Exactly three segments
+            assertEquals(5, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -188,8 +240,29 @@ class RoSIBerkeleyTest2 {
             assertValue(T4, new AbstractInterval<>(-1.0, -1.0), ss[4]);
             assertValue(T5, ANY, ss[5]);
 
-            // Exactly two updates
-            assertEquals(2, ss.length);
+            // Exactly six segments
+            assertEquals(6, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Disabled("Work in Progress")
+    @Test
+    void testWholeFormulaAtT5() {
+        Object[] ss = testAtUpdate5(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(5, new AbstractInterval<>(2.0, 2.0), ss[2]);
+            assertValue(T2, new AbstractInterval<>(2.0, P_INF), ss[3]);
+            assertValue(11, new AbstractInterval<>(1.0, P_INF), ss[3]);
+            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[3]);
+            assertValue(T5, ANY, ss[4]);
+
+            // Exactly four updates
+            assertEquals(4, ss.length);
         }
         else
             fail("Empty signal should never happen!");
