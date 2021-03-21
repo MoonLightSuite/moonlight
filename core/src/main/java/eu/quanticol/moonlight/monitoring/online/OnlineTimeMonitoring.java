@@ -1,18 +1,15 @@
 package eu.quanticol.moonlight.monitoring.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.*;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -28,15 +25,14 @@ import java.util.function.Supplier;
  * @see FormulaVisitor
  * @see TemporalMonitor
  */
-public class OnlineTimeMonitoring
-        <V extends Comparable<V>,
-         R extends Comparable<R>>
-        implements FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>
+public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
+    FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>
 {
 
     private final Formula formula;
     private final SignalDomain<R> interpretation;
-    private final Map<String, OnlineMonitor<Double, V, AbstractInterval<R>>> monitors;
+    private final Map<String, OnlineMonitor<Double, V, AbstractInterval<R>>>
+                                                                       monitors;
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
     public OnlineTimeMonitoring(
@@ -55,7 +51,8 @@ public class OnlineTimeMonitoring
     {
         UpdateParameter<Double, V> param = new UpdateParameter<>(update);
 
-        OnlineMonitor<Double, V, AbstractInterval<R>> m = formula.accept(this, param);
+        OnlineMonitor<Double, V, AbstractInterval<R>> m =
+                                        formula.accept(this, param);
 
         if(update != null)
             m.monitor(update);
@@ -70,7 +67,7 @@ public class OnlineTimeMonitoring
         Function<V, AbstractInterval<R>> f = fetchAtom(formula);
 
         return fetchMonitor(formula.toString(),
-                () -> new AtomicMonitor<>(f, interpretation));
+                            () -> new AtomicMonitor<>(f, interpretation));
 
     }
 

@@ -69,8 +69,6 @@ public class AbstractInterval<T extends Comparable<T>>
         this(start,end,false,false);
     }
 
-    //public abstract AbstractInterval<T> from(T start, T end);
-
     /**
      * @return the left bound of the interval
      */
@@ -101,22 +99,24 @@ public class AbstractInterval<T extends Comparable<T>>
 
     /**
      * Non-strict set containment between intervals
-     * @param interval interval to be checked
+     * @param target interval to be checked
      * @return true if the argument interval is contained, false otherwise
+     * @throws ClassCastException when the target is of a different type
      */
-    public boolean contains(AbstractInterval<T> interval) {
-        if (interval != null) {
+    public boolean contains(AbstractInterval<?> target) {
+        if (target != null) {
+            AbstractInterval<T> interval = (AbstractInterval<T>) target;
             return  // same object
                     this.equals(interval)                                ||
                     // strictly contained
                     (contains(interval.start) && contains(interval.end)) ||
                     // contained on the right
                     (start == interval.start &&
-                     openOnLeft == interval.openOnLeft &&
+                     openOnLeft == target.openOnLeft &&
                      contains(interval.end))                             ||
                     // contained on the left
-                    (end == interval.end &&
-                     openOnRight == interval.openOnRight &&
+                    (end == target.end &&
+                     openOnRight == target.openOnRight &&
                      contains(interval.end));
         }
         return false;
@@ -157,12 +157,12 @@ public class AbstractInterval<T extends Comparable<T>>
      *
      * @param o target interval of the comparison
      * @return a number corresponding to the result of the comparison
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException if the specified object's type prevents it
      */
     @Override
     public int compareTo(AbstractInterval<T> o) {
-        if(o == null) {
-            throw new IllegalArgumentException("Comparing Interval to null");
-        }
+
         if(getEnd().compareTo(o.getStart()) < 0) {
             return getEnd().compareTo(o.getStart());
         }
@@ -200,8 +200,9 @@ public class AbstractInterval<T extends Comparable<T>>
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass()) //TODO: this can be problematic with subclasses
-            return false;
+        if (getClass() != obj.getClass()) //TODO: this can be problematic with
+            return false;                 //      subclasses
+        @SuppressWarnings("unchecked")
         AbstractInterval<T> other = (AbstractInterval<T>) obj;
         if (!end.equals(other.end))
             return false;
@@ -232,7 +233,11 @@ public class AbstractInterval<T extends Comparable<T>>
         return output;
     }
 
-    public <R extends Comparable<R>> AbstractInterval<R> apply(Function<T, R> f) {
-        return new AbstractInterval<>(f.apply(this.start),f.apply(this.end),this.openOnLeft,this.openOnRight);
+    public <R extends Comparable<R>> AbstractInterval<R> apply(Function<T, R> f)
+    {
+        return new AbstractInterval<>(f.apply(this.start),
+                                      f.apply(this.end),
+                                      this.openOnLeft,
+                                      this.openOnRight);
     }
 }

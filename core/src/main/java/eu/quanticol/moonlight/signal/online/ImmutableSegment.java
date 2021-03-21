@@ -2,10 +2,7 @@ package eu.quanticol.moonlight.signal.online;
 
 import java.util.Objects;
 
-public class ImmutableSegment<V extends Comparable<V>>
-        implements SegmentInterface<Double, V>
-{
-
+public class ImmutableSegment<V> implements SegmentInterface<Double, V> {
     private final double start;
     //private final double end;
 

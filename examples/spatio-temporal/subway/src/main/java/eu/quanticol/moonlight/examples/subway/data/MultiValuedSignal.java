@@ -23,7 +23,9 @@ import java.util.List;
  * @see HashBiMap
  * @see SpatialTemporalSignal
  */
-public class MultiValuedSignal extends SpatialTemporalSignal<List<Comparable<?>>> {
+public class MultiValuedSignal
+       extends SpatialTemporalSignal<List<Comparable<?>>>
+{
     private final int length;
     private int dimensions = 0;
     private final List<Comparable<?>[][]> data;

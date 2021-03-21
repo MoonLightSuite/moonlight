@@ -1,13 +1,8 @@
 package eu.quanticol.moonlight.formula;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitoring;
-import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.online.*;
-import eu.quanticol.moonlight.util.MultiValuedTrace;
-import eu.quanticol.moonlight.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -49,8 +44,8 @@ class RoSIBerkeleyTest2 {
     @Test
     void berkleyTestEmpty() {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<Double, Double> m =
-                instrument(testFormula());
+        OnlineTimeMonitoring<List<Double>, Double> m =
+                instrument(leftFormula());
 
         Object[] ss = exec(null, m);
 
@@ -62,19 +57,8 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void berkleyTestAtT2() {
-        // Monitor Instrumentation...
-        OnlineTimeMonitoring<Double, Double> m =
-                instrument(testFormula());
-
-        AbstractInterval<Double> expected;
-
-        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
-        m.monitor(u);   //Signal init
-
-        //Test at T2!
-        u = new Update<>(T1, T2, 2.0);
-        Object[] ss = exec(u, m);
+    void testLeftFormulaAtT2() {
+        Object[] ss = testAtUpdate2(leftFormula());
 
         if(ss != null) {
             assertValue(0.0, ANY, ss[0]);
@@ -84,23 +68,40 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void berkleyTestAtT3() {
-        // Monitor Instrumentation...
-        OnlineTimeMonitoring<Double, Double> m =
-                instrument(testFormula());
+    void testRightFormulaAtT2() {
+        Object[] ss = testAtUpdate2(rightFormula());
 
-        AbstractInterval<Double> expected;
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, ANY, ss[2]);
 
-        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
-        m.monitor(u);   //Signal init
+            // Exactly three updates
+            assertEquals(3, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
 
-        //Update at T2...
-        u = new Update<>(T1, T2, 2.0);
-        exec(u, m);
+    @Test
+    void testWholeFormulaAtT2() {
+        Object[] ss = testAtUpdate2(wholeFormula());
 
-        //Test at T3!
-        u = new Update<>(T2, T3, -1.0);
-        Object[] ss = exec(u, m);
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, P_INF), ss[1]);
+            assertValue(A, ANY, ss[2]);
+
+            // Exactly three updates
+            assertEquals(3, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
+    void testLeftFormulaAtT3() {
+        Object[] ss = testAtUpdate3(leftFormula());
 
         if(ss != null) {
             assertValue(0.0, new AbstractInterval<>(-1.0, P_INF), ss[0]);
@@ -111,24 +112,25 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void berkleyTestAtT4() {
-        // Monitor Instrumentation...
-        OnlineTimeMonitoring<Double, Double> m =
-                instrument(testFormula());
+    void testRightFormulaAtT3() {
+        Object[] ss = testAtUpdate3(rightFormula());
 
-        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
-        m.monitor(u);   //Signal init
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
+            assertValue(T3, ANY, ss[3]);
 
-        //Update at T2...
-        u = new Update<>(T1, T2, 2.0);
-        exec(u, m);
-        //Update at T3...
-        u = new Update<>(T2, T3, -1.0);
-        exec(u, m);
+            // Exactly two updates
+            assertEquals(2, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
 
-        //Test at T4!
-        u = new Update<>(T3, T4, -2.0);
-        Object[] ss = exec(u, m);
+    @Test
+    void testLeftFormulaAtT4() {
+        Object[] ss = testAtUpdate4(leftFormula());
 
         if(ss != null) {
             assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
@@ -141,29 +143,26 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void berkleyTestAtT5() {
-        // Monitor Instrumentation...
-        OnlineTimeMonitoring<Double, Double> m =
-                instrument(testFormula());
+    void testRightFormulaAtT4() {
+        Object[] ss = testAtUpdate4(rightFormula());
 
-        Update<Double, Double> u = new Update<>(T0, T1, 1.0);
-        m.monitor(u);   //Signal init
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
+            assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
+            assertValue(T4, ANY, ss[4]);
 
-        //Update at T2...
-        u = new Update<>(T1, T2, 2.0);
-        exec(u, m);
-        //Update at T3...
-        u = new Update<>(T2, T3, -1.0);
-        exec(u, m);
+            // Exactly two updates
+            assertEquals(2, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
 
-        //Update at T4...
-        u = new Update<>(T3, T4, -2.0);
-        exec(u, m);
-
-        //Test at T5!
-        u = new Update<>(T4, T5, 2.0);
-
-        Object[] ss = exec(u, m);
+    @Test
+    void testLeftFormulaAtT5() {
+        Object[] ss = testAtUpdate5(leftFormula());
 
         if(ss != null) {
             assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
@@ -174,188 +173,35 @@ class RoSIBerkeleyTest2 {
         }
         else
             fail("Empty signal should never happen!");
+
     }
 
-/*
-    @Disabled("Re-engeneering Sliding Window")
     @Test
-    void berkleyTestT3() {
-        // Trace generation...
-        //Signal<List<Comparable<?>>> trace = init();
-        SignalInterface<Double, AbstractInterval<Double>> trace =
-                new OnlineSignal<>(new DoubleDomain());
+    void testRightFormulaAtT5() {
+        Object[] ss = testAtUpdate5(rightFormula());
 
-        // Monitor Instrumentation...
-        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
+            assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
+            assertValue(T4, new AbstractInterval<>(-1.0, -1.0), ss[4]);
+            assertValue(T5, ANY, ss[5]);
 
-        // Update with data up to T3...
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        trace = update(trace, xValues, yValues);
-
-        //Test at T3!
-        assertEquals(Interval.any(), test(trace, m));
+            // Exactly two updates
+            assertEquals(2, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
     }
-
-    @Disabled("This seems to be a corner case and requires investigation.")
-    @Test
-    void berkleyTestT4() {
-        // Trace generation...
-        Signal<List<Comparable<?>>> trace = init();
-
-        // Monitor Instrumentation...
-        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
-
-        // Update with data up to T3...
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-
-        // Update with data up to T4...
-        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
-        yValues.add(new Pair<>(1, new Interval(T3, T4)));
-        trace = update(trace, xValues, yValues);
-
-        //Test at T4!
-        assertEquals(new Interval(-2.0), test(trace, m));
-    }
-
-    @Disabled("Re-engeneering Sliding Window")
-    @Test
-    void berkleyTestT5() {
-        // Trace generation...
-        Signal<List<Comparable<?>>> trace = init();
-
-        // Monitor Instrumentation...
-        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
-
-        // Update with data up to T3...
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-
-        // Update with data up to T4...
-        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
-        yValues.add(new Pair<>(1, new Interval(T3, T4)));
-
-        // Update with data up to T5...
-        xValues.add(new Pair<>(2, new Interval(T4, T5)));
-        yValues.add(new Pair<>(1, new Interval(T4, T5)));
-        trace = update(trace, xValues, yValues);
-
-        //Test at T5!
-        assertEquals(new Interval(-2.0), test(trace, m));
-    }
-
-    @Disabled("Re-engeneering Sliding Window")
-    @Test
-    void berkleyTestTMax() {
-        // Trace generation...
-        Signal<List<Comparable<?>>> trace = init();
-
-        // Monitor Instrumentation...
-        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
-
-        // Update with data up to T3...
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-
-        // Update with data up to T4...
-        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
-        yValues.add(new Pair<>(1, new Interval(T3, T4)));
-
-        // Update with data up to T5...
-        xValues.add(new Pair<>(2, new Interval(T4, T5)));
-        yValues.add(new Pair<>(1, new Interval(T4, T5)));
-
-        // Update with data up to the end...
-        xValues.add(new Pair<>(-1, new Interval(T5, T_MAX)));
-        yValues.add(new Pair<>(1, new Interval(T5, T_MAX)));
-        trace = update(trace, xValues, yValues);
-
-        //Test at end of time!
-        assertEquals(new Interval(-2.0), test(trace, m));
-    }
-
-    @Disabled("Re-engeneering Sliding Window")
-    @Test
-    void berkleyTestAllTogether() {
-        // Trace generation...
-        Signal<List<Comparable<?>>> trace = init();
-
-        // Monitor Instrumentation...
-        LegacyOnlineTemporalMonitoring<List<Comparable<?>>, Interval> m = instrument();
-
-        //Test at T2!
-        assertEquals(Interval.any(), test(trace, m));
-
-        // Update with data up to T3...
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        yValues.add(new Pair<>(-1, new Interval(T2, T3)));
-        update(trace, xValues, yValues);
-
-        //Test at T3!
-        assertEquals(Interval.any(), test(trace, m));
-
-        // Update with data up to T4...
-        xValues = new ArrayList<>();
-        yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-2, new Interval(T3, T4)));
-        yValues.add(new Pair<>(1, new Interval(T3, T4)));
-        update(trace, xValues, yValues);
-
-        //Test at T4!
-        //assertEquals(new Interval(-2.0), test(trace, m));
-
-        // Update with data up to T5...
-        xValues = new ArrayList<>();
-        yValues = new ArrayList<>();
-        xValues.add(new Pair<>(2, new Interval(T4, T5)));
-        yValues.add(new Pair<>(1, new Interval(T4, T5)));
-        update(trace, xValues, yValues);
-
-        //Test at T5!
-        assertEquals(new Interval(-2.0), test(trace, m));
-
-        // Update with data up to the end...
-        xValues = new ArrayList<>();
-        yValues = new ArrayList<>();
-        xValues.add(new Pair<>(-1, new Interval(T5, T_MAX)));
-        yValues.add(new Pair<>(1, new Interval(T5, T_MAX)));
-        update(trace, xValues, yValues);
-
-        //Test at end of time!
-        assertEquals(new Interval(-2.0), test(trace, m));
-    }
-
-    private static SignalInterface<Double, Double> init() {
-        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
-        xValues.add(new Pair<>(1, new Interval(0, 4, true)));
-        xValues.add(new Pair<>(2, new Interval(4, T2)));
-
-        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
-        yValues.add(new Pair<>(-1, new Interval(0, 4, true)));
-        yValues.add(new Pair<>(2, new Interval(4, T2)));
-
-        // We generate a signal and return it...
-        return traceGenerator(T2, xValues, yValues);
-    }*/
 
     /**
      * Actual parametric test runner.
      * @param m monitoring process to use
      * @return an Interval corresponding to the final result of the monitoring
      */
-    private static Object[] exec(Update<Double, Double> u,
-                                 OnlineTimeMonitoring<Double, Double> m)
+    private static Object[] exec(Update<Double, List<Double>> u,
+                                 OnlineTimeMonitoring<List<Double>, Double> m)
     {
         try {
             OnlineSignal<Double> r = (OnlineSignal<Double>) m.monitor(u);
@@ -367,90 +213,125 @@ class RoSIBerkeleyTest2 {
     }
 
     /**
-     * Updates a trace by attaching new data to the previous one
-     * @param signal previous signal to update
-     * @param xValues list of values for the X signal
-     * @param yValues list of values for the Y signal
-     * @return a new traces that combines this data with the old one
-     */
-    private static Signal<List<Comparable<?>>> update(
-            Signal<List<Comparable<?>>> signal,
-            List<Pair<Integer, Interval>> xValues,
-            List<Pair<Integer, Interval>> yValues)
-    {
-        double init = xValues.get(0).getSecond().getStart();
-        double length = xValues.get(xValues.size() - 1).getSecond().getEnd();
-        for(double t = init; t < length; t ++) {
-            List<Comparable<?>> values = new ArrayList<>();
-            updateValues(xValues, values, t);
-            updateValues(yValues, values, t);
-
-            signal.add(t, values);
-            signal.endAt(t);
-        }
-        return signal;
-    }
-
-    /**
-     * Adds the input data to the given output
-     * @param input input data
-     * @param output output list
-     * @param time time instant of interest
-     */
-    private static void updateValues(List<Pair<Integer, Interval>> input,
-                                     List<Comparable<?>> output,
-                                     double time)
-    {
-        for(Pair<Integer, Interval> p : input) {
-            if(p.getSecond().contains(time)) {
-                output.add(p.getFirst());
-                break;
-            }
-        }
-    }
-
-
-    /**
      * @return a Monitoring object, ready to run
      */
-    private static OnlineTimeMonitoring<Double, Double> instrument(Formula f)
+    private static OnlineTimeMonitoring<List<Double>, Double> instrument(Formula f)
     {
-        HashMap<String,
-                Function<Double, AbstractInterval<Double>>>
-                atoms = new HashMap<>();
+        HashMap<String, Function<List<Double>, AbstractInterval<Double>>>
+                                                        atoms = new HashMap<>();
 
         //positiveX is the atomic proposition: x >= 0
-        atoms.put("positiveX", trc -> new AbstractInterval<>(trc, trc));
+        atoms.put("positiveX", trc -> new AbstractInterval<>(trc.get(0),
+                                                             trc.get(0)));
+        //positiveY is the atomic proposition: y >= 0
+        atoms.put("positiveY", trc -> new AbstractInterval<>(trc.get(1),
+                                                             trc.get(1)));
 
         return new OnlineTimeMonitoring<>(f, new DoubleDomain(), atoms);
+    }
+
+
+    private static Formula leftFormula() {
+        Formula atomX = new AtomicFormula("positiveX");
+
+        return new EventuallyFormula(atomX, new Interval(B, C));
     }
 
     /**
      * @return we return the formula from the paper example
      */
-    private static Formula testFormula() {
-        Formula atomX = new AtomicFormula("positiveX");
-        Formula atomY = new AtomicFormula("positiveY");
-
+    private static Formula wholeFormula() {
         return //new GloballyFormula(
-                 //   new OrFormula(
-                                    new EventuallyFormula(atomX,
-                                                   new Interval(B, C))
-                                    //,
-                                  //new NegationFormula(atomX)),
-                    //new Interval(0, A))
+                   new OrFormula(leftFormula(), rightFormula())
+                   //,
+               //new Interval(0, A))
         ;
     }
 
-    /**
-     * Given two list of values, generates a Multivalued spatial-temporal trace.
-     * @param traceLength length of the trace
-     * @param xValues values for the first coordinate
-     * @param yValues values for the second coordinate
-     * @return a MultiValuedTrace
-     *
-     * @see MultiValuedTrace
-     */
+    private static Formula rightFormula() {
+        Formula atomY = new AtomicFormula("positiveY");
+        return new NegationFormula(atomY);
+    }
+
+    private Object[] testAtUpdate2(Formula f) {
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+
+        Update<Double, List<Double>> u =
+                new Update<>(T0, T1, toList(1.0, -1.0));
+        m.monitor(u);   //Signal init
+
+        //Test at T2!
+        u = new Update<>(T1, T2, toList(2.0, 2.0));
+
+        return exec(u, m);
+    }
+
+    private Object[] testAtUpdate3(Formula f) {
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+
+        Update<Double, List<Double>> u =
+                new Update<>(T0, T1, toList(1.0, -1.0));
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, toList(2.0, 2.0));
+        exec(u, m);
+
+        //Test at T3!
+        u = new Update<>(T2, T3, toList(-1.0, -1.0));
+
+        return exec(u, m);
+    }
+
+    private Object[] testAtUpdate4(Formula f) {
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+
+        Update<Double, List<Double>> u =
+                new Update<>(T0, T1, toList(1.0, -1.0));
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, toList(2.0, 2.0));
+        exec(u, m);
+        //Update at T3...
+        u = new Update<>(T2, T3, toList(-1.0, -1.0));
+        exec(u, m);
+
+        //Test at T4!
+        u = new Update<>(T3, T4, toList(-2.0, 1.0));
+
+        return exec(u, m);
+    }
+
+    private Object[] testAtUpdate5(Formula f) {
+        // Monitor Instrumentation...
+        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+
+        Update<Double, List<Double>> u =
+                new Update<>(T0, T1, toList(1.0, -1.0));
+        m.monitor(u);   //Signal init
+
+        //Update at T2...
+        u = new Update<>(T1, T2, toList(2.0, 2.0));
+        exec(u, m);
+        //Update at T3...
+        u = new Update<>(T2, T3, toList(-1.0, -1.0));
+        exec(u, m);
+
+        //Update at T4...
+        u = new Update<>(T3, T4, toList(-2.0, 1.0));
+        exec(u, m);
+
+        //Test at T5!
+        u = new Update<>(T4, T5, toList(2.0, 1.0));
+
+        return exec(u, m);
+    }
+
+/*
     private static Signal<List<Comparable<?>>> traceGenerator(int traceLength,
                                       List<Pair<Integer, Interval>> xValues,
                                       List<Pair<Integer, Interval>> yValues) {
@@ -468,12 +349,6 @@ class RoSIBerkeleyTest2 {
         return trace.getSignals().get(0);   //list discarded (only one location)
     }
 
-    /**
-     * Given a piecewise constant integer function,
-     * returns a corresponding array of values, one for any integer.
-     * @param function function piecewise definitions
-     * @return Array of function values
-     */
     private static Integer[] valuesFromIntervals(List<Pair<Integer, Interval>>
                                                                     function) {
         int end = (int) Math.round(function.get(function.size() - 1)
@@ -493,6 +368,55 @@ class RoSIBerkeleyTest2 {
     }
 
 
+    private static Signal<List<Comparable<?>>> update(
+            Signal<List<Comparable<?>>> signal,
+            List<Pair<Integer, Interval>> xValues,
+            List<Pair<Integer, Interval>> yValues)
+    {
+        double init = xValues.get(0).getSecond().getStart();
+        double length = xValues.get(xValues.size() - 1).getSecond().getEnd();
+        for(double t = init; t < length; t ++) {
+            List<Comparable<?>> values = new ArrayList<>();
+            updateValues(xValues, values, t);
+            updateValues(yValues, values, t);
+
+            signal.add(t, values);
+            signal.endAt(t);
+        }
+        return signal;
+    }
+
+    private static void updateValues(List<Pair<Integer, Interval>> input,
+                                     List<Comparable<?>> output,
+                                     double time)
+    {
+        for(Pair<Integer, Interval> p : input) {
+            if(p.getSecond().contains(time)) {
+                output.add(p.getFirst());
+                break;
+            }
+        }
+    }
+
+    private static SignalInterface<Double, Double> init() {
+        List<Pair<Integer, Interval>> xValues = new ArrayList<>();
+        xValues.add(new Pair<>(1, new Interval(0, 4, true)));
+        xValues.add(new Pair<>(2, new Interval(4, T2)));
+
+        List<Pair<Integer, Interval>> yValues = new ArrayList<>();
+        yValues.add(new Pair<>(-1, new Interval(0, 4, true)));
+        yValues.add(new Pair<>(2, new Interval(4, T2)));
+
+        // We generate a signal and return it...
+        return traceGenerator(T2, xValues, yValues);
+    }*/
+
+    private static <T> List<T> toList(T elem1, T elem2) {
+        List<T> ls = new ArrayList<>();
+        ls.add(elem1);
+        ls.add(elem2);
+        return ls;
+    }
 
     private static void assertValue(double start,
                                     AbstractInterval<Double> value,

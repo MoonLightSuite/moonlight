@@ -65,7 +65,7 @@ public class IntervalDomain implements SignalDomain<Interval> {
     }
 
     @Override
-    public Interval unknown() {
+    public Interval any() {
         return TOTAL_INTERVAL;
     }
 

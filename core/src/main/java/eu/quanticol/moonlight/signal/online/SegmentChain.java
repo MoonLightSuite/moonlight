@@ -54,7 +54,7 @@ import java.util.*;
  * @param <V>
  */
 public class SegmentChain
-        <T extends Comparable<T> & Serializable, V extends Comparable<V>>
+        <T extends Comparable<T> & Serializable, V>
         extends LinkedList<SegmentInterface<T, V>>
 {
     /**

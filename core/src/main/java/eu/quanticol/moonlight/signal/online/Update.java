@@ -25,7 +25,7 @@ package eu.quanticol.moonlight.signal.online;
  * @param <T>
  * @param <V>
  */
-public class Update<T extends Comparable<T>, V extends Comparable<V>>  {
+public class Update<T extends Comparable<T>, V>  {
 
     private final T start;
     private final T end;

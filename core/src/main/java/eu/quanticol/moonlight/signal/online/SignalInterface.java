@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @see OnlineSignal for a concrete implementation
  */
 public interface SignalInterface<T extends Comparable<T> & Serializable,
-                                 V extends Comparable<V>>
+                                 V>
 {
 
     /**
@@ -58,5 +58,5 @@ public interface SignalInterface<T extends Comparable<T> & Serializable,
      * @param end ending of the time frame of interest
      * @return the chain of segments of the signal delimited by the input
      */
-    SegmentChain<T,V> select(T start, T end);
+    SegmentChain<T, V> select(T start, T end);
 }

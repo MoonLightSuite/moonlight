@@ -65,7 +65,7 @@ public class DoubleIntervalDomain implements SignalDomain<AbstractInterval<Doubl
     }
 
     @Override
-    public AbstractInterval<Double> unknown() {
+    public AbstractInterval<Double> any() {
         return TOTAL_INTERVAL;
     }
 

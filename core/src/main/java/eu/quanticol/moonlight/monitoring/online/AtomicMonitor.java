@@ -44,7 +44,7 @@ import java.util.function.Function;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class AtomicMonitor<V extends Comparable<V>, R extends Comparable<R>>
+public class AtomicMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 

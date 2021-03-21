@@ -125,7 +125,7 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
         if(m == null) {
             m = new OnlineSTMonitorAtomic<>(atomic,
                                             getHorizon(parameters),
-                                            domain.unknown());
+                                            domain.any());
             monitors.put(atomicF.toString(), m);
         }
         return m;
@@ -397,7 +397,7 @@ public class OnlineSpatialTemporalMonitoring<S, T, R> implements
 
         if(m == null) {
             m = new OnlineSTMonitorFutureOperator<>(monitoringArg,
-                                                    op, min, domain.unknown(),
+                                                    op, min, domain.any(),
                                                     interval, horizon);
             monitors.put(f.toString(), m);
         }

@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.monitoring.online;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.signal.online.Update;
 
-public class UpdateParameter<T extends Comparable<T>, V extends Comparable<V>>
+public class UpdateParameter<T extends Comparable<T>, V>
         extends Parameters
 {
 

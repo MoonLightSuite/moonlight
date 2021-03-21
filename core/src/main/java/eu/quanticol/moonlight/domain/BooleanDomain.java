@@ -30,7 +30,7 @@ import eu.quanticol.moonlight.signal.DataHandler;
 public class BooleanDomain implements SignalDomain<Boolean> {
 
 	@Override
-	public Boolean unknown() {
+	public Boolean any() {
 		throw new UnsupportedOperationException("Booleans don't have a " +
 											    "third value");
 	}

@@ -45,7 +45,7 @@ import java.util.function.UnaryOperator;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class UnaryMonitor<V extends Comparable<V>, R extends Comparable<R>>
+public class UnaryMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 

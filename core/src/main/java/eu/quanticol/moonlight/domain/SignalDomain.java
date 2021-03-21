@@ -48,7 +48,7 @@ public interface SignalDomain<R> extends Semiring<R> {
 	 * a third value for booleans, or the total interval for intervals.
 	 * @return the element of the set representing absence of knowledge
 	 */
-	R unknown();
+	R any();
 
 	/**
 	 * Negation function that s.t. De Morgan laws, double negation

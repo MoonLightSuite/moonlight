@@ -31,7 +31,7 @@ package eu.quanticol.moonlight.signal.online;
  * @see SegmentChain for a data structure that exploits them
  */
 public interface SegmentInterface
-        <T extends Comparable<T>, V extends Comparable<V>>
+        <T extends Comparable<T>, V>
 {
     /**
      * @return the value of the segment

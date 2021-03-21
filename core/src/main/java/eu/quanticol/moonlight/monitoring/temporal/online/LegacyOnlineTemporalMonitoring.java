@@ -119,7 +119,7 @@ public class LegacyOnlineTemporalMonitoring<T, R>
         if(m == null) {
             m = new OnlineMonitorAtomic<>(atomic,
                                           getHorizon(parameters),
-                                          domain.unknown());
+                                          domain.any());
             monitors.put(atomicFormula.toString(), m);
         }
         return m;
@@ -267,7 +267,7 @@ public class LegacyOnlineTemporalMonitoring<T, R>
 
         if(m == null) {
             m = new OnlineMonitorFutureOperator<>(monitoringArg,
-                                                  op, min, domain.unknown(),
+                                                  op, min, domain.any(),
                                                   interval, horizon);
             monitors.put(f.toString(), m);
         }

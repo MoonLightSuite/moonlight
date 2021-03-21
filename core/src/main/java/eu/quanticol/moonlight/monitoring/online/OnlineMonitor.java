@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OnlineMonitor
 <T extends Comparable<T> & Serializable,
- V extends Comparable<V>,
+ V,
  R extends Comparable<R>>
 {
     List<Update<T, R>> monitor(Update<T, V> signalUpdate);

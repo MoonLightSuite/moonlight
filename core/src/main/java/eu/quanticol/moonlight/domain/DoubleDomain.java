@@ -27,11 +27,11 @@ import eu.quanticol.moonlight.signal.DataHandler;
  *
  * @see SignalDomain
  */
-public class DoubleDomain implements SignalDomain<Double> {
+public class DoubleDomain implements RefinableSignalDomain<Double> {
 	private static final double TOLERANCE = 1E-12;
 
 	@Override
-	public Double unknown() {
+	public Double any() {
 		return 0.0;
 	}
 

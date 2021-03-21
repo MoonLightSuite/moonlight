@@ -42,7 +42,7 @@ import java.util.function.BinaryOperator;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class BinaryMonitor<V extends Comparable<V>, R extends Comparable<R>>
+public class BinaryMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 
