@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.ListDomain;
+import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -40,7 +40,7 @@ public class MultiOnlineSignal
     /**
      * @param domain The signal domain to consider
      */
-    public MultiOnlineSignal(ListDomain domain) {
+    public MultiOnlineSignal(SignalDomain<List<AbstractInterval<?>>> domain) {
         this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
         this.segments.add(new ImmutableSegment<>(0.0, domain.any()));
     }

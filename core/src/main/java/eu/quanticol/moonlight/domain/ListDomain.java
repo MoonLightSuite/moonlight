@@ -20,6 +20,14 @@ public class ListDomain<T extends Comparable<T>>
         }
     }
 
+    public static <T extends Comparable<T>> ListDomain<T>
+    of(RefinableSignalDomain<T> singleton)
+    {
+        List<RefinableSignalDomain<T>> ls = new ArrayList<>();
+        ls.add(singleton);
+        return new ListDomain<>(ls);
+    }
+
     /**
      * Negation function that s.t. De Morgan laws, double negation
      * and inversion of the idempotent elements hold.

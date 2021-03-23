@@ -8,7 +8,9 @@ import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -54,8 +56,12 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
         OnlineMonitor<Double, V, AbstractInterval<R>> m =
                                         formula.accept(this, param);
 
+        List<Update<Double , AbstractInterval<R>>> ups = new ArrayList<>();
+
         if(update != null)
-            m.monitor(update);
+            ups = m.monitor(update);
+
+        //System.out.println(ups);
 
         return m.getResult();
     }

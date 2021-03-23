@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The formula of this example comes from:
  * https://doi.org/10.1007/978-3-642-39799-8_19
  */
-class RoSIBerkeleyTest2 {
+class TestRoSIBerkeleyExample {
     private static final int X_SIGNAL = 0;
     private static final int Y_SIGNAL = 1;
 
@@ -91,8 +91,8 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void testWholeFormulaAtT2() {
-        Object[] ss = testAtUpdate2(wholeFormula());
+    void testOrFormulaAtT2() {
+        Object[] ss = testAtUpdate2(orFormula());
 
         if(ss != null) {
             assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
@@ -139,8 +139,8 @@ class RoSIBerkeleyTest2 {
     }
 
     @Test
-    void testWholeFormulaAtT3() {
-        Object[] ss = testAtUpdate3(wholeFormula());
+    void testOrFormulaAtT3() {
+        Object[] ss = testAtUpdate3(orFormula());
 
         if(ss != null) {
             assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
@@ -191,19 +191,21 @@ class RoSIBerkeleyTest2 {
     }
 
 
-    @Disabled("Work in Progress")
+    @Disabled("Work in progress")
     @Test
-    void testWholeFormulaAtT4() {
-        Object[] ss = testAtUpdate4(wholeFormula());
+    void testOrFormulaAtT4() {
+        Object[] ss = testAtUpdate4(orFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[2]);
-            assertValue(T4, ANY, ss[3]);
+            assertValue(0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(4, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[2]);
+            assertValue(8, new AbstractInterval<>(1.0, P_INF), ss[3]);
+            assertValue(13, new AbstractInterval<>(-1.0, P_INF), ss[4]);
+            assertValue(19, ANY, ss[5]);
 
             // Exactly four updates
-            assertEquals(4, ss.length);
+            assertEquals(6, ss.length);
         }
         else
             fail("Empty signal should never happen!");
@@ -247,10 +249,10 @@ class RoSIBerkeleyTest2 {
             fail("Empty signal should never happen!");
     }
 
-    @Disabled("Work in Progress")
+    @Disabled("Work in progress")
     @Test
-    void testWholeFormulaAtT5() {
-        Object[] ss = testAtUpdate5(wholeFormula());
+    void testOrFormulaAtT5() {
+        Object[] ss = testAtUpdate5(orFormula());
 
         if(ss != null) {
             assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
@@ -294,11 +296,13 @@ class RoSIBerkeleyTest2 {
                                                         atoms = new HashMap<>();
 
         //positiveX is the atomic proposition: x >= 0
-        atoms.put("positiveX", trc -> new AbstractInterval<>(trc.get(0),
-                                                             trc.get(0)));
+        atoms.put("positiveX",
+                    trc -> new AbstractInterval<>(trc.get(X_SIGNAL),
+                                                  trc.get(X_SIGNAL)));
         //positiveY is the atomic proposition: y >= 0
-        atoms.put("positiveY", trc -> new AbstractInterval<>(trc.get(1),
-                                                             trc.get(1)));
+        atoms.put("positiveY",
+                    trc -> new AbstractInterval<>(trc.get(Y_SIGNAL),
+                                                  trc.get(Y_SIGNAL)));
 
         return new OnlineTimeMonitoring<>(f, new DoubleDomain(), atoms);
     }
@@ -313,12 +317,15 @@ class RoSIBerkeleyTest2 {
     /**
      * @return we return the formula from the paper example
      */
+    private static Formula orFormula() {
+        return new OrFormula(leftFormula(), rightFormula());
+    }
+
+    /**
+     * @return we return the formula from the paper example
+     */
     private static Formula wholeFormula() {
-        return //new GloballyFormula(
-                   new OrFormula(leftFormula(), rightFormula())
-                   //,
-               //new Interval(0, A))
-        ;
+        return new GloballyFormula(orFormula(), new Interval(0, A));
     }
 
     private static Formula rightFormula() {

@@ -77,26 +77,44 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     public List<Update<Double, AbstractInterval<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
+        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+
         List<Update<Double, AbstractInterval<R>>> firstArgUps =
                 firstArgMonitor.monitor(signalUpdate);
         List<Update<Double, AbstractInterval<R>>> secondArgUps =
                 secondArgMonitor.monitor(signalUpdate);
 
-        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
-
-        SignalInterface<Double, AbstractInterval<R>> s2 = secondArgMonitor.getResult();
-        for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
-            updates.addAll(BooleanComputation.binaryUp(s2, argU, opFunction));
-        }
 
         SignalInterface<Double, AbstractInterval<R>> s1 = firstArgMonitor.getResult();
-        for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
-            updates.addAll(BooleanComputation.binaryUp(s1, argU, opFunction));
+        SignalInterface<Double, AbstractInterval<R>> s2 = secondArgMonitor.getResult();
+
+        //System.out.println(">>> Arg 1 updates: " + firstArgUps);
+
+        for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
+            List<Update<Double, AbstractInterval<R>>> ups =
+                    BooleanComputation.binaryUp(s2, argU, opFunction);
+            updates.addAll(ups);
+            ups.forEach(rho::refine);
         }
 
-        for(Update<Double, AbstractInterval<R>> u: updates) {
-            rho.refine(u);
+        for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
+            List<Update<Double, AbstractInterval<R>>> ups =
+                    BooleanComputation.binaryUp(s1, argU, opFunction);
+            updates.addAll(ups);
+            ups.forEach(rho::refine);
         }
+
+        System.out.println(">>> S1: " + s1);
+
+        System.out.println(">>> S2: " + s2);
+
+        System.out.println(">>> Binary Updates: " + updates);
+
+        //for(Update<Double, AbstractInterval<R>> u: updates) {
+        //    rho.refine(u);
+        //}
+
+        System.out.println(">>> Binary New Rho: " + rho);
 
         return updates;
     }

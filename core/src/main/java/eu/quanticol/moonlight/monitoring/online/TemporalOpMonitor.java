@@ -26,10 +26,7 @@ import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
-import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SegmentChain;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,9 +89,13 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
                                                              op));
         }
 
+        //System.out.println("Temporal Updates: " + updates);
+
         for(Update<Double, AbstractInterval<R>> u: updates) {
             rho.refine(u);
         }
+
+        //System.out.println("Temporal New Rho: " + rho);
 
         return updates;
     }

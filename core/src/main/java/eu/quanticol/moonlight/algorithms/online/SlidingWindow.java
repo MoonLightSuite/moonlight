@@ -42,7 +42,7 @@ public class SlidingWindow<R extends Comparable<R>> {
 
         // We add the last pieces of the window to the updates
         while(!w.isEmpty()) {
-            updates.add(pushUpdate());
+            updates.add(pushUpdate(Double.POSITIVE_INFINITY));
         }
 
         return updates;
@@ -78,11 +78,11 @@ public class SlidingWindow<R extends Comparable<R>> {
             // We are exceeding the window size, we must pop left sides
             // of the window and we can propagate the related updates
             while(!w.isEmpty() && t - w.getFirst().getStart() > wSize) {
-                updates.add(pushUpdate());
+                updates.add(pushUpdate(t));
             }
 
             // We push out the exceeding part of the window's first segment
-            pushOut(curr.getStart());
+            pushOut(t, curr.getStart());
 
             // We clear the monotonic edge
             Node<Double, R> newNode = makeMonotonic(t, curr.getValue());
@@ -92,9 +92,9 @@ public class SlidingWindow<R extends Comparable<R>> {
         }
     }
 
-    private void pushOut(double currT) {
+    private void pushOut(double t, double currT) {
         if(!w.isEmpty() && currT - h.getEnd() > w.getFirst().getStart()) {
-            Update<Double, R> oldFirst = pushUpdate();
+            Update<Double, R> oldFirst = pushUpdate(t);
             updates.add(oldFirst);
             w.addFirst(new Node<>(currT - h.getEnd(),
                                   oldFirst.getValue()));
@@ -113,10 +113,11 @@ public class SlidingWindow<R extends Comparable<R>> {
         return new Node<>(lastT, currV);
     }
 
-    private Update<Double, R> pushUpdate()
+    private Update<Double, R> pushUpdate(double outT)
     {
         Node<Double, R> f = w.removeFirst();
-        Double end = hEnd;
+        //Double end = hEnd;
+        Double end = min(hEnd, outT);
         if(!w.isEmpty())
             end = w.getFirst().getStart();
 

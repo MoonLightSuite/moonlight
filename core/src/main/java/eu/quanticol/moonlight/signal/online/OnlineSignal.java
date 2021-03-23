@@ -26,9 +26,11 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import java.util.NoSuchElementException;
 
 /**
+ * @deprecated replaced by the more general {@link MultiOnlineSignal}
  * Class to represent online signals. Work in progress
  * @param <D> Signal domain of interest
  */
+@Deprecated
 public class OnlineSignal<D extends Comparable<D>>
         implements SignalInterface<Double, AbstractInterval<D>> {
     private final SegmentChain<Double, AbstractInterval<D>> segments;
@@ -87,15 +89,20 @@ public class OnlineSignal<D extends Comparable<D>>
                 segments.diffIterator();
         SegmentInterface<Double, AbstractInterval<D>> current = itr.next();
 
+        boolean done = false;
+
         while (itr.hasNext()) {
-            if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue()))
+            if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue())) {
+                done = true;
                 break;
+            }
 
             // Save the "next" as the next "current".
             current = itr.next();
         }
 
-        doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue());
+        if(!done) // To handle single-segment signals
+            doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue());
 
         return !itr.getChanges().isEmpty();
     }
@@ -130,7 +137,7 @@ public class OnlineSignal<D extends Comparable<D>>
         // Case 1 - `from` in (t, tNext):
         //          This means the update starts in the current segment
         if(t < from && tNext > from) {
-            itr.add(new ImmutableSegment<>(from, vNew));
+            add(itr, from, vNew);
             return false;
         }
         // Case 2 - from  == t:
@@ -153,7 +160,7 @@ public class OnlineSignal<D extends Comparable<D>>
         //          last part of the segment.
         //          From now on the signal will not change.
         if(to < tNext && t != to) {
-            itr.add(new ImmutableSegment<>(to, v));
+            add(itr, to, v);
             return true;
         }
 
@@ -177,11 +184,17 @@ public class OnlineSignal<D extends Comparable<D>>
             AbstractInterval<D> vNew)
     {
         if(v.contains(vNew)) {
-            itr.set(new ImmutableSegment<>(t, vNew));
+            ImmutableSegment<AbstractInterval<D>> s =
+                                                new ImmutableSegment<>(t, vNew);
+
+            SegmentInterface<Double, AbstractInterval<D>> p = itr.peekPrevious();
+
+            if(!s.equals(p))
+                itr.set(s);
         } else {
-            throw new UnsupportedOperationException(
-                    "Refining interval: " + vNew +
-                    " is wider than the original:" + v);
+            throw new UnsupportedOperationException("Refining interval: " +
+                                                    vNew + " is wider than " +
+                                                    "the original:" + v);
         }
     }
 
@@ -196,6 +209,14 @@ public class OnlineSignal<D extends Comparable<D>>
     {
         itr.previous();
         itr.remove();
+    }
+
+    private void add(
+            DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr,
+            Double start, AbstractInterval<D> value)
+    {
+        if(!itr.peekPrevious().getValue().equals(value))
+            itr.add(new ImmutableSegment<>(start, value));
     }
 
     /**
@@ -238,18 +259,22 @@ public class OnlineSignal<D extends Comparable<D>>
                 segments.diffIterator();
         SegmentInterface<Double, AbstractInterval<D>> current;
 
-        while (itr.hasNext()) {
+        do{
             current = itr.next();
-            if (current.getStart() > from && start == 0) {
-                start = itr.previousIndex();
-            }
             if(current.getStart() > to) {
                 end = itr.previousIndex();
                 break;
             }
-        }
+            if (current.getStart() > from) {
+                start = itr.previousIndex();
+            }
+            if(itr.tryPeekNext(current).equals(current)) {
+                start = itr.previousIndex();
+                end = itr.previousIndex() + 1;
+            }
+        } while(itr.hasNext());
 
-        return segments.subChain(start, end, to);
+        return segments.subChain(start, end, Math.max(to, current.getStart()));
     }
 
     @Override

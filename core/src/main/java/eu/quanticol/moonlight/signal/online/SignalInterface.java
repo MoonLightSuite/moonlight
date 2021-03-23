@@ -29,9 +29,9 @@ import java.io.Serializable;
  * @param <V> The signal domain to be considered
  *
  * @see OnlineSignal for a concrete implementation
+ * @see MultiOnlineSignal for a concrete implementation
  */
-public interface SignalInterface<T extends Comparable<T> & Serializable,
-                                 V>
+public interface SignalInterface<T extends Comparable<T> & Serializable, V>
 {
 
     /**

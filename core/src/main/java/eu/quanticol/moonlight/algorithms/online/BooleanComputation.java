@@ -147,6 +147,10 @@ public class BooleanComputation {
         parallelExec(p1, updates, op, u);  // TODO: this should be different for
                                            //       left and right operands
 
+        // ... u2 end after the intersection
+        //if(u.getEnd().compareTo(p1.getEnd()) < 0)
+        //    overlappingAfter(p1, updates, op, u, p1.getEnd());
+
         return updates;
     }
 
@@ -209,13 +213,15 @@ public class BooleanComputation {
     {
         DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
         SegmentInterface<T, R> curr;
+        T nextTime;
 
         while(itr.hasNext()) {
             curr = itr.next();
-            if(curr.getStart().compareTo(u.getEnd()) < 0) {
-                T nextStart = tryPeekNextStart(itr, s.getEnd());
+            nextTime = tryPeekNextStart(itr, s.getEnd());
 
-                T end = min(nextStart, u.getEnd());
+            if(curr.getStart().compareTo(u.getEnd()) < 0
+                    && nextTime.compareTo(u.getStart()) >= 0)  {
+                T end = min(nextTime, u.getEnd());
                 T start = max(curr.getStart(), u.getStart());
                 Update<T, R> r = new Update<>(start, end,
                         op.apply(u.getValue(), curr.getValue()));
@@ -241,7 +247,7 @@ public class BooleanComputation {
      * @param <V> domain of the returned value
      * @return the next time value if present, otherwise the default one.
      */
-    static <T extends Comparable<T> & Serializable, V extends Comparable<V>>
+    static <T extends Comparable<T>, V>
     T tryPeekNextStart(DiffIterator<SegmentInterface<T, V>> itr, T defaultValue)
     {
         try {

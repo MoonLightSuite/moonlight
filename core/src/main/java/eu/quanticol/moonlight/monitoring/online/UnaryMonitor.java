@@ -27,6 +27,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitor;
+import eu.quanticol.moonlight.signal.online.MultiOnlineSignal;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;

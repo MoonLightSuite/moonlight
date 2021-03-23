@@ -48,4 +48,10 @@ public class Update<T extends Comparable<T>, V>  {
     public V getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "Update{" + "start=" + start + ", end=" + end +
+                ", value=" + value + '}';
+    }
 }
