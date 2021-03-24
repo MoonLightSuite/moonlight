@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.space;
 
 import java.util.Iterator;
 import java.util.LinkedList;

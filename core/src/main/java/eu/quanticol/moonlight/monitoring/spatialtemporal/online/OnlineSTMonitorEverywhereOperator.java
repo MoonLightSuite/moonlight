@@ -20,13 +20,13 @@
 
 package eu.quanticol.moonlight.monitoring.spatialtemporal.online;
 
-import eu.quanticol.moonlight.algorithms.WhereOperator;
+import eu.quanticol.moonlight.algorithms.SpaceOperator;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class OnlineSTMonitorEverywhereOperator<S, T, R>
     {
         //if(horizon.contains(signalEnd) || worklist.isEmpty()) {
         //update result
-        worklist.add(WhereOperator.computeDynamic(locationService,
+        worklist.add(SpaceOperator.computeWhereDynamic(locationService,
                                                   distance,
                                                   this::everywhereOp,
                                                   m.monitor(locationService,

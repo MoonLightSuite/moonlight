@@ -20,6 +20,7 @@
 package eu.quanticol.moonlight.signal;
 
 /**
+ * //TODO: why not the standard {@link IllegalArgumentException}?
  * This exception is thrown when a value that is not fitting with expected
  * type or format is passed.
  */

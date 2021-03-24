@@ -3,6 +3,8 @@
  */
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+
 import java.util.function.Function;
 
 /**

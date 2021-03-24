@@ -5,6 +5,7 @@ import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.IntervalDomain;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
 import eu.quanticol.moonlight.util.Pair;

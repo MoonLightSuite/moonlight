@@ -22,11 +22,11 @@ package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.algorithms.EscapeOperator;
+import eu.quanticol.moonlight.algorithms.SpaceOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
@@ -59,10 +59,10 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
-		return EscapeOperator
-				.computeDynamic(locationService,
-							    distance,
-								domain,
-								m.monitor(locationService, signal));
+		return SpaceOperator.computeEscapeDynamic(
+				locationService,
+				distance,
+				domain,
+				m.monitor(locationService, signal));
 	}
 }

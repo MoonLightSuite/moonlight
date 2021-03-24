@@ -3,11 +3,11 @@ package eu.quanticol.moonlight.domain;
 import eu.quanticol.moonlight.signal.DataHandler;
 
 public class AbsIntervalDomain<R extends Comparable<R>>
-        implements RefinableSignalDomain<AbstractInterval<R>>
+        implements SignalDomain<AbstractInterval<R>>
 {
-    private final RefinableSignalDomain<R> domain;
+    private final SignalDomain<R> domain;
 
-    public AbsIntervalDomain(RefinableSignalDomain<R> domain) {
+    public AbsIntervalDomain(SignalDomain<R> domain) {
         this.domain = domain;
     }
 

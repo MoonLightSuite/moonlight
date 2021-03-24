@@ -18,8 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.space;
 
+import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Arrays;

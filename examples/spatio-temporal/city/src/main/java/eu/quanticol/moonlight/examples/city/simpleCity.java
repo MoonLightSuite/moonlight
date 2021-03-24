@@ -5,6 +5,9 @@ import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 

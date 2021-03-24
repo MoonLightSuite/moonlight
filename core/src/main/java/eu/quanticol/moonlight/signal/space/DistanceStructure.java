@@ -1,7 +1,7 @@
 /**
  *
  */
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.space;
 
 import eu.quanticol.moonlight.domain.DistanceDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
@@ -12,9 +12,7 @@ import eu.quanticol.moonlight.util.Triple;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 

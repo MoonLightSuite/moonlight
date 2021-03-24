@@ -22,7 +22,12 @@ package eu.quanticol.moonlight.io;
 
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.signal.MoonLightRecord;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.signal.space.GraphModel;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.LocationServiceList;
+import eu.quanticol.moonlight.signal.space.StaticLocationService;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;

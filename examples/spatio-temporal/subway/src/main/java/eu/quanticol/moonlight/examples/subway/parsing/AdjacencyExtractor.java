@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.signal.ImmutableGraphModel;
+import eu.quanticol.moonlight.signal.space.ImmutableGraphModel;
 
 /**
  * Parsing strategy that generates a GraphModel based on

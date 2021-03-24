@@ -9,16 +9,17 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
-import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 

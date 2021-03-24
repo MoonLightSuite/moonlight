@@ -28,8 +28,9 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
 /**
- *
+ * @deprecated prefer {@link SlidingWindow}
  */
+@Deprecated
 public class OldSlidingWindow<R> {
 
 	private final double a;

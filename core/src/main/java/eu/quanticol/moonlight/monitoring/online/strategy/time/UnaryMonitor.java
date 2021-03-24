@@ -47,7 +47,6 @@ public class UnaryMonitor<V, R extends Comparable<R>>
 {
 
     private final UnaryOperator<AbstractInterval<R>> op;
-    //private final Interval horizon;
     private final SignalInterface<Double, AbstractInterval<R>> rho;
     private final OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor;
 
@@ -60,11 +59,9 @@ public class UnaryMonitor<V, R extends Comparable<R>>
      */
     public UnaryMonitor(OnlineMonitor<Double, V, AbstractInterval<R>> argument,
                         UnaryOperator<AbstractInterval<R>> unaryOp,
-                         //Interval parentHorizon,
                         SignalDomain<R> interpretation)
     {
         this.op = unaryOp;
-        //this.horizon = parentHorizon;
         this.rho = new OnlineSignal<>(interpretation);
         this.argumentMonitor = argument;
     }

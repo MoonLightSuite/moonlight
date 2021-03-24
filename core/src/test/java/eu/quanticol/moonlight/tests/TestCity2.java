@@ -20,10 +20,10 @@ import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;

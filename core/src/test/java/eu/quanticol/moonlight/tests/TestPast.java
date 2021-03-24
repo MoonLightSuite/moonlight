@@ -8,6 +8,7 @@ import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 import org.junit.jupiter.api.Test;

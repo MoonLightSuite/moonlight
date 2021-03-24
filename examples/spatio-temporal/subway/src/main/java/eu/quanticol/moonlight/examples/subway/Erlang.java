@@ -4,6 +4,9 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.examples.subway.io.DataWriter;
 import eu.quanticol.moonlight.examples.subway.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.examples.subway.parsing.RawTrajectoryExtractor;
+import eu.quanticol.moonlight.signal.space.ImmutableGraphModel;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.LocationServiceList;
 import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.examples.subway.grid.Grid;
@@ -18,7 +21,6 @@ import eu.quanticol.moonlight.domain.Interval;
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;

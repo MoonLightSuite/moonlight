@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.space.LocationService;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 

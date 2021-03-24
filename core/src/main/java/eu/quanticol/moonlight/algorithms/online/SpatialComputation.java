@@ -1,10 +1,12 @@
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.signal.online.DiffIterator;
 import eu.quanticol.moonlight.signal.online.SegmentChain;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;

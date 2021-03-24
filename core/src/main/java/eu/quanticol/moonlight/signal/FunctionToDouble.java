@@ -19,6 +19,10 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
+/**
+ * TODO: Does not do what it says it does (i.e. no restriction to Double!)
+ * @param <S>
+ */
 @FunctionalInterface
 public interface FunctionToDouble<S> {
 

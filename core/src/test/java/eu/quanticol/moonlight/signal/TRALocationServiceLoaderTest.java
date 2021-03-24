@@ -21,6 +21,10 @@
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.signal.space.TRALocationServiceLoader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

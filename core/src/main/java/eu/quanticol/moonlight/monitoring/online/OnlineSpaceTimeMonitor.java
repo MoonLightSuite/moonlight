@@ -1,15 +1,14 @@
 package eu.quanticol.moonlight.monitoring.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.RefinableSignalDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.SomewhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -22,7 +21,7 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
     FormulaVisitor<Parameters, OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>>
 {
     private final Formula formula;
-    private final RefinableSignalDomain<R> interpretation;
+    private final SignalDomain<R> interpretation;
     private final Map<String, OnlineMonitor<Double, List<V>,
                                             List<AbstractInterval<R>>>>
                                                                        monitors;
@@ -40,7 +39,7 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
     public OnlineSpaceTimeMonitor(
             Formula formula,
             int size,
-            RefinableSignalDomain<R> interpretation,
+            SignalDomain<R> interpretation,
             LocationService<S> locationService,
             Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,

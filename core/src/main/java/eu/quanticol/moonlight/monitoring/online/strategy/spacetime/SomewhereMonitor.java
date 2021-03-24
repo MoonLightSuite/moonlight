@@ -20,17 +20,15 @@
 
 package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
-import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
 import eu.quanticol.moonlight.algorithms.online.SpatialComputation;
 import eu.quanticol.moonlight.domain.AbsIntervalDomain;
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.RefinableSignalDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.LocationService;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -62,7 +60,7 @@ public class SomewhereMonitor<S, V, R extends Comparable<R>>
 			int locations,
 			LocationService<S> locationService,
 			Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-			RefinableSignalDomain<R> domain)
+			SignalDomain<R> domain)
     {
     	this.locationService = locationService;
 		this.argument = argument;

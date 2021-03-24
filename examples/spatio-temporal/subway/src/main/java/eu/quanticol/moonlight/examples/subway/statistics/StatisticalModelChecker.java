@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.examples.subway.statistics;
 
 import eu.quanticol.moonlight.examples.subway.statistics.SignalStatistics.Statistics;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;

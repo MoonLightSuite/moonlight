@@ -17,7 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.space;
+
+import eu.quanticol.moonlight.signal.DataHandler;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -30,7 +32,7 @@ import java.util.stream.IntStream;
 public class MoonLightRecord {
 	
 	private Object[] values;
-	private Function<Integer,DataHandler<?>> handlers;
+	private Function<Integer, DataHandler<?>> handlers;
 
 	public MoonLightRecord(Function<Integer,DataHandler<?>> handlers , Object[] values ) {
 		this.values = values;

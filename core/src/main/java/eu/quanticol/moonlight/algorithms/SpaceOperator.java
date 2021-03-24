@@ -1,6 +1,10 @@
 package eu.quanticol.moonlight.algorithms;
 
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;
@@ -11,11 +15,11 @@ import java.util.function.Function;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class WhereOperator {
+public class SpaceOperator {
 
-    private WhereOperator() {} // Hidden constructor
+    private SpaceOperator() {} // Hidden constructor
 
-    public static <S, R> SpatialTemporalSignal<R> computeDynamic(
+    public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(
             LocationService<S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             BiFunction<Function<Integer, R>,
@@ -47,6 +51,38 @@ public class WhereOperator {
         return toReturn;
     }
 
+    public static <S,R> SpatialTemporalSignal<R> computeEscapeDynamic(
+            LocationService<S> l,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            SignalDomain<R> domain,
+            SpatialTemporalSignal<R> s)
+    {
+
+        SpatialTemporalSignal<R> toReturn =
+                new SpatialTemporalSignal<>(s.getNumberOfLocations());
+
+        if (l.isEmpty()) {
+            return toReturn;
+        }
+
+        ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+
+        Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator = l.times();
+        Pair<Double, SpatialModel<S>> current = locSvcIterator.next();
+        Pair<Double, SpatialModel<S>> next = getNext(locSvcIterator);
+
+        double time = cursor.getTime();
+        while ((next != null) && (next.getFirst() <= time)) {
+            current = next;
+            next = getNext(locSvcIterator);
+        }
+
+        escapeOperator(cursor, time, current, next, distance, domain, toReturn,
+                locSvcIterator);
+
+        return toReturn;
+    }
+
     private static <S, R> SpatialTemporalSignal<R> whereOperator(
             ParallelSignalCursor<R> cursor,
             double time,
@@ -72,6 +108,39 @@ public class WhereOperator {
                 next = getNext(locSvcIterator);
                 f = distance.apply(current.getSecond());
                 toReturn.add(time, operator.apply(spatialSignal, f));
+            }
+            time = nextTime;
+            current = (next != null ? next : current);
+            next = getNext(locSvcIterator);
+        }
+        //TODO: Manage end of signal!
+        return toReturn;
+    }
+
+    private static <S, R> SpatialTemporalSignal<R> escapeOperator(
+            ParallelSignalCursor<R> cursor,
+            double time,
+            Pair<Double, SpatialModel<S>> current,
+            Pair<Double, SpatialModel<S>> next,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            SignalDomain<R> domain,
+            SpatialTemporalSignal<R> toReturn,
+            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    {
+        // Loop invariant: (current.getFirst() <= time) &&
+        //                 ((next==null)||(time<next.getFirst()))
+        SpatialModel<S> sm = current.getSecond();
+        DistanceStructure<S, ?> f = distance.apply(sm);
+        while (!cursor.completed() && !Double.isNaN(time)) {
+            Function<Integer, R> spatialSignal = cursor.getValue();
+            toReturn.add(time, f.escape(domain, spatialSignal));
+            double nextTime = cursor.forward();
+            while ((next != null) && (next.getFirst() < nextTime)) {
+                current = next;
+                time = current.getFirst();
+                next = getNext(locSvcIterator);
+                f = distance.apply(current.getSecond());
+                toReturn.add(time, f.escape(domain, spatialSignal));
             }
             time = nextTime;
             current = (next != null ? next : current);

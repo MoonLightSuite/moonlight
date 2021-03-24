@@ -18,10 +18,12 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.space;
 
 import eu.quanticol.moonlight.io.AbstractFileByRowReader;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
+import eu.quanticol.moonlight.signal.IllegalValueException;
+import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.io.File;
 import java.io.IOException;

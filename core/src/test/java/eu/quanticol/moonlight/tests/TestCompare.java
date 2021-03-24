@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.MoonLightRecord;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;

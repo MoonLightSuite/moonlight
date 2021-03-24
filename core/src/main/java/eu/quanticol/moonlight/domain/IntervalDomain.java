@@ -23,12 +23,14 @@ package eu.quanticol.moonlight.domain;
 import eu.quanticol.moonlight.signal.DataHandler;
 
 /**
+ * @deprecated use the more general {@link AbsIntervalDomain}
  * Signal domain to support intervals.
  * Currently limited to intervals of doubles.
  *
  * @see Interval
  * @see SignalDomain
  */
+@Deprecated
 public class IntervalDomain implements SignalDomain<Interval> {
     private static final Interval NEGATIVE_INFINITY =
             new Interval(Double.NEGATIVE_INFINITY);

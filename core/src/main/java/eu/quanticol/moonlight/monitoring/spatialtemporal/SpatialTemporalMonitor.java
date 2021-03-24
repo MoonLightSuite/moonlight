@@ -26,6 +26,9 @@ import eu.quanticol.moonlight.monitoring.temporal.*;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 
 /**
  * Primary SpatialTemporal Monitoring interface
@@ -188,7 +191,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> somewhereMonitor(
 			SpatialTemporalMonitor<S, T, R> m ,
 			Function<SpatialModel<S>,
-			DistanceStructure<S, ?>> distance,
+					DistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
 		return new SpatialTemporalMonitorSomewhere<>(m,distance,domain);

@@ -3,6 +3,9 @@ package eu.quanticol.moonlight.examples.city;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.GraphModel;
+import eu.quanticol.moonlight.signal.space.MoonLightRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -11,6 +11,10 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.signal.space.DistanceStructure;
+import eu.quanticol.moonlight.signal.space.GraphModel;
+import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.signal.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import static eu.quanticol.moonlight.util.TestUtils.*;

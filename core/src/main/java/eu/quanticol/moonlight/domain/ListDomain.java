@@ -13,19 +13,11 @@ public class ListDomain<T extends Comparable<T>>
     private final
     List<SignalDomain<AbstractInterval<T>>> domains;
 
-    public ListDomain(List<RefinableSignalDomain<T>> domains) {
+    public ListDomain(List<SignalDomain<T>> domains) {
         this.domains = new ArrayList<>();
-        for(RefinableSignalDomain<T> d: domains) {
+        for(SignalDomain<T> d: domains) {
             this.domains.add(new AbsIntervalDomain<>(d));
         }
-    }
-
-    public static <T extends Comparable<T>> ListDomain<T>
-    of(RefinableSignalDomain<T> singleton)
-    {
-        List<RefinableSignalDomain<T>> ls = new ArrayList<>();
-        ls.add(singleton);
-        return new ListDomain<>(ls);
     }
 
     /**

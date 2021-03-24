@@ -19,7 +19,11 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
-
+/**
+ * @deprecated
+ * @param <T>
+ */
+@Deprecated
 public class Sample<T> {		
 
 	final double time;		

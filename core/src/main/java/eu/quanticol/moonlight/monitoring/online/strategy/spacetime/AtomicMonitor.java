@@ -25,7 +25,6 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -48,7 +47,6 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
     private final Function<List<V>, List<AbstractInterval<R>>> atomicFunction;
-    //private final Interval horizon;
     private final SignalInterface<Double, List<AbstractInterval<R>>> rho;
 
 
@@ -59,13 +57,11 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
      * @param interpretation The interpretation domain of interest
      */
     public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
-                         //Interval parentHorizon,
                          int locations,
                          SignalDomain<R> interpretation)
     {
         this.atomicFunction =  x -> x.stream().map(atomicFunction)
                                      .collect(Collectors.toList());
-        //this.horizon = parentHorizon;
         this.rho = new OnlineSpaceTimeSignal<>(locations, interpretation);
     }
 

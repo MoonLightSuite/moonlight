@@ -3,7 +3,7 @@
  */
 package eu.quanticol.moonlight.monitoring;
 
-import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
