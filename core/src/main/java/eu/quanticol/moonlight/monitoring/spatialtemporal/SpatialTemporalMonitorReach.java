@@ -24,9 +24,9 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.algorithms.ReachOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.signal.space.DistanceStructure;
-import eu.quanticol.moonlight.signal.space.LocationService;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**

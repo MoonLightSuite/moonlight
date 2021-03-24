@@ -11,10 +11,10 @@ import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.signal.space.DistanceStructure;
-import eu.quanticol.moonlight.signal.space.LocationService;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.File;

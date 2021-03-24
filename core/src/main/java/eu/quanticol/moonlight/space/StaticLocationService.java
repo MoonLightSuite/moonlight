@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.signal.space;
+package eu.quanticol.moonlight.space;
 
 import java.util.List;
 import eu.quanticol.moonlight.util.Pair;

@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal.space;
+package eu.quanticol.moonlight.space;
 
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.util.Pair;

@@ -14,13 +14,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoringInput;
-import eu.quanticol.moonlight.signal.space.GraphModel;
-import eu.quanticol.moonlight.signal.space.LocationService;
-import eu.quanticol.moonlight.signal.space.LocationServiceList;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.LocationServiceList;
+import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**

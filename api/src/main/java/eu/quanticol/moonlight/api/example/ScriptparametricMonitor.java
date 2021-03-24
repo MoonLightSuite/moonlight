@@ -8,7 +8,7 @@ import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.MoonLightRecord;
 
 import java.util.HashMap;
 

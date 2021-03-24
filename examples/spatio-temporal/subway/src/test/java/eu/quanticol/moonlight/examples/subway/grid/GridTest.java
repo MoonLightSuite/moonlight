@@ -2,8 +2,8 @@ package eu.quanticol.moonlight.examples.subway.grid;
 
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.examples.subway.Erlang;
-import eu.quanticol.moonlight.signal.space.DistanceStructure;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

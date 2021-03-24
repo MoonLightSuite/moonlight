@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.signal.space;
+package eu.quanticol.moonlight.space;
 
 import java.util.ArrayList;
 import java.util.HashMap;

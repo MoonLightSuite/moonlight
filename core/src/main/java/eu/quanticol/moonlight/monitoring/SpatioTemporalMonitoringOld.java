@@ -4,10 +4,10 @@
 package eu.quanticol.moonlight.monitoring;
 
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.signal.space.DistanceStructure;
-import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;

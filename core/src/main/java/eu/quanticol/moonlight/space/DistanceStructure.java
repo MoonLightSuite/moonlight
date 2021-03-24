@@ -1,7 +1,7 @@
 /**
  *
  */
-package eu.quanticol.moonlight.signal.space;
+package eu.quanticol.moonlight.space;
 
 import eu.quanticol.moonlight.domain.DistanceDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;

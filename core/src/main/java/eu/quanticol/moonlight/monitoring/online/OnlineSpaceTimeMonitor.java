@@ -6,9 +6,9 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.SomewhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
-import eu.quanticol.moonlight.signal.space.DistanceStructure;
-import eu.quanticol.moonlight.signal.space.LocationService;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 

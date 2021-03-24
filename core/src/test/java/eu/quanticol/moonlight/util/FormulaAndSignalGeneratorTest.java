@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

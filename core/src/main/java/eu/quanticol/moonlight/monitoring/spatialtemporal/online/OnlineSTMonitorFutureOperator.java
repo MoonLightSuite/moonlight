@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.algorithms.OnlineSlidingWindow;
 import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.space.LocationService;
+import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 

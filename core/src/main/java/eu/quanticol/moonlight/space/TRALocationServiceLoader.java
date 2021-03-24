@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal.space;
+package eu.quanticol.moonlight.space;
 
 import eu.quanticol.moonlight.io.AbstractFileByRowReader;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;

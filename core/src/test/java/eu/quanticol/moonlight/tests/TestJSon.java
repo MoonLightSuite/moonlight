@@ -23,7 +23,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;

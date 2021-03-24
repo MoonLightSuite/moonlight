@@ -1,10 +1,10 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.signal.space.GraphModel;
-import eu.quanticol.moonlight.signal.space.LocationService;
-import eu.quanticol.moonlight.signal.space.LocationServiceList;
-import eu.quanticol.moonlight.signal.space.SpatialModel;
+import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.LocationServiceList;
+import eu.quanticol.moonlight.space.SpatialModel;
 
 import java.util.Map;
 import java.util.function.BiFunction;

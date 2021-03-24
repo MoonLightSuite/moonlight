@@ -5,7 +5,7 @@ import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.function.Function;
