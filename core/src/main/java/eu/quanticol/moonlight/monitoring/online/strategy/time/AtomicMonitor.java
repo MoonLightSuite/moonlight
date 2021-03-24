@@ -18,12 +18,11 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.monitoring.online.strategy;
+package eu.quanticol.moonlight.monitoring.online.strategy.time;
 
 import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
@@ -32,7 +31,7 @@ import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 /**
  * Strategy to interpret (online) an atomic predicate on the signal of interest.
@@ -43,79 +42,39 @@ import java.util.function.BinaryOperator;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class BinaryMonitor<V, R extends Comparable<R>>
+public class AtomicMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 
-    private final BinaryOperator<AbstractInterval<R>> opFunction;
+    private final Function<V, AbstractInterval<R>> atomicFunction;
     //private final Interval horizon;
     private final SignalInterface<Double, AbstractInterval<R>> rho;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> firstArgMonitor;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor;
 
 
     /**
      * Prepares an atomic online (temporal) monitor.
-     * @param binaryOp The function evaluated by the atomic predicate
+     * @param atomicFunction The function evaluated by the atomic predicate
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public BinaryMonitor(
-            OnlineMonitor<Double, V, AbstractInterval<R>> firstArgument,
-            OnlineMonitor<Double, V, AbstractInterval<R>> secondArgument,
-            BinaryOperator<AbstractInterval<R>> binaryOp,
-            //Interval parentHorizon,
-            SignalDomain<R> interpretation)
+    public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
+                         //Interval parentHorizon,
+                         SignalDomain<R> interpretation)
     {
-        this.opFunction = binaryOp;
+        this.atomicFunction = atomicFunction;
         //this.horizon = parentHorizon;
         this.rho = new OnlineSignal<>(interpretation);
-        this.firstArgMonitor = firstArgument;
-        this.secondArgMonitor = secondArgument;
     }
 
     @Override
     public List<Update<Double, AbstractInterval<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
+        Update<Double, AbstractInterval<R>> u =
+                BooleanComputation.atom(signalUpdate, atomicFunction);
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
-
-        List<Update<Double, AbstractInterval<R>>> firstArgUps =
-                firstArgMonitor.monitor(signalUpdate);
-        List<Update<Double, AbstractInterval<R>>> secondArgUps =
-                secondArgMonitor.monitor(signalUpdate);
-
-
-        SignalInterface<Double, AbstractInterval<R>> s1 = firstArgMonitor.getResult();
-        SignalInterface<Double, AbstractInterval<R>> s2 = secondArgMonitor.getResult();
-
-        //System.out.println(">>> Arg 1 updates: " + firstArgUps);
-
-        for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
-            List<Update<Double, AbstractInterval<R>>> ups =
-                    BooleanComputation.binaryUp(s2, argU, opFunction);
-            updates.addAll(ups);
-            ups.forEach(rho::refine);
-        }
-
-        for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
-            List<Update<Double, AbstractInterval<R>>> ups =
-                    BooleanComputation.binaryUp(s1, argU, opFunction);
-            updates.addAll(ups);
-            ups.forEach(rho::refine);
-        }
-
-        System.out.println(">>> S1: " + s1);
-
-        System.out.println(">>> S2: " + s2);
-
-        System.out.println(">>> Binary Updates: " + updates);
-
-        //for(Update<Double, AbstractInterval<R>> u: updates) {
-        //    rho.refine(u);
-        //}
-
-        System.out.println(">>> Binary New Rho: " + rho);
+        updates.add(u);
+        rho.refine(u);
 
         return updates;
     }

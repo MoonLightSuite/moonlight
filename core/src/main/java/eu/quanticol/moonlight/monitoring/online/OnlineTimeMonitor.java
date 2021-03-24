@@ -4,10 +4,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.online.strategy.AtomicMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.BinaryMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.TemporalOpMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.UnaryMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.time.*;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -15,7 +12,6 @@ import eu.quanticol.moonlight.signal.online.Update;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Primary entry point to perform online monitoring.

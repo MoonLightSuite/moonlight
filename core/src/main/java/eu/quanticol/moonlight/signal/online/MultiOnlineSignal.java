@@ -28,13 +28,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * Class to represent online signals. Work in progress
+ * Class to represent n-dimensional online time signals.
  */
 public class MultiOnlineSignal
         implements SignalInterface<Double, List<AbstractInterval<?>>>
 {
     private final SegmentChain<Double, List<AbstractInterval<?>>> segments;
-
 
     /**
      * @param domain The signal domain to consider

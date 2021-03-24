@@ -17,20 +17,20 @@ public class SpatialComputation {
 
     private SpatialComputation() {}    // hidden constructor
 
-    public static <S, R>
-    List<Update<Double, R>> computeDynamic(
+    public static <S, R extends Comparable<R>>
+    List<Update<Double, List<R>>> computeDynamic(
         LocationService<S> l,
         Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
         BiFunction<Function<Integer, R>, DistanceStructure<S, ?>, List<R>> op,
-        Update<Double, R> u,
-        SegmentChain<Double, R> s)
+        Update<Double, List<R>> u,
+        SegmentChain<Double, List<R>> s)
     {
-        List<Update<Double, R>> results = new ArrayList<>();
+        List<Update<Double, List<R>>> results = new ArrayList<>();
 
         if (l.isEmpty())
             return results;
 
-        //TODO: only Double dependence
+        //NOTE: only `Double` dependence
         Iterator<Pair<Double, SpatialModel<S>>> spaceItr = l.times();
 
         Pair<Double, SpatialModel<S>> currSpace = spaceItr.next();
@@ -38,8 +38,8 @@ public class SpatialComputation {
 
 
 
-        DiffIterator<SegmentInterface<Double, R>> itr = s.diffIterator();
-        SegmentInterface<Double, R> curr = itr.next();
+        DiffIterator<SegmentInterface<Double, List<R>>> itr = s.diffIterator();
+        SegmentInterface<Double, List<R>> curr = itr.next();
         Double t = curr.getStart();
 
         while ((nextSpace != null) &&
@@ -48,8 +48,8 @@ public class SpatialComputation {
             nextSpace = getNext(spaceItr);
         }
 
-        /*while(itr.hasNext() && t < u.getEnd()) {
-            SegmentInterface<Double, R> next = itr.tryPeekNext(curr);
+        while(itr.hasNext() && t < u.getEnd()) {
+            SegmentInterface<Double, List<R>> next = itr.tryPeekNext(curr);
             Double nextTime = next.getStart();
             Function<Integer, R> spatialSignal = i -> curr.getValue().get(i);
 
@@ -71,7 +71,7 @@ public class SpatialComputation {
             currSpace = (nextSpace != null ? nextSpace : currSpace);
             nextSpace = getNext(spaceItr);
 
-        }*/
+        }
 
         return results;
     }

@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MultiOnlineSpaceTimeSignal
-        implements SignalInterface<Double, List<List<AbstractInterval<?>>>>{
+        implements SignalInterface<Double, List<List<AbstractInterval<?>>>>
+{
     private final SegmentChain<Double, List<List<AbstractInterval<?>>>> segments;
     private final int size;
 
@@ -39,9 +40,6 @@ public class MultiOnlineSpaceTimeSignal
      */
     @Override
     public boolean refine(Update<Double, List<List<AbstractInterval<?>>>> u) {
-
-
-
         BiPredicate<List<AbstractInterval<?>>, List<AbstractInterval<?>>> pred =
                 (v, vNew) -> IntStream.range(0, v.size()).parallel()
                         .filter(i -> !v.get(i)
@@ -49,14 +47,11 @@ public class MultiOnlineSpaceTimeSignal
                         .count() != 0;
 
         return Refinement.refine(segments, u,
-                (v, vNew) ->
-
-                    IntStream.range(0, size).parallel()
-                             .filter(i -> pred.test(v.get(i), vNew.get(i)))
-                             .count() != 0
-
+                (v, vNew) -> IntStream.range(0, size).parallel()
+                                      .filter(i -> pred.test(v.get(i),
+                                                             vNew.get(i)))
+                                      .count() != 0
                 );
-
     }
 
     /**

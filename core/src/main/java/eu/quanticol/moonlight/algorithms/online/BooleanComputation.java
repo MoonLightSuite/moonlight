@@ -27,7 +27,7 @@ public class BooleanComputation {
      * @return an update of the robustness signal in input
      */
     public static
-    <T extends Comparable<T>, V, R extends Comparable<R>>
+    <T extends Comparable<T>, V, R>
     Update<T, R> atom(Update<T, V> u, Function<V, R> op)
     {
         return new Update<>(u.getStart(), u.getEnd(),

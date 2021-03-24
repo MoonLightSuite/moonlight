@@ -25,15 +25,12 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 /**
- * @deprecated replaced by the more general {@link MultiOnlineSignal}
- * Class to represent online signals. Work in progress
+ * Class to represent 1-dimensional online time signals.
  * @param <D> Signal domain of interest
  */
-@Deprecated
 public class OnlineSignal<D extends Comparable<D>>
         implements SignalInterface<Double, AbstractInterval<D>> {
     private final SegmentChain<Double, AbstractInterval<D>> segments;
-
 
     /**
      * @param domain The signal domain to consider

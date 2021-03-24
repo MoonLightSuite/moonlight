@@ -7,7 +7,7 @@ public class AbsIntervalDomain<R extends Comparable<R>>
 {
     private final RefinableSignalDomain<R> domain;
 
-    AbsIntervalDomain(RefinableSignalDomain<R> domain) {
+    public AbsIntervalDomain(RefinableSignalDomain<R> domain) {
         this.domain = domain;
     }
 

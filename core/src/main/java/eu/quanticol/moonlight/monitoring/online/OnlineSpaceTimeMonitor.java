@@ -1,37 +1,47 @@
 package eu.quanticol.moonlight.monitoring.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.RefinableSignalDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.FormulaVisitor;
-import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.monitoring.online.strategy.AtomicMonitor;
+import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.SomewhereMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.signal.DistanceStructure;
+import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
-    FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>
+    FormulaVisitor<Parameters, OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>>
 {
     private final Formula formula;
-    private final SignalDomain<R> interpretation;
-    private final Map<String, OnlineMonitor<Double, V, AbstractInterval<R>>>
-            monitors;
+    private final RefinableSignalDomain<R> interpretation;
+    private final Map<String, OnlineMonitor<Double, List<V>,
+                                            List<AbstractInterval<R>>>>
+                                                                       monitors;
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
     private final Map<String, Function<SpatialModel<S>,
                                        DistanceStructure<S, ?>>> dist;
 
+    private final LocationService<S> locSvc;
+
+    //TODO: refactor this in some cleaner way
+    private final int size;
+
 
     public OnlineSpaceTimeMonitor(
             Formula formula,
-            SignalDomain<R> interpretation,
+            int size,
+            RefinableSignalDomain<R> interpretation,
+            LocationService<S> locationService,
             Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                                  DistanceStructure<S, ?>>> distanceFunctions)
@@ -41,12 +51,14 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
         this.interpretation = interpretation;
         this.monitors = new HashMap<>();
         this.dist = distanceFunctions;
+        this.locSvc = locationService;
+        this.size = size;
     }
 
-    public SignalInterface<Double, AbstractInterval<R>>
-    monitor(Update<Double, V> update)
+    public SignalInterface<Double, List<AbstractInterval<R>>>
+    monitor(Update<Double, List<V>> update)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> m =
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> m =
                                     formula.accept(this, null);
 
         if(update != null)
@@ -56,15 +68,32 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
     }
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
             AtomicFormula formula, Parameters parameters)
     {
         Function<V, AbstractInterval<R>> f = fetchAtom(formula);
 
         return monitors.computeIfAbsent(formula.toString(),
-                                  x -> new AtomicMonitor<>(f, interpretation));
+                                  x -> new AtomicMonitor<>(f, size, interpretation));
 
     }
+
+
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            SomewhereFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance = dist.get(formula.getDistanceFunctionId());
+
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new SomewhereMonitor<S, V, R>(argumentMonitor, size, locSvc, distance, interpretation));
+    }
+
+
 
     private Function<V, AbstractInterval<R>> fetchAtom(AtomicFormula f)
     {
