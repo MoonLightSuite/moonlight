@@ -25,6 +25,8 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -60,6 +62,22 @@ public class EscapeOperator {
             next = getNext(locSvcIterator);
         }
 
+        escapeOperator(cursor, time, current, next, distance, domain, toReturn,
+                       locSvcIterator);
+
+        return toReturn;
+    }
+
+    private static <S, R> SpatialTemporalSignal<R> escapeOperator(
+            ParallelSignalCursor<R> cursor,
+            double time,
+            Pair<Double, SpatialModel<S>> current,
+            Pair<Double, SpatialModel<S>> next,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            SignalDomain<R> domain,
+            SpatialTemporalSignal<R> toReturn,
+            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    {
         // Loop invariant: (current.getFirst() <= time) &&
         //                 ((next==null)||(time<next.getFirst()))
         SpatialModel<S> sm = current.getSecond();

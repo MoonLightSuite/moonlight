@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
  * @author loreti
  *
  */
-public class STMonitorClosure<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
+public class SpatialTemporalMonitorClosure<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
 	@Override
 	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {

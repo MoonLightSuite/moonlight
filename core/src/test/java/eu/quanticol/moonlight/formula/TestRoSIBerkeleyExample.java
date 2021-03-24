@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitoring;
+import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class TestRoSIBerkeleyExample {
     @Test
     void berkleyTestEmpty() {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<List<Double>, Double> m =
+        OnlineTimeMonitor<List<Double>, Double> m =
                 instrument(leftFormula());
 
         Object[] ss = exec(null, m);
@@ -276,7 +276,7 @@ class TestRoSIBerkeleyExample {
      * @return an Interval corresponding to the final result of the monitoring
      */
     private static Object[] exec(Update<Double, List<Double>> u,
-                                 OnlineTimeMonitoring<List<Double>, Double> m)
+                                 OnlineTimeMonitor<List<Double>, Double> m)
     {
         try {
             OnlineSignal<Double> r = (OnlineSignal<Double>) m.monitor(u);
@@ -290,7 +290,7 @@ class TestRoSIBerkeleyExample {
     /**
      * @return a Monitoring object, ready to run
      */
-    private static OnlineTimeMonitoring<List<Double>, Double> instrument(Formula f)
+    private static OnlineTimeMonitor<List<Double>, Double> instrument(Formula f)
     {
         HashMap<String, Function<List<Double>, AbstractInterval<Double>>>
                                                         atoms = new HashMap<>();
@@ -304,7 +304,7 @@ class TestRoSIBerkeleyExample {
                     trc -> new AbstractInterval<>(trc.get(Y_SIGNAL),
                                                   trc.get(Y_SIGNAL)));
 
-        return new OnlineTimeMonitoring<>(f, new DoubleDomain(), atoms);
+        return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }
 
 
@@ -335,7 +335,7 @@ class TestRoSIBerkeleyExample {
 
     private Object[] testAtUpdate2(Formula f) {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+        OnlineTimeMonitor<List<Double>, Double> m = instrument(f);
 
         Update<Double, List<Double>> u =
                 new Update<>(T0, T1, toList(1.0, -1.0));
@@ -349,7 +349,7 @@ class TestRoSIBerkeleyExample {
 
     private Object[] testAtUpdate3(Formula f) {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+        OnlineTimeMonitor<List<Double>, Double> m = instrument(f);
 
         Update<Double, List<Double>> u =
                 new Update<>(T0, T1, toList(1.0, -1.0));
@@ -367,7 +367,7 @@ class TestRoSIBerkeleyExample {
 
     private Object[] testAtUpdate4(Formula f) {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+        OnlineTimeMonitor<List<Double>, Double> m = instrument(f);
 
         Update<Double, List<Double>> u =
                 new Update<>(T0, T1, toList(1.0, -1.0));
@@ -388,7 +388,7 @@ class TestRoSIBerkeleyExample {
 
     private Object[] testAtUpdate5(Formula f) {
         // Monitor Instrumentation...
-        OnlineTimeMonitoring<List<Double>, Double> m = instrument(f);
+        OnlineTimeMonitor<List<Double>, Double> m = instrument(f);
 
         Update<Double, List<Double>> u =
                 new Update<>(T0, T1, toList(1.0, -1.0));

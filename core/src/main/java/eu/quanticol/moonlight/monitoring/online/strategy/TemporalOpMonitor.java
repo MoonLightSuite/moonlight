@@ -18,22 +18,20 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.monitoring.online;
+package eu.quanticol.moonlight.monitoring.online.strategy;
 
-import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
+import eu.quanticol.moonlight.algorithms.online.TemporalComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.online.OnlineTemporalMonitor;
-import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BinaryOperator;
 
 /**
  * Strategy to interpret (online) an atomic predicate on the signal of interest.
@@ -44,40 +42,61 @@ import java.util.function.Function;
  * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
-public class AtomicMonitor<V, R extends Comparable<R>>
+public class TemporalOpMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, V, AbstractInterval<R>>
 {
 
-    private final Function<V, AbstractInterval<R>> atomicFunction;
-    //private final Interval horizon;
-    private final SignalInterface<Double, AbstractInterval<R>> rho;
+    private final BinaryOperator<AbstractInterval<R>> op;
+    private final Interval horizon;
+    private final OnlineSignal<R> rho;
+    private final OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor;
 
 
     /**
      * Prepares an atomic online (temporal) monitor.
-     * @param atomicFunction The function evaluated by the atomic predicate
+     * @param binaryOp The function evaluated by the atomic predicate
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
-                         //Interval parentHorizon,
-                         SignalDomain<R> interpretation)
+    public TemporalOpMonitor(
+                        OnlineMonitor<Double, V, AbstractInterval<R>> argument,
+                        BinaryOperator<AbstractInterval<R>> binaryOp,
+                        Interval timeHorizon,
+                        //Interval parentHorizon,
+                        SignalDomain<R> interpretation)
     {
-        this.atomicFunction = atomicFunction;
-        //this.horizon = parentHorizon;
+        this.op = binaryOp;
+        this.horizon = timeHorizon;
         this.rho = new OnlineSignal<>(interpretation);
+        this.argumentMonitor = argument;
     }
 
     @Override
     public List<Update<Double, AbstractInterval<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
+        List<Update<Double, AbstractInterval<R>>> argUpdates =
+                argumentMonitor.monitor(signalUpdate);
 
-        Update<Double, AbstractInterval<R>> u =
-                BooleanComputation.atom(signalUpdate, atomicFunction);
+        SegmentChain<Double, AbstractInterval<R>> s =
+                ((OnlineSignal<R>) argumentMonitor.getResult()).getSegments();
+
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
-        updates.add(u);
-        rho.refine(u);
+
+        for(Update<Double, AbstractInterval<R>> argU : argUpdates) {
+            updates.addAll(TemporalComputation.slidingWindow(s,
+                                                             argU,
+                                                             horizon,
+                                                             op));
+        }
+
+        //System.out.println("Temporal Updates: " + updates);
+
+        for(Update<Double, AbstractInterval<R>> u: updates) {
+            rho.refine(u);
+        }
+
+        //System.out.println("Temporal New Rho: " + rho);
 
         return updates;
     }

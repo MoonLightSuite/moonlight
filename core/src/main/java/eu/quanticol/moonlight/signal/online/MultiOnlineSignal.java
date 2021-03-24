@@ -20,12 +20,11 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import eu.quanticol.moonlight.algorithms.online.Refinement;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -48,6 +47,7 @@ public class MultiOnlineSignal
     /**
      * @return the internal list of segments;
      */
+    @Override
     public SegmentChain<Double, List<AbstractInterval<?>>> getSegments() {
         return segments;
     }
@@ -82,157 +82,15 @@ public class MultiOnlineSignal
     public boolean
         refine(Update<Double, List<AbstractInterval<?>>> u)
     {
-        if(u.getStart() > u.getEnd()) {
-            throw new IllegalArgumentException("Invalid update time span");
-        }
-        DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr =
-                segments.diffIterator();
-        SegmentInterface<Double, List<AbstractInterval<?>>> current = itr.next();
-
-        while (itr.hasNext()) {
-            if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue()))
-                break;
-
-            // Save the "next" as the next "current".
-            current = itr.next();
-        }
-
-        doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue());
-
-        return !itr.getChanges().isEmpty();
+        //TODO: should handle the case where the update is
+        //      a list of a different size
+        return Refinement.refine(segments, u,
+                (v, vNew) -> IntStream.range(0, v.size()).parallel()
+                                      .filter(i -> !v.get(i)
+                                                     .contains(vNew.get(i)))
+                                      .boxed().count() != 0);
     }
 
-
-    /**
-     * Refinement logic
-     *
-     * @param itr segment iterator
-     * @param curr current segment
-     * @param from starting time of the update
-     * @param to ending time of the update
-     * @param vNew new value of the update
-     * @return true when the update won't affect the signal anymore,
-     *         false otherwise.
-     */
-    private boolean doRefine(
-        DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr,
-        SegmentInterface<Double, List<AbstractInterval<?>>> curr,
-        double from, double to, List<AbstractInterval<?>> vNew)
-    {
-        double t = curr.getStart();
-        double tNext = Double.POSITIVE_INFINITY;
-        try {
-            tNext = itr.peekNext().getStart();
-        } catch(NoSuchElementException ignored) {
-            // Exception handled by default value of tNext
-        }
-
-        List<AbstractInterval<?>> v = curr.getValue();
-
-        // Case 1 - `from` in (t, tNext):
-        //          This means the update starts in the current segment
-        if(t < from && tNext > from) {
-            itr.add(new ImmutableSegment<>(from, vNew));
-            return false;
-        }
-        // Case 2 - from  == t:
-        //          This means the current segment starts exactly at
-        //          update time, therefore, its value must be updated
-        if(t == from) {
-            update(itr, t, v, vNew);
-        }
-
-        // Case 3 - t  in (from, to):
-        //          This means the current segment starts within the update
-        //          horizon and must therefore be updated
-        if(t > from && t < to) {
-            remove(itr);
-        }
-
-        // General Sub-case - to < tNext:
-        //          This means the current segment contains the end of the
-        //          area to update. Therefore, we must add a segment for the
-        //          last part of the segment.
-        //          From now on the signal will not change.
-        if(to < tNext && t != to) {
-            itr.add(new ImmutableSegment<>(to, v));
-            return true;
-        }
-
-        // Case 4 - t  >= to:
-        //          The current segment is beyond the update horizon,
-        //          from now on, the signal will not change.
-        return t >= to;
-    }
-
-    /**
-     * Method for checking whether the provided interval refines the current
-     * one, and to update it accordingly.
-     * @param itr iterator of the signal segments
-     * @param t current time instant
-     * @param v current value
-     * @param vNew new value from the update
-     */
-    private void update(
-        DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr,
-        double t, List<AbstractInterval<?>> v, List<AbstractInterval<?>> vNew)
-    {
-        List<Integer> valid = IntStream.range(0, v.size()).parallel()
-                                       .filter(i -> !v.get(i)
-                                                      .contains(vNew.get(i)))
-                                       .boxed()
-                                       .collect(Collectors.toList());
-
-        if(valid.isEmpty()) {
-            itr.set(new ImmutableSegment<>(t, vNew));
-        } else {
-            throw new UnsupportedOperationException(
-                    "Refining interval: " + vNew +
-                    " is wider than the original:" + v);
-        }
-    }
-
-    /**
-     * Removes the last object seen by the iterator.
-     * Note that the iterator is one step ahead, so we have to bring it back
-     * first.
-     * @param itr iterator to update
-     */
-    private void remove(
-            DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr)
-    {
-        itr.previous();
-        itr.remove();
-    }
-
-    /**
-     * Returns the interval of valid signal values at time <code>t</code>. An {@link IllegalArgumentException}
-     * is thrown whenever the value <code>t</code> is outside the signal time boundaries.
-     *
-     * @param t time instant.
-     * @return the interval of valid signal values at time <code>t</code>.
-     */
-    public List<AbstractInterval<?>> getValueAt(Double t) {
-        DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr =
-                segments.diffIterator();
-        SegmentInterface<Double, List<AbstractInterval<?>>> current = null;
-
-        while (itr.hasNext()) {
-            current = itr.next();
-            if (current.getStart() > t) {
-                // We went too far, we have to look at the previous element
-                // So we have to move the iterator twice back
-                // (as we are now looking backwards)
-                itr.previous();
-                return itr.previous().getValue();
-            }
-        }
-
-        if(current != null) // Single-segment signal
-            return current.getValue();
-        else
-            throw new UnsupportedOperationException("Empty signal provided");
-    }
 
     @Override
     public SegmentChain<Double, List<AbstractInterval<?>>> select(Double from,

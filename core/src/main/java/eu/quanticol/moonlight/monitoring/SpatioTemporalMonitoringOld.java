@@ -20,9 +20,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
+ * @deprecated use {@link SpatialTemporalMonitoring} instead.
  * TODO: this class doesn't seem to be used anymore. Can we remove it?
  * 		 After all it can always be restored from git history.
  */
+@Deprecated
 public class SpatioTemporalMonitoringOld<V, T, R> implements
         FormulaVisitor<Parameters, BiFunction<
                 LocationService<V>,

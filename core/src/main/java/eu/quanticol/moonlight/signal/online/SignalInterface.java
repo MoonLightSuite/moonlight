@@ -33,13 +33,6 @@ import java.io.Serializable;
  */
 public interface SignalInterface<T extends Comparable<T> & Serializable, V>
 {
-
-    /**
-     * @param time the time instant of interest for looking at the signal value
-     * @return the signal value at the time instant passed.
-     */
-    V getValueAt(T time);
-
     /**
      * Performs an update of the internal representation of the signal,
      * given the data available in the update.
@@ -50,13 +43,50 @@ public interface SignalInterface<T extends Comparable<T> & Serializable, V>
      */
     boolean refine(Update<T, V> u);
 
+
+
+    /**
+     * Returns the internal chain of segments.
+     *
+     * @return the total chain of segments of the signal
+     * @throws UnsupportedOperationException when not allowed by implementors
+     */
+    SegmentChain<T, V> getSegments();
+
+    /**
+     * @param time the time instant of interest for looking at the signal value
+     * @return the signal value at the time instant passed.
+     */
+    default V getValueAt(T time) {
+        DiffIterator<SegmentInterface<T, V>> itr = getSegments().diffIterator();
+        SegmentInterface<T, V> current = null;
+
+        while (itr.hasNext()) {
+            current = itr.next();
+            if (current.getStart() .compareTo(time) > 0) {
+                // We went too far, we have to look at the previous element
+                // So we have to move the iterator twice back
+                // (as we are now looking backwards)
+                itr.previous();
+                return itr.previous().getValue();
+            }
+        }
+
+        if(current != null) // Single-segment signal
+            return current.getValue();
+        else
+            throw new UnsupportedOperationException("Empty signal provided");
+    }
+
     /**
      * Temporal projection operation that selects a sub-part of the signal
      * delimited by the time instants provided by the input parameters.
      *
-     * @param start beginning of the time frame of interest
-     * @param end ending of the time frame of interest
+     * @param from beginning of the time frame of interest
+     * @param to ending of the time frame of interest
      * @return the chain of segments of the signal delimited by the input
+     * @throws UnsupportedOperationException when not allowed by implementors
      */
-    SegmentChain<T, V> select(T start, T end);
+    SegmentChain<T, V> select(T from, T to);
+
 }

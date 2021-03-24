@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.signal.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
+ * TODO: what is this class for?
  * @author loreti
  *
  */

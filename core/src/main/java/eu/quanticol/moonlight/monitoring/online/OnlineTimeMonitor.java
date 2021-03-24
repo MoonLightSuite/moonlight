@@ -4,13 +4,15 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.monitoring.online.strategy.AtomicMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.BinaryMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.TemporalOpMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.UnaryMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -27,7 +29,7 @@ import java.util.function.Supplier;
  * @see FormulaVisitor
  * @see TemporalMonitor
  */
-public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
+public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>
 {
 
@@ -37,7 +39,7 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
                                                                        monitors;
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
-    public OnlineTimeMonitoring(
+    public OnlineTimeMonitor(
         Formula formula,
         SignalDomain<R> interpretation,
         Map<String, Function<V, AbstractInterval<R>>> atomicPropositions)
@@ -56,12 +58,8 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
         OnlineMonitor<Double, V, AbstractInterval<R>> m =
                                         formula.accept(this, param);
 
-        List<Update<Double , AbstractInterval<R>>> ups = new ArrayList<>();
-
         if(update != null)
-            ups = m.monitor(update);
-
-        //System.out.println(ups);
+            m.monitor(update);
 
         return m.getResult();
     }
@@ -72,8 +70,8 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
     {
         Function<V, AbstractInterval<R>> f = fetchAtom(formula);
 
-        return fetchMonitor(formula.toString(),
-                            () -> new AtomicMonitor<>(f, interpretation));
+        return monitors.computeIfAbsent(formula.toString(),
+                                x -> new AtomicMonitor<>(f, interpretation));
 
     }
 
@@ -84,8 +82,8 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
         OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
                 formula.getArgument().accept(this, parameters);
 
-        return fetchMonitor(formula.toString(),
-                () -> new UnaryMonitor<>(argumentMonitor,
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new UnaryMonitor<>(argumentMonitor,
                         v -> negation(v, interpretation), interpretation));
     }
 
@@ -100,8 +98,8 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
         OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
                 formula.getSecondArgument().accept(this, parameters);
 
-        return fetchMonitor(this.formula.toString(),
-                () -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
                         (v1, v2) -> conjunction(v1, v2, interpretation),
                                                         interpretation));
     }
@@ -116,12 +114,40 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
         OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
                 formula.getSecondArgument().accept(this, parameters);
 
-        return fetchMonitor(this.formula.toString(),
-                () -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
+        return monitors.computeIfAbsent(formula.toString(),
+                x ->  new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
                         (v1, v2) -> disjunction(v1, v2, interpretation),
                         interpretation));
     }
 
+
+    @Override
+    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+            EventuallyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x ->  new TemporalOpMonitor<>(argumentMonitor,
+                        (v1, v2) -> disjunction(v1, v2, interpretation),
+                                                        formula.getInterval(),
+                                                        interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+            GloballyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x ->  new TemporalOpMonitor<>(argumentMonitor,
+                        (v1, v2) -> conjunction(v1, v2, interpretation),
+                                                        formula.getInterval(),
+                                                        interpretation));
+    }
 
     private AbstractInterval<R> negation(AbstractInterval<R> value,
                                          SignalDomain<R> domain)
@@ -135,8 +161,8 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
                                             SignalDomain<R> domain)
     {
         return new AbstractInterval<>(
-            domain.conjunction(firstValue.getStart(), secondValue.getStart()),
-            domain.conjunction(firstValue.getEnd(), secondValue.getEnd()));
+                domain.conjunction(firstValue.getStart(), secondValue.getStart()),
+                domain.conjunction(firstValue.getEnd(), secondValue.getEnd()));
     }
 
     private AbstractInterval<R> disjunction(AbstractInterval<R> firstValue,
@@ -144,100 +170,9 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
                                             SignalDomain<R> domain)
     {
         return new AbstractInterval<>(
-            domain.disjunction(firstValue.getStart(), secondValue.getStart()),
-            domain.disjunction(firstValue.getEnd(), secondValue.getEnd()));
+                domain.disjunction(firstValue.getStart(), secondValue.getStart()),
+                domain.disjunction(firstValue.getEnd(), secondValue.getEnd()));
     }
-
-    @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
-            EventuallyFormula formula, Parameters parameters)
-    {
-        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
-
-        return fetchMonitor(formula.toString(),
-                () -> new TemporalOpMonitor<>(argumentMonitor,
-                        (v1, v2) -> disjunction(v1, v2, interpretation),
-                                                        formula.getInterval(),
-                                                        interpretation));
-    }
-
-    @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
-            GloballyFormula formula, Parameters parameters)
-    {
-        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
-
-        return fetchMonitor(formula.toString(),
-                () -> new TemporalOpMonitor<>(argumentMonitor,
-                        (v1, v2) -> conjunction(v1, v2, interpretation),
-                                                        formula.getInterval(),
-                                                        interpretation));
-    }
-
-    /*
-
-    @Override
-    public TemporalMonitor<V, R> visit(EventuallyFormula eventuallyFormula,
-                                       Parameters parameters)
-    {
-        return unaryTemporalMonitor(eventuallyFormula, parameters,
-                interpretation::disjunction, interpretation.min());
-    }
-
-    @Override
-    public TemporalMonitor<V, R> visit(GloballyFormula globallyFormula,
-                                       Parameters parameters)
-    {
-        return unaryTemporalMonitor(globallyFormula, parameters,
-                interpretation::conjunction, interpretation.max());
-    }
-
-    private TemporalMonitor<V, R> binaryMonitor(BinaryFormula f, Parameters ps,
-                                                BinaryOperator<R> op)
-    {
-        TemporalMonitor<V, R> m = monitors.get(f.toString());
-
-        TemporalMonitor<V, R> leftMonitoring = f.getFirstArgument()
-                .accept(this, ps);
-        TemporalMonitor<V, R> rightMonitoring = f.getSecondArgument()
-                .accept(this, ps);
-
-        if(m == null) {
-            m = new OnlineMonitorBinaryOperator<>(leftMonitoring,
-                    op,
-                    rightMonitoring,
-                    getHorizon(ps));
-            monitors.put(f.toString(), m);
-        }
-        return m;
-    }
-
-    private OnlineMonitor<Double, V, AbstractInterval<R>> unaryTemporalMonitor(TemporalFormula f,
-                                                       Parameters ps,
-                                                       BinaryOperator<R> op,
-                                                       R min)
-    {
-        OnlineMonitor<Double, V, R> m = monitors.get(f.toString());
-
-        Interval horizon = getHorizon(ps);
-        Interval interval = f.getInterval();
-        Parameters childPars = new HorizonParameter(
-                Interval.combine(horizon, interval));
-
-        OnlineMonitor<Double, V, R> monitoringArg = ((UnaryFormula) f).getArgument()
-                .accept(this, childPars);
-
-        if(m == null) {
-            m = new OnlineMonitorFutureOperator<>(monitoringArg,
-                    op, min, interpretation.unknown(),
-                    interval, horizon);
-            monitors.put(f.toString(), m);
-        }
-        return m;
-    }
-*/
 
     private Function<V, AbstractInterval<R>> fetchAtom(AtomicFormula f)
     {
@@ -248,18 +183,6 @@ public class OnlineTimeMonitoring<V, R extends Comparable<R>> implements
                     f.getAtomicId());
         }
         return atom;
-    }
-
-    private OnlineMonitor<Double, V, AbstractInterval<R>> fetchMonitor(
-            String id,
-            Supplier<OnlineMonitor<Double, V, AbstractInterval<R>>> builder)
-    {
-        OnlineMonitor<Double, V, AbstractInterval<R>> m = monitors.get(id);
-        if(m == null) {
-            m = builder.get();
-            monitors.put(id, m);
-        }
-        return m;
     }
 
 }

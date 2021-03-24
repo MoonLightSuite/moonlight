@@ -27,9 +27,11 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
 /**
+ * @deprecated use {@link TemporalMonitoring} instead.
  * TODO: this class doesn't seem to be used anymore. Can we remove it?
  * 		 After all it can always be restored from git history.
  */
+@Deprecated
 public class TemporalMonitoringOld<T,R> implements 
 		FormulaVisitor<Parameters, Function<Signal<T>,Signal<R>>> {
 	

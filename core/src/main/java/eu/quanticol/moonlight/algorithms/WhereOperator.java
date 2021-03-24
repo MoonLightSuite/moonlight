@@ -41,6 +41,23 @@ public class WhereOperator {
             next = getNext(locSvcIterator);
         }
 
+        whereOperator(cursor, time, current, next, distance, operator,
+                      toReturn, locSvcIterator);
+
+        return toReturn;
+    }
+
+    private static <S, R> SpatialTemporalSignal<R> whereOperator(
+            ParallelSignalCursor<R> cursor,
+            double time,
+            Pair<Double, SpatialModel<S>> current,
+            Pair<Double, SpatialModel<S>> next,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            BiFunction<Function<Integer, R>, DistanceStructure<S, ?>,
+                                                            List<R>> operator,
+            SpatialTemporalSignal<R> toReturn,
+            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    {
         //Loop invariant: (current.getFirst() <= time) &&
         //                ((next == null) || (time < next.getFirst()))
         while (!cursor.completed() && !Double.isNaN(time)) {

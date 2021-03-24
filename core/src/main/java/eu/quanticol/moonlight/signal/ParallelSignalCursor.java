@@ -92,7 +92,8 @@ public class ParallelSignalCursor<T> {
 	}
 	
 	public Function<Integer,T> getValue() {
-		ArrayList<T> values = new ArrayList<>( cursors.stream().map(c -> c.value()).collect(Collectors.toList()) );
+		ArrayList<T> values = new ArrayList<>(
+				cursors.stream().map(c -> c.value()).collect(Collectors.toList()));
 		return (i -> values.get(i));
 	}
 	
