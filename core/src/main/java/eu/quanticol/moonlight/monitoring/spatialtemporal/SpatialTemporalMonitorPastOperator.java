@@ -57,7 +57,7 @@ public class SpatialTemporalMonitorPastOperator<S, T, R>
 	}
 
 	@Override
-	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
 		return m.monitor(locationService, signal).applyToSignal(

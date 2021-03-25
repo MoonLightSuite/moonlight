@@ -99,7 +99,7 @@ public class Erlang {
         Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
 
         //// We are considering a dynamic Location Service ///
-        LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
+        LocationService<Double, Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
         smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
@@ -125,7 +125,7 @@ public class Erlang {
             SpatialTemporalMonitor<Double, List<Comparable<?>>, D> p,
             String id,
             Collection<MultiValuedTrace> trajectories,
-            LocationService<Double> locService)
+            LocationService<Double, Double> locService)
     {
         //Statistical Model Checking
         StatisticalModelChecker<Double, List<Comparable<?>>, D> smc =
@@ -459,7 +459,7 @@ public class Erlang {
      * @param devDir list of directions of the device, at each time instant
      * @return a dynamic location service for the grid spatial model
      */
-    private static LocationService<Double>
+    private static LocationService<Double, Double>
     createOrientedLocSvc(List<Integer> devPos, List<GridDirection> devDir) {
         LocationServiceList<Double> locService = new LocationServiceList<>();
 

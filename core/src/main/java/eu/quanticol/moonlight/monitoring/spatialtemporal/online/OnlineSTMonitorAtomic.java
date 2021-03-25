@@ -70,7 +70,7 @@ public class OnlineSTMonitorAtomic<S, T, R>
 
 
     @Override
-    public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+    public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
         // If the previous signal end falls within the formula horizon,

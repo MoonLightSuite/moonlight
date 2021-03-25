@@ -53,7 +53,7 @@ public class MainSp {
         citySignal.add(1, signalSP);
         citySignal.add(3, signalSP);
 
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 3,city);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 3,city);
 
         HashMap<String, Function<Parameters, Function<MoonLightRecord, Boolean>>> atomicPropositions = new HashMap<>();
         atomicPropositions.put("thereIsATaxi", par -> a -> a.get(1, Boolean.class));

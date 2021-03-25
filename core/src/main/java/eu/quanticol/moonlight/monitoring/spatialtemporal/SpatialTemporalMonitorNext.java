@@ -13,7 +13,7 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 public class SpatialTemporalMonitorNext<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
 	@Override
-	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal) {
+	public SpatialTemporalSignal<T> monitor(LocationService<Double, E> locationService, SpatialTemporalSignal<S> signal) {
 		// TODO Auto-generated method stub
 		return null;
 	}

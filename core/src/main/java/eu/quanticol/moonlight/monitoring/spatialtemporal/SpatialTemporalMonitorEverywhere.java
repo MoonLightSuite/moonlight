@@ -57,7 +57,7 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
 	}
 
 	@Override
-	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
 		return SpaceOperator.computeWhereDynamic(locationService,

@@ -51,7 +51,7 @@ public class StatisticalModelChecker<S, T, R> {
      */
     private final SpatialTemporalMonitor<S, T, R> monitor;
     private final Collection<? extends SpatialTemporalSignal<T>> samples;
-    private final LocationService<S> locService;
+    private final LocationService<Double, S> locService;
 
     /**
      * Output Results
@@ -70,7 +70,7 @@ public class StatisticalModelChecker<S, T, R> {
     public StatisticalModelChecker(
             SpatialTemporalMonitor<S, T, R> propertyMonitor,
             Collection<? extends SpatialTemporalSignal<T>> trajectorySamples,
-            LocationService<S> locationService)
+            LocationService<Double, S> locationService)
     {
         monitor = propertyMonitor;
         samples = trajectorySamples;

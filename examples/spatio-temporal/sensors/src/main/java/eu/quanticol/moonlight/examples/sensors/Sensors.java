@@ -38,7 +38,7 @@ public class Sensors {
         Object[] cgraph1 = eng.getVariable("cgraph1");
         Object[] cgraph2 = eng.getVariable("cgraph2");
         MatlabExecutor.close();
-        LocationService<Double> tConsumer = TestUtils.createLocServiceFromSetMatrix(cgraph1);
+        LocationService<Double, Double> tConsumer = TestUtils.createLocServiceFromSetMatrix(cgraph1);
         SpatialTemporalSignal<Pair<Integer, Integer>> spatialTemporalSignal = new SpatialTemporalSignal<>(nodesType.length);
         IntStream.range(0, trajectory.length-1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
 

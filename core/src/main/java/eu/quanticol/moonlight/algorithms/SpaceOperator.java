@@ -20,7 +20,7 @@ public class SpaceOperator {
     private SpaceOperator() {} // Hidden constructor
 
     public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(
-            LocationService<S> l,
+            LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             BiFunction<Function<Integer, R>,
                        DistanceStructure<S, ?>,
@@ -52,7 +52,7 @@ public class SpaceOperator {
     }
 
     public static <S,R> SpatialTemporalSignal<R> computeEscapeDynamic(
-            LocationService<S> l,
+            LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s)

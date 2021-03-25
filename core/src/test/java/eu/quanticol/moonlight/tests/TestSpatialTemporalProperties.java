@@ -43,7 +43,7 @@ class TestSpatialTemporalProperties {
 
 
         SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 6.0, 10., grid);
@@ -95,7 +95,7 @@ class TestSpatialTemporalProperties {
         Formula escape = new EscapeFormula("dist6", new AtomicFormula("simpleAtomicl"));
 
         SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
         SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
@@ -129,7 +129,7 @@ class TestSpatialTemporalProperties {
         atomic.put("simpleAtomic", p -> (x -> (x.getFirst() + x.getSecond() - 2)));
         SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
         SpatialTemporalSignal<Pair<Double, Double>> signal = TestUtils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> new Pair<>(t * l / 2, t * l / 2));
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
         SpatialTemporalMonitoring<Double, Pair<Double, Double>, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 new HashMap<>(),

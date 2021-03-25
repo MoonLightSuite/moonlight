@@ -82,17 +82,17 @@ import java.util.Optional;
  */
 public class CsvLocationServiceReader extends AbstractFileByRowReader implements LocationServiceReader {
     @Override
-    public LocationService<MoonLightRecord> read(RecordHandler handler, File input)
+    public LocationService<Double, MoonLightRecord> read(RecordHandler handler, File input)
             throws IOException, IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
     @Override
-    public LocationService<MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException {
+    public LocationService<Double, MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException {
         return load(handler, getRows(input));
     }
 
-    private LocationService<MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormatException {
+    private LocationService<Double, MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormatException {
         int size = getModelSize(rows);
         boolean isStatic = checkStatic(rows);
         boolean isDirected = checkDirected(rows);
@@ -103,7 +103,7 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         }
     }
 
-    private LocationService<MoonLightRecord> loadDynamicLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
+    private LocationService<Double, MoonLightRecord> loadDynamicLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
         Iterator<Row> rowIterator = rows.iterator();
         Row current = shiftToFirstTimeDeclaration(rowIterator);
         LocationServiceList<MoonLightRecord> locationService = new LocationServiceList<>();
@@ -149,7 +149,7 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         return rows.stream().anyMatch(r -> r.getRow().startsWith("DIRECTED"));
     }
 
-    private LocationService<MoonLightRecord> loadStaticLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
+    private LocationService<Double, MoonLightRecord> loadStaticLocationService(RecordHandler handler, int size, boolean isDirected, List<Row> rows) throws IllegalFileFormatException {
         GraphModel<MoonLightRecord> model = new GraphModel<>(size);
         Iterator<Row> rowIterator = rows.iterator();
         shiftToStatic(rowIterator);

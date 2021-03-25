@@ -4,6 +4,8 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.EscapeMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.EverywhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.SomewhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.space.DistanceStructure;
@@ -30,7 +32,7 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
     private final Map<String, Function<SpatialModel<S>,
                                        DistanceStructure<S, ?>>> dist;
 
-    private final LocationService<S> locSvc;
+    private final LocationService<Double, S> locSvc;
 
     //TODO: refactor this in some cleaner way
     private final int size;
@@ -40,7 +42,7 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
             Formula formula,
             int size,
             SignalDomain<R> interpretation,
-            LocationService<S> locationService,
+            LocationService<Double, S> locationService,
             Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                                  DistanceStructure<S, ?>>> distanceFunctions)
@@ -73,23 +75,55 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
         Function<V, AbstractInterval<R>> f = fetchAtom(formula);
 
         return monitors.computeIfAbsent(formula.toString(),
-                                  x -> new AtomicMonitor<>(f, size, interpretation));
-
+                             x -> new AtomicMonitor<>(f, size, interpretation));
     }
 
-
+    @Override
     public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
             SomewhereFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+                argumentMonitor = formula.getArgument()
+                                         .accept(this, parameters);
 
-
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance = dist.get(formula.getDistanceFunctionId());
-
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance =
+                                      dist.get(formula.getDistanceFunctionId());
 
         return monitors.computeIfAbsent(formula.toString(),
-                x -> new SomewhereMonitor<S, V, R>(argumentMonitor, size, locSvc, distance, interpretation));
+                x -> new SomewhereMonitor<>(argumentMonitor, locSvc,
+                                            distance, interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            EverywhereFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+                argumentMonitor = formula.getArgument()
+                                         .accept(this, parameters);
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance =
+                                      dist.get(formula.getDistanceFunctionId());
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new EverywhereMonitor<>(argumentMonitor, locSvc,
+                                             distance, interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            EscapeFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+                argumentMonitor = formula.getArgument()
+                .accept(this, parameters);
+
+        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance =
+                dist.get(formula.getDistanceFunctionId());
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new EscapeMonitor<>(argumentMonitor, locSvc,
+                        distance, interpretation));
     }
 
 

@@ -36,7 +36,7 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        LocationService<Double, MoonLightRecord> ls = reader.read(rh, input);
         SpatialModel<MoonLightRecord> model = ls.get(100.0);
         MoonLightRecord record;
         record = model.get(0, 1);
@@ -75,7 +75,7 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        LocationService<Double, MoonLightRecord> ls = reader.read(rh, input);
         SpatialModel<MoonLightRecord> model = ls.get(100.0);
         MoonLightRecord record;
         record = model.get(0, 1);
@@ -126,7 +126,7 @@ class CsvLocationServiceReaderTest {
                 "2;0;3;3.0;true";
         CsvLocationServiceReader reader = new CsvLocationServiceReader();
         RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL, DataHandler.BOOLEAN);
-        LocationService<MoonLightRecord> ls = reader.read(rh, input);
+        LocationService<Double, MoonLightRecord> ls = reader.read(rh, input);
         SpatialModel<MoonLightRecord> model = ls.get(0.0);
         assertEquals(rh.fromString("1;1.0;true"), model.get(0, 1));
         assertNull(model.get(1, 2));

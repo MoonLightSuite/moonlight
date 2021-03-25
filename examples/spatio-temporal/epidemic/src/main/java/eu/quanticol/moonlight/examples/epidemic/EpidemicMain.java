@@ -63,7 +63,7 @@ public class EpidemicMain {
                 URL TRAJECTORY_SOURCE = classLoader.getResource("epidemic_simulation_network_" + i + ".txt");
                 File fileL = new File(TRAJECTORY_SOURCE.toURI());
                 CsvLocationServiceReader readerL = new CsvLocationServiceReader();
-                LocationService<MoonLightRecord> ls = readerL.read(rhL, fileL);
+                LocationService<Double, MoonLightRecord> ls = readerL.read(rhL, fileL);
 
                 // trajectory
                 URL NETWORK_SOURCE = classLoader.getResource("epidemic_simulation_trajectory_" + i + ".txt");

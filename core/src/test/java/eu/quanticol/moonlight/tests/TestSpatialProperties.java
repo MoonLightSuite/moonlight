@@ -409,7 +409,7 @@ class TestSpatialProperties {
         SpatialTemporalSignal<Integer> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 1.0,
                 (t, l) -> new Integer(typeOfNode.get(l)));
         //// Loc Service Static ///
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 1,model);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 1,model);
 
         System.out.println(signal.valuesatT(0));
 

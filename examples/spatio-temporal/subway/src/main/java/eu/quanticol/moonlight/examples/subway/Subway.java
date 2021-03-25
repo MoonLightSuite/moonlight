@@ -76,7 +76,7 @@ public class Subway {
 
 
         //// We are considering a static Location Service ///
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, T, network);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, T, network);
 
 
         // Now we can monitor the system for the satisfaction of our Peak Management property

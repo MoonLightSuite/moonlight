@@ -57,7 +57,7 @@ import eu.quanticol.moonlight.space.SpatialModel;
  */
 public interface SpatialTemporalMonitor<S, T, R> {
 	
-	SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+	SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 									 SpatialTemporalSignal<T> signal);
 	
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> atomicMonitor(Function<T, R> atomic) {

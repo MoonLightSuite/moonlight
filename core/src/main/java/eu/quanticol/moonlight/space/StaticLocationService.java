@@ -5,7 +5,7 @@ import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;
 
-public class StaticLocationService<V> implements LocationService<V> {
+public class StaticLocationService<V> implements LocationService<Double, V> {
 
     private SpatialModel<V> model;
 
@@ -14,7 +14,7 @@ public class StaticLocationService<V> implements LocationService<V> {
     }
 
     @Override
-    public SpatialModel<V> get(double t) {
+    public SpatialModel<V> get(Double t) {
         return model;
     }
 

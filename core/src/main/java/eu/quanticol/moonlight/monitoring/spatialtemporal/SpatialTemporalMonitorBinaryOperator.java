@@ -54,7 +54,7 @@ public class SpatialTemporalMonitorBinaryOperator<S, T, R>
 	}
 
 	@Override
-	public SpatialTemporalSignal<R> monitor(LocationService<S> locationService,
+	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
 		return SpatialTemporalSignal.apply(m1.monitor(locationService, signal),

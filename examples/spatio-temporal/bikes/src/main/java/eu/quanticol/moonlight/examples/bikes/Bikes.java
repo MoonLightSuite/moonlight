@@ -71,12 +71,12 @@ public class Bikes {
                 parseTrajectory(simulation);
 
         // We load the spatial graph model
-        GraphModel<Double> spatialModel = loadSpatialGraph();
+        SpatialModel<Double> spatialModel = loadSpatialGraph();
 
         // We initialize a static location service on the space graph
         // (i.e. the space graph never changes its topology during monitoring)
         double[] times = copyOfRange(simulation[0], 0, SIMULATION_STEPS);
-        LocationService<Double> locService =
+        LocationService<Double, Double> locService =
                 createLocServiceStaticFromTimeTraj(times, spatialModel);
 
         // We initialize the set of atomic properties of our interest

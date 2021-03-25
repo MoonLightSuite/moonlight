@@ -69,7 +69,7 @@ public class OnlineSTMonitorReachOperator<S, T, R>
     }
 
     @Override
-    public SpatialTemporalSignal<R> monitor(LocationService<S> locServ,
+    public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locServ,
                                             SpatialTemporalSignal<T> signal)
     {
         //if(horizon.contains(signalEnd) || worklist.isEmpty()) {

@@ -41,7 +41,7 @@ class TRALocationServiceLoaderTest {
                 "3 4 7\n" +
                 "2 4 8\n";
         TRALocationServiceLoader loader = new TRALocationServiceLoader();
-        LocationService<MoonLightRecord> ls = loader.load(rh,tra);
+        LocationService<Double, MoonLightRecord> ls = loader.load(rh,tra);
         assertNotNull(ls);
         SpatialModel<MoonLightRecord> g = ls.get(0.0);
         assertEquals(4,g.size());
@@ -76,7 +76,7 @@ class TRALocationServiceLoaderTest {
                 "3 4 7\n" +
                 "2 4 8\n";
         TRALocationServiceLoader loader = new TRALocationServiceLoader();
-        LocationService<MoonLightRecord> ls = loader.load(rh,tra);
+        LocationService<Double, MoonLightRecord> ls = loader.load(rh,tra);
         assertNotNull(ls);
         SpatialModel<MoonLightRecord> g = ls.get(0.0);
         assertEquals(4,g.size());
@@ -93,7 +93,7 @@ class TRALocationServiceLoaderTest {
                 "2 4 8 4.5\n" +
                 "TIME 0.1\n";
         TRALocationServiceLoader loader = new TRALocationServiceLoader();
-        LocationService<MoonLightRecord> ls = loader.load(rh,tra);
+        LocationService<Double, MoonLightRecord> ls = loader.load(rh,tra);
         assertNotNull(ls);
         SpatialModel<MoonLightRecord> g = ls.get(0.0);
         assertEquals(4,g.size());
@@ -134,7 +134,7 @@ class TRALocationServiceLoaderTest {
                 "3 4 7 3.4\n" +
                 "2 4 8 4.5\n";
         TRALocationServiceLoader loader = new TRALocationServiceLoader();
-        LocationService<MoonLightRecord> ls = loader.load(rh,tra);
+        LocationService<Double, MoonLightRecord> ls = loader.load(rh,tra);
         assertNotNull(ls);
         SpatialModel<MoonLightRecord> g = ls.get(0.0);
         assertEquals(4,g.size());

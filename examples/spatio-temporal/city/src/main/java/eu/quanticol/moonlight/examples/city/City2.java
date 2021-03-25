@@ -39,7 +39,7 @@ public class City2 {
 
 
         //// Loc Service Static ///
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,city);
+        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,city);
 
 
         ////  P1 = "isThereATaxi" ////

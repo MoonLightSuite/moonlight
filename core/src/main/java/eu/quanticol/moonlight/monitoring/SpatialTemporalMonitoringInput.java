@@ -14,10 +14,10 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 public class SpatialTemporalMonitoringInput<S,T> {
 	
 	private final SpatialTemporalSignal<S> signal;
-	private final LocationService<T> locationService;
+	private final LocationService<Double, T> locationService;
 	private final String[] locationId;
 	
-	public SpatialTemporalMonitoringInput(SpatialTemporalSignal<S> signal, LocationService<T> locationService, String[] locationId) {
+	public SpatialTemporalMonitoringInput(SpatialTemporalSignal<S> signal, LocationService<Double, T> locationService, String[] locationId) {
 		super();
 		this.signal = signal;
 		this.locationService = locationService;
@@ -28,7 +28,7 @@ public class SpatialTemporalMonitoringInput<S,T> {
 		return signal;
 	}
 
-	public LocationService<T> getLocationService() {
+	public LocationService<Double, T> getLocationService() {
 		return locationService;
 	}
 	

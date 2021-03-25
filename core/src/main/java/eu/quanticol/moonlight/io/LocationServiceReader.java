@@ -41,7 +41,7 @@ public interface LocationServiceReader {
      * @throws IOException if I/O error occurs while reading the file
      * @throws IllegalFileFormatException if the file is not well formatted
      */
-    LocationService<MoonLightRecord> read(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
+    LocationService<Double, MoonLightRecord> read(RecordHandler handler, File input) throws IOException, IllegalFileFormatException;
 
     /**
      * Reads a location service from a file.
@@ -51,7 +51,7 @@ public interface LocationServiceReader {
      * @return a location service
      * @throws IllegalFileFormatException if the file is not well formatted
      */
-    LocationService<MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException;
+    LocationService<Double, MoonLightRecord> read(RecordHandler handler, String input) throws IllegalFileFormatException;
 
 
 }

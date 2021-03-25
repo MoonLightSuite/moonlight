@@ -44,7 +44,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 		checkTypes( root );
 		Map<String,Integer> locationIndex = getLocationIndex( root );
 		SpatialTemporalSignal<MoonLightRecord> signal = loadSignal( locationIndex, root );
-		LocationService<MoonLightRecord> locationService = loadLocationService( locationIndex, root );
+		LocationService<Double, MoonLightRecord> locationService = loadLocationService( locationIndex, root );
 		return new SpatialTemporalMonitoringInput<>(signal, locationService,null);
 	}
 
@@ -112,7 +112,7 @@ public class JSonSpatioTemporalSignalDeserializer {
 		return toReturn;
 	}
 
-	private LocationService<MoonLightRecord> loadLocationService(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
+	private LocationService<Double, MoonLightRecord> loadLocationService(Map<String, Integer> locationIndex, JsonObject root) throws IllegalFileFormat {
 		if (!root.has(JSONUtils.SPACE_TAG)) {
 			throw new IllegalFileFormat("Tag "+JSONUtils.SPACE_TAG+" is missing!");						
 		}

@@ -28,7 +28,7 @@ import eu.quanticol.moonlight.util.Pair;
  * @author loreti
  *
  */
-public class LocationServiceList<V> implements LocationService<V> {
+public class LocationServiceList<V> implements LocationService<Double, V> {
 	
 	private final LinkedList<Pair<Double,SpatialModel<V>>> steps = new LinkedList<>();
 	private Pair<Double,SpatialModel<V>> last;
@@ -47,7 +47,7 @@ public class LocationServiceList<V> implements LocationService<V> {
 	}
 
 	@Override
-	public SpatialModel<V> get(double t) {
+	public SpatialModel<V> get(Double t) {
 		 Pair<Double,SpatialModel<V>> temp = null;
 		 for (Pair<Double, SpatialModel<V>> p : steps) {
 			if ((temp!=null)&&(t<p.getFirst())) {

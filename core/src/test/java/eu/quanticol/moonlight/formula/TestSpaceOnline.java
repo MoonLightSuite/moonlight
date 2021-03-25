@@ -1,80 +1,96 @@
-package eu.quanticol.moonlight.examples.subway.grid;
+package eu.quanticol.moonlight.formula;
 
-import eu.quanticol.moonlight.examples.subway.io.DataReader;
-import eu.quanticol.moonlight.examples.subway.parsing.AdjacencyExtractor;
-import eu.quanticol.moonlight.examples.subway.io.FileType;
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
+import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.ImmutableGraphModel;
+import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-/**
- * We are assuming the Subway network is part of an N x N grid,
- * where all the edges represent the same distance.
- */
-public class Grid {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    public SpatialModel<Double> getModel(String file) {
-        ParsingStrategy<ImmutableGraphModel<Double>> s = new AdjacencyExtractor();
-        DataReader<ImmutableGraphModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
+class TestSpaceOnline {
+    static final double T = 10;
+    static final int N = 3;
 
-        return data.read();
+    @Test
+    void testSomewhere() {
+        SpatialModel<Double> grid = generateNGrid(N);
+        LocationService<Double, Double> locSvc =
+                TestUtils.createLocServiceStatic(0, 1, T, grid);
+
+
+        HashMap<String, Function<Double, AbstractInterval<Double>>>
+                atoms = new HashMap<>();
+
+        atoms.put("positiveX", v -> new AbstractInterval<>(v, v));
+
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> dist = new HashMap<>();
+        dist.put("standard",
+                    g -> distance(0.0, 1.0).apply(g));
+
+        OnlineSpaceTimeMonitor<Double, Double, Double> m =
+                new OnlineSpaceTimeMonitor<>(formula(), N * N, new DoubleDomain(), locSvc, atoms, dist);
+
+
+        //define update
+
+        List<Double> uData =
+            IntStream.range(0, N * N)
+                     .boxed()
+                     .map(Integer::doubleValue)
+                     .collect(Collectors.toList());
+
+        Update<Double, List<Double>> u = new Update<>(0.0, 5.0, uData);
+
+        SignalInterface<Double, List<AbstractInterval<Double>>> r =
+                m.monitor(null);
+
+        SegmentChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
+
+        List<AbstractInterval<Double>> fs = ss.get(0).getValue();
+
+        for(int i = 0; i < fs.size(); i++)
+            System.out.println("Robustness at Location " + i + ": " + fs.get(i));
+
+        assertEquals(ss.size(), 1);
+
+        r = m.monitor(u);
+
+        ss = r.getSegments();
+
+        fs = ss.get(0).getValue();
+
+        for(int i = 0; i < fs.size(); i++)
+            System.out.println("Robustness at Location " + i + ": " + fs.get(i));
+
+        System.out.println("Grid:");
+        IntStream.range(0, N * N).forEach(x -> System.out.println(fromArray(x, N)));
+
+        System.out.println("Update:");
+        IntStream.range(0, N * N).forEach(x -> System.out.println("Cell " + fromArray(x, N) + " -> " + uData.get(x).intValue()));
+
+        System.out.println("Robustness:");
+        List<AbstractInterval<Double>> vs = fs;
+        IntStream.range(0, N * N).forEach(x -> System.out.println("Cell " + fromArray(x, N) + " -> " + vs.get(x).getStart().intValue()));
+
     }
 
-    /**
-     * Predicate that, given two locations, converts them in grid coordinates
-     * and checks whether the direction is consistent with the new location.
-     * @param nl identifier of the new location
-     * @param ol identifier of the old location
-     * @param dir direction to consider
-     * @param size dimension of the (squared) grid
-     * @return the result of the comparison between the direction and the locations.
-     */
-    public static Boolean checkDirection(int nl, int ol, GridDirection dir, int size) {
-        int nx = fromArray(nl, size).getFirst();
-        int ny = fromArray(nl, size).getSecond();
-        int ox = fromArray(ol, size).getFirst();
-        int oy = fromArray(ol, size).getSecond();
-
-        switch(dir) {
-            case NE:
-                return (ny == oy + 1) && (nx == ox + 1);
-            case NW:
-                return (ny == oy + 1) && (nx == ox - 1);
-            case SE:
-                return (ny == oy - 1) && (nx == ox + 1);
-            case SW:
-                return (ny == oy - 1) && (nx == ox - 1);
-            case NN:
-                return ny == oy + 1;
-            case SS:
-                return ny == oy - 1;
-            case WW:
-                return nx == ox - 1;
-            case EE:
-                return nx == ox + 1;
-            case HH:
-                return nx == ox && ny == oy;
-            default:
-                throw new UnsupportedOperationException("Invalid direction provided.");
-        }
-
-    }
-
-    /**
-     * Locally generated grid
-     * @return a spatial grid of fixed size
-     */
-    public static SpatialModel<Double> simulateModel() {
-        return generateNGrid(3);
+    private static Formula formula() {
+        return new SomewhereFormula("standard",
+                                    new AtomicFormula("positiveX"));
     }
 
     /**
@@ -93,26 +109,6 @@ public class Grid {
             }
 
         return TestUtils.createSpatialModel(d * d, cityMap);
-    }
-
-    /**
-     * Surroundings of the current node, filtered by a direction
-     * @param loc the current node
-     * @param dir the direction of interest
-     * @param size dimension of the (quadratic) grid
-     * @return a List of the serialized coordinates of the nodes.
-     *
-     * @see #toArray for details on the serialization technique
-     */
-    public static List<Integer> getNeighboursByDirection(int loc, GridDirection dir, int size) {
-        int x = Grid.fromArray(loc, size).getFirst();
-        int y = Grid.fromArray(loc, size).getSecond();
-        List<Integer> neighbours = getNeighbours(x, y, size);
-
-        // remove neighbours not in the right direction
-        neighbours.removeIf(n -> !checkDirection(n, loc, dir, size));
-
-        return neighbours;
     }
 
     /**
@@ -197,5 +193,4 @@ public class Grid {
     public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
         return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
     }
-
 }

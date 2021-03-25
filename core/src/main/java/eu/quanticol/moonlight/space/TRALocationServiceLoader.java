@@ -64,22 +64,22 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
     private static final String TRANSITIONS_KEY = "TRANSITIONS";
 
     @Override
-    public LocationService<MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormat {
+    public LocationService<Double, MoonLightRecord> load(RecordHandler handler, File input) throws IOException, IllegalFileFormat {
         return load(handler,getRows(input));
     }
 
     @Override
-    public LocationService<MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormat {
+    public LocationService<Double, MoonLightRecord> load(RecordHandler handler, String input) throws IllegalFileFormat {
         return load(handler,getRows(input));
     }
 
-    private LocationService<MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormat {
+    private LocationService<Double, MoonLightRecord> load(RecordHandler handler, List<Row> rows) throws IllegalFileFormat {
         Iterator<Row> iterator = rows.iterator();
         int size = parseSize( iterator );
         return parseLocationService(size,handler,iterator);
     }
 
-    private LocationService<MoonLightRecord> parseLocationService(int size, RecordHandler handler, Iterator<Row> iterator) throws IllegalFileFormat {
+    private LocationService<Double, MoonLightRecord> parseLocationService(int size, RecordHandler handler, Iterator<Row> iterator) throws IllegalFileFormat {
         LocationServiceList<MoonLightRecord> loc = new LocationServiceList<>();
         Row row = nextNotEmpty(iterator);
         if (isTimeRow(row)) {

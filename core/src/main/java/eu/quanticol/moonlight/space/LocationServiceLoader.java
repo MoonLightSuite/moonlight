@@ -28,8 +28,8 @@ import java.io.IOException;
 
 public interface LocationServiceLoader {
 
-    LocationService<MoonLightRecord> load(RecordHandler handler, File input ) throws IOException, IllegalFileFormat;
-    LocationService<MoonLightRecord> load(RecordHandler handler, String input ) throws  IllegalFileFormat;
+    LocationService<Double, MoonLightRecord> load(RecordHandler handler, File input ) throws IOException, IllegalFileFormat;
+    LocationService<Double, MoonLightRecord> load(RecordHandler handler, String input ) throws  IllegalFileFormat;
 
 
 }

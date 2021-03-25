@@ -50,7 +50,7 @@ class OnlineSpatialTemporalMonitoringTest {
     private static final GraphModel<Double> city = new GraphModel<>(7);
 
 
-    private static final LocationService<Double> LOC_SVC =
+    private static final LocationService<Double, Double> LOC_SVC =
                     TestUtils.createLocServiceStatic(0, 1, 3, city);
 
     @BeforeAll

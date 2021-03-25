@@ -1,82 +1,151 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.signal.online.DiffIterator;
-import eu.quanticol.moonlight.signal.online.SegmentChain;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class SpatialComputation {
+public class SpatialComputation
+<T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
+{
+    private final LocationService<T, S> locSvc;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
+    private final BiFunction<Function<Integer, R>,
+                             DistanceStructure<S, ?>,
+                             List<R>> op;
 
-    private SpatialComputation() {}    // hidden constructor
+    Iterator<Pair<T, SpatialModel<S>>> spaceItr;
+    Pair<T, SpatialModel<S>> currSpace;
+    Pair<T, SpatialModel<S>> nextSpace;
 
-    public static <S, R extends Comparable<R>>
-    List<Update<Double, List<R>>> computeDynamic(
-        LocationService<S> l,
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-        BiFunction<Function<Integer, R>, DistanceStructure<S, ?>, List<R>> op,
-        Update<Double, List<R>> u,
-        SegmentChain<Double, List<R>> s)
+    public SpatialComputation(LocationService<T, S> locationService,
+                              Function<SpatialModel<S>,
+                                       DistanceStructure<S, ?>> distance,
+                              BiFunction<Function<Integer, R>,
+                                                  DistanceStructure<S, ?>,
+                                                  List<R>> operator)
     {
-        List<Update<Double, List<R>>> results = new ArrayList<>();
+        if (locationService.isEmpty())
+            throw new UnsupportedOperationException("The location Service " +
+                    "must not be empty!");
 
-        if (l.isEmpty())
-            return results;
+        locSvc = locationService;
+        dist = distance;
+        op = operator;
+    }
 
-        //NOTE: only `Double` dependence
-        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = l.times();
+    public List<Update<T, List<R>>> computeDynamic(Update<T, List<R>> u)
+    {
+        List<Update<T, List<R>>> results = new ArrayList<>();
 
-        Pair<Double, SpatialModel<S>> currSpace = spaceItr.next();
-        Pair<Double, SpatialModel<S>> nextSpace = getNext(spaceItr);
+        spaceItr = locSvc.times();
 
+        T t = u.getStart();
+        T tNext = u.getEnd();
+        Function<Integer, R> spatialSignal = i -> u.getValue().get(i);
 
+        tNext = seekSpace(t, tNext);
 
-        DiffIterator<SegmentInterface<Double, List<R>>> itr = s.diffIterator();
-        SegmentInterface<Double, List<R>> curr = itr.next();
-        Double t = curr.getStart();
+        SpatialModel<S> sm = currSpace.getSecond();
+        DistanceStructure<S, ?> f = dist.apply(sm);
 
-        while ((nextSpace != null) &&
-               (nextSpace.getFirst().compareTo(t) <= 0)) {
+        results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
+
+        while (nextSpace != null &&
+               nextSpace.getFirst().compareTo(u.getEnd()) < 0)
+        {
             currSpace = nextSpace;
+            t = currSpace.getFirst();
             nextSpace = getNext(spaceItr);
-        }
-
-        while(itr.hasNext() && t < u.getEnd()) {
-            SegmentInterface<Double, List<R>> next = itr.tryPeekNext(curr);
-            Double nextTime = next.getStart();
-            Function<Integer, R> spatialSignal = i -> curr.getValue().get(i);
-
-            SpatialModel<S> sm = currSpace.getSecond();
-            DistanceStructure<S, ?> f = distance.apply(sm);
-
-            results.add(
-                    new Update<>(t, nextTime,
-                            op.apply(spatialSignal, f)));
-            //TODO: toReturn.add(start, op.apply(spatialSignal, f));
-
-            while ((nextSpace != null) && (nextSpace.getFirst() < nextTime)) {
-                currSpace = nextSpace;
-                t = currSpace.getFirst();
-                nextSpace = getNext(spaceItr);
-                f = distance.apply(currSpace.getSecond());
-                //TODO: toReturn.add(t, op.apply(spatialSignal, f));
+            if(nextSpace != null && !currSpace.equals(nextSpace)) {
+                tNext = nextSpace.getFirst();
+                f = dist.apply(currSpace.getSecond());
+                results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
             }
-            currSpace = (nextSpace != null ? nextSpace : currSpace);
-            nextSpace = getNext(spaceItr);
-
         }
 
         return results;
     }
+
+    private T seekSpace(T start, T end) {
+        T value = end;
+        currSpace = spaceItr.next();
+        getNext(spaceItr);
+        while(nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0) {
+            currSpace = nextSpace;
+            nextSpace = getNext(spaceItr);
+        }
+
+        if(nextSpace != null)
+            value = nextSpace.getFirst();
+
+        return value;
+    }
+
+    public List<Update<T, List<R>>> computeEscapeDynamic(
+            Update<T, List<R>> u, SignalDomain<R> domain)
+    {
+        List<Update<T, List<R>>> results = new ArrayList<>();
+        spaceItr = locSvc.times();
+
+        T t = u.getStart();
+        T tNext = u.getEnd();
+        Function<Integer, R> spatialSignal = i -> u.getValue().get(i);
+
+        tNext = seekSpace(t, tNext);
+
+        SpatialModel<S> sm = currSpace.getSecond();
+        DistanceStructure<S, ?> f = dist.apply(sm);
+
+        results.add(new Update<>(t, tNext, f.escape(domain, spatialSignal)));
+
+        while ((nextSpace != null) &&
+                nextSpace.getFirst().compareTo(u.getEnd()) < 0)
+        {
+            currSpace = nextSpace;
+            t = currSpace.getFirst();
+            nextSpace = getNext(spaceItr);
+
+            if(nextSpace != null && !currSpace.equals(nextSpace)) {
+                tNext = nextSpace.getFirst();
+                f = dist.apply(currSpace.getSecond());
+                results.add(new Update<>(t, tNext, f.escape(domain,
+                                                            spatialSignal)));
+            }
+        }
+
+        return results;
+    }
+
 
     /**
      * Returns the next element if there is one, otherwise null

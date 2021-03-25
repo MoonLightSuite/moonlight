@@ -141,7 +141,7 @@ class TestSensorScript {
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
 	}
 	
-	private LocationService<MoonLightRecord> createLocService(double start, double dt, double end, SpatialModel<MoonLightRecord> graph) {
+	private LocationService<Double, MoonLightRecord> createLocService(double start, double dt, double end, SpatialModel<MoonLightRecord> graph) {
         LocationServiceList<MoonLightRecord> locService = new LocationServiceList<MoonLightRecord>();
         double time = start;
         while (time < end) {

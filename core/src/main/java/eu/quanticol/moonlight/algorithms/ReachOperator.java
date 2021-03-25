@@ -39,7 +39,7 @@ public class ReachOperator {
     private ReachOperator() {} // Hidden constructor
 
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
-            LocationService<S> locSvc,
+            LocationService<Double, S> locSvc,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
