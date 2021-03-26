@@ -190,8 +190,6 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
-
-    @Disabled("Work in progress")
     @Test
     void testOrFormulaAtT4() {
         Object[] ss = testAtUpdate4(orFormula());
@@ -239,17 +237,15 @@ class TestRoSIBerkeleyExample {
             assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
             assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
             assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
-            assertValue(T4, new AbstractInterval<>(-1.0, -1.0), ss[4]);
-            assertValue(T5, ANY, ss[5]);
+            assertValue(T5, ANY, ss[4]);
 
             // Exactly six segments
-            assertEquals(6, ss.length);
+            assertEquals(5, ss.length);
         }
         else
             fail("Empty signal should never happen!");
     }
 
-    @Disabled("Work in progress")
     @Test
     void testOrFormulaAtT5() {
         Object[] ss = testAtUpdate5(orFormula());
@@ -259,12 +255,11 @@ class TestRoSIBerkeleyExample {
             assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
             assertValue(5, new AbstractInterval<>(2.0, 2.0), ss[2]);
             assertValue(T2, new AbstractInterval<>(2.0, P_INF), ss[3]);
-            assertValue(11, new AbstractInterval<>(1.0, P_INF), ss[3]);
-            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[3]);
-            assertValue(T5, ANY, ss[4]);
+            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[4]);
+            assertValue(T5, ANY, ss[5]);
 
             // Exactly four updates
-            assertEquals(4, ss.length);
+            assertEquals(6, ss.length);
         }
         else
             fail("Empty signal should never happen!");

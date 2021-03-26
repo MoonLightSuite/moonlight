@@ -20,23 +20,26 @@ public class Refinement {
                 s.diffIterator();
         SegmentInterface<Double, V> current = itr.next();
 
+        V oldV = current.getValue();
+
         boolean done = false;
 
         while (itr.hasNext()) {
             if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
-                        refinable))
+                        refinable, oldV))
             {
                 done = true;
                 break;
             }
 
             // Save the "next" as the next "current".
+            oldV = current.getValue();
             current = itr.next();
         }
 
         if(!done) // To handle single-segment signals
             doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
-                     refinable);
+                     refinable, oldV);
 
         return !itr.getChanges().isEmpty();
     }
@@ -55,7 +58,7 @@ public class Refinement {
     private static <V> boolean doRefine(
             DiffIterator<SegmentInterface<Double, V>> itr,
             SegmentInterface<Double, V> curr,
-            double from, double to, V vNew, BiPredicate<V, V> refinable)
+            double from, double to, V vNew, BiPredicate<V, V> refinable, V oldV)
     {
         double t = curr.getStart();
         double tNext = Double.POSITIVE_INFINITY;
@@ -77,7 +80,7 @@ public class Refinement {
         //          This means the current segment starts exactly at
         //          update time, therefore, its value must be updated
         if(t == from) {
-            update(itr, t, v, vNew, refinable);
+            update(itr, t, v, vNew, refinable, oldV);
         }
 
         // Case 3 - t  in (from, to):
@@ -113,19 +116,20 @@ public class Refinement {
      */
     private static <V>
     void update(DiffIterator<SegmentInterface<Double, V>> itr,
-                double t, V v, V vNew, BiPredicate<V, V> refinable)
+                double t, V v, V vNew, BiPredicate<V, V> refinable, V oldV)
     {
-        if(refinable.test(v, vNew)) {
-            ImmutableSegment<V> s = new ImmutableSegment<>(t, vNew);
-
-            SegmentInterface<Double, V> p = itr.peekPrevious();
-
-            if(!s.equals(p))
+        //redundant updates can be ignored
+        if(!v.equals(vNew)) {
+            if(oldV.equals(vNew)) {
+                remove(itr);
+            } else if (refinable.test(v, vNew)) {
+                SegmentInterface<Double, V> s = new ImmutableSegment<>(t, vNew);
                 itr.set(s);
-        } else {
-            throw new UnsupportedOperationException("Refining interval: " +
-                    vNew + " is wider than " +
-                    "the original:" + v);
+            } else {
+                throw new UnsupportedOperationException("Refining interval: " +
+                        vNew + " is wider than " +
+                        "the original:" + v);
+            }
         }
     }
 
