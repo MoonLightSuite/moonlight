@@ -54,6 +54,22 @@ public class BooleanComputation {
         return results;
     }
 
+
+    public static
+    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    List<Update<T, R>> binaryUp(SignalInterface<T, R> s,
+                                Update<T, R> u,
+                                BinaryOperator<R> op)
+    {
+        List<Update<T, R>> updates = new ArrayList<>();
+        SegmentChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
+
+        parallelExec(p1, updates, op, u);  // TODO: this should be different for
+                                           //       left and right operands
+
+        return updates;
+    }
+
     /**
      * Computes a list of updates to the robustness signal of a binary operator.
      *
@@ -78,6 +94,7 @@ public class BooleanComputation {
      * @param <R> Output robustness domain
      * @return a list of updates for the robustness signal in input
      */
+    /*
     public static
     <T extends Comparable<T> & Serializable, R extends Comparable<R>>
     List<Update<T, R>> binary(SignalInterface<T, R> s1,
@@ -135,21 +152,6 @@ public class BooleanComputation {
         return updates;
     }
 
-    public static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    List<Update<T, R>> binaryUp(SignalInterface<T, R> s,
-                                Update<T, R> u,
-                                BinaryOperator<R> op)
-    {
-        List<Update<T, R>> updates = new ArrayList<>();
-        SegmentChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
-
-        parallelExec(p1, updates, op, u);  // TODO: this should be different for
-                                           //       left and right operands
-
-        return updates;
-    }
-
     private static
     <T extends Comparable<T> & Serializable, R extends Comparable<R>>
     void overlappingBefore(SegmentChain<T, R> s,
@@ -198,7 +200,7 @@ public class BooleanComputation {
                 updates.add(r);
             }
         }
-    }
+    }*/
 
     private static
     <T extends Comparable<T> & Serializable, R extends Comparable<R>>

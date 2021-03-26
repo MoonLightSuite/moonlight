@@ -47,10 +47,9 @@ public class BinaryMonitor<V, R extends Comparable<R>>
 {
 
     private final BinaryOperator<AbstractInterval<R>> opFunction;
-    //private final Interval horizon;
     private final SignalInterface<Double, AbstractInterval<R>> rho;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> firstArgMonitor;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor;
+    private final OnlineMonitor<Double, V, AbstractInterval<R>> firstArg;
+    private final OnlineMonitor<Double, V, AbstractInterval<R>> secondArg;
 
 
     /**
@@ -63,14 +62,12 @@ public class BinaryMonitor<V, R extends Comparable<R>>
             OnlineMonitor<Double, V, AbstractInterval<R>> firstArgument,
             OnlineMonitor<Double, V, AbstractInterval<R>> secondArgument,
             BinaryOperator<AbstractInterval<R>> binaryOp,
-            //Interval parentHorizon,
             SignalDomain<R> interpretation)
     {
         this.opFunction = binaryOp;
-        //this.horizon = parentHorizon;
         this.rho = new OnlineSignal<>(interpretation);
-        this.firstArgMonitor = firstArgument;
-        this.secondArgMonitor = secondArgument;
+        this.firstArg = firstArgument;
+        this.secondArg = secondArgument;
     }
 
     @Override
@@ -80,41 +77,24 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
         List<Update<Double, AbstractInterval<R>>> firstArgUps =
-                firstArgMonitor.monitor(signalUpdate);
+                firstArg.monitor(signalUpdate);
         List<Update<Double, AbstractInterval<R>>> secondArgUps =
-                secondArgMonitor.monitor(signalUpdate);
+                secondArg.monitor(signalUpdate);
 
 
-        SignalInterface<Double, AbstractInterval<R>> s1 = firstArgMonitor.getResult();
-        SignalInterface<Double, AbstractInterval<R>> s2 = secondArgMonitor.getResult();
-
-        //System.out.println(">>> Arg 1 updates: " + firstArgUps);
+        SignalInterface<Double, AbstractInterval<R>> s1 = firstArg.getResult();
+        SignalInterface<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
         for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
-            List<Update<Double, AbstractInterval<R>>> ups =
-                    BooleanComputation.binaryUp(s2, argU, opFunction);
-            updates.addAll(ups);
-            ups.forEach(rho::refine);
+            updates.addAll(BooleanComputation.binaryUp(s2, argU, opFunction));
+
         }
 
         for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
-            List<Update<Double, AbstractInterval<R>>> ups =
-                    BooleanComputation.binaryUp(s1, argU, opFunction);
-            updates.addAll(ups);
-            ups.forEach(rho::refine);
+            updates.addAll(BooleanComputation.binaryUp(s1, argU, opFunction));
         }
 
-        System.out.println(">>> S1: " + s1);
-
-        System.out.println(">>> S2: " + s2);
-
-        System.out.println(">>> Binary Updates: " + updates);
-
-        //for(Update<Double, AbstractInterval<R>> u: updates) {
-        //    rho.refine(u);
-        //}
-
-        System.out.println(">>> Binary New Rho: " + rho);
+        updates.forEach(rho::refine);
 
         return updates;
     }
