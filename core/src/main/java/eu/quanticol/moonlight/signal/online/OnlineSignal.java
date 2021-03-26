@@ -88,31 +88,7 @@ public class OnlineSignal<D extends Comparable<D>>
     public SegmentChain<Double, AbstractInterval<D>> select(Double from,
                                                             Double to)
     {
-        int start = 0;
-        int end = 1;
-
-        DiffIterator<SegmentInterface<Double, AbstractInterval<D>>> itr =
-                getSegments().diffIterator();
-        SegmentInterface<Double, AbstractInterval<D>> current;
-
-        do{
-            current = itr.next();
-            if(current.getStart().compareTo(to) > 0) {
-                end = itr.previousIndex();
-                break;
-            }
-            if (current.getStart().compareTo(from) > 0) {
-                start = itr.previousIndex();
-            }
-            if(itr.tryPeekNext(current).equals(current)) {
-                start = itr.previousIndex();
-                end = itr.previousIndex() + 1;
-            }
-        } while(itr.hasNext());
-
-        return getSegments().subChain(start, end,
-                //Math.max(to, current.getStart()));
-                to);
+        return Refinement.select(segments, from, to);
     }
 
     @Override

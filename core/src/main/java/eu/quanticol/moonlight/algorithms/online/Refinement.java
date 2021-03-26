@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.signal.online.*;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
 
@@ -146,5 +147,36 @@ public class Refinement {
     {
         if(!itr.peekPrevious().getValue().equals(value))
             itr.add(new ImmutableSegment<>(start, value));
+    }
+
+
+    public static <T extends Comparable<T> & Serializable, V>
+    SegmentChain<T, V> select(SegmentChain<T, V> segments, T from, T to)
+    {
+        int start = 0;
+        int end = 1;
+
+        DiffIterator<SegmentInterface<T, V>> itr = segments.diffIterator();
+
+        do {
+            SegmentInterface<T, V> current = itr.next();
+
+            // We went too far, the last returned is the last one useful
+            if(current.getStart().compareTo(to) > 0) {
+                end = itr.previousIndex();
+                break;
+            }
+
+            // So far no interesting segments, we move on
+            if(current.getStart().compareTo(from) < 0)
+                start = itr.previousIndex();
+
+            // Last segment, this is necessarily the last interesting one.
+            if(itr.tryPeekNext(current).equals(current))
+                end = itr.previousIndex() + 1;
+
+        } while(itr.hasNext());
+
+        return segments.subChain(start, end, to);
     }
 }

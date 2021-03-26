@@ -37,60 +37,63 @@ class TestSpaceOnline {
 
         atoms.put("positiveX", v -> new AbstractInterval<>(v, v));
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> dist = new HashMap<>();
+        HashMap<String,
+                Function<SpatialModel<Double>,
+                         DistanceStructure<Double, ?>>> dist = new HashMap<>();
         dist.put("standard",
                     g -> distance(0.0, 1.0).apply(g));
 
+        Formula f = new SomewhereFormula("standard",
+                                        new AtomicFormula("positiveX"));
+
         OnlineSpaceTimeMonitor<Double, Double, Double> m =
-                new OnlineSpaceTimeMonitor<>(formula(), N * N, new DoubleDomain(), locSvc, atoms, dist);
+                new OnlineSpaceTimeMonitor<>(f, N * N, new DoubleDomain(),
+                                             locSvc, atoms, dist);
 
 
-        //define update
-
-        List<Double> uData =
-            IntStream.range(0, N * N)
-                     .boxed()
-                     .map(Integer::doubleValue)
-                     .collect(Collectors.toList());
-
-        Update<Double, List<Double>> u = new Update<>(0.0, 5.0, uData);
 
         SignalInterface<Double, List<AbstractInterval<Double>>> r =
                 m.monitor(null);
 
         SegmentChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
 
-        List<AbstractInterval<Double>> fs = ss.get(0).getValue();
+        assertEquals(1, ss.size());
 
-        for(int i = 0; i < fs.size(); i++)
-            System.out.println("Robustness at Location " + i + ": " + fs.get(i));
-
-        assertEquals(ss.size(), 1);
-
+        Update<Double, List<Double>> u = basicUpdate(N * N);
         r = m.monitor(u);
 
         ss = r.getSegments();
 
-        fs = ss.get(0).getValue();
+        assertEquals(2, ss.size());
 
-        for(int i = 0; i < fs.size(); i++)
-            System.out.println("Robustness at Location " + i + ": " + fs.get(i));
+        List<AbstractInterval<Double>> fs = ss.get(0).getValue();
+
+        assertEquals(4, fs.get(0).getStart());
+        assertEquals(5, fs.get(1).getStart());
+        assertEquals(5, fs.get(2).getStart());
+        assertEquals(7, fs.get(3).getStart());
+        assertEquals(8, fs.get(4).getStart());
+        assertEquals(8, fs.get(5).getStart());
+        assertEquals(7, fs.get(6).getStart());
+        assertEquals(8, fs.get(7).getStart());
+        assertEquals(8, fs.get(8).getStart());
 
         System.out.println("Grid:");
-        IntStream.range(0, N * N).forEach(x -> System.out.println(fromArray(x, N)));
+        IntStream.range(0, N * N)
+                 .forEach(x -> System.out.println(fromArray(x, N)));
 
         System.out.println("Update:");
-        IntStream.range(0, N * N).forEach(x -> System.out.println("Cell " + fromArray(x, N) + " -> " + uData.get(x).intValue()));
+        IntStream.range(0, N * N)
+                 .forEach(x -> System.out.println("Cell " + fromArray(x, N) +
+                                                  " -> " + u.getValue().get(x)
+                                                            .intValue()));
 
         System.out.println("Robustness:");
-        List<AbstractInterval<Double>> vs = fs;
-        IntStream.range(0, N * N).forEach(x -> System.out.println("Cell " + fromArray(x, N) + " -> " + vs.get(x).getStart().intValue()));
-
-    }
-
-    private static Formula formula() {
-        return new SomewhereFormula("standard",
-                                    new AtomicFormula("positiveX"));
+        IntStream.range(0, N * N)
+                 .forEach(x -> System.out.println("Cell " + fromArray(x, N) +
+                                                  " -> " + fs.get(x)
+                                                             .getStart()
+                                                             .intValue()));
     }
 
     /**
@@ -109,6 +112,16 @@ class TestSpaceOnline {
             }
 
         return TestUtils.createSpatialModel(d * d, cityMap);
+    }
+
+    private static Update<Double, List<Double>> basicUpdate(int n) {
+        List<Double> uData =
+                IntStream.range(0, n)
+                        .boxed()
+                        .map(Integer::doubleValue)
+                        .collect(Collectors.toList());
+
+        return new Update<>(0.0, 5.0, uData);
     }
 
     /**

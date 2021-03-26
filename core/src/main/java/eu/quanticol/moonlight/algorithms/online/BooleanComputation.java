@@ -147,10 +147,6 @@ public class BooleanComputation {
         parallelExec(p1, updates, op, u);  // TODO: this should be different for
                                            //       left and right operands
 
-        // ... u2 end after the intersection
-        //if(u.getEnd().compareTo(p1.getEnd()) < 0)
-        //    overlappingAfter(p1, updates, op, u, p1.getEnd());
-
         return updates;
     }
 
