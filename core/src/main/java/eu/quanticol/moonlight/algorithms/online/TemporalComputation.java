@@ -1,16 +1,11 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.signal.online.DiffIterator;
-import eu.quanticol.moonlight.signal.online.SegmentChain;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.Update;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.BinaryOperator;
-
-import static eu.quanticol.moonlight.algorithms.online.BooleanComputation.tryPeekNextStart;
 
 /**
  * Note that the methods in this class require explicit time declaration to deal
@@ -28,7 +23,7 @@ public class TemporalComputation {
     private TemporalComputation() {}    // hidden constructor
 
     public static <R extends Comparable<R>>
-    List<Update<Double, R>> slidingWindow(SegmentChain<Double, R> s,
+    List<Update<Double, R>> slidingWindow(TimeChain<Double, R> s,
                                           Update<Double, R> u,
                                           Interval opHorizon,
                                           BinaryOperator<R> op)

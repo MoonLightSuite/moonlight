@@ -25,7 +25,6 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.online.*;
 
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import java.util.function.BinaryOperator;
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
 public class TemporalOpMonitor<V, R extends Comparable<R>>
@@ -77,8 +75,8 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
         List<Update<Double, AbstractInterval<R>>> argUpdates =
                 argumentMonitor.monitor(signalUpdate);
 
-        SegmentChain<Double, AbstractInterval<R>> s =
-                ((OnlineSignal<R>) argumentMonitor.getResult()).getSegments();
+        TimeChain<Double, AbstractInterval<R>> s =
+                argumentMonitor.getResult().getSegments();
 
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 

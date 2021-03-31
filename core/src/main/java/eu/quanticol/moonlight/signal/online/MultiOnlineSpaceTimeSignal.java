@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 public class MultiOnlineSpaceTimeSignal
         implements SignalInterface<Double, List<List<AbstractInterval<?>>>>
 {
-    private final SegmentChain<Double, List<List<AbstractInterval<?>>>> segments;
+    private final TimeChain<Double, List<List<AbstractInterval<?>>>> segments;
     private final int size;
 
 
@@ -24,7 +24,7 @@ public class MultiOnlineSpaceTimeSignal
                          .map(i -> domain.any())
                          .collect(Collectors.toList());
 
-        segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
+        segments = new TimeChain<>(Double.POSITIVE_INFINITY);
         segments.add(new ImmutableSegment<>(0.0, any));
 
         size = locations;
@@ -63,7 +63,7 @@ public class MultiOnlineSpaceTimeSignal
      * @return the chain of segments of the signal delimited by the input
      */
     @Override
-    public SegmentChain<Double, List<List<AbstractInterval<?>>>> select(
+    public TimeChain<Double, List<List<AbstractInterval<?>>>> select(
             Double start, Double end)
     {
         throw new UnsupportedOperationException("Not allowed for SpaceTime" +
@@ -77,7 +77,7 @@ public class MultiOnlineSpaceTimeSignal
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public SegmentChain<Double, List<List<AbstractInterval<?>>>> getSegments() {
+    public TimeChain<Double, List<List<AbstractInterval<?>>>> getSegments() {
         return segments;
     }
 }

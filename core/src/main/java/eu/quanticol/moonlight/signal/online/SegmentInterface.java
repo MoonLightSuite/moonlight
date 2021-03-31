@@ -28,7 +28,7 @@ package eu.quanticol.moonlight.signal.online;
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V>
  *
- * @see SegmentChain for a data structure that exploits them
+ * @see TimeChain for a data structure that exploits them
  */
 public interface SegmentInterface
         <T extends Comparable<T>, V>

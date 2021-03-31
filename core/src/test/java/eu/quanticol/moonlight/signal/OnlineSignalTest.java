@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OnlineSignalTest {
-/*
+
     @Test
     void refine1() {
         DoubleDomain domain = new DoubleDomain();
@@ -77,5 +77,4 @@ class OnlineSignalTest {
 
         System.out.println(signal);
     }
- */
 }

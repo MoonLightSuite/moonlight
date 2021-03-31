@@ -55,7 +55,7 @@ class TestSpaceOnline {
         SignalInterface<Double, List<AbstractInterval<Double>>> r =
                 m.monitor(null);
 
-        SegmentChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
+        TimeChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
 
         assertEquals(1, ss.size());
 

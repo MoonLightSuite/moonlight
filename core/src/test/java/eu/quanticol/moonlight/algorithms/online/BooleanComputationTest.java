@@ -26,7 +26,7 @@ class BooleanComputationTest {
         assertEquals(new AbstractInterval<>(-6.0, -4.0), r.get(0).getValue());
     }
 
-    @Disabled("Needs reworking")
+    @Disabled("Needs Reworking")
     @Test
     void binary() {
         SignalDomain<Double> domain = new DoubleDomain();
@@ -45,22 +45,24 @@ class BooleanComputationTest {
 
 
         List<Update<Double, AbstractInterval<Double>>> ups =
-                //BooleanComputation.binary(s1, s2, u1, u2,
-                //                          BooleanComputationTest::or);
-                null;   //TODO: temporary placeholder
+                BooleanComputation.binaryUp(s1, u2,
+                                            BooleanComputationTest::or);
+
+        ups.addAll(BooleanComputation.binaryUp(s2, u1,
+                                               BooleanComputationTest::or));
 
         assertEquals(2, ups.size());
 
         // First update
-        assertEquals(2, ups.get(0).getStart());
-        assertEquals(3, ups.get(0).getEnd());
-        assertEquals(new AbstractInterval<>(8.0, 8.0), ups.get(0).getValue());
+        assertEquals(2, ups.get(1).getStart());
+        assertEquals(3, ups.get(1).getEnd());
+        assertEquals(new AbstractInterval<>(8.0, 8.0), ups.get(1).getValue());
 
         // Second update
-        assertEquals(3, ups.get(1).getStart());
-        assertEquals(5, ups.get(1).getEnd());
+        assertEquals(3, ups.get(0).getStart());
+        assertEquals(5, ups.get(0).getEnd());
         assertEquals(new AbstractInterval<>(8.0, Double.POSITIVE_INFINITY),
-                     ups.get(1).getValue());
+                     ups.get(0).getValue());
     }
 
     private static AbstractInterval<Double> or(AbstractInterval<Double> x,

@@ -107,6 +107,21 @@ class TestRoSIBerkeleyExample {
     }
 
     @Test
+    void testWholeFormulaAtT2() {
+        Object[] ss = testAtUpdate2(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(-2.0, P_INF), ss[0]);
+            assertValue(2, ANY, ss[1]);
+
+            // Exactly three updates
+            assertEquals(2, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
     void testLeftFormulaAtT3() {
         Object[] ss = testAtUpdate3(leftFormula());
 
@@ -115,6 +130,21 @@ class TestRoSIBerkeleyExample {
             assertValue(3.0, new AbstractInterval<>(N_INF, P_INF), ss[1]);
 
             // Exactly two segments
+            assertEquals(2, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
+    void testWholeFormulaAtT3() {
+        Object[] ss = testAtUpdate3(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(-2.0, P_INF), ss[0]);
+            assertValue(7, ANY, ss[1]);
+
+            // Exactly three updates
             assertEquals(2, ss.length);
         }
         else
@@ -195,15 +225,32 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate4(orFormula());
 
         if(ss != null) {
-            assertValue(0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(4, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
             assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[2]);
-            assertValue(8, new AbstractInterval<>(1.0, P_INF), ss[3]);
-            assertValue(13, new AbstractInterval<>(-1.0, P_INF), ss[4]);
-            assertValue(19, ANY, ss[5]);
+            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[3]);
+            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[4]);
+            assertValue(T4, ANY, ss[5]);
 
             // Exactly four updates
             assertEquals(6, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
+    void testWholeFormulaAtT4() {
+        Object[] ss = testAtUpdate4(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, new AbstractInterval<>(-2.0, -2.0), ss[0]);
+            assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[1]);
+            assertValue(7, new AbstractInterval<>(-1.0, P_INF), ss[2]);
+            assertValue(T3, ANY, ss[3]);
+
+            // Exactly three updates
+            assertEquals(4, ss.length);
         }
         else
             fail("Empty signal should never happen!");

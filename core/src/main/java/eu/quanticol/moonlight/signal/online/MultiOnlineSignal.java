@@ -33,13 +33,13 @@ import java.util.stream.IntStream;
 public class MultiOnlineSignal
         implements SignalInterface<Double, List<AbstractInterval<?>>>
 {
-    private final SegmentChain<Double, List<AbstractInterval<?>>> segments;
+    private final TimeChain<Double, List<AbstractInterval<?>>> segments;
 
     /**
      * @param domain The signal domain to consider
      */
     public MultiOnlineSignal(SignalDomain<List<AbstractInterval<?>>> domain) {
-        this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
+        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
         this.segments.add(new ImmutableSegment<>(0.0, domain.any()));
     }
 
@@ -47,7 +47,7 @@ public class MultiOnlineSignal
      * @return the internal list of segments;
      */
     @Override
-    public SegmentChain<Double, List<AbstractInterval<?>>> getSegments() {
+    public TimeChain<Double, List<AbstractInterval<?>>> getSegments() {
         return segments;
     }
 
@@ -92,8 +92,8 @@ public class MultiOnlineSignal
 
 
     @Override
-    public SegmentChain<Double, List<AbstractInterval<?>>> select(Double from,
-                                                            Double to)
+    public TimeChain<Double, List<AbstractInterval<?>>> select(Double from,
+                                                               Double to)
     {
         int start = 0;
         int end = 1;

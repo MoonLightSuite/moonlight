@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.signal.online.DiffIterator;
-import eu.quanticol.moonlight.signal.online.SegmentChain;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -37,7 +37,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.abs;
 
 public class SlidingWindow<R extends Comparable<R>> {
-    private final SegmentChain<Double, R> s;
+    private final TimeChain<Double, R> s;
     private final Interval h;
     private final BinaryOperator<R> op;
     private final double hEnd;
@@ -45,7 +45,7 @@ public class SlidingWindow<R extends Comparable<R>> {
     private final Deque<Node<Double, R>> w = new ArrayDeque<>();
     private final List<Update<Double, R>> updates = new ArrayList<>();
 
-    public SlidingWindow(SegmentChain<Double, R> s, Update<Double, R> update,
+    public SlidingWindow(TimeChain<Double, R> s, Update<Double, R> update,
                          Interval opHorizon, BinaryOperator<R> op)
     {
         this.s = s;
@@ -61,7 +61,7 @@ public class SlidingWindow<R extends Comparable<R>> {
         doSlide(itr);
 
         // We add the last pieces of the window to the updates
-        while(!w.isEmpty()) {
+        while(!w.isEmpty() && w.getFirst().getStart() < hEnd) {
             updates.add(pushUpdate(Double.POSITIVE_INFINITY));
         }
 
@@ -121,9 +121,16 @@ public class SlidingWindow<R extends Comparable<R>> {
         }
     }
 
+    /**
+     * From the last to the first value of the window, we remove them until the
+     * last element is strictly bigger than the current one
+     * @param lastT
+     * @param currV
+     * @return
+     */
     private Node<Double, R> makeMonotonic(Double lastT, R currV) {
         while(!w.isEmpty() && !op.apply(w.getLast().getValue(), currV)
-                .equals(w.getLast().getValue()))
+                                 .equals(w.getLast().getValue()))
         {
             lastT = w.getLast().getStart();
             currV = op.apply(w.getLast().getValue(), currV);

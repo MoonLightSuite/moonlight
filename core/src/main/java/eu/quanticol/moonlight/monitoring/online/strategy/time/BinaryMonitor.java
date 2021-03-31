@@ -24,7 +24,6 @@ import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.online.LegacyOnlineTemporalMonitoring;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -39,7 +38,6 @@ import java.util.function.BinaryOperator;
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see LegacyOnlineTemporalMonitoring
  * @see TemporalMonitor
  */
 public class BinaryMonitor<V, R extends Comparable<R>>

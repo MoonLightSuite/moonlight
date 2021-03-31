@@ -159,9 +159,12 @@ public class AbstractInterval<T extends Comparable<T>>
      * @return a number corresponding to the result of the comparison
      * @throws NullPointerException if the specified object is null
      * @throws ClassCastException if the specified object's type prevents it
+     * @throws UnsupportedOperationException if the interval cannot be compared
      */
     @Override
     public int compareTo(AbstractInterval<T> o) {
+        if(this.equals(o))
+            return 0;
 
         if(getEnd().compareTo(o.getStart()) < 0) {
             return getEnd().compareTo(o.getStart());
@@ -172,7 +175,7 @@ public class AbstractInterval<T extends Comparable<T>>
 
         throw new UnsupportedOperationException("Unable to compare interval " +
                                                 toString() +
-                                                "with " + o.toString());
+                                                " with " + o.toString());
     }
 
     /**

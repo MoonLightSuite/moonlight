@@ -9,7 +9,7 @@ import java.util.function.BiPredicate;
 public class Refinement {
     private Refinement() {}     // hidden constructor
 
-    public static <V> boolean refine(SegmentChain<Double, V> s,
+    public static <V> boolean refine(TimeChain<Double, V> s,
                                      Update<Double, V> u,
                                      BiPredicate<V, V> refinable)
     {
@@ -155,7 +155,7 @@ public class Refinement {
 
 
     public static <T extends Comparable<T> & Serializable, V>
-    SegmentChain<T, V> select(SegmentChain<T, V> segments, T from, T to)
+    TimeChain<T, V> select(TimeChain<T, V> segments, T from, T to)
     {
         int start = 0;
         int end = 1;

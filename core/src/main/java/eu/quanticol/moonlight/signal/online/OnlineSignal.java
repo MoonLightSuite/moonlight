@@ -30,13 +30,13 @@ import eu.quanticol.moonlight.domain.SignalDomain;
  */
 public class OnlineSignal<D extends Comparable<D>>
         implements SignalInterface<Double, AbstractInterval<D>> {
-    private final SegmentChain<Double, AbstractInterval<D>> segments;
+    private final TimeChain<Double, AbstractInterval<D>> segments;
 
     /**
      * @param domain The signal domain to consider
      */
     public OnlineSignal(SignalDomain<D> domain) {
-        this.segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
+        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
         this.segments.add(new ImmutableSegment<>(0.0, new AbstractInterval<>(domain.min(), domain.max())));
     }
 
@@ -44,7 +44,7 @@ public class OnlineSignal<D extends Comparable<D>>
      * @return the internal list of segments;
      */
     @Override
-    public SegmentChain<Double, AbstractInterval<D>> getSegments() {
+    public TimeChain<Double, AbstractInterval<D>> getSegments() {
         return segments;
     }
 
@@ -85,8 +85,8 @@ public class OnlineSignal<D extends Comparable<D>>
 
 
     @Override
-    public SegmentChain<Double, AbstractInterval<D>> select(Double from,
-                                                            Double to)
+    public TimeChain<Double, AbstractInterval<D>> select(Double from,
+                                                         Double to)
     {
         return Refinement.select(segments, from, to);
     }

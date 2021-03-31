@@ -1,14 +1,18 @@
 package eu.quanticol.moonlight.examples.subway.io;
 
 import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.net.URL;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataReaderTest {
+    private static final Logger LOG = Logger.getLogger(DataReaderTest.class.getName());
+    private static final String FILE_SYSTEM_ERROR = "Problems accessing the file system";
+
     private final String[] files = {
                                         "small_TXT.txt"
                                     ,   "small_CSV.csv"
@@ -23,95 +27,97 @@ class DataReaderTest {
 
 
     @Test
-    @Disabled
     void readText() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(files[0]).getFile());
-        String path = file.getAbsolutePath();
+        URL source = getClass().getClassLoader().getResource(files[0]);
 
-        EmptyStrategy str = new EmptyStrategy();
-        DataReader<Boolean> rdr = new DataReader<>(path, types[0], str);
+        if(source != null) {
+            File file = new File(source.getFile());
+            String path = file.getAbsolutePath();
 
-        boolean processed = rdr.read();
+            EmptyStrategy str = new EmptyStrategy();
+            DataReader<Boolean> rdr = new DataReader<>(path, types[0], str);
 
-        file.delete();
+            boolean processed = rdr.read();
 
-        assertTrue(processed);
+            assertTrue(processed);
 
-        assertEquals(3, str.header_count);
-        assertEquals(2, str.line_sum);
+            assertEquals(3, str.header_count);
+            assertEquals(2, str.line_sum);
+        } else
+            LOG.warning(FILE_SYSTEM_ERROR);
     }
 
 
     @Test
-    @Disabled
     void readCSV() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(files[1]).getFile());
-        String path = file.getAbsolutePath();
+        URL source = getClass().getClassLoader().getResource(files[1]);
 
-        EmptyStrategy str = new EmptyStrategy();
-        DataReader<Boolean> rdr = new DataReader<>(path, types[1], str);
+        if(source != null) {
+            File file = new File(source.getFile());
+            String path = file.getAbsolutePath();
 
-        boolean processed = rdr.read();
+            EmptyStrategy str = new EmptyStrategy();
+            DataReader<Boolean> rdr = new DataReader<>(path, types[1], str);
 
-        file.delete();
+            boolean processed = rdr.read();
 
-        assertTrue(processed);
+            assertTrue(processed);
 
-        assertEquals(4, str.header_count);
-        assertEquals(2, str.line_sum);
+            assertEquals(4, str.header_count);
+            assertEquals(2, str.line_sum);
+        } else
+            LOG.warning(FILE_SYSTEM_ERROR);
     }
 
     @Test
-    @Disabled
     void readLongHeaderTxt() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(files[2]).getFile());
-        String path = file.getAbsolutePath();
+        URL source = getClass().getClassLoader().getResource(files[2]);
 
-        EmptyStrategy str = new EmptyStrategy();
-        DataReader<Boolean> rdr = new DataReader<>(path, types[2], str);
+        if(source != null) {
+            File file = new File(source.getFile());
+            String path = file.getAbsolutePath();
 
-        boolean processed = rdr.read();
+            EmptyStrategy str = new EmptyStrategy();
+            DataReader<Boolean> rdr = new DataReader<>(path, types[2], str);
 
-        file.delete();
+            boolean processed = rdr.read();
 
-        assertTrue(processed);
+            assertTrue(processed);
 
-        assertEquals(672, str.header_count);
-        assertEquals(1421.099239665429, str.line_sum);
+            assertEquals(672, str.header_count);
+            assertEquals(1421.099239665429, str.line_sum);
+        } else
+            LOG.warning(FILE_SYSTEM_ERROR);
     }
 
     @Test
-    @Disabled
     void unsupportedFile() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(files[3]).getFile());
-        String path = file.getAbsolutePath();
+        URL source = getClass().getClassLoader().getResource(files[3]);
 
-        EmptyStrategy str = new EmptyStrategy();
-        DataReader<Boolean> rdr = new DataReader<>(path, null, str);
+        if(source != null) {
+            File file = new File(source.getFile());
+            String path = file.getAbsolutePath();
 
-        assertThrows(UnsupportedFileTypeException.class, rdr::read);
+            EmptyStrategy str = new EmptyStrategy();
+            DataReader<Boolean> rdr = new DataReader<>(path, null, str);
 
-        file.delete();
+            assertThrows(UnsupportedFileTypeException.class, rdr::read);
+        } else
+            LOG.warning(FILE_SYSTEM_ERROR);
     }
 
 
     /**
      * Mocked Parsing Strategy
      */
-    class EmptyStrategy implements ParsingStrategy<Boolean> {
+    static class EmptyStrategy implements ParsingStrategy<Boolean> {
         int header_count = 0;
         int line_count = 0;
         double line_sum = 0;
 
         @Override
         public void initialize(String[] header) {
-            for(String v : header) {
-                header_count++;
-            }
+            header_count = header.length;
         }
 
         @Override

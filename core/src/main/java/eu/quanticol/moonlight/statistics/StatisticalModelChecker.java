@@ -119,6 +119,7 @@ public class StatisticalModelChecker<S, T, R> {
             results.addAll(stats.getResults());
         } catch(InterruptedException e) {
             LOG.severe("Thread crashed! " + e.getMessage());
+            Thread.currentThread().interrupt();
         }
 
     }

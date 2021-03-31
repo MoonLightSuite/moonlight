@@ -51,7 +51,7 @@ public interface SignalInterface<T extends Comparable<T> & Serializable, V>
      * @return the total chain of segments of the signal
      * @throws UnsupportedOperationException when not allowed by implementors
      */
-    SegmentChain<T, V> getSegments();
+    TimeChain<T, V> getSegments();
 
     /**
      * @param time the time instant of interest for looking at the signal value
@@ -87,6 +87,6 @@ public interface SignalInterface<T extends Comparable<T> & Serializable, V>
      * @return the chain of segments of the signal delimited by the input
      * @throws UnsupportedOperationException when not allowed by implementors
      */
-    SegmentChain<T, V> select(T from, T to);
+    TimeChain<T, V> select(T from, T to);
 
 }

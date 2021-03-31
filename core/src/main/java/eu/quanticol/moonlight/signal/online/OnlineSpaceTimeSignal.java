@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 public class OnlineSpaceTimeSignal<D extends Comparable<D>>
         implements SignalInterface<Double, List<AbstractInterval<D>>>
 {
-    private final SegmentChain<Double, List<AbstractInterval<D>>> segments;
+    private final TimeChain<Double, List<AbstractInterval<D>>> segments;
     private final int size;
 
     public OnlineSpaceTimeSignal(int locations,
@@ -23,7 +23,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
                                                          domain.max()))
                         .collect(Collectors.toList());
 
-        segments = new SegmentChain<>(Double.POSITIVE_INFINITY);
+        segments = new TimeChain<>(Double.POSITIVE_INFINITY);
         segments.add(new ImmutableSegment<>(0.0, any));
 
         size = locations;
@@ -53,7 +53,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public SegmentChain<Double, List<AbstractInterval<D>>> getSegments() {
+    public TimeChain<Double, List<AbstractInterval<D>>> getSegments() {
         return segments;
     }
 
@@ -67,7 +67,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public SegmentChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
+    public TimeChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
         return null;
     }
 }

@@ -292,7 +292,9 @@ public class Erlang {
                 //surroundPhi(notMonitor(locationCrowdedness(d), d),
                 //            locationCrowdedness(d), d)
                 //escapeMonitor(locationCrowdedness(d), Grid.distance(1,2), d)
-                somewhereMonitor(globallyMonitor(isNotCrowded(d), new Interval(0,3),d), Grid.distance(1,2), d)
+                somewhereMonitor(globallyMonitor(isNotCrowded(d),
+                                 new Interval(0,3),d),
+                                 Grid.distance(1,2), d)
                 )
                 ;
     }
@@ -305,7 +307,8 @@ public class Erlang {
         return andMonitor(p1, d,
                         andMonitor(
                             notMonitor(
-                                reachMonitor(p1, Grid.distance(0, 2),
+                                reachMonitor(p1,
+                                        Grid.distance(0, 2),
                                     notMonitor(
                                         orMonitor(p1, d, p2),
                                     d),
@@ -313,7 +316,9 @@ public class Erlang {
                             d),
                                 d,
                                 notMonitor(
-                                        escapeMonitor(p2, Grid.distance(2, Double.POSITIVE_INFINITY),
+                                        escapeMonitor(p2,
+                                                      Grid.distance(2,
+                                                      Double.POSITIVE_INFINITY),
                                                                 d),
                                         d))
                         );
@@ -327,7 +332,9 @@ public class Erlang {
      *
      * @return a GloballyMonitor for the property
      */
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> neighbourSafety(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    neighbourSafety(SignalDomain<D> d)
+    {
         return globallyMonitor(   // Globally in TH...
                     impliesMonitor(request(d), d, eligibleLoc(d))
                 , new Interval(0, TH), d);
@@ -342,107 +349,141 @@ public class Erlang {
      *
      * @return an EventuallyMonitor for the property
      */
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> communicationLiveness(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    communicationLiveness(SignalDomain<D> d)
+    {
         return eventuallyMonitor(   // Eventually in T2...
                 andMonitor(request(d), d,
                         eventuallyMonitor(response(d), new Interval(0, T3), d))
                 , new Interval(0, T2), d);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> request(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    request(SignalDomain<D> d)
+    {
         return devConnected(d);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> eligibleLoc(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    eligibleLoc(SignalDomain<D> d)
+    {
         return somewhereMonitor(
                 andMonitor(isNotCrowded(d), d, locationRouter(d))
                 , Grid.distance(0, LH), d);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> response(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    response(SignalDomain<D> d)
+    {
         return outputRouter(d); //some quality metrics may be added here...
     }
 
 
     // --------- ATOMIC PREDICATES --------- //
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> devConnected(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    devConnected(SignalDomain<D> d)
+    {
         if(d instanceof DoubleDomain || d instanceof BooleanDomain) {
             return atomicMonitor((s -> (D) s.get(DEV_CONNECTED)));
         } else
-            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+            throw new UnsupportedOperationException(INVALID_DOMAIN);
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> devMoving() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+    devMoving()
+    {
         return atomicMonitor((s -> s.get(DEV_DIRECTION) != GridDirection.HH));
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> locationRouter(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    locationRouter(SignalDomain<D> d)
+    {
         if(d instanceof DoubleDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) lrDouble();
         } else if(d instanceof BooleanDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) lrBoolean();
         } else
-            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+            throw new UnsupportedOperationException(INVALID_DOMAIN);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> isNotCrowded(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    isNotCrowded(SignalDomain<D> d)
+    {
         if(d instanceof DoubleDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) lcDouble();
         } else if(d instanceof BooleanDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) lcBoolean();
         } else
-            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+            throw new UnsupportedOperationException(INVALID_DOMAIN);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> outputRouter(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    outputRouter(SignalDomain<D> d)
+    {
         if(d instanceof DoubleDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) orDouble();
         } else if(d instanceof BooleanDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) orBoolean();
         } else
-            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+            throw new UnsupportedOperationException(INVALID_DOMAIN);
     }
 
-    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D> isHospital(SignalDomain<D> d) {
+    private static <D> SpatialTemporalMonitor<Double, List<Comparable<?>>, D>
+    isHospital(SignalDomain<D> d)
+    {
         if(d instanceof DoubleDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) isHDouble();
         } else if(d instanceof BooleanDomain) {
             return (SpatialTemporalMonitor<Double, List<Comparable<?>>, D>) isHBoolean();
         } else
-            throw new UnsupportedOperationException("Unsupported Signal Domain!");
+            throw new UnsupportedOperationException(INVALID_DOMAIN);
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> lrBoolean() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+    lrBoolean()
+    {
         return atomicMonitor((s -> (Integer) s.get(LOC_ROUTER) >= 0));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> lrDouble() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double>
+    lrDouble()
+    {
         return atomicMonitor((s -> (Double) s.get(LOC_ROUTER)));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> lcBoolean() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+    lcBoolean()
+    {
         return atomicMonitor((s -> (Float) s.get(LOC_CROWDEDNESS) < K));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> lcDouble() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double>
+    lcDouble()
+    {
         return atomicMonitor((s -> K - (Float) s.get(LOC_CROWDEDNESS)));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> orBoolean() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+    orBoolean()
+    {
         return atomicMonitor((s -> (Integer) s.get(OUT_ROUTER) >= -1));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> orDouble() {
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double>
+    orDouble()
+    {
         return atomicMonitor((s -> (Double) s.get(OUT_ROUTER) - 1));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> isHBoolean()
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean>
+    isHBoolean()
     {
         return atomicMonitor((s -> s.get(IS_HOSPITAL) == Boolean.TRUE));
     }
 
-    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> isHDouble()
+    private static SpatialTemporalMonitor<Double, List<Comparable<?>>, Double>
+    isHDouble()
     {
         return atomicMonitor((s -> s.get(IS_HOSPITAL) == Boolean.TRUE ?
                         Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY));
@@ -506,7 +547,6 @@ public class Erlang {
         return edges;
     }
 
-
-
+    private static final String INVALID_DOMAIN = "Unsupported Signal Domain!";
 
 }

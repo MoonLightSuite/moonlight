@@ -32,7 +32,7 @@ import java.util.*;
  *    <ul>
  *        <li>
  *            <em>Monotonicity</em> invariant:
- *            <code>forall element():
+ *            <code>forall element:
  *                      current.getStart() < next.getStart() &&
  *                      current.getStart() > prev.getStart()
  *            </code>
@@ -53,12 +53,12 @@ import java.util.*;
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V>
  */
-public class SegmentChain
+public class TimeChain
         <T extends Comparable<T> & Serializable, V>
         extends LinkedList<SegmentInterface<T, V>>
 {
     /**
-     * Last time instant of definition of the signal
+     * Last time instant of definition of the chain
      */
     private T end;
 
@@ -66,21 +66,21 @@ public class SegmentChain
      * It defines a chain of time segments that ends at some time instant
      * @param end the time instant from which the segment chain is not defined.
      */
-    public SegmentChain(T end) {
+    public TimeChain(T end) {
         this.end = end;
     }
 
-    private SegmentChain(List<SegmentInterface<T,V>> segments, T end) {
+    private TimeChain(List<SegmentInterface<T,V>> segments, T end) {
         this.end = end;
         // TODO: instead of addAll a more efficient solution could be to
         //       generate a SubChain in the same way SubLists are generated.
         this.addAll(segments);
     }
 
-    public SegmentChain<T,V> subChain(int from, int to, T end) {
+    public TimeChain<T,V> subChain(int from, int to, T end) {
         //TODO: should check relation between 'end' and 'to'
         List<SegmentInterface<T,V>> segments = subList(from, to);
-        return new SegmentChain<>(segments, end);
+        return new TimeChain<>(segments, end);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class SegmentChain
 
     public DiffIterator<SegmentInterface<T, V>> diffIterator(int index) {
         // To implicitly call checkPositionIndex(index) we call parent's method
-        SegmentChain.super.listIterator(index);
+        TimeChain.super.listIterator(index);
         return new DiffListItr(index);
     }
 
@@ -135,7 +135,7 @@ public class SegmentChain
 
         public DiffListItr(int index) {
             changes = new ArrayList<>();
-            itr = SegmentChain.super.listIterator(index);
+            itr = TimeChain.super.listIterator(index);
         }
 
         @Override
@@ -282,7 +282,7 @@ public class SegmentChain
     public boolean equals(Object o) {
         if(super.equals(o)) {
             try{
-                return ((SegmentChain<T, V>) o).getEnd() == end;
+                return ((TimeChain<T, V>) o).getEnd() == end;
             } catch (ClassCastException e) {
                 return false;
             }

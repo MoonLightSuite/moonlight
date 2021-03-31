@@ -26,7 +26,7 @@ import java.util.*;
  * Interface that extends the ListIterator interface to also retrieve
  * a list of changes that should be updated on mutators invocation.
  *
- * @see SegmentChain#diffIterator()
+ * @see TimeChain#diffIterator()
  */
 public interface DiffIterator<E> extends ListIterator<E> {
 

@@ -1,6 +1,12 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
+import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.ImmutableGraphModel;
+import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 class AdjacencyExtractorTest {
 
@@ -10,29 +16,29 @@ class AdjacencyExtractorTest {
 
     @Test
     void headerSize() {
-//        ParsingStrategy<GraphModel<Double>> str = new AdjacencyExtractor();
-//
-//        str.initialize(data[0]);
-//        GraphModel<Double> grid = str.result();
-//
-//        assertEquals(2, grid.size());
+        ParsingStrategy<ImmutableGraphModel<Double>> str = new AdjacencyExtractor();
+
+        str.initialize(data[0]);
+        SpatialModel<Double> grid = str.result();
+
+        assertEquals(2, grid.size());
     }
 
     @Test
     void processData() {
-//        ParsingStrategy<GraphModel<Double>> str = new AdjacencyExtractor();
-//
-//        str.initialize(data[0]);
-//
-//        for(String[] s: data) {
-//            str.process(s);
-//        }
-//
-//        GraphModel<Double> grid = str.result();
-//
-//        assertEquals(1, grid.get(0, 1));
-//        assertEquals(1, grid.get(1, 0));
-//
-//        assertNull(grid.get(1,1));
+        ParsingStrategy<ImmutableGraphModel<Double>> str = new AdjacencyExtractor();
+
+        str.initialize(data[0]);
+
+        for(String[] s: data) {
+            str.process(s);
+        }
+
+        SpatialModel<Double> grid = str.result();
+
+        assertEquals(1.0, grid.get(0, 1), 0.0);
+        assertEquals(1.0, grid.get(1, 0), 0.0);
+
+        assertNull(grid.get(1,1));
     }
 }
