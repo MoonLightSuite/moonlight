@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
  * Class to represent n-dimensional online time signals.
  */
 public class MultiOnlineSignal
-        implements SignalInterface<Double, List<AbstractInterval<?>>>
+        implements TimeSignal<Double, List<AbstractInterval<?>>>
 {
     private final TimeChain<Double, List<AbstractInterval<?>>> segments;
 

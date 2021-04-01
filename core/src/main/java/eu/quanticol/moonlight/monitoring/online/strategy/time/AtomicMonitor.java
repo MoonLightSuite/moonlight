@@ -25,7 +25,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class AtomicMonitor<V, R extends Comparable<R>>
 {
 
     private final Function<V, AbstractInterval<R>> atomicFunction;
-    private final SignalInterface<Double, AbstractInterval<R>> rho;
+    private final TimeSignal<Double, AbstractInterval<R>> rho;
 
 
     /**
@@ -75,7 +75,7 @@ public class AtomicMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public SignalInterface<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, AbstractInterval<R>> getResult() {
         return rho;
     }
 }

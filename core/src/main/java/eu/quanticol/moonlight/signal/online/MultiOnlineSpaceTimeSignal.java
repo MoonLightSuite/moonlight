@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MultiOnlineSpaceTimeSignal
-        implements SignalInterface<Double, List<List<AbstractInterval<?>>>>
+        implements TimeSignal<Double, List<List<AbstractInterval<?>>>>
 {
     private final TimeChain<Double, List<List<AbstractInterval<?>>>> segments;
     private final int size;

@@ -25,7 +25,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class BinaryMonitor<V, R extends Comparable<R>>
 {
 
     private final BinaryOperator<AbstractInterval<R>> opFunction;
-    private final SignalInterface<Double, AbstractInterval<R>> rho;
+    private final TimeSignal<Double, AbstractInterval<R>> rho;
     private final OnlineMonitor<Double, V, AbstractInterval<R>> firstArg;
     private final OnlineMonitor<Double, V, AbstractInterval<R>> secondArg;
 
@@ -80,8 +80,8 @@ public class BinaryMonitor<V, R extends Comparable<R>>
                 secondArg.monitor(signalUpdate);
 
 
-        SignalInterface<Double, AbstractInterval<R>> s1 = firstArg.getResult();
-        SignalInterface<Double, AbstractInterval<R>> s2 = secondArg.getResult();
+        TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
+        TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
         for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
             updates.addAll(BooleanComputation.binaryUp(s2, argU, opFunction));
@@ -98,7 +98,7 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public SignalInterface<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, AbstractInterval<R>> getResult() {
         return rho;
     }
 }

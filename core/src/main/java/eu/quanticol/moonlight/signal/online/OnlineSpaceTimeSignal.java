@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class OnlineSpaceTimeSignal<D extends Comparable<D>>
-        implements SignalInterface<Double, List<AbstractInterval<D>>>
+        implements SpaceTimeSignal<Double, AbstractInterval<D>>
 {
     private final TimeChain<Double, List<AbstractInterval<D>>> segments;
     private final int size;
@@ -69,5 +69,15 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
     @Override
     public TimeChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
         return null;
+    }
+
+    /**
+     * Returns the size of the spatial universe of reference
+     *
+     * @return the size of the spatial universe of reference
+     */
+    @Override
+    public int getSize() {
+        return size;
     }
 }

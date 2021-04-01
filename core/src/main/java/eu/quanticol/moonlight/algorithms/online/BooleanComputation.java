@@ -43,7 +43,7 @@ public class BooleanComputation {
      * @return an update of the robustness signal in input
      */
     public static
-    <T extends Comparable<T>, R extends Comparable<R>>
+    <T extends Comparable<T>, R>
     List<Update<T, R>> unary(Update<T, R> u, UnaryOperator<R> op)
     {
         Update<T, R> result = new Update<>(u.getStart(), u.getEnd(),
@@ -57,7 +57,7 @@ public class BooleanComputation {
 
     public static
     <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    List<Update<T, R>> binaryUp(SignalInterface<T, R> s,
+    List<Update<T, R>> binaryUp(TimeSignal<T, R> s,
                                 Update<T, R> u,
                                 BinaryOperator<R> op)
     {
@@ -85,10 +85,6 @@ public class BooleanComputation {
      *      2.2 - same for s2
      *
      *
-     * @param s1 robustness signal of the first operand
-     * @param s2 robustness signal of the second operand
-     * @param u1 update of the first operand
-     * @param u2 update of the second operand
      * @param op operation to be performed
      * @param <T> Time domain, usually expressed as a {@link Number}
      * @param <R> Output robustness domain

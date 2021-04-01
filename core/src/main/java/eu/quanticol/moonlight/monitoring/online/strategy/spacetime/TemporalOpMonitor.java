@@ -18,12 +18,13 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.monitoring.online.strategy.time;
+package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
 import eu.quanticol.moonlight.algorithms.online.TemporalComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.*;
 
@@ -40,13 +41,13 @@ import java.util.function.BinaryOperator;
  * @see TemporalMonitor
  */
 public class TemporalOpMonitor<V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, V, AbstractInterval<R>>
+        implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
-    private final BinaryOperator<AbstractInterval<R>> op;
+    private final BinaryOperator<List<AbstractInterval<R>>> op;
     private final Interval horizon;
-    private final OnlineSignal<R> rho;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor;
+    private final SpaceTimeSignal<Double, AbstractInterval<R>> rho;
+    private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argumentMonitor;
 
 
     /**
@@ -56,31 +57,32 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
      * @param interpretation The interpretation domain of interest
      */
     public TemporalOpMonitor(
-                        OnlineMonitor<Double, V, AbstractInterval<R>> argument,
-                        BinaryOperator<AbstractInterval<R>> binaryOp,
+                        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
+                        BinaryOperator<List<AbstractInterval<R>>> binaryOp,
                         Interval timeHorizon,
                         //Interval parentHorizon,
-                        SignalDomain<R> interpretation)
+                        SignalDomain<R> interpretation,
+                        int locations)
     {
         this.op = binaryOp;
         this.horizon = timeHorizon;
-        this.rho = new OnlineSignal<>(interpretation);
+        this.rho = new OnlineSpaceTimeSignal<>(locations, interpretation);
         this.argumentMonitor = argument;
     }
 
     @Override
-    public List<Update<Double, AbstractInterval<R>>> monitor(
-            Update<Double, V> signalUpdate)
+    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+            Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, AbstractInterval<R>>> argUpdates =
+        List<Update<Double, List<AbstractInterval<R>>>> argUpdates =
                 argumentMonitor.monitor(signalUpdate);
 
-        TimeChain<Double, AbstractInterval<R>> s =
+        TimeChain<Double, List<AbstractInterval<R>>> s =
                 argumentMonitor.getResult().getSegments();
 
-        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<Update<Double, List<AbstractInterval<R>>>> updates = new ArrayList<>();
 
-        for(Update<Double, AbstractInterval<R>> argU : argUpdates) {
+        for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
             updates.addAll(TemporalComputation.slidingWindow(s,
                                                              argU,
                                                              horizon,
@@ -89,7 +91,7 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
 
         //System.out.println("Temporal Updates: " + updates);
 
-        for(Update<Double, AbstractInterval<R>> u: updates) {
+        for(Update<Double, List<AbstractInterval<R>>> u: updates) {
             rho.refine(u);
         }
 
@@ -99,7 +101,7 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public TimeSignal<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
         return rho;
     }
 }

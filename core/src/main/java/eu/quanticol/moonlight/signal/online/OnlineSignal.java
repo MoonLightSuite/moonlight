@@ -29,7 +29,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
  * @param <D> Signal domain of interest
  */
 public class OnlineSignal<D extends Comparable<D>>
-        implements SignalInterface<Double, AbstractInterval<D>> {
+        implements TimeSignal<Double, AbstractInterval<D>> {
     private final TimeChain<Double, AbstractInterval<D>> segments;
 
     /**

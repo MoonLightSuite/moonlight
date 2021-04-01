@@ -1,13 +1,13 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
 import eu.quanticol.moonlight.space.ImmutableGraphModel;
+import eu.quanticol.moonlight.space.SpatialModel;
 
 /**
  * Parsing strategy that generates a GraphModel based on
  * a String-based adjacency matrix
  */
-public class AdjacencyExtractor implements ParsingStrategy<ImmutableGraphModel<Double>> {
-    private double weight;
+public class AdjacencyExtractor implements ParsingStrategy<SpatialModel<Double>> {
     private ImmutableGraphModel<Double> graph;
     private int row;
 
@@ -18,7 +18,6 @@ public class AdjacencyExtractor implements ParsingStrategy<ImmutableGraphModel<D
      */
     @Override
     public void initialize(String[] header) {
-        this.weight = 1;
         this.graph = new ImmutableGraphModel<>(header.length);
         this.row = 0;
     }
@@ -31,8 +30,8 @@ public class AdjacencyExtractor implements ParsingStrategy<ImmutableGraphModel<D
     public void process(String[] data) {
         for(int i = 0; i < data.length; i++) {
             double v = Double.parseDouble(data[i]);
-            if(v == 1)
-                graph = graph.add(row, weight, i);
+            if(v != 0)
+                graph = graph.add(row, v, i);
         }
 
         row++;

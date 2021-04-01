@@ -23,8 +23,8 @@ import java.util.function.Function;
 public class Grid {
 
     public SpatialModel<Double> getModel(String file) {
-        ParsingStrategy<ImmutableGraphModel<Double>> s = new AdjacencyExtractor();
-        DataReader<ImmutableGraphModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
+        ParsingStrategy<SpatialModel<Double>> s = new AdjacencyExtractor();
+        DataReader<SpatialModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
 
         return data.read();
     }

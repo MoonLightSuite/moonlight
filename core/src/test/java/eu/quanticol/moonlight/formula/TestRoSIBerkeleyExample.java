@@ -239,6 +239,7 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
+    @Disabled("Needs more investigation on the sliding window")
     @Test
     void testWholeFormulaAtT4() {
         Object[] ss = testAtUpdate4(wholeFormula());

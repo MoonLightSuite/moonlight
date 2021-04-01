@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @see OnlineSignal for a concrete implementation
  * @see MultiOnlineSignal for a concrete implementation
  */
-public interface SignalInterface<T extends Comparable<T> & Serializable, V>
+public interface TimeSignal<T extends Comparable<T> & Serializable, V>
 {
     /**
      * Performs an update of the internal representation of the signal,

@@ -15,4 +15,9 @@ subprojects {
         compile group: 'colt', name: 'colt', version: '1.2.0'
         compile group: 'org.apache.commons', name: 'commons-math', version: '2.2'
     }
+
+    test {
+        // Use junit platform for unit tests
+        useJUnitPlatform()
+    }
 }

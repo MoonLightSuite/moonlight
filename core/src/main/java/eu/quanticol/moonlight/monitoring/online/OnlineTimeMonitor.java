@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.*;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
         this.monitors = new HashMap<>();
     }
 
-    public SignalInterface<Double, AbstractInterval<R>>
+    public TimeSignal<Double, AbstractInterval<R>>
     monitor(Update<Double, V> update)
     {
         UpdateParameter<Double, V> param = new UpdateParameter<>(update);

@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
@@ -51,7 +51,7 @@ public class EverywhereMonitor<S, V, R extends Comparable<R>>
     private final OnlineMonitor<Double, List<V>,
                                 List<AbstractInterval<R>>> argument;
     private final SignalDomain<AbstractInterval<R>> domain;
-    private final SignalInterface<Double, List<AbstractInterval<R>>> rho;
+    private final TimeSignal<Double, List<AbstractInterval<R>>> rho;
 
     private final SpatialComputation<Double, S, AbstractInterval<R>> spatialOp;
 
@@ -91,7 +91,7 @@ public class EverywhereMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public SignalInterface<Double, List<AbstractInterval<R>>> getResult() {
+    public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
         return rho;
     }
 

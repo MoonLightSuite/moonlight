@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
 import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.io.Serializable;
@@ -13,5 +13,5 @@ public interface OnlineSpaceTimeMonitor
     List<Update<T, R>> monitor(LocationService<Double, S> locationService,
                                Update<T, V> signalUpdate);
 
-    SignalInterface<T, R> getResult();
+    TimeSignal<T, R> getResult();
 }

@@ -1,7 +1,5 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.ImmutableGraphModel;
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +14,7 @@ class AdjacencyExtractorTest {
 
     @Test
     void headerSize() {
-        ParsingStrategy<ImmutableGraphModel<Double>> str = new AdjacencyExtractor();
+        ParsingStrategy<SpatialModel<Double>> str = new AdjacencyExtractor();
 
         str.initialize(data[0]);
         SpatialModel<Double> grid = str.result();
@@ -26,7 +24,7 @@ class AdjacencyExtractorTest {
 
     @Test
     void processData() {
-        ParsingStrategy<ImmutableGraphModel<Double>> str = new AdjacencyExtractor();
+        ParsingStrategy<SpatialModel<Double>> str = new AdjacencyExtractor();
 
         str.initialize(data[0]);
 

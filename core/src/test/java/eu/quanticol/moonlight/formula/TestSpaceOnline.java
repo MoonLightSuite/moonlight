@@ -52,7 +52,7 @@ class TestSpaceOnline {
 
 
 
-        SignalInterface<Double, List<AbstractInterval<Double>>> r =
+        TimeSignal<Double, List<AbstractInterval<Double>>> r =
                 m.monitor(null);
 
         TimeChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();

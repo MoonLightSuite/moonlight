@@ -26,7 +26,6 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
     private final Function<List<V>, List<AbstractInterval<R>>> atomicFunction;
-    private final SignalInterface<Double, List<AbstractInterval<R>>> rho;
+    private final OnlineSpaceTimeSignal<R> rho;
 
 
     /**
@@ -80,7 +79,7 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
     }
 
     @Override
-    public SignalInterface<Double, List<AbstractInterval<R>>> getResult() {
+    public OnlineSpaceTimeSignal<R> getResult() {
         return rho;
     }
 }

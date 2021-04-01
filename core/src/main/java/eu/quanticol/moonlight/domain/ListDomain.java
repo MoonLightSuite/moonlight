@@ -20,6 +20,13 @@ public class ListDomain<T extends Comparable<T>>
         }
     }
 
+    public ListDomain(int size, SignalDomain<T> domain) {
+        this.domains = new ArrayList<>();
+        for(int i = 0; i < size; i++) {
+            this.domains.add(new AbsIntervalDomain<>(domain));
+        }
+    }
+
     /**
      * Negation function that s.t. De Morgan laws, double negation
      * and inversion of the idempotent elements hold.

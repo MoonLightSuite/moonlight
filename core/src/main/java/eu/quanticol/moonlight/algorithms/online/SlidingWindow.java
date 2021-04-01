@@ -36,7 +36,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.max;
 import static java.lang.Math.abs;
 
-public class SlidingWindow<R extends Comparable<R>> {
+public class SlidingWindow<R> {
     private final TimeChain<Double, R> s;
     private final Interval h;
     private final BinaryOperator<R> op;

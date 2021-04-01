@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.monitoring.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.ListDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
@@ -8,10 +9,12 @@ import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.EscapeMonitor
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.EverywhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.SomewhereMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.TemporalOpMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnaryMonitor;
+import eu.quanticol.moonlight.signal.online.SpaceTimeSignal;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
 import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.HashMap;
@@ -20,13 +23,14 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
-    FormulaVisitor<Parameters, OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>>
+FormulaVisitor<Parameters, OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>>
 {
     private final Formula formula;
     private final SignalDomain<R> interpretation;
-    private final Map<String, OnlineMonitor<Double, List<V>,
-                                            List<AbstractInterval<R>>>>
-                                                                       monitors;
+    private final ListDomain<R> listInterpretation;
+    private final Map<String,
+                      OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>>
+                                                     monitors = new HashMap<>();
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
     private final Map<String, Function<SpatialModel<S>,
@@ -50,13 +54,13 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
         this.atoms = atomicPropositions;
         this.formula = formula;
         this.interpretation = interpretation;
-        this.monitors = new HashMap<>();
         this.dist = distanceFunctions;
         this.locSvc = locationService;
         this.size = size;
+        this.listInterpretation = new ListDomain<>(size, interpretation);
     }
 
-    public SignalInterface<Double, List<AbstractInterval<R>>>
+    public SpaceTimeSignal<Double, AbstractInterval<R>>
     monitor(Update<Double, List<V>> update)
     {
         OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> m =
@@ -65,7 +69,7 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
         if(update != null)
             m.monitor(update);
 
-        return m.getResult();
+        return (SpaceTimeSignal<Double, AbstractInterval<R>>) m.getResult();
     }
 
     @Override
@@ -76,6 +80,33 @@ public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
 
         return monitors.computeIfAbsent(formula.toString(),
                              x -> new AtomicMonitor<>(f, size, interpretation));
+    }
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            NegationFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argumentMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new UnaryMonitor<>(argumentMonitor,
+                        listInterpretation::negation, interpretation, size));
+    }
+
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            GloballyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x ->  new TemporalOpMonitor<>(argMonitor,
+                        listInterpretation::conjunction,
+                        formula.getInterval(),
+                        interpretation, size));
     }
 
     @Override

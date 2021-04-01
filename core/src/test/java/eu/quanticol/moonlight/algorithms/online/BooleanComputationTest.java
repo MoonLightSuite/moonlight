@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.SignalInterface;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class BooleanComputationTest {
     @Test
     void binary() {
         SignalDomain<Double> domain = new DoubleDomain();
-        SignalInterface<Double, AbstractInterval<Double>> s1 = new OnlineSignal<>(domain);
+        TimeSignal<Double, AbstractInterval<Double>> s1 = new OnlineSignal<>(domain);
 
         OnlineSignal<Double> s2 = new OnlineSignal<>(domain);
 

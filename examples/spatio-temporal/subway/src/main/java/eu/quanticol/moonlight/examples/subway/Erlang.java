@@ -94,7 +94,7 @@ public class Erlang {
 
 
     public static void main(String[] argv) {
-        LOG.info("The network size is: " + network.size());
+        LOG.info(() -> "The network size is: " + network.size());
 
         Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
 
@@ -161,41 +161,6 @@ public class Erlang {
                      .getPath();
         return new DataReader<>(path, FileType.CSV, trajectory).read();
     }
-
-    /*
-    public static void oldmain(String[] argv) {
-        LOG.info("The network size is: " + network.size());
-
-        MultiValuedTrace signal = data.iterator().next();
-
-        Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
-
-        //// We are considering a dynamic Location Service ///
-        LocationService<Double> locService = createOrientedLocSvc(device.getFirst(), device.getSecond());
-
-        // Now we can monitor the system for the satisfaction of our properties
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Double> safety = phi1();
-        SpatialTemporalSignal<Double> result = safety.monitor(locService, signal);
-
-        Signal<Double> output = result.getSignals().get(0);
-
-        SpatialTemporalMonitor<Double, List<Comparable<?>>, Boolean> liveness = phi2();
-        result = liveness.monitor(locService, signal);
-        output = result.getSignals().get(0);
-
-        //Statistical Model Checking
-        StatisticalModelChecker<Double, List<Comparable<?>>, Double> smc =
-                new StatisticalModelChecker<>(safety, data, locService);
-        smc.compute();
-        double[][] sat = filterAverage(smc.getStats());
-
-        PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
-        new DataWriter<>(RESULT, FileType.CSV, str).write(sat);
-
-        LOG.info("Saving output in :" + RESULT);
-
-        //LOG.info("SMC Average Satisfiability: " + smc.getStats().toString());
-    }*/
 
     private static String outputFile(String path, String ext1, String ext2) {
         String trace = DATA_DIR + ext1 + "_" + ext2 + "_K" + (int) K;

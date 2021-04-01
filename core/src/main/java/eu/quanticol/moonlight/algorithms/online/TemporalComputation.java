@@ -22,7 +22,7 @@ public class TemporalComputation {
 
     private TemporalComputation() {}    // hidden constructor
 
-    public static <R extends Comparable<R>>
+    public static <R>
     List<Update<Double, R>> slidingWindow(TimeChain<Double, R> s,
                                           Update<Double, R> u,
                                           Interval opHorizon,
