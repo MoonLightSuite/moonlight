@@ -40,7 +40,7 @@ import java.util.function.BinaryOperator;
  *
  * @see TemporalMonitor
  */
-public class TemporalOpMonitor<V, R extends Comparable<R>>
+public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
@@ -56,7 +56,7 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public TemporalOpMonitor(
+    public UnaryTimeOpMonitor(
                         OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
                         BinaryOperator<List<AbstractInterval<R>>> binaryOp,
                         Interval timeHorizon,

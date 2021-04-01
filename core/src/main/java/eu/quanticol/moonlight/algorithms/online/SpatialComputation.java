@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
@@ -109,41 +108,6 @@ public class SpatialComputation
             value = nextSpace.getFirst();
 
         return value;
-    }
-
-    public List<Update<T, List<R>>> computeEscapeDynamic(
-            Update<T, List<R>> u, SignalDomain<R> domain)
-    {
-        List<Update<T, List<R>>> results = new ArrayList<>();
-        spaceItr = locSvc.times();
-
-        T t = u.getStart();
-        T tNext = u.getEnd();
-        Function<Integer, R> spatialSignal = i -> u.getValue().get(i);
-
-        tNext = seekSpace(t, tNext);
-
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
-
-        results.add(new Update<>(t, tNext, f.escape(domain, spatialSignal)));
-
-        while ((nextSpace != null) &&
-                nextSpace.getFirst().compareTo(u.getEnd()) < 0)
-        {
-            currSpace = nextSpace;
-            t = currSpace.getFirst();
-            nextSpace = getNext(spaceItr);
-
-            if(nextSpace != null && !currSpace.equals(nextSpace)) {
-                tNext = nextSpace.getFirst();
-                f = dist.apply(currSpace.getSecond());
-                results.add(new Update<>(t, tNext, f.escape(domain,
-                                                            spatialSignal)));
-            }
-        }
-
-        return results;
     }
 
 

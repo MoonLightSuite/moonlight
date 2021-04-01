@@ -7,7 +7,7 @@ package eu.quanticol.moonlight.formula;
  * @author loreti
  *
  */
-public class SomewhereFormula implements Formula {
+public class SomewhereFormula implements UnaryFormula, SpatialFormula {
 
 	private final String distanceFunctionId;
 	private final Formula argument;

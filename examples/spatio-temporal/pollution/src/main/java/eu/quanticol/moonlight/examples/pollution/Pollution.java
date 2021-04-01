@@ -9,6 +9,7 @@ import eu.quanticol.moonlight.examples.subway.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.GloballyFormula;
+import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
@@ -30,14 +31,17 @@ public class Pollution {
     private static final String SPACE_FILE = "lombardy_dist.csv";
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
-    private static double km(double meters) { return meters * 1000; }
-
+    private static double km(double meters) {
+        return meters * 1000;
+    }
 
     public static void main(String[] argv) {
         LOG.setLevel(Level.ALL);
         String file = Pollution.class.getResource(SPACE_FILE).getPath();
         ParsingStrategy<SpatialModel<Double>> ex = new AdjacencyExtractor();
-        DataReader<SpatialModel<Double>> data = new DataReader<>(file, FileType.CSV, ex);
+        DataReader<SpatialModel<Double>> data = new DataReader<>(file,
+                                                                 FileType.CSV,
+                                                                 ex);
         SpatialModel<Double> space = data.read();
 
         LocationService<Double, Double> ls = new StaticLocationService<>(space);
@@ -62,7 +66,19 @@ public class Pollution {
         }
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
-        LOG.info(() -> "Monitoring result: " + output);
+        LOG.info(() -> "Monitoring result of F1: " + output);
+
+        m = new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
+                                         ls, atoms(), dist());
+
+        for(Update<Double, List<Double>> u : updates){
+            s = m.monitor(u);
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
+        }
+
+        final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
+        LOG.info(() -> "Monitoring result of F1: " + output2);
+
     }
 
     private static List<Update<Double, List<Double>>> importUpdates(int size) {
@@ -76,7 +92,8 @@ public class Pollution {
             updates.add(new Update<>((double) i,
                                 (double) i + 1,
                                      Arrays.stream(trace[i])
-                                           .map(n -> n == -20.0 ? Double.NEGATIVE_INFINITY : n)
+                                           .map(n -> n == -20.0 ?
+                                                   Double.NEGATIVE_INFINITY : n)
                                            .boxed()
                                            .collect(Collectors.toList())));
         }
@@ -99,6 +116,12 @@ public class Pollution {
         Formula atomX = new AtomicFormula("notCriticalNO2");
 
         return new GloballyFormula(atomX, new Interval(0, 3));
+    }
+
+    private static Formula formula2() {
+        Formula atomX = new AtomicFormula("notCriticalNO2");
+
+        return new SomewhereFormula("nearby", atomX);
     }
 
     private static

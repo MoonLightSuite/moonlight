@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.examples.bikes;
 
-import eu.quanticol.moonlight.examples.bikes.utilities.SStats;
 import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
@@ -15,12 +14,14 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.util.Pair;
 
 import static eu.quanticol.moonlight.util.TestUtils.*;
 import static java.util.Arrays.copyOfRange;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -40,7 +41,7 @@ public class Bikes {
      */
     private static final String SIMHYA_MODEL_FILE = "733bike.txt";
     private static final String GRAPH_FILE = "733stationsGraph.tra";
-    /* An alternative smaller model is available, decomment the following.
+    /* An alternative smaller model is available, uncomment the following.
     *  Note that it also requires proper adjustment of the simulator, or,
     *  alternatively, a prototypical trace is available at file:
     *  "trajectory.tra"
@@ -120,7 +121,9 @@ public class Bikes {
 
         // *************************** MONITORING *************************** //
 
-        SStats<SpatialTemporalSignal<Boolean>> stats = new SStats<>();
+        SignalStatistics<SpatialTemporalSignal<Boolean>> stats =
+                new SignalStatistics<>(trajectory.getNumberOfLocations(),
+                                       trajectory.getSignals().get(0).size());
         SpatialTemporalSignal<Boolean> result = null;
         for(int i = 0; i < 100; i++) {
             result = stats.record(
@@ -148,7 +151,7 @@ public class Bikes {
         List<Signal<Boolean>> signals = result.getSignals();
         System.out.print("\nThe monitoring result of the phi1 property is: ");
         System.out.println(signals.get(0).valueAt(0));
-        System.out.println("Execution stats:" + stats.analyze());
+        System.out.println("Execution stats:" + Arrays.toString(stats.analyze()));
     }
 
     /**
@@ -266,7 +269,7 @@ public class Bikes {
                     Function<Parameters, Function<Pair<Double, Double>,
                              Boolean>>> atoms)
     {
-        // First atomic property:  B > 0
+        // First atomic property:  B < 1
         atoms.put("B < 1", p -> (x -> x.getFirst() < 1));
         // Second atomic property: S > 0
         atoms.put("B > 0", p -> (x -> x.getFirst() > 0));

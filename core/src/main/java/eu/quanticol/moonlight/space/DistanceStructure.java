@@ -118,7 +118,7 @@ public class DistanceStructure<T, A> {
         return checkDistance(getDistance(i, j));
     }
 
-    public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
+    public <R> List<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
         HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
         ArrayList<HashMap<Integer,R>> pending = IntStream
               .range(0, model.size()).boxed()

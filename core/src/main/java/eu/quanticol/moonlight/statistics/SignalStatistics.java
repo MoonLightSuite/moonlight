@@ -51,8 +51,10 @@ import static java.util.Collections.synchronizedCollection;
  * @see StatisticalModelChecker for usage details
  */
 public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
-    private final Collection<T> results = synchronizedCollection(new ArrayList<>());
-    private final Collection<Float> durations = synchronizedCollection(new ArrayList<>());
+    private final Collection<T> results =
+                                    synchronizedCollection(new ArrayList<>());
+    private final Collection<Float> durations =
+                                    synchronizedCollection(new ArrayList<>());
 
     private final long startingTime;
     private final int locations;
@@ -150,7 +152,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         if (s.valueAt(t) instanceof Double) {
             value += ((Double) s.valueAt(t)).floatValue();
         } else if (s.valueAt(t) instanceof Boolean) {
-            value += (Boolean) s.valueAt(t) ? 1 : 0;
+            value += (boolean) s.valueAt(t) ? 1 : 0;
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
 
@@ -192,10 +194,10 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
                                   double t)
     {
         if (s.valueAt(t) instanceof Double) {
-            float v = ((Double) s.valueAt(t)).floatValue();;
+            float v = ((Double) s.valueAt(t)).floatValue();
             value += Math.pow((v - avg), 2);
         } else if (s.valueAt(t) instanceof Boolean) {
-            float v = (Boolean) s.valueAt(t) ? 1 : 0;
+            float v = (boolean) s.valueAt(t) ? 1 : 0;
             value += Math.pow((v - avg), 2);
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
@@ -212,7 +214,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
      */
     public static class Statistics implements Serializable {
 
-        Statistics(float avg, float exec, float std,
+        public Statistics(float avg, float exec, float std,
                    float var, int cnt, float tot)
         {
             average = avg;

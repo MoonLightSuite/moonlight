@@ -7,7 +7,7 @@ package eu.quanticol.moonlight.formula;
  * @author loreti
  *
  */
-public class EscapeFormula implements Formula {
+public class EscapeFormula implements UnaryFormula, SpatialFormula {
 
 	private final String distanceFunctionId;
 	private final Formula argument;

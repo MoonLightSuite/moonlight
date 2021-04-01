@@ -1,11 +1,9 @@
 package eu.quanticol.moonlight.examples.bikes.utilities;
 
-import eu.quanticol.jsstl.core.monitor.SpatialBooleanSignal;
-import eu.quanticol.jsstl.core.signal.BooleanSignal;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.statistics.SignalStatistics.Statistics;
 
-import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +14,8 @@ public class SStats<T> {
     private final Collection<T> results = Collections.synchronizedCollection(new ArrayList<>());
     private final Collection<Float> durations = new ArrayList<>();
 
-    private final long startingTime;
+    private long startingTime;
+    private long endingTime;
 
     public SStats() {
         startingTime = System.currentTimeMillis();
@@ -24,9 +23,9 @@ public class SStats<T> {
 
     public T record(Supplier<T> f) {
         try {
-            long startingTime = System.currentTimeMillis();
+            startingTime = System.currentTimeMillis();
             T result = f.get(); //Supplier code execution (i.e. f.apply())
-            long endingTime = System.currentTimeMillis();
+            endingTime = System.currentTimeMillis();
 
             float duration = (float)((endingTime - startingTime) / 1000.0);
 
@@ -51,7 +50,7 @@ public class SStats<T> {
         float execTime = computeAvgExecTime();
         int cnt = results.size();
 
-        long endingTime = System.currentTimeMillis();
+        endingTime = System.currentTimeMillis();
         float totalTime = (float) ((endingTime - startingTime) / 1000.0);
 
         return new Statistics(avg, execTime, stdDev, var, cnt, totalTime);
@@ -67,7 +66,7 @@ public class SStats<T> {
                 if (s.valueAt(0) instanceof Float) {
                     value += (Float) s.valueAt(0);
                 } else if (s.valueAt(0) instanceof Boolean) {
-                    value += (Boolean) s.valueAt(0) ? 1 : 0;
+                    value += (boolean) s.valueAt(0) ? 1 : 0;
                 }
                 else
                     throw new InvalidParameterException("Unknown Signal Output");
@@ -100,7 +99,7 @@ public class SStats<T> {
                     float v = (Float) s.valueAt(0);
                     value += Math.pow((v - avg), 2);
                 } else if (s.valueAt(0) instanceof Boolean) {
-                    float v = (Boolean) s.valueAt(0) ? 1 : 0;
+                    float v = (boolean) s.valueAt(0) ? 1 : 0;
                     value += Math.pow((v - avg), 2);
                 } else
                     throw new InvalidParameterException("Unknown Signal Output");
@@ -110,57 +109,5 @@ public class SStats<T> {
         }
 
         return value / (results.size());
-    }
-
-
-
-    public static class Statistics implements Serializable {
-
-        Statistics(float avg, float exec, float std, float var, int cnt, float tot) {
-            average = avg;
-            executionTime = exec;
-            stdDeviation = std;
-            variance = var;
-            count = cnt;
-            totalExecutionTime = tot;
-        }
-
-        /**
-         * Average of the results of the monitoring process
-         */
-        public final float average;
-
-        /**
-         * Standard deviation of the results of the monitoring process
-         */
-        public final float stdDeviation;
-
-        /**
-         * Variance of the results of the monitoring process
-         */
-        public final float variance;
-
-        /**
-         * Average execution time of the monitoring process
-         */
-        public final float executionTime;
-
-        /**
-         * Number of executions of the monitoring process
-         */
-        public final int count;
-
-        /**
-         * Total execution time of the monitoring process
-         */
-        public final float totalExecutionTime;
-
-        @Override
-        public String toString() {
-            return  "AVG:" + average + " | STD:" + stdDeviation +
-                    " | VAR:" + variance + " | CNT:" + count +
-                    " | AVG_EXEC_TIME:" + executionTime + "ms" +
-                    " | TOT_EXEC_TIME:" + totalExecutionTime + "ms";
-        }
     }
 }

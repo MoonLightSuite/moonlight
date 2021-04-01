@@ -21,23 +21,18 @@
 package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
 import eu.quanticol.moonlight.algorithms.online.SpatialComputation;
-import eu.quanticol.moonlight.domain.AbsIntervalDomain;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
- * Strategy to interpret the Escape spatial logic operator.
+ * Strategy to interpret the unary spatial logic operators.
  *
  * @param <S> Spatial Graph Edge Type
  * @param <V> Signal Trace Type
@@ -45,28 +40,23 @@ import java.util.function.Function;
  *
  * @see OnlineMonitor
  */
-public class EscapeMonitor<S, V, R extends Comparable<R>>
+public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
         implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
     private final OnlineMonitor<Double, List<V>,
-            List<AbstractInterval<R>>> argument;
-    private final SignalDomain<AbstractInterval<R>> domain;
+                                List<AbstractInterval<R>>> argument;
     private final TimeSignal<Double, List<AbstractInterval<R>>> rho;
-
     private final SpatialComputation<Double, S, AbstractInterval<R>> spatialOp;
 
-    public EscapeMonitor(
+    public UnarySpaceOpMonitor(
             OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
-            LocationService<Double, S> locationService,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            SignalDomain<R> domain)
+            SpatialComputation<Double, S, AbstractInterval<R>> op,
+            SignalDomain<R> domain,
+            int size)
     {
         this.argument = argument;
-        this.rho = new OnlineSpaceTimeSignal<>(locationService.get(0.0).size(),
-                domain);
-        this.domain = new AbsIntervalDomain<>(domain);
-        this.spatialOp = new SpatialComputation<>(locationService, distance,
-                null);
+        this.rho = new OnlineSpaceTimeSignal<>(size, domain);
+        this.spatialOp = op;
     }
 
     @Override
@@ -77,10 +67,10 @@ public class EscapeMonitor<S, V, R extends Comparable<R>>
                 argument.monitor(signalUpdate);
 
         List<Update<Double, List<AbstractInterval<R>>>> updates =
-                new ArrayList<>();
+                                                              new ArrayList<>();
 
         for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
-            updates.addAll(spatialOp.computeEscapeDynamic(argU, domain));
+            updates.addAll(spatialOp.computeDynamic(argU));
         }
 
         for(Update<Double, List<AbstractInterval<R>>> u : updates) {

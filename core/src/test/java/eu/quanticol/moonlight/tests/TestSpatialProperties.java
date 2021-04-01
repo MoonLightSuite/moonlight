@@ -187,7 +187,7 @@ class TestSpatialProperties {
         int wallR = 2;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), range, Double.POSITIVE_INFINITY, model);
-        ArrayList<Boolean> result = ds.escape(
+        List<Boolean> result = ds.escape(
                 new BooleanDomain(),
                 (i) -> {
                     Pair<Integer, Integer> p = TestUtils.gridLocationOf(i, rows, columns);

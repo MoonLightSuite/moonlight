@@ -33,11 +33,12 @@ public class JSSTLBikes {
     private static final int VAR_B = 0;
     private static final int VAR_S = 1;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         String graphPath = JSSTLBikes.class.getResource(GRAPH_FILE).getPath();
         SpatialTemporalSimHyA model =
                 new SpatialTemporalSimHyA(graphPath, SPACE_LOCATIONS);
-        String modelPath = JSSTLBikes.class.getResource(SIMHYA_MODEL_FILE).getPath();
+        String modelPath = JSSTLBikes.class.getResource(SIMHYA_MODEL_FILE)
+                                           .getPath();
         model.loadModel(modelPath);
 
         GraphModel g = model.getGraphModel();
