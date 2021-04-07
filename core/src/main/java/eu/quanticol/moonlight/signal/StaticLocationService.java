@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.signal;
 
+import java.util.ArrayList;
 import java.util.List;
 import eu.quanticol.moonlight.util.Pair;
 
@@ -20,7 +21,9 @@ public class StaticLocationService<V> implements LocationService<V> {
 
     @Override
     public Iterator<Pair<Double, SpatialModel<V>>> times() {
-        return List.of(new Pair<>(0.0,model)).iterator();
+        List<Pair<Double, SpatialModel<V>>> list = new ArrayList<>();
+        list.add(new Pair<>(0.0,model));
+        return list.iterator();
     }
 
     @Override

@@ -1,5 +1,8 @@
 language: java
 sudo: false
+jdk:
+  - oraclejdk8
+  - openjdk8
 env:
   global:
     - CODECOV_TOKEN="e55b13c2-bff0-49c1-81e8-0fe254c2955e"
