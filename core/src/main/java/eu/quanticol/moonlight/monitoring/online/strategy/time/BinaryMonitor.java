@@ -85,7 +85,6 @@ public class BinaryMonitor<V, R extends Comparable<R>>
 
         for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
             updates.addAll(BooleanComputation.binary(s2, argU, opFunction));
-
         }
 
         for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {

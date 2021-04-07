@@ -217,9 +217,11 @@ public class BooleanComputation {
                     && nextTime.compareTo(u.getStart()) >= 0)  {
                 T end = min(nextTime, u.getEnd());
                 T start = max(curr.getStart(), u.getStart());
-                Update<T, R> r = new Update<>(start, end,
-                        op.apply(u.getValue(), curr.getValue()));
-                updates.add(r);
+                if(!start.equals(end)) {
+                    Update<T, R> r = new Update<>(start, end,
+                            op.apply(u.getValue(), curr.getValue()));
+                    updates.add(r);
+                }
             }
         }
     }
