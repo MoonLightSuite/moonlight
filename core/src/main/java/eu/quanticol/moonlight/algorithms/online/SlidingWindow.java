@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -44,6 +44,7 @@ public class SlidingWindow<R> {
     private final double hStart;
     private final Deque<Node<Double, R>> w = new ArrayDeque<>();
     private final List<Update<Double, R>> updates = new ArrayList<>();
+    private final Update<Double, R> u;
 
     public SlidingWindow(TimeChain<Double, R> s, Update<Double, R> update,
                          Interval opHorizon, BinaryOperator<R> op)
@@ -53,6 +54,7 @@ public class SlidingWindow<R> {
         hEnd = update.getEnd() - opHorizon.getStart();
         hStart = update.getStart() - h.getEnd();
         this.op = op;
+        u = update;
     }
 
     public List<Update<Double, R>>  slide() {
@@ -62,7 +64,7 @@ public class SlidingWindow<R> {
 
         // We add the last pieces of the window to the updates
         while(!w.isEmpty() && w.getFirst().getStart() < hEnd) {
-            updates.add(pushUpdate(Double.POSITIVE_INFINITY));
+            updates.add(popUpdate(Double.POSITIVE_INFINITY));
         }
 
         return updates;
@@ -83,9 +85,11 @@ public class SlidingWindow<R> {
             // i.e. we take n = `next.start - h.end` if it is non-negative
             //      and m = `curr.start - h.start` if it is not negative
             //      then t is the minimum between n and m
+            double lastT = t;
             t = max(0, next.getStart() - h.getEnd());
-            if(!w.isEmpty())
+            if(!w.isEmpty()) {
                 t = min(t, abs(curr.getStart() - h.getStart()));
+            }
 
 
             // `t >= next.start - op.horizon.start` or
@@ -98,11 +102,11 @@ public class SlidingWindow<R> {
             // We are exceeding the window size, we must pop left sides
             // of the window and we can propagate the related updates
             while(!w.isEmpty() && t - w.getFirst().getStart() > wSize) {
-                updates.add(pushUpdate(t));
+                updates.add(popUpdate(t));
             }
 
             // We push out the exceeding part of the window's first segment
-            pushOut(t, curr.getStart());
+            cutLeft(t, curr.getStart());
 
             // We clear the monotonic edge
             Node<Double, R> newNode = makeMonotonic(t, curr.getValue());
@@ -112,9 +116,9 @@ public class SlidingWindow<R> {
         }
     }
 
-    private void pushOut(double t, double currT) {
+    private void cutLeft(double t, double currT) {
         if(!w.isEmpty() && currT - h.getEnd() > w.getFirst().getStart()) {
-            Update<Double, R> oldFirst = pushUpdate(t);
+            Update<Double, R> oldFirst = popUpdate(t);
             updates.add(oldFirst);
             w.addFirst(new Node<>(currT - h.getEnd(),
                                   oldFirst.getValue()));
@@ -140,7 +144,7 @@ public class SlidingWindow<R> {
         return new Node<>(lastT, currV);
     }
 
-    private Update<Double, R> pushUpdate(double outT)
+    private Update<Double, R> popUpdate(double outT)
     {
         Node<Double, R> f = w.removeFirst();
         //Double end = hEnd;

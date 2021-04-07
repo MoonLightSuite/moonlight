@@ -22,6 +22,9 @@ public class Refinement {
 
         V oldV = current.getValue();
 
+        if(u.getStart().equals(u.getEnd()))
+            return false;
+
         boolean done = false;
 
         while (itr.hasNext()) {
@@ -32,7 +35,7 @@ public class Refinement {
                 break;
             }
 
-            // Save the "next" as the next "current".
+            // Save the "next" as the new "current".
             oldV = current.getValue();
             current = itr.next();
         }
@@ -41,7 +44,7 @@ public class Refinement {
             doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
                      refinable, oldV);
 
-        return !itr.getChanges().isEmpty();
+        return !itr.hasChanged();
     }
 
     /**

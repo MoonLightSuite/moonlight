@@ -239,6 +239,7 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
+    @Disabled("Under Investigation")
     @Test
     void testWholeFormulaAtT4() {
         Object[] ss = testAtUpdate4(wholeFormula());
@@ -293,6 +294,7 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
+    @Disabled("Under Investigation")
     @Test
     void testOrFormulaAtT5() {
         Object[] ss = testAtUpdate5(orFormula());

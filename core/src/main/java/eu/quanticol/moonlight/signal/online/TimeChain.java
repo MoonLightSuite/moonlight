@@ -44,9 +44,9 @@ import java.util.*;
  *    </ul>
  *
  * <p>
- * TODO: they should be enforced by mutators and are is trivially
+ * TODO: they should be enforced by mutators and are trivially
  *       satisfied at the beginning, i.e. with no segments
- * TODO: addAll, set, add, offer, offerFirst, offerLast, push, listIterator, diffIterator
+ * TODO: addAll, add, set, push, offer, offerFirst, offerLast, listIterator, diffIterator
  *
  *
  * @see SegmentInterface
@@ -83,32 +83,6 @@ public class TimeChain
         return new TimeChain<>(segments, end);
     }
 
-    @Override
-    public void addFirst(SegmentInterface<T, V> e) {
-        if(getFirst().getStart().compareTo(e.getStart()) > 0)
-            super.addFirst(e);
-        else
-            throw new IllegalArgumentException(MONOTONICITY);
-    }
-
-    @Override
-    public void addLast(SegmentInterface<T, V> e) {
-        if(this.end.compareTo(e.getStart()) > 0)
-            super.addLast(e);
-        else
-            throw new IllegalArgumentException(ENDING_COND);
-    }
-
-    @Override
-    public boolean add(SegmentInterface<T, V> e) {
-        if(this.end.compareTo(e.getStart()) > 0)
-            return super.add(e);
-        else
-            throw new IllegalArgumentException(ENDING_COND);
-    }
-
-
-
     public void setEnd(T end) {
         if(getLast().getStart().compareTo(end) < 0 &&
                 this.end.compareTo(end) <= 0)
@@ -117,7 +91,6 @@ public class TimeChain
             throw new IllegalArgumentException(ENDING_COND);
 
     }
-
 
     public DiffIterator<SegmentInterface<T, V>> diffIterator() {
         return diffIterator(0);
@@ -129,18 +102,22 @@ public class TimeChain
         return new DiffListItr(index);
     }
 
-    private class DiffListItr implements DiffIterator<SegmentInterface<T, V>> {
-        private final ArrayList<SegmentInterface<T, V>>  changes;
+    private class DiffListItr implements
+            DiffIterator<SegmentInterface<T, V>>
+    {
         private final ListIterator<SegmentInterface<T, V>> itr;
+        private boolean changed;
 
         public DiffListItr(int index) {
-            changes = new ArrayList<>();
             itr = TimeChain.super.listIterator(index);
+            changed = false;
         }
-
+        /**
+         * @return A list of changes generated from list mutators
+         */
         @Override
-        public List<SegmentInterface<T, V>> getChanges() {
-            return changes;
+        public boolean hasChanged() {
+            return changed;
         }
 
         /**
@@ -210,21 +187,20 @@ public class TimeChain
         @Override
         public void remove() {
             itr.remove();
-            //TODO: should we track removals?
+            changed = true;
         }
 
         @Override
         public void set(SegmentInterface<T, V> e) {
-            changes.add(e);
             itr.set(e);
+            changed = true;
         }
 
         @Override
         public void add(SegmentInterface<T, V> e) {
-            changes.add(e);
             itr.add(e);
+            changed = true;
         }
-
         // ------------------------- END OF MUTATORS ------------------------ //
 
         @Override
@@ -256,6 +232,35 @@ public class TimeChain
         public int previousIndex() {
             return itr.previousIndex();
         }
+    }
+
+    @Override
+    public void push(SegmentInterface<T, V> e) {
+        addFirst(e);
+    }
+
+    @Override
+    public void addFirst(SegmentInterface<T, V> e) {
+        if(getFirst().getStart().compareTo(e.getStart()) > 0)
+            super.addFirst(e);
+        else
+            throw new IllegalArgumentException(MONOTONICITY);
+    }
+
+    @Override
+    public void addLast(SegmentInterface<T, V> e) {
+        if(this.end.compareTo(e.getStart()) > 0)
+            super.addLast(e);
+        else
+            throw new IllegalArgumentException(ENDING_COND);
+    }
+
+    @Override
+    public boolean add(SegmentInterface<T, V> e) {
+        if(this.end.compareTo(e.getStart()) > 0)
+            return super.add(e);
+        else
+            throw new IllegalArgumentException(ENDING_COND);
     }
 
     public T getEnd() {

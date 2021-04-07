@@ -40,8 +40,9 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V>
      * @param u the new data available from new knowledge
      * @return <code>true</code> if the refinement actually updates the signal.
      *         <code>false</code> otherwise
+     * @throws UnsupportedOperationException when not allowed by implementors
      */
-    boolean refine(Update<T, V> u);
+    boolean refine(Update<T, V> u) throws UnsupportedOperationException;
 
 
 
@@ -51,7 +52,7 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V>
      * @return the total chain of segments of the signal
      * @throws UnsupportedOperationException when not allowed by implementors
      */
-    TimeChain<T, V> getSegments();
+    TimeChain<T, V> getSegments() throws UnsupportedOperationException;
 
     /**
      * @param time the time instant of interest for looking at the signal value
