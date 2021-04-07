@@ -1,9 +1,9 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018 
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
+
 package eu.quanticol.moonlight.signal;
 
+import eu.quanticol.moonlight.signal.online.TimeChain;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
+import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 /**
  *
  */
-public class Signal<T> {
+public class Signal<T> implements TimeSignal<Double, T> {
 
     private Segment<T> first;
     private Segment<T> last;
@@ -79,7 +82,7 @@ public class Signal<T> {
             startWith(t, value);
         } else {
             if (this.end > t) {
-                throw new IllegalArgumentException("Time: " + t + " Expected: >" + this.end);//TODO: Add Message!
+                throw new IllegalArgumentException("Time: " + t + " Expected: >" + this.end); //TODO: Add Message!
             }
             last = last.addAfter(t, value);
             end = t;
@@ -118,7 +121,7 @@ public class Signal<T> {
      * return a signal, given a signal and a function
      */
     public <R> Signal<R> apply(Function<T, R> f) {
-        Signal<R> newSignal = new Signal<R>();
+        Signal<R> newSignal = new Signal<>();
         SignalCursor<T> cursor = getIterator(true);
         while (!cursor.completed()) {
             newSignal.add(cursor.time(), f.apply(cursor.value()));
@@ -130,86 +133,13 @@ public class Signal<T> {
 
     /**
      *
-     * @param f function to apply to a given signal
-     * @param undefined fallback elements when reaching undefined signal areas
-     * @param horizonStart start of the horizon of the formula
-     * @param horizonEnd end of the horizon of the formula
-     * @param <R> signal interpretation domain
-     * @return a signal resulting from the application of f on it.
-     */
-    public <R> Signal<R> applyHorizon(Function<T, R> f,
-                                      R undefined,
-                                      double horizonStart,
-                                      double horizonEnd)
-    {
-        Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> cursor = getIterator(true);
-
-        double lastTime = 0;
-        while (!cursor.completed()) {
-
-            if(checkHorizon(cursor, horizonStart, horizonEnd)) {
-                newSignal.add(cursor.time(), f.apply(cursor.value()));
-            }
-            lastTime = cursor.time();
-            cursor.forward();
-        }
-        /*if(lastTime < horizonEnd) {
-            newSignal.add(lastTime, undefined);
-            newSignal.endAt(horizonEnd);
-        } else {*/
-            newSignal.endAt(end);
-        //}
-        return newSignal;
-    }
-
-    /**
-     * We want to check the intersection between the signal piece
-     * and the horizon is not empty, i.e. we want the horizon to start
-     * before the current segment or to end after it.
-     *
-     * TODO: we should break the signal here
-     */
-    private static <T> boolean checkHorizon(SignalCursor<T> cursor,
-                                            double start, double end)
-    {
-        return cursor.time() >= start || cursor.nextTime() <= end;
-    }
-
-    /**
-     * return a signal, given two signals and a bifunction
-     */
-    public static <T, R> Signal<R> applyHorizon(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
-        Signal<R> newSignal = new Signal<>();
-        if (!s1.isEmpty() && !s2.isEmpty()) {
-            SignalCursor<T> c1 = s1.getIterator(true);
-            SignalCursor<T> c2 = s2.getIterator(true);
-            double time = Math.max(s1.start(), s2.start());
-            c1.move(time);
-            c2.move(time);
-            while (!c1.completed() && !c2.completed()) {
-                newSignal.add(time, f.apply(c1.value(), c2.value()));
-                time = Math.min(c1.nextTime(), c2.nextTime());
-                c1.move(time);
-                c2.move(time);
-            }
-            if (!newSignal.isEmpty()) {
-                newSignal.endAt(Math.min(s1.end, s2.end));
-            }
-        }
-        return newSignal;
-    }
-
-
-    /**
-     *
      */
     public static <T, R> Signal<R> apply(Signal<T> s, Function<T, R> f) {
         return s.apply(f);
     }
 
     /**
-     * return a signal, given two signals and a bifunction
+     * return a signal, given two signals and a binary function
      */
     public static <T, R> Signal<R> apply(Signal<T> s1, BiFunction<T, T, R> f, Signal<T> s2) {
         Signal<R> newSignal = new Signal<>();
@@ -311,7 +241,7 @@ public class Signal<T> {
         return new SignalCursor<T>() {
 
             private Segment<T> current = (forward ? first : last);
-            private double time = (current != null ? (forward ? current.getTime() : current.getSegmentEnd()) : Double.NaN);
+            private double time = (current != null ? (forward ? current.getStart() : current.getSegmentEnd()) : Double.NaN);
             private Segment<T> previous = null;
 
             @Override
@@ -330,7 +260,7 @@ public class Signal<T> {
                     previous = current;
                     if ((!current.isRightClosed()) || (current.doEndAt(time))) {
                         current = current.getNext();
-                        time = (current != null ? current.getTime() : Double.NaN);
+                        time = (current != null ? current.getStart() : Double.NaN);
                     } else {
                         time = current.getSegmentEnd();
                     }
@@ -341,11 +271,11 @@ public class Signal<T> {
             public void backward() {
                 if (current != null) {
                     previous = current;
-                    if (time>current.getTime()) {
-                        time = current.getTime();
+                    if (time>current.getStart()) {
+                        time = current.getStart();
                     } else {
                         current = current.getPrevious();
-                        time = (current != null ? current.getTime() : Double.NaN);
+                        time = (current != null ? current.getStart() : Double.NaN);
                     }
                 }
             }
@@ -379,8 +309,8 @@ public class Signal<T> {
             @Override
             public double previousTime() {
                 if (current != null) {
-                    if (current.getTime() < time) {
-                        return current.getTime();
+                    if (current.getStart() < time) {
+                        return current.getStart();
                     } else {
                         return current.getPreviousTime();
                     }
@@ -406,7 +336,7 @@ public class Signal<T> {
 
             @Override
             public String toString() {
-                return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getTime() + ")"));
+                return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getStart() + ")"));
             }
 
         };
@@ -431,7 +361,7 @@ public class Signal<T> {
 
     public void endAt(double end) {
         if ((this.end > end) || (last == null)) {
-            throw new IllegalArgumentException();//TODO: Add message!
+            throw new IllegalArgumentException(); //TODO: Add message!
         }
         this.end = end;
         this.last.endAt(end);
@@ -455,7 +385,7 @@ public class Signal<T> {
         Segment<T> current = first;
         int counter = 0;
         while (current != null) {
-            toReturn[counter][0] = current.getTime();
+            toReturn[counter][0] = current.getStart();
             toReturn[counter][1] = f.apply( current.getValue() );
             current = current.getNext();
             counter++;
@@ -494,14 +424,52 @@ public class Signal<T> {
         HashSet<Double> timeSet = new HashSet<>();
         Segment<T> current = first;
         while (current != null) {
-            timeSet.add(current.getTime());
+            timeSet.add(current.getStart());
             current = current.getNext();
         }
         timeSet.add(end);
         return timeSet;
     }
 
-    public double getEnd() {
+    public Double getEnd() {
         return end;
+    }
+
+    /**
+     * Performs an update of the internal representation of the signal,
+     * given the data available in the update.
+     *
+     * @param u the new data available from new knowledge
+     * @return <code>true</code> if the refinement actually updates the signal.
+     * <code>false</code> otherwise
+     */
+    @Override
+    public boolean refine(Update<Double, T> u) {
+        throw new UnsupportedOperationException("Refinements are not implemented yet for offline signals");
+    }
+
+    /**
+     * Returns the internal chain of segments.
+     *
+     * @return the total chain of segments of the signal
+     * @throws UnsupportedOperationException when not allowed by implementors
+     */
+    @Override
+    public TimeChain<Double, T> getSegments() {
+        throw new UnsupportedOperationException("Segment extraction is not implemented yet for offline signals");
+    }
+
+    /**
+     * Temporal projection operation that selects a sub-part of the signal
+     * delimited by the time instants provided by the input parameters.
+     *
+     * @param from beginning of the time frame of interest
+     * @param to   ending of the time frame of interest
+     * @return the chain of segments of the signal delimited by the input
+     * @throws UnsupportedOperationException when not allowed by implementors
+     */
+    @Override
+    public TimeChain<Double, T> select(Double from, Double to) {
+        throw new UnsupportedOperationException("Selection is not implemented yet for offline signals");
     }
 }

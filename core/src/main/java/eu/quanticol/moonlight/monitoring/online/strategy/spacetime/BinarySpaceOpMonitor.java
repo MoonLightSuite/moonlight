@@ -22,15 +22,16 @@ package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
 import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.ListDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
+import eu.quanticol.moonlight.signal.online.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
+import java.util.function.BinaryOperator;
 
 /**
  * Strategy to interpret (online) an atomic predicate on the signal of interest.
@@ -40,55 +41,68 @@ import java.util.function.UnaryOperator;
  *
  * @see TemporalMonitor
  */
-public class UnaryMonitor<V, R extends Comparable<R>>
+public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
-    private final UnaryOperator<List<AbstractInterval<R>>> op;
-    private final SpaceTimeSignal<Double, AbstractInterval<R>> rho;
+    private final BinaryOperator<List<AbstractInterval<R>>> opFunction;
+    private final OnlineSpaceTimeSignal<R> rho;
     private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
-                                                                argumentMonitor;
-
+                                                                    firstArg;
+    private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+                                                                    secondArg;
 
     /**
      * Prepares an atomic online (temporal) monitor.
-     * @param unaryOp The function evaluated by the atomic predicate
+     * @param binaryOp The function evaluated by the atomic predicate
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public UnaryMonitor(OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
-                        UnaryOperator<List<AbstractInterval<R>>> unaryOp,
-                        SignalDomain<R> interpretation,
-                        int locations)
+    public BinarySpaceOpMonitor(
+            OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> firstArg,
+            OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> secondArg,
+            BinaryOperator<List<AbstractInterval<R>>> binaryOp,
+            SignalDomain<R> interpretation,
+            int locations)
     {
-        this.op = unaryOp;
+        this.opFunction = binaryOp;
         this.rho = new OnlineSpaceTimeSignal<>(locations, interpretation);
-        this.argumentMonitor = argument;
+        this.firstArg = firstArg;
+        this.secondArg = secondArg;
     }
 
     @Override
     public List<Update<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, List<AbstractInterval<R>>>> argUpdates =
-                                        argumentMonitor.monitor(signalUpdate);
-
         List<Update<Double, List<AbstractInterval<R>>>> updates =
                                                             new ArrayList<>();
 
-        for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
-            updates.addAll(BooleanComputation.unary(argU, op));
+        List<Update<Double, List<AbstractInterval<R>>>> firstArgUps =
+                                                firstArg.monitor(signalUpdate);
+        List<Update<Double, List<AbstractInterval<R>>>> secondArgUps =
+                                                secondArg.monitor(signalUpdate);
+
+        TimeSignal<Double, List<AbstractInterval<R>>> s1 =
+                                                        firstArg.getResult();
+        TimeSignal<Double, List<AbstractInterval<R>>> s2 =
+                                                        secondArg.getResult();
+
+        for(Update<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
+            updates.addAll(BooleanComputation.binary(s2, argU, opFunction));
         }
 
-        for(Update<Double, List<AbstractInterval<R>>> u : updates) {
-            rho.refine(u);
+        for(Update<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
+            updates.addAll(BooleanComputation.binary(s1, argU, opFunction));
         }
+
+        updates.forEach(rho::refine);
 
         return updates;
     }
 
     @Override
-    public SpaceTimeSignal<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
         return rho;
     }
 }

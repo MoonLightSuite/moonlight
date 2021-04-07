@@ -20,20 +20,22 @@
 
 package eu.quanticol.moonlight.signal.online;
 
-import java.util.*;
+
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
- * Interface that extends the ListIterator interface to also retrieve
- * a list of changes that should be updated on mutators invocation.
+ * Interface that extends the ListIterator interface with some handy methods.
  *
- * @see TimeChain#diffIterator()
+ * @see TimeChain#guardedIterator()
  */
-public interface DiffIterator<E> extends ListIterator<E> {
+public interface GuardedIterator<E> extends ListIterator<E> {
 
     /**
-     * @return A list of changes generated from list mutators
+     * @return <code>true</code> if some elements of the list mutated.
+     *         <code>false</code> otherwise.
      */
-    List<E> getChanges();
+    boolean hasChanged();
 
     /**
      * @return the next element of the iterator by keeping current position

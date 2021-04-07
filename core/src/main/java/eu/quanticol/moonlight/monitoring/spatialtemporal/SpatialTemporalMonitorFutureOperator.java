@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.

@@ -56,10 +56,10 @@ public class BooleanComputation {
 
 
     public static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    List<Update<T, R>> binaryUp(TimeSignal<T, R> s,
-                                Update<T, R> u,
-                                BinaryOperator<R> op)
+    <T extends Comparable<T> & Serializable, R>
+    List<Update<T, R>> binary(TimeSignal<T, R> s,
+                              Update<T, R> u,
+                              BinaryOperator<R> op)
     {
         List<Update<T, R>> updates = new ArrayList<>();
         TimeChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
@@ -199,7 +199,7 @@ public class BooleanComputation {
     }*/
 
     private static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
+    <T extends Comparable<T> & Serializable, R>
     void parallelExec(TimeChain<T, R> s,
                       List<Update<T, R>> updates,
                       BinaryOperator<R> op,

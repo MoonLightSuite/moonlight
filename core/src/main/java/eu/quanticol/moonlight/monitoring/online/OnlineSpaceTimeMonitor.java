@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -28,6 +28,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnarySpaceOpMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.BinaryMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnaryTimeOpMonitor;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnaryMonitor;
@@ -121,6 +122,22 @@ FormulaVisitor<Parameters,
                         listInterpretation::negation, interpretation, size));
     }
 
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            AndFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> firstArg =
+                formula.getFirstArgument().accept(this, parameters);
+
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> secondArg =
+                formula.getSecondArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new BinaryMonitor<>(firstArg, secondArg,
+                        listInterpretation::conjunction,
+                        interpretation, size));
+    }
+
 
     @Override
     public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
@@ -155,6 +172,14 @@ FormulaVisitor<Parameters,
             EscapeFormula formula, Parameters parameters)
     {
         return unarySpace(formula, parameters, this::escapeOp);
+    }
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            ReachFormula formula, Parameters parameters)
+    {
+        //return unarySpace(formula, parameters, this::escapeOp);
+        return null;
     }
 
     private OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>

@@ -77,7 +77,7 @@ public class Pollution {
         }
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
-        LOG.info(() -> "Monitoring result of F1: " + output2);
+        LOG.info(() -> "Monitoring result of F2: " + output2);
 
     }
 

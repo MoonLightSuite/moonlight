@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -108,7 +108,7 @@ public class OldSlidingWindow<R> {
 
 		public void shift(double time) {
 			double nextTime = first.getSegmentEnd();
-			if (first.getTime()==nextTime) { // Double.isNaN(nextTime)) {//Window contains a single element!
+			if (first.getStart() == nextTime) { // Double.isNaN(nextTime)) {//Window contains a single element!
 				init( time-size , first.getValue() );
 			} else {
 				if (nextTime+size>time) {
@@ -123,7 +123,7 @@ public class OldSlidingWindow<R> {
 		}
 
 		public double firstTime() {
-			return first.getTime();
+			return first.getStart();
 		}
 
 		public R firstValue() {
@@ -131,7 +131,7 @@ public class OldSlidingWindow<R> {
 		}
 
 		public double size( ) {
-			return (first == null?0.0:end-first.getTime());
+			return (first == null ? 0.0 : end - first.getStart());
 		}
 
 		public boolean add( double time , R value ) {
@@ -140,7 +140,7 @@ public class OldSlidingWindow<R> {
 			} else {
 //				if (Math.abs(first.getTime()+size-time)<EPSILON) {
 //				if (first.getTime()+size<time) {
-				if ((first.getTime()<time-size)&&(first.getTime()+size<time)) {
+				if ((first.getStart()<time-size)&&(first.getStart()+size<time)) {
 					return false;
 				} else {
 					update(time, value);
@@ -161,7 +161,7 @@ public class OldSlidingWindow<R> {
 					last = current.addAfter(insertTime, aggregatedValue);
 					return ;
 				} else {
-					insertTime =  current.getTime();
+					insertTime =  current.getStart();
 					aggregatedValue = newValue;
 					current = current.getPrevious();
 				}
@@ -171,7 +171,7 @@ public class OldSlidingWindow<R> {
 		}
 
 		private void init(double time, R value) {
-			first = new Segment<R>(time,value);
+			first = new Segment<>(time,value);
 			last = first;
 			end = time;
 		}

@@ -149,25 +149,25 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
                                          SignalDomain<R> domain)
     {
         return new AbstractInterval<>(domain.negation(value.getEnd()),
-                domain.negation(value.getStart()));
+                                      domain.negation(value.getStart()));
     }
 
-    private AbstractInterval<R> conjunction(AbstractInterval<R> firstValue,
-                                            AbstractInterval<R> secondValue,
+    private AbstractInterval<R> conjunction(AbstractInterval<R> fstVal,
+                                            AbstractInterval<R> sndVal,
                                             SignalDomain<R> domain)
     {
         return new AbstractInterval<>(
-                domain.conjunction(firstValue.getStart(), secondValue.getStart()),
-                domain.conjunction(firstValue.getEnd(), secondValue.getEnd()));
+                domain.conjunction(fstVal.getStart(), sndVal.getStart()),
+                domain.conjunction(fstVal.getEnd(), sndVal.getEnd()));
     }
 
-    private AbstractInterval<R> disjunction(AbstractInterval<R> firstValue,
-                                            AbstractInterval<R> secondValue,
+    private AbstractInterval<R> disjunction(AbstractInterval<R> fstVal,
+                                            AbstractInterval<R> sndVal,
                                             SignalDomain<R> domain)
     {
         return new AbstractInterval<>(
-                domain.disjunction(firstValue.getStart(), secondValue.getStart()),
-                domain.disjunction(firstValue.getEnd(), secondValue.getEnd()));
+                domain.disjunction(fstVal.getStart(), sndVal.getStart()),
+                domain.disjunction(fstVal.getEnd(), sndVal.getEnd()));
     }
 
     private Function<V, AbstractInterval<R>> fetchAtom(AtomicFormula f)

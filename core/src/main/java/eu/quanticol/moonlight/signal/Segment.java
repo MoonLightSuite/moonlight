@@ -1,18 +1,37 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.signal;
+
+import eu.quanticol.moonlight.signal.online.SegmentInterface;
 
 /**
  * @author loreti
  *
  */
-public class Segment<T> {
+public class Segment<T> implements SegmentInterface<Double, T> {
 	
 	private double time;
 	private final T value;
-	private Segment next;
-	private Segment previous;
+	private Segment<T> next;
+	private Segment<T> previous;
 	private double end = Double.NaN;
 	
 	public Segment( double time , T value ) {
@@ -21,18 +40,14 @@ public class Segment<T> {
 		this.previous = null;
 	}
 	
-	private Segment(Segment previous, double time, T value) {
+	private Segment(Segment<T> previous, double time, T value) {
 		this.previous = previous;
 		this.time = time;
 		this.value = value;
 		this.end = time;
 	}
 
-	public double getTime() {
-		return time;
-	}
-
-	public double getStart() {
+	public Double getStart() {
 		return time;
 	}
 
@@ -40,15 +55,15 @@ public class Segment<T> {
 		return value;
 	}
 	
-	public Segment getNext() {
+	public Segment<T> getNext() {
 		return next;
 	}
 	
-	public Segment getPrevious() {
+	public Segment<T> getPrevious() {
 		return previous;
 	}
 	
-	public void setNext( Segment next ) {
+	public void setNext( Segment<T> next ) {
 		this.next = next;
 	}
 
@@ -57,7 +72,7 @@ public class Segment<T> {
 		return (selected==null?null:selected.value);
 	}
 	
-	public Segment jump(double t ) {
+	public Segment<T> jump(double t ) {
 		if (t<time) {
 			return backwardTo( this, t );
 		} else {
@@ -65,8 +80,8 @@ public class Segment<T> {
 		}
 	}
 	
-	public static <T> Segment forwardTo(Segment segment, double t) {
-		Segment cursor = segment;
+	public static <T> Segment<T> forwardTo(Segment<T> segment, double t) {
+		Segment<T> cursor = segment;
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
@@ -76,8 +91,8 @@ public class Segment<T> {
 		return null;	
 	}
 
-	public static <T> Segment backwardTo(Segment segment, double t) {
-		Segment cursor = segment;
+	public static <T> Segment<T> backwardTo(Segment<T> segment, double t) {
+		Segment<T> cursor = segment;
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
@@ -91,17 +106,18 @@ public class Segment<T> {
 		return (time==t)||((time<=t)&&((Double.isFinite(end)&&(t<=end))||(next!=null)&&(t<next.time)));
 	}
 
-	public static double getTime(Segment s) {
-		return (s==null?Double.NaN:s.getTime());
+	public static <T> double getTime(Segment<T> s) {
+		return (s == null ? Double.NaN : s.getStart());
 	}
 
-	public Segment addAfter(double time, T value) {
-		if (this.time>=time) {
-			throw new IllegalArgumentException("Time: "+time+" Expexted: >="+this.time); //TODO: Add error message!
+	public Segment<T> addAfter(double time, T value) {
+		if (this.time >= time) {
+			throw new IllegalArgumentException("Trying to add time: " + time +
+											   ". Expected: >= " + this.time);
 		}
 		if (!this.value.equals(value)) {
-			this.next = new Segment(this, time, value);
-			this.end = Double.NaN; //TODO: Why?!
+			this.next = new Segment<>(this, time, value);
+			this.end = Double.NaN;
 			return this.next;
 		} else {
 			this.end = time;
@@ -110,12 +126,12 @@ public class Segment<T> {
 		}
 	}
 
-	public Segment addBefore(double time, T value) {
+	public Segment<T> addBefore(double time, T value) {
 		if (this.time<=time) {
 			throw new IllegalArgumentException(); //TODO: Add error message!
 		}
 		if (!this.value.equals(value)) {
-			this.previous = new Segment(this, time, value);
+			this.previous = new Segment<>(this, time, value);
 			this.previous.next = this;
 			return this.previous;
 		} else {
@@ -134,14 +150,14 @@ public class Segment<T> {
 			}
 			return this.end;
 		}
-		return next.getTime();
+		return next.getStart();
 	}
 
 	public double getPreviousTime() {
 		if (previous == null) {
 			return Double.NaN;
 		}
-		return previous.getTime();
+		return previous.getStart();
 	}
 	
 	@Override
@@ -158,7 +174,7 @@ public class Segment<T> {
 
 	//TODO: this method mutates the Segment (very dangerous!)
 	//		and doesn't do what it says it does!!!!!
-	public Segment splitAt(double time) {
+	public Segment<T> splitAt(double time) {
 		if (this.time>=time) {
 			throw new IllegalArgumentException();
 		}
@@ -180,7 +196,7 @@ public class Segment<T> {
 
 	public double nextTimeAfter(double time) {
 		if (this.next!=null) {
-			return next.getTime();
+			return next.getStart();
 		} else {
 			if (time<end) {
 				return end;

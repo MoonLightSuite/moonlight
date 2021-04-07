@@ -45,10 +45,10 @@ class BooleanComputationTest {
 
 
         List<Update<Double, AbstractInterval<Double>>> ups =
-                BooleanComputation.binaryUp(s1, u2,
+                BooleanComputation.binary(s1, u2,
                                             BooleanComputationTest::or);
 
-        ups.addAll(BooleanComputation.binaryUp(s2, u1,
+        ups.addAll(BooleanComputation.binary(s2, u1,
                                                BooleanComputationTest::or));
 
         assertEquals(2, ups.size());

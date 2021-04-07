@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -84,12 +84,12 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
         for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
-            updates.addAll(BooleanComputation.binaryUp(s2, argU, opFunction));
+            updates.addAll(BooleanComputation.binary(s2, argU, opFunction));
 
         }
 
         for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
-            updates.addAll(BooleanComputation.binaryUp(s1, argU, opFunction));
+            updates.addAll(BooleanComputation.binary(s1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);

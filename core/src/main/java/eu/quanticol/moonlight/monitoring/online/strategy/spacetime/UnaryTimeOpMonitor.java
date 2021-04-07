@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -89,13 +89,9 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
                                                              op));
         }
 
-        //System.out.println("Temporal Updates: " + updates);
-
         for(Update<Double, List<AbstractInterval<R>>> u: updates) {
             rho.refine(u);
         }
-
-        //System.out.println("Temporal New Rho: " + rho);
 
         return updates;
     }

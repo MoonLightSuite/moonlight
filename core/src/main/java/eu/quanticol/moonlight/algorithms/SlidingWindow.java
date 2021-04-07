@@ -1,6 +1,6 @@
 /*
  * MoonLight: a light-weight framework for runtime monitoring
- * Copyright (C) 2018
+ * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
@@ -281,7 +281,7 @@ public class SlidingWindow<R> {
 		 * @return the first time instant of the Sliding Window
 		 */
 		double firstTime() {
-			return first.getTime();
+			return first.getStart();
 		}
 
 		/**
@@ -329,7 +329,7 @@ public class SlidingWindow<R> {
 					// Since the value is different, we store it and shift
 					// backwards, the next iteration will compare with the
 					// aggregated value
-					insertTime =  current.getTime();
+					insertTime =  current.getStart();
 					aggregatedValue = newValue;
 					current = current.getPrevious();
 					// We will re-use the window in the future, so we have to
