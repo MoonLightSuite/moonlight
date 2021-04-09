@@ -20,7 +20,7 @@ public class Refinement {
                 s.diffIterator();
         SegmentInterface<Double, V> current = itr.next();
 
-        V oldV = current.getValue();
+        V prevV = current.getValue();
 
         if(u.getStart().equals(u.getEnd()))
             return false;
@@ -29,20 +29,20 @@ public class Refinement {
 
         while (itr.hasNext()) {
             if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
-                        refinable, oldV))
+                        refinable, prevV))
             {
                 done = true;
                 break;
             }
 
             // Save the "next" as the new "current".
-            oldV = current.getValue();
+            prevV = current.getValue();
             current = itr.next();
         }
 
         if(!done) // To handle single-segment signals
             doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
-                     refinable, oldV);
+                     refinable, prevV);
 
         return !itr.hasChanged();
     }
@@ -61,7 +61,7 @@ public class Refinement {
     private static <V> boolean doRefine(
             DiffIterator<SegmentInterface<Double, V>> itr,
             SegmentInterface<Double, V> curr,
-            double from, double to, V vNew, BiPredicate<V, V> refinable, V oldV)
+            double from, double to, V vNew, BiPredicate<V, V> refinable, V prevV)
     {
         double t = curr.getStart();
         double tNext = Double.POSITIVE_INFINITY;
@@ -75,7 +75,7 @@ public class Refinement {
 
         // Case 1 - `from` in (t, tNext):
         //          This means the update starts in the current segment
-        if(t < from && tNext > from) {
+        if(t < from && tNext > from && refinable.test(v, vNew)) {
             add(itr, from, vNew);
             return false;
         }
@@ -83,13 +83,13 @@ public class Refinement {
         //          This means the current segment starts exactly at
         //          update time, therefore, its value must be updated
         if(t == from) {
-            update(itr, t, v, vNew, refinable, oldV);
+            update(itr, t, v, vNew, refinable, prevV);
         }
 
         // Case 3 - t  in (from, to):
         //          This means the current segment starts within the update
         //          horizon and must therefore be updated
-        if(t > from && t < to) {
+        if(t > from && t < to && refinable.test(v, vNew) && !v.equals(vNew)) {
             remove(itr);
         }
 
@@ -119,11 +119,11 @@ public class Refinement {
      */
     private static <V>
     void update(DiffIterator<SegmentInterface<Double, V>> itr,
-                double t, V v, V vNew, BiPredicate<V, V> refinable, V oldV)
+                double t, V v, V vNew, BiPredicate<V, V> refinable, V prevV)
     {
         //redundant updates can be ignored
         if(!v.equals(vNew)) {
-            if(oldV.equals(vNew)) {
+            if(prevV.equals(vNew)) {
                 remove(itr);
             } else if (refinable.test(v, vNew)) {
                 SegmentInterface<Double, V> s = new ImmutableSegment<>(t, vNew);
@@ -150,10 +150,16 @@ public class Refinement {
     }
 
     private static <V> void add(DiffIterator<SegmentInterface<Double, V>> itr,
-                                Double start, V value)
+                                Double start, V vNew)
     {
-        if(!itr.peekPrevious().getValue().equals(value))
-            itr.add(new ImmutableSegment<>(start, value));
+        if(!itr.peekPrevious().getValue().equals(vNew)) {
+            itr.add(new ImmutableSegment<>(start, vNew));
+            if(itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
+                itr.next();
+                remove(itr);
+                itr.previous();
+            }
+        }
     }
 
 

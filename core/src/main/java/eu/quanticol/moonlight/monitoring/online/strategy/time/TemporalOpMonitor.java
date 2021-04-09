@@ -80,11 +80,9 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
 
         List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
-        for(Update<Double, AbstractInterval<R>> argU : argUpdates) {
-            updates.addAll(TemporalComputation.slidingWindow(s,
-                                                             argU,
-                                                             horizon,
-                                                             op));
+        for(Update<Double, AbstractInterval<R>> argU: argUpdates) {
+            updates.addAll(TemporalComputation.slidingWindow(s, argU,
+                                                             horizon, op));
         }
 
         for(Update<Double, AbstractInterval<R>> u: updates) {

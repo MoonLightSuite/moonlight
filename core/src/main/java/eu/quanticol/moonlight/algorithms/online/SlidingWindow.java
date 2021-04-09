@@ -37,7 +37,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.abs;
 
 public class SlidingWindow<R> {
-    private final TimeChain<Double, R> s;
+    private final TimeChain<Double, R> arg;
     private final Interval h;
     private final BinaryOperator<R> op;
     private final double hEnd;
@@ -46,10 +46,10 @@ public class SlidingWindow<R> {
     private final List<Update<Double, R>> updates = new ArrayList<>();
     private final Update<Double, R> u;
 
-    public SlidingWindow(TimeChain<Double, R> s, Update<Double, R> update,
+    public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> update,
                          Interval opHorizon, BinaryOperator<R> op)
     {
-        this.s = s;
+        this.arg = arg;
         h = opHorizon;
         hEnd = update.getEnd() - opHorizon.getStart();
         hStart = update.getStart() - h.getEnd();
@@ -58,7 +58,7 @@ public class SlidingWindow<R> {
     }
 
     public List<Update<Double, R>>  slide() {
-        DiffIterator<SegmentInterface<Double, R>> itr = s.diffIterator();
+        DiffIterator<SegmentInterface<Double, R>> itr = arg.diffIterator();
 
         doSlide(itr);
 
@@ -109,10 +109,13 @@ public class SlidingWindow<R> {
             cutLeft(t, curr.getStart());
 
             // We clear the monotonic edge
-            Node<Double, R> newNode = makeMonotonic(t, curr.getValue());
+            Node<Double, R> newNode = makeMonotonic(t, wSize, curr.getStart(), curr.getValue());
+            t = newNode.getStart();
 
             // We can add to the window the pair (lastT, currV)
             w.addLast(newNode);
+
+            //System.out.println("The window has been updated: " + w.toString());
         }
     }
 
@@ -122,35 +125,48 @@ public class SlidingWindow<R> {
             updates.add(oldFirst);
             w.addFirst(new Node<>(currT - h.getEnd(),
                                   oldFirst.getValue()));
+            //System.out.println("The window has been updated: " + w.toString());
         }
     }
 
     /**
      * From the last to the first value of the window, we remove them until the
      * last element is strictly bigger than the current one
-     * @param lastT
+     * @param fromT
      * @param currV
      * @return
      */
-    private Node<Double, R> makeMonotonic(Double lastT, R currV) {
+    private Node<Double, R> makeMonotonic(Double fromT, Double wSize, Double currT, R currV) {
+        // w.lastV < currV => currV is global maximum, replace lastV
+        // else => currV local minimum starting from max(fromT,currT)
         while(!w.isEmpty() && !op.apply(w.getLast().getValue(), currV)
                                  .equals(w.getLast().getValue()))
         {
-            lastT = w.getLast().getStart();
+            fromT = w.getLast().getStart();
             currV = op.apply(w.getLast().getValue(), currV);
             w.removeLast();
+            //System.out.println("The window has been updated: " + w.toString());
         }
 
-        return new Node<>(lastT, currV);
+        if(!w.isEmpty() &&
+           w.getLast().getStart() + wSize > fromT &&
+           op.apply(w.getLast().getValue(), currV).equals(w.getLast().getValue()))
+        {
+            fromT = min(max(fromT, w.getLast().getStart() + wSize), currT - h.getStart());
+            //fromT = currT;
+        }
+
+        return new Node<>(fromT, currV);
     }
 
     private Update<Double, R> popUpdate(double outT)
     {
         Node<Double, R> f = w.removeFirst();
+        //System.out.println("The window has been updated: " + w.toString());
         //Double end = hEnd;
         Double end = min(hEnd, outT);
         if(!w.isEmpty())
-            end = w.getFirst().getStart();
+            end = min(end, w.getFirst().getStart());
 
         return new Update<>(f.getStart(), end, f.getValue());
     }
@@ -178,6 +194,11 @@ public class SlidingWindow<R> {
 
         public void setValue(V value) {
             this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "<" + start.toString() + " , " + value.toString();
         }
     }
 
