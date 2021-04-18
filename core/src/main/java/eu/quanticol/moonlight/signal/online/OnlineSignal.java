@@ -29,7 +29,8 @@ import eu.quanticol.moonlight.domain.SignalDomain;
  * @param <D> Signal domain of interest
  */
 public class OnlineSignal<D extends Comparable<D>>
-        implements TimeSignal<Double, AbstractInterval<D>> {
+        implements TimeSignal<Double, AbstractInterval<D>>
+{
     private final TimeChain<Double, AbstractInterval<D>> segments;
 
     /**
@@ -37,7 +38,7 @@ public class OnlineSignal<D extends Comparable<D>>
      */
     public OnlineSignal(SignalDomain<D> domain) {
         this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new ImmutableSegment<>(0.0, new AbstractInterval<>(domain.min(), domain.max())));
+        this.segments.add(new TimeSegment<>(0.0, new AbstractInterval<>(domain.min(), domain.max())));
     }
 
     /**
@@ -75,18 +76,13 @@ public class OnlineSignal<D extends Comparable<D>>
      * @see Update
      */
     @Override
-    public boolean
-        refine(Update<Double, AbstractInterval<D>> u)
-    {
-
+    public boolean refine(Update<Double, AbstractInterval<D>> u) {
         return Refinement.refine(segments, u, AbstractInterval::contains);
-
     }
 
 
     @Override
-    public TimeChain<Double, AbstractInterval<D>> select(Double from,
-                                                         Double to)
+    public TimeChain<Double, AbstractInterval<D>> select(Double from, Double to)
     {
         return Refinement.select(segments, from, to);
     }

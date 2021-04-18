@@ -26,7 +26,7 @@ package eu.quanticol.moonlight.signal.online;
  * segment is not present.
  *
  * @param <T> The time domain of interest, typically a {@link Number}
- * @param <V>
+ * @param <V> The value domain of interest
  *
  * @see TimeChain for a data structure that exploits them
  */
@@ -42,4 +42,11 @@ public interface SegmentInterface
      * @return the time instant at which the segment started
      */
     T getStart();
+
+    /**
+     * @return the time instant at which the segment ends
+     * @throws UnsupportedOperationException when the implementation does not
+     *         store the ending of the Segment.
+     */
+    T getEnd() throws UnsupportedOperationException;
 }

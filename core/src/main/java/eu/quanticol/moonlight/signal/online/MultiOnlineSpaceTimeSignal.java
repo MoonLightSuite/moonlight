@@ -25,7 +25,7 @@ public class MultiOnlineSpaceTimeSignal
                          .collect(Collectors.toList());
 
         segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        segments.add(new ImmutableSegment<>(0.0, any));
+        segments.add(new TimeSegment<>(0.0, any));
 
         size = locations;
     }

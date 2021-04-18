@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.domain;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 
 /**
@@ -59,6 +61,11 @@ public class AbstractInterval<T extends Comparable<T>>
      * @param openOnRight marks whether the right bound is included or not
      */
     public AbstractInterval(T start, T end, boolean openOnLeft, boolean openOnRight) {
+        if(start.compareTo(end) > 0)
+            throw new IllegalArgumentException("An Interval must have the " +
+                                               "left bound smaller than the " +
+                                               "right bound");
+
         this.start = start;
         this.end = end;
         this.openOnLeft = openOnLeft;
@@ -147,7 +154,7 @@ public class AbstractInterval<T extends Comparable<T>>
      * Note that in classical interval arithmetic no total ordering
      * relation is defined over intervals.
      * Nevertheless, a strict partial ordering does exist,
-     * so I decided to support it, and to "totalize" the function by
+     * so I decided to support it, and to make the function total by
      * failing at runtime when a comparison cannot be made.
      *
      * A summary of the logic is the following:
@@ -162,7 +169,7 @@ public class AbstractInterval<T extends Comparable<T>>
      * @throws UnsupportedOperationException if the interval cannot be compared
      */
     @Override
-    public int compareTo(AbstractInterval<T> o) {
+    public int compareTo(@NotNull AbstractInterval<T> o) {
         if(this.equals(o))
             return 0;
 
@@ -203,8 +210,8 @@ public class AbstractInterval<T extends Comparable<T>>
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass()) //TODO: this can be problematic with
-            return false;                 //      subclasses
+        if (getClass() != obj.getClass())
+            return false;
         @SuppressWarnings("unchecked")
         AbstractInterval<T> other = (AbstractInterval<T>) obj;
         if (!end.equals(other.end))

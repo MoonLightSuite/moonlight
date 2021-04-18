@@ -143,6 +143,11 @@ public class Segment<T> implements SegmentInterface<Double, T> {
 		}
 	}
 
+	@Override
+	public Double getEnd() {
+		return getSegmentEnd();
+	}
+
 	public double getSegmentEnd() {
 		if (next == null) {
 			if (Double.isNaN(this.end)) {

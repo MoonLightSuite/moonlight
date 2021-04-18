@@ -40,7 +40,7 @@ public class MultiOnlineSignal
      */
     public MultiOnlineSignal(SignalDomain<List<AbstractInterval<?>>> domain) {
         this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new ImmutableSegment<>(0.0, domain.any()));
+        this.segments.add(new TimeSegment<>(0.0, domain.any()));
     }
 
     /**

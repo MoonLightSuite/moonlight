@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -55,12 +57,14 @@ import java.util.*;
  */
 public class TimeChain
         <T extends Comparable<T> & Serializable, V>
-        extends LinkedList<SegmentInterface<T, V>>
+        extends LinkedList<SegmentInterface<T, V>> implements Serializable
 {
+
+    private static final long serialVersionUID = -2785336975515274864L;
     /**
      * Last time instant of definition of the chain
      */
-    private T end;
+    protected T end;
 
     /**
      * It defines a chain of time segments that ends at some time instant
@@ -77,8 +81,27 @@ public class TimeChain
         this.addAll(segments);
     }
 
+    @SuppressWarnings("java:S1185")
+    @Override
+    protected void removeRange(int fromIndex, int toIndex) {
+        super.removeRange(fromIndex, toIndex);
+    }
+
+    public boolean hasChanged() {
+        return modCount > 0;
+    }
+
+    protected int getModCount() {
+        return modCount;
+    }
+
     public TimeChain<T,V> subChain(int from, int to, T end) {
-        //TODO: should check relation between 'end' and 'to'
+        if(end.compareTo(get(to - 1).getStart()) < 0)
+            throw new IllegalArgumentException(ENDING_COND);
+
+        //TODO: commented out, work in progress
+        //return new SubChain<>(this, from, to, end);
+
         List<SegmentInterface<T,V>> segments = subList(from, to);
         return new TimeChain<>(segments, end);
     }
@@ -130,7 +153,7 @@ public class TimeChain
                 SegmentInterface<T, V> e = itr.next();
                 itr.previous();
                 itr.previous();     // This repetition is done to also bring
-                itr.next();         // the pointer to lastReturned
+                itr.next();         // the pointer to super.lastReturned
                 return e;
             } else
                 throw new NoSuchElementException("There is no next element!");
@@ -302,3 +325,233 @@ public class TimeChain
             "Violating ending condition: The chain must either end " +
                     "after the last segment or after the previous ending";
 }
+
+/**
+ * {@inheritDoc}
+ *
+ * <p>This implementation returns a list that subclasses
+ * {@code TimeChain}.  The subclass stores, in private fields, the
+ * offset of the subChain within the backing list, the size of the subChain
+ * (which can change over its lifetime), and the expected
+ * {@code modCount} value of the backing list.
+ *
+ * <p>The subclass's {@code set(int, E)}, {@code get(int)},
+ * {@code add(int, E)}, {@code remove(int)}, {@code addAll(int,
+ * Collection)} and {@code removeRange(int, int)} methods all
+ * delegate to the corresponding methods on the backing time chain,
+ * after bounds-checking the index and adjusting for the offset.  The
+ * {@code addAll(Collection c)} method merely returns {@code addAll(size,
+ * c)}.
+ *
+ * <p>The {@code listIterator(int)} method returns a "wrapper object"
+ * over a list iterator on the backing list, which is created with the
+ * corresponding method on the backing list.  The {@code iterator} method
+ * merely returns {@code listIterator()}, and the {@code size} method
+ * merely returns the subclass's {@code size} field.
+ *
+ * <p>All methods first check to see if the actual {@code modCount} of
+ * the backing list is equal to its expected value, and throw a
+ * {@code ConcurrentModificationException} if it is not.
+ *
+ */
+@SuppressWarnings("java:S110")
+class SubChain<T extends Comparable<T> & Serializable, V>
+        extends TimeChain<T, V> implements Serializable
+{
+    private static final long serialVersionUID = 815690343193147073L;
+
+    private final TimeChain<T, V> l;
+    private final int offset;
+    private int subSize;
+
+    SubChain(TimeChain<T, V> list, int fromIndex, int toIndex, T end) {
+        super(end);
+
+        if (fromIndex < 0)
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        if (toIndex > list.size())
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        if (fromIndex > toIndex)
+            throw new IllegalArgumentException("fromIndex(" + fromIndex +
+                    ") > toIndex(" + toIndex + ")");
+        l = list;
+        offset = fromIndex;
+        subSize = toIndex - fromIndex;
+        this.modCount = l.getModCount();
+    }
+
+    @Override
+    public SegmentInterface<T, V> set(int index, SegmentInterface<T, V> element)
+    {
+        rangeCheck(index);
+        checkForComodification();
+        return l.set(index + offset, element);
+    }
+
+    @Override
+    public SegmentInterface<T, V> get(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        return l.get(index + offset);
+    }
+
+    @Override
+    public int size() {
+        checkForComodification();
+        return subSize;
+    }
+
+    @Override
+    public void add(int index, SegmentInterface<T, V> element) {
+        rangeCheckForAdd(index);
+        checkForComodification();
+        l.add(index + offset, element);
+        this.modCount = l.getModCount();
+        subSize++;
+    }
+
+    @Override
+    public SegmentInterface<T, V> remove(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        SegmentInterface<T, V> result = l.remove(index + offset);
+        this.modCount = l.getModCount();
+        subSize--;
+        return result;
+    }
+
+    @Override
+    protected void removeRange(int fromIndex, int toIndex) {
+        checkForComodification();
+        l.removeRange(fromIndex + offset, toIndex+offset);
+        this.modCount = l.getModCount();
+        subSize -= (toIndex-fromIndex);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends SegmentInterface<T, V>> c) {
+        return addAll(subSize, c);
+    }
+
+    @Override
+    public boolean addAll(int index,
+                          Collection<? extends SegmentInterface<T, V>> c)
+    {
+        rangeCheckForAdd(index);
+        int cSize = c.size();
+        if (cSize==0)
+            return false;
+
+        checkForComodification();
+        l.addAll(offset + index, c);
+        this.modCount = l.getModCount();
+        subSize += cSize;
+        return true;
+    }
+
+    @Override
+    public @NotNull Iterator<SegmentInterface<T, V>> iterator() {
+        return listIterator();
+    }
+
+    @Override
+    public @NotNull ListIterator<SegmentInterface<T, V>>
+    listIterator(final int index)
+    {
+        checkForComodification();
+        rangeCheckForAdd(index);
+
+        return new ListIterator<SegmentInterface<T, V>>() {
+            private final ListIterator<SegmentInterface<T, V>> i =
+                                        l.listIterator(index + offset);
+
+            public boolean hasNext() {
+                return nextIndex() < subSize;
+            }
+
+            public SegmentInterface<T, V> next() {
+                if (hasNext())
+                    return i.next();
+                else
+                    throw new NoSuchElementException();
+            }
+
+            public boolean hasPrevious() {
+                return previousIndex() >= 0;
+            }
+
+            public SegmentInterface<T, V> previous() {
+                if (hasPrevious())
+                    return i.previous();
+                else
+                    throw new NoSuchElementException();
+            }
+
+            public int nextIndex() {
+                return i.nextIndex() - offset;
+            }
+
+            public int previousIndex() {
+                return i.previousIndex() - offset;
+            }
+
+            public void remove() {
+                i.remove();
+                SubChain.this.modCount = l.getModCount();
+                subSize--;
+            }
+
+            public void set(SegmentInterface<T, V> e) {
+                i.set(e);
+            }
+
+            public void add(SegmentInterface<T, V> e) {
+                i.add(e);
+                SubChain.this.modCount = l.getModCount();
+                subSize++;
+            }
+        };
+    }
+
+    public @NotNull List<SegmentInterface<T, V>>
+    subList(int fromIndex, int toIndex)
+    {
+        return new SubChain<>(this, fromIndex, toIndex, this.end);
+    }
+
+    private void rangeCheck(int index) {
+        if (index < 0 || index >= subSize)
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+    }
+
+    private void rangeCheckForAdd(int index) {
+        if (index < 0 || index > subSize)
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+    }
+
+    private String outOfBoundsMsg(int index) {
+        return "Index: "+index+", Size: "+ subSize;
+    }
+
+    private void checkForComodification() {
+        if (this.modCount != l.getModCount())
+            throw new ConcurrentModificationException();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SubChain)) return false;
+        if (!super.equals(o)) return false;
+        SubChain<?, ?> subChain = (SubChain<?, ?>) o;
+        return offset == subChain.offset &&
+                subSize == subChain.subSize &&
+                l.equals(subChain.l);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), l, offset, subSize);
+    }
+}
+

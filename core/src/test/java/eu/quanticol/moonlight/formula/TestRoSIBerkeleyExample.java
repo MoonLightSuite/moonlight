@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.*;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -313,7 +312,6 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
-    @Disabled("Under Investigation")
     @Test
     void testWholeFormulaAtT5() {
         Object[] ss = testAtUpdate5(wholeFormula());
@@ -565,6 +563,6 @@ class TestRoSIBerkeleyExample {
                                     AbstractInterval<Double> value,
                                     Object segment)
     {
-        assertEquals(new ImmutableSegment<>(start, value), segment);
+        assertEquals(new TimeSegment<>(start, value), segment);
     }
 }

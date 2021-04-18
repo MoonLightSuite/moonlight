@@ -44,7 +44,7 @@ public class Refinement {
             doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
                      refinable, prevV);
 
-        return !itr.hasChanged();
+        return !s.hasChanged();
     }
 
     /**
@@ -126,7 +126,7 @@ public class Refinement {
             if(prevV.equals(vNew)) {
                 remove(itr);
             } else if (refinable.test(v, vNew)) {
-                SegmentInterface<Double, V> s = new ImmutableSegment<>(t, vNew);
+                SegmentInterface<Double, V> s = new TimeSegment<>(t, vNew);
                 itr.set(s);
             } else {
                 throw new UnsupportedOperationException("Refining interval: " +
@@ -153,7 +153,7 @@ public class Refinement {
                                 Double start, V vNew)
     {
         if(!itr.peekPrevious().getValue().equals(vNew)) {
-            itr.add(new ImmutableSegment<>(start, vNew));
+            itr.add(new TimeSegment<>(start, vNew));
             if(itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
                 itr.next();
                 remove(itr);

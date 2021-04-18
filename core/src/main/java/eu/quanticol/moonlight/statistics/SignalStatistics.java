@@ -43,7 +43,7 @@ import static java.util.Collections.synchronizedCollection;
  * {@link Statistics} is the Data Transfer Object (DTO) devoted to showing
  * the results.
  *
- * TODO: Generalize so that it can accepts both
+ * TODO: Generalize so that it can accept both
  *       SpatialTemporalSignals and TemporalSignals
  *
  * @param <T> the Signal Type of interest

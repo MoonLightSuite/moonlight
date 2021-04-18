@@ -40,21 +40,22 @@ public class SlidingWindow<R> {
     private final TimeChain<Double, R> arg;
     private final Interval h;
     private final BinaryOperator<R> op;
-    private final double hEnd;
-    private final double hStart;
+    private final double uEnd;
+    private final double uStart;
     private final Deque<Node<Double, R>> w = new ArrayDeque<>();
     private final List<Update<Double, R>> updates = new ArrayList<>();
-    private final Update<Double, R> u;
 
-    public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> update,
+    public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> u,
                          Interval opHorizon, BinaryOperator<R> op)
     {
         this.arg = arg;
-        h = opHorizon;
-        hEnd = update.getEnd() - opHorizon.getStart();
-        hStart = update.getStart() - h.getEnd();
         this.op = op;
-        u = update;
+        h = opHorizon;
+
+        // We define the resulting update horizon, cut at 0,
+        // as updating before time 0 doesn't make any sense.
+        uStart = u.getStart() - h.getEnd() > 0 ? u.getStart() - h.getEnd() : 0;
+        uEnd = u.getEnd() - h.getStart() > 0 ? u.getEnd() - h.getStart() : 0;
     }
 
     public List<Update<Double, R>>  slide() {
@@ -63,8 +64,8 @@ public class SlidingWindow<R> {
         doSlide(itr);
 
         // We add the last pieces of the window to the updates
-        while(!w.isEmpty() && w.getFirst().getStart() < hEnd) {
-            updates.add(popUpdate(Double.POSITIVE_INFINITY));
+        while(!w.isEmpty() && w.getFirst().getStart() < uEnd) {
+            updates.add(popUpdate(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
         }
 
         return updates;
@@ -76,67 +77,77 @@ public class SlidingWindow<R> {
 
         // While there are segments and
         // the update horizon ends after the current time-point
-        while(itr.hasNext() && t < hEnd) {
+        while(itr.hasNext() && t < uEnd) {
             SegmentInterface<Double, R> curr = itr.next();
-            SegmentInterface<Double, R> next = itr.tryPeekNext(curr);
+            double currStart = curr.getStart();
+            double currEnd = itr.tryPeekNext(curr).getStart();
+
 
             // We update the result time pointer:
             // t = min(max(0, next.start - h.end), |curr.start - h.start|)
             // i.e. we take n = `next.start - h.end` if it is non-negative
             //      and m = `curr.start - h.start` if it is not negative
             //      then t is the minimum between n and m
-            double lastT = t;
-            t = max(0, next.getStart() - h.getEnd());
-            if(!w.isEmpty()) {
-                t = min(t, abs(curr.getStart() - h.getStart()));
+            t = max(t, currEnd - h.getEnd());
+            if(//!w.isEmpty() &&
+                    currStart - h.getStart() >= uStart) {
+                t = min(t, currStart - h.getStart());
             }
 
 
-            // `t >= next.start - op.horizon.start` or
-            // `next.start - op.horizon.end < hStart`:
-            //   We can skip this segment
-            if(next != curr && t >= next.getStart() - h.getStart() ||
-               next.getStart() - h.getEnd() < hStart)
+            // we must skip segments starting before the update horizon of
+            // the current t
+            if(t >= currEnd - h.getStart() || currEnd - h.getStart() < uStart)
                 continue;
+            /*if(currEnd != currStart && t >= currEnd - h.getStart() ||
+               (currEnd - h.getEnd() < hStart
+                       //&& t + wSize < currEnd
+                       //&& currStart - h.getStart() < hStart
+               ))
+                continue;*/
+
 
             // We are exceeding the window size, we must pop left sides
             // of the window and we can propagate the related updates
             while(!w.isEmpty() && t - w.getFirst().getStart() > wSize) {
-                updates.add(popUpdate(t));
+                generateUpdate(t, currStart);
             }
 
             // We push out the exceeding part of the window's first segment
-            cutLeft(t, curr.getStart());
+            cutLeft(t, currStart);
 
             // We clear the monotonic edge
-            Node<Double, R> newNode = makeMonotonic(t, wSize, curr.getStart(), curr.getValue());
+            Node<Double, R> newNode = makeMonotonic(t, wSize, currStart, currEnd, curr.getValue());
             t = newNode.getStart();
 
             // We can add to the window the pair (lastT, currV)
             w.addLast(newNode);
-
-            //System.out.println("The window has been updated: " + w.toString());
         }
     }
 
-    private void cutLeft(double t, double currT) {
-        if(!w.isEmpty() && currT - h.getEnd() > w.getFirst().getStart()) {
-            Update<Double, R> oldFirst = popUpdate(t);
-            updates.add(oldFirst);
-            w.addFirst(new Node<>(currT - h.getEnd(),
+    // We are exceeding the window size, we must pop left sides
+    // of the window and we can propagate the related updates
+    private void cutLeft(double t, double currStart) {
+       // if(!w.isEmpty() && t - w.getFirst().getStart() > h.getEnd() - h.getStart()) {
+        if(!w.isEmpty() && currStart - h.getEnd() > w.getFirst().getStart()) {
+            Update<Double, R> oldFirst = popUpdate(t, currStart);
+            w.addFirst(new Node<>(currStart - h.getEnd(),
                                   oldFirst.getValue()));
-            //System.out.println("The window has been updated: " + w.toString());
+            if(currStart - h.getEnd() < oldFirst.getStart())
+                oldFirst = new Update<>(oldFirst.getStart(), currStart - h.getEnd(), oldFirst.getValue());
+
+            updates.add(oldFirst);
         }
     }
 
     /**
      * From the last to the first value of the window, we remove them until the
      * last element is strictly bigger than the current one
-     * @param fromT
-     * @param currV
-     * @return
      */
-    private Node<Double, R> makeMonotonic(Double fromT, Double wSize, Double currT, R currV) {
+    private Node<Double, R> makeMonotonic(Double fromT, Double wSize,
+                                          Double currStart, Double currEnd,
+                                          R currV)
+    {
         // w.lastV < currV => currV is global maximum, replace lastV
         // else => currV local minimum starting from max(fromT,currT)
         while(!w.isEmpty() && !op.apply(w.getLast().getValue(), currV)
@@ -145,26 +156,72 @@ public class SlidingWindow<R> {
             fromT = w.getLast().getStart();
             currV = op.apply(w.getLast().getValue(), currV);
             w.removeLast();
-            //System.out.println("The window has been updated: " + w.toString());
         }
 
+        // if   w.last.start + wSize > fromT &&
+        //      w.last.value `op` currV == w.last.value &&
+        //      w.last.start + wSize < currEnd - wSize
+        // then the last value of the window is still valid for the current time instant,
+        // and will be so until the current segment ends, i.e. currEnd - wSize
         if(!w.isEmpty() &&
-           w.getLast().getStart() + wSize > fromT &&
+           w.getLast().getStart() + h.getEnd() > fromT &&
            op.apply(w.getLast().getValue(), currV).equals(w.getLast().getValue()))
         {
-            fromT = min(max(fromT, w.getLast().getStart() + wSize), currT - h.getStart());
+            //double newT = w.getLast().getStart();
+            if(currEnd - h.getEnd() <= fromT) {
+                fromT = max(
+                        w.getLast().getStart() + h.getEnd()
+                        //, min(fromT + wSize
+                         , max(0, currEnd - h.getEnd())
+                        //, max(0, min(currEnd - wSize, currStart - h.getStart()))
+                        //, max(0, currStart - h.getStart()))
+                )
+                //, max(0, currT - h.getStart()))
+                ;
+            }
+            else
+                fromT = min(
+                        w.getLast().getStart() + h.getEnd()
+                        //, min(fromT + wSize
+                        // min(max(0, currEnd - h.getEnd())
+                        //, max(0, min(currEnd - wSize, currStart - h.getStart()))
+                        , max(0, currStart - h.getStart()))
+                        //)
+                        //, max(0, currT - h.getStart()))
+                        ;
+            /*if(fromT + h.getEnd() < currEnd)
+                fromT = min(newT, currStart - h.getStart());
+            else
+                fromT = min(newT, fromT);*/
+            //fromT = min(max(fromT, w.getLast().getStart() + wSize), currT - h.getStart());
             //fromT = currT;
         }
 
         return new Node<>(fromT, currV);
     }
 
-    private Update<Double, R> popUpdate(double outT)
+    /**
+     * if start > hStart && < hEnd, push update
+     */
+    private void generateUpdate(double outT, double currT) {
+        Node<Double, R> f = w.removeFirst();
+        //if(f.getStart() >= uStart) {
+            double end = //min(
+                    min(uEnd, outT)
+                    //, currT - h.getEnd())
+                    ;
+            if(!w.isEmpty())
+                end = min(end, w.getFirst().getStart());
+
+            updates.add(new Update<>(f.getStart(), end, f.getValue()));
+        //}
+    }
+
+    private Update<Double, R> popUpdate(double outT, double currT)
     {
         Node<Double, R> f = w.removeFirst();
-        //System.out.println("The window has been updated: " + w.toString());
         //Double end = hEnd;
-        Double end = min(hEnd, outT);
+        double end = min(min(uEnd, outT), currT - h.getEnd());
         if(!w.isEmpty())
             end = min(end, w.getFirst().getStart());
 
@@ -198,7 +255,7 @@ public class SlidingWindow<R> {
 
         @Override
         public String toString() {
-            return "<" + start.toString() + " , " + value.toString();
+            return "<" + start.toString() + " , " + value.toString()+ ">";
         }
     }
 

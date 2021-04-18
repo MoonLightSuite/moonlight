@@ -13,7 +13,7 @@ class OnlineSignalTest {
     @Test
     void refine1() {
         DoubleDomain domain = new DoubleDomain();
-        AbstractInterval<Double> data = new AbstractInterval<>(30.0,10.0);
+        AbstractInterval<Double> data = new AbstractInterval<>(10.0,30.0);
         AbstractInterval<Double> any = new AbstractInterval<>(
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);
@@ -32,7 +32,7 @@ class OnlineSignalTest {
     @Test
     void refine2() {
         DoubleDomain domain = new DoubleDomain();
-        AbstractInterval<Double> data = new AbstractInterval<>(30.0,10.0);
+        AbstractInterval<Double> data = new AbstractInterval<>(10.0,30.0);
         AbstractInterval<Double> any = new AbstractInterval<>(
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);

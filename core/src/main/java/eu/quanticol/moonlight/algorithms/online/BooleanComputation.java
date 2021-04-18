@@ -83,12 +83,6 @@ public class BooleanComputation {
      *                      end = s1.select.peekNext();
      *                  ups.add(sss1.start, min(end, u2.end), OP(u1, sss1))
      *      2.2 - same for s2
-     *
-     *
-     * @param op operation to be performed
-     * @param <T> Time domain, usually expressed as a {@link Number}
-     * @param <R> Output robustness domain
-     * @return a list of updates for the robustness signal in input
      */
     /*
     public static
