@@ -100,7 +100,7 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
             throw new IllegalArgumentException("Mismatching time length");
 
         // Perhaps we should check if all required values exist
-        data.add(index, dimData);
+        data.add(dimData);
 
         return this;
     }
@@ -124,6 +124,8 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
 
         return signal;
     }
+
+
     /**
      * @return the number of dimensions of the signal
      */

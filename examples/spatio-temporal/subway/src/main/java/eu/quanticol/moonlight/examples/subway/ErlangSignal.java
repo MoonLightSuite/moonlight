@@ -1,159 +1,103 @@
 package eu.quanticol.moonlight.examples.subway;
 
 import eu.quanticol.moonlight.util.MultiValuedTrace;
-import eu.quanticol.moonlight.examples.subway.grid.GridDirection;
-import eu.quanticol.moonlight.examples.subway.parsing.SignalProcessor;
-import eu.quanticol.moonlight.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
+import eu.quanticol.moonlight.io.parsing.SignalProcessor;
 
 public class ErlangSignal implements SignalProcessor<Float> {
-    /**
-     * Input Signals
-     */
-    public static final int DEV_CONNECTED = 0;
-    public static final int DEV_DIRECTION = 1;
-
-    /**
+   /**
      * State Signals
      */
-    public static final int LOC_ROUTER = 2;
-    public static final int LOC_CROWDEDNESS = 3;
+    public static final int LOC_CROWDEDNESS = 0;
 
     /**
-     * Output Signals
+     * Predictors Signals
      */
-    public static final int OUT_ROUTER = 4;
+    public static final int CROWDEDNESS_1_STEP = 1;
+    public static final int CROWDEDNESS_2_STEP = 2;
+    public static final int CROWDEDNESS_3_STEP = 3;
 
     /**
      * POI Signals
      */
-    public static final int IS_HOSPITAL = 5;
+    public static final int IS_HOSPITAL = 4;
 
 
     private int size;
     private int length;
+    private final int dimensions;
+    private int currDim = 0;
+    private MultiValuedTrace trace;
 
-    private Pair<List<Integer>, List<GridDirection>> sampleDevice;
+    Float[][][] data;
+
+    public ErlangSignal(int inputs) {
+        dimensions = inputs;
+        data = new Float[4][][];
+    }
 
     @Override
     public void initializeSpaceTime(int space, int time) {
         size = space;
         length = time;
+        trace = new MultiValuedTrace(space, time);
+    }
 
-        sampleDevice = sampleDevice();
+    /**
+     * Factory method that generates signals.
+     *
+     * @param input the data used to generate the signal
+     * @return a signal generated from the input data
+     */
+    @Override
+    public MultiValuedTrace generateSignal(Float[][] input) {
+        if(currDim < dimensions) {
+            data[currDim] = input;
+            currDim++;
+        } else
+            throw new UnsupportedOperationException("Exceeding max inputs");
+        return trace;
     }
 
     /**
      * Gathers the values to generate a multi-valued signal of the dimensions
      * of interest from the input.
      *
-     * @param input the data to be loaded
      * @return a list of signals representing the 5-tuple:
      * (devConnected, devDirection, locRouter, locCrowdedness, outRouter)
      */
-    @Override
-    public MultiValuedTrace generateSignal(Float[][] input) {
-        MultiValuedTrace trace = new MultiValuedTrace(size, length);
-
-        Boolean[][] devConn = new Boolean[size][length];
-        GridDirection[][] devDir = new GridDirection[size][length];
-        Integer[][] routerLoc = new Integer[size][length];
-        Integer[][] outRouter = new Integer[size][length];
+    public MultiValuedTrace generateSignal()
+    {
         Boolean[][] isHospital = new Boolean[size][length];
 
         for(int l = 0; l < size; l++) {
             for(int t = 0; t < length; t++) {
-                devConn[l][t] = isDevicePresent(l, t);
-                devDir[l][t] = getDeviceDirection(l, t);
-                routerLoc[l][t] = getRouterLocation(l);
-                outRouter[l][t] = getOutputRouter(l, t);
                 isHospital[l][t] = isHospital(l, t);
             }
         }
 
-        trace
-                .setDimension(devConn, DEV_CONNECTED)   // Device Position
-                .setDimension(devDir, DEV_DIRECTION)    // Device Direction
-                .setDimension(routerLoc, LOC_ROUTER)    // Location Router ID
-                .setDimension(input, LOC_CROWDEDNESS)   // Location Crowdedness
-                .setDimension(outRouter, OUT_ROUTER)    // Output Router ID
-                .setDimension(isHospital, IS_HOSPITAL)  // POI ID boolean
-                .initialize();
+        for(int i = 0; i < data.length; i++){
+            trace.setDimension(data[i], i);
+        }
 
+        trace.setDimension(isHospital, IS_HOSPITAL);   // POI ID boolean
+
+        /*
+        trace.setDimension(crowd, LOC_CROWDEDNESS)    // Location Crowdedness
+             .setDimension(pred1, CROWDEDNESS_1_STEP) // 1 Step Predictor
+             .setDimension(pred2, CROWDEDNESS_2_STEP) // 2 Step Predictor
+             .setDimension(pred3, CROWDEDNESS_3_STEP) // 3 Step Predictor
+             .setDimension(isHospital, IS_HOSPITAL)   // POI ID boolean
+             .initialize();
+        */
+        trace.initialize();
         return trace;
     }
 
     // ------------- SIGNAL EXTRACTORS ------------- ////
 
-    private Integer getRouterLocation(int l) {
-        return l;
-    }
-
-    private Boolean isDevicePresent(int l, int t) {
-        return sampleDevice.getFirst().get(t) == l;
-    }
-
-    private GridDirection getDeviceDirection(int l, int t) {
-        return sampleDevice.getSecond().get(t);
-    }
-
-    /**
-     * Method for crafting arbitrary device signals
-     * @return a list of (devicePosition, deviceDirection)
-     */
-    private Pair<List<Integer>, List<GridDirection>> sampleDevice() {
-        List<Integer> positions = new ArrayList<>();
-        List<GridDirection> directions = new ArrayList<>();
-
-        // at every time instant i, the device is at position i
-        // and is directed to South East.
-        for (int t = 0; t < length; t++) {
-            if(t < size) {
-                positions.add(t);
-                directions.add(GridDirection.SE);
-            } else {
-                positions.add(size);
-                directions.add(GridDirection.HH);
-            }
-        }
-
-        return new Pair<>(positions, directions);
-    }
-
     private Boolean isHospital(int l, int t) {
         // Starting from (0,0)
         // Hospitals: (4,10) | (12,8) | (10,17)
         return l == 4 + 10 * 21 || l == 12 + 8 * 21 || l == 10 + 17 * 21;
-    }
-
-    //TODO: dynamize these methods...
-    private Integer getOutputRouter(int l, int t) {
-        return 1;
-    }
-
-    // ------------- OTHERS ------------- ////
-    // These two methods try to correlate the OUT and LOC signals,
-    // might be useful in future...
-    /*
-    private static Boolean acceptableLocation(List<Comparable> s) {
-        int l = (Integer) s.get(LOC_ROUTER);
-        int n = (Integer) s.get(OUT_ROUTER);
-        GridDirection d = (GridDirection) s.get(DEV_DIRECTION);
-
-        return Grid.checkDirection(n,l,d,network.size());
-    }
-
-    private static Boolean sameRouter(List<Comparable> s) {
-        Comparable s1 = s.get(OUT_ROUTER);
-        Comparable s2 = s.get(LOC_ROUTER);
-
-        return s1.equals(s2);
-    }
-     */
-
-    public Pair<List<Integer>, List<GridDirection>> getSampleDevice() {
-        return sampleDevice;
     }
 }

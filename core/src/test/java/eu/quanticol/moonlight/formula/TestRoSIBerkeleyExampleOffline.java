@@ -1,8 +1,12 @@
 package eu.quanticol.moonlight.formula;
 
-import eu.quanticol.moonlight.domain.*;
+import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.TimeSegment;
+import eu.quanticol.moonlight.signal.online.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The formula of this example comes from:
  * https://doi.org/10.1007/978-3-642-39799-8_19
  */
-class TestRoSIBerkeleyExample {
+class TestRoSIBerkeleyExampleOffline {
     private static final int X_SIGNAL = 0;
     private static final int Y_SIGNAL = 1;
 

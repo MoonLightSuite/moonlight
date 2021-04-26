@@ -1,7 +1,5 @@
-package eu.quanticol.moonlight.examples.subway.data;
+package eu.quanticol.moonlight.signal;
 
-
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +15,8 @@ import java.util.List;
  * Moreover, it performs some input checks to make sure the generated signal
  * is correct in terms of the spatial-temporal domain.
  *
- * Based on HashBiMap for the internal structure.
  *
  * @see Comparable
- * @see HashBiMap
  * @see SpatialTemporalSignal
  */
 public class MultiValuedSignal
@@ -69,7 +65,6 @@ public class MultiValuedSignal
      * Given some Comparable data, it performs some checks and prepares it
      * to be later added as the index dimension of the n-dimensional signal.
      *
-     * @see HashBiMap to learn more about the kind of data it processes.
      * @see Comparable to learn more about the minimum data requirements
      *
      * @param dimData data to be set as the provided dimension

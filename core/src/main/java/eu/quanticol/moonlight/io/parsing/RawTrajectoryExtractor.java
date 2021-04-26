@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.io.parsing;
 
 /**
  * Parsing strategy that generates a double[][] spatial-temporal signal
@@ -6,6 +6,7 @@ package eu.quanticol.moonlight.examples.subway.parsing;
  *
  * @see MultiRawTrajectoryExtractor for importing multiple trajectories from the
  * same file.
+ * @see ParsingStrategy
  */
 public class RawTrajectoryExtractor
         implements ParsingStrategy<double[][]>, PrintingStrategy<double[][]>

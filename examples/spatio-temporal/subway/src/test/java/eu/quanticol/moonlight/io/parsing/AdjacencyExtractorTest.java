@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.io.parsing;
 
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;

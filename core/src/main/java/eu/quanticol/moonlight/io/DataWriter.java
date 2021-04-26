@@ -1,6 +1,6 @@
-package eu.quanticol.moonlight.examples.subway.io;
+package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.examples.subway.parsing.PrintingStrategy;
+import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 
 import java.io.*;
 

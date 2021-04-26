@@ -1,6 +1,6 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.io.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.MultiValuedSignal;
+import eu.quanticol.moonlight.signal.MultiValuedSignal;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

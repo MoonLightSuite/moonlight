@@ -1,6 +1,6 @@
-package eu.quanticol.moonlight.examples.subway.io;
+package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 
 /**
  * Enum collecting the files supported by the parsing strategies

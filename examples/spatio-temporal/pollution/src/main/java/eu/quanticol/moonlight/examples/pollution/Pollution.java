@@ -1,11 +1,11 @@
 package eu.quanticol.moonlight.examples.pollution;
 
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.examples.subway.io.DataReader;
-import eu.quanticol.moonlight.examples.subway.io.FileType;
-import eu.quanticol.moonlight.examples.subway.parsing.AdjacencyExtractor;
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
-import eu.quanticol.moonlight.examples.subway.parsing.RawTrajectoryExtractor;
+import eu.quanticol.moonlight.io.DataReader;
+import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.GloballyFormula;

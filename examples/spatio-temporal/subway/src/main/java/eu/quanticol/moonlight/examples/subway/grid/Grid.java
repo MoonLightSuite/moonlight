@@ -1,12 +1,11 @@
 package eu.quanticol.moonlight.examples.subway.grid;
 
-import eu.quanticol.moonlight.examples.subway.io.DataReader;
-import eu.quanticol.moonlight.examples.subway.parsing.AdjacencyExtractor;
-import eu.quanticol.moonlight.examples.subway.io.FileType;
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.DataReader;
+import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
+import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.ImmutableGraphModel;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;

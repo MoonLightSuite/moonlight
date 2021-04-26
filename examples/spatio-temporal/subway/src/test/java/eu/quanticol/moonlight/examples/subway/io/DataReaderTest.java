@@ -1,6 +1,9 @@
 package eu.quanticol.moonlight.examples.subway.io;
 
-import eu.quanticol.moonlight.examples.subway.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.DataReader;
+import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.UnsupportedFileTypeException;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -10,8 +13,9 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataReaderTest {
-    private static final Logger LOG = Logger.getLogger(DataReaderTest.class.getName());
-    private static final String FILE_SYSTEM_ERROR = "Problems accessing the file system";
+    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final String FILE_SYSTEM_ERROR = "Problems accessing the " +
+                                                    "file system";
 
     private final String[] files = {
                                         "small_TXT.txt"

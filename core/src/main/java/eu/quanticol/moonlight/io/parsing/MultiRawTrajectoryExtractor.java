@@ -1,6 +1,5 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.io.parsing;
 
-import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 
 import java.util.ArrayList;
@@ -10,10 +9,9 @@ import java.util.List;
 /**
  * Parsing strategy that generates a collection of spatial-temporal
  * signals based on a set of String-based time series.
- * The output is represented as a Collection of HashBiMaps,
+ * The output is represented as a Collection of MultiValuedTrace,
  * s.t. (Integer space, Integer time) -> Double value
  *
- * @see HashBiMap for more info about the internal data structure.
  * @see RawTrajectoryExtractor for importing a single trajectory from a file.
  */
 public class MultiRawTrajectoryExtractor implements ParsingStrategy<Collection<MultiValuedTrace>> {

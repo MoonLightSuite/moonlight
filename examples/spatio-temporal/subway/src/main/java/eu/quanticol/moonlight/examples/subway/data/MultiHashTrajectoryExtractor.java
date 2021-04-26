@@ -1,6 +1,7 @@
-package eu.quanticol.moonlight.examples.subway.parsing;
+package eu.quanticol.moonlight.examples.subway.data;
 
-import eu.quanticol.moonlight.examples.subway.data.HashBiMap;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 
 import java.util.ArrayList;
 import java.util.Collection;
