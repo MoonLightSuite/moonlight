@@ -2,9 +2,7 @@ package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Generic Class to read line-wise from a text file.
@@ -39,7 +37,9 @@ public class DataReader<T> {
      */
     public T read() {
         try {
-            BufferedReader fileReader = new BufferedReader(new FileReader(path));
+            InputStream in = getClass().getResourceAsStream(path);
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(in));
+            //BufferedReader fileReader = new BufferedReader(new FileReader());
 
             // Read the first line to initialize the parser
             fileReader = readHeader(fileReader);
@@ -73,7 +73,8 @@ public class DataReader<T> {
         // so we reset
         if (FileType.TEXT == type) {
             fileReader.close();
-            fileReader = new BufferedReader(new FileReader(path));
+            InputStream in = getClass().getResourceAsStream(path);
+            fileReader = new BufferedReader(new InputStreamReader(in));
         }
 
         return fileReader;

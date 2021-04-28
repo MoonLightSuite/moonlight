@@ -16,10 +16,11 @@ import eu.quanticol.moonlight.statistics.StatisticalModelChecker;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
-import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.util.TestUtils;
+
+import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
+import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,14 +103,14 @@ public class Erlang {
 
         Collection<MultiValuedTrace> trajectories = loadTrajectories();
 
-        smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
-        smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
-        smc(real_phi1(SATISFACTION), "real_s_p1", trajectories, locService);
-        smc(real_phi1(ROBUSTNESS), "real_r_p1", trajectories, locService);
+//        smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
+//        smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
+//        smc(real_phi1(SATISFACTION), "real_s_p1", trajectories, locService);
+//        smc(real_phi1(ROBUSTNESS), "real_r_p1", trajectories, locService);
         smc(phi2(SATISFACTION), "s_p2", trajectories, locService);
         smc(phi2(ROBUSTNESS), "r_p2", trajectories, locService);
-        smc(phi3(SATISFACTION), "s_p3", trajectories, locService);
-        smc(phi3(ROBUSTNESS), "r_p3", trajectories, locService);
+//        smc(phi3(SATISFACTION), "s_p3", trajectories, locService);
+//        smc(phi3(ROBUSTNESS), "r_p3", trajectories, locService);
         /*smc(phi4(SATISFACTION), "s_p4", trajectories, locService);
         smc(phi4(ROBUSTNESS), "r_p4", trajectories, locService);*/
     }
@@ -136,7 +137,7 @@ public class Erlang {
 
     private static Collection<MultiValuedTrace> loadTrajectories() {
         Collection<MultiValuedTrace> trajectories = new ArrayList<>();
-        for(int i = 1; i <= 100; i++) {
+        for(int i = 1; i <= 5; i++) {
             String t = "100";
             if(i < 10)
                 t = "00".concat(String.valueOf(i));

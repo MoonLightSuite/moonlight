@@ -73,7 +73,8 @@ public class SlidingWindow<R> {
 
     private void doSlide(DiffIterator<SegmentInterface<Double, R>> itr) {
         double wSize = h.getEnd() - h.getStart();
-        double t = 0.0;
+        //double t = 0.0;
+        double t = uStart;
 
         // While there are segments and
         // the update horizon ends after the current time-point

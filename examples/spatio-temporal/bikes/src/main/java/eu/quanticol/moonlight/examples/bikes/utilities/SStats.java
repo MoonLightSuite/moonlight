@@ -66,7 +66,7 @@ public class SStats<T> {
                 if (s.valueAt(0) instanceof Float) {
                     value += (Float) s.valueAt(0);
                 } else if (s.valueAt(0) instanceof Boolean) {
-                    value += (boolean) s.valueAt(0) ? 1 : 0;
+                    value += (Boolean) s.valueAt(0) ? 1 : 0;
                 }
                 else
                     throw new InvalidParameterException("Unknown Signal Output");
@@ -99,7 +99,7 @@ public class SStats<T> {
                     float v = (Float) s.valueAt(0);
                     value += Math.pow((v - avg), 2);
                 } else if (s.valueAt(0) instanceof Boolean) {
-                    float v = (boolean) s.valueAt(0) ? 1 : 0;
+                    float v = (Boolean) s.valueAt(0) ? 1 : 0;
                     value += Math.pow((v - avg), 2);
                 } else
                     throw new InvalidParameterException("Unknown Signal Output");

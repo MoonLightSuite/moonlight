@@ -152,7 +152,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         if (s.valueAt(t) instanceof Double) {
             value += ((Double) s.valueAt(t)).floatValue();
         } else if (s.valueAt(t) instanceof Boolean) {
-            value += (boolean) s.valueAt(t) ? 1 : 0;
+            value += (Boolean) s.valueAt(t) ? 1 : 0;
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
 
@@ -197,7 +197,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
             float v = ((Double) s.valueAt(t)).floatValue();
             value += Math.pow((v - avg), 2);
         } else if (s.valueAt(t) instanceof Boolean) {
-            float v = (boolean) s.valueAt(t) ? 1 : 0;
+            float v = (Boolean) s.valueAt(t) ? 1 : 0;
             value += Math.pow((v - avg), 2);
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
