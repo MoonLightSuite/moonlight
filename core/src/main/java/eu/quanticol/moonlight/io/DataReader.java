@@ -24,7 +24,9 @@ public class DataReader<T> {
      * @param type the file type of source
      * @param strategy the parsing strategy to execute
      */
-    public DataReader(InputStream input, FileType type, ParsingStrategy<T> strategy) {
+    public DataReader(InputStream input, FileType type,
+                      ParsingStrategy<T> strategy)
+    {
         this.input = input;
         this.type = type;
         this.strategy = strategy;
@@ -37,8 +39,8 @@ public class DataReader<T> {
      */
     public T read() {
         try {
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(input));
-            //BufferedReader fileReader = new BufferedReader(new FileReader());
+            BufferedReader fileReader =
+                            new BufferedReader(new InputStreamReader(input));
 
             // Read the first line to initialize the parser
             fileReader = readHeader(fileReader);
@@ -64,6 +66,7 @@ public class DataReader<T> {
     private BufferedReader readHeader(BufferedReader fileReader)
             throws IOException
     {
+        input.mark(0); //TODO: verify that mark is reliable for this
         String header = fileReader.readLine();
 
         strategy.initialize(splitLine(header));
@@ -71,7 +74,7 @@ public class DataReader<T> {
         // Text files have header that coincides with the first line of data
         // so we reset
         if (FileType.TEXT == type) {
-            fileReader.close();
+            input.reset();
             fileReader = new BufferedReader(new InputStreamReader(input));
         }
 
@@ -92,16 +95,18 @@ public class DataReader<T> {
     }
 
     /**
+     * It splits the input, according to the standard of the implementation
+     * (commas for comma-separated values or spaces for generic text)
      *
-     * @param line
-     * @return
+     * @param target target input to split, according to implementation
+     * @return an array of Strings corresponding to the splitting target
      */
-    private String[] splitLine(String line) {
+    private String[] splitLine(String target) {
         String[] data;
         if (FileType.CSV == type)
-            data = line.split(",");
+            data = target.split(",");
         else if (FileType.TEXT == type)
-            data = line.split(" ");
+            data = target.split(" ");
         else
             throw new UnsupportedFileTypeException(
                     "The file format doesn't comply with the allowed ones.");

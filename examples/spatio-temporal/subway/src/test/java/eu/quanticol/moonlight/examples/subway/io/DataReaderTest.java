@@ -7,6 +7,7 @@ import eu.quanticol.moonlight.io.UnsupportedFileTypeException;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -32,14 +33,14 @@ class DataReaderTest {
 
     @Test
     void readText() {
-        URL source = getClass().getClassLoader().getResource(files[0]);
+        InputStream source = getClass().getClassLoader().getResourceAsStream(files[0]);
 
         if(source != null) {
-            File file = new File(source.getFile());
-            String path = file.getAbsolutePath();
+            //File file = new File(source.getFile());
+            //String path = file.getAbsolutePath();
 
             EmptyStrategy str = new EmptyStrategy();
-            DataReader<Boolean> rdr = new DataReader<>(path, types[0], str);
+            DataReader<Boolean> rdr = new DataReader<>(source, types[0], str);
 
             boolean processed = rdr.read();
 
@@ -54,14 +55,14 @@ class DataReaderTest {
 
     @Test
     void readCSV() {
-        URL source = getClass().getClassLoader().getResource(files[1]);
+        InputStream source = getClass().getClassLoader().getResourceAsStream(files[1]);
 
         if(source != null) {
-            File file = new File(source.getFile());
-            String path = file.getAbsolutePath();
+            //File file = new File(source.getFile());
+            //String path = file.getAbsolutePath();
 
             EmptyStrategy str = new EmptyStrategy();
-            DataReader<Boolean> rdr = new DataReader<>(path, types[1], str);
+            DataReader<Boolean> rdr = new DataReader<>(source, types[1], str);
 
             boolean processed = rdr.read();
 
@@ -75,14 +76,14 @@ class DataReaderTest {
 
     @Test
     void readLongHeaderTxt() {
-        URL source = getClass().getClassLoader().getResource(files[2]);
+        InputStream source = getClass().getClassLoader().getResourceAsStream(files[2]);
 
         if(source != null) {
-            File file = new File(source.getFile());
-            String path = file.getAbsolutePath();
+//            File file = new File(source.getFile());
+//            String path = file.getAbsolutePath();
 
             EmptyStrategy str = new EmptyStrategy();
-            DataReader<Boolean> rdr = new DataReader<>(path, types[2], str);
+            DataReader<Boolean> rdr = new DataReader<>(source, types[2], str);
 
             boolean processed = rdr.read();
 
@@ -96,14 +97,14 @@ class DataReaderTest {
 
     @Test
     void unsupportedFile() {
-        URL source = getClass().getClassLoader().getResource(files[3]);
+        InputStream source = getClass().getClassLoader().getResourceAsStream(files[3]);
 
         if(source != null) {
-            File file = new File(source.getFile());
-            String path = file.getAbsolutePath();
+//            File file = new File(source.getFile());
+//            String path = file.getAbsolutePath();
 
             EmptyStrategy str = new EmptyStrategy();
-            DataReader<Boolean> rdr = new DataReader<>(path, null, str);
+            DataReader<Boolean> rdr = new DataReader<>(source, null, str);
 
             assertThrows(UnsupportedFileTypeException.class, rdr::read);
         } else

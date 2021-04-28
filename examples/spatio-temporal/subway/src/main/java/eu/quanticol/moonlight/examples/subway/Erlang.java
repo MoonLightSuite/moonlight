@@ -22,6 +22,7 @@ import eu.quanticol.moonlight.util.TestUtils;
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,8 +63,9 @@ public class Erlang {
     private static final String TRAJ_FILE_EXT = ".csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
     private static final String REAL_DATA = "data_matrix_20131111.csv";
-    private static final String NETWORK_SOURCE =
-            Erlang.class.getResource(NETWORK_FILE).getPath();
+    private static final InputStream NETWORK_SOURCE =
+            Erlang.class.getClassLoader()
+                                 .getResourceAsStream(NETWORK_FILE);
 
     /**
      * Numeric constants of the problem
@@ -105,10 +107,10 @@ public class Erlang {
 
 //        smc(phi1(SATISFACTION), "s_p1", trajectories, locService);
 //        smc(phi1(ROBUSTNESS), "r_p1", trajectories, locService);
-//        smc(real_phi1(SATISFACTION), "real_s_p1", trajectories, locService);
-//        smc(real_phi1(ROBUSTNESS), "real_r_p1", trajectories, locService);
-        smc(phi2(SATISFACTION), "s_p2", trajectories, locService);
-        smc(phi2(ROBUSTNESS), "r_p2", trajectories, locService);
+        smc(real_phi1(SATISFACTION), "real_s_p1", trajectories, locService);
+        smc(real_phi1(ROBUSTNESS), "real_r_p1", trajectories, locService);
+//        smc(phi2(SATISFACTION), "s_p2", trajectories, locService);
+//        smc(phi2(ROBUSTNESS), "r_p2", trajectories, locService);
 //        smc(phi3(SATISFACTION), "s_p3", trajectories, locService);
 //        smc(phi3(ROBUSTNESS), "r_p3", trajectories, locService);
         /*smc(phi4(SATISFACTION), "s_p4", trajectories, locService);
@@ -157,7 +159,7 @@ public class Erlang {
         new DataReader<>(path(REAL_DATA), FileType.CSV, extractor).read();
 
         for(int predictor = 1; predictor <= 3; predictor++) {
-            String path = path(DATA_DIR + i + TRAJ_FILE_PART + predictor + TRAJ_FILE_EXT);
+            InputStream path = path(DATA_DIR + i + TRAJ_FILE_PART + predictor + TRAJ_FILE_EXT);
             new DataReader<>(path, FileType.CSV, extractor).read();
         }
 
@@ -197,8 +199,8 @@ public class Erlang {
     }
 
 
-    private static String path(String p) {
-        return Erlang.class.getResource(p).getPath();
+    private static InputStream path(String p) {
+        return Erlang.class.getClassLoader().getResourceAsStream(p);
     }
 
 

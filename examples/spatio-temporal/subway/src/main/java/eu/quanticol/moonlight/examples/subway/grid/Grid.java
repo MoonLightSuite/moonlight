@@ -10,6 +10,7 @@ import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.function.Function;
  */
 public class Grid {
 
-    public SpatialModel<Double> getModel(String file) {
+    public SpatialModel<Double> getModel(InputStream file) {
         ParsingStrategy<SpatialModel<Double>> s = new AdjacencyExtractor();
         DataReader<SpatialModel<Double>> data = new DataReader<>(file, FileType.TEXT, s);
 

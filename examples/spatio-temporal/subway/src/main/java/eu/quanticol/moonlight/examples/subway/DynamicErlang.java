@@ -20,7 +20,9 @@ import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.statistics.StatisticalModelChecker;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.util.Pair;
+import org.jfree.data.io.CSV;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -61,8 +63,9 @@ public class DynamicErlang {
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final String TRAJECTORY_FILE_PART = "_trajectories_grid_21x21_T_144.csv";
     private static final String RESULT = "_smc_grid_21x21_T_144.csv";
-    private static final String NETWORK_SOURCE =
-            DynamicErlang.class.getResource(DATA_DIR + NETWORK_FILE).getPath();
+    private static final InputStream NETWORK_SOURCE =
+            DynamicErlang.class.getClassLoader()
+                    .getResourceAsStream(DATA_DIR + NETWORK_FILE);
 
     /**
      * Numeric constants of the problem
@@ -89,9 +92,11 @@ public class DynamicErlang {
     private static final DynamicErlangSignal processor = new DynamicErlangSignal();
     private static final MultiRawTrajectoryExtractor multiTraj = new MultiRawTrajectoryExtractor(network.size(), processor);
    private static final Collection<MultiValuedTrace> data =
-            new DataReader<>(DynamicErlang.class
-                    .getResource(DATA_DIR + "001" + TRAJECTORY_FILE_PART)
-                    .getPath(), FileType.CSV, multiTraj).read();
+            new DataReader<>(
+                    DynamicErlang.class.getClassLoader()
+                                 .getResourceAsStream(DATA_DIR + "001"
+                                                      + TRAJECTORY_FILE_PART),
+                    FileType.CSV, multiTraj).read();
 
 
     public static void main(String[] argv) {
@@ -125,8 +130,9 @@ public class DynamicErlang {
     public static void realData() {
         Collection<MultiValuedTrace> data =
                 new DataReader<>(DynamicErlang.class
-                        .getResource("data_matrix_20131111.csv")
-                        .getPath(), FileType.CSV, multiTraj).read();
+                        .getClassLoader()
+                        .getResourceAsStream("data_matrix_20131111.csv"),
+                        FileType.CSV, multiTraj).read();
 
         Pair<List<Integer>, List<GridDirection>> device = processor.getSampleDevice();
         LocationService<Double, Double> locService =
@@ -180,9 +186,8 @@ public class DynamicErlang {
     private static Collection<MultiValuedTrace> loadTrajectory(String i) {
         MultiRawTrajectoryExtractor trajectory =
                     new MultiRawTrajectoryExtractor(network.size(), processor);
-        String path = DynamicErlang.class
-                     .getResource(DATA_DIR + i + TRAJECTORY_FILE_PART)
-                     .getPath();
+        InputStream path = DynamicErlang.class.getClassLoader()
+                        .getResourceAsStream(DATA_DIR + i + TRAJECTORY_FILE_PART);
         return new DataReader<>(path, FileType.CSV, trajectory).read();
     }
 

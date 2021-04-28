@@ -6,13 +6,17 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GridTest {
 
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
-    private static final String NETWORK_SOURCE =
-            Erlang.class.getResource(NETWORK_FILE).getPath();
+    private static final InputStream NETWORK_SOURCE =
+            Objects.requireNonNull(Erlang.class
+                    .getResourceAsStream(NETWORK_FILE));
 
     @Test
     void distance() {

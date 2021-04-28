@@ -19,6 +19,7 @@ import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.space.StaticLocationService;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -37,7 +38,8 @@ public class Pollution {
 
     public static void main(String[] argv) {
         LOG.setLevel(Level.ALL);
-        String file = Pollution.class.getResource(SPACE_FILE).getPath();
+        InputStream file = Pollution.class.getClassLoader()
+                .getResourceAsStream(SPACE_FILE);
         ParsingStrategy<SpatialModel<Double>> ex = new AdjacencyExtractor();
         DataReader<SpatialModel<Double>> data = new DataReader<>(file,
                                                                  FileType.CSV,
@@ -83,7 +85,8 @@ public class Pollution {
 
     private static List<Update<Double, List<Double>>> importUpdates(int size) {
         ParsingStrategy<double[][]> ex = new RawTrajectoryExtractor(size);
-        String file = Pollution.class.getResource(SIGNAL_FILE).getPath();
+        InputStream file = Pollution.class.getClassLoader()
+                .getResourceAsStream(SIGNAL_FILE);
         double[][] trace = new DataReader<>(file, FileType.CSV, ex).read();
         trace = transposeMatrix(trace);
 
