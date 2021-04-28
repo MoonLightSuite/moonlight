@@ -11,6 +11,7 @@ import eu.quanticol.moonlight.signal.online.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +51,12 @@ class AFCTest {
     }
 
     private List<Update<Double, Double>> loadInput() {
-        URL input = getClass().getClassLoader().getResource(INPUT);
-        String source = Objects.requireNonNull(input).getPath();
+        //URL input = getClass().getClassLoader().getResource(INPUT);
+        //String source = Objects.requireNonNull(input).getPath();
+        //source = "/eu/quanticol/moonlight/formula/" + INPUT;
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
+
+        InputStream source = AFCTest.class.getClassLoader().getResourceAsStream(INPUT);
         double[] data = new DataReader<>(source, FileType.CSV, ex).read()[0];
 
         return genUpdates(data);
@@ -116,14 +120,16 @@ class AFCTest {
     {
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
 
-        URL rhoLow = getClass().getClassLoader().getResource(RHO_LOW);
-        URL rhoUp = getClass().getClassLoader().getResource(RHO_UP);
+        //URL rhoLow = getClass().getClassLoader().getResource(RHO_LOW);
+        InputStream rhoLow = AFCTest.class.getClassLoader().getResourceAsStream(RHO_LOW);
+        //URL rhoUp = getClass().getClassLoader().getResource(RHO_UP);
+        InputStream rhoUp = AFCTest.class.getClassLoader().getResourceAsStream(RHO_UP);
 
-        String source = Objects.requireNonNull(rhoLow).getPath();
-        double[] data1 = new DataReader<>(source, FileType.CSV, ex).read()[0];
+        //String source = Objects.requireNonNull(rhoLow).getPath();
+        double[] data1 = new DataReader<>(rhoLow, FileType.CSV, ex).read()[0];
 
-        source = Objects.requireNonNull(rhoUp).getPath();
-        double[] data2 = new DataReader<>(source, FileType.CSV, ex).read()[0];
+        //source = Objects.requireNonNull(rhoUp).getPath();
+        double[] data2 = new DataReader<>(rhoUp, FileType.CSV, ex).read()[0];
 
         ArrayList<TimeSegment<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
         for(int i = 0; i < data1.length; i++) {

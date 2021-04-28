@@ -15,17 +15,17 @@ import java.io.*;
  */
 public class DataReader<T> {
     private final FileType type;
-    private final String path;
+    private final InputStream input;
     private final ParsingStrategy<T> strategy;
 
     /**
      * Reader initialization
-     * @param path the path to the data source file
+     * @param input the input stream to the data source file
      * @param type the file type of source
      * @param strategy the parsing strategy to execute
      */
-    public DataReader(String path, FileType type, ParsingStrategy<T> strategy) {
-        this.path = path;
+    public DataReader(InputStream input, FileType type, ParsingStrategy<T> strategy) {
+        this.input = input;
         this.type = type;
         this.strategy = strategy;
     }
@@ -37,8 +37,7 @@ public class DataReader<T> {
      */
     public T read() {
         try {
-            InputStream in = getClass().getResourceAsStream(path);
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(input));
             //BufferedReader fileReader = new BufferedReader(new FileReader());
 
             // Read the first line to initialize the parser
@@ -73,8 +72,7 @@ public class DataReader<T> {
         // so we reset
         if (FileType.TEXT == type) {
             fileReader.close();
-            InputStream in = getClass().getResourceAsStream(path);
-            fileReader = new BufferedReader(new InputStreamReader(in));
+            fileReader = new BufferedReader(new InputStreamReader(input));
         }
 
         return fileReader;
