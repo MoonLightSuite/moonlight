@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ class AFCTest {
     private final static String RHO_UP = DIR + "rho_up.csv";
     private final static String INPUT = DIR + "input.csv";
 
-    @Disabled("Under Investigation")
     @Test
     void afcTest() {
         List<Update<Double, Double>> input = loadInput();
@@ -51,12 +49,9 @@ class AFCTest {
     }
 
     private List<Update<Double, Double>> loadInput() {
-        //URL input = getClass().getClassLoader().getResource(INPUT);
-        //String source = Objects.requireNonNull(input).getPath();
-        //source = "/eu/quanticol/moonlight/formula/" + INPUT;
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
 
-        InputStream source = AFCTest.class.getClassLoader().getResourceAsStream(INPUT);
+        InputStream source = path(INPUT);
         double[] data = new DataReader<>(source, FileType.CSV, ex).read()[0];
 
         return genUpdates(data);
@@ -64,14 +59,14 @@ class AFCTest {
 
     private static OnlineTimeMonitor<Double, Double> instrument()
     {
-        Formula f = //new GloballyFormula(
-                        //new OrFormula(
-                        //        new AtomicFormula("smallError"),
+        Formula f = new GloballyFormula(
+                        new OrFormula(
+                                new AtomicFormula("smallError"),
                                 new EventuallyFormula(
                                     new AtomicFormula("smallError")
                                     ,  new Interval(0.0, 1.0))
-                        //),
-                //new Interval(10.0, 30.0))
+                        ),
+                new Interval(10.0, 30.0))
         ;
 
         // alw_[10, 30] ((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AFref[t]) < 0.05)))
@@ -120,15 +115,11 @@ class AFCTest {
     {
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
 
-        //URL rhoLow = getClass().getClassLoader().getResource(RHO_LOW);
-        InputStream rhoLow = AFCTest.class.getClassLoader().getResourceAsStream(RHO_LOW);
-        //URL rhoUp = getClass().getClassLoader().getResource(RHO_UP);
-        InputStream rhoUp = AFCTest.class.getClassLoader().getResourceAsStream(RHO_UP);
+        InputStream rhoLow = path(RHO_LOW);
+        InputStream rhoUp = path(RHO_UP);
 
-        //String source = Objects.requireNonNull(rhoLow).getPath();
         double[] data1 = new DataReader<>(rhoLow, FileType.CSV, ex).read()[0];
 
-        //source = Objects.requireNonNull(rhoUp).getPath();
         double[] data2 = new DataReader<>(rhoUp, FileType.CSV, ex).read()[0];
 
         ArrayList<TimeSegment<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
@@ -137,5 +128,11 @@ class AFCTest {
         }
 
         return condenseSignal(rho);
+    }
+
+    private static InputStream path(String filename) {
+        return Objects.requireNonNull(
+                  AFCTest.class.getClassLoader().getResourceAsStream(filename)
+               );
     }
 }

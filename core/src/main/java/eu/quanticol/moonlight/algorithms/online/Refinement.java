@@ -123,7 +123,7 @@ public class Refinement {
     {
         //redundant updates can be ignored
         if(!v.equals(vNew)) {
-            if(prevV.equals(vNew)) {
+            if(prevV.equals(vNew) && refinable.test(v, vNew)) {
                 remove(itr);
             } else if (refinable.test(v, vNew)) {
                 SegmentInterface<Double, V> s = new TimeSegment<>(t, vNew);

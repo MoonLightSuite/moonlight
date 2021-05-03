@@ -239,7 +239,7 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
-    @Disabled("Under investigation")
+    //@Disabled("Under investigation")
     @Test
     void testWholeFormulaAtT4() {
         Object[] ss = testAtUpdate4(wholeFormula());
@@ -247,7 +247,7 @@ class TestRoSIBerkeleyExample {
         if(ss != null) {
             assertValue(T0, new AbstractInterval<>(-2.0, -2.0), ss[0]);
             assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[1]);
-            assertValue(7, new AbstractInterval<>(-1.0, P_INF), ss[2]);
+            assertValue(8, new AbstractInterval<>(-1.0, P_INF), ss[2]);
             assertValue(T3, ANY, ss[3]);
 
             // Exactly three updates
@@ -314,7 +314,6 @@ class TestRoSIBerkeleyExample {
             fail("Empty signal should never happen!");
     }
 
-    @Disabled("Under investigation")
     @Test
     void testWholeFormulaAtT5() {
         Object[] ss = testAtUpdate5(wholeFormula());
