@@ -9,16 +9,12 @@ import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
-import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +34,7 @@ public class EpidemicMain {
     private static final BooleanDomain booleanDomain = new BooleanDomain();
     private static final double S = 3;    // state, S=1,E=2,I=3,R=4
     private static final double d = 3;
-    private static final double t = 4;
+    private static final double t = 0;
 
     private static String code = "signal { int nodeType; }\n" +
             "             	space {\n" +
@@ -47,54 +43,63 @@ public class EpidemicMain {
             "             	domain boolean;\n" +
             "               formula suscettible = ( nodeType== 1 );\n" +
             "               formula infected = ( nodeType==3 );\n" +
-            "               formula ev_inf (real t) = eventually [0 t] infected;\n" +
-            "               formula evw_inf (real d) = everywhere(length)[0 d] {!infected};\n" +
-            "               formula g_notinf = globally [0 3]{!infected};\n" +
-            "               formula safe_radius (real d, real t) = globally { {!{everywhere(length)[0 d] {!infected}}} | {globally [0 t]{!infected}} } ;\n" +
-            "             	formula reach_inf = eventually [0 1] infected;";
+            "               formula ev_inf = eventually [2 4] infected;\n" +
+            "               formula ev_inf2 = eventually [0 7] infected;\n" +
+            "               formula once_inf = once [3 7] infected;\n" +
+            "               formula reach_inf = suscettible reach(length)[0 2]  infected;\n" +
+            "               formula once_reach_inf = once [3 5] {suscettible reach(length)[0 5]  infected};\n" +
+            "               formula test_reach = suscettible reach(length)[0 5] infected;\n" +
+//            "               formula evw_inf (real d) = everywhere(length)[0 d] {!infected};\n" +
+//            "               formula g_notinf = globally [0 3]{!infected};\n" +
+//            "               formula safe_radius (real d, real t) = globally { {!{everywhere(length)[0 d] {!infected}}} | {globally [0 t]{!infected}} } ;\n" +
+            "             	formula reach_reach_inf = suscettible reach[0 1] once_reach_inf;\n" +
+            "             	formula glob_reach_inf =  globally {!{suscettible reach(length)[0 2]  ev_inf}} | ev_inf;\n" +
+            "               formula dang_days =  globally {{! {suscettible reach(length)[0 2] ev_inf}} | ev_inf2};";
 
     public static void main(String[] argv) {
         try {
-            Runtime run = Runtime.getRuntime();
-            Runtime.getRuntime().exec(cmd, null, dir);
-            Process pr = run.exec(cmd);
-
+//            Runtime run = Runtime.getRuntime();
+//            Runtime.getRuntime().exec(cmd, null, dir);
+//            Process pr = run.exec(cmd);
             for(int i = 0; i <nRuns; i++) {
                 // space model
                 URL TRAJECTORY_SOURCE = classLoader.getResource("epidemic_simulation_network_" + i + ".txt");
                 File fileL = new File(TRAJECTORY_SOURCE.toURI());
                 CsvLocationServiceReader readerL = new CsvLocationServiceReader();
-                LocationService<MoonLightRecord> ls = readerL.read(rhL, fileL);
+                LocationService<MoonLightRecord> space_model = readerL.read(rhL, fileL);
 
                 // trajectory
                 URL NETWORK_SOURCE = classLoader.getResource("epidemic_simulation_trajectory_" + i + ".txt");
                 File fileT = new File(NETWORK_SOURCE.toURI());
                 CsvSpatialTemporalSignalReader readerT = new CsvSpatialTemporalSignalReader();
-                SpatialTemporalSignal<MoonLightRecord> s = readerT.load(rhT, fileT);
+                SpatialTemporalSignal<MoonLightRecord> input_signal = readerT.load(rhT, fileT);
 
                 // monitor from script
                 ScriptLoader sl = new ScriptLoader();
                 MoonLightScript script = sl.compileScript(code);
                 MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
                 spatialTemporalScript.setBooleanDomain();
-                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("safe_radius");
-                double[] radius = new double[]{5,6,7,8,9,10,11,12,13,14,15};
-                for (int j = 0; j <radius.length; j++) {
-                    SpatialTemporalSignal<Boolean> results = (SpatialTemporalSignal<Boolean>) monitScript.getMonitor(radius[j], t).monitor(ls, s);
-                    List<? extends Signal<?>> signals = results.getSignals();
-                    List<Boolean> result_zero = results.valuesatT(0);
-                    int n = 0;
-                    int l = result_zero.size();
-                    int[] int_result = new int[l];
-                    for (int k = 0; k < l; ++k) {
-                        int_result[k] = (result_zero.get(k) ? 1 : 0);
+                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("dang_days");
+                double[] radius = new double[]{1,1.5,2,2.5,3,3.5,4,4.5,5.5,6,6.5,7};
+                int[] result_radius = new int[radius.length];
+//                for (int j = 0; j <radius.length; j++) {
+                SpatialTemporalSignal<Boolean> results = (SpatialTemporalSignal<Boolean>) monitScript.getMonitor(t).monitor(space_model, input_signal);
+                List<? extends Signal<?>> signals = results.getSignals();
+                List<Boolean> result_zero = results.valuesatT(t);
+                int n = 0;
+                int l = result_zero.size();
+                int[] int_result = new int[l];
+                for (int k = 0; k < l; ++k) {
+                    int_result[k] = (result_zero.get(k) ? 1 : 0);
                         n = n + int_result[k];
                     }
-                    //System.out.println(Arrays.toString(int_result));
+                    System.out.println(Arrays.toString(int_result));
                     System.out.println(n);
-                    //System.out.println(signals.get(0).valueAt(0));
-                    //outputs.add(i, results);
-                }
+                    // result_radius[j]=n;
+                    System.out.println(signals.get(0));
+                    //outputs.add(i, results)
+//                }
+                System.out.println(Arrays.toString(new Signal[]{signals.get(0)}));
 //                URL resource = classLoader.getResource("results.txt");
 //                File fileResults = new File(resource.toURI());
 //                CsvSpatialTemporalSignalWriter writer = new CsvSpatialTemporalSignalWriter();

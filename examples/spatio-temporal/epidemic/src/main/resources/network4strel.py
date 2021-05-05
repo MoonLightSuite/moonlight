@@ -340,23 +340,24 @@ class Network():
         adj_matrix2 = sparse_matrix((self.node_number, self.node_number))
         for n in self.network.nodes:
             adj_list = self.network.adj[n]
-            for nbr in adj_list:
-                mlogp = adj_list[nbr]['mlogp']
-                adj_matrix[n, nbr] += mlogp
-                # if n < nbr:
-                #     adj_matrix2[n, nbr] += mlogp
-                # else:
-                #     adj_matrix2[nbr, n] += mlogp
+#             for nbr in adj_list:
+#                 mlogp = adj_list[nbr]['mlogp']
+#                 adj_matrix[n, nbr] += mlogp
+#                 if n < nbr:
+#                     adj_matrix[n, nbr] += mlogp
+#                 else:
+#                     adj_matrix[nbr, n] += mlogp
             # s += "{0:d}; {1:d}; {2:.5f}\n".format(n,nbr,mlogp)
             # print dynamic network
             if not self.event_network is None:
                 adj_list = self.event_network.adj[n]
                 for nbr in adj_list:
                     mlogp = adj_list[nbr]['mlogp']
-                    if n < nbr:
-                        adj_matrix[n, nbr] += mlogp
-                    else:
-                        adj_matrix[nbr, n] += mlogp
+                    adj_matrix[n, nbr] += mlogp
+#                     if n < nbr:
+#                         adj_matrix[n, nbr] += mlogp
+#                     else:
+#                         adj_matrix[nbr, n] += mlogp
                 # s += "{0:d}; {1:d}; {2:.5f}\n".format(n,nbr,mlogp)
 
         row, col = adj_matrix.nonzero()
