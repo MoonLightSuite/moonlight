@@ -12,10 +12,10 @@ values = trajFunction(time);
 moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");
 
 %% STEP 3 (optional): change the domain on the fly
-moonlightScript.setMinMaxDomain();
+moonlightScript.setBooleanDomain();
 
 %% STEP 4: getting the monitor associated with a target formula
-boolFutureMonitor = moonlightScript.getMonitor("future");
+FutureMonitor = moonlightScript.getMonitor("future");
 
 %% STEP 5: monitor the signal 
-boolFutureMonitorResult = boolFutureMonitor.monitor(time,values);
+FutureMonitorResult = FutureMonitor.monitor(time,values);
