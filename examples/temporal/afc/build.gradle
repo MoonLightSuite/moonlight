@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+}
+
+dependencies {
+    compile project(":core")
+    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript")
+    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript.ide")
+}
+
+test {
+    useJUnitPlatform()
+}

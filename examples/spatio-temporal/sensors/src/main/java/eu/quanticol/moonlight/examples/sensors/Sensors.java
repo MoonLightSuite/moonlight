@@ -26,21 +26,24 @@ import java.util.stream.IntStream;
 public class Sensors {
 
     public static void main(String[] args) throws URISyntaxException, ExecutionException, InterruptedException {
-        String path = Paths.get(Sensors.class.getResource("mobility/mobility.m").toURI()).getParent().toAbsolutePath().toString();
+        String path = Paths.get(Sensors.class.getResource("mobility.m").toURI()).getParent().toAbsolutePath().toString();
         MatlabEngine eng = MatlabExecutor.startMatlab();
         eng.eval("addpath(\"" + path + "\")");
 
         /// Generation of the trace
         eng.eval("mobility");
 
-        Object[][] trajectory = eng.getVariable("nodes");
+        // TODO: The 'nodes' variable apparently makes JVM crash
+        //       with MatlabEngine2021
+        //Object[][] trajectory = eng.getVariable("nodes");
+        double nodes = eng.getVariable("num_nodes");
         Double[] nodesType = MatlabDataConverter.getArray(eng.getVariable("nodes_type"), Double.class);
         Object[] cgraph1 = eng.getVariable("cgraph1");
         Object[] cgraph2 = eng.getVariable("cgraph2");
         MatlabExecutor.close();
         LocationService<Double, Double> tConsumer = TestUtils.createLocServiceFromSetMatrix(cgraph1);
         SpatialTemporalSignal<Pair<Integer, Integer>> spatialTemporalSignal = new SpatialTemporalSignal<>(nodesType.length);
-        IntStream.range(0, trajectory.length-1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
+        IntStream.range(0, (int) nodes - 1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
 
         HashMap<String, Function<Parameters, Function<Pair<Integer,Integer>, Boolean>>> atomicFormulas = new HashMap<>();
         atomicFormulas.put("type1", p -> (x -> x.getFirst() == 1));

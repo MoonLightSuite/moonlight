@@ -32,14 +32,15 @@ public class Pollution {
     private static final String SPACE_FILE = "lombardy_dist.csv";
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
+    private static final String NOT_CRITICAL_NO2 = "notCriticalNO2";
+
     private static double km(double meters) {
         return meters * 1000;
     }
 
     public static void main(String[] argv) {
         LOG.setLevel(Level.ALL);
-        InputStream file = Pollution.class.getClassLoader()
-                .getResourceAsStream(SPACE_FILE);
+        InputStream file = Pollution.class.getResourceAsStream(SPACE_FILE);
         ParsingStrategy<SpatialModel<Double>> ex = new AdjacencyExtractor();
         DataReader<SpatialModel<Double>> data = new DataReader<>(file,
                                                                  FileType.CSV,
@@ -85,8 +86,7 @@ public class Pollution {
 
     private static List<Update<Double, List<Double>>> importUpdates(int size) {
         ParsingStrategy<double[][]> ex = new RawTrajectoryExtractor(size);
-        InputStream file = Pollution.class.getClassLoader()
-                .getResourceAsStream(SIGNAL_FILE);
+        InputStream file = Pollution.class.getResourceAsStream(SIGNAL_FILE);
         double[][] trace = new DataReader<>(file, FileType.CSV, ex).read();
         trace = transposeMatrix(trace);
 
@@ -116,13 +116,13 @@ public class Pollution {
     }
 
     private static Formula formula1() {
-        Formula atomX = new AtomicFormula("notCriticalNO2");
+        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
 
         return new GloballyFormula(atomX, new Interval(0, 3));
     }
 
     private static Formula formula2() {
-        Formula atomX = new AtomicFormula("notCriticalNO2");
+        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
 
         return new SomewhereFormula("nearby", atomX);
     }
@@ -134,7 +134,7 @@ public class Pollution {
                 atoms = new HashMap<>();
 
         // notCriticalNO2 is the atomic proposition: NO2 < k
-        atoms.put("notCriticalNO2", trc -> new AbstractInterval<>(trc, trc));
+        atoms.put(NOT_CRITICAL_NO2, trc -> new AbstractInterval<>(trc, trc));
 
         return atoms;
     }
