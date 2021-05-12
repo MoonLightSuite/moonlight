@@ -38,6 +38,7 @@ public class SlidingWindow<R> {
     private final BinaryOperator<R> op;
     private final double uEnd;
     private final double uStart;
+    private final double wSize;
     private final Window<Node<Double, R>> w = new Window<>();
     private final List<Update<Double, R>> updates = new ArrayList<>();
     //private final BiFunction<R, BiFunction<R, BinaryOperator<R>, R>, Boolean> survive;
@@ -48,6 +49,7 @@ public class SlidingWindow<R> {
         this.arg = arg;
         this.op = op;
         h = opHorizon;
+        wSize = h.getEnd() - h.getStart();
 
         // We define the resulting update horizon, cut at 0,
         // as updating before time 0 doesn't make any sense.
@@ -55,21 +57,84 @@ public class SlidingWindow<R> {
         uEnd = u.getEnd() - h.getStart() > 0 ? u.getEnd() - h.getStart() : 0;
     }
 
-    public List<Update<Double, R>>  slide() {
+    public List<Update<Double, R>> run() {
         DiffIterator<SegmentInterface<Double, R>> itr = arg.diffIterator();
 
-        doSlide(itr);
+        while(itr.hasNext()) {
+            add(itr.next());
+        }
 
         // We add the last pieces of the window to the updates
         while(!w.isEmpty() && w.getFirst().getStart() < uEnd) {
-            updates.add(popUpdate(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+            //updates.add(popUpdate(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+            Node<Double, R> node = w.removeFirst();
+            addUpdate(node.getStart(), node.getValue());
         }
 
         return updates;
     }
 
+    private void add(SegmentInterface<Double, R> curr) {
+        if(!w.isEmpty() &&
+                curr.getStart() - w.getFirst().getStart() > wSize)
+        {
+            shift(curr.getStart() - wSize);
+        }
+        doAdd(curr.getStart(), curr.getValue());
+        //w.setEnd(curr.getStart());
+    }
+
+    private void shift(double t) {
+        if(!w.isEmpty()) {
+            Node<Double, R> first = w.removeFirst();
+
+            while(!w.isEmpty() && w.getFirst().getStart() < t) {
+                addUpdate(first.getStart(), first.getValue());
+                Node<Double, R> next = w.removeFirst();
+                if(next.getStart() > t) {
+                    w.addFirst(new Node<>(t, first.getValue()));
+                    w.addFirst(new Node<>(next.getStart(), next.getValue()));
+                } else
+                    first = next;
+            }
+
+            addUpdate(first.getStart(), first.getValue());
+            w.addFirst(new Node<>(t, first.getValue()));
+        }
+    }
+
+    private void addUpdate(double t, R v) {
+        if(t < uEnd) {
+            //if (w.isEmpty())
+                updates.add(new Update<>(t, uEnd, v));
+            //else
+            //    updates.add(new Update<>(t, w.getFirst().getStart(), v));
+        }
+    }
+
+    private void doAdd(Double t, R v) {
+        if(w.isEmpty())
+            w.addLast(new Node<>(t, v));
+        else {
+            Node<Double, R> last = w.removeLast();
+            double t2 = last.getStart();
+            R v2 = last.getValue();
+            if(v.equals(v2))
+                w.addLast(new Node<>(t2, v2));
+            R v3 = op.apply(v, v2);
+            if(v.equals(v3))
+                doAdd(t2, v3);
+            else if(!v2.equals(v3)) {
+                doAdd(t2, v3);
+                w.addLast(new Node<>(t, v));
+            } else {
+                w.addLast(new Node<>(t2, v2));
+                w.addLast(new Node<>(t, v));
+            }
+        }
+    }
+
     private void doSlide(DiffIterator<SegmentInterface<Double, R>> itr) {
-        double wSize = h.getEnd() - h.getStart();
         double t = uStart;
 
         // While there are segments and

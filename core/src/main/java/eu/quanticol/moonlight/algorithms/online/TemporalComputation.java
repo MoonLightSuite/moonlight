@@ -28,7 +28,7 @@ public class TemporalComputation {
                                           Interval opHorizon,
                                           BinaryOperator<R> op)
     {
-        return new SlidingWindow<>(s, u, opHorizon, op).slide();
+        return new SlidingWindow<>(s, u, opHorizon, op).run();
     }
 
 }

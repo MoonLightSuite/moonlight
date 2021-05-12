@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import java.util.Objects;
+
 /**
  *
  * @param <T>
@@ -53,5 +55,20 @@ public class Update<T extends Comparable<T>, V>  {
     public String toString() {
         return "Update{" + "start=" + start + ", end=" + end +
                 ", value=" + value + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Update)) return false;
+        Update<?, ?> update = (Update<?, ?>) o;
+        return start.equals(update.start) &&
+                end.equals(update.end) &&
+                value.equals(update.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end, value);
     }
 }
