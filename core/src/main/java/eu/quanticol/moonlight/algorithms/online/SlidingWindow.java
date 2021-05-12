@@ -25,12 +25,9 @@ import eu.quanticol.moonlight.signal.online.DiffIterator;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.Update;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
@@ -88,23 +85,14 @@ public class SlidingWindow<R> {
             // i.e. we take n = `next.start - h.end` if it is non-negative
             //      and m = `curr.start - h.start` if it is not negative
             //      then t is the minimum between n and m
-            t = max(t, currEnd - h.getEnd());
-            if(//!w.isEmpty() &&
-                    currStart - h.getStart() >= uStart) {
-                t = min(t, currStart - h.getStart());
-            }
+            t = setStartingTime(t, currStart, currEnd);
 
 
             // we must skip segments starting before the update horizon of
             // the current t
-            if(t >= currEnd - h.getStart() || currEnd - h.getStart() < uStart)
+            if(//t >= currEnd - h.getStart() ||
+                    currEnd - h.getStart() < uStart)
                 continue;
-            /*if(currEnd != currStart && t >= currEnd - h.getStart() ||
-               (currEnd - h.getEnd() < hStart
-                       //&& t + wSize < currEnd
-                       //&& currStart - h.getStart() < hStart
-               ))
-                continue;*/
 
 
             // We are exceeding the window size, we must pop left sides
@@ -119,6 +107,14 @@ public class SlidingWindow<R> {
             // We clear the monotonic edge, adding the current value at the end
             makeMonotonic(t, currStart, currEnd, curr.getValue());
         }
+    }
+
+    private double setStartingTime(double t, double currStart, double currEnd) {
+        t = max(t, currEnd - h.getEnd());
+        if(currStart - h.getStart() >= uStart) {
+            t = min(t, currStart - h.getStart());
+        }
+        return t;
     }
 
     // We are exceeding the window size, we must pop left sides
@@ -145,29 +141,28 @@ public class SlidingWindow<R> {
      * From the last to the first value of the window, we remove them until the
      * last element is strictly bigger than the current one
      */
-    private Node<Double, R> makeMonotonic(Double fromT,
+    private void makeMonotonic(Double fromT,
                                           Double currStart, Double currEnd,
                                           R currV)
     {
-        //Stack<Node<Double, R>> oldNodes = new Stack<>();
-        // w.lastV < currV => currV is global maximum, replace lastV
-        // else => currV local minimum starting from max(fromT,currT)
-//        while(!w.isEmpty() && !op.apply(w.getLast().getValue(), currV)
-//                                 .equals(w.getLast().getValue()))
-//        {
-//            Node<Double, R> oldNode = w.removeLast();
-//            fromT = oldNode.getStart();
-//            currV = op.apply(oldNode.getValue(), currV);
-//        }
 
         ListIterator<Node<Double, R>> itr = w.descendingIterator();
-        Node<Double, R> last = null;
-        while(itr.hasPrevious() && !isOptimum(w.getLast().getValue(), currV, op)
+        Node<Double, R> last = w.isEmpty() ? null : w.getLast();
+        Node<Double, R> next = null;
+        while(itr.hasPrevious() && !isOptimum(last.getValue(), currV, op)
              )
         {
             last = itr.previous();
-            if (!survive(last.getValue(), currV, op) || !itr.hasPrevious()) {
+            if (isNotSurviving(last.getValue(), currV, op) || !itr.hasPrevious())
+            {
                 itr.remove();
+//                if(next != null) {
+//                    itr.next();
+//                    itr.remove();
+//                }
+            } else if (!isNotSurviving(last.getValue(), currV, op)) {
+                next = new Node<>(last.getStart(), op.apply(last.getValue(), currV));
+                itr.set(next);
             }
 
             fromT = last.getStart();
@@ -177,7 +172,6 @@ public class SlidingWindow<R> {
 
         if(last != null && last.getStart() + h.getEnd() > fromT &&
                 isOptimum(last.getValue(), currV, op)
-               // op.apply(w.getLast().getValue(), currV).equals(w.getLast().getValue())
           )
         {
             if(currEnd - h.getEnd() < fromT) {
@@ -191,29 +185,41 @@ public class SlidingWindow<R> {
                             min(
                                 last.getStart() + h.getEnd()
                                 , max(0, currStart - h.getStart())
-                          //  )
+                        //    )
                         );
             }
         }
 
-
         itr.add(new Node<>(fromT, currV));
+
+        // ---------------------------------------------
+
+/*
+        // w.lastV < currV => currV is global maximum, replace lastV
+        // else => currV local minimum starting from max(fromT,currT)
+        while(!w.isEmpty() && !op.apply(w.getLast().getValue(), currV)
+                .equals(w.getLast().getValue()))
+        {
+            Node<Double, R> oldNode = w.removeLast();
+            fromT = oldNode.getStart();
+            currV = op.apply(oldNode.getValue(), currV);
+        }
 
         // if   w.last.start + wSize > fromT &&
         //      w.last.value `op` currV == w.last.value &&
         //      w.last.start + wSize < currEnd - wSize
         // then the last value of the window is still valid for the current time instant,
         // and will be so until the current segment ends, i.e. currEnd - wSize
-        /*if(!w.isEmpty() &&
-           w.getLast().getStart() + h.getEnd() > fromT &&
-           op.apply(w.getLast().getValue(), currV).equals(w.getLast().getValue()))
+        if(!w.isEmpty() &&
+                w.getLast().getStart() + h.getEnd() > fromT &&
+                op.apply(w.getLast().getValue(), currV).equals(w.getLast().getValue()))
         {
             //double newT = w.getLast().getStart();
             if(currEnd - h.getEnd() < fromT) {
                 fromT = max(
                         w.getLast().getStart() + h.getEnd()
                         //, min(fromT + wSize
-                         , currEnd - h.getEnd()
+                        , currEnd - h.getEnd()
                         //, max(0, min(currEnd - wSize, currStart - h.getStart()))
                         //, max(0, currStart - h.getStart()))
                 )
@@ -230,45 +236,22 @@ public class SlidingWindow<R> {
                 //)
                 //, max(0, currT - h.getStart()))
                 ;
-//            if(fromT + h.getEnd() < currEnd)
-//                fromT = min(newT, currStart - h.getStart());
-//            else
-//                fromT = min(newT, fromT);
                 //fromT = min(max(fromT, w.getLast().getStart() + wSize), currT - h.getStart());
                 //fromT = currT;
             }
             //currV = op.apply(w.getLast().getValue(), currV);
-        }*/
-
-        // Removed intermediate values must be added in case they are still
-        // local optima...
-        /*// TODO: however this seems to generate invalid updates
-        if(!w.isEmpty() && w.getLast().getStart().equals(fromT)) {
-            currV = op.apply(w.getLast().getValue(), currV);
-            w.removeLast();
         }
 
-
-
-        Node<Double, R> newNode = new Node<>(fromT, currV);
-
         // We can add to the window the pair (lastT, currV)
-        w.addLast(newNode);
-
-//       for(Node<Double, R> oldNode: oldNodes) {
-//           if(fromT < oldNode.getStart())
-//               w.addLast(new Node<>(oldNode.getStart(), op.apply(oldNode.getValue(), currV)));
-//       }
-
-        //if(fromT + h.getEnd() < )
-
-        */
-        return null;
+        w.addLast(new Node<>(fromT, currV));
+*/
     }
 
-    private static <R> boolean survive(R oldV, R newV, BinaryOperator<R> f) {
+    private static <R> boolean isNotSurviving(R oldV, R newV, BinaryOperator<R> f)
+    {
         R result = f.apply(oldV, newV);
-        return !(result.equals(oldV) || result.equals(newV));
+        return result.equals(oldV) // || result.equals(newV)
+               ;
     }
 
     private static <R> boolean isOptimum(R oldV, R newV, BinaryOperator<R> f) {

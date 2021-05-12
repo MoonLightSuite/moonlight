@@ -26,12 +26,8 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.ListDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.AtomicMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnarySpaceOpMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.BinaryMonitor;
+import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnaryTimeOpMonitor;
-import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.UnaryMonitor;
 import eu.quanticol.moonlight.signal.online.SpaceTimeSignal;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
@@ -178,8 +174,16 @@ FormulaVisitor<Parameters,
     public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
             ReachFormula formula, Parameters parameters)
     {
-        //return unarySpace(formula, parameters, this::escapeOp);
-        return null;
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> firstArg =
+                formula.getFirstArgument().accept(this, parameters);
+
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> secondArg =
+                formula.getSecondArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new BinarySpaceOpMonitor<>(firstArg, secondArg,
+                        null,
+                        interpretation, size));
     }
 
     private OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>

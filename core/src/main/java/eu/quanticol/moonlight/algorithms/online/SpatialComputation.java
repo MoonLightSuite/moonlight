@@ -62,7 +62,7 @@ public class SpatialComputation
         op = operator;
     }
 
-    public List<Update<T, List<R>>> computeDynamic(Update<T, List<R>> u)
+    public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u)
     {
         List<Update<T, List<R>>> results = new ArrayList<>();
 
@@ -94,8 +94,6 @@ public class SpatialComputation
 
         return results;
     }
-
-
 
     private T seekSpace(T start, T end) {
         T value = end;

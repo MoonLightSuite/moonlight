@@ -61,6 +61,20 @@ class TestRoSIBerkeleyExample {
     }
 
     @Test
+    void testWholeFormulaAtT1() {
+        Object[] ss = testAtUpdate1(wholeFormula());
+
+        if(ss != null) {
+            assertValue(T0, ANY, ss[0]);
+
+            // Exactly one update
+            assertEquals(1, ss.length);
+        }
+        else
+            fail("Empty signal should never happen!");
+    }
+
+    @Test
     void testLeftFormulaAtT2() {
         Object[] ss = testAtUpdate2(leftFormula());
 
@@ -394,6 +408,17 @@ class TestRoSIBerkeleyExample {
     private static Formula rightFormula() {
         Formula atomY = new AtomicFormula("positiveY");
         return new NegationFormula(atomY);
+    }
+
+    private Object[] testAtUpdate1(Formula f) {
+        // Monitor Instrumentation...
+        OnlineTimeMonitor<List<Double>, Double> m = instrument(f);
+
+        Update<Double, List<Double>> u =
+                new Update<>(T0, T1, toList(1.0, -1.0));
+        //m.monitor(u);   //Signal init
+
+        return exec(u, m);
     }
 
     private Object[] testAtUpdate2(Formula f) {

@@ -70,7 +70,7 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
                                                               new ArrayList<>();
 
         for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
-            updates.addAll(spatialOp.computeDynamic(argU));
+            updates.addAll(spatialOp.computeUnary(argU));
         }
 
         for(Update<Double, List<AbstractInterval<R>>> u : updates) {

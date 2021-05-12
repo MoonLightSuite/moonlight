@@ -39,7 +39,7 @@ import java.util.function.BinaryOperator;
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see TemporalMonitor
+ * @see OnlineMonitor
  */
 public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
         implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
