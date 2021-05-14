@@ -39,9 +39,8 @@ public class SlidingWindow<R> {
     private final double uEnd;
     private final double uStart;
     private final double wSize;
-    private final Window<Node<Double, R>> w = new Window<>();
-    private final List<Update<Double, R>> updates = new ArrayList<>();
-    //private final BiFunction<R, BiFunction<R, BinaryOperator<R>, R>, Boolean> survive;
+    private final Window<R> w;
+    private final LinkedList<Update<Double, R>> updates = new LinkedList<>();
 
     public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> u,
                          Interval opHorizon, BinaryOperator<R> op)
@@ -50,6 +49,7 @@ public class SlidingWindow<R> {
         this.op = op;
         h = opHorizon;
         wSize = h.getEnd() - h.getStart();
+        w = new Window<>(0.0, h.getStart());
 
         // We define the resulting update horizon, cut at 0,
         // as updating before time 0 doesn't make any sense.
@@ -64,72 +64,95 @@ public class SlidingWindow<R> {
             add(itr.next());
         }
 
-        // We add the last pieces of the window to the updates
-        while(!w.isEmpty() && w.getFirst().getStart() < uEnd) {
-            //updates.add(popUpdate(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
-            Node<Double, R> node = w.removeFirst();
-            addUpdate(node.getStart(), node.getValue());
-        }
-
+        collectUpdates();
         return updates;
     }
 
+    private void collectUpdates() {
+        // We add the last pieces of the window to the updates
+        while(!w.isEmpty() && w.getFirst().getStart() < uEnd) {
+            //updates.add(popUpdate(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+            Element<Double, R> element = w.removeFirst();
+            addUpdate(element.getStart(), element.getValue());
+        }
+
+        if(!updates.isEmpty()) {
+            Update<Double, R> last = updates.removeLast();
+            updates.add(new Update<>(last.getStart(), uEnd, last.getValue()));
+        }
+    }
+
+    /**
+     * This method adds the current segment of the input to the sliding window.
+     * The addition operation might induce a shift in the sliding window and
+     * might result in the removal of some previous elements.
+     *
+     * @param curr current segment of the input signal
+     */
     private void add(SegmentInterface<Double, R> curr) {
         if(!w.isEmpty() &&
-                curr.getStart() - w.getFirst().getStart() > wSize)
+              curr.getStart() - h.getStart() -  w.getFirst().getStart() > wSize)
         {
-            shift(curr.getStart() - wSize);
+            shift(curr.getStart() - h.getEnd());
+        } else if(w.getEndingTime() + wSize <= curr.getStart()) {
+            w.clear();
         }
-        doAdd(curr.getStart(), curr.getValue());
-        //w.setEnd(curr.getStart());
+        doAdd(curr.getStart() - h.getStart(), curr.getValue());
     }
 
     private void shift(double t) {
         if(!w.isEmpty()) {
-            Node<Double, R> first = w.removeFirst();
+            Element<Double, R> first = w.removeFirst();
 
             while(!w.isEmpty() && w.getFirst().getStart() < t) {
                 addUpdate(first.getStart(), first.getValue());
-                Node<Double, R> next = w.removeFirst();
+                Element<Double, R> next = w.removeFirst();
                 if(next.getStart() > t) {
-                    w.addFirst(new Node<>(t, first.getValue()));
-                    w.addFirst(new Node<>(next.getStart(), next.getValue()));
+                    w.addFirst(new Element<>(t, first.getValue()));
+                    w.addFirst(new Element<>(next.getStart(), next.getValue()));
                 } else
                     first = next;
             }
 
             addUpdate(first.getStart(), first.getValue());
-            w.addFirst(new Node<>(t, first.getValue()));
+            w.addFirst(new Element<>(t, first.getValue()));
         }
     }
 
     private void addUpdate(double t, R v) {
         if(t < uEnd) {
-            //if (w.isEmpty())
-                updates.add(new Update<>(t, uEnd, v));
-            //else
-            //    updates.add(new Update<>(t, w.getFirst().getStart(), v));
+            t = t < 0 ? 0 : t;
+
+            if(!updates.isEmpty() && updates.getFirst().getStart() == t) {
+                updates.clear();
+            }
+
+            if(!updates.isEmpty()) {
+                Update<Double, R> old = updates.removeLast();
+                updates.add(new Update<>(old.getStart(), t, old.getValue()));
+            }
+            updates.add(new Update<>(t, Double.NaN, v));
         }
     }
 
     private void doAdd(Double t, R v) {
         if(w.isEmpty())
-            w.addLast(new Node<>(t, v));
+            w.addLast(new Element<>(t, v));
         else {
-            Node<Double, R> last = w.removeLast();
+            Element<Double, R> last = w.removeLast();
             double t2 = last.getStart();
             R v2 = last.getValue();
             if(v.equals(v2))
-                w.addLast(new Node<>(t2, v2));
+                w.addLast(new Element<>(t2, v2));
             R v3 = op.apply(v, v2);
             if(v.equals(v3))
                 doAdd(t2, v3);
             else if(!v2.equals(v3)) {
                 doAdd(t2, v3);
-                w.addLast(new Node<>(t, v));
+                w.addLast(new Element<>(t, v));
             } else {
-                w.addLast(new Node<>(t2, v2));
-                w.addLast(new Node<>(t, v));
+                w.addLast(new Element<>(t2, v2));
+                w.addLast(new Element<>(t, v));
             }
         }
     }
@@ -195,7 +218,7 @@ public class SlidingWindow<R> {
                                         oldFirst.getValue());
 
             if(w.isEmpty() || oldFirst.getEnd() < w.getFirst().getStart())
-                w.addFirst(new Node<>(oldFirst.getEnd(),
+                w.addFirst(new Element<>(oldFirst.getEnd(),
                                       oldFirst.getValue()));
 
             updates.add(oldFirst);
@@ -211,9 +234,9 @@ public class SlidingWindow<R> {
                                           R currV)
     {
 
-        ListIterator<Node<Double, R>> itr = w.descendingIterator();
-        Node<Double, R> last = w.isEmpty() ? null : w.getLast();
-        Node<Double, R> next = null;
+        ListIterator<Element<Double, R>> itr = w.descendingIterator();
+        Element<Double, R> last = w.isEmpty() ? null : w.getLast();
+        Element<Double, R> next = null;
         while(itr.hasPrevious() && !isOptimum(last.getValue(), currV, op)
              )
         {
@@ -226,7 +249,7 @@ public class SlidingWindow<R> {
 //                    itr.remove();
 //                }
             } else if (!isNotSurviving(last.getValue(), currV, op)) {
-                next = new Node<>(last.getStart(), op.apply(last.getValue(), currV));
+                next = new Element<>(last.getStart(), op.apply(last.getValue(), currV));
                 itr.set(next);
             }
 
@@ -255,7 +278,7 @@ public class SlidingWindow<R> {
             }
         }
 
-        itr.add(new Node<>(fromT, currV));
+        itr.add(new Element<>(fromT, currV));
 
         // ---------------------------------------------
 
@@ -328,7 +351,7 @@ public class SlidingWindow<R> {
      * if start > hStart && < hEnd, push update
      */
     private void generateUpdate(double outT, double currT, R currV) {
-        Node<Double, R> f = w.removeFirst();
+        Element<Double, R> f = w.removeFirst();
         R newV = f.getValue();
         double end = //min(
                 min(uEnd, outT)
@@ -344,10 +367,10 @@ public class SlidingWindow<R> {
 
 
         if (currT - h.getEnd() == end) {
-            Node<Double, R> n = new Node<>(end, op.apply(f.getValue(), currV));
+            Element<Double, R> n = new Element<>(end, op.apply(f.getValue(), currV));
 
             if (!w.isEmpty() && w.getFirst().getStart() <= end) {
-                n = new Node<>(end, op.apply(currV, w.getFirst().getValue()));
+                n = new Element<>(end, op.apply(currV, w.getFirst().getValue()));
             }
 
             w.addLast(n);
@@ -356,7 +379,7 @@ public class SlidingWindow<R> {
 
     private Update<Double, R> popUpdate(double outT, double currT)
     {
-        Node<Double, R> f = w.removeFirst();
+        Element<Double, R> f = w.removeFirst();
         double end = min(min(uEnd, outT), currT - h.getEnd());
 
         if(!w.isEmpty())
@@ -365,14 +388,18 @@ public class SlidingWindow<R> {
         return new Update<>(f.getStart(), end, f.getValue());
     }
 
-    private static class Window<E> {
-        private final LinkedList<E> deque;
+    private static class Window<V> {
+        private final LinkedList<Element<Double, V>> deque;
+        private double endingTime;
+        private final double offset;
 
-        public Window() {
-            this.deque = new LinkedList<>();
+        public Window(Double startingTime, Double startingOffset) {
+            endingTime = startingTime;
+            offset = startingOffset;
+            deque = new LinkedList<>();
         }
 
-        public E removeFirst() {
+        public Element<Double, V> removeFirst() {
             return deque.removeFirst();
         }
 
@@ -380,36 +407,45 @@ public class SlidingWindow<R> {
             return deque.isEmpty();
         }
 
-        public E getFirst() {
+        public Element<Double, V> getFirst() {
             return deque.getFirst();
         }
 
-        public E getLast() {
+        public Element<Double, V> getLast() {
             return deque.getLast();
         }
 
-        public void addLast(E e) {
+        public void addLast(Element<Double, V> e) {
             deque.addLast(e);
+            endingTime = e.getStart() + offset;
         }
 
-        public void addFirst(E e) {
+        public void addFirst(Element<Double, V> e) {
             deque.addFirst(e);
         }
 
-        public E removeLast() {
+        public Element<Double, V> removeLast() {
             return deque.removeLast();
         }
 
-        public ListIterator<E> descendingIterator() {
+        public ListIterator<Element<Double, V>> descendingIterator() {
             return deque.listIterator(deque.isEmpty() ? 0 : deque.size());
+        }
+
+        public void clear() {
+            deque.clear();
+        }
+
+        public Double getEndingTime() {
+            return endingTime;
         }
     }
 
-    private static class Node<T, V> {
+    private static class Element<T, V> {
         private T start;
         private V value;
 
-        public Node(T start, V value) {
+        public Element(T start, V value) {
             this.start = start;
             this.value = value;
         }

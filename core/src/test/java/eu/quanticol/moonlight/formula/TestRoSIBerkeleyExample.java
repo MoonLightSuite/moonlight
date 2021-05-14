@@ -341,7 +341,7 @@ class TestRoSIBerkeleyExample {
             assertValue(16, ANY, ss[5]);
 
             // Exactly three updates
-            assertEquals(4, ss.length);
+            assertEquals(6, ss.length);
         }
         else
             fail("Empty signal should never happen!");

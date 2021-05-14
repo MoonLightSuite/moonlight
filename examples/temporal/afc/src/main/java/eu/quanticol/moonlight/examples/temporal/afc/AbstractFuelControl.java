@@ -92,12 +92,12 @@ public class AbstractFuelControl {
 
         TimeSignal<Double, AbstractInterval<Double>> result = null;
         for(Update<Double, Double> u: updates) {
-            try {
+            //try {
                 result = m.monitor(u);
-            } catch (Exception e) {
+            /*} catch (Exception e) {
                 System.out.println("Suppressing error at update: " +
                                     u.toString());
-            }
+            }*/
         }
 
         long after = System.currentTimeMillis();

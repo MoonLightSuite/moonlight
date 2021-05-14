@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.Update;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TemporalComputationTest {
 
+    @Disabled("Old logic, must be reworked.")
     @Test
     void slidingWindow() {
         AbsIntervalDomain<Double> domain = new AbsIntervalDomain<>(new DoubleDomain());
