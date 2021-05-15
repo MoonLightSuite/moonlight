@@ -1,6 +1,7 @@
 dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     compile 'org.jetbrains:annotations:16.0.2'
+    compile "com.google.guava:guava:21.0"
 }
 
 jar {

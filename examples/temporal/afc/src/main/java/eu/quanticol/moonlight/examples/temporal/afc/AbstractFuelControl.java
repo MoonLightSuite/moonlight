@@ -25,8 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 public class AbstractFuelControl {
     private static final FormulaToBreach converter = new FormulaToBreach();
-    private static final String BREACH_PATH =
-                                    "C:\\Users\\ennio\\source\\repos\\breach";
+    private static final String BREACH_PATH = System.getProperty("BREACH_PATH");
+                                    //"C:\\Users\\ennio\\source\\repos\\breach";
 
     private static final String MOONLIGHT_ATOM = "smallError";
 
@@ -92,12 +92,8 @@ public class AbstractFuelControl {
 
         TimeSignal<Double, AbstractInterval<Double>> result = null;
         for(Update<Double, Double> u: updates) {
-            //try {
-                result = m.monitor(u);
-            /*} catch (Exception e) {
-                System.out.println("Suppressing error at update: " +
-                                    u.toString());
-            }*/
+            System.out.println(u.toString());
+            result = m.monitor(u);
         }
 
         long after = System.currentTimeMillis();
