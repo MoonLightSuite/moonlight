@@ -131,7 +131,8 @@ public class AbstractFuelControl {
     private static List<Update<Double, Double>> genUpdates(double[] values) {
         List<Update<Double, Double>> updates = new ArrayList<>();
         for(int i = 0; i < values.length; i++) {
-            updates.add(new Update<>((double)i, (double)i + 1, values[i]));
+            updates.add(new Update<>((double)i * 0.1,
+                                 (double)i * 0.1 + 0.1, values[i]));
         }
         return updates;
     }

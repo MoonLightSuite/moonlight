@@ -367,9 +367,20 @@ public class Signal<T> implements TimeSignal<Double, T> {
         this.last.endAt(end);
     }
 
-
+    /**
+     * @deprecated Prefer <code>getValueAt()</code> which is standardized.
+     *
+     * @param t time point of interest
+     * @return value corresponding to the provided time point
+     */
+    @Deprecated
     public T valueAt(double t) {
         return (first == null ? null : first.getValueAt(t));
+    }
+
+    @Override
+    public T getValueAt(Double time) {
+        return (first == null ? null : first.getValueAt(time));
     }
 
     public double[][] arrayOf(FunctionToDouble<T> f) {
