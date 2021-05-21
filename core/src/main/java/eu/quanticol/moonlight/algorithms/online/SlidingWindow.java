@@ -189,42 +189,6 @@ public class SlidingWindow<R> {
     }
 
     /**
-     * Actual adding logic of the algorithm.
-     * It pops the right side of the window, until the last element dominates
-     * the current value, then adds it to the end of the window, starting at
-     * a time that is the minimum of the removed ones.
-     *
-     * @param t starting time of the current segment
-     * @param v value of the current segment
-     */
-    private void doAdd2(Double t, R v) {
-        if(w.isEmpty())
-            w.addLast(new Element<>(t, v));
-        else {
-            ListIterator<Element<Double, R>> itr = w.fromLastIterator();
-            Element<Double, R> last = itr.previous();
-            itr.remove();
-            double t2 = last.getStart();
-            R v2 = last.getValue();
-
-            if(v.equals(v2))
-                itr.add(new Element<>(t2, v2));
-
-            R v3 = op.apply(v, v2);
-            if(v.equals(v3)) {
-                while(itr.hasPrevious())
-                doAdd(t2, v3);
-            } else if(!v2.equals(v3)) {
-                doAdd(t2, v3);
-                itr.add(new Element<>(t, v));
-            } else {
-                itr.add(new Element<>(t2, v2));
-                itr.add(new Element<>(t, v));
-            }
-        }
-    }
-
-    /**
      * Internal data structure used to keep the stored values and the starting
      * time of the last segment processed.
      *

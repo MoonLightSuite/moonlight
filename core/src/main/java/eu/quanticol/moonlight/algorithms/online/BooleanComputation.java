@@ -64,7 +64,7 @@ public class BooleanComputation {
         List<Update<T, R>> updates = new ArrayList<>();
         TimeChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
 
-        parallelExec(p1, updates, op, u);  // TODO: this should be different for
+        rightApply(p1, updates, op, u);  // TODO: this should be different for
                                            //       left and right operands
 
         return updates;
@@ -194,10 +194,10 @@ public class BooleanComputation {
 
     private static
     <T extends Comparable<T> & Serializable, R>
-    void parallelExec(TimeChain<T, R> s,
-                      List<Update<T, R>> updates,
-                      BinaryOperator<R> op,
-                      Update<T, R> u)
+    void rightApply(TimeChain<T, R> s,
+                    List<Update<T, R>> updates,
+                    BinaryOperator<R> op,
+                    Update<T, R> u)
     {
         DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
         SegmentInterface<T, R> curr;
