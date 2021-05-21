@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 /**
  *
@@ -383,7 +384,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
         return (first == null ? null : first.getValueAt(time));
     }
 
-    public double[][] arrayOf(FunctionToDouble<T> f) {
+    public double[][] arrayOf(ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
             //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
@@ -397,18 +398,18 @@ public class Signal<T> implements TimeSignal<Double, T> {
         int counter = 0;
         while (current != null) {
             toReturn[counter][0] = current.getStart();
-            toReturn[counter][1] = f.apply( current.getValue() );
+            toReturn[counter][1] = f.applyAsDouble( current.getValue() );
             current = current.getNext();
             counter++;
         }
         if (!last.isAPoint()) {
             toReturn[size][0] = end;
-            toReturn[size][1] = f.apply( last.getValue() );
+            toReturn[size][1] = f.applyAsDouble( last.getValue() );
         }
         return toReturn;
     }
 
-    public double[][] arrayOf(double[] timePoints, FunctionToDouble<T> f) {
+    public double[][] arrayOf(double[] timePoints, ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
             //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
@@ -421,7 +422,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
                 current = current.jump(timePoints[i]);
             }
             if (current != null) {
-                value = f.apply(current.getValue());
+                value = f.applyAsDouble(current.getValue());
             }
             toReturn[i][0] = timePoints[i];
             toReturn[i][1] = value;

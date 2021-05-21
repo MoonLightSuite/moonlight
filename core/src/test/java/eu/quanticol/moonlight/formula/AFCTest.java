@@ -36,13 +36,15 @@ class AFCTest {
         ArrayList<SegmentInterface<Double, AbstractInterval<Double>>>
                                                             rho = getRho();
 
-        TimeSignal<Double, AbstractInterval<Double>> result = null;
+        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+                result = new ArrayList<>();
         for(Update<Double, Double> u: input) {
-            result = m.monitor(u);
+            result.add(new ArrayList<>(m.monitor(u).getSegments()));
         }
 
         ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> r =
-                new ArrayList<>(Objects.requireNonNull(result).getSegments());
+                new ArrayList<>(result.get(result.size() - 1));
+                //        new ArrayList<>(Objects.requireNonNull(result).getSegments());
         //r = condenseSignal(r);
 
         assertEquals(rho.size(), r.size());
@@ -120,7 +122,8 @@ class AFCTest {
     private List<Update<Double, Double>> genUpdates(double[] values) {
         List<Update<Double, Double>> updates = new ArrayList<>();
         for(int i = 0; i < values.length; i++) {
-            updates.add(new Update<>((double)i, (double)i + 1, values[i]));
+            //if(i % 10 == 0)
+                updates.add(new Update<>((double)i * 0.1, (double)i*0.1 + 0.1, values[i]));
         }
         return updates;
     }
@@ -139,11 +142,12 @@ class AFCTest {
 
         ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
         for(int i = 0; i < data1.length; i++) {
-            rho.add(new TimeSegment<>((double)i, new AbstractInterval<>(data1[i], data2[i])));
+            //if((double)i * 0.1 % 1 == 0)
+                rho.add(new TimeSegment<>((double)i* 0.1, new AbstractInterval<>(data1[i], data2[i])));
         }
 
-        //return condenseSignal(rho);
-        return rho;
+        return condenseSignal(rho);
+        //return rho;
     }
 
     private static InputStream path(String filename) {

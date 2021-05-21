@@ -22,6 +22,7 @@ import eu.quanticol.moonlight.util.MultiValuedTrace;
 import eu.quanticol.moonlight.util.Pair;
 import org.jfree.data.io.CSV;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -165,8 +166,12 @@ public class DynamicErlang {
         double[][] var = filterVariance(smc.getStats());
 
         PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
-        new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
-        new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
+        try {
+            new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
+            new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
+        } catch (IOException e) {
+            LOG.warning("Writing failed:" + e);
+        }
     }
 
     private static Collection<MultiValuedTrace> loadTrajectories() {

@@ -6,7 +6,7 @@ import java.io.*;
 
 /**
  * Generic Class to write line-wise from a text file.
- * given an object conformant to a parsing strategy,
+ * given an object conforming to a parsing strategy,
  * it updates the output file
  *
  * @param <T> type to which the data read is converted
@@ -14,7 +14,6 @@ import java.io.*;
  * @see PrintingStrategy
  */
 public class DataWriter<T> {
-
     private final FileType type;
     private final String path;
     private final PrintingStrategy<T> strategy;
@@ -37,19 +36,14 @@ public class DataWriter<T> {
      * Writes the data to the destination file
      * @param data to write
      */
-    public void write(T data) {
-        try {
-            BufferedWriter outWriter = new BufferedWriter(new FileWriter(path));
-
+    public void write(T data) throws IOException {
+        try(BufferedWriter outWriter = new BufferedWriter(new FileWriter(path)))
+        {
             // Write the header
             writeHeader(outWriter, data);
 
             // Write the data
             writeLines(outWriter, data);
-
-            outWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * MoonLight: a light-weight framework for runtime monitoring
  * Copyright (C) 2018-2021
  *
@@ -16,13 +16,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
+
 package eu.quanticol.moonlight.signal;
 
 /**
- * TODO: Does not do what it says it does (i.e. no restriction to Double!)
+ * @deprecated Use {@link java.util.function.ToDoubleFunction} instead.
+ * Will be removed soon.
+ *
  * @param <S>
  */
+@Deprecated
 @FunctionalInterface
 public interface FunctionToDouble<S> {
 

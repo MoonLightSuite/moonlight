@@ -22,6 +22,7 @@ import eu.quanticol.moonlight.util.TestUtils;
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import static eu.quanticol.moonlight.examples.subway.ErlangSignal.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,8 +132,14 @@ public class Erlang {
         double[][] var = filterVariance(smc.getStats());
 
         PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
-        new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
-        new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
+
+        try {
+            new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
+            new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
+        } catch (IOException e) {
+            LOG.warning("Writing failed:" + e);
+        }
+
 
         LOG.info("SMC results: " + Arrays.toString(smc.getStats()));
     }

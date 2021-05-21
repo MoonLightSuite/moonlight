@@ -42,6 +42,15 @@ public class OnlineSignal<D extends Comparable<D>>
     }
 
     /**
+     * @param defaultValue The signal default value to consider
+     */
+    public OnlineSignal(AbstractInterval<D> defaultValue)
+    {
+        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
+        this.segments.add(new TimeSegment<>(0.0, defaultValue));
+    }
+
+    /**
      * @return the internal list of segments;
      */
     @Override

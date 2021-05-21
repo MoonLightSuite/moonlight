@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.IntStream;
 
 /**
@@ -137,7 +138,7 @@ public class SpatialTemporalSignal<T> {
 	}
 
 
-	public double[][][] toArray(FunctionToDouble<T> f) {
+	public double[][][] toArray(ToDoubleFunction<T> f) {
 		double[] timePoints = getTimeArray();
 		double[][][] toReturn = new double[size][][];
 		IntStream.range(0, size).forEach(i -> toReturn[i] = signals.get(i).arrayOf(timePoints,f));

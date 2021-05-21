@@ -103,7 +103,7 @@ public class SlidingWindow<R> {
         if(!w.isEmpty() &&
               curr.getStart() - h.getStart() - w.getFirst().getStart() > wSize)
         {
-            shift(curr.getStart() - h.getEnd());
+            slide(curr.getStart() - h.getEnd());
         } else if(w.getEndingTime() + wSize < curr.getStart()) {
             w.clear();
         }
@@ -116,7 +116,7 @@ public class SlidingWindow<R> {
      *
      * @param t new time point entering the window
      */
-    private void shift(double t) {
+    private void slide(double t) {
         if(!w.isEmpty()) {
             Element<Double, R> first = w.removeFirst();
 
@@ -173,12 +173,12 @@ public class SlidingWindow<R> {
             Element<Double, R> last = w.removeLast();
             double t2 = last.getStart();
             R v2 = last.getValue();
-            if(v.equals(v2))
-                w.addLast(new Element<>(t2, v2));
             R v3 = op.apply(v, v2);
-            if(v.equals(v3))
+            if (v.equals(v2)){
+                w.addLast(new Element<>(t2, v2));
+            } else if(v.equals(v3)) {
                 doAdd(t2, v3);
-            else if(!v2.equals(v3)) {
+            } else if(!v2.equals(v3)) {
                 doAdd(t2, v3);
                 w.addLast(new Element<>(t, v));
             } else {
@@ -189,12 +189,48 @@ public class SlidingWindow<R> {
     }
 
     /**
+     * Actual adding logic of the algorithm.
+     * It pops the right side of the window, until the last element dominates
+     * the current value, then adds it to the end of the window, starting at
+     * a time that is the minimum of the removed ones.
+     *
+     * @param t starting time of the current segment
+     * @param v value of the current segment
+     */
+    private void doAdd2(Double t, R v) {
+        if(w.isEmpty())
+            w.addLast(new Element<>(t, v));
+        else {
+            ListIterator<Element<Double, R>> itr = w.fromLastIterator();
+            Element<Double, R> last = itr.previous();
+            itr.remove();
+            double t2 = last.getStart();
+            R v2 = last.getValue();
+
+            if(v.equals(v2))
+                itr.add(new Element<>(t2, v2));
+
+            R v3 = op.apply(v, v2);
+            if(v.equals(v3)) {
+                while(itr.hasPrevious())
+                doAdd(t2, v3);
+            } else if(!v2.equals(v3)) {
+                doAdd(t2, v3);
+                itr.add(new Element<>(t, v));
+            } else {
+                itr.add(new Element<>(t2, v2));
+                itr.add(new Element<>(t, v));
+            }
+        }
+    }
+
+    /**
      * Internal data structure used to keep the stored values and the starting
      * time of the last segment processed.
      *
      * @param <V> Type of the value of a window element
      */
-    private static class Window<V> {
+    static class Window<V> {
         private final LinkedList<Element<Double, V>> deque;
         private double endingTime;
         private final double offset;
@@ -212,6 +248,8 @@ public class SlidingWindow<R> {
         public boolean isEmpty() {
             return deque.isEmpty();
         }
+
+        public int size() { return deque.size(); }
 
         public Element<Double, V> getFirst() {
             return deque.getFirst();
@@ -234,7 +272,7 @@ public class SlidingWindow<R> {
             return deque.removeLast();
         }
 
-        public ListIterator<Element<Double, V>> descendingIterator() {
+        public ListIterator<Element<Double, V>> fromLastIterator() {
             return deque.listIterator(deque.isEmpty() ? 0 : deque.size());
         }
 

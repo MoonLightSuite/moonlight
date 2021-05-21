@@ -20,12 +20,15 @@ BrDemo.InitAFC_Online()
 % slstlib.slx. AFC_Online contains one 'STL Monitor' block and one 'STL
 % stops when false' block. We configure the first one as follows.
 
-max_rob = 0.5;            % estimate of maximum robust satisfaction of a formula (default to +inf)
+%max_rob = +inf;            % estimate of maximum robust satisfaction of a formula (default to +inf)
 sig_names = 'AF,AFref';   % declares signal names used in the specification
 
 % defines a simple overshoot property - note that STL formula are given as
 % string, STL_Formula object are not supported.
 phi_st = 'alw_[10, 30] ((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AFref[t]) < 0.05)))';
+%phi_st = '(abs(AF[t]-AFref[t]) < 0.05)';
+%phi_st = '(ev_[0, 1] (abs(AF[t]-AFref[t]) < 0.05))';
+%phi_st = '((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AFref[t]) < 0.05)))';
 
 %%
 % Set parameters for one simulation and run.

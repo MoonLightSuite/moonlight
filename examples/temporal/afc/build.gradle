@@ -13,8 +13,12 @@ sourceSets {
     }
 }
 
+def buildCommonDir = buildscript.sourceFile.getParent()
 dependencies {
+    implementation 'com.github.sh0nk:matplotlib4j:0.5.0'
     compile project(":core")
+    compile project(":utility")
+    compile fileTree(dir: buildCommonDir + '/lib', include: ['*.jar'])
     compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript")
     compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript.ide")
 }
