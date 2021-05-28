@@ -80,7 +80,7 @@ public interface Semiring<R> {
 	 */
 	R max();
 
-	/* TODO: the following methods have no meaning (create what for?).
+	/* TODO: the following methods have no clear meaning (create what for?).
 	    	 Do we even need a default implementation?? */
 	default ArrayList<R> createArray(int size ) {
 		return createArray(size, i -> min());

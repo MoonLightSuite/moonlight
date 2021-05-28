@@ -13,7 +13,7 @@
 %% Initialization
 % This demo uses a modified version of the AbstractFuelControl model to
 % illustrate the use of online monitoring blocks from the Breach Library.
-BrDemo.InitAFC_Online()
+BrDemo.InitAFC_Online2()
 
 %%
 % Breach Library is accessible via Simulink Library Browser, or by opening
@@ -33,6 +33,6 @@ phi_st = 'alw_[10, 30] ((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AF
 %%
 % Set parameters for one simulation and run.
 BrAFC_Online.SetParam({'max_rob','Pedal_Angle_pulse_period', 'Pedal_Angle_pulse_amp'}, [max_rob, 12, 50]);
-BrAFC_Online.Sim(0:.1:40)
+BrAFC_Online.Sim(0:0.1:160)
 
 input = BrAFC_Online.GetExprValues('AF[t] - AFref[t]')
