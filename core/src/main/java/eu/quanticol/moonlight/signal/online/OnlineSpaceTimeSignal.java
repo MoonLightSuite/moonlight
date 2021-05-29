@@ -40,7 +40,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
     @Override
     public boolean refine(Update<Double, List<AbstractInterval<D>>> u) {
         return Refinement.refine(segments, u,
-                (v, vNew) -> IntStream.range(0, size).parallel()
+                (v, vNew) -> IntStream.range(0, size)
                         .filter(i -> v.get(i).contains(vNew.get(i)))
                         .count() != 0
         );
@@ -68,7 +68,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      */
     @Override
     public TimeChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
-        return null;
+        return Refinement.select(segments, from, to);
     }
 
     /**

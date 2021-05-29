@@ -31,6 +31,8 @@ public class AbstractFuelControl {
     private static double[] breachInput;
     private static double[] moonlightInput;
 
+    private static final List<String> text = new ArrayList<>();
+
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
     private static final boolean PLOTTING = false;
@@ -43,13 +45,12 @@ public class AbstractFuelControl {
 
         repeatedRunner("Breach", AbstractFuelControl::runBreach);
 
-        /*
+
         System.out.println("------> ");
 
-        for(int i = 0; i < stopwatches.size(); i++) {
-            System.out.println("S" + i + " Execution Time (sec): " +
-                               stopwatches.get(i).getDuration() / 1000.);
-        }*/
+        for(int i = 0; i < text.size(); i++) {
+            System.out.println(text.get(i));
+        }
 
 //        if(PLOTTING)
 //            plotInput();
@@ -66,6 +67,7 @@ public class AbstractFuelControl {
 
         tot = (tot / iterations) / 1000.;
 
+        text.add(title + " Execution time (avg over 100):" + tot);
         System.out.println(title + " Execution time (avg over 100):" + tot);
 
         stopwatches.clear();

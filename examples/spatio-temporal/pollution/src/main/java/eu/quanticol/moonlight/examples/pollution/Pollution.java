@@ -19,6 +19,10 @@ import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.space.StaticLocationService;
 
+import com.github.sh0nk.matplotlib4j.Plot;
+import com.github.sh0nk.matplotlib4j.PythonExecutionException;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Function;
@@ -65,7 +69,7 @@ public class Pollution {
 
         for(Update<Double, List<Double>> u : updates){
             s = m.monitor(u);
-            LOG.info(() -> "Monitoring for " + u + " completed!");
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
         }
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
@@ -80,6 +84,13 @@ public class Pollution {
         }
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
+        List<Double> rhoUp = s.getSegments().stream()
+                              .map(i -> i.getValue().get(0).getEnd())
+                              .collect(Collectors.toList());
+        List<Double> rhoDown = s.getSegments().stream()
+                                .map(i -> i.getValue().get(0).getEnd())
+                                .collect(Collectors.toList());
+        plot(rhoDown, rhoUp, "F2");
         LOG.info(() -> "Monitoring result of F2: " + output2);
 
     }
@@ -125,6 +136,32 @@ public class Pollution {
         Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
 
         return new SomewhereFormula("nearby", atomX);
+    }
+
+    private static void plot(List<Double> dataDown, List<Double> dataUp, String name)
+    {
+        try {
+            Plot plt = Plot.create();
+            plt.plot()
+                    .add(dataUp)
+                    .label("rho_up");
+            plt.plot()
+                    .add(dataDown)
+                    .label("rho_down");
+//        plt.plot()
+//                .add(Arrays.stream(breachInput)
+//                           .boxed().collect(Collectors.toList()))
+//                .label("input");
+            plt.xlabel("times");
+            plt.ylabel("robustness");
+            //plt.text(1, 0.5, "text");
+            plt.title(name);
+            plt.legend();
+            plt.show();
+        } catch (PythonExecutionException| IOException e) {
+            System.err.println("unable to plot!");
+            e.printStackTrace();
+        }
     }
 
     private static
