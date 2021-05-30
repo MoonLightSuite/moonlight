@@ -264,12 +264,15 @@ public class AbstractFuelControl {
         List<Update<Double, Double>> updates = new ArrayList<>();
         double di = 0;
         for(int i = 0; i < values.length; i++) {
-            double vi = Math.round(di * 100.0)/100.0;
-            double vj = Math.round((di + scale) * 100.0)/100.0;
-            double vv = Math.round(values[i] * 100.0)/100.0;
-                updates.add(new Update<>(vi, vj, vv));
+//          double vi = Math.round(di * 100.0)/100.0;
+//          double vj = Math.round((di + scale) * 100.0)/100.0;
+//          double vv = Math.round(values[i] * 100.0)/100.0;
+            double vi = i * scale;
+            double vj = (i + 1) * scale;
+            double vv = values[i];
+            updates.add(new Update<>(vi, vj, vv));
 
-            di = Math.round((i + 1) * scale * 100.0)/100.0;
+            //di = Math.round((i + 1) * scale * 100.0)/100.0;
         }
 
         //System.out.println(updates);

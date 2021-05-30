@@ -124,8 +124,8 @@ class AFCTest {
         for(int i = 0; i < values.length; i++) {
             //double ti = Math.round((double)i * 0.1 * 100.0) / 100.0;
             //double tj = Math.round(((double)i * 0.1 + 0.1) * 100.0) / 100.0;
-            double ti = Math.round((double)i * 0.1);
-            double tj = Math.round(((double)i + 1) * 0.1);
+            double ti = (double)i * 0.1;
+            double tj = (double)(i + 1) * 0.1;
             updates.add(new Update<>(ti, tj, values[i]));
         }
         return updates;

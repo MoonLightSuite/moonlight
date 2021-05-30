@@ -25,6 +25,8 @@ class OutOfOrderTest {
     private static final String POSITIVE_X = "x > 0";
     private static final List<Thread> threads = new ArrayList<>();
 
+    private static final boolean PLOTTING = true;
+
     @Test
     void test1() {
         HashMap<String, Function<Double, AbstractInterval<Double>>> atoms = new HashMap<>();
@@ -36,11 +38,11 @@ class OutOfOrderTest {
         OnlineTimeMonitor<Double, Double> m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
 
         List<Update<Double, Double>> updates = new ArrayList<>();
-        updates.add(new Update<>(0.0, 1.0, 2.0));
-        updates.add(new Update<>(1.0, 2.0, 3.0));
-        updates.add(new Update<>(2.0, 3.0, 4.0));
-        updates.add(new Update<>(3.0, 4.0, -1.0));
-        updates.add(new Update<>(4.0, 5.0, 2.0));
+//        updates.add(new Update<>(0.0, 1.0, 2.0));
+//        updates.add(new Update<>(1.0, 2.0, 3.0));
+//        updates.add(new Update<>(2.0, 3.0, 4.0));
+//        updates.add(new Update<>(3.0, 4.0, -1.0));
+//        updates.add(new Update<>(4.0, 5.0, 2.0));
 
         updates = AFCTest.loadInput().subList(0, 213);
 
@@ -74,8 +76,10 @@ class OutOfOrderTest {
         assert r1 != null;
         assert r2 != null;
 
-        plot(r1.getSegments(), "In order");
-        plot(r2.getSegments(), "Out of order");
+        if(PLOTTING) {
+            plot(r1.getSegments(), "In order");
+            plot(r2.getSegments(), "Out of order");
+        }
 
         try {
             for (Thread t: threads) {
