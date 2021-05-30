@@ -35,7 +35,7 @@ public class AbstractFuelControl {
 
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
+    private static final boolean PLOTTING = true;
 
     public static void main(String[] args)
     {
@@ -58,7 +58,7 @@ public class AbstractFuelControl {
     }
 
     private static void repeatedRunner(String title, Runnable task) {
-        final int iterations = 10;
+        final int iterations = 1;
         double tot = 0;
         for(int i = 0; i < iterations; i++) {
             task.run();
@@ -209,7 +209,7 @@ public class AbstractFuelControl {
         double[] input = eng.getVariable("input");
         moonlightInput = input;
 
-        List<Update<Double, Double>> updates = genUpdates(input, shuffle, 0.1);
+        List<Update<Double, Double>> updates = genUpdates(input, shuffle, 1);
         OnlineTimeMonitor<Double, Double> m = instrument();
 
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
@@ -247,7 +247,7 @@ public class AbstractFuelControl {
 
         atoms.put(MOONLIGHT_ATOM,
                 trc -> new AbstractInterval<>(trc - 0.05,
-                        trc - 0.05));
+                                              trc - 0.05));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }

@@ -77,7 +77,9 @@ public class Refinement {
         //          This means the update starts in the current segment
         if(t < from && tNext > from && refinable.test(v, vNew)) {
             add(itr, from, vNew);
-            return false;
+//            if(!itr.hasNext() || (tNext > to && !v.equals(prevV)))
+//                itr.add(new TimeSegment<>(to, v));
+//            return false;
         }
         // Case 2 - from  == t:
         //          This means the current segment starts exactly at
@@ -132,6 +134,13 @@ public class Refinement {
                 throw new UnsupportedOperationException("Refining interval: " +
                         vNew + " is wider than " +
                         "the original:" + v);
+            }
+
+            if(itr.hasNext() ) {
+                if(itr.next().getValue().equals(vNew))
+                    itr.remove();
+                else
+                    itr.previous();
             }
         }
     }

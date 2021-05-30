@@ -55,7 +55,7 @@ class AFCTest {
         System.out.println("End");
     }
 
-    private List<Update<Double, Double>> loadInput() {
+    public static List<Update<Double, Double>> loadInput() {
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
 
         InputStream source = path(INPUT);
@@ -119,11 +119,14 @@ class AFCTest {
 
 
 
-    private List<Update<Double, Double>> genUpdates(double[] values) {
+    private static List<Update<Double, Double>> genUpdates(double[] values) {
         List<Update<Double, Double>> updates = new ArrayList<>();
         for(int i = 0; i < values.length; i++) {
-            //if(i % 10 == 0)
-                updates.add(new Update<>((double)i * 0.1, (double)i*0.1 + 0.1, values[i]));
+            //double ti = Math.round((double)i * 0.1 * 100.0) / 100.0;
+            //double tj = Math.round(((double)i * 0.1 + 0.1) * 100.0) / 100.0;
+            double ti = Math.round((double)i * 0.1);
+            double tj = Math.round(((double)i + 1) * 0.1);
+            updates.add(new Update<>(ti, tj, values[i]));
         }
         return updates;
     }

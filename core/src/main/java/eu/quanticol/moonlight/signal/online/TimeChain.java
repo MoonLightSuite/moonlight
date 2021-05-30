@@ -81,6 +81,18 @@ public class TimeChain
         this.addAll(segments);
     }
 
+    public TimeChain<T, V> replicate() {
+        //TODO: this method should be removed when refactoring TimeChain to
+        // encapsulate LinkedList instead of extending it
+        Iterator<SegmentInterface<T, V>> itr = this.iterator();
+        List<SegmentInterface<T, V>> newL = new ArrayList<>();
+
+        while(itr.hasNext())
+            newL.add(itr.next());
+
+        return new TimeChain<>(newL, end);
+    }
+
     @SuppressWarnings("java:S1185")
     @Override
     protected void removeRange(int fromIndex, int toIndex) {
@@ -114,7 +126,6 @@ public class TimeChain
             throw new IllegalArgumentException(ENDING_COND);
 
     }
-
     public DiffIterator<SegmentInterface<T, V>> diffIterator() {
         return diffIterator(0);
     }
