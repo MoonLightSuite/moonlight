@@ -44,7 +44,7 @@ class OutOfOrderTest {
 //        updates.add(new Update<>(3.0, 4.0, -1.0));
 //        updates.add(new Update<>(4.0, 5.0, 2.0));
 
-        updates = AFCTest.loadInput().subList(0, 213);
+        updates = AFCTest.loadInput().subList(0, 100);
 
         TimeSignal<Double, AbstractInterval<Double>> r1 = null;
         int i = 1;
@@ -58,7 +58,7 @@ class OutOfOrderTest {
 
         System.out.println("Shuffled updates");
 
-        Collections.shuffle(updates, new Random(32));
+        Collections.shuffle(updates, new Random(2));
         TimeSignal<Double, AbstractInterval<Double>> r2 = null;
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
         int j = 1;
@@ -110,8 +110,10 @@ class OutOfOrderTest {
         Thread t = new Thread(() -> {
             List<Double> dataDown = filterValues(data.stream().map(x -> x.getValue().getStart()).collect(Collectors.toList()));
             List<Double> dataUp = filterValues(data.stream().map(x -> x.getValue().getEnd()).collect(Collectors.toList()));
+            List<Double> times = data.stream().map(x->x.getStart()).collect(Collectors.toList());
             try {
                 Plot plt = Plot.create();
+                //plt.xticks(times);    // Experimental feature, still unreliable
                 plt.plot().add(dataUp).label("rho_up");
                 plt.plot().add(dataDown).label("rho_down");
                 plt.xlabel("times");
