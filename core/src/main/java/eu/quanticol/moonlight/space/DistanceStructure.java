@@ -28,6 +28,7 @@ import eu.quanticol.moonlight.util.Triple;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -350,6 +351,44 @@ public class DistanceStructure<T, A> {
             values.set(i, v);
         }
         return values;
+    }
+
+    public static <T, A, R> List<R> somewhereParallel(SignalDomain<R> dModule,
+                                                      Function<Integer, R> s,
+                                                      DistanceStructure<T, A> ds)
+    {
+        return IntStream
+                .range(0, ds.getModelSize())
+                .boxed()
+                .parallel()
+                .map(i -> {
+                    R v = dModule.min();
+                    for (int j = 0; j < ds.getModelSize(); j++) {
+                        if (ds.checkDistance(i, j)) {
+                            v = dModule.disjunction(v, s.apply(j));
+                        }
+                    }
+                    return v;
+                }).collect(Collectors.toList());
+    }
+
+    public static <T, A, R> List<R> everywhereParallel(SignalDomain<R> dModule,
+                                                       Function<Integer, R> s,
+                                                       DistanceStructure<T, A> ds)
+    {
+        return IntStream
+                .range(0, ds.getModelSize())
+                .boxed()
+                .parallel()
+                .map(i -> {
+                    R v = dModule.max();
+                    for (int j = 0; j < ds.getModelSize(); j++) {
+                        if (ds.checkDistance(i, j)) {
+                            v = dModule.conjunction(v, s.apply(j));
+                        }
+                    }
+                    return v;
+                }).collect(Collectors.toList());
     }
 
     private <R> ArrayList<ArrayList<R>> createMatrix(int rows, int columns, BiFunction<Integer, Integer, R> init) {

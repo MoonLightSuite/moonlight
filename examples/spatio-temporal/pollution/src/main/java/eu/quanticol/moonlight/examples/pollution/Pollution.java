@@ -21,6 +21,7 @@ import eu.quanticol.moonlight.space.StaticLocationService;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
+import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,42 +57,89 @@ public class Pollution {
 
         LOG.info(() -> "The space model has: " + space.size() + " nodes.");
 
-        OnlineSpaceTimeMonitor<Double, Double, Double> m =
-                new OnlineSpaceTimeMonitor<>(formula1(), space.size(), d,
-                                             ls, atoms(), dist());
 
         List<Update<Double, List<Double>>> updates = importUpdates(space.size());
 
         LOG.info("Signal loaded correctly!");
 
+
+        OnlineSpaceTimeMonitor<Double, Double, Double> m =
+                new OnlineSpaceTimeMonitor<>(formula1(), space.size(), d,
+                        ls, atoms(), dist());
+
         TimeSignal<Double, List<AbstractInterval<Double>>> s =
                                 new OnlineSpaceTimeSignal<>(space.size(), d);
 
-        for(Update<Double, List<Double>> u : updates){
-            s = m.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
+        updates = updates.subList(0, 1000);
 
-        final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
-        LOG.info(() -> "Monitoring result of F1: " + output);
+//        for(Update<Double, List<Double>> u : updates) {
+//            s = m.monitor(u);
+//            //LOG.info(() -> "Monitoring for " + u + " completed!");
+//        }
 
-        m = new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
-                                         ls, atoms(), dist());
-
-        for(Update<Double, List<Double>> u : updates){
-            s = m.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
-
-        final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
         List<Double> rhoUp = s.getSegments().stream()
                               .map(i -> i.getValue().get(0).getEnd())
                               .collect(Collectors.toList());
         List<Double> rhoDown = s.getSegments().stream()
                                 .map(i -> i.getValue().get(0).getEnd())
                                 .collect(Collectors.toList());
-        plot(rhoDown, rhoUp, "F2");
-        LOG.info(() -> "Monitoring result of F2: " + output2);
+        rhoDown = new ArrayList<>();
+        rhoDown.add(1.0);
+        rhoUp = new ArrayList<>();
+        rhoUp.add(1.0);
+        //plot(rhoDown, rhoUp, "F1");
+
+        final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
+        LOG.info(() -> "Monitoring result of F1: " + output.getSegments());
+
+
+        Stopwatch rec = Stopwatch.start();
+        OnlineSpaceTimeMonitor<Double, Double, Double> m2 =
+                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
+                                         ls, atoms(), dist());
+
+        for(Update<Double, List<Double>> u : updates) {
+            s = m2.monitor(u);
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
+        }
+        rec.stop();
+        System.out.println("F2 Sequential time: " + rec.getDuration());
+
+        rec = Stopwatch.start();
+        OnlineSpaceTimeMonitor<Double, Double, Double> m3 =
+                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
+                        ls, atoms(), dist(), true);
+
+        for(Update<Double, List<Double>> u : updates) {
+            s = m3.monitor(u);
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
+        }
+        rec.stop();
+        System.out.println("F2 Parallel time: " + rec.getDuration());
+
+        rec = Stopwatch.start();
+        OnlineSpaceTimeMonitor<Double, Double, Double> m4 =
+                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
+                        ls, atoms(), dist(), true);
+
+        for(Update<Double, List<Double>> u : updates) {
+            s = m4.monitor(u);
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
+        }
+        rec.stop();
+        System.out.println("F2 Parallel time#2: " + rec.getDuration());
+
+
+        rhoUp = s.getSegments().stream()
+                .map(i -> i.getValue().get(0).getEnd())
+                .collect(Collectors.toList());
+        rhoDown = s.getSegments().stream()
+                .map(i -> i.getValue().get(0).getEnd())
+                .collect(Collectors.toList());
+        //plot(rhoDown, rhoUp, "F2");
+
+        final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
+        //LOG.info(() -> "Monitoring result of F2: " + output2.getSegments());
 
     }
 

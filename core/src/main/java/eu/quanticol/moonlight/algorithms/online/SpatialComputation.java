@@ -77,6 +77,8 @@ public class SpatialComputation
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
 
+        f.checkDistance(0, 0); //TODO: Done to force pre-computation of distance matrix
+
         results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
 
         while (nextSpace != null &&

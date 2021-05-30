@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -48,9 +49,9 @@ class TestSpaceOnline {
 
         OnlineSpaceTimeMonitor<Double, Double, Double> m =
                 new OnlineSpaceTimeMonitor<>(f, N * N, new DoubleDomain(),
-                                             locSvc, atoms, dist);
+                                             locSvc, atoms, dist, true);
 
-
+        ForkJoinPool customThreadPool = new ForkJoinPool(12);
 
         TimeSignal<Double, List<AbstractInterval<Double>>> r =
                 m.monitor(null);

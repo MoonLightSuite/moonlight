@@ -13,6 +13,7 @@ import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -37,8 +38,7 @@ public class AbstractFuelControl {
 
     private static final boolean PLOTTING = true;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         repeatedRunner("In-Order M", () -> runMoonlight(false));
 
         repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
@@ -48,7 +48,7 @@ public class AbstractFuelControl {
 
         System.out.println("------> ");
 
-        for(int i = 0; i < text.size(); i++) {
+        for (int i = 0; i < text.size(); i++) {
             System.out.println(text.get(i));
         }
 
@@ -60,7 +60,7 @@ public class AbstractFuelControl {
     private static void repeatedRunner(String title, Runnable task) {
         final int iterations = 1;
         double tot = 0;
-        for(int i = 0; i < iterations; i++) {
+        for (int i = 0; i < iterations; i++) {
             task.run();
             tot += stopwatches.get(i).getDuration();
         }
@@ -95,7 +95,7 @@ public class AbstractFuelControl {
                     .collect(Collectors.toList());
             eng.close();
 
-            if(PLOTTING)
+            if (PLOTTING)
                 plot(bStart, bEnd, "Breach");
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -119,7 +119,7 @@ public class AbstractFuelControl {
             List<Double> mStart = mRes.get(0);
             List<Double> mEnd = mRes.get(1);
 
-            if(PLOTTING)
+            if (PLOTTING)
                 plot(mStart, mEnd, "Moonlight");
 
         } catch (ExecutionException e) {
@@ -144,24 +144,21 @@ public class AbstractFuelControl {
 
             return eng;
         } catch (URISyntaxException | ExecutionException |
-                 InterruptedException e)
-        {
-             Thread.currentThread().interrupt();
+                InterruptedException e) {
+            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
         return null;
     }
 
-        private static List<List<Double>> processMoonlight(
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>> results)
-    {
+    private static List<List<Double>> processMoonlight(
+            List<List<SegmentInterface<Double, AbstractInterval<Double>>>> results) {
         List<List<Double>> r = new ArrayList<>();
         r.add(new ArrayList<>());
         r.add(new ArrayList<>());
 
-        for(List<SegmentInterface<Double, AbstractInterval<Double>>> v: results)
-        {
+        for (List<SegmentInterface<Double, AbstractInterval<Double>>> v : results) {
             r.get(0).add(v.get(0).getValue().getStart());
             r.get(1).add(v.get(0).getValue().getEnd());
         }
@@ -171,28 +168,27 @@ public class AbstractFuelControl {
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
     executeBreach(MatlabEngine eng) throws ExecutionException,
-                                       InterruptedException
-    {
-        Stopwatch rec =  Stopwatch.start();
+            InterruptedException {
+        Stopwatch rec = Stopwatch.start();
         eng.eval("afc_breach_monitoring");
         long duration = rec.stop();
         stopwatches.add(rec);
 
         System.out.println("Breach Execution Time (sec): " +
-                            duration / 1000.);
+                duration / 1000.);
 
         double[] rhoLow = eng.getVariable("rho_low");
         double[] rhoUp = eng.getVariable("rho_up");
         breachInput = eng.getVariable("input");
 
         List<SegmentInterface<Double, AbstractInterval<Double>>> output =
-                        IntStream.range(0, rhoLow.length).boxed()
-                                 .map(i -> (SegmentInterface<Double,
-                                            AbstractInterval<Double>>)
-                                            new TimeSegment<>((double) i,
-                                            new AbstractInterval<>(rhoLow[i],
-                                                                   rhoUp[i])))
-                                 .collect(Collectors.toList());
+                IntStream.range(0, rhoLow.length).boxed()
+                        .map(i -> (SegmentInterface<Double,
+                                AbstractInterval<Double>>)
+                                new TimeSegment<>((double) i,
+                                        new AbstractInterval<>(rhoLow[i],
+                                                rhoUp[i])))
+                        .collect(Collectors.toList());
 
         //return condenseSignal(output);
         return output;
@@ -200,8 +196,7 @@ public class AbstractFuelControl {
 
     private static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
     executeMoonlight(MatlabEngine eng, boolean shuffle)
-            throws ExecutionException, InterruptedException
-    {
+            throws ExecutionException, InterruptedException {
         Stopwatch rec = Stopwatch.start();
 
         eng.eval("afc_moonlight_monitoring");
@@ -215,7 +210,7 @@ public class AbstractFuelControl {
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
 
-        for(Update<Double, Double> u: updates) {
+        for (Update<Double, Double> u : updates) {
             //System.out.println(u.toString());
             result.add(new ArrayList<>(m.monitor(u).getSegments()));
         }
@@ -228,15 +223,14 @@ public class AbstractFuelControl {
         return result;
     }
 
-    private static OnlineTimeMonitor<Double, Double> instrument()
-    {
+    private static OnlineTimeMonitor<Double, Double> instrument() {
         Formula f = new GloballyFormula(
                 new OrFormula(
                         new NegationFormula(new AtomicFormula(MOONLIGHT_ATOM)),
                         new EventuallyFormula(
                                 new NegationFormula(
-                                new AtomicFormula(MOONLIGHT_ATOM))
-                                ,  new Interval(0.0, 1.0))
+                                        new AtomicFormula(MOONLIGHT_ATOM))
+                                , new Interval(0.0, 1.0))
                 ),
                 new Interval(10.0, 30.0));
 
@@ -247,23 +241,23 @@ public class AbstractFuelControl {
 
         atoms.put(MOONLIGHT_ATOM,
                 trc -> new AbstractInterval<>(trc - 0.05,
-                                              trc - 0.05));
+                        trc - 0.05));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }
 
     /**
      * Hacks to reduce errors on double computations
+     *
      * @param values
      * @param shuffle
      * @return
      */
     private static List<Update<Double, Double>>
-    genUpdates(double[] values, boolean shuffle, double scale)
-    {
+    genUpdates(double[] values, boolean shuffle, double scale) {
         List<Update<Double, Double>> updates = new ArrayList<>();
         double di = 0;
-        for(int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
 //          double vi = Math.round(di * 100.0)/100.0;
 //          double vj = Math.round((di + scale) * 100.0)/100.0;
 //          double vv = Math.round(values[i] * 100.0)/100.0;
@@ -277,7 +271,7 @@ public class AbstractFuelControl {
 
         //System.out.println(updates);
 
-        if(shuffle)
+        if (shuffle)
             Collections.shuffle(updates, new Random(1));
 
         //System.out.println(updates);
@@ -286,15 +280,14 @@ public class AbstractFuelControl {
     }
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
-    condenseSignal(List<SegmentInterface<Double, AbstractInterval<Double>>> ss)
-    {
+    condenseSignal(List<SegmentInterface<Double, AbstractInterval<Double>>> ss) {
         List<SegmentInterface<Double, AbstractInterval<Double>>> out =
                 new ArrayList<>();
         SegmentInterface<Double, AbstractInterval<Double>> bound = ss.get(0);
         out.add(ss.get(0));
 
-        for(SegmentInterface<Double, AbstractInterval<Double>> curr: ss) {
-            if(!curr.getValue().equals(bound.getValue())) {
+        for (SegmentInterface<Double, AbstractInterval<Double>> curr : ss) {
+            if (!curr.getValue().equals(bound.getValue())) {
                 bound = curr;
                 out.add(curr);
             }
@@ -303,8 +296,7 @@ public class AbstractFuelControl {
         return out;
     }
 
-    private static void plot(List<Double> dataDown, List<Double> dataUp, String name)
-    {
+    private static void plot(List<Double> dataDown, List<Double> dataUp, String name) {
         try {
             dataDown = filterValues(dataDown);
             dataUp = filterValues(dataUp);
@@ -325,15 +317,14 @@ public class AbstractFuelControl {
             plt.title(name);
             plt.legend();
             plt.show();
-        } catch (PythonExecutionException| IOException e) {
+        } catch (PythonExecutionException | IOException e) {
             System.err.println("unable to plot!");
             e.printStackTrace();
         }
     }
 
     private static void plotInput()
-            throws PythonExecutionException, IOException
-    {
+            throws PythonExecutionException, IOException {
         Plot plt = Plot.create();
         plt.plot()
                 .add(Arrays.stream(breachInput)
@@ -342,60 +333,16 @@ public class AbstractFuelControl {
         plt.xlabel("times");
         plt.ylabel("|AF-AFRef|");
         plt.title("alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) => " +
-                  "(ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))");
+                "(ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))");
         plt.legend();
         plt.show();
     }
 
     private static List<Double> filterValues(List<Double> vs) {
-        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ?  1 : v)
+        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ? 1 : v)
                 .map(v -> v.equals(Double.NEGATIVE_INFINITY) ? -1 : v)
                 .map(v -> v.equals(20.0) ? 1 : v)
                 .collect(Collectors.toList());
         return vs;
-    }
-
-    private static class Stopwatch {
-        private static final Map<UUID, Pair<Long, Long>> sessions = new HashMap<>();
-        private final UUID sessionId;
-
-        private Stopwatch(UUID id) {
-            sessionId = id;
-        }
-
-        public static Stopwatch start() {
-            UUID id = UUID.randomUUID();
-            Long start = System.currentTimeMillis();
-            sessions.put(id, new Pair<>(start, null));
-            return new Stopwatch(id);
-        }
-
-        public long stop() {
-            Long start = sessions.remove(sessionId).getFirst();
-            Long end = System.currentTimeMillis();
-            sessions.put(sessionId, new Pair<>(start, end));
-
-            return end - start;
-        }
-
-        public static long getDuration(UUID sessionId) {
-            Pair<Long, Long> session = sessions.get(sessionId);
-            if(session != null && session.getSecond() != null) {
-                return session.getSecond() - session.getFirst();
-            } else
-                throw new UnsupportedOperationException("The requested session never started or never ended");
-        }
-
-        public long getDuration() {
-            Pair<Long, Long> session = sessions.get(sessionId);
-            if(session != null && session.getSecond() != null) {
-                return session.getSecond() - session.getFirst();
-            } else
-                throw new UnsupportedOperationException("The requested session never ended");
-        }
-
-        public static Map<UUID, Pair<Long, Long>> getSessions() {
-            return new HashMap<>(sessions);
-        }
     }
 }

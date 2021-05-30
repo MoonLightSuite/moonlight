@@ -36,6 +36,8 @@ import eu.quanticol.moonlight.signal.online.Update;
 
 
 import static eu.quanticol.moonlight.space.DistanceStructure.somewhere;
+import static eu.quanticol.moonlight.space.DistanceStructure.somewhereParallel;
+import static eu.quanticol.moonlight.space.DistanceStructure.everywhereParallel;
 import static eu.quanticol.moonlight.space.DistanceStructure.everywhere;
 
 import java.util.HashMap;
@@ -62,6 +64,8 @@ FormulaVisitor<Parameters,
 
     private final LocationService<Double, S> locSvc;
 
+    private final boolean parallel;
+
     //TODO: refactor this in some cleaner way
     private final int size;
 
@@ -75,6 +79,20 @@ FormulaVisitor<Parameters,
             Map<String, Function<SpatialModel<S>,
                                  DistanceStructure<S, ?>>> distanceFunctions)
     {
+        this(formula, size, interpretation, locationService,
+             atomicPropositions, distanceFunctions, false);
+    }
+
+    public OnlineSpaceTimeMonitor(
+            Formula formula,
+            int size,
+            SignalDomain<R> interpretation,
+            LocationService<Double, S> locationService,
+            Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
+            Map<String, Function<SpatialModel<S>,
+                    DistanceStructure<S, ?>>> distanceFunctions,
+            boolean parallel)
+    {
         this.atoms = atomicPropositions;
         this.formula = formula;
         this.interpretation = interpretation;
@@ -82,6 +100,7 @@ FormulaVisitor<Parameters,
         this.locSvc = locationService;
         this.size = size;
         this.listInterpretation = new ListDomain<>(size, interpretation);
+        this.parallel = parallel;
     }
 
     public SpaceTimeSignal<Double, AbstractInterval<R>>
@@ -212,6 +231,9 @@ FormulaVisitor<Parameters,
             Function<Integer, AbstractInterval<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
+        if(parallel)
+            return everywhereParallel(new AbsIntervalDomain<>(interpretation),
+                                      spatialSignal, ds);
         return everywhere(new AbsIntervalDomain<>(interpretation),
                           spatialSignal, ds);
     }
@@ -220,8 +242,13 @@ FormulaVisitor<Parameters,
             Function<Integer, AbstractInterval<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
+        if(parallel)
+            return somewhereParallel(new AbsIntervalDomain<>(interpretation),
+                                     spatialSignal, ds);
+
         return somewhere(new AbsIntervalDomain<>(interpretation),
                          spatialSignal, ds);
+
     }
 
     private List<AbstractInterval<R>> escapeOp(
