@@ -65,11 +65,9 @@ public class Refinement {
     {
         double t = curr.getStart();
         double tNext = Double.POSITIVE_INFINITY;
-        try {
+
+        if(itr.hasNext())
             tNext = itr.peekNext().getStart();
-        } catch(NoSuchElementException ignored) {
-            // Exception handled by default value of tNext
-        }
 
         V v = curr.getValue();
 
@@ -136,7 +134,7 @@ public class Refinement {
                         "the original:" + v);
             }
 
-            if(itr.hasNext() ) {
+            if(itr.hasNext()) {
                 if(itr.next().getValue().equals(vNew))
                     itr.remove();
                 else

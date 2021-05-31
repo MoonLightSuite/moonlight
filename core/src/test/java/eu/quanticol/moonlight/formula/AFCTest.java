@@ -27,7 +27,7 @@ class AFCTest {
     private final static String RHO_UP = DIR + "rho_up.csv";
     private final static String INPUT = DIR + "input.csv";
 
-    @Disabled("Under investigation")
+    //@Disabled("Under investigation")
     @Test
     void afcTest() {
         List<Update<Double, Double>> input = loadInput();

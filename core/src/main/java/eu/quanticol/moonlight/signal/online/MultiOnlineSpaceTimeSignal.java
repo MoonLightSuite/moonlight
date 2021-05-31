@@ -41,13 +41,13 @@ public class MultiOnlineSpaceTimeSignal
     @Override
     public boolean refine(Update<Double, List<List<AbstractInterval<?>>>> u) {
         BiPredicate<List<AbstractInterval<?>>, List<AbstractInterval<?>>> pred =
-                (v, vNew) -> IntStream.range(0, v.size()).parallel()
+                (v, vNew) -> IntStream.range(0, v.size())   //.parallel()
                         .filter(i -> !v.get(i)
                                 .contains(vNew.get(i)))
                         .count() != 0;
 
         return Refinement.refine(segments, u,
-                (v, vNew) -> IntStream.range(0, size).parallel()
+                (v, vNew) -> IntStream.range(0, size)   //.parallel()
                                       .filter(i -> pred.test(v.get(i),
                                                              vNew.get(i)))
                                       .count() != 0

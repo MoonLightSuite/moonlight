@@ -82,8 +82,8 @@ public class TimeChain
     }
 
     public TimeChain<T, V> replicate() {
-        //TODO: this method should be removed when refactoring TimeChain to
-        // encapsulate LinkedList instead of extending it
+        //TODO: this method should be removed when TimeChain will be refactored
+        // to encapsulate LinkedList instead of extending it
         Iterator<SegmentInterface<T, V>> itr = this.iterator();
         List<SegmentInterface<T, V>> newL = new ArrayList<>();
 
@@ -299,34 +299,6 @@ public class TimeChain
 
     public T getEnd() {
         return end;
-    }
-
-    /**
-     * @return the hash code value for this list
-     * @implSpec This implementation uses exactly the code that is used to define the
-     * list hash function in the documentation for the {@link List#hashCode}
-     * method.
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    /**
-     * Compares the specified object with this list for equality.
-     * If that is the case, it also checks that they end at the same value.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean equals(Object o) {
-        if(super.equals(o)) {
-            try{
-                return ((TimeChain<T, V>) o).getEnd() == end;
-            } catch (ClassCastException e) {
-                return false;
-            }
-        }
-        return false;
     }
 
     private static final String MONOTONICITY =

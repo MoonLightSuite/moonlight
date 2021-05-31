@@ -70,12 +70,12 @@ public class Pollution {
         TimeSignal<Double, List<AbstractInterval<Double>>> s =
                                 new OnlineSpaceTimeSignal<>(space.size(), d);
 
-        updates = updates.subList(0, 1000);
+        //updates = updates.subList(0, 2000);
 
-//        for(Update<Double, List<Double>> u : updates) {
-//            s = m.monitor(u);
-//            //LOG.info(() -> "Monitoring for " + u + " completed!");
-//        }
+        for(Update<Double, List<Double>> u : updates) {
+            s = m.monitor(u);
+            //LOG.info(() -> "Monitoring for " + u + " completed!");
+        }
 
         List<Double> rhoUp = s.getSegments().stream()
                               .map(i -> i.getValue().get(0).getEnd())

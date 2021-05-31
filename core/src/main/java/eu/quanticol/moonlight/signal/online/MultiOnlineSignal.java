@@ -84,7 +84,8 @@ public class MultiOnlineSignal
         //TODO: should handle the case where the update is
         //      a list of a different size
         return Refinement.refine(segments, u,
-                (v, vNew) -> IntStream.range(0, v.size()).parallel()
+                (v, vNew) -> IntStream.range(0, v.size())
+                                      //.parallel()
                                       .filter(i -> !v.get(i)
                                                      .contains(vNew.get(i)))
                                       .boxed().count() != 0);

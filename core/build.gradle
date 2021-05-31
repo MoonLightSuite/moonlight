@@ -3,6 +3,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.github.sh0nk:matplotlib4j:0.5.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     testImplementation 'com.github.sh0nk:matplotlib4j:0.5.1-SNAPSHOT'
     testImplementation 'com.github.sh0nk:matplotlib4j:0.5.0'

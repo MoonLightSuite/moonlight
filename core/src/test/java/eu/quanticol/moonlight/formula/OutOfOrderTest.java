@@ -5,18 +5,14 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.util.Plotter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.github.sh0nk.matplotlib4j.Plot;
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,9 +22,131 @@ class OutOfOrderTest {
     private static final List<Thread> threads = new ArrayList<>();
 
     private static final boolean PLOTTING = true;
+    Plotter plt = new Plotter();
 
     @Test
-    void test1() {
+    void testSimple1() {
+        // Atom
+        HashMap<String, Function<Double, AbstractInterval<Double>>> atoms = new HashMap<>();
+        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+
+        // Monitor
+        OnlineTimeMonitor<Double, Double> m;
+
+        // Updates
+        List<Update<Double, Double>> updates = simpleUpdates();
+
+        // Formula
+        Formula f = new AtomicFormula(POSITIVE_X);
+
+        // Monitoring in-order updates
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        System.out.println(r1);
+
+        // Monitoring shuffled updates
+        Collections.shuffle(updates, new Random(2));    //TODO: vary seeds
+
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        System.out.println(r2);
+
+        assert r1 != null;
+        assert r2 != null;
+
+        if(PLOTTING) {
+            plt.plot(r1, "In order");
+            plt.plot(r2, "Out of order");
+            plt.waitActivePlots();
+        }
+
+        assertEquals(r1, r2);
+    }
+
+    @Test
+    void testSimple3() {
+        // Atom
+        HashMap<String, Function<Double, AbstractInterval<Double>>> atoms = new HashMap<>();
+        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+
+        // Monitor
+        OnlineTimeMonitor<Double, Double> m;
+
+        // Updates
+        List<Update<Double, Double>> updates = simpleUpdates();
+
+        // Formula
+        Formula f = formulaAFC();
+
+        // Monitoring in-order updates
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        System.out.println(r1);
+
+        // Monitoring shuffled updates
+        Collections.shuffle(updates, new Random(2));    //TODO: vary seeds
+
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        System.out.println(r1);
+
+        assert r1 != null;
+        assert r2 != null;
+
+        if(PLOTTING) {
+            plt.plot(r1, "In order");
+            plt.plot(r2, "Out of order");
+            plt.waitActivePlots();
+        }
+
+        assertEquals(r1, r2);
+    }
+
+    @Test
+    void testSimple2() {
+        // Atom
+        HashMap<String, Function<Double, AbstractInterval<Double>>> atoms = new HashMap<>();
+        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+
+        // Monitor
+        OnlineTimeMonitor<Double, Double> m;
+
+        // Updates
+        List<Update<Double, Double>> updates = simpleUpdates();
+
+        // Formula(e)
+        Formula f = new GloballyFormula(new AtomicFormula(POSITIVE_X),
+                new Interval(0, 8));
+        Formula f3 = formulaAFC();
+
+        // Monitoring in-order updates
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        System.out.println(r1);
+
+        // Monitoring shuffled updates
+        Collections.shuffle(updates, new Random(2));    //TODO: vary seeds
+
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        System.out.println(r1);
+
+        assert r1 != null;
+        assert r2 != null;
+
+        if(PLOTTING) {
+            plt.plot(r1, "In order");
+            plt.plot(r2, "Out of order");
+            plt.waitActivePlots();
+        }
+
+        assertEquals(r1, r2);
+    }
+
+
+    @Disabled
+    @Test
+    void test2() {
         HashMap<String, Function<Double, AbstractInterval<Double>>> atoms = new HashMap<>();
         atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
 
@@ -37,14 +155,7 @@ class OutOfOrderTest {
         //f = formulaAFC();
         OnlineTimeMonitor<Double, Double> m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
 
-        List<Update<Double, Double>> updates = new ArrayList<>();
-//        updates.add(new Update<>(0.0, 1.0, 2.0));
-//        updates.add(new Update<>(1.0, 2.0, 3.0));
-//        updates.add(new Update<>(2.0, 3.0, 4.0));
-//        updates.add(new Update<>(3.0, 4.0, -1.0));
-//        updates.add(new Update<>(4.0, 5.0, 2.0));
-
-        updates = AFCTest.loadInput().subList(0, 100);
+        List<Update<Double, Double>> updates = AFCTest.loadInput().subList(0, 100);
 
         TimeSignal<Double, AbstractInterval<Double>> r1 = null;
         int i = 1;
@@ -70,26 +181,17 @@ class OutOfOrderTest {
             j++;
         }
 
-
-
-
         assert r1 != null;
         assert r2 != null;
 
         if(PLOTTING) {
-            plot(r1.getSegments(), "In order");
-            plot(r2.getSegments(), "Out of order");
+            Plotter plt = new Plotter();
+            plt.plot(r1.getSegments(), "In order");
+            plt.plot(r2.getSegments(), "Out of order");
+            plt.waitActivePlots();
         }
 
-        try {
-            for (Thread t: threads) {
-                t.join();
-            }
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        assertSame(r1.getSegments(), r2.getSegments());
+        assertEquals(r1.getSegments(), r2.getSegments());
     }
 
     private Formula formulaAFC() {
@@ -105,46 +207,32 @@ class OutOfOrderTest {
                 ;
     }
 
-    private static void plot(TimeChain<Double, AbstractInterval<Double>> data, String name)
+
+    private List<Update<Double, Double>> simpleUpdates() {
+        List<Update<Double, Double>> updates = new ArrayList<>();
+        updates.add(new Update<>(0.0, 1.0, 2.0));
+        updates.add(new Update<>(1.0, 2.0, 3.0));
+        updates.add(new Update<>(2.0, 3.0, 4.0));
+        updates.add(new Update<>(3.0, 4.0, -1.0));
+        updates.add(new Update<>(4.0, 5.0, 2.0));
+
+        return updates;
+    }
+
+    private TimeChain<Double, AbstractInterval<Double>> monitor(
+            OnlineTimeMonitor<Double, Double> m , List<Update<Double, Double>> ups
+            //, String prefix
+    )
     {
-        Thread t = new Thread(() -> {
-            List<Double> dataDown = filterValues(data.stream().map(x -> x.getValue().getStart()).collect(Collectors.toList()));
-            List<Double> dataUp = filterValues(data.stream().map(x -> x.getValue().getEnd()).collect(Collectors.toList()));
-            List<Double> times = data.stream().map(x->x.getStart()).collect(Collectors.toList());
-            try {
-                Plot plt = Plot.create();
-                //plt.xticks(times);    // Experimental feature, still unreliable
-                plt.plot().add(dataUp).label("rho_up");
-                plt.plot().add(dataDown).label("rho_down");
-                plt.xlabel("times");
-                plt.ylabel("robustness");
-                plt.title(name);
-                plt.legend();
-                plt.show();
-            } catch (PythonExecutionException | IOException e) {
-                System.err.println("unable to plot!");
-                e.printStackTrace();
-            }
-        }){{start();}};
-        threads.add(t);
-//        try {
-//            t.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    private static List<Double> filterValues(List<Double> vs) {
-        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ?  10 : v)
-                .map(v -> v.equals(Double.NEGATIVE_INFINITY) ? -10 : v)
-                .collect(Collectors.toList());
-        return vs;
-    }
-
-    private static <T> void assertSame(List<T> expected, List<T> toTest) {
-        assertEquals(expected.size(), toTest.size());
-        for(int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), toTest.get(i));
+        TimeChain<Double, AbstractInterval<Double>> res = null;
+        int i = 1;
+        for(Update<Double, Double> u: ups) {
+            res = m.monitor(u).getSegments().replicate();
+            i++;
+//            if(PLOTTING)
+//                plt.plot(res, prefix +  At Update " + i);
         }
+
+        return res;
     }
 }

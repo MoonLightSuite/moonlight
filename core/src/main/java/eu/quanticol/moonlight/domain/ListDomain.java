@@ -36,7 +36,7 @@ public class ListDomain<T extends Comparable<T>>
      */
     @Override
     public List<AbstractInterval<T>> negation(List<AbstractInterval<T>> x) {
-        return IntStream.range(0, domains.size()).parallel()
+        return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i).negation(x.get(i)))
                         .collect(Collectors.toList());
     }
@@ -52,7 +52,7 @@ public class ListDomain<T extends Comparable<T>>
     public List<AbstractInterval<T>> conjunction(List<AbstractInterval<T>> x,
                                                  List<AbstractInterval<T>> y)
     {
-        return IntStream.range(0, domains.size()).parallel()
+        return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i)
                                               .conjunction(x.get(i), y.get(i)))
                         .collect(Collectors.toList());
@@ -69,7 +69,7 @@ public class ListDomain<T extends Comparable<T>>
     public List<AbstractInterval<T>> disjunction(List<AbstractInterval<T>> x,
                                                  List<AbstractInterval<T>> y)
     {
-        return IntStream.range(0, domains.size()).parallel()
+        return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i)
                                               .disjunction(x.get(i), y.get(i)))
                         .collect(Collectors.toList());
