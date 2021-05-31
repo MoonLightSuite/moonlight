@@ -12,7 +12,6 @@ import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
-import javafx.scene.paint.Stop;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -137,6 +136,8 @@ public class AbstractFuelControl {
         try {
             MatlabEngine eng = MatlabEngine.startMatlab();
 
+            eng = null;
+            eng.putVariable(" test",2);
             String localPath = Paths.get(Objects.requireNonNull(
                     AbstractFuelControl.class
                             .getResource("afc_breach_monitoring.m"))
