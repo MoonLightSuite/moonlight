@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.algorithms.online;
 import eu.quanticol.moonlight.signal.online.*;
 
 import java.io.Serializable;
-import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
 
 public class Refinement {
@@ -75,15 +74,12 @@ public class Refinement {
         //          This means the update starts in the current segment
         if(t < from && tNext > from && refinable.test(v, vNew)) {
             add(itr, from, vNew);
-//            if(!itr.hasNext() || (tNext > to && !v.equals(prevV)))
-//                itr.add(new TimeSegment<>(to, v));
-//            return false;
         }
         // Case 2 - from  == t:
         //          This means the current segment starts exactly at
         //          update time, therefore, its value must be updated
-        if(t == from) {
-            update(itr, t, v, vNew, refinable, prevV);
+        if(t == from && !v.equals(vNew)) {
+            update(itr, t, v, vNew, refinable, prevV, to);
         }
 
         // Case 3 - t  in (from, to):
@@ -96,11 +92,19 @@ public class Refinement {
         // General Sub-case - to < tNext:
         //          This means the current segment contains the end of the
         //          area to update. Therefore, we must add a segment for the
-        //          last part of the segment.
+        //          last (not to be changed) part of the segment.
         //          From now on the signal will not change.
         if(to < tNext && t != to) {
-            add(itr, to, v);
+            add(itr, to, v); //TODO
             return true;
+        }
+
+        if(t == from) {
+            if (itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
+                itr.next();
+                remove(itr);
+                itr.previous();
+            }
         }
 
         // Case 4 - t  >= to:
@@ -119,28 +123,28 @@ public class Refinement {
      */
     private static <V>
     void update(DiffIterator<SegmentInterface<Double, V>> itr,
-                double t, V v, V vNew, BiPredicate<V, V> refinable, V prevV)
+                double t, V v, V vNew, BiPredicate<V, V> refinable, V prevV, double to)
     {
-        //redundant updates can be ignored
-        if(!v.equals(vNew)) {
-            if(prevV.equals(vNew) && refinable.test(v, vNew)) {
-                remove(itr);
-            } else if (refinable.test(v, vNew)) {
-                SegmentInterface<Double, V> s = new TimeSegment<>(t, vNew);
-                itr.set(s);
-            } else {
-                throw new UnsupportedOperationException("Refining interval: " +
-                        vNew + " is wider than " +
-                        "the original:" + v);
-            }
-
-            if(itr.hasNext()) {
-                if(itr.next().getValue().equals(vNew))
-                    itr.remove();
-                else
-                    itr.previous();
-            }
+        boolean isRefinable = refinable.test(v, vNew);
+        if(isRefinable && prevV.equals(vNew)) {
+            remove(itr);
+        } else if (isRefinable) {
+            SegmentInterface<Double, V> s = new TimeSegment<>(t, vNew);
+            itr.set(s);
+        } else {
+            throw new UnsupportedOperationException("Refining interval: " +
+                                                    vNew + " is wider than " +
+                                                    "the original:" + v);
         }
+
+//        if(itr.hasNext()) {
+//            SegmentInterface<Double, V> s = itr.next();
+//                if (s.getValue().equals(vNew)) {
+//                    itr.remove();
+//                }
+//                else
+//                    itr.previous(); // Since we shifted right, we must revert
+//        }
     }
 
     /**
@@ -161,15 +165,25 @@ public class Refinement {
     {
         if(!itr.peekPrevious().getValue().equals(vNew)) {
             itr.add(new TimeSegment<>(start, vNew));
-            if(itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
-                itr.next();
-                remove(itr);
-                itr.previous();
-            }
+        }
+
+        if(itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
+            itr.next();
+            remove(itr);
+            itr.previous();
         }
     }
 
 
+    /**
+     * Selects a fragment of the given {@code TimeChain}
+     * @param segments original chain of segments
+     * @param from first time of interest for the caller
+     * @param to last time of interest for the caller
+     * @param <T> Time domain of the chain
+     * @param <V> value domain of the chain
+     * @return a sub-chain of the input signal
+     */
     public static <T extends Comparable<T> & Serializable, V>
     TimeChain<T, V> select(TimeChain<T, V> segments, T from, T to)
     {

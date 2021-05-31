@@ -33,6 +33,6 @@ phi_st = 'alw_[10, 30] ((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AF
 %%
 % Set parameters for one simulation and run.
 BrAFC_Online.SetParam({'max_rob','Pedal_Angle_pulse_period', 'Pedal_Angle_pulse_amp'}, [max_rob, 12, 50]);
-BrAFC_Online.Sim(0:.1:200)
+BrAFC_Online.Sim(0:.1:1000)
 
 input = BrAFC_Online.GetExprValues('AF[t] - AFref[t]')

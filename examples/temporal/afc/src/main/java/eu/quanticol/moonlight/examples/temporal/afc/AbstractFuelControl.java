@@ -1,8 +1,6 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 
-import com.github.sh0nk.matplotlib4j.Plot;
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
@@ -12,48 +10,54 @@ import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.Update;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
+import javafx.scene.paint.Stop;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AbstractFuelControl {
+    //TODO: set environment variable or replace with path to breach
     private static final String BREACH_PATH = System.getProperty("BREACH_PATH");
 
     private static final String MOONLIGHT_ATOM = "bigError";
     private static double[] breachInput;
     private static double[] moonlightInput;
 
-    private static final List<String> text = new ArrayList<>();
+    private static final List<String> output = new ArrayList<>();
 
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
     private static final boolean PLOTTING = false;
 
+    private static final Plotter plt = new Plotter();
+
     public static void main(String[] args) {
         repeatedRunner("In-Order M", () -> runMoonlight(false));
 
-        repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
+        //repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
 
         repeatedRunner("Breach", AbstractFuelControl::runBreach);
 
 
-        System.out.println("------> ");
+        System.out.println("------> Experiment results (sec):");
 
-        for (int i = 0; i < text.size(); i++) {
-            System.out.println(text.get(i));
+        for (int i = 0; i < output.size(); i++) {
+            System.out.println(output.get(i));
         }
 
-//        if(PLOTTING)
-//            plotInput();
+        if(PLOTTING)
+            plt.plot(Arrays.stream(breachInput)
+                    .boxed().collect(Collectors.toList()),
+                    "alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) => " +
+                            "(ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))",
+                    "|AF-AFRef|");
 
     }
 
@@ -67,16 +71,15 @@ public class AbstractFuelControl {
 
         tot = (tot / iterations) / 1000.;
 
-        text.add(title + " Execution time (avg over 100):" + tot);
-        System.out.println(title + " Execution time (avg over 100):" + tot);
+        output.add(title + " Execution time (avg over 100):" + tot);
 
         stopwatches.clear();
-
     }
 
     private static void runBreach() {
         MatlabEngine eng = matlabInit();
         try {
+            //eng.putVariable("max_sim", 50);
             List<SegmentInterface<Double, AbstractInterval<Double>>>
                     breach = executeBreach(eng);
 
@@ -96,7 +99,7 @@ public class AbstractFuelControl {
             eng.close();
 
             if (PLOTTING)
-                plot(bStart, bEnd, "Breach");
+                plt.plot(bStart, bEnd, "Breach");
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -120,7 +123,7 @@ public class AbstractFuelControl {
             List<Double> mEnd = mRes.get(1);
 
             if (PLOTTING)
-                plot(mStart, mEnd, "Moonlight");
+                plt.plot(mStart, mEnd, "Moonlight");
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -168,7 +171,8 @@ public class AbstractFuelControl {
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
     executeBreach(MatlabEngine eng) throws ExecutionException,
-            InterruptedException {
+            InterruptedException
+    {
         Stopwatch rec = Stopwatch.start();
         eng.eval("afc_breach_monitoring");
         long duration = rec.stop();
@@ -196,29 +200,33 @@ public class AbstractFuelControl {
 
     private static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
     executeMoonlight(MatlabEngine eng, boolean shuffle)
-            throws ExecutionException, InterruptedException {
+            throws ExecutionException, InterruptedException
+    {
+        // Model execution recording....
         Stopwatch rec = Stopwatch.start();
-
         eng.eval("afc_moonlight_monitoring");
+        long duration = rec.stop();
+        //stopwatches.add(rec);
+        output.add("Symulink Model execution time: " + duration / 1000.);
 
         double[] input = eng.getVariable("input");
         moonlightInput = input;
 
+        // Adapting Matlab variable for Moonlight Online
         List<Update<Double, Double>> updates = genUpdates(input, shuffle, 0.1);
         OnlineTimeMonitor<Double, Double> m = instrument();
 
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
 
+        // Moonlight execution recording...
+        rec = Stopwatch.start();
         for (Update<Double, Double> u : updates) {
             //System.out.println(u.toString());
             result.add(new ArrayList<>(m.monitor(u).getSegments()));
         }
-        long duration = rec.stop();
+        duration = rec.stop();
         stopwatches.add(rec);
-
-//        System.out.println("Moonlight Execution Time (sec): " +
-//                            duration / 1000.);
 
         return result;
     }
@@ -234,7 +242,8 @@ public class AbstractFuelControl {
                 ),
                 new Interval(10.0, 30.0));
 
-        // alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))
+        // alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) =>
+        //               (ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))
 
         HashMap<String, Function<Double, AbstractInterval<Double>>>
                 atoms = new HashMap<>();
@@ -246,41 +255,26 @@ public class AbstractFuelControl {
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }
 
-    /**
-     * Hacks to reduce errors on double computations
-     *
-     * @param values
-     * @param shuffle
-     * @return
-     */
-    private static List<Update<Double, Double>>
-    genUpdates(double[] values, boolean shuffle, double scale) {
+    private static List<Update<Double, Double>> genUpdates(
+            double[] values, boolean shuffle, double scale)
+    {
         List<Update<Double, Double>> updates = new ArrayList<>();
-        double di = 0;
         for (int i = 0; i < values.length; i++) {
-//          double vi = Math.round(di * 100.0)/100.0;
-//          double vj = Math.round((di + scale) * 100.0)/100.0;
-//          double vv = Math.round(values[i] * 100.0)/100.0;
             double vi = i * scale;
             double vj = (i + 1) * scale;
             double vv = values[i];
             updates.add(new Update<>(vi, vj, vv));
-
-            //di = Math.round((i + 1) * scale * 100.0)/100.0;
         }
-
-        //System.out.println(updates);
 
         if (shuffle)
             Collections.shuffle(updates, new Random(1));
-
-        //System.out.println(updates);
 
         return updates;
     }
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
-    condenseSignal(List<SegmentInterface<Double, AbstractInterval<Double>>> ss) {
+    condenseSignal(List<SegmentInterface<Double, AbstractInterval<Double>>> ss)
+    {
         List<SegmentInterface<Double, AbstractInterval<Double>>> out =
                 new ArrayList<>();
         SegmentInterface<Double, AbstractInterval<Double>> bound = ss.get(0);
@@ -294,55 +288,5 @@ public class AbstractFuelControl {
         }
 
         return out;
-    }
-
-    private static void plot(List<Double> dataDown, List<Double> dataUp, String name) {
-        try {
-            dataDown = filterValues(dataDown);
-            dataUp = filterValues(dataUp);
-            Plot plt = Plot.create();
-            plt.plot()
-                    .add(dataUp)
-                    .label("rho_up");
-            plt.plot()
-                    .add(dataDown)
-                    .label("rho_down");
-//        plt.plot()
-//                .add(Arrays.stream(breachInput)
-//                           .boxed().collect(Collectors.toList()))
-//                .label("input");
-            plt.xlabel("times");
-            plt.ylabel("robustness");
-            //plt.text(1, 0.5, "text");
-            plt.title(name);
-            plt.legend();
-            plt.show();
-        } catch (PythonExecutionException | IOException e) {
-            System.err.println("unable to plot!");
-            e.printStackTrace();
-        }
-    }
-
-    private static void plotInput()
-            throws PythonExecutionException, IOException {
-        Plot plt = Plot.create();
-        plt.plot()
-                .add(Arrays.stream(breachInput)
-                        .boxed().collect(Collectors.toList()))
-                .label("input");
-        plt.xlabel("times");
-        plt.ylabel("|AF-AFRef|");
-        plt.title("alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) => " +
-                "(ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))");
-        plt.legend();
-        plt.show();
-    }
-
-    private static List<Double> filterValues(List<Double> vs) {
-        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ? 1 : v)
-                .map(v -> v.equals(Double.NEGATIVE_INFINITY) ? -1 : v)
-                .map(v -> v.equals(20.0) ? 1 : v)
-                .collect(Collectors.toList());
-        return vs;
     }
 }

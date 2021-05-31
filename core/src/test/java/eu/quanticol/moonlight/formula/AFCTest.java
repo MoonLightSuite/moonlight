@@ -27,7 +27,7 @@ class AFCTest {
     private final static String RHO_UP = DIR + "rho_up.csv";
     private final static String INPUT = DIR + "input.csv";
 
-    //@Disabled("Under investigation")
+    @Disabled("Under investigation")
     @Test
     void afcTest() {
         List<Update<Double, Double>> input = loadInput();
@@ -149,7 +149,7 @@ class AFCTest {
                 rho.add(new TimeSegment<>((double)i* 0.1, new AbstractInterval<>(data1[i], data2[i])));
         }
 
-        return condenseSignal(rho);
+        return rho;
         //return rho;
     }
 

@@ -21,6 +21,7 @@ import eu.quanticol.moonlight.space.StaticLocationService;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
+import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.io.IOException;
@@ -38,6 +39,9 @@ public class Pollution {
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
     private static final String NOT_CRITICAL_NO2 = "notCriticalNO2";
+
+
+    private static final Plotter plt = new Plotter();
 
     private static double km(double meters) {
         return meters * 1000;
@@ -87,7 +91,7 @@ public class Pollution {
         rhoDown.add(1.0);
         rhoUp = new ArrayList<>();
         rhoUp.add(1.0);
-        //plot(rhoDown, rhoUp, "F1");
+        plt.plot(rhoUp, rhoDown, "F1");
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
         LOG.info(() -> "Monitoring result of F1: " + output.getSegments());

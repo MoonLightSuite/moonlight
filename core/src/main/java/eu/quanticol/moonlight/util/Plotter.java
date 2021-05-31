@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 
 import java.io.IOException;
@@ -11,6 +12,12 @@ import java.util.stream.Collectors;
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 
+/**
+ * Utility class for plotting.
+ * <p>
+ * !! Requires python 3+ and Matplotlib in running environment
+ * </p>
+ */
 public class Plotter {
     private final List<Thread> threads;
 
@@ -27,10 +34,31 @@ public class Plotter {
             e.printStackTrace();
         }
     }
+    
+    public void plot(List<Double> data, String name, String label) {
+        asyncShow(() -> plotSingle(data, name, label));
+    }
+
+    public void plot(List<Double> dataDown, List<Double> dataUp, String name) {
+        asyncShow(() -> plotInterval(dataDown, dataUp, name));
+    }
 
     public void plot(TimeChain<Double, AbstractInterval<Double>> data, String name) {
-        //plt.xticks(times);    // Experimental feature, still unreliable
-        asyncShow(() -> doPlot(data, name));
+        asyncShow(() -> {
+            List<Double> dataDown =
+                    replaceInfinite(data.stream()
+                                        .map(x -> x.getValue().getStart())
+                                        .collect(Collectors.toList()));
+            List<Double> dataUp =
+                    replaceInfinite(data.stream()
+                                        .map(x -> x.getValue().getEnd())
+                                        .collect(Collectors.toList()));
+            List<Double> times = data.stream()
+                                     .map(SegmentInterface::getStart)
+                                     .collect(Collectors.toList());
+
+            plotInterval(dataDown, dataUp, name);
+        });
     }
 
     private Plot createPlot(String name) {
@@ -55,15 +83,24 @@ public class Plotter {
         }
     }
 
-    private void doPlot(TimeChain<Double, AbstractInterval<Double>> data, String name) {
+    private void plotInterval(List<Double> dataDown, List<Double> dataUp,
+                              String name)
+    {
         Plot plt = createPlot(name);
-        List<Double> dataDown = replaceInfinite(data.stream().map(x -> x.getValue().getStart()).collect(Collectors.toList()));
-        List<Double> dataUp = replaceInfinite(data.stream().map(x -> x.getValue().getEnd()).collect(Collectors.toList()));
-        List<Double> times = data.stream().map(x -> x.getStart()).collect(Collectors.toList());
 
-        addData(plt, dataUp, "rho_up");
         addData(plt, dataDown, "rho_down");
+        addData(plt, dataUp, "rho_up");
 
+        //plt.xticks(times);    // Experimental feature, still unreliable
+        showPlot(plt);
+    }
+
+    private void plotSingle(List<Double> data, String name, String label) {
+        Plot plt = createPlot(name);
+
+        addData(plt, data, label);
+
+        //plt.xticks(times);    // Experimental feature, still unreliable
         showPlot(plt);
     }
 
