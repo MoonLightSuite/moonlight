@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.algorithms.SpaceOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
@@ -67,7 +68,7 @@ public class SpatialTemporalMonitorSomewhere<S, T, R>
 	}
 
 
-    private List<R> somewhereOp(Function<Integer, R> spatialSignal,
+    private List<R> somewhereOp(IntFunction<R> spatialSignal,
 								DistanceStructure<S, ?> ds)
     {
         return DistanceStructure.somewhere(domain, spatialSignal, ds);

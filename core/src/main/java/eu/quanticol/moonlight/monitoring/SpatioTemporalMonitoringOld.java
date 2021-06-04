@@ -15,9 +15,11 @@ import eu.quanticol.moonlight.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * @deprecated use {@link SpatialTemporalMonitoring} instead.
@@ -247,7 +249,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
         while (!cursor.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal = cursor.getValue();
+            IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
             toReturn.add(time, DistanceStructure.somewhere(module, spatialSignal, f));
@@ -319,7 +321,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
         while (!cursor.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal = cursor.getValue();
+            IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
             toReturn.add(time, DistanceStructure.everywhere(module, spatialSignal, f));
@@ -389,11 +391,11 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         c1.move(time);
         c2.move(time);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal1 = c1.getValue();
-            Function<Integer, R> spatialSignal2 = c2.getValue();
+            IntFunction<R> spatialSignal1 = c1.getValue();
+            IntFunction<R> spatialSignal2 = c2.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
-            ArrayList<R> values =  f.reach(module, spatialSignal1, spatialSignal2);
+            List<R> values =  f.reach(module, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(time);
@@ -423,7 +425,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         SpatialModel<V> sm = l.get(c1.getTime());
         DistanceStructure<V, ?> f = distanceFunction.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
-            ArrayList<R> values = f.reach(module, c1.getValue(), c2.getValue());
+            List<R> values = f.reach(module, c1.getValue(), c2.getValue());
             toReturn.add(time, (values::get));
             time = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(time);
@@ -481,7 +483,7 @@ public class SpatioTemporalMonitoringOld<V, T, R> implements
         }
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
         while (!cursor.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal = cursor.getValue();
+            IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<V> sm = current.getSecond();
             DistanceStructure<V, ?> f = distanceFunction.apply(sm);
             toReturn.add(time, f.escape(module, spatialSignal));

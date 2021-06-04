@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Algorithm for Reach Operator Computation
@@ -102,8 +103,8 @@ public class ReachOperator
         SpatialModel<S> sm = current.getSecond();
         DistanceStructure<S, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal1 = c1.getValue();
-            Function<Integer, R> spatialSignal2 = c2.getValue();
+            IntFunction<R> spatialSignal1 = c1.getValue();
+            IntFunction<R> spatialSignal2 = c2.getValue();
             List<R> values =  f.reach(domain, spatialSignal1, spatialSignal2);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());

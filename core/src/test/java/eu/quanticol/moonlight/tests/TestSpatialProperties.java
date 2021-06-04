@@ -210,7 +210,7 @@ class TestSpatialProperties {
         double range = 10.0;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
-        ArrayList<Boolean> result = ds.reach(
+        List<Boolean> result = ds.reach(
                 new BooleanDomain(),
                 (i) -> {
                     Pair<Integer, Integer> p = TestUtils.gridLocationOf(i, rows, columns);

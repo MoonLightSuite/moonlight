@@ -36,7 +36,7 @@ public class DataWriter<T> {
      * Writes the data to the destination file
      * @param data to write
      */
-    public void write(T data) throws IOException {
+    public void write(T data) {
         try(BufferedWriter outWriter = new BufferedWriter(new FileWriter(path)))
         {
             // Write the header
@@ -44,6 +44,8 @@ public class DataWriter<T> {
 
             // Write the data
             writeLines(outWriter, data);
+        } catch(IOException e) {
+            throw new IllegalArgumentException("Unable to read at:" + path, e);
         }
     }
 

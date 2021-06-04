@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Algorithm for Somewhere and Everywhere Computation
@@ -42,7 +43,7 @@ public class SpaceOperator {
     public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<Function<Integer, R>,
+            BiFunction<IntFunction<R>,
                        DistanceStructure<S, ?>,
                        List<R>> operator,
             SpatialTemporalSignal<R> s)
@@ -109,15 +110,14 @@ public class SpaceOperator {
             Pair<Double, SpatialModel<S>> current,
             Pair<Double, SpatialModel<S>> next,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<Function<Integer, R>, DistanceStructure<S, ?>,
-                                                            List<R>> operator,
+            BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator,
             SpatialTemporalSignal<R> toReturn,
             Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
     {
         //Loop invariant: (current.getFirst() <= time) &&
         //                ((next == null) || (time < next.getFirst()))
         while (!cursor.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal = cursor.getValue();
+            IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<S> sm = current.getSecond();
             DistanceStructure<S, ?> f = distance.apply(sm);
             toReturn.add(time, operator.apply(spatialSignal, f));
@@ -152,7 +152,7 @@ public class SpaceOperator {
         SpatialModel<S> sm = current.getSecond();
         DistanceStructure<S, ?> f = distance.apply(sm);
         while (!cursor.completed() && !Double.isNaN(time)) {
-            Function<Integer, R> spatialSignal = cursor.getValue();
+            IntFunction<R> spatialSignal = cursor.getValue();
             toReturn.add(time, f.escape(domain, spatialSignal));
             double nextTime = cursor.forward();
             while ((next != null) && (next.getFirst() < nextTime)) {

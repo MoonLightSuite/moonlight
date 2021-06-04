@@ -6,6 +6,7 @@ package eu.quanticol.moonlight.signal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -91,7 +92,7 @@ public class ParallelSignalCursor<T> {
 		return true;
 	}
 	
-	public Function<Integer,T> getValue() {
+	public IntFunction<T> getValue() {
 		ArrayList<T> values = new ArrayList<>(
 				cursors.stream().map(c -> c.value()).collect(Collectors.toList()));
 		return (i -> values.get(i));

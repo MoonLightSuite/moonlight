@@ -133,13 +133,8 @@ public class Erlang {
 
         PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(network.size());
 
-        try {
-            new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
-            new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
-        } catch (IOException e) {
-            LOG.warning("Writing failed:" + e);
-        }
-
+        new DataWriter<>(outputFile(RESULT, id, "avg"), FileType.CSV, str).write(avg);
+        new DataWriter<>(outputFile(RESULT, id, "var"), FileType.CSV, str).write(var);
 
         LOG.info("SMC results: " + Arrays.toString(smc.getStats()));
     }

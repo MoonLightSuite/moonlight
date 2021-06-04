@@ -135,9 +135,6 @@ public class AbstractFuelControl {
     private static MatlabEngine matlabInit() {
         try {
             MatlabEngine eng = MatlabEngine.startMatlab();
-
-            eng = null;
-            eng.putVariable(" test",2);
             String localPath = Paths.get(Objects.requireNonNull(
                     AbstractFuelControl.class
                             .getResource("afc_breach_monitoring.m"))

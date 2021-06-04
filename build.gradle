@@ -12,6 +12,11 @@ subprojects {
     apply plugin: 'jacoco'
     apply from: rootDir.absolutePath + '/module.gradle'
 
+    javadoc {
+        source = sourceSets.main.allJava
+        classpath = configurations.compile
+    }
+
     sourceCompatibility = 8
     targetCompatibility = 8
 
@@ -67,3 +72,4 @@ subprojects {
 
     check.dependsOn jacocoTestReport
 }
+

@@ -31,8 +31,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author loreti
@@ -136,7 +138,7 @@ public class DistanceStructure<T, A> {
         return checkDistance(getDistance(i, j));
     }
 
-    public <R> List<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
+    public <R> List<R> escape(SignalDomain<R> mDomain, IntFunction<R> s) {
         HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
         ArrayList<HashMap<Integer,R>> pending = IntStream
               .range(0, model.size()).boxed()
@@ -201,21 +203,31 @@ public class DistanceStructure<T, A> {
 //        }
 //        return extractEscapeValues(mDomain, map);
 //    }
-    
-    public <R> ArrayList<R> reach(SignalDomain<R> mDomain, Function<Integer, R> s1, Function<Integer, R> s2) {
-        ArrayList<Map<A, R>> reachFunction =
-                IntStream
-                        .range(0, model.size()).boxed()
-                        .map(i -> new HashMap<A, R>())
-                        .collect(Collectors.toCollection(ArrayList::new));
-        LinkedList<Triple<Integer, A, R>> queue =
-                IntStream
-                        .range(0, model.size()).boxed()
-                        .map(i -> new Triple<Integer, A, R>(i, domain.zero(), s2.apply(i)))
-                        .collect(Collectors.toCollection(LinkedList::new));
-        queue.forEach(t -> reachFunction.get(t.getFirst()).put(t.getSecond(), t.getThird()));
+
+    public <R> List<R> reach(SignalDomain<R> mDomain, IntFunction<R> s1, IntFunction<R> s2) {
+
+        List<Map<A, R>> reachFunc = new ArrayList<>();
+        List<Triple<Integer, A, R>> queue = new LinkedList<>();
+
+        for(int i = 0; i < model.size(); i++) {
+            Map<A, R> map = new HashMap<>();
+            queue.add(new Triple<>(i, domain.zero(), s2.apply(i)));
+            map.put(domain.zero(), s2.apply(i));
+            reachFunc.add(map);
+        }
+
+        reachCore(queue, reachFunc, mDomain, s1);
+
+        return collectReachValue(mDomain, reachFunc);
+    }
+
+    public <R> void reachCore(List<Triple<Integer, A, R>> queue,
+                              List<Map<A, R>> reachFunc,
+                              SignalDomain<R> mDomain,
+                              IntFunction<R> s1)
+    {
         while (!queue.isEmpty()) {
-            Triple<Integer, A, R> t1 = queue.poll();
+            Triple<Integer, A, R> t1 = queue.remove(0);
             int l1 = t1.getFirst();
             A d1 = t1.getSecond();
             R v1 = t1.getThird();
@@ -223,19 +235,35 @@ public class DistanceStructure<T, A> {
                 int l2 = pre.getFirst();
                 A d2 = domain.sum(distance.apply(pre.getSecond()), d1);
                 if (domain.lessOrEqual(d2, upperBound)) {
-                    Triple<Integer, A, R> t2 = combine(mDomain, l2, d2, mDomain.conjunction(v1, s1.apply(l2)), reachFunction.get(l2));
+                    Triple<Integer, A, R> t2 = combine(mDomain, l2, d2,
+                            mDomain.conjunction(v1, s1.apply(l2)), reachFunc.get(l2));
                     if (t2 != null) {
                         queue.add(t2);
                     }
                 }
             }
-
         }
+    }
+
+    public <R> List<R> oldReach(SignalDomain<R> mDomain, IntFunction<R> s1, IntFunction<R> s2) {
+        List<Map<A, R>> reachFunction =
+                IntStream.range(0, model.size()).boxed()
+                        .map(i -> new HashMap<A, R>())
+                        .collect(Collectors.toCollection(ArrayList::new));
+        List<Triple<Integer, A, R>> queue =
+                IntStream.range(0, model.size()).boxed()
+                        .map(i -> new Triple<>(i, domain.zero(), s2.apply(i)))
+                        .collect(Collectors.toCollection(LinkedList::new));
+        queue.forEach(t -> reachFunction.get(t.getFirst()).put(t.getSecond(), t.getThird()));
+
+        reachCore(queue, reachFunction, mDomain, s1);
+
         return collectReachValue(mDomain, reachFunction);
     }
 
-    private <R> Triple<Integer, A, R> combine(SignalDomain<R> mDomain, int l, A d, R v,
-                                              Map<A, R> fr) {
+    private <R> Triple<Integer, A, R> combine(SignalDomain<R> mDomain, int l,
+                                              A d, R v, Map<A, R> fr)
+    {
         R v1 = fr.get(d);
         if (v1 != null) {
             R v2 = mDomain.disjunction(v, v1);
@@ -251,19 +279,26 @@ public class DistanceStructure<T, A> {
         return null;
     }
 
-    private <R> ArrayList<R> collectReachValue(SignalDomain<R> mDomain, ArrayList<Map<A, R>> reachFunction) {
-        return IntStream
-                .range(0, model.size()).boxed()
-                .map(i -> reachFunction.get(i))
-                .map(rf -> computeReachValue(mDomain, rf))
-                .collect(Collectors.toCollection(ArrayList::new));
+    private <R> List<R> collectReachValue(SignalDomain<R> mDomain,
+                                          List<Map<A, R>> reachFunction)
+    {
+//        return IntStream
+//                .range(0, model.size()).boxed()
+//                .map(i -> reachFunction.get(i))
+//                .map(rf -> computeReachValue(mDomain, rf))
+//                .collect(Collectors.toCollection(ArrayList::new));
+
+        return reachFunction.stream()
+                            .map(rf -> computeReachValue(mDomain, rf))
+                            .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private <R> R computeReachValue(SignalDomain<R> mDomain, Map<A, R> rf) {
+    private <R> R computeReachValue(SignalDomain<R> mDomain, Map<A, R> rf)
+    {
         return rf.entrySet()
                 .stream()
                 .filter(e -> checkDistance(e.getKey()))
-                .map(e -> e.getValue())
+                .map(Entry::getValue)
                 .reduce(mDomain.min(), mDomain::disjunction);
     }
 
@@ -298,7 +333,7 @@ public class DistanceStructure<T, A> {
     }
 
     private <R> HashMap<Integer, HashMap<Integer, R>> initEscapeMap(SignalDomain<R> mDomain,
-                                                                    Function<Integer, R> s) {
+                                                                    IntFunction<R> s) {
         HashMap<Integer, HashMap<Integer, R>> toReturn = new HashMap<>();
         for (int i = 0; i < model.size(); i++) {
             HashMap<Integer, R> iR = new HashMap<>();
@@ -320,7 +355,7 @@ public class DistanceStructure<T, A> {
 //	}
 
     public static <T, A, R> List<R> everywhere(SignalDomain<R> dModule,
-                                               Function<Integer, R> s,
+                                               IntFunction<R> s,
                                                DistanceStructure<T, A> ds)
     {
         ArrayList<R> values = dModule.createArray(ds.getModelSize());
@@ -337,7 +372,7 @@ public class DistanceStructure<T, A> {
     }
 
     public static <T, A, R> List<R> somewhere(SignalDomain<R> dModule,
-                                              Function<Integer, R> s,
+                                              IntFunction<R> s,
                                               DistanceStructure<T, A> ds)
     {
         ArrayList<R> values = dModule.createArray(ds.getModelSize());
@@ -354,7 +389,7 @@ public class DistanceStructure<T, A> {
     }
 
     public static <T, A, R> List<R> somewhereParallel(SignalDomain<R> dModule,
-                                                      Function<Integer, R> s,
+                                                      IntFunction<R> s,
                                                       DistanceStructure<T, A> ds)
     {
         return IntStream
@@ -373,7 +408,7 @@ public class DistanceStructure<T, A> {
     }
 
     public static <T, A, R> List<R> everywhereParallel(SignalDomain<R> dModule,
-                                                       Function<Integer, R> s,
+                                                       IntFunction<R> s,
                                                        DistanceStructure<T, A> ds)
     {
         return IntStream

@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
 FormulaVisitor<Parameters,
@@ -208,7 +209,7 @@ FormulaVisitor<Parameters,
     private OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
     unarySpace(UnaryFormula f,
                Parameters p,
-               BiFunction<Function<Integer, AbstractInterval<R>>,
+               BiFunction<IntFunction<AbstractInterval<R>>,
                        DistanceStructure<S, ?>, List<AbstractInterval<R>>> op)
     {
         OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
@@ -228,7 +229,7 @@ FormulaVisitor<Parameters,
     }
 
     private List<AbstractInterval<R>> everywhereOp(
-            Function<Integer, AbstractInterval<R>> spatialSignal,
+            IntFunction<AbstractInterval<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -239,7 +240,7 @@ FormulaVisitor<Parameters,
     }
 
     private List<AbstractInterval<R>> somewhereOp(
-            Function<Integer, AbstractInterval<R>> spatialSignal,
+            IntFunction<AbstractInterval<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -252,7 +253,7 @@ FormulaVisitor<Parameters,
     }
 
     private List<AbstractInterval<R>> escapeOp(
-            Function<Integer, AbstractInterval<R>> spatialSignal,
+            IntFunction<AbstractInterval<R>> spatialSignal,
             DistanceStructure<S, ?> f)
     {
         return f.escape(new AbsIntervalDomain<>(interpretation), spatialSignal);

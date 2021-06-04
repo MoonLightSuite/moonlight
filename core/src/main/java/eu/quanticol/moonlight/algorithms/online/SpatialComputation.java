@@ -32,13 +32,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
 {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<Function<Integer, R>,
+    private final BiFunction<IntFunction<R>,
                              DistanceStructure<S, ?>,
                              List<R>> op;
 
@@ -49,7 +50,7 @@ public class SpatialComputation
     public SpatialComputation(LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
                                        DistanceStructure<S, ?>> distance,
-                              BiFunction<Function<Integer, R>,
+                              BiFunction<IntFunction<R>,
                                                   DistanceStructure<S, ?>,
                                                   List<R>> operator)
     {
@@ -70,7 +71,7 @@ public class SpatialComputation
 
         T t = u.getStart();
         T tNext = u.getEnd();
-        Function<Integer, R> spatialSignal = i -> u.getValue().get(i);
+        IntFunction<R> spatialSignal = i -> u.getValue().get(i);
 
         tNext = seekSpace(t, tNext);
 
