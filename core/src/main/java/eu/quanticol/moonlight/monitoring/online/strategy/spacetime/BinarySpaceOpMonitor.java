@@ -20,11 +20,11 @@
 
 package eu.quanticol.moonlight.monitoring.online.strategy.spacetime;
 
-import eu.quanticol.moonlight.algorithms.online.BooleanComputation;
+import eu.quanticol.moonlight.algorithms.online.ReachOperator;
+import eu.quanticol.moonlight.algorithms.online.SpatialComputation;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.monitoring.online.strategy.time.OnlineMonitor;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -41,7 +41,7 @@ import java.util.function.BinaryOperator;
  *
  * @see OnlineMonitor
  */
-public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
+public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
         implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
 {
 
@@ -51,6 +51,8 @@ public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
                                                                     firstArg;
     private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
                                                                     secondArg;
+
+    private final ReachOperator<Double, S, AbstractInterval<R>> spatialOp;
 
     /**
      * Prepares an atomic online (temporal) monitor.
@@ -69,6 +71,9 @@ public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
         this.rho = new OnlineSpaceTimeSignal<>(locations, interpretation);
         this.firstArg = firstArg;
         this.secondArg = secondArg;
+        //this.spatialOp = new ReachOperator<>(locSvc, distance);
+        this.spatialOp = null;
+
     }
 
     @Override
@@ -89,11 +94,11 @@ public class BinarySpaceOpMonitor<V, R extends Comparable<R>>
                                                         secondArg.getResult();
 
         for(Update<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
-            updates.addAll(BooleanComputation.binary(s2, argU, opFunction));
+            //updates.addAll(spacialOp.binary(s2, argU, opFunction));
         }
 
         for(Update<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
-            updates.addAll(BooleanComputation.binary(s1, argU, opFunction));
+            //updates.addAll(SpatialComputation.binary(s1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);
