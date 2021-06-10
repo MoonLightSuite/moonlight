@@ -55,8 +55,8 @@ public class MultiOnlineSignal
      * @return the time point where the signal starts.
      */
     public double getStart() {
-        assert segments.peekFirst() != null;
-        return segments.peekFirst().getStart();
+        assert segments.getFirst() != null;
+        return segments.getFirst().getStart();
     }
 
     /**

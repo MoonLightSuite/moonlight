@@ -348,7 +348,7 @@ class TestRoSIBerkeleyExampleOffline {
     {
         try {
             OnlineSignal<Double> r = (OnlineSignal<Double>) m.monitor(u);
-            return r.getSegments().toArray();
+            return r.getSegments().toList().toArray();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;

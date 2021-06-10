@@ -221,7 +221,7 @@ public class AbstractFuelControl {
         rec = Stopwatch.start();
         for (Update<Double, Double> u : updates) {
             //System.out.println(u.toString());
-            result.add(new ArrayList<>(m.monitor(u).getSegments()));
+            result.add(new ArrayList<>(m.monitor(u).getSegments().toList()));
         }
         duration = rec.stop();
         stopwatches.add(rec);

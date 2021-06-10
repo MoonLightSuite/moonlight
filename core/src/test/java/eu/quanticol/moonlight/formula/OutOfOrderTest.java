@@ -309,7 +309,7 @@ class OutOfOrderTest {
         TimeChain<Double, AbstractInterval<Double>> res = null;
         int i = 1;
         for(Update<Double, Double> u: ups) {
-            res = m.monitor(u).getSegments().replicate();
+            res = m.monitor(u).getSegments().copy();
             i++;
 //            if(PLOTTING)
 //                plt.plot(res, prefix +  At Update " + i);

@@ -155,7 +155,7 @@ public interface SpatialModel<T> {
      *
      * @param locations number of locations.
      * @param edgeRecordHandler handler for edges data type.
-     * @param data adjacency matrix.
+     * @param objects adjacency matrix.
      * @return a SpatialModel.
      */
     static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler,

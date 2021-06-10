@@ -11,7 +11,6 @@ import eu.quanticol.moonlight.signal.online.Update;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -256,12 +255,12 @@ class SlidingWindowTest {
     toUpdates(TimeChain<Double, AbstractInterval<Double>> chain)
     {
         //TODO handle end of updates
-        LinkedList<Update<Double, AbstractInterval<Double>>> ups =
-                                                            new LinkedList<>();
+        List<Update<Double, AbstractInterval<Double>>> ups =
+                                                            new ArrayList<>();
 
         for(SegmentInterface<Double, AbstractInterval<Double>> s: chain) {
             if(!ups.isEmpty()) {
-                Update<Double, AbstractInterval<Double>> u = ups.removeLast();
+                Update<Double, AbstractInterval<Double>> u = ups.remove(ups.size() - 1);
                 ups.add(new Update<>(u.getStart(), s.getStart(), u.getValue()));
             }
 
@@ -300,7 +299,7 @@ class SlidingWindowTest {
     private static void add(TimeChain<Double, AbstractInterval<Double>> input,
                             double t, double a, double b)
     {
-        input.addLast(new TimeSegment<>(t, new AbstractInterval<>(a, b)));
+        input.add(new TimeSegment<>(t, new AbstractInterval<>(a, b)));
     }
 
 }
