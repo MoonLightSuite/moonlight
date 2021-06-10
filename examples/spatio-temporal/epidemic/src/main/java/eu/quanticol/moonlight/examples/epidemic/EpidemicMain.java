@@ -3,14 +3,18 @@ package eu.quanticol.moonlight.examples.epidemic;
 import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.formula.Interval;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.File;
@@ -66,7 +70,7 @@ public class EpidemicMain {
                 URL TRAJECTORY_SOURCE = classLoader.getResource("epidemic_simulation_network_" + i + ".txt");
                 File fileL = new File(TRAJECTORY_SOURCE.toURI());
                 CsvLocationServiceReader readerL = new CsvLocationServiceReader();
-                LocationService<MoonLightRecord> space_model = readerL.read(rhL, fileL);
+                LocationService<Double, MoonLightRecord> space_model = readerL.read(rhL, fileL);
 
                 // trajectory
                 URL NETWORK_SOURCE = classLoader.getResource("epidemic_simulation_trajectory_" + i + ".txt");
