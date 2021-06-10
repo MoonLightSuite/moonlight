@@ -41,7 +41,7 @@ public class SlidingWindow<R> {
     private final double uStart;
     private final double wSize;
     private final Window<R> w;
-    private final LinkedList<Update<Double, R>> updates = new LinkedList<>();
+    private final ArrayList<Update<Double, R>> updates = new ArrayList<>();
 
     public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> u,
                          Interval opHorizon, BinaryOperator<R> op)
@@ -87,7 +87,7 @@ public class SlidingWindow<R> {
         }
 
         if(!updates.isEmpty()) {
-            Update<Double, R> last = updates.removeLast();
+            Update<Double, R> last = updates.remove(updates.size() - 1);
             updates.add(new Update<>(last.getStart(), uEnd, last.getValue()));
         }
     }
@@ -145,12 +145,12 @@ public class SlidingWindow<R> {
         if(t < uEnd) {
             t = t < 0 ? 0 : t;
 
-            if(!updates.isEmpty() && updates.getFirst().getStart() == t) {
+            if(!updates.isEmpty() && updates.get(0).getStart() == t) {
                 updates.clear();
             }
 
             if(!updates.isEmpty()) {
-                Update<Double, R> old = updates.removeLast();
+                Update<Double, R> old = updates.remove(updates.size() - 1);
                 updates.add(new Update<>(old.getStart(), t, old.getValue()));
             }
             updates.add(new Update<>(t, Double.NaN, v));
@@ -195,14 +195,14 @@ public class SlidingWindow<R> {
      * @param <V> Type of the value of a window element
      */
     static class Window<V> {
-        private final LinkedList<Element<Double, V>> deque;
+        private final Deque<Element<Double, V>> deque;
         private double endingTime;
         private final double offset;
 
         public Window(Double startingTime, Double startingOffset) {
             endingTime = startingTime;
             offset = startingOffset;
-            deque = new LinkedList<>();
+            deque = new ArrayDeque<>();
         }
 
         public Element<Double, V> removeFirst() {
@@ -236,8 +236,8 @@ public class SlidingWindow<R> {
             return deque.removeLast();
         }
 
-        public ListIterator<Element<Double, V>> fromLastIterator() {
-            return deque.listIterator(deque.isEmpty() ? 0 : deque.size());
+        public Iterator<Element<Double, V>> descendingIterator() {
+            return deque.descendingIterator();
         }
 
         public void clear() {
