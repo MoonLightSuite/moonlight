@@ -28,7 +28,7 @@ def modelPID(x, t, Kp, Ki, Kd):
     dQ1 = - F01 - x1 * Q1 + k12 * Q2 - FR + EGP0 * (1 - x3) + (x[9] * AG * 1000 / Gmolar) * tau * np.exp(
         -tau / tmaxG) / (tmaxG ** 2)
     dQ2 = x1 * Q1 - (k12 + x2) * Q2
-    dIe = sp - Q1
+    dIe =  sp- Q1
     de = - dQ1
     uNew = max(Ki * Ie + Kp * dIe + Kd * de, 0)
     dS1 = uNew + u_b - S1 / tmaxI
