@@ -25,7 +25,6 @@ class MoonlightScript:
     def getMonitor(self,formulaName):
         loader = autoclass('eu.quanticol.moonlight.MoonlightScriptFactory')()
         if(self.isTemporal()):
-            #loader.getTemporalScript(self.script).selectTemporalComponent(formulaName)
             return TemporalScriptComponent(loader.getTemporalScript(self.script).selectTemporalComponent(formulaName));
         else:
             return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(self.script).selectSpatialTemporalComponent(formulaName));
@@ -60,7 +59,7 @@ class Moonlight:
         if(self.compiled_script.isTemporal()):
             return TemporalScriptComponent(loader.getTemporalScript(self.compiled_script).selectTemporalComponent(monitor_name))
         else:
-            return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(compiled_script))
+            return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(self.compiled_script).selectSpatialTemporalComponent(monitor_name))
             
     
 class TemporalScriptComponent():
@@ -78,9 +77,9 @@ class SpatialTemporalScriptComponent():
      def __init__(self,moonlight_monitor):
             self.scriptComponent = moonlight_monitor
      
-     def monitor(self, time, space, parameters=None):
+     def monitor(self, locationTimeArray, graph, signalTimeArray, signalValues, parameters=None):
             monitor = self.scriptComponent
             if(not parameters):
-                return monitor.monitorToArray(time,space)
+                return monitor.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,signalTimeArray,signalValues)
             else:
-                return monitor.monitorToArray(time,space,parameters)
+                return monitor.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,signalTimeArray,signalValues,parameters)
