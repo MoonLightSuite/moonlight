@@ -39,7 +39,7 @@ class AFCTest {
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
         for(Update<Double, Double> u: input) {
-            result.add(new ArrayList<>(m.monitor(u).getSegments()));
+            result.add(new ArrayList<>(m.monitor(u).getSegments().toList()));
         }
 
         ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> r =

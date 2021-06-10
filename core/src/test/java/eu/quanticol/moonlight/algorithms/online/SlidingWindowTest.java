@@ -299,7 +299,7 @@ class SlidingWindowTest {
     private static void add(TimeChain<Double, AbstractInterval<Double>> input,
                             double t, double a, double b)
     {
-        input.addLast(new TimeSegment<>(t, new AbstractInterval<>(a, b)));
+        input.add(new TimeSegment<>(t, new AbstractInterval<>(a, b)));
     }
 
 }

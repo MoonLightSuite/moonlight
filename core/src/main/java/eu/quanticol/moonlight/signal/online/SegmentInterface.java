@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import java.io.Serializable;
+
 /**
  * The basic interface to represent time segments.
  * Note that for memory-efficiency reasons, the ending of the

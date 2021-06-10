@@ -43,7 +43,7 @@ public class Refinement {
             doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
                      refinable, prevV);
 
-        return !s.hasChanged();
+        return !itr.hasChanged();
     }
 
     /**
