@@ -107,7 +107,7 @@ public class SlidingWindow<R> {
         } else if(w.getEndingTime() + wSize < curr.getStart()) {
             w.clear();
         }
-        doAdd(curr.getStart() - h.getStart(), curr.getValue());
+        doAdd2(curr.getStart() - h.getStart(), curr.getValue());
     }
 
     /**
@@ -188,6 +188,39 @@ public class SlidingWindow<R> {
         }
     }
 
+    private void doAdd2(Double t, R v) {
+        ArrayDeque<Element<Double, R>> tail = new ArrayDeque<>();
+        boolean completed = false;
+        while(!w.isEmpty() && !completed) {
+            Element<Double, R> last = w.removeLast();
+            double t2 = last.getStart();
+            R v2 = last.getValue();
+            R v3 = op.apply(v, v2);
+            if (v.equals(v2)) {
+                w.addLast(new Element<>(t2, v2));
+                completed = true;
+            } else if(v.equals(v3)) {
+                //doAdds(t2, v3);
+                t = t2;
+                v = v3;
+            } else if(!v2.equals(v3)) {
+                tail.addFirst(new Element<>(t, v));
+                t = t2;
+                v = v3;
+                //doAdds(t2, v3);
+            } else {
+                w.addLast(new Element<>(t2, v2));
+                w.addLast(new Element<>(t, v));
+                completed = true;
+            }
+        }
+
+        if(w.isEmpty())
+            w.addLast(new Element<>(t, v));
+
+        w.addAll(tail);
+    }
+
     /**
      * Internal data structure used to keep the stored values and the starting
      * time of the last segment processed.
@@ -221,6 +254,10 @@ public class SlidingWindow<R> {
 
         public Element<Double, V> getLast() {
             return deque.getLast();
+        }
+
+        public void addAll(Collection<Element<Double, V>> c) {
+            deque.addAll(c);
         }
 
         public void addLast(Element<Double, V> e) {
