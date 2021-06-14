@@ -7,7 +7,7 @@
 %% Initialization
 % This demo uses a modified version of the AbstractFuelControl model to
 % illustrate the use of online monitoring blocks from the Breach Library.
-BrDemo.InitAFC_Online()
+InitAFC_Online()
 
 %%
 % Breach Library is accessible via Simulink Library Browser, or by opening

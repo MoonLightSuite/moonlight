@@ -24,9 +24,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public class AFCMoonlightRunner {
-    //TODO: set environment variable or replace with path to breach
-    private static final String BREACH_PATH = System.getProperty("BREACH_PATH");
-
     private static final String MOONLIGHT_ATOM = "bigError";
     private static final int ITERATIONS = 1;
 
@@ -92,10 +89,9 @@ public class AFCMoonlightRunner {
             MatlabEngine eng = MatlabEngine.startMatlab();
             String localPath = Paths.get(Objects.requireNonNull(
                     AFCMoonlightRunner.class
-                            .getResource("afc_breach_monitoring.m"))
+                            .getResource("matlab/afc_breach_monitoring.m"))
                     .toURI()).getParent().toAbsolutePath().toString();
 
-            eng.eval("addpath(\"" + BREACH_PATH + "\")");
             eng.eval("addpath(\"" + localPath + "\")");
 
             return eng;
@@ -208,6 +204,6 @@ public class AFCMoonlightRunner {
 
     private static InputStream data_path (String id) {
         return AFCSimulatorRunner.class
-                .getResourceAsStream("output_" + id + ".csv");
+                .getResourceAsStream("data/afc_sim_" + id + ".csv");
     }
 }

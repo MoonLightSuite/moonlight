@@ -13,9 +13,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class AFCSimulatorRunner {
-    //TODO: set environment variable or replace with path to breach
-    private static final String BREACH_PATH = System.getProperty("BREACH_PATH");
-
     private static final double LAST_TIME = 20;
 
     private static final String OUTPUT_NAME = "/afc_sim_" + LAST_TIME + ".csv";
@@ -50,7 +47,6 @@ public class AFCSimulatorRunner {
             MatlabEngine eng = MatlabEngine.startMatlab();
             String localPath = localPath() ;
 
-            //eng.eval("addpath(\"" + BREACH_PATH + "\")");
             eng.eval("addpath(\"" + localPath + "\")");
 
             return eng;
