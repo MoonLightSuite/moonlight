@@ -35,9 +35,9 @@ public class AFCMoonlightRunner {
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
-        repeatedRunner("In-Order 20", () -> runMoonlight(false, "20"));
-        repeatedRunner("In-Order 50", () -> runMoonlight(false, "50"));
-        repeatedRunner("In-Order 100", () -> runMoonlight(false, "100"));
+//        repeatedRunner("In-Order 20", () -> runMoonlight(false, "20"));
+//        repeatedRunner("In-Order 50", () -> runMoonlight(false, "50"));
+//        repeatedRunner("In-Order 100", () -> runMoonlight(false, "100"));
         repeatedRunner("In-Order 200", () -> runMoonlight(false, "200"));
 
         //repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));

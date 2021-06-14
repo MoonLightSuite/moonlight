@@ -62,7 +62,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     /**
      * Internal representation of the chain
      */
-    private final ArrayList<SegmentInterface<T, V>> list;
+    private final List<SegmentInterface<T, V>> list;
 
     /**
      * Last time instant of definition of the chain

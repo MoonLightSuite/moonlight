@@ -73,7 +73,7 @@ public class AbstractInterval<T extends Comparable<T>>
     }
 
     public AbstractInterval(T start, T end) {
-        this(start,end,false,false);
+        this(start, end,false,false);
     }
 
     /**

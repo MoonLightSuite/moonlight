@@ -41,7 +41,7 @@ public class SlidingWindow<R> {
     private final double uStart;
     private final double wSize;
     private final Window<R> w;
-    private final ArrayList<Update<Double, R>> updates = new ArrayList<>();
+    private final Deque<Update<Double, R>> updates = new ArrayDeque<>();
 
     public SlidingWindow(TimeChain<Double, R> arg, Update<Double, R> u,
                          Interval opHorizon, BinaryOperator<R> op)
@@ -73,7 +73,7 @@ public class SlidingWindow<R> {
 
             collectUpdates();
         }
-        return updates;
+        return new ArrayList<>(updates);
     }
 
     /**
@@ -87,7 +87,7 @@ public class SlidingWindow<R> {
         }
 
         if(!updates.isEmpty()) {
-            Update<Double, R> last = updates.remove(updates.size() - 1);
+            Update<Double, R> last = updates.removeLast();
             updates.add(new Update<>(last.getStart(), uEnd, last.getValue()));
         }
     }
@@ -145,14 +145,15 @@ public class SlidingWindow<R> {
         if(t < uEnd) {
             t = t < 0 ? 0 : t;
 
-            if(!updates.isEmpty() && updates.get(0).getStart() == t) {
-                updates.clear();
+            if(!updates.isEmpty()) {
+                if(updates.getFirst().getStart() == t)
+                    updates.clear();
+                else {
+                    Update<Double, R> old = updates.removeLast();
+                    updates.add(new Update<>(old.getStart(), t, old.getValue()));
+                }
             }
 
-            if(!updates.isEmpty()) {
-                Update<Double, R> old = updates.remove(updates.size() - 1);
-                updates.add(new Update<>(old.getStart(), t, old.getValue()));
-            }
             updates.add(new Update<>(t, Double.NaN, v));
         }
     }
