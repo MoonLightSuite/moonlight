@@ -16,6 +16,11 @@ xtext-gen
 output/
 api_resources/
 
+# Matlab & Simulink caches
+slprj
+*.mexw64
+*.slxc
+
 distribution/**/**
 distribution_files/matlab/moonlight/jar
 distribution_files/matlab/moonlight/script

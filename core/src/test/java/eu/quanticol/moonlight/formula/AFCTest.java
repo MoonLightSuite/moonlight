@@ -25,7 +25,7 @@ class AFCTest {
     private final static String DIR = "afcBreach/";
     private final static String RHO_LOW = DIR + "rho_low.csv";
     private final static String RHO_UP = DIR + "rho_up.csv";
-    private final static String INPUT = DIR + "input.csv";
+    private final static String INPUT = DIR + "test_input.csv";
 
     @Disabled("Under investigation")
     @Test

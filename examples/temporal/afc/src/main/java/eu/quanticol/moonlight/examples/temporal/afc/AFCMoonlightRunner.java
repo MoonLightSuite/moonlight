@@ -6,28 +6,28 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.io.DataReader;
+import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class AbstractFuelControl {
+public class AFCMoonlightRunner {
     //TODO: set environment variable or replace with path to breach
     private static final String BREACH_PATH = System.getProperty("BREACH_PATH");
 
     private static final String MOONLIGHT_ATOM = "bigError";
-    private static double[] breachInput;
-    private static double[] moonlightInput;
     private static final int ITERATIONS = 1;
 
     private static final List<String> output = new ArrayList<>();
@@ -38,24 +38,17 @@ public class AbstractFuelControl {
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
-        repeatedRunner("In-Order M", () -> runMoonlight(false));
+        repeatedRunner("In-Order 20", () -> runMoonlight(false, "20"));
+        repeatedRunner("In-Order 50", () -> runMoonlight(false, "50"));
+        repeatedRunner("In-Order 100", () -> runMoonlight(false, "100"));
+        repeatedRunner("In-Order 200", () -> runMoonlight(false, "200"));
 
         //repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
-
-        repeatedRunner("Breach", AbstractFuelControl::runBreach);
-
 
         System.out.println("------> Experiment results (sec):");
         for (String s : output) {
             System.out.println(s);
         }
-
-        if(PLOTTING)
-            plt.plot(Arrays.stream(breachInput)
-                    .boxed().collect(Collectors.toList()),
-                    "alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) => " +
-                            "(ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))",
-                    "|AF-AFRef|");
     }
 
     private static void repeatedRunner(String title, Runnable task) {
@@ -71,41 +64,11 @@ public class AbstractFuelControl {
         stopwatches.clear();
     }
 
-    private static void runBreach() {
-        MatlabEngine eng = matlabInit();
-        try {
-            //eng.putVariable("max_sim", 50);
-            List<SegmentInterface<Double, AbstractInterval<Double>>>
-                    breach = executeBreach(eng);
-
-            List<Double> bStart = IntStream.range(0, breach.size())
-                    .boxed()
-                    .map(i -> breach.get(i)
-                            .getValue()
-                            .getStart())
-                    .collect(Collectors.toList());
-
-            List<Double> bEnd = IntStream.range(0, breach.size())
-                    .boxed()
-                    .map(i -> breach.get(i)
-                            .getValue()
-                            .getEnd())
-                    .collect(Collectors.toList());
-            eng.close();
-
-            if (PLOTTING)
-                plt.plot(bStart, bEnd, "Breach");
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private static void runMoonlight(boolean shuffle) {
+    private static void runMoonlight(boolean shuffle, String id) {
         MatlabEngine eng = matlabInit();
         try {
             List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-                    moonlightColl = executeMoonlight(eng, shuffle);
+                    moonlightColl = executeMoonlight(eng, shuffle, id);
             List<SegmentInterface<Double, AbstractInterval<Double>>>
                     moonlight = moonlightColl.get(moonlightColl.size() - 1);
 
@@ -121,9 +84,6 @@ public class AbstractFuelControl {
 
         } catch (ExecutionException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -131,7 +91,7 @@ public class AbstractFuelControl {
         try {
             MatlabEngine eng = MatlabEngine.startMatlab();
             String localPath = Paths.get(Objects.requireNonNull(
-                    AbstractFuelControl.class
+                    AFCMoonlightRunner.class
                             .getResource("afc_breach_monitoring.m"))
                     .toURI()).getParent().toAbsolutePath().toString();
 
@@ -162,56 +122,21 @@ public class AbstractFuelControl {
         return r;
     }
 
-    private static List<SegmentInterface<Double, AbstractInterval<Double>>>
-    executeBreach(MatlabEngine eng) throws ExecutionException,
-            InterruptedException
-    {
-        Stopwatch rec = Stopwatch.start();
-        eng.eval("afc_breach_monitoring");
-        long duration = rec.stop();
-        stopwatches.add(rec);
-
-        System.out.println("Breach Execution Time (sec): " +
-                duration / 1000.);
-
-        double[] rhoLow = eng.getVariable("rho_low");
-        double[] rhoUp = eng.getVariable("rho_up");
-        breachInput = eng.getVariable("input");
-
-        return IntStream.range(0, rhoLow.length).boxed()
-                        .map(i -> (SegmentInterface<Double,
-                                AbstractInterval<Double>>)
-                                new TimeSegment<>((double) i,
-                                        new AbstractInterval<>(rhoLow[i],
-                                                rhoUp[i])))
-                        .collect(Collectors.toList());
-
-        //return condenseSignal(output);
-    }
-
     private static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-    executeMoonlight(MatlabEngine eng, boolean shuffle)
-            throws ExecutionException, InterruptedException
+    executeMoonlight(MatlabEngine eng, boolean shuffle, String id)
     {
-        // Model execution recording....
-        Stopwatch rec = Stopwatch.start();
-        eng.eval("afc_moonlight_monitoring");
-        long duration = rec.stop();
-        //stopwatches.add(rec);
-        output.add("Symulink Model execution time: " + duration / 1000.);
-
-        double[] input = eng.getVariable("input");
-        moonlightInput = input;
+        ParsingStrategy<double[][]> str = new RawTrajectoryExtractor(1);
+        double[][] input = new DataReader<>(data_path(id), FileType.CSV, str).read();
 
         // Adapting Matlab variable for Moonlight Online
-        List<Update<Double, Double>> updates = genUpdates(input, shuffle, 0.1);
+        List<Update<Double, Double>> updates = genUpdates(input[0], shuffle, 0.1);
         OnlineTimeMonitor<Double, Double> m = instrument();
 
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
 
         // Moonlight execution recording...
-        rec = Stopwatch.start();
+        Stopwatch rec = Stopwatch.start();
         for (Update<Double, Double> u : updates) {
             //System.out.println(u.toString());
             result.add(new ArrayList<>(m.monitor(u).getSegments().toList()));
@@ -279,5 +204,10 @@ public class AbstractFuelControl {
         }
 
         return out;
+    }
+
+    private static InputStream data_path (String id) {
+        return AFCSimulatorRunner.class
+                .getResourceAsStream("output_" + id + ".csv");
     }
 }
