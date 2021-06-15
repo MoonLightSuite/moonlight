@@ -44,6 +44,17 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V>
      */
     boolean refine(Update<T, V> u) throws UnsupportedOperationException;
 
+    /**
+     * Performs an update of the internal representation of the signal,
+     * given the data available in the update.
+     *
+     * @param updates the new data available from new knowledge
+     * @return <code>true</code> if the refinement actually updates the signal.
+     *         <code>false</code> otherwise
+     * @throws UnsupportedOperationException when not allowed by implementors
+     */
+    boolean refine(TimeChain<T, V> updates) throws UnsupportedOperationException;
+
 
 
     /**

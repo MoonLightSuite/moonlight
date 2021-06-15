@@ -26,6 +26,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -73,6 +74,20 @@ public class AtomicMonitor<V, R extends Comparable<R>>
         rho.refine(u);
 
         return updates;
+    }
+
+    @Override
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+            TimeChain<Double, V> updates)
+    {
+        TimeChain<Double, AbstractInterval<R>> us =
+                BooleanComputation.atomSequence(updates, atomicFunction);
+
+        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+        output.add(us);
+        rho.refine(us);
+
+        return output;
     }
 
     @Override

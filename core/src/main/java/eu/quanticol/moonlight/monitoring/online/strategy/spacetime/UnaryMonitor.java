@@ -87,6 +87,27 @@ public class UnaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+            TimeChain<Double, List<V>> updates)
+    {
+        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+                argumentMonitor.monitor(updates);
+
+        List<TimeChain<Double, List<AbstractInterval<R>>>> output =
+                new ArrayList<>();
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+            output.addAll(BooleanComputation.unarySequence(argU, op));
+        }
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> us : output) {
+            rho.refine(us);
+        }
+
+        return output;
+    }
+
+    @Override
     public SpaceTimeSignal<Double, AbstractInterval<R>> getResult() {
         return rho;
     }

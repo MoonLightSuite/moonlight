@@ -85,10 +85,21 @@ public class MultiOnlineSignal
         //      a list of a different size
         return Refinement.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, v.size())
-                                      //.parallel()
                                       .filter(i -> !v.get(i)
                                                      .contains(vNew.get(i)))
                                       .boxed().count() != 0);
+    }
+
+    @Override
+    public boolean refine(TimeChain<Double, List<AbstractInterval<?>>> updates)
+    {
+        //TODO: should handle the case where the update is
+        //      a list of a different size
+        return Refinement.refineChain(segments, updates,
+                (v, vNew) -> IntStream.range(0, v.size())
+                        .filter(i -> !v.get(i)
+                                .contains(vNew.get(i)))
+                        .boxed().count() != 0);
     }
 
 

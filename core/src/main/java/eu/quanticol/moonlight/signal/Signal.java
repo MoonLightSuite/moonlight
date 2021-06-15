@@ -460,6 +460,11 @@ public class Signal<T> implements TimeSignal<Double, T> {
         throw new UnsupportedOperationException("Refinements are not implemented yet for offline signals");
     }
 
+    @Override
+    public boolean refine(TimeChain<Double, T> updates) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Refinements are not implemented yet for offline signals");
+    }
+
     /**
      * Returns the internal chain of segments.
      *

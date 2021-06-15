@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -36,6 +37,27 @@ public class BooleanComputation {
 
     /**
      *
+     * @param us update of the input signal
+     * @param op  operation to be performed
+     * @param <T> Time domain, usually expressed as a {@link Number}
+     * @param <V> Input signal domain
+     * @param <R> Output robustness domain
+     * @return an update of the robustness signal in input
+     */
+    public static
+    <T extends Comparable<T> & Serializable, V, R>
+    TimeChain<T, R> atomSequence(TimeChain<T, V> us, Function<V, R> op)
+    {
+        List<SegmentInterface<T, R>> ls =
+            us.stream()
+              .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
+              .collect(Collectors.toList());
+
+        return new TimeChain<>(ls, us.getEnd());
+    }
+
+    /**
+     *
      * @param u update of the operand
      * @param op  operation to be performed
      * @param <T> Time domain, usually expressed as a {@link Number}
@@ -52,6 +74,44 @@ public class BooleanComputation {
         results.add(result);
 
         return results;
+    }
+
+    /**
+     *
+     * @param us chain of updates of the operand
+     * @param op  operation to be performed
+     * @param <T> Time domain, usually expressed as a {@link Number}
+     * @param <R> Output robustness domain
+     * @return an update of the robustness signal in input
+     */
+    public static
+    <T extends Comparable<T> & Serializable, R>
+    List<TimeChain<T, R>> unarySequence(TimeChain<T, R> us, UnaryOperator<R> op)
+    {
+        List<SegmentInterface<T, R>> ls =
+            us.stream()
+              .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
+              .collect(Collectors.toList());
+
+        List<TimeChain<T, R>> results = new ArrayList<>();
+        results.add(new TimeChain<>(ls, us.getEnd()));
+
+        return results;
+    }
+
+    public static
+    <T extends Comparable<T> & Serializable, R>
+    List<TimeChain<T, R>> binarySequence(TimeSignal<T, R> s,
+                                         TimeChain<T, R> us,
+                                         BinaryOperator<R> op)
+    {
+        List<TimeChain<T, R>> updates = new ArrayList<>();
+        TimeChain<T, R> p1 = s.select(us.getFirst().getStart(), us.getEnd());
+
+        //rightApply(p1, updates, op, us);  // TODO: this should be different for
+        //       left and right operands
+
+        return updates;
     }
 
 
@@ -208,7 +268,8 @@ public class BooleanComputation {
             nextTime = tryPeekNextStart(itr, s.getEnd());
 
             if(curr.getStart().compareTo(u.getEnd()) < 0
-                    && nextTime.compareTo(u.getStart()) >= 0)  {
+                    && nextTime.compareTo(u.getStart()) >= 0)
+            {
                 T end = min(nextTime, u.getEnd());
                 T start = max(curr.getStart(), u.getStart());
                 if(!start.equals(end)) {
@@ -240,10 +301,9 @@ public class BooleanComputation {
     static <T extends Comparable<T>, V>
     T tryPeekNextStart(DiffIterator<SegmentInterface<T, V>> itr, T defaultValue)
     {
-        try {
+        if(itr.hasNext())
             return itr.peekNext().getStart();
-        } catch (NoSuchElementException ignored) {
+        else
             return defaultValue;
-        }
     }
 }

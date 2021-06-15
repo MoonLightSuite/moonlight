@@ -78,6 +78,15 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         this.list = new ArrayList<>();
     }
 
+    /**
+     * WARNING: this interface assumes the programmer is taking responsibility
+     *          about the Monotonicity of the ordered list of segments.
+     *          (This means that if the List of segments has some
+     *           wrongly-ordered segments, the TimeChain <em>MONOTONICITY</em>
+     *           is violated, but it will go undetected)
+     * @param segments chain of segments, passed as list
+     * @param end      last time value of the new chain
+     */
     public TimeChain(List<SegmentInterface<T,V>> segments, T end) {
         if(end.compareTo(segments.get(segments.size() - 1).getStart()) < 0)
             throw new IllegalArgumentException(ENDING_COND);
@@ -215,11 +224,10 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         @Override
         public SegmentInterface<T, V> tryPeekNext(SegmentInterface<T, V> other)
         {
-            try {
+            if(itr.hasNext())
                 return peekNext();
-            } catch (NoSuchElementException e) {
+            else
                 return other;
-            }
         }
 
         /**
@@ -230,12 +238,12 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
          */
         @Override
         public SegmentInterface<T, V> tryPeekPrevious(
-                SegmentInterface<T, V> other) {
-            try {
+                SegmentInterface<T, V> other)
+        {
+            if(itr.hasPrevious())
                 return peekPrevious();
-            } catch (NoSuchElementException e) {
+            else
                 return other;
-            }
         }
 
         // ---------------------------- MUTATORS ---------------------------- //

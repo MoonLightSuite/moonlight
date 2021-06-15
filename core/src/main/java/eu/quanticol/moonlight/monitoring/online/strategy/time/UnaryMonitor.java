@@ -26,6 +26,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -83,6 +84,26 @@ public class UnaryMonitor<V, R extends Comparable<R>>
         }
 
         return updates;
+    }
+
+    @Override
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+            TimeChain<Double, V> updates)
+    {
+        List<TimeChain<Double, AbstractInterval<R>>> argUpdates =
+                argumentMonitor.monitor(updates);
+
+        List<TimeChain<Double, AbstractInterval<R>>> outputUpdates = new ArrayList<>();
+
+        for(TimeChain<Double, AbstractInterval<R>> argU : argUpdates) {
+            outputUpdates.addAll(BooleanComputation.unarySequence(argU, op));
+        }
+
+        for(TimeChain<Double, AbstractInterval<R>> us : outputUpdates) {
+            rho.refine(us);
+        }
+
+        return outputUpdates;
     }
 
     @Override

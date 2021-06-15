@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.monitoring.online;
 
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -42,6 +43,14 @@ public interface OnlineMonitor<T extends Comparable<T> & Serializable, V, R>
      * @return a list of updates to the interpretation signal
      */
     List<Update<T, R>> monitor(Update<T, V> signalUpdate);
+
+    /**
+     * Execution starter of the monitoring process. It returns a list of update
+     * sequences to the interpretation signal computed at the previous step.
+     * @param updates sequence of connected updates of the input signal
+     * @return a list of updates to the interpretation signal
+     */
+    List<TimeChain<T, R>> monitor(TimeChain<T, V> updates);
 
     /**
      * Returns the result of the monitoring process.

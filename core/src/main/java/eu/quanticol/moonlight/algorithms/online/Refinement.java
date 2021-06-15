@@ -1,3 +1,23 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.signal.online.*;
@@ -5,8 +25,71 @@ import eu.quanticol.moonlight.signal.online.*;
 import java.io.Serializable;
 import java.util.function.BiPredicate;
 
+/**
+ * Algorithms for basic signal primitives, precisely
+ * <ul>
+ *     <li> {@link #refine}</li> for refining a signal given an update
+ *     <li> {@link #refineChain}</li> for refining a signal given a sequence of updates
+ *     <li> {@link #select}</li> for selecting a fragment of a signal given some bounds
+ * </ul>
+ */
 public class Refinement {
     private Refinement() {}     // hidden constructor
+
+    public static <V> boolean refineChain(TimeChain<Double, V> s,
+                                     TimeChain<Double, V> updates,
+                                     BiPredicate<V, V> refinable)
+    {
+        if(updates.getFirst().getStart() > updates.getEnd()) {
+            throw new IllegalArgumentException("Invalid update time span");
+        }  else if(updates.getFirst().getStart().equals(updates.getEnd()))
+            return false;
+
+        DiffIterator<SegmentInterface<Double, V>> itr =
+                s.diffIterator();
+        SegmentInterface<Double, V> current = itr.next();
+
+        V prevV = current.getValue();
+
+        boolean done = false;
+
+        // Take first
+        // Take second
+        // Build update as <first.start, second.start, first.value>
+        // when doRefine=true,
+        //      if updates.hasNext, hop right and continue
+        //      else, just return
+        DiffIterator<SegmentInterface<Double, V>> utr = updates.diffIterator();
+        SegmentInterface<Double, V> last = new TimeSegment<>(updates.getEnd(), null);
+        SegmentInterface<Double, V> fst = utr.next();
+        SegmentInterface<Double, V> snd = utr.tryPeekNext(last);
+        Update<Double, V> u = new Update<>(fst.getStart(), snd.getStart(), fst.getValue());
+        while (itr.hasNext() && !done) {
+            if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
+                        refinable, prevV))
+            {
+                if(utr.hasNext()) {
+                    fst = utr.next();
+                    snd = utr.tryPeekNext(last);
+                    u = new Update<>(fst.getStart(), snd.getStart(), fst.getValue());
+                    continue;
+                } else {
+                    done = true;
+                }
+            }
+
+            // Save the "next" as the new "current".
+            prevV = current.getValue();
+            current = itr.next();
+        }
+
+        if(!done) // To handle single-segment signals
+            doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
+                     refinable, prevV);
+
+        return !itr.hasChanged();
+    }
+
 
     public static <V> boolean refine(TimeChain<Double, V> s,
                                      Update<Double, V> u,
@@ -14,24 +97,22 @@ public class Refinement {
     {
         if(u.getStart() > u.getEnd()) {
             throw new IllegalArgumentException("Invalid update time span");
-        }
+        } else if(u.getStart().equals(u.getEnd()))
+            return false;
+
         DiffIterator<SegmentInterface<Double, V>> itr =
                 s.diffIterator();
         SegmentInterface<Double, V> current = itr.next();
 
         V prevV = current.getValue();
 
-        if(u.getStart().equals(u.getEnd()))
-            return false;
-
         boolean done = false;
 
-        while (itr.hasNext()) {
+        while (itr.hasNext() && !done) {
             if(doRefine(itr, current, u.getStart(), u.getEnd(), u.getValue(),
                         refinable, prevV))
             {
                 done = true;
-                break;
             }
 
             // Save the "next" as the new "current".

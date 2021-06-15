@@ -46,6 +46,17 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
         );
     }
 
+    @Override
+    public boolean refine(
+            TimeChain<Double, List<AbstractInterval<D>>> updates)
+    {
+        return Refinement.refineChain(segments, updates,
+                (v, vNew) -> IntStream.range(0, size)
+                        .filter(i -> v.get(i).contains(vNew.get(i)))
+                        .count() != 0
+        );
+    }
+
     /**
      * Returns the internal chain of segments.
      *

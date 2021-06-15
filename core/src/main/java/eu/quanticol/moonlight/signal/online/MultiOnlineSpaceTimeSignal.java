@@ -40,18 +40,32 @@ public class MultiOnlineSpaceTimeSignal
      */
     @Override
     public boolean refine(Update<Double, List<List<AbstractInterval<?>>>> u) {
-        BiPredicate<List<AbstractInterval<?>>, List<AbstractInterval<?>>> pred =
-                (v, vNew) -> IntStream.range(0, v.size())   //.parallel()
-                        .filter(i -> !v.get(i)
-                                .contains(vNew.get(i)))
-                        .count() != 0;
-
         return Refinement.refine(segments, u,
-                (v, vNew) -> IntStream.range(0, size)   //.parallel()
-                                      .filter(i -> pred.test(v.get(i),
-                                                             vNew.get(i)))
+                (v, vNew) -> IntStream.range(0, size)
+                                      .filter(i -> containment(v.get(i),
+                                                               vNew.get(i)))
                                       .count() != 0
                 );
+    }
+
+    @Override
+    public boolean refine(
+            TimeChain<Double, List<List<AbstractInterval<?>>>> updates)
+    {
+        return Refinement.refineChain(segments, updates,
+                (v, vNew) -> IntStream.range(0, size)   //.parallel()
+                                      .filter(i -> containment(v.get(i),
+                                                               vNew.get(i)))
+                                      .count() != 0
+                );
+    }
+
+    private static boolean containment(List<AbstractInterval<?>> v,
+                                       List<AbstractInterval<?>> vNew)
+    {
+        return  IntStream.range(0, v.size())
+                         .filter(i -> !v.get(i).contains(vNew.get(i)))
+                         .count() != 0;
     }
 
     /**
