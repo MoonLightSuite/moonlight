@@ -3,9 +3,7 @@ package eu.quanticol.moonlight.algorithms.online;
 import eu.quanticol.moonlight.signal.online.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -101,17 +99,18 @@ public class BooleanComputation {
 
     public static
     <T extends Comparable<T> & Serializable, R>
-    List<TimeChain<T, R>> binarySequence(TimeSignal<T, R> s,
+    TimeChain<T, R> binarySequence(TimeSignal<T, R> s,
                                          TimeChain<T, R> us,
                                          BinaryOperator<R> op)
     {
-        List<TimeChain<T, R>> updates = new ArrayList<>();
+        List<SegmentInterface<T, R>> updates = new ArrayList<>(us.size());
         TimeChain<T, R> p1 = s.select(us.getFirst().getStart(), us.getEnd());
 
-        //rightApply(p1, updates, op, us);  // TODO: this should be different for
-        //       left and right operands
+        rightApplySequence(p1, updates, op, us);  // TODO: this should be different for
+                                                  //       left and right operands
 
-        return updates;
+        return new TimeChain<>(updates, us.getEnd());
+
     }
 
 
@@ -254,10 +253,8 @@ public class BooleanComputation {
 
     private static
     <T extends Comparable<T> & Serializable, R>
-    void rightApply(TimeChain<T, R> s,
-                    List<Update<T, R>> updates,
-                    BinaryOperator<R> op,
-                    Update<T, R> u)
+    void rightApply(TimeChain<T, R> s, List<Update<T, R>> updates,
+                    BinaryOperator<R> op, Update<T, R> u)
     {
         DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
         SegmentInterface<T, R> curr;
@@ -276,6 +273,42 @@ public class BooleanComputation {
                     Update<T, R> r = new Update<>(start, end,
                             op.apply(u.getValue(), curr.getValue()));
                     updates.add(r);
+                }
+            }
+        }
+    }
+
+    private static
+    <T extends Comparable<T> & Serializable, R>
+    void rightApplySequence(TimeChain<T, R> s, List<SegmentInterface<T, R>> outputUps,
+                    BinaryOperator<R> op, TimeChain<T, R> inputUps)
+    {
+        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        DiffIterator<SegmentInterface<T, R>> utr = inputUps.diffIterator();
+        SegmentInterface<T, R> curr;
+        T nextTime;
+        SegmentInterface<T, R> last = new TimeSegment<>(inputUps.getEnd(), null);
+        SegmentInterface<T, R> fst = utr.next();
+        SegmentInterface<T, R> snd = utr.tryPeekNext(last);
+
+        while(itr.hasNext()) {
+            curr = itr.next();
+            nextTime = tryPeekNextStart(itr, s.getEnd());
+
+            if(curr.getStart().compareTo(snd.getStart()) < 0
+                    && nextTime.compareTo(fst.getStart()) >= 0)
+            {
+                T end = min(nextTime, snd.getStart());
+                T start = max(curr.getStart(), fst.getStart());
+                if(!start.equals(end)) {
+                    SegmentInterface<T, R> r = new TimeSegment<>(start,
+                                    op.apply(fst.getValue(), curr.getValue()));
+                    outputUps.add(r);
+
+                    if(utr.hasNext()) {
+                        fst = utr.next();
+                        snd = utr.tryPeekNext(last);
+                    }
                 }
             }
         }

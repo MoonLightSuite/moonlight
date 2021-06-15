@@ -79,9 +79,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
             updates.addAll(BooleanComputation.unary(argU, op));
         }
 
-        for(Update<Double, AbstractInterval<R>> u : updates) {
-            rho.refine(u);
-        }
+        updates.forEach(rho::refine);
 
         return updates;
     }
@@ -99,9 +97,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
             outputUpdates.addAll(BooleanComputation.unarySequence(argU, op));
         }
 
-        for(TimeChain<Double, AbstractInterval<R>> us : outputUpdates) {
-            rho.refine(us);
-        }
+        outputUpdates.forEach(rho::refine);
 
         return outputUpdates;
     }

@@ -26,6 +26,7 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSignal;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -95,6 +96,38 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         updates.forEach(rho::refine);
 
         return updates;
+    }
+
+    /**
+     * Execution starter of the monitoring process. It returns a list of update
+     * sequences to the interpretation signal computed at the previous step.
+     *
+     * @param updates sequence of connected updates of the input signal
+     * @return a list of updates to the interpretation signal
+     */
+    @Override
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(TimeChain<Double, V> updates) {
+        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+
+        List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =
+                firstArg.monitor(updates);
+        List<TimeChain<Double, AbstractInterval<R>>> secondArgUps =
+                secondArg.monitor(updates);
+
+        TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
+        TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
+
+        for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
+            output.add(BooleanComputation.binarySequence(s2, argU, opFunction));
+        }
+
+        for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
+            output.add(BooleanComputation.binarySequence(s1, argU, opFunction));
+        }
+
+        output.forEach(rho::refine);
+
+        return output;
     }
 
     @Override
