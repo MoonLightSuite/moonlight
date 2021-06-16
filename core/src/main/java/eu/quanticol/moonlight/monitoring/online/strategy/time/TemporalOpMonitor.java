@@ -94,6 +94,11 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
     }
 
     @Override
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(TimeChain<Double, V> updates) {
+        return null;
+    }
+
+    @Override
     public TimeSignal<Double, AbstractInterval<R>> getResult() {
         return rho;
     }

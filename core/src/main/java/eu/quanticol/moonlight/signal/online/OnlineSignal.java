@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.algorithms.online.Refinement;
+import eu.quanticol.moonlight.algorithms.online.Signals;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
@@ -37,8 +37,8 @@ public class OnlineSignal<D extends Comparable<D>>
      * @param domain The signal domain to consider
      */
     public OnlineSignal(SignalDomain<D> domain) {
-        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new TimeSegment<>(0.0, new AbstractInterval<>(domain.min(), domain.max())));
+        AbstractInterval<D> i = new AbstractInterval<>(domain.min(), domain.max());
+        this.segments = new TimeChain<>(new TimeSegment<>(0.0, i), Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -46,8 +46,7 @@ public class OnlineSignal<D extends Comparable<D>>
      */
     public OnlineSignal(AbstractInterval<D> defaultValue)
     {
-        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new TimeSegment<>(0.0, defaultValue));
+        this.segments = new TimeChain<>(new TimeSegment<>(0.0, defaultValue), Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -86,19 +85,19 @@ public class OnlineSignal<D extends Comparable<D>>
      */
     @Override
     public boolean refine(Update<Double, AbstractInterval<D>> u) {
-        return Refinement.refine(segments, u, AbstractInterval::contains);
+        return Signals.refine(segments, u, AbstractInterval::contains);
     }
 
     @Override
     public boolean refine(TimeChain<Double, AbstractInterval<D>> updates) {
-        return Refinement.refineChain(segments, updates, AbstractInterval::contains);
+        return Signals.refineChain(segments, updates, AbstractInterval::contains);
     }
 
 
     @Override
     public TimeChain<Double, AbstractInterval<D>> select(Double from, Double to)
     {
-        return Refinement.select(segments, from, to);
+        return Signals.select(segments, from, to);
     }
 
     @Override

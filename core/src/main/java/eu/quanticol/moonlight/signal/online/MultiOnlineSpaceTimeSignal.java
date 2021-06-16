@@ -1,11 +1,10 @@
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.algorithms.online.Refinement;
+import eu.quanticol.moonlight.algorithms.online.Signals;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,8 +23,7 @@ public class MultiOnlineSpaceTimeSignal
                          .map(i -> domain.any())
                          .collect(Collectors.toList());
 
-        segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        segments.add(new TimeSegment<>(0.0, any));
+        segments = new TimeChain<>(new TimeSegment<>(0.0, any), Double.POSITIVE_INFINITY);
 
         size = locations;
     }
@@ -40,7 +38,7 @@ public class MultiOnlineSpaceTimeSignal
      */
     @Override
     public boolean refine(Update<Double, List<List<AbstractInterval<?>>>> u) {
-        return Refinement.refine(segments, u,
+        return Signals.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, size)
                                       .filter(i -> containment(v.get(i),
                                                                vNew.get(i)))
@@ -52,7 +50,7 @@ public class MultiOnlineSpaceTimeSignal
     public boolean refine(
             TimeChain<Double, List<List<AbstractInterval<?>>>> updates)
     {
-        return Refinement.refineChain(segments, updates,
+        return Signals.refineChain(segments, updates,
                 (v, vNew) -> IntStream.range(0, size)   //.parallel()
                                       .filter(i -> containment(v.get(i),
                                                                vNew.get(i)))

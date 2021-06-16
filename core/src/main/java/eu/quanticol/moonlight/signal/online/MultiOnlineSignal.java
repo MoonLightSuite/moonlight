@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.algorithms.online.Refinement;
+import eu.quanticol.moonlight.algorithms.online.Signals;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
@@ -39,8 +39,7 @@ public class MultiOnlineSignal
      * @param domain The signal domain to consider
      */
     public MultiOnlineSignal(SignalDomain<List<AbstractInterval<?>>> domain) {
-        this.segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        this.segments.add(new TimeSegment<>(0.0, domain.any()));
+        this.segments = new TimeChain<>(new TimeSegment<>(0.0, domain.any()), Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -83,7 +82,7 @@ public class MultiOnlineSignal
     {
         //TODO: should handle the case where the update is
         //      a list of a different size
-        return Refinement.refine(segments, u,
+        return Signals.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, v.size())
                                       .filter(i -> !v.get(i)
                                                      .contains(vNew.get(i)))
@@ -95,7 +94,7 @@ public class MultiOnlineSignal
     {
         //TODO: should handle the case where the update is
         //      a list of a different size
-        return Refinement.refineChain(segments, updates,
+        return Signals.refineChain(segments, updates,
                 (v, vNew) -> IntStream.range(0, v.size())
                         .filter(i -> !v.get(i)
                                 .contains(vNew.get(i)))
@@ -110,8 +109,8 @@ public class MultiOnlineSignal
         int start = 0;
         int end = 1;
 
-        DiffIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr =
-                segments.diffIterator();
+        ChainIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr =
+                segments.chainIterator();
         SegmentInterface<Double, List<AbstractInterval<?>>> current;
 
         while (itr.hasNext()) {

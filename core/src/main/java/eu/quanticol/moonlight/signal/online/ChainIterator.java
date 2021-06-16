@@ -27,9 +27,9 @@ import java.util.NoSuchElementException;
 /**
  * Interface that extends the ListIterator interface with some handy methods.
  *
- * @see TimeChain#diffIterator()
+ * @see TimeChain#chainIterator()
  */
-public interface DiffIterator<E> extends ListIterator<E> {
+public interface ChainIterator<E> extends ListIterator<E> {
 
     /**
      * @return <code>true</code> if some elements of the list mutated.

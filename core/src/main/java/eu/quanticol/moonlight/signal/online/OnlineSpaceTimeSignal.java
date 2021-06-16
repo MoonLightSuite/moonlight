@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.algorithms.online.Refinement;
+import eu.quanticol.moonlight.algorithms.online.Signals;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
@@ -23,8 +23,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
                                                          domain.max()))
                         .collect(Collectors.toList());
 
-        segments = new TimeChain<>(Double.POSITIVE_INFINITY);
-        segments.add(new TimeSegment<>(0.0, any));
+        segments = new TimeChain<>(new TimeSegment<>(0.0, any), Double.POSITIVE_INFINITY);
 
         size = locations;
     }
@@ -39,7 +38,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      */
     @Override
     public boolean refine(Update<Double, List<AbstractInterval<D>>> u) {
-        return Refinement.refine(segments, u,
+        return Signals.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, size)
                         .filter(i -> v.get(i).contains(vNew.get(i)))
                         .count() != 0
@@ -50,7 +49,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
     public boolean refine(
             TimeChain<Double, List<AbstractInterval<D>>> updates)
     {
-        return Refinement.refineChain(segments, updates,
+        return Signals.refineChain(segments, updates,
                 (v, vNew) -> IntStream.range(0, size)
                         .filter(i -> v.get(i).contains(vNew.get(i)))
                         .count() != 0
@@ -79,7 +78,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      */
     @Override
     public TimeChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
-        return Refinement.select(segments, from, to);
+        return Signals.select(segments, from, to);
     }
 
     /**

@@ -28,9 +28,9 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * A segment chain is a subtype of {@link LinkedList} providing some specific
- * features for {@link SegmentInterface}s, like checking temporal integrity
- * constraints, a custom iterator etc.
+ * A segment chain is a non-empty subtype of {@link LinkedList} providing some
+ * specific features for {@link SegmentInterface}s, like checking temporal
+ * integrity constraints, a custom iterator etc.
  *
  * <p> Two data integrity constraints must hold on the data structure:
  *    <ul>
@@ -70,12 +70,27 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     protected final T end;
 
     /**
+     * @deprecated now it should always be non-empty
      * It defines a chain of time segments that ends at some time instant
      * @param end the time instant from which the segment chain is not defined.
      */
+    @Deprecated
     public TimeChain(T end) {
         this.end = end;
         this.list = new ArrayList<>();
+    }
+
+    /**
+     * It defines a chain of time segments that ends at some time instant
+     * @param end the time instant from which the segment chain is not defined.
+     */
+    public TimeChain(SegmentInterface<T, V> element, T end) {
+        if(end.compareTo(element.getStart()) < 0)
+            throw new IllegalArgumentException(ENDING_COND);
+        
+        this.end = end;
+        this.list = new ArrayList<>();
+        list.add(element);
     }
 
     /**
@@ -129,14 +144,14 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return list.get(list.size() - 1);
     }
 
-    public DiffIterator<SegmentInterface<T, V>> diffIterator() {
-        return diffIterator(0);
+    public ChainIterator<SegmentInterface<T, V>> chainIterator() {
+        return chainIterator(0);
     }
 
-    public DiffIterator<SegmentInterface<T, V>> diffIterator(int index) {
+    public ChainIterator<SegmentInterface<T, V>> chainIterator(int index) {
         if (index < 0 || index > list.size())
             throw new IndexOutOfBoundsException("Index: " + index);
-        return new DiffListItr(index);
+        return new ChainListItr(index);
     }
 
     @NotNull
@@ -168,13 +183,13 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return Objects.hash(list, end);
     }
 
-    private class DiffListItr implements
-            DiffIterator<SegmentInterface<T, V>>
+    private class ChainListItr implements
+            ChainIterator<SegmentInterface<T, V>>
     {
         private final ListIterator<SegmentInterface<T, V>> itr;
         private boolean changed;
 
-        public DiffListItr(int index) {
+        public ChainListItr(int index) {
             itr = list.listIterator(index);
             changed = false;
         }

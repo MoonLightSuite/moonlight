@@ -208,7 +208,7 @@ public class BooleanComputation {
                          BinaryOperator<R> op,
                          Update<T, R> u, T tMin)
     {
-        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        ChainIterator<SegmentInterface<T, R>> itr = s.diffIterator();
         SegmentInterface<T, R> curr;
 
         while(itr.hasNext()) {
@@ -232,7 +232,7 @@ public class BooleanComputation {
                           BinaryOperator<R> op,
                           Update<T, R> u, T tMax)
     {
-        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        ChainIterator<SegmentInterface<T, R>> itr = s.diffIterator();
         SegmentInterface<T, R> curr;
 
         while(itr.hasNext()) {
@@ -256,7 +256,7 @@ public class BooleanComputation {
     void rightApply(TimeChain<T, R> s, List<Update<T, R>> updates,
                     BinaryOperator<R> op, Update<T, R> u)
     {
-        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
+        ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
         SegmentInterface<T, R> curr;
         T nextTime;
 
@@ -283,8 +283,8 @@ public class BooleanComputation {
     void rightApplySequence(TimeChain<T, R> s, List<SegmentInterface<T, R>> outputUps,
                     BinaryOperator<R> op, TimeChain<T, R> inputUps)
     {
-        DiffIterator<SegmentInterface<T, R>> itr = s.diffIterator();
-        DiffIterator<SegmentInterface<T, R>> utr = inputUps.diffIterator();
+        ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
+        ChainIterator<SegmentInterface<T, R>> utr = inputUps.chainIterator();
         SegmentInterface<T, R> curr;
         T nextTime;
         SegmentInterface<T, R> last = new TimeSegment<>(inputUps.getEnd(), null);
@@ -332,7 +332,7 @@ public class BooleanComputation {
      * @return the next time value if present, otherwise the default one.
      */
     static <T extends Comparable<T>, V>
-    T tryPeekNextStart(DiffIterator<SegmentInterface<T, V>> itr, T defaultValue)
+    T tryPeekNextStart(ChainIterator<SegmentInterface<T, V>> itr, T defaultValue)
     {
         if(itr.hasNext())
             return itr.peekNext().getStart();

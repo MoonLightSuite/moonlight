@@ -26,6 +26,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.online.OnlineMonitor;
 import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -104,6 +105,11 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
         updates.forEach(rho::refine);
 
         return updates;
+    }
+
+    @Override
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
+        return null;
     }
 
     @Override

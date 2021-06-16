@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.signal.online.DiffIterator;
+import eu.quanticol.moonlight.signal.online.ChainIterator;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,23 +128,23 @@ public class OldTimeChain
             throw new IllegalArgumentException(ENDING_COND);
 
     }
-    public DiffIterator<SegmentInterface<T, V>> diffIterator() {
+    public ChainIterator<SegmentInterface<T, V>> diffIterator() {
         return diffIterator(0);
     }
 
-    public DiffIterator<SegmentInterface<T, V>> diffIterator(int index) {
+    public ChainIterator<SegmentInterface<T, V>> diffIterator(int index) {
         // To implicitly call checkPositionIndex(index) we call parent's method
         OldTimeChain.super.listIterator(index);
-        return new DiffListItr(index);
+        return new ChainListItr(index);
     }
 
-    private class DiffListItr implements
-            DiffIterator<SegmentInterface<T, V>>
+    private class ChainListItr implements
+            ChainIterator<SegmentInterface<T, V>>
     {
         private final ListIterator<SegmentInterface<T, V>> itr;
         private boolean changed;
 
-        public DiffListItr(int index) {
+        public ChainListItr(int index) {
             itr = OldTimeChain.super.listIterator(index);
             changed = false;
         }

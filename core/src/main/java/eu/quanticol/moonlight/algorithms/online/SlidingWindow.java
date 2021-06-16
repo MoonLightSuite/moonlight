@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.signal.online.DiffIterator;
+import eu.quanticol.moonlight.signal.online.ChainIterator;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.Update;
@@ -65,7 +65,7 @@ public class SlidingWindow<R> {
      */
     public List<Update<Double, R>> run() {
         if(uEnd != 0.0) {
-            DiffIterator<SegmentInterface<Double, R>> itr = arg.diffIterator();
+            ChainIterator<SegmentInterface<Double, R>> itr = arg.chainIterator();
 
             while(itr.hasNext()) {
                 add(itr.next());

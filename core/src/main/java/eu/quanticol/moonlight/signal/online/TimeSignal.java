@@ -70,7 +70,7 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V>
      * @return the signal value at the time instant passed.
      */
     default V getValueAt(T time) {
-        DiffIterator<SegmentInterface<T, V>> itr = getSegments().diffIterator();
+        ChainIterator<SegmentInterface<T, V>> itr = getSegments().chainIterator();
         SegmentInterface<T, V> current = null;
 
         while (itr.hasNext()) {

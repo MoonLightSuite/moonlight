@@ -100,6 +100,11 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         return updates;
     }
 
+    @Override
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
+        return null;
+    }
+
 //    @Override
 //    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
 //            TimeChain<Double, List<V>> updates)

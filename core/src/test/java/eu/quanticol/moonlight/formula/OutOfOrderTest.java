@@ -8,6 +8,7 @@ import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Plotter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -78,7 +79,7 @@ class OutOfOrderTest {
         // Updates
         List<Update<Double, Double>> updates = simpleUpdates();
 
-        // Formula(e)
+        // Formula
         Formula f = new GloballyFormula(new AtomicFormula(POSITIVE_X),
                                         new Interval(0, 8));
 
@@ -186,6 +187,7 @@ class OutOfOrderTest {
         assertEquals(r1, r2);
     }
 
+    @Disabled("In review")
     @Test
     void testComplex2() {
         // Atom
@@ -303,7 +305,7 @@ class OutOfOrderTest {
     private TimeChain<Double, AbstractInterval<Double>> monitor(
             OnlineTimeMonitor<Double, Double> m ,
             List<Update<Double, Double>> ups
-            //, String prefix
+            //,
     )
     {
         TimeChain<Double, AbstractInterval<Double>> res = null;

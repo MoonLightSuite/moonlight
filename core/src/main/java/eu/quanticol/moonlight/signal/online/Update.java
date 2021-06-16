@@ -23,9 +23,10 @@ package eu.quanticol.moonlight.signal.online;
 import java.util.Objects;
 
 /**
+ * Data class to store updates of the kind <code>[start, end) -> value</code>
  *
- * @param <T>
- * @param <V>
+ * @param <T> Time domain of the update
+ * @param <V> Value of the update
  */
 public class Update<T extends Comparable<T>, V>  {
 
@@ -34,6 +35,9 @@ public class Update<T extends Comparable<T>, V>  {
     private final V value;
 
     public Update(T start, T end, V value) {
+        if(start.compareTo(end) > 0 || start.equals(end))
+            throw new IllegalArgumentException("Invalid update time span");
+
         this.start = start;
         this.end = end;
         this.value = value;
