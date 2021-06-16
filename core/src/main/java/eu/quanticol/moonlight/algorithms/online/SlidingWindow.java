@@ -107,7 +107,7 @@ public class SlidingWindow<R> {
         } else if(w.getEndingTime() + wSize < curr.getStart()) {
             w.clear();
         }
-        doAdd2(curr.getStart() - h.getStart(), curr.getValue());
+        doAdd(curr.getStart() - h.getStart(), curr.getValue());
     }
 
     /**
@@ -131,7 +131,8 @@ public class SlidingWindow<R> {
             }
 
             addUpdate(first.getStart(), first.getValue());
-            w.addFirst(new Element<>(t, first.getValue()));
+            if(w.isEmpty() || w.getFirst().getStart() > t)
+                w.addFirst(new Element<>(t, first.getValue()));
         }
     }
 
@@ -167,7 +168,7 @@ public class SlidingWindow<R> {
      * @param t starting time of the current segment
      * @param v value of the current segment
      */
-    private void doAdd(Double t, R v) {
+    private void doAddRec(Double t, R v) {
         if(w.isEmpty())
             w.addLast(new Element<>(t, v));
         else {
@@ -189,8 +190,8 @@ public class SlidingWindow<R> {
         }
     }
 
-    private void doAdd2(Double t, R v) {
-        ArrayDeque<Element<Double, R>> tail = new ArrayDeque<>();
+    private void doAdd(Double t, R v) {
+        Deque<Element<Double, R>> tail = new ArrayDeque<>();
         boolean completed = false;
         while(!w.isEmpty() && !completed) {
             Element<Double, R> last = w.removeLast();
@@ -201,14 +202,12 @@ public class SlidingWindow<R> {
                 w.addLast(new Element<>(t2, v2));
                 completed = true;
             } else if(v.equals(v3)) {
-                //doAdds(t2, v3);
                 t = t2;
                 v = v3;
             } else if(!v2.equals(v3)) {
                 tail.addFirst(new Element<>(t, v));
                 t = t2;
                 v = v3;
-                //doAdds(t2, v3);
             } else {
                 w.addLast(new Element<>(t2, v2));
                 w.addLast(new Element<>(t, v));

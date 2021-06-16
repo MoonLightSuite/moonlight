@@ -4,9 +4,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSignal;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.util.Plotter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -108,6 +106,37 @@ class OutOfOrderTest {
     }
 
     @Test
+    void testSimple3a() {
+        // Atom
+        HashMap<String, Function<Double, AbstractInterval<Double>>> atoms =
+                new HashMap<>();
+        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+
+        // Monitor
+        OnlineTimeMonitor<Double, Double> m;
+
+        // Updates
+        List<Update<Double, Double>> updates = simpleUpdates();
+
+        // Formula
+        Formula f = new EventuallyFormula(
+                        new NegationFormula(new AtomicFormula(POSITIVE_X))
+                        ,  new Interval(0.0, 1.0));
+
+        // Monitoring in-order updates
+        m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
+        TimeChain<Double, AbstractInterval<Double>> r = monitor(m, updates);
+        System.out.println(r);
+
+        assert r != null;
+
+        List<SegmentInterface<Double, AbstractInterval<Double>>> segments = r.toList();
+        assertEquals(new TimeSegment<>(0.0, new AbstractInterval<>(-2.0, -2.0)), segments.get(0));
+        assertEquals(new TimeSegment<>(1.0,
+                new AbstractInterval<>(-3.0, -3.0)), segments.get(1));
+    }
+
+    @Test
     void testSimple3() {
         // Atom
         HashMap<String, Function<Double, AbstractInterval<Double>>> atoms =
@@ -187,7 +216,6 @@ class OutOfOrderTest {
         assertEquals(r1, r2);
     }
 
-    @Disabled("In review")
     @Test
     void testComplex2() {
         // Atom

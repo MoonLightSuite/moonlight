@@ -33,14 +33,14 @@ public class AbstractFuelControl {
     private static final List<String> output = new ArrayList<>();
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
+    private static final boolean PLOTTING = true;
 
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
         repeatedRunner("In-Order M", () -> runMoonlight(false));
 
-        //repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
+        repeatedRunner("Out-Of-Order M", () -> runMoonlight(true));
 
         repeatedRunner("Breach", AbstractFuelControl::runBreach);
 
@@ -132,7 +132,7 @@ public class AbstractFuelControl {
             MatlabEngine eng = MatlabEngine.startMatlab();
             String localPath = Paths.get(Objects.requireNonNull(
                     AbstractFuelControl.class
-                            .getResource("afc_breach_monitoring.m"))
+                            .getResource("matlab/afc_breach_monitoring.m"))
                     .toURI()).getParent().toAbsolutePath().toString();
 
             eng.eval("addpath(\"" + BREACH_PATH + "\")");

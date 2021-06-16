@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.domain.AbsIntervalDomain;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSegment;
@@ -242,6 +243,39 @@ class SlidingWindowTest {
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
         assertSame(expected, results);
+    }
+
+    @Test
+    void complexEv() {
+        Interval opHorizon = new Interval(0.0, 1.0);
+        Formula f = new EventuallyFormula(new NegationFormula(
+                        new AtomicFormula("POSITIVE_X"))
+                        ,  opHorizon)
+                    ;
+        List<Update<Double, AbstractInterval<Double>>> updates = new ArrayList<>();
+        updates.add(new Update<>(0.0, 1.0, new AbstractInterval<>(2.0, 2.0)));
+        updates.add(new Update<>(1.0, 2.0, new AbstractInterval<>(3.0, 3.0)));
+        updates.add(new Update<>(2.0, 3.0, new AbstractInterval<>(4.0, 4.0)));
+        updates.add(new Update<>(3.0, 4.0, new AbstractInterval<>(-1.0, -1.0)));
+        updates.add(new Update<>(4.0, 5.0, new AbstractInterval<>(2.0, 2.0)));
+        updates.add(new Update<>(5.0, 6.0, new AbstractInterval<>(2.0, 2.0)));
+        updates.add(new Update<>(7.0, 8.0, new AbstractInterval<>(2.0, 2.0)));
+
+        TimeChain<Double, AbstractInterval<Double>> input = new TimeChain<>(INF);
+        input.add(new TimeSegment<>(0.0, new Interval(-2, -2)));
+        input.add(new TimeSegment<>(1.0, new Interval(-3, -3)));
+
+        SlidingWindow<AbstractInterval<Double>> w =
+                new SlidingWindow<>(input, updates.get(0),
+                                    opHorizon, domain::disjunction);
+
+        w.run();
+
+        w = new SlidingWindow<>(input, updates.get(1),
+                                opHorizon, domain::disjunction);
+
+        w.run();
+
     }
 
     private static <T> void assertSame(List<T> expected, List<T> toTest) {
