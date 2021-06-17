@@ -58,7 +58,7 @@ class OutOfOrderTest {
         if(PLOTTING) {
             plt.plot(r1, "In order");
             plt.plot(r2, "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1, r2);
@@ -99,7 +99,7 @@ class OutOfOrderTest {
         if(PLOTTING) {
             plt.plot(r1, "In order");
             plt.plot(r2, "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1, r2);
@@ -170,7 +170,7 @@ class OutOfOrderTest {
         if(PLOTTING) {
             plt.plot(r1, "In order");
             plt.plot(r2, "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1, r2);
@@ -210,7 +210,7 @@ class OutOfOrderTest {
         if(PLOTTING) {
             plt.plot(r1, "In order");
             plt.plot(r2, "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1, r2);
@@ -251,7 +251,7 @@ class OutOfOrderTest {
         if(PLOTTING) {
             plt.plot(r1, "In order");
             plt.plot(r2, "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1, r2);
@@ -298,7 +298,7 @@ class OutOfOrderTest {
             Plotter plt = new Plotter();
             plt.plot(r1.getSegments(), "In order");
             plt.plot(r2.getSegments(), "Out of order");
-            plt.waitActivePlots();
+            plt.waitActivePlots(0);
         }
 
         assertEquals(r1.getSegments(), r2.getSegments());

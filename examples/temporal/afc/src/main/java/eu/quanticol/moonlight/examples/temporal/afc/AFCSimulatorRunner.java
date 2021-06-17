@@ -1,3 +1,23 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import com.mathworks.engine.MatlabEngine;
@@ -7,88 +27,57 @@ import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.util.Stopwatch;
 
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
+
+import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
 
 public class AFCSimulatorRunner {
-    private static final double LAST_TIME = 20;
 
     private static final String OUTPUT_NAME = "/afc_sim_" + LAST_TIME + ".csv";
 
     private static final List<String> output = new ArrayList<>();
 
     public static void main(String[] args) {
-        System.out.println("Executing Breach AFC simulator...");
+        LOG.info("Executing Breach AFC simulator...");
 
-        runSimulation();
+        runInMatlab(AFCSimulatorRunner::executeMoonlight);
 
-        System.out.println("------> Experiment results (sec):");
+        LOG.info("------> Experiment results (sec):");
         for (String s : output) {
-            System.out.println(s);
+            LOG.info(s);
         }
     }
 
-    private static void runSimulation() {
-        MatlabEngine eng = matlabInit();
-        try {
-            assert eng != null;
-            executeMoonlight(eng);
-            eng.close();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-        }
-    }
+    private static void executeMoonlight(MatlabEngine eng) {
+        // Matlab setup
+        eval(eng, "clear");
+        putVar(eng, "tot", LAST_TIME);
 
-    private static MatlabEngine matlabInit() {
-        try {
-            MatlabEngine eng = MatlabEngine.startMatlab();
-            String localPath = localPath() ;
-
-            eng.eval("addpath(\"" + localPath + "\")");
-
-            return eng;
-        } catch (ExecutionException |
-                InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-            return null;
-        }
-    }
-
-    private static void executeMoonlight(MatlabEngine eng)
-            throws ExecutionException, InterruptedException {
         // Model execution recording....
-        eng.eval("clear");
-        eng.putVariable("tot", LAST_TIME);
         Stopwatch rec = Stopwatch.start();
-        eng.eval("afc_moonlight_monitoring");
+        eval(eng, "afc_moonlight_monitoring");
         long duration = rec.stop();
         output.add("Simulink Model execution time: " + duration / 1000.);
 
-        double[] input = eng.getVariable("input");
+        double[] input = getVar(eng, "input");
+        assert input != null;
         double[][] input2 = new double[1][input.length];
         input2[0] = input;
 
-        PrintingStrategy<double[][]> str = new RawTrajectoryExtractor(1);
-
-        new DataWriter<>(localPath() + OUTPUT_NAME, FileType.CSV, str).write(input2);
-
-        System.out.println("Saving output in: " + localPath() + OUTPUT_NAME);
+        storeResults(input2);
     }
 
-    public static String localPath() {
-        try {
-            return Paths.get(Objects.requireNonNull(
-                    AFCSimulatorRunner.class
-                            .getResource("matlab/afc_moonlight_monitoring.m"))
-                    .toURI()).getParent().toAbsolutePath().toString();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    private static void storeResults(double[][] data) {
+        PrintingStrategy<double[][]> st = new RawTrajectoryExtractor(1);
 
-        return null;
+        try {
+            String destination = localPath() + OUTPUT_NAME;
+            LOG.info("Saving output in: " + destination);
+            new DataWriter<>(destination, FileType.CSV, st).write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UnknownError("Unable to write results");
+        }
     }
 }

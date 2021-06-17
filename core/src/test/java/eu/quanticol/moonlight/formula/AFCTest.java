@@ -45,12 +45,9 @@ class AFCTest {
         ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> r =
                 new ArrayList<>(result.get(result.size() - 1));
                 //        new ArrayList<>(Objects.requireNonNull(result).getSegments());
-        //r = condenseSignal(r);
+        r = condenseSignal(r);
 
-        assertEquals(rho.size(), r.size());
-        for(int i = 0; i < rho.size(); i++) {
-            assertEquals(rho.get(i), r.get(i));
-        }
+        assertEquals(rho, r);
 
         System.out.println("End");
     }

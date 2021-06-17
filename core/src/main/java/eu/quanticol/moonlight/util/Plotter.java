@@ -1,7 +1,6 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeChain;
 
 import java.io.IOException;
@@ -13,52 +12,75 @@ import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 
 /**
- * Utility class for plotting.
+ * <em>EXPERIMENTAL:</em> Utility class for plotting.
  * <p>
  * !! Requires python 3+ and Matplotlib in running environment
  * </p>
  */
 public class Plotter {
     private final List<Thread> threads;
+    private final boolean isAsync;
 
     public Plotter() {
-        threads = new ArrayList<>();
+        this(true);
     }
 
-    public void waitActivePlots() {
+    public Plotter(boolean async) {
+        threads = new ArrayList<>();
+        isAsync = async;
+    }
+
+    /**
+     * Required for actually showing async plots
+     */
+    public void waitActivePlots(long seconds) {
         try {
             for (Thread t: threads) {
-                t.join();
+                t.join(seconds * 1000);
             }
         } catch(InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Plot coordinator died " +
+                                            "unexpectedly");
         }
     }
     
     public void plot(List<Double> data, String name, String label) {
-        asyncShow(() -> plotSingle(data, name, label));
+        if(isAsync)
+            asyncShow(() -> plotSingle(data, name, label));
+        else
+            plotSingle(data, name, label);
     }
 
     public void plot(List<Double> dataDown, List<Double> dataUp, String name) {
-        asyncShow(() -> plotInterval(dataDown, dataUp, name));
+        List<Double> down = replaceInfinite(dataDown);
+        List<Double> up = replaceInfinite(dataUp);
+
+        if(isAsync)
+            asyncShow(() -> plotInterval(down, up, name));
+        else
+            plotInterval(down, up, name);
     }
 
-    public void plot(TimeChain<Double, AbstractInterval<Double>> data, String name) {
-        asyncShow(() -> {
-            List<Double> dataDown =
-                    replaceInfinite(data.stream()
-                                        .map(x -> x.getValue().getStart())
-                                        .collect(Collectors.toList()));
-            List<Double> dataUp =
-                    replaceInfinite(data.stream()
-                                        .map(x -> x.getValue().getEnd())
-                                        .collect(Collectors.toList()));
-            List<Double> times = data.stream()
-                                     .map(SegmentInterface::getStart)
-                                     .collect(Collectors.toList());
+    public void plot(TimeChain<Double, AbstractInterval<Double>> data,
+                     String name)
+    {
+        List<Double> dataDown =
+            replaceInfinite(data.stream()
+                    .map(x -> x.getValue().getStart())
+                    .collect(Collectors.toList()));
+        List<Double> dataUp =
+                replaceInfinite(data.stream()
+                        .map(x -> x.getValue().getEnd())
+                        .collect(Collectors.toList()));
+//        List<Double> times = data.stream().map(SegmentInterface::getStart)
+//                                 .collect(Collectors.toList());
 
+        if(isAsync)
+            asyncShow(() -> plotInterval(dataDown, dataUp, name));
+        else
             plotInterval(dataDown, dataUp, name);
-        });
     }
 
     private Plot createPlot(String name) {
@@ -87,28 +109,24 @@ public class Plotter {
                               String name)
     {
         Plot plt = createPlot(name);
-
         addData(plt, dataDown, "rho_down");
         addData(plt, dataUp, "rho_up");
-
         //plt.xticks(times);    // Experimental feature, still unreliable
         showPlot(plt);
     }
 
     private void plotSingle(List<Double> data, String name, String label) {
         Plot plt = createPlot(name);
-
+        data = replaceInfinite(data);
         addData(plt, data, label);
-
         //plt.xticks(times);    // Experimental feature, still unreliable
         showPlot(plt);
     }
 
     private void asyncShow(Runnable r) {
-        Thread t = new Thread(r) {{
-            start();
-        }};
+        Thread t = new Thread(r);
         threads.add(t);
+        t.start();
     }
 
     private static List<Double> replaceInfinite(List<Double> vs) {
