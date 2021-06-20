@@ -20,7 +20,7 @@ public interface SpatialTemporalMonitor<E,S,T> {
 	
 	public SpatialTemporalSignal<T> monitor(LocationService<E> locationService, SpatialTemporalSignal<S> signal);
 	
-	public static <E,S,T> SpatialTemporalMonitor<E,S,T> atomicMonitor(Function<S,T> atomic ) {
+	public static <V,E,S,T> SpatialTemporalMonitor<E,S,T> atomicMonitor(Function<S,T> atomic ) {
 		return new SpatialTemporalMonitorAtomic<>( atomic );
 	}
 

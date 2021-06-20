@@ -87,11 +87,16 @@ public class EnumerationHandler<T> implements DataHandler<T> {
     }
 
     @Override
-    public double doubleOf(T t) {
-        int idx = indexOf.getOrDefault(t,-1);
-        return idx;
+    public double doubleOf(Object t) {
+        if (type.isInstance(t)) {
+            return indexOf(type.cast(t));
+        }
+        return Double.NaN;
     }
 
+    public int indexOf(T t) {
+        return indexOf.getOrDefault(t, -1);
+    }
     @Override
     public boolean checkObjectValue(Object o) {
         return (type.isInstance(o)&&indexOf.containsKey(o));

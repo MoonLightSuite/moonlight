@@ -75,7 +75,7 @@ public interface DataHandler<S> {
      * @param s data item to represent.
      * @return double representation of <code>s</code>.
      */
-    double doubleOf(S s);
+    double doubleOf(Object s);
 
     /**
      * Check if the object <code>o</code> is a valid data type.
@@ -157,8 +157,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Double aDouble) {
-            return aDouble;
+        public double doubleOf(Object aDouble) {
+            if (aDouble instanceof Double) {
+                return (Double) aDouble;
+            }
+            return Double.NaN;
         }
 
         @Override
@@ -236,8 +239,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Integer integer) {
-            return integer.doubleValue();
+        public double doubleOf(Object integer) {
+            if (integer instanceof Integer) {
+                return (Integer) integer;
+            }
+            return Double.NaN;
         }
 
         @Override
@@ -308,8 +314,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Boolean aBoolean) {
-            return (aBoolean?1.0:-1.0);
+        public double doubleOf(Object aBoolean) {
+            if (aBoolean instanceof Boolean) {
+                return (((Boolean) aBoolean)?1.0:-1.0);
+            }
+            return Double.NaN;
         }
 
         @Override

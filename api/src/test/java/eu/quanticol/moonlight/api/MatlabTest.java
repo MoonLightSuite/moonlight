@@ -16,7 +16,7 @@ class MatlabTest {
                 "   domain boolean;\n" +
                 "   formula aFormula = globally [73, 98] ( x>=0 );\n";
 
-        Matlab.compileScript(a);
+        Matlab.loadFromCode(a);
         System.out.println();
     }
 }

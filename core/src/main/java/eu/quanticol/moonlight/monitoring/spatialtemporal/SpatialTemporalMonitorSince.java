@@ -21,7 +21,7 @@ public class SpatialTemporalMonitorSince<E,S,T> implements SpatialTemporalMonito
 	private SignalDomain<T> domain;
 
 	public SpatialTemporalMonitorSince(SpatialTemporalMonitor<E, S, T> m1, Interval interval,
-									   SpatialTemporalMonitor<E, S, T> m2, SignalDomain<T> domain) {
+                                       SpatialTemporalMonitor<E, S, T> m2, SignalDomain<T> domain) {
 		this.m1 = m1;
 		this.m2 = m2;
 		this.interval = interval;

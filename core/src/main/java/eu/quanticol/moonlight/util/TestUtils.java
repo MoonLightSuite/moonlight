@@ -125,7 +125,7 @@ public class TestUtils {
         return locService;
     }
 
-    public static LocationService<Double> createLocServiceStatic(double start, double dt, double end,SpatialModel<Double> graph) {
+    public static LocationService<Double> createLocServiceStatic(double start, double dt, double end, SpatialModel<Double> graph) {
         LocationServiceList<Double> locService = new LocationServiceList<Double>();
         double time = start;
         while (time < end) {
@@ -137,7 +137,7 @@ public class TestUtils {
         return locService;
     }
 
-    public static LocationService<Double> createLocServiceStaticFromTimeTraj(double [] time ,SpatialModel<Double> graph) {
+    public static LocationService<Double> createLocServiceStaticFromTimeTraj(double [] time , SpatialModel<Double> graph) {
         LocationServiceList<Double> locService = new LocationServiceList<Double>();
         for (int i = 0; i < time.length; i++) {
             locService.add(time[i], graph);

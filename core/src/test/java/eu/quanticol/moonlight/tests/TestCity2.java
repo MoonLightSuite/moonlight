@@ -13,9 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import eu.quanticol.moonlight.signal.DistanceStructure;

@@ -6,11 +6,11 @@ import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import eu.quanticol.moonlight.xtext.ScriptLoader;
 import simhya.matlab.SimHyAModel;
 
 import java.io.IOException;
@@ -61,8 +61,7 @@ public class MultipleMonitors {
         // Load File Script
         URL multipleMonitorsUri = MultipleMonitors.class.getResource("booleanmonitor.mls");
         String multipleMonitorsPath = Paths.get(multipleMonitorsUri.toURI()).toString();
-        ScriptLoader scriptLoader = new ScriptLoader();
-        MoonLightScript moonLightScript = scriptLoader.loadFile(multipleMonitorsPath);
+        MoonLightScript moonLightScript = ScriptLoader.loaderFromFile(multipleMonitorsPath).getScript();
         TemporalScriptComponent<?> booleanMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
 
@@ -87,8 +86,7 @@ public class MultipleMonitors {
                 "formula main = globally ( x - y );\n";
         //@formatter:on
         // Load script
-        ScriptLoader scriptLoader = new ScriptLoader();
-        MoonLightScript moonLightScript = scriptLoader.compileScript(script);
+        MoonLightScript moonLightScript = ScriptLoader.loaderFromCode(script).getScript();
         // Choose the monitor
         TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
@@ -105,7 +103,7 @@ public class MultipleMonitors {
                 "domain boolean;\n" +
                 "formula globally ( x > y );\n";
 
-        moonLightScript = scriptLoader.compileScript(script);
+        moonLightScript = ScriptLoader.loaderFromCode(script).getScript();
         // Choose the monitor
 
         // Choose the monitor

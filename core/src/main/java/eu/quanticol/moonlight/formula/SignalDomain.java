@@ -20,6 +20,9 @@
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.signal.DataHandler;
+import eu.quanticol.moonlight.signal.Signal;
+
+import java.util.function.BiFunction;
 
 public interface SignalDomain<R> extends Semiring<R> {
 	
@@ -50,4 +53,24 @@ public interface SignalDomain<R> extends Semiring<R> {
 	R computeGreaterOrEqualThan(double v1, double v2);
 
 	DataHandler<R> getDataHandler();
+
+	static <S> BiFunction<Double, Double,S> getOperator(SignalDomain<S> domain, String op) {
+		if ("<".equals(op)) {
+			return domain::computeLessThan;
+		}
+		if ("<=".equals(op)) {
+			return domain::computeLessOrEqualThan;
+		}
+		if ("==".equals(op)) {
+			return domain::computeEqualTo;
+		}
+		if (">=".equals(op)) {
+			return domain::computeGreaterOrEqualThan;
+		}
+		if (">".equals(op)) {
+			return domain::computeGreaterThan;
+		}
+		return (x,y) -> domain.min();
+	}
+
 }

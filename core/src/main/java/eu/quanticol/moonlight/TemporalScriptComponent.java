@@ -30,47 +30,31 @@ import eu.quanticol.moonlight.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.function.BiFunction;
 
 /**
  * An instance of this class an be used to instantiate a monitor of given property.
  */
 public class TemporalScriptComponent<S> {
 
-    private final String name;
-    private final RecordHandler signalRecordHandler;
-    private final RecordHandler parameters;
-    private final Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder;
+    private final TemporalMonitorDefinition definition;
     private final SignalDomain<S> domain;
 
     /**
      * Create a new TemporalScriptComponent
-     * @param name property name.
-     * @param signalRecordHandler signal input data handler.
-     * @param domain signal domain.
-     * @param parameters parameters that can be used to instantiate.
-     * @param builder function used to build the monitor.
+     * @param definition temporal monitor definition.
+     * @param domain     domain of resulting signal.
      */
-    public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
-                                   SignalDomain<S> domain,
-                                   RecordHandler parameters,
-                                   Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder) {
+    public TemporalScriptComponent(TemporalMonitorDefinition definition,
+                                   SignalDomain<S> domain) {
         super();
-        this.name = name;
-        this.signalRecordHandler = signalRecordHandler;
+        this.definition = definition;
         this.domain = domain;
-        this.parameters = parameters;
-        this.builder = builder;
     }
 
-    public TemporalScriptComponent(String name, RecordHandler signalRecordHandler,
-                                   SignalDomain<S> domain,
-                                   Function<MoonLightRecord, TemporalMonitor<MoonLightRecord, S>> builder) {
-        this(name,signalRecordHandler,domain,null,builder);
-    }
-
-        public String getName() {
-        return name;
+    public String getName() {
+        return definition.getName();
     }
 
     /**
@@ -79,11 +63,7 @@ public class TemporalScriptComponent<S> {
      * @return a monitor.
      */
     public TemporalMonitor<MoonLightRecord, S> getMonitorFromString(String ... values) {
-        if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromStringArray(values));
-        } else {
-            return builder.apply(null);
-        }
+        return definition.getMonitorFromString(domain, values);
     }
 
     /**
@@ -92,11 +72,7 @@ public class TemporalScriptComponent<S> {
      * @return a monitor.
      */
     public TemporalMonitor<MoonLightRecord, S> getMonitorFromDouble(double ... values) {
-        if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromDoubleArray(values));
-        } else {
-            return builder.apply(null);
-        }
+        return definition.getMonitorFromDouble(domain, values);
     }
 
     /**
@@ -105,11 +81,7 @@ public class TemporalScriptComponent<S> {
      * @return a monitor.
      */
     public TemporalMonitor<MoonLightRecord, S> getMonitorFromObject(Object ... values) {
-        if (this.parameters != null && this.parameters.size() > 0 && values.length > 0) {
-            return builder.apply(parameters.fromObjectArray(values));
-        } else {
-            return builder.apply(null);
-        }
+        return definition.getMonitorFromObject(domain, values);
     }
 
     /**
@@ -185,7 +157,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result as an array of doubles.
      */
     public double[][] monitorToArray(double[] time, String[][] signal, String... values) {
-        return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+        return monitorToArray(RecordHandler.buildTemporalSignal(definition.getSignalRecordHandler(), time, signal), values);
     }
 
     /**
@@ -197,7 +169,7 @@ public class TemporalScriptComponent<S> {
      * @return monitor result as an array of doubles.
      */
     public double[][] monitorToArray(double[] time, double[][] signal, double ... values) {
-        return monitorToArray(RecordHandler.buildTemporalSignal(signalRecordHandler, time, signal), values);
+        return monitorToArray(RecordHandler.buildTemporalSignal(definition.getSignalRecordHandler(), time, signal), values);
     }
 
     public void monitorToFile(TemporalSignalWriter writer, File output, Signal<MoonLightRecord> input, String ... values) throws IOException {
@@ -206,15 +178,15 @@ public class TemporalScriptComponent<S> {
     }
 
     public void monitor(TemporalSignalReader reader, File input, TemporalSignalWriter writer, File output, String ... values) throws IOException, IllegalFileFormatException {
-        monitorToFile(writer, output, reader.load(signalRecordHandler, input), values);
+        monitorToFile(writer, output, reader.load(definition.getSignalRecordHandler(), input), values);
     }
 
     public String getInfo() {
-       return getName();
+       return getName()+ Arrays.toString(getVariables());
     }
 
     public String[] getVariables() {
-        return signalRecordHandler.getVariables();
+        return definition.getArguments().getVariables();
     }
 
 }

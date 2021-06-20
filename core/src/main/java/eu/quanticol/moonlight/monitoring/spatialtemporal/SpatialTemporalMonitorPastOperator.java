@@ -22,7 +22,7 @@ public class SpatialTemporalMonitorPastOperator<E,S,T> implements SpatialTempora
 	private T init;
 
 	public SpatialTemporalMonitorPastOperator(SpatialTemporalMonitor<E, S, T> m, Interval interval, BiFunction<T,T,T> op,
-											  T init) {
+                                              T init) {
 		this.m = m;
 		this.interval = interval;
 		this.op = op;

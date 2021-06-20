@@ -20,7 +20,7 @@ public interface LocationService<V> {
 	boolean isEmpty();
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-                                                                                    String[][][][] graph) {
+																					String[][][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph[i]));
@@ -29,14 +29,14 @@ public interface LocationService<V> {
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double time,
-                                                                                    String[][][] graph) {
+																					String[][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph));
 		return toReturn;
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-                                                                                    double[][][][] graph) {
+																					double[][][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph[i]));
@@ -45,14 +45,14 @@ public interface LocationService<V> {
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double time,
-                                                                                    double[][][] graph) {
+																					double[][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph));
 		return toReturn;
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-                                                                                  String[][][] graph) {
+																				  String[][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph[i]));
@@ -61,14 +61,14 @@ public interface LocationService<V> {
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double time,
-                                                                                  String[][] graph) {
+																				  String[][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph));
 		return toReturn;
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-                                                                                  double[][][] graph) {
+																				  double[][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph[i]));
@@ -77,7 +77,7 @@ public interface LocationService<V> {
 	}
 
 	static LocationService<MoonLightRecord> buildLocationServiceFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double time,
-                                                                                  double[][] graph) {
+																				  double[][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		toReturn.add(time, SpatialModel.buildSpatialModelFromAdjacencyList(locations,edgeRecordHandler,graph));
 		return toReturn;

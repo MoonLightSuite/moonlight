@@ -33,7 +33,7 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
 
 
     public RecordHandler(DataHandler<?>... varTypes) {
-        this(null, varTypes);
+        this(new HashMap<>(), varTypes);
     }
 
     public RecordHandler(Map<String, Integer> variableIndex, DataHandler<?>... varTypes) {
@@ -66,6 +66,10 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
         return build(data);
     }
 
+    public MoonLightRecord fromDoubleArray(Double[] values) {
+        return fromDoubleArray(values,0, values.length);
+    }
+
     public MoonLightRecord fromDoubleArray(double ... values) {
         return fromDoubleArray(values,0,values.length);
     }
@@ -81,6 +85,16 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
         return build(data);
     }
 
+    public MoonLightRecord fromDoubleArray(Double[] values, int from, int to) {
+        if ((to-from) != handlers.length) {
+            throw new IllegalArgumentException("Wrong data size! (Expected " + handlers.length + " is " + (to-from));
+        }
+        Object[] data = new Object[handlers.length];
+        for (int i=0 ; i<handlers.length ; i++) {
+            data[i] = handlers[i].fromDouble(values[i+from]);
+        }
+        return build(data);
+    }
 
     private MoonLightRecord build(Object[] values) {
         if (values.length != handlers.length) {
@@ -309,8 +323,8 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
     }
 
     @Override
-    public double doubleOf(MoonLightRecord record) {
-        throw new IllegalArgumentException();
+    public double doubleOf(Object record) {
+        return Double.NaN;
     }
 
     @Override
@@ -331,5 +345,9 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
     @Override
     public boolean checkDoubleValue(double value) {
         return false;
+    }
+
+    public boolean isAVariable(String name) {
+        return variables.containsKey(name);
     }
 }
