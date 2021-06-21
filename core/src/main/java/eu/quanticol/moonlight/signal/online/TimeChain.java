@@ -111,6 +111,10 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         this.list = new ArrayList<>(segments);
     }
 
+    public T getStart() {
+        return this.getFirst().getStart();
+    }
+
     public TimeChain<T, V> copy() {
         return new TimeChain<>(list, end);
     }
