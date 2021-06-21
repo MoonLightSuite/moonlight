@@ -73,7 +73,7 @@ public class AFCSimulatorRunner {
 
         try {
             String destination = localPath() + OUTPUT_NAME;
-            LOG.info("Saving output in: " + destination);
+            LOG.info(() -> "Saving output in: " + destination);
             new DataWriter<>(destination, FileType.CSV, st).write(data);
         } catch (IOException e) {
             e.printStackTrace();

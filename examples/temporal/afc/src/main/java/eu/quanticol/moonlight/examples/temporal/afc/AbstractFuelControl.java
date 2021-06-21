@@ -48,11 +48,10 @@ public class AbstractFuelControl {
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
-        String id = String.valueOf((int) LAST_TIME);
-        repeatedRunner("In-Order M", s -> moonlightChain(false, id, s),
+        repeatedRunner("In-Order M", s -> moonlightChain(false, LAST_TIME, s),
                        stopwatches, output);
 
-        repeatedRunner("Out-Of-Order M", s -> moonlight(true, id, s),
+        repeatedRunner("Out-Of-Order M", s -> moonlight(true, LAST_TIME, s),
                        stopwatches, output);
 
         repeatedRunner("Breach",

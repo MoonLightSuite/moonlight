@@ -49,17 +49,16 @@ public class AFCMoonlightRunner {
     private static final List<List<SegmentInterface<
             Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
+    private static final boolean PLOTTING = true;
 
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
-        String id = String.valueOf((int) LAST_TIME);
 
-        repeatedRunner("In-Order " + id,
-                       s -> moonlight(false, id, stopwatches),
+        repeatedRunner("In-Order " + LAST_TIME,
+                       s -> moonlight(false, LAST_TIME, stopwatches),
                        stopwatches, output);
-        repeatedRunner("OO-Order " + id, s -> moonlight(true, id, stopwatches),
+        repeatedRunner("OO-Order " + LAST_TIME, s -> moonlight(true, LAST_TIME, stopwatches),
                        stopwatches, output);
 
         LOG.info("------> Experiment results (sec):");
@@ -73,28 +72,35 @@ public class AFCMoonlightRunner {
             LOG.severe("Results don't match");
     }
 
-
-
-    static void moonlight(boolean shuffle, String id, List<Stopwatch> s)
-    {
-            List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-                    moonlightColl = execMoonlight(shuffle, id, s);
-            List<SegmentInterface<Double, AbstractInterval<Double>>>
-                    moonlight = moonlightColl.get(moonlightColl.size() - 1);
-
-            results.add(moonlight);
-
-            List<List<Double>> mRes = handleData(moonlightColl);
-
-            List<Double> mStart = mRes.get(0);
-            List<Double> mEnd = mRes.get(1);
-
-            if (PLOTTING)
-                plt.plot(mStart, mEnd, "Moonlight");
+    private static String intToString(Number v) {
+        return String.valueOf(v.intValue());
     }
 
-    static void moonlightChain(boolean shuffle, String id, List<Stopwatch> s)
+
+
+    static void moonlight(boolean shuffle, Number lastT, List<Stopwatch> s)
     {
+        String id = intToString(lastT);
+        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+                moonlightColl = execMoonlight(shuffle, id, s);
+        List<SegmentInterface<Double, AbstractInterval<Double>>>
+                moonlight = moonlightColl.get(moonlightColl.size() - 1);
+
+        results.add(moonlight);
+
+        List<List<Double>> mRes = handleData(moonlightColl);
+
+        List<Double> mStart = mRes.get(0);
+        List<Double> mEnd = mRes.get(1);
+
+        if (PLOTTING)
+            plt.plot(mStart, mEnd, "Moonlight");
+    }
+
+    static void moonlightChain(boolean shuffle, Number lastT,
+                               List<Stopwatch> s)
+    {
+        String id = intToString(lastT);
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 moonlightColl = execChainMoonlight(shuffle, id, s);
         List<SegmentInterface<Double, AbstractInterval<Double>>>
