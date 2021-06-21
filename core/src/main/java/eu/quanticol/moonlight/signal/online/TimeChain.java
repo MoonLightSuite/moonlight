@@ -62,12 +62,12 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     /**
      * Internal representation of the chain
      */
-    private final List<SegmentInterface<T, V>> list;
+    private final List<SegmentInterface<T, V>> segments;
 
     /**
      * Last time instant of definition of the chain
      */
-    protected final T end;
+    private final T end;
 
     /**
      * @deprecated now it should always be non-empty
@@ -77,7 +77,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     @Deprecated
     public TimeChain(T end) {
         this.end = end;
-        this.list = new ArrayList<>();
+        this.segments = new ArrayList<>();
     }
 
     /**
@@ -89,8 +89,8 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
             throw new IllegalArgumentException(ENDING_COND);
         
         this.end = end;
-        this.list = new ArrayList<>();
-        list.add(element);
+        this.segments = new ArrayList<>();
+        segments.add(element);
     }
 
     /**
@@ -106,46 +106,65 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         if(end.compareTo(segments.get(segments.size() - 1).getStart()) < 0)
             throw new IllegalArgumentException(ENDING_COND);
 
-
         this.end = end;
-        this.list = new ArrayList<>(segments);
+        this.segments = new ArrayList<>(segments);
     }
 
-    public T getStart() {
-        return this.getFirst().getStart();
+    /**
+     * Adds a segment to the TimeChain.
+     * @param e segment to add
+     * @return true as specified by {@link List#add(Object)}
+     * @throws IllegalArgumentException when monotonicity
+     *                                         or ending condition are violated.
+     */
+    public boolean add(SegmentInterface<T, V> e) {
+        if(end.compareTo(e.getStart()) > 0) {
+            checkMonotonicity(e.getStart());
+            return segments.add(e);
+        } else
+            throw new IllegalArgumentException(ENDING_COND);
     }
 
+    /**
+     * Checks if monotonicity is violated at time t
+     * @param t new time value to check
+     */
+    private void checkMonotonicity(T t) {
+        if (!segments.isEmpty() &&
+                segments.get(segments.size() - 1).getStart().compareTo(t) > 0)
+            throw new IllegalArgumentException(MONOTONICITY);
+    }
+
+    /**
+     * Shallow copy of the chain
+     * @return a new TimeChain defined on the same data
+     */
     public TimeChain<T, V> copy() {
-        return new TimeChain<>(list, end);
-    }
-
-    public List<SegmentInterface<T, V>> toList() {
-        return list;
-    }
-
-    public int size() {
-        return list.size();
-    }
-
-    public Stream<SegmentInterface<T, V>> stream() {
-        return list.stream();
-    }
-
-    public TimeChain<T,V> subChain(int from, int to, T end) {
-        List<SegmentInterface<T,V>> segments = list.subList(from, to);
         return new TimeChain<>(segments, end);
     }
 
-    public SegmentInterface<T, V> getFirst() {
-        return list.get(0);
+    /**
+     * Generates a sub-chain of the current chain.
+     * <em>WARNING:</em> Similarly to {@link List#subList(int, int)},
+     * the new chain shares the data structure with the current one, therefore
+     * modifications will be reflected to both.
+     *
+     * @param from starting segment's index of the new chain
+     * @param to ending segment's index of the new chain
+     * @param end ending time of the new chain
+     * @return a new chain on current data, defined on the provided bounds
+     */
+    public TimeChain<T,V> subChain(int from, int to, T end) {
+        List<SegmentInterface<T,V>> newList = this.segments.subList(from, to);
+        return new TimeChain<>(newList, end);
     }
 
-    public SegmentInterface<T, V> get(int index) {
-        return list.get(index);
-    }
-
+    /**
+     * Returns the last element of the chain
+     * @return last element of the chain
+     */
     public SegmentInterface<T, V> getLast() {
-        return list.get(list.size() - 1);
+        return segments.get(segments.size() - 1);
     }
 
     public ChainIterator<SegmentInterface<T, V>> chainIterator() {
@@ -153,7 +172,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     }
 
     public ChainIterator<SegmentInterface<T, V>> chainIterator(int index) {
-        if (index < 0 || index > list.size())
+        if (index < 0 || index > segments.size())
             throw new IndexOutOfBoundsException("Index: " + index);
         return new ChainListItr(index);
     }
@@ -161,17 +180,17 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     @NotNull
     @Override
     public Iterator<SegmentInterface<T, V>> iterator() {
-        return list.iterator();
+        return segments.iterator();
     }
 
     @Override
     public void forEach(Consumer<? super SegmentInterface<T, V>> action) {
-        list.forEach(action);
+        segments.forEach(action);
     }
 
     @Override
     public Spliterator<SegmentInterface<T, V>> spliterator() {
-        return list.spliterator();
+        return segments.spliterator();
     }
 
     @Override
@@ -179,22 +198,57 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         if (this == o) return true;
         if (!(o instanceof TimeChain)) return false;
         TimeChain<?, ?> timeChain = (TimeChain<?, ?>) o;
-        return list.equals(timeChain.list) && end.equals(timeChain.end);
+        return segments.equals(timeChain.segments) && end.equals(timeChain.end);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(list, end);
+        return Objects.hash(segments, end);
     }
 
-    private class ChainListItr implements
-            ChainIterator<SegmentInterface<T, V>>
+    public Stream<SegmentInterface<T, V>> stream() {
+        return segments.stream();
+    }
+
+    public T getEnd() {
+        return end;
+    }
+
+    public List<SegmentInterface<T, V>> toList() {
+        return segments;
+    }
+
+    public int size() {
+        return segments.size();
+    }
+
+    public SegmentInterface<T, V> getFirst() {
+        return segments.get(0);
+    }
+
+    public T getStart() {
+        return this.getFirst().getStart();
+    }
+
+    public SegmentInterface<T, V> get(int index) {
+        return segments.get(index);
+    }
+
+    private static final String MONOTONICITY =
+            "Violating monotonicity: The chain must be in monotonic time order";
+
+    private static final String ENDING_COND =
+            "Violating ending condition: The chain must either end " +
+            "after the last segment or after the previous ending";
+
+
+    private class ChainListItr implements ChainIterator<SegmentInterface<T, V>>
     {
         private final ListIterator<SegmentInterface<T, V>> itr;
         private boolean changed;
 
         public ChainListItr(int index) {
-            itr = list.listIterator(index);
+            itr = segments.listIterator(index);
             changed = false;
         }
 
@@ -216,7 +270,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
                 itr.next();         // the pointer to super.lastReturned
                 return e;
             } else
-                throw new NoSuchElementException("There is no next element!");
+                throw new NoSuchElementException(NO_NEXT);
         }
 
         /**
@@ -230,8 +284,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
                 itr.next();
                 return e;
             } else
-                throw new NoSuchElementException("There is no previous " +
-                                                                    "element!");
+                throw new NoSuchElementException(NO_PREV);
         }
 
         /**
@@ -314,27 +367,9 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         public int previousIndex() {
             return itr.previousIndex();
         }
+
+        private static final String NO_NEXT = "There is no next element!";
+        private static final String NO_PREV = "There is no previous element!";
     }
-
-    public boolean add(SegmentInterface<T, V> e) {
-        if(this.end.compareTo(e.getStart()) > 0) {
-            if (!list.isEmpty() &&
-                    list.get(list.size() - 1).getStart().compareTo(e.getStart()) > 0)
-                throw new IllegalArgumentException(MONOTONICITY);
-            return list.add(e);
-        } else
-            throw new IllegalArgumentException(ENDING_COND);
-    }
-
-    public T getEnd() {
-        return end;
-    }
-
-    private static final String MONOTONICITY =
-            "Violating monotonicity: The chain must be in monotonic time order";
-
-    private static final String ENDING_COND =
-            "Violating ending condition: The chain must either end " +
-                    "after the last segment or after the previous ending";
 }
 
