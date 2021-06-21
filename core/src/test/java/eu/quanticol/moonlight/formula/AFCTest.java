@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.formula;
 
-import com.google.common.math.DoubleMath;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
@@ -109,9 +108,10 @@ class AFCTest {
     private boolean fuzzyEquals(AbstractInterval<Double>a,
                                 AbstractInterval<Double>b, double tolerance)
     {
-        return DoubleMath.fuzzyEquals(a.getStart(), b.getStart(), tolerance)
-                &&
-               DoubleMath.fuzzyEquals(a.getEnd(), b.getEnd(), tolerance);
+//        return DoubleMath.fuzzyEquals(a.getStart(), b.getStart(), tolerance)
+//                &&
+//               DoubleMath.fuzzyEquals(a.getEnd(), b.getEnd(), tolerance);
+        return a.equals(b);
     }
 
 

@@ -31,4 +31,13 @@ public class TemporalComputation {
         return new SlidingWindow<>(s, u, opHorizon, op).run();
     }
 
+    public static <R>
+    List<TimeChain<Double, R>> slidingWindow(TimeChain<Double, R> s,
+                                             TimeChain<Double, R> us,
+                                             Interval opHorizon,
+                                             BinaryOperator<R> op)
+    {
+        return new SlidingWindow<>(s, us, opHorizon, op).runChain();
+    }
+
 }

@@ -86,18 +86,32 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
                                                              horizon, op));
         }
 
-        for(Update<Double, AbstractInterval<R>> u: updates) {
-            rho.refine(u);
-        }
+        updates.forEach(rho::refine);
 
         return updates;
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(TimeChain<Double, V> updates) {
-        return null;
-    }
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+            TimeChain<Double, V> updates)
+    {
+        List<TimeChain<Double, AbstractInterval<R>>> argUpdates =
+                argumentMonitor.monitor(updates);
 
+        TimeChain<Double, AbstractInterval<R>> s =
+                argumentMonitor.getResult().getSegments();
+
+        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+
+        for(TimeChain<Double, AbstractInterval<R>> argU: argUpdates) {
+            output.addAll(TemporalComputation.slidingWindow(s, argU,
+                    horizon, op));
+        }
+
+        output.forEach(rho::refine);
+
+        return output;
+    }
     @Override
     public TimeSignal<Double, AbstractInterval<R>> getResult() {
         return rho;

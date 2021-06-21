@@ -21,13 +21,11 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.signal.online.ChainIterator;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -56,6 +54,49 @@ public class SlidingWindow<R> {
         // as updating before time 0 doesn't make any sense.
         uStart = u.getStart() - h.getEnd() > 0 ? u.getStart() - h.getEnd() : 0;
         uEnd = u.getEnd() - h.getStart() > 0 ? u.getEnd() - h.getStart() : 0;
+    }
+
+    public SlidingWindow(TimeChain<Double, R> arg, TimeChain<Double, R> us,
+                         Interval opHorizon, BinaryOperator<R> op)
+    {
+        this.arg = arg;
+        this.op = op;
+        h = opHorizon;
+        wSize = h.getEnd() - h.getStart();
+        w = new Window<>(0.0, h.getStart());
+
+        // We define the resulting update horizon, cut at 0,
+        // as updating before time 0 doesn't make any sense.
+        uStart = us.getFirst().getStart() - h.getEnd() > 0 ?
+                                    us.getFirst().getStart() - h.getEnd() : 0;
+        uEnd = us.getEnd() - h.getStart() > 0 ? us.getEnd() - h.getStart() : 0;
+    }
+
+    /**
+     * Primary entry point of the Sliding Window, it loops over the
+     * input signal and adds eligible segments to the sliding window.
+     * @return list of updates to the robustness signal
+     */
+    public List<TimeChain<Double, R>> runChain() {
+        if(uEnd != 0.0) {
+            var itr = arg.chainIterator();
+
+            while(itr.hasNext()) {
+                add(itr.next());
+            }
+
+            collectUpdates();
+        }
+
+        List<SegmentInterface<Double, R>> ups =
+                updates.stream()
+                       .map(x -> new TimeSegment<>(x.getStart(), x.getValue()))
+                       .collect(Collectors.toList());
+
+        List<TimeChain<Double, R>> chain = new ArrayList<>();
+        chain.add(new TimeChain<>(ups, uEnd));
+
+        return chain;
     }
 
     /**

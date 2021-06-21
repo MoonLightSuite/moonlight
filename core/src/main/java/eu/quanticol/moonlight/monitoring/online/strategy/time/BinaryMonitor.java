@@ -106,7 +106,9 @@ public class BinaryMonitor<V, R extends Comparable<R>>
      * @return a list of updates to the interpretation signal
      */
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(TimeChain<Double, V> updates) {
+    public List<TimeChain<Double, AbstractInterval<R>>>
+    monitor(TimeChain<Double, V> updates)
+    {
         List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
 
         List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =

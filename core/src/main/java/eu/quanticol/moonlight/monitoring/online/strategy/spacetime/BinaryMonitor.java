@@ -101,16 +101,32 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
-        return null;
-    }
+    public List<TimeChain<Double, List<AbstractInterval<R>>>>
+    monitor(TimeChain<Double, List<V>> updates)
+    {
+        List<TimeChain<Double, List<AbstractInterval<R>>>> output =
+                new ArrayList<>();
 
-//    @Override
-//    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
-//            TimeChain<Double, List<V>> updates)
-//    {
-//        return null;
-//    }
+        List<TimeChain<Double, List<AbstractInterval<R>>>> firstArgUps =
+                firstArg.monitor(updates);
+        List<TimeChain<Double, List<AbstractInterval<R>>>> secondArgUps =
+                secondArg.monitor(updates);
+
+        TimeSignal<Double, List<AbstractInterval<R>>> s1 = firstArg.getResult();
+        TimeSignal<Double, List<AbstractInterval<R>>> s2 = secondArg.getResult();
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
+            output.add(BooleanComputation.binarySequence(s2, argU, opFunction));
+        }
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
+            output.add(BooleanComputation.binarySequence(s1, argU, opFunction));
+        }
+
+        output.forEach(rho::refine);
+
+        return output;
+    }
 
     @Override
     public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
