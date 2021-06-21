@@ -21,33 +21,67 @@
 package eu.quanticol.moonlight.signal.online;
 
 
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /**
- * Interface that extends the ListIterator interface with some handy methods.
+ * Iterator that extends the ListIterator interface with some handy methods.
+ *
+ * TODO: Mutators should check the order is kept by using Comparable
  *
  * @see TimeChain#chainIterator()
  */
-public interface ChainIterator<E> extends ListIterator<E> {
+public class ChainIterator<E> implements ListIterator<E> {
+    private final ListIterator<E> itr;
+    private boolean changed;
+
+    public ChainIterator(List<E> list, int index) {
+        itr = list.listIterator(index);
+        changed = false;
+    }
+
+    public ChainIterator(List<E> list) {
+        this(list, 0);
+    }
 
     /**
-     * @return <code>true</code> if some elements of the list mutated.
+     * @return <code>true</code> if the list didn't mutate during iteration.
      *         <code>false</code> otherwise.
      */
-    boolean hasChanged();
+    public boolean noEffects() {
+        return !changed;
+    }
 
     /**
      * @return the next element of the iterator by keeping current position
      * @throws NoSuchElementException when there is no such element
      */
-    E peekNext() throws NoSuchElementException;
+    public E peekNext() {
+        if (hasNext()) {
+            E e = next();
+            previous();
+            if(hasPrevious()) {
+                previous();     // This repetition is done to also bring
+                next();         // the pointer to super.lastReturned
+            }
+            return e;
+        } else
+            throw new NoSuchElementException(NO_NEXT);
+    }
 
     /**
      * @return the previous element of the iterator by keeping current position
      * @throws NoSuchElementException when there is no such element
      */
-    E peekPrevious() throws NoSuchElementException;
+    public E peekPrevious() {
+        if (hasPrevious()) {
+            E e = previous();
+            next();
+            return e;
+        } else
+            throw new NoSuchElementException(NO_PREV);
+    }
 
     /**
      * Fail-safe method for fetching data from next element (if exists).
@@ -55,7 +89,13 @@ public interface ChainIterator<E> extends ListIterator<E> {
      * @param other default value in case of failure
      * @return the next value if present, otherwise the other one.
      */
-    E tryPeekNext(E other);
+    public E tryPeekNext(E other)
+    {
+        if(hasNext())
+            return peekNext();
+        else
+            return other;
+    }
 
     /**
      * Fail-safe method for fetching data from previous element (if exists).
@@ -63,6 +103,65 @@ public interface ChainIterator<E> extends ListIterator<E> {
      * @param other default value in case of failure
      * @return the previous value if present, otherwise the other one.
      */
-    E tryPeekPrevious(E other);
+    public E tryPeekPrevious(E other)
+    {
+        if(hasPrevious())
+            return peekPrevious();
+        else
+            return other;
+    }
+
+    // ---------------------------- MUTATORS ---------------------------- //
+    @Override
+    public void remove() {
+        itr.remove();
+        changed = true;
+    }
+
+    @Override
+    public void set(E e) {
+        itr.set(e);
+        changed = true;
+    }
+
+    @Override
+    public void add(E e) {
+        itr.add(e);
+        changed = true;
+    }
+    // ------------------------- END OF MUTATORS ------------------------ //
+
+    @Override
+    public boolean hasNext() {
+        return itr.hasNext();
+    }
+
+    @Override
+    public boolean hasPrevious() {
+        return itr.hasPrevious();
+    }
+
+    @Override
+    public int nextIndex() {
+        return itr.nextIndex();
+    }
+
+    @Override
+    public int previousIndex() {
+        return itr.previousIndex();
+    }
+
+    @Override
+    public E next() {
+        return itr.next();
+    }
+
+    @Override
+    public E previous() {
+        return itr.previous();
+    }
+
+    private static final String NO_NEXT = "There is no next element!";
+    private static final String NO_PREV = "There is no previous element!";
 }
 

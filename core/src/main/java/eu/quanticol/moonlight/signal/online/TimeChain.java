@@ -84,12 +84,12 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * It defines a chain of time segments that ends at some time instant
      * @param end the time instant from which the segment chain is not defined.
      */
-    public TimeChain(SegmentInterface<T, V> element, T end) {
+    public TimeChain(@NotNull SegmentInterface<T, V> element, @NotNull T end) {
         if(end.compareTo(element.getStart()) < 0)
             throw new IllegalArgumentException(ENDING_COND);
         
         this.end = end;
-        this.segments = new ArrayList<>();
+        segments = new ArrayList<>();
         segments.add(element);
     }
 
@@ -102,7 +102,11 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * @param segments chain of segments, passed as list
      * @param end      last time value of the new chain
      */
-    public TimeChain(List<SegmentInterface<T,V>> segments, T end) {
+    public TimeChain(@NotNull List<SegmentInterface<T,V>> segments,
+                     @NotNull T end)
+    {
+        if(segments.isEmpty())
+            throw new IllegalArgumentException("Invalid Segment list");
         if(end.compareTo(segments.get(segments.size() - 1).getStart()) < 0)
             throw new IllegalArgumentException(ENDING_COND);
 
@@ -115,7 +119,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * @param e segment to add
      * @return true as specified by {@link List#add(Object)}
      * @throws IllegalArgumentException when monotonicity
-     *                                         or ending condition are violated.
+     *                                    or ending condition are violated.
      */
     public boolean add(SegmentInterface<T, V> e) {
         if(end.compareTo(e.getStart()) > 0) {
@@ -174,7 +178,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     public ChainIterator<SegmentInterface<T, V>> chainIterator(int index) {
         if (index < 0 || index > segments.size())
             throw new IndexOutOfBoundsException("Index: " + index);
-        return new ChainListItr(index);
+        return new ChainIterator<>(segments, index);
     }
 
     @NotNull
@@ -240,136 +244,5 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     private static final String ENDING_COND =
             "Violating ending condition: The chain must either end " +
             "after the last segment or after the previous ending";
-
-
-    private class ChainListItr implements ChainIterator<SegmentInterface<T, V>>
-    {
-        private final ListIterator<SegmentInterface<T, V>> itr;
-        private boolean changed;
-
-        public ChainListItr(int index) {
-            itr = segments.listIterator(index);
-            changed = false;
-        }
-
-        @Override
-        public boolean hasChanged() {
-            return changed;
-        }
-
-        /**
-         * @return the next element of the iterator by returning to
-         *         the current position (or not moving at all)
-         */
-        @Override
-        public SegmentInterface<T, V> peekNext() {
-            if (itr.hasNext()) {
-                SegmentInterface<T, V> e = itr.next();
-                itr.previous();
-                itr.previous();     // This repetition is done to also bring
-                itr.next();         // the pointer to super.lastReturned
-                return e;
-            } else
-                throw new NoSuchElementException(NO_NEXT);
-        }
-
-        /**
-         * @return the previous element of the iterator by returning to
-         *         the current position (or not moving at all)
-         */
-        @Override
-        public SegmentInterface<T, V> peekPrevious() {
-            if (itr.hasPrevious()) {
-                SegmentInterface<T, V> e = itr.previous();
-                itr.next();
-                return e;
-            } else
-                throw new NoSuchElementException(NO_PREV);
-        }
-
-        /**
-         * Fail-safe method for fetching data from next element (if exists).
-         *
-         * @param other default value in case of failure
-         * @return the next value if present, otherwise the default one.
-         */
-        @Override
-        public SegmentInterface<T, V> tryPeekNext(SegmentInterface<T, V> other)
-        {
-            if(itr.hasNext())
-                return peekNext();
-            else
-                return other;
-        }
-
-        /**
-         * Fail-safe method for fetching data from previous element (if exists).
-         *
-         * @param other default value in case of failure
-         * @return the previous value if present, otherwise the default one.
-         */
-        @Override
-        public SegmentInterface<T, V> tryPeekPrevious(
-                SegmentInterface<T, V> other)
-        {
-            if(itr.hasPrevious())
-                return peekPrevious();
-            else
-                return other;
-        }
-
-        // ---------------------------- MUTATORS ---------------------------- //
-        @Override
-        public void remove() {
-            itr.remove();
-            changed = true;
-        }
-
-        @Override
-        public void set(SegmentInterface<T, V> e) {
-            itr.set(e);
-            changed = true;
-        }
-
-        @Override
-        public void add(SegmentInterface<T, V> e) {
-            itr.add(e);
-            changed = true;
-        }
-        // ------------------------- END OF MUTATORS ------------------------ //
-
-        @Override
-        public boolean hasNext() {
-            return itr.hasNext();
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return itr.hasPrevious();
-        }
-
-        @Override
-        public int nextIndex() {
-            return itr.nextIndex();
-        }
-
-        @Override
-        public SegmentInterface<T, V> next() {
-            return itr.next();
-        }
-
-        @Override
-        public SegmentInterface<T, V> previous() {
-            return itr.previous();
-        }
-
-        @Override
-        public int previousIndex() {
-            return itr.previousIndex();
-        }
-
-        private static final String NO_NEXT = "There is no next element!";
-        private static final String NO_PREV = "There is no previous element!";
-    }
 }
 

@@ -27,11 +27,14 @@ import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.signal.online.TimeChain;
+import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.*;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
@@ -90,6 +93,24 @@ public class AFCMoonlightRunner {
                 plt.plot(mStart, mEnd, "Moonlight");
     }
 
+    static void moonlightChain(boolean shuffle, String id, List<Stopwatch> s)
+    {
+        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+                moonlightColl = execChainMoonlight(shuffle, id, s);
+        List<SegmentInterface<Double, AbstractInterval<Double>>>
+                moonlight = moonlightColl.get(moonlightColl.size() - 1);
+
+        results.add(moonlight);
+
+        List<List<Double>> mRes = handleData(moonlightColl);
+
+        List<Double> mStart = mRes.get(0);
+        List<Double> mEnd = mRes.get(1);
+
+        if (PLOTTING)
+            plt.plot(mStart, mEnd, "Moonlight");
+    }
+
     static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
     execMoonlight(boolean shuffle, String id, List<Stopwatch> stopwatches)
     {
@@ -113,6 +134,43 @@ public class AFCMoonlightRunner {
         stopwatches.add(rec);
 
         return result;
+    }
+
+    static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    execChainMoonlight(boolean shuffle, String id, List<Stopwatch> stopwatches)
+    {
+        ParsingStrategy<double[][]> st = new RawTrajectoryExtractor(1);
+        FileType type = FileType.CSV;
+        double[] input = new DataReader<>(dataPath(id), type, st).read()[0];
+
+        List<Update<Double, Double>> updates = genUpdates(input, shuffle,
+                                                          SCALE, RND_SEED);
+        OnlineTimeMonitor<Double, Double> m = instrument();
+
+        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+                result = new ArrayList<>();
+
+        TimeChain<Double, Double> chain = updatesToTimeChain(updates);
+
+        // Moonlight execution recording...
+        Stopwatch rec = Stopwatch.start();
+        result.add(m.monitor(chain).getSegments().toList());
+        rec.stop();
+        stopwatches.add(rec);
+
+        return result;
+    }
+
+    // WARNING: we are assuming sequential updates
+    private static TimeChain<Double, Double> updatesToTimeChain(
+            List<Update<Double, Double>> updates)
+    {
+        List<SegmentInterface<Double, Double>> ups =
+                updates.stream()
+                        .map(u -> new TimeSegment<>(u.getStart(), u.getValue()))
+                        .collect(Collectors.toList());
+
+        return new TimeChain<>(ups, updates.get(updates.size() - 1).getEnd());
     }
 
 

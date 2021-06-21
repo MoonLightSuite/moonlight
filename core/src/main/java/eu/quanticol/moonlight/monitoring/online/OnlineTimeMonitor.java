@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.online.strategy.time.*;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 
@@ -56,6 +57,19 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
 
         if(update != null)
             m.monitor(update);
+
+        return m.getResult();
+    }
+
+    public TimeSignal<Double, AbstractInterval<R>>
+    monitor(TimeChain<Double, V> updates)
+    {
+
+        OnlineMonitor<Double, V, AbstractInterval<R>> m =
+                formula.accept(this, null);
+
+        if(updates != null)
+            m.monitor(updates);
 
         return m.getResult();
     }

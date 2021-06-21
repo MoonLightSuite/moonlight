@@ -33,6 +33,7 @@ import java.util.stream.IntStream;
 
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.*;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCMoonlightRunner.moonlight;
+import static eu.quanticol.moonlight.examples.temporal.afc.AFCMoonlightRunner.moonlightChain;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
 
 public class AbstractFuelControl {
@@ -42,13 +43,13 @@ public class AbstractFuelControl {
     private static final List<String> output = new ArrayList<>();
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
+    private static final boolean PLOTTING = true;
 
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
         String id = String.valueOf((int) LAST_TIME);
-        repeatedRunner("In-Order M", s -> moonlight(false, id, s),
+        repeatedRunner("In-Order M", s -> moonlightChain(false, id, s),
                        stopwatches, output);
 
         repeatedRunner("Out-Of-Order M", s -> moonlight(true, id, s),
@@ -61,6 +62,8 @@ public class AbstractFuelControl {
         LOG.info("------> Experiment results (sec):");
 
         output.forEach(LOG::info);
+
+        AFCSimulatorRunner.main(null);
 
         if(PLOTTING)
             plt.plot(Arrays.stream(input)

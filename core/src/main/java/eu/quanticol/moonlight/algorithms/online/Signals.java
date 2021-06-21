@@ -54,14 +54,15 @@ public class Signals {
                 current = itr.next();
             } else if(utr.hasNext()) {
                 u = nextUpdate(utr, updates.getEnd());
-                itr.previous();
                 current = itr.previous();
+                if(itr.hasPrevious())
+                    current = itr.previous();
                 prevV = itr.tryPeekPrevious(current).getValue();
             } else
                 break;
         }
 
-        return !itr.hasChanged();
+        return itr.noEffects();
     }
 
     public static <V> boolean refine(TimeChain<Double, V> s,
@@ -79,7 +80,7 @@ public class Signals {
             current = itr.next();
         }
 
-        return !itr.hasChanged();
+        return itr.noEffects();
     }
 
     private static <V> Update<Double, V>

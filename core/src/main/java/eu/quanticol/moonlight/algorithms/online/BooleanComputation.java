@@ -99,14 +99,14 @@ public class BooleanComputation {
 
     public static
     <T extends Comparable<T> & Serializable, R>
-    TimeChain<T, R> binarySequence(TimeSignal<T, R> s,
-                                         TimeChain<T, R> us,
-                                         BinaryOperator<R> op)
+    TimeChain<T, R> binarySequence(TimeChain<T, R> c1,
+                                   TimeChain<T, R> us,
+                                   BinaryOperator<R> op)
     {
         List<SegmentInterface<T, R>> updates = new ArrayList<>(us.size());
-        TimeChain<T, R> p1 = s.select(us.getFirst().getStart(), us.getEnd());
+        //TimeChain<T, R> c1 = s.select(us.getFirst().getStart(), us.getEnd());
 
-        rightApplySequence(p1, updates, op, us);  // TODO: this should be different for
+        rightApplySequence(c1, updates, op, us);  // TODO: this should be different for
                                                   //       left and right operands
 
         return new TimeChain<>(updates, us.getEnd());
@@ -116,14 +116,13 @@ public class BooleanComputation {
 
     public static
     <T extends Comparable<T> & Serializable, R>
-    List<Update<T, R>> binary(TimeSignal<T, R> s,
+    List<Update<T, R>> binary(TimeChain<T, R> c1,
                               Update<T, R> u,
                               BinaryOperator<R> op)
     {
-        List<Update<T, R>> updates = new ArrayList<>();
-        TimeChain<T, R> p1 = s.select(u.getStart(), u.getEnd());
+        List<Update<T, R>> updates;
 
-        rightApply(p1, updates, op, u);  // TODO: this should be different for
+        updates = rightApply(c1, op, u);  // TODO: this should be different for
                                            //       left and right operands
 
         return updates;
@@ -253,9 +252,10 @@ public class BooleanComputation {
 
     private static
     <T extends Comparable<T> & Serializable, R>
-    void rightApply(TimeChain<T, R> s, List<Update<T, R>> updates,
+    List<Update<T, R>> rightApply(TimeChain<T, R> s,
                     BinaryOperator<R> op, Update<T, R> u)
     {
+        List<Update<T, R>> updates = new ArrayList<>();
         ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
         SegmentInterface<T, R> curr;
         T nextTime;
@@ -263,17 +263,25 @@ public class BooleanComputation {
         while(itr.hasNext()) {
             curr = itr.next();
             nextTime = tryPeekNextStart(itr, s.getEnd());
+            exec(curr, u, nextTime, op, updates);
+        }
 
-            if(curr.getStart().compareTo(u.getEnd()) < 0
-                    && nextTime.compareTo(u.getStart()) >= 0)
-            {
-                T end = min(nextTime, u.getEnd());
-                T start = max(curr.getStart(), u.getStart());
-                if(!start.equals(end)) {
-                    Update<T, R> r = new Update<>(start, end,
-                            op.apply(u.getValue(), curr.getValue()));
-                    updates.add(r);
-                }
+        return updates;
+    }
+
+    private static <T extends Comparable<T> & Serializable, R>
+    void exec(SegmentInterface<T, R> curr, Update<T, R> u, T nextTime,
+              BinaryOperator<R> op, List<Update<T, R>> updates)
+    {
+        if(curr.getStart().compareTo(u.getEnd()) < 0
+                && nextTime.compareTo(u.getStart()) >= 0)
+        {
+            T end = min(nextTime, u.getEnd());
+            T start = max(curr.getStart(), u.getStart());
+            if(!start.equals(end)) {
+                Update<T, R> r = new Update<>(start, end,
+                        op.apply(u.getValue(), curr.getValue()));
+                updates.add(r);
             }
         }
     }

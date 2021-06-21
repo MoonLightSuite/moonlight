@@ -88,11 +88,15 @@ public class BinaryMonitor<V, R extends Comparable<R>>
                                                         secondArg.getResult();
 
         for(Update<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
-            updates.addAll(BooleanComputation.binary(s2, argU, opFunction));
+            TimeChain<Double, List<AbstractInterval<R>>> c2 =
+                    s2.select(argU.getStart(), argU.getEnd());
+            updates.addAll(BooleanComputation.binary(c2, argU, opFunction));
         }
 
         for(Update<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
-            updates.addAll(BooleanComputation.binary(s1, argU, opFunction));
+            TimeChain<Double, List<AbstractInterval<R>>> c1 =
+                s1.select(argU.getStart(), argU.getEnd());
+            updates.addAll(BooleanComputation.binary(c1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);
@@ -116,11 +120,15 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         TimeSignal<Double, List<AbstractInterval<R>>> s2 = secondArg.getResult();
 
         for(TimeChain<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
-            output.add(BooleanComputation.binarySequence(s2, argU, opFunction));
+            TimeChain<Double, List<AbstractInterval<R>>> c2 =
+                    s2.select(argU.getStart(), argU.getEnd());
+            output.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
         for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
-            output.add(BooleanComputation.binarySequence(s1, argU, opFunction));
+            TimeChain<Double, List<AbstractInterval<R>>> c1 =
+                    s1.select(argU.getStart(), argU.getEnd());
+            output.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
 
         output.forEach(rho::refine);
