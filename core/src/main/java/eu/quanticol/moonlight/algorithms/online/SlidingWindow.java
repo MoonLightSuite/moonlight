@@ -25,7 +25,6 @@ import eu.quanticol.moonlight.signal.online.*;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -36,9 +35,8 @@ public class SlidingWindow<R> {
     private final Interval h;
     private final BinaryOperator<R> op;
     private final double uEnd;
-    private final double uStart;
     private final Window<R> w;
-    private final Deque<Update<Double, R>> updates = new ArrayDeque<>();
+    private final TimeChain<Double, R> updates;
 
     public SlidingWindow(TimeChain<Double, R> argument,
                          Update<Double, R> u,
@@ -65,9 +63,9 @@ public class SlidingWindow<R> {
         this.op = op;
         arg = argument;
         h = opHorizon;
-        w = new Window<>(0.0, opHorizon.getStart());
-        uStart = setStartBoundary(start);
+        w = new Window<>(setStartBoundary(start), opHorizon.getStart());
         uEnd = setEndBoundary(end);
+        updates = new TimeChain<>(uEnd);
     }
 
     /**
@@ -98,7 +96,7 @@ public class SlidingWindow<R> {
     public List<TimeChain<Double, R>> runChain() {
         processArgument();
         List<TimeChain<Double, R>> chain = new ArrayList<>();
-        chain.add(updatesToChain());
+        chain.add(updates);
         return chain;
     }
 
@@ -116,7 +114,7 @@ public class SlidingWindow<R> {
      */
     public List<Update<Double, R>> run() {
         processArgument();
-        return new ArrayList<>(updates);
+        return updates.toUpdates();
     }
 
     /**
@@ -125,27 +123,9 @@ public class SlidingWindow<R> {
      */
     private void collectUpdates() {
         while(!w.isEmpty() && w.getStart() < uEnd) {
-            Element<Double, R> element = w.removeFirst();
+            TimeSegment<Double, R> element = w.removeFirst();
             addUpdate(element);
         }
-
-        if(!updates.isEmpty()) {
-            Update<Double, R> last = updates.removeLast();
-            updates.add(new Update<>(last.getStart(), uEnd, last.getValue()));
-        }
-    }
-
-    /**
-     * <em>Temporary utility</em> Transforms a list of updates to a TimeChain
-     * @return chained updates
-     */
-    private TimeChain<Double, R> updatesToChain() {
-        List<SegmentInterface<Double, R>> ups =
-                updates.stream()
-                        .map(u -> new TimeSegment<>(u.getStart(), u.getValue()))
-                        .collect(Collectors.toList());
-
-        return new TimeChain<>(ups, updates.getLast().getEnd());
     }
 
     /**
@@ -175,7 +155,7 @@ public class SlidingWindow<R> {
      */
     private void slide(double timeBound) {
         if(!w.isEmpty()) {
-            Element<Double, R> first = keepSliding(timeBound);
+            TimeSegment<Double, R> first = keepSliding(timeBound);
             addUpdate(first);
 
             if(w.isEmpty() || w.getStart() > timeBound)
@@ -189,8 +169,8 @@ public class SlidingWindow<R> {
      * @param timeBound time bound to which keeping sliding
      * @return the new first element of the window
      */
-    private Element<Double, R> keepSliding(double timeBound) {
-        Element<Double, R> first = w.removeFirst();
+    private TimeSegment<Double, R> keepSliding(double timeBound) {
+        TimeSegment<Double, R> first = w.removeFirst();
         while(!w.isEmpty() && w.getStart() < timeBound) {
             addUpdate(first);
             first = checkNext(timeBound, first);
@@ -198,10 +178,10 @@ public class SlidingWindow<R> {
         return first;
     }
 
-    private Element<Double, R> checkNext(double timeBound,
-                                         Element<Double, R> prev)
+    private TimeSegment<Double, R> checkNext(double timeBound,
+                                             TimeSegment<Double, R> prev)
     {
-        Element<Double, R> next = w.removeFirst();
+        TimeSegment<Double, R> next = w.removeFirst();
         if(next.getStart() > timeBound) {
             w.addFirst(timeBound, prev.getValue());
             w.addFirst(next.getStart(), next.getValue());
@@ -214,28 +194,18 @@ public class SlidingWindow<R> {
      * Saves the current element of the window for caller's update
      * @param element current element
      */
-    private void addUpdate(Element<Double, R> element) {
-        //TODO: updates management is highly inefficient, should be refactored
-        double t = element.getStart();
-        if(t < uEnd) {
-            t = t < 0 ? 0 : t;
-            updateLast(t);
-            updates.add(new Update<>(t, Double.NaN, element.getValue()));
-        }
-    }
+    private void addUpdate(TimeSegment<Double, R> element) {
+        if(element.getStart() < uEnd) {
+            if(element.getStart() < 0)
+                element = new TimeSegment<>(0.0, element.getValue());
 
-    /**
-     * refreshes last saved update, making it end properly
-     * @param newEnd new ending time of the last update
-     */
-    private void updateLast(double newEnd) {
-        if(!updates.isEmpty()) {
-            if(updates.getFirst().getStart() == newEnd)
+            if (!updates.isEmpty() &&
+                    updates.getFirst().getStart().equals(element.getStart()))
                 updates.clear();
-            else {
-                Update<Double, R> old = updates.removeLast();
-                updates.add(new Update<>(old.getStart(), newEnd, old.getValue()));
-            }
+
+            if(updates.isEmpty() ||
+                    !updates.getLast().getValue().equals(element.getValue()))
+                updates.add(element);
         }
     }
 
@@ -249,10 +219,10 @@ public class SlidingWindow<R> {
      * @param v value of the current segment
      */
     private void doAdd(Double t, R v) {
-        Deque<Element<Double, R>> tail = new ArrayDeque<>();
+        Deque<TimeSegment<Double, R>> tail = new ArrayDeque<>();
         boolean completed = false;
         while(!w.isEmpty() && !completed) {
-            Element<Double, R> last = w.removeLast();
+            TimeSegment<Double, R> last = w.removeLast();
             double t2 = last.getStart();
             R v2 = last.getValue();
             R v3 = op.apply(v, v2);
@@ -263,7 +233,7 @@ public class SlidingWindow<R> {
                 t = t2;
                 v = v3;
             } else if(!v2.equals(v3)) {
-                tail.addFirst(new Element<>(t, v));
+                tail.addFirst(new TimeSegment<>(t, v));
                 t = t2;
                 v = v3;
             } else {
@@ -286,7 +256,7 @@ public class SlidingWindow<R> {
      * @param <V> Type of the value of a window element
      */
     static class Window<V> {
-        private final Deque<Element<Double, V>> deque;
+        private final Deque<TimeSegment<Double, V>> deque;
         private double endingTime;
         private final double offset;
 
@@ -300,7 +270,7 @@ public class SlidingWindow<R> {
             return deque.isEmpty() ? endingTime : deque.getFirst().getStart();
         }
 
-        public Element<Double, V> removeFirst() {
+        public TimeSegment<Double, V> removeFirst() {
             return deque.removeFirst();
         }
 
@@ -310,29 +280,29 @@ public class SlidingWindow<R> {
 
         public int size() { return deque.size(); }
 
-        public Element<Double, V> getFirst() {
+        public TimeSegment<Double, V> getFirst() {
             return deque.getFirst();
         }
 
-        public Element<Double, V> getLast() {
+        public TimeSegment<Double, V> getLast() {
             return deque.getLast();
         }
 
-        public void addAll(Collection<Element<Double, V>> c) {
+        public void addAll(Collection<TimeSegment<Double, V>> c) {
             deque.addAll(c);
         }
 
         public void addLast(double start, V value) {
-            Element<Double, V> e = new Element<>(start, value);
+            TimeSegment<Double, V> e = new TimeSegment<>(start, value);
             deque.addLast(e);
             endingTime = start + offset;
         }
 
         public void addFirst(double start, V value) {
-            deque.addFirst(new Element<>(start, value));
+            deque.addFirst(new TimeSegment<>(start, value));
         }
 
-        public Element<Double, V> removeLast() {
+        public TimeSegment<Double, V> removeLast() {
             return deque.removeLast();
         }
 
@@ -342,51 +312,6 @@ public class SlidingWindow<R> {
 
         public Double getEnd() {
             return endingTime;
-        }
-    }
-
-    private static class Element<T, V> {
-        private T start;
-        private V value;
-
-        public Element(T start, V value) {
-            this.start = start;
-            this.value = value;
-        }
-
-        public T getStart() {
-            return start;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setStart(T start) {
-            this.start = start;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "<" + start.toString() + " , " + value.toString()+ ">";
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Element)) return false;
-            Element<?, ?> element = (Element<?, ?>) o;
-            return Objects.equals(start, element.start) &&
-                    Objects.equals(value, element.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(start, value);
         }
     }
 

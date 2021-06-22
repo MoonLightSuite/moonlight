@@ -26,15 +26,11 @@ import eu.quanticol.moonlight.io.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.*;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
@@ -49,7 +45,7 @@ public class AFCMoonlightRunner {
     private static final List<List<SegmentInterface<
             Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
-    private static final boolean PLOTTING = true;
+    private static final boolean PLOTTING = false;
 
     private static final Plotter plt = new Plotter();
 
@@ -156,27 +152,17 @@ public class AFCMoonlightRunner {
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
 
-        TimeChain<Double, Double> chain = updatesToTimeChain(updates);
+        TimeChain<Double, Double> chain = Update.asTimeChain(updates);
 
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
-        result.add(m.monitor(chain).getSegments().toList());
+        TimeChain<Double, AbstractInterval<Double>> r =
+                                            m.monitor(chain).getSegments();
         rec.stop();
+        result.add(r.toList());
         stopwatches.add(rec);
 
         return result;
-    }
-
-    // WARNING: we are assuming sequential updates
-    private static TimeChain<Double, Double> updatesToTimeChain(
-            List<Update<Double, Double>> updates)
-    {
-        List<SegmentInterface<Double, Double>> ups =
-                updates.stream()
-                        .map(u -> new TimeSegment<>(u.getStart(), u.getValue()))
-                        .collect(Collectors.toList());
-
-        return new TimeChain<>(ups, updates.get(updates.size() - 1).getEnd());
     }
 
 

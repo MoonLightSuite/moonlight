@@ -45,21 +45,24 @@ public class Signals {
         SegmentInterface<Double, V> current = itr.next();
         V prevV = current.getValue();   // Default when no previous value exists
 
-        Update<Double, V> u = nextUpdate(utr, updates.getEnd());
+        if(utr.hasNext()) {
+            Update<Double, V> u = nextUpdate(utr, updates.getEnd());
 
-        while(true) {
-            if(stillRefining(itr, current, u, refinable, prevV, s.getEnd())) {
-                // Save the "next" as the new "current".
-                prevV = current.getValue();
-                current = itr.next();
-            } else if(utr.hasNext()) {
-                u = nextUpdate(utr, updates.getEnd());
-                current = itr.previous();
-                if(itr.hasPrevious())
+            while (true) {
+                if (stillRefining(itr, current, u, refinable, prevV, s.getEnd())) {
+                    // Save the "next" as the new "current".
+                    prevV = current.getValue();
+                    current = itr.next();
+                } else if (utr.hasNext()) {
+                    u = nextUpdate(utr, updates.getEnd());
                     current = itr.previous();
-                prevV = itr.tryPeekPrevious(current).getValue();
-            } else
-                break;
+                    if (itr.hasPrevious())
+                        current = itr.previous();
+                    prevV = itr.tryPeekPrevious(current).getValue();
+                } else
+                    break;
+            }
+
         }
 
         return itr.noEffects();

@@ -41,7 +41,7 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
         System.out.println("IO: " + r1);
         io = r1;
 
@@ -49,7 +49,7 @@ class OutOfOrderTest {
         Collections.shuffle(updates, new Random(RND_SEED));
 
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
         System.out.println("OO: " + r2);
 
         assert r1 != null;
@@ -83,14 +83,14 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
         System.out.println(r1);
 
         // Monitoring shuffled updates
         Collections.shuffle(updates, new Random(RND_SEED));
 
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
         System.out.println(r1);
 
         assert r1 != null;
@@ -125,7 +125,7 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r = monitor(m, updates, true);
         System.out.println(r);
 
         assert r != null;
@@ -154,14 +154,14 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
         System.out.println(r1);
 
         // Monitoring shuffled updates
         Collections.shuffle(updates, new Random(RND_SEED));
 
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
         System.out.println(r1);
 
         assert r1 != null;
@@ -194,14 +194,14 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
         System.out.println(r1);
 
         // Monitoring shuffled updates
         Collections.shuffle(updates, new Random(RND_SEED));
 
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
         System.out.println(r2);
 
         assert r1 != null;
@@ -235,14 +235,14 @@ class OutOfOrderTest {
 
         // Monitoring in-order updates
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
         System.out.println(r1);
 
         // Monitoring shuffled updates
         Collections.shuffle(updates, new Random(RND_SEED));
 
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates);
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
         System.out.println(r2);
 
         assert r1 != null;
@@ -267,41 +267,25 @@ class OutOfOrderTest {
 
         List<Update<Double, Double>> updates = AFCTest.loadInput().subList(0, 100);
 
-        TimeSignal<Double, AbstractInterval<Double>> r1 = null;
-        int i = 1;
-        for(Update<Double, Double> u: updates) {
-            r1 =  m.monitor(u);
-            //TimeChain<Double, AbstractInterval<Double>> res = r1.getSegments().replicate();
-            //plot(res, "io-" + i);
-            //System.out.println(r1.getSegments());
-            i++;
-        }
+        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(m, updates, true);
 
-        System.out.println("Shuffled updates");
+        // Monitoring shuffled updates
+        Collections.shuffle(updates, new Random(RND_SEED));
 
-        Collections.shuffle(updates, new Random(2));
-        TimeSignal<Double, AbstractInterval<Double>> r2 = null;
         m = new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
-        int j = 1;
-        for(Update<Double, Double> u: updates) {
-            r2 =  m.monitor(u);
-            //TimeChain<Double, AbstractInterval<Double>> res = r2.getSegments().replicate();
-            //plot(res, "ooo-" + j);
-            //System.out.println(r2.getSegments());
-            j++;
-        }
+        TimeChain<Double, AbstractInterval<Double>> r2 = monitor(m, updates, false);
 
         assert r1 != null;
         assert r2 != null;
 
         if(PLOTTING) {
             Plotter plt = new Plotter();
-            plt.plot(r1.getSegments(), "In order");
-            plt.plot(r2.getSegments(), "Out of order");
+            plt.plot(r1, "In order");
+            plt.plot(r2, "Out of order");
             plt.waitActivePlots(0);
         }
 
-        assertEquals(r1.getSegments(), r2.getSegments());
+        assertEquals(r1, r2);
     }
 
     private Formula formulaAFC() {
@@ -325,6 +309,7 @@ class OutOfOrderTest {
         updates.add(new Update<>(3.0, 4.0, -1.0));
         updates.add(new Update<>(4.0, 5.0, 2.0));
         updates.add(new Update<>(5.0, 6.0, 2.0));
+        updates.add(new Update<>(6.0, 7.0, 2.0));
         updates.add(new Update<>(7.0, 8.0, 2.0));
 
         return updates;
@@ -332,17 +317,22 @@ class OutOfOrderTest {
 
     private TimeChain<Double, AbstractInterval<Double>> monitor(
             OnlineTimeMonitor<Double, Double> m ,
-            List<Update<Double, Double>> ups
-            //,
+            List<Update<Double, Double>> ups,
+            boolean asChain
     )
     {
         TimeChain<Double, AbstractInterval<Double>> res = null;
         int i = 1;
-        for(Update<Double, Double> u: ups) {
-            res = m.monitor(u).getSegments().copy();
-            i++;
+        if(asChain) {
+            TimeChain<Double, Double> chain = Update.asTimeChain(ups);
+            res = m.monitor(chain).getSegments().copy();
+        } else {
+            for (Update<Double, Double> u : ups) {
+                res = m.monitor(u).getSegments().copy();
+                i++;
 //            if(PLOTTING)
 //                plt.plot(res, prefix +  At Update " + i);
+            }
         }
 
         return res;

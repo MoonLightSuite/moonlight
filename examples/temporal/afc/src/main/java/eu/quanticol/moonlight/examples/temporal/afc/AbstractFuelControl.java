@@ -43,7 +43,7 @@ public class AbstractFuelControl {
     private static final List<String> output = new ArrayList<>();
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
-    private static final boolean PLOTTING = true;
+    private static final boolean PLOTTING = false;
 
     private static final Plotter plt = new Plotter();
 

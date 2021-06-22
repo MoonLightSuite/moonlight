@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.signal.online;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,7 +38,8 @@ public class Update<T extends Comparable<T>, V>  {
 
     public Update(T start, T end, V value) {
         if(start.compareTo(end) > 0 || start.equals(end))
-            throw new IllegalArgumentException("Invalid update time span");
+            throw new IllegalArgumentException("Invalid update time span: [" +
+                                               start + ", " + end + ")");
 
         this.start = start;
         this.end = end;
@@ -74,5 +77,26 @@ public class Update<T extends Comparable<T>, V>  {
     @Override
     public int hashCode() {
         return Objects.hash(start, end, value);
+    }
+
+    public static <T extends Comparable<T> & Serializable, V>
+    TimeChain<T, V> asTimeChain(List<Update<T, V>> ups)
+    {
+        T end = ups.get(ups.size() - 1).getEnd();
+        TimeChain<T, V> chain = new TimeChain<>(end);
+        for(int i = 0; i < ups.size(); i++) {
+            if(i != ups.size() - 1) {
+                if (ups.get(i).getEnd().equals(ups.get(i + 1).getStart())) {
+                    chain.add(new TimeSegment<>(ups.get(i).getStart(),
+                            ups.get(i).getValue()));
+                } else throw new UnsupportedOperationException("Updates " + i +
+                        " and " + (i + 1) +
+                        " are not sequential");
+            } else
+                chain.add(new TimeSegment<>(ups.get(i).getStart(),
+                                            ups.get(i).getValue()));
+        }
+
+        return chain;
     }
 }

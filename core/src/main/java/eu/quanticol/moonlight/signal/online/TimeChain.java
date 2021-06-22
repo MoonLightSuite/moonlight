@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * A segment chain is a non-empty subtype of {@link LinkedList} providing some
+ * A segment chain is similar to a {@link LinkedList}, providing some
  * specific features for {@link SegmentInterface}s, like checking temporal
  * integrity constraints, a custom iterator etc.
  *
@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  *    </ul>
  *
  * <p>
- * TODO: they should be enforced by mutators and are trivially
+ * TODO: they should be enforced by mutators and trivially
  *       satisfied at the beginning, i.e. with no segments
  *
  *
@@ -70,12 +70,10 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     private final T end;
 
     /**
-     * @deprecated now it should always be non-empty
      * It defines a chain of time segments that ends at some time instant
      * @param end the time instant from which the segment chain is not defined.
      */
-    @Deprecated
-    public TimeChain(T end) {
+    public TimeChain(@NotNull T end) {
         this.end = end;
         this.segments = new ArrayList<>();
     }
@@ -163,6 +161,14 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return new TimeChain<>(newList, end);
     }
 
+    public boolean isEmpty() {
+        return segments.isEmpty();
+    }
+
+    public void clear() {
+        segments.clear();
+    }
+
     /**
      * Returns the last element of the chain
      * @return last element of the chain
@@ -179,6 +185,21 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         if (index < 0 || index > segments.size())
             throw new IndexOutOfBoundsException("Index: " + index);
         return new ChainIterator<>(segments, index);
+    }
+
+    public List<Update<T, V>> toUpdates() {
+        List<Update<T, V>> updates = new ArrayList<>(segments.size());
+        for(int i = 0; i < segments.size(); i++) {
+            T uEnd = end;
+            if(i != segments.size() - 1)
+                uEnd = segments.get(i + 1).getStart();
+
+            Update<T, V> u = new Update<>(segments.get(i).getStart(),
+                                          uEnd,
+                                          segments.get(i).getValue());
+            updates.add(u);
+        }
+        return updates;
     }
 
     @NotNull
@@ -244,5 +265,13 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
     private static final String ENDING_COND =
             "Violating ending condition: The chain must either end " +
             "after the last segment or after the previous ending";
+
+    @Override
+    public String toString() {
+        return "TimeChain{" +
+                "segments=" + segments +
+                ", end=" + end +
+                '}';
+    }
 }
 

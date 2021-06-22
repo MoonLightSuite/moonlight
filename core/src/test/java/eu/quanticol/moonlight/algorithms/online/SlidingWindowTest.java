@@ -21,30 +21,56 @@ class SlidingWindowTest {
 
     private static final SignalDomain<Double> doubles = new DoubleDomain();
 
-    @Disabled("WIP")
+
     @Test
-    void test1() {
+    void basicTestChain() {
+        TimeChain<Double, Double> arg = basicTimeChain();
+        TimeChain<Double, Double> ups = simpleUpdateChain();
+
+        TimeChain<Double, Double> results = globallyChain(arg, ups).get(0);
+
+        System.out.println(results);
+        assertEquals(new TimeSegment<>(0.0, 3.0), results.get(0));
+        assertEquals(new TimeSegment<>(4.0, -1.0), results.get(1));
+        assertEquals(10.0, results.getEnd());
+    }
+
+    @Test
+    void basicTestUpdate() {
         TimeChain<Double, Double> arg = basicTimeChain();
 
-        Update<Double, Double> u = new Update<>(0.0, 1.0, 2.0);
+        Update<Double, Double> u = new Update<>(0.0, 4.0, null);
+        List<Update<Double, Double>> results = new ArrayList<>(globallyUpdate(arg, u));
 
-        List<Update<Double, Double>> results = globally(arg, u);
+        System.out.println(results);
+        assertEquals(new Update<>(0.0, 4.0, 3.0), results.get(0));
+        assertEquals(1, results.size());
     }
 
 
+    private TimeChain<Double, Double> simpleUpdateChain() {
+        List<SegmentInterface<Double, Double>> segments = new ArrayList<>();
+        segments.add(new TimeSegment<>(4.0, 5.0));
+        segments.add(new TimeSegment<>(7.0, 10.0));
+
+        double end = 10.0;
+
+        return new TimeChain<>(segments, end);
+    }
 
     private TimeChain<Double, Double> basicTimeChain() {
         List<SegmentInterface<Double, Double>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(0.0, 3.0));
         segments.add(new TimeSegment<>(4.0, 5.0));
+        segments.add(new TimeSegment<>(7.0, 10.0));
+        segments.add(new TimeSegment<>(10.0, -1.0));
 
-        double end = 5.0;
+        double end = Double.POSITIVE_INFINITY;
 
         return new TimeChain<>(segments, end);
     }
 
 
-    @Disabled
     @Test
     void globTest1() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -57,13 +83,12 @@ class SlidingWindowTest {
         add(output, 0, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execGl(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void globTest2() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -78,13 +103,12 @@ class SlidingWindowTest {
         add(output, 2, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execGl(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void globTest3() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -97,17 +121,15 @@ class SlidingWindowTest {
         TimeChain<Double, AbstractInterval<Double>>
                 output = new TimeChain<>(INF);
         add(output, 0, -2, INF);
-        add(output, 2, -2, INF);
         add(output, 7, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execGl(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void globTest4() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -122,20 +144,17 @@ class SlidingWindowTest {
         TimeChain<Double, AbstractInterval<Double>>
                 output = new TimeChain<>(INF);
         add(output, 0, -2, -2);
-        add(output, 2, -2, -2);
         add(output, 5, -2, INF);
-        add(output, 7, -2, INF);
         add(output, 8, -1, INF);
         add(output, 13, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execGl(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void globTest5() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -151,7 +170,6 @@ class SlidingWindowTest {
         TimeChain<Double, AbstractInterval<Double>>
                 output = new TimeChain<>(INF);
         add(output, 0, -2, -2);
-        add(output, 2, -2, -2);
         add(output, 5, 2, 2);
         add(output, 6, 1, 2);
         add(output, 7, -1, 2);
@@ -159,13 +177,12 @@ class SlidingWindowTest {
         add(output, 16, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execGl(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void evTest1() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -178,13 +195,12 @@ class SlidingWindowTest {
         add(output, 0, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void evTest2() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -198,13 +214,12 @@ class SlidingWindowTest {
         add(output, 0, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void evTest3() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -220,13 +235,12 @@ class SlidingWindowTest {
         add(output, 3, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void evTest4() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -245,13 +259,12 @@ class SlidingWindowTest {
         add(output, 9, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void evTest5() {
         TimeChain<Double, AbstractInterval<Double>>
@@ -272,13 +285,12 @@ class SlidingWindowTest {
         add(output, 12, -INF, INF);
 
         List<Update<Double, AbstractInterval<Double>>>
-                expected = toUpdates(output);
+                expected = output.toUpdates();
 
         List<Update<Double, AbstractInterval<Double>>> results = execEv(input);
-        assertSame(expected, results);
+        assertEquals(expected, results);
     }
 
-    @Disabled
     @Test
     void complexEv() {
         Interval opHorizon = new Interval(0.0, 1.0);
@@ -310,31 +322,6 @@ class SlidingWindowTest {
 
         w.run();
 
-    }
-
-    private static <T> void assertSame(List<T> expected, List<T> toTest) {
-        assertEquals(expected.size(), toTest.size());
-        for(int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), toTest.get(i));
-        }
-    }
-
-    private static List<Update<Double, AbstractInterval<Double>>>
-    toUpdates(TimeChain<Double, AbstractInterval<Double>> chain)
-    {
-        //TODO handle end of updates
-        List<Update<Double, AbstractInterval<Double>>> ups =
-                                                            new ArrayList<>();
-
-        for(SegmentInterface<Double, AbstractInterval<Double>> s: chain) {
-            if(!ups.isEmpty()) {
-                Update<Double, AbstractInterval<Double>> u = ups.remove(ups.size() - 1);
-                ups.add(new Update<>(u.getStart(), s.getStart(), u.getValue()));
-            }
-
-            ups.add(new Update<>(s.getStart(), INF, s.getValue()));
-        }
-        return ups;
     }
 
     private static List<Update<Double, AbstractInterval<Double>>>
@@ -370,7 +357,15 @@ class SlidingWindowTest {
         input.add(new TimeSegment<>(t, new AbstractInterval<>(a, b)));
     }
 
-    private static List<Update<Double, Double>> globally(
+    private static List<TimeChain<Double, Double>> globallyChain(
+            TimeChain<Double, Double> arg,
+            TimeChain<Double, Double> ups)
+    {
+        Interval h = new Interval(0, 6);
+        return new SlidingWindow<>(arg, ups, h, doubles::conjunction).runChain();
+    }
+
+    private static List<Update<Double, Double>> globallyUpdate(
             TimeChain<Double, Double> arg,
             Update<Double, Double> u)
     {
