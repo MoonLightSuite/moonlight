@@ -82,8 +82,24 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
-        return null;
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+            TimeChain<Double, List<V>> updates)
+    {
+        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+                argument.monitor(updates);
+
+        List<TimeChain<Double, List<AbstractInterval<R>>>> output =
+                new ArrayList<>();
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+            output.add(spatialOp.computeUnaryChain(argU));
+        }
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> us : output) {
+            rho.refine(us);
+        }
+
+        return output;
     }
 
     @Override

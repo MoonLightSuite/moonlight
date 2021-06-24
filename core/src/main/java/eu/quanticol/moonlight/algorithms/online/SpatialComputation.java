@@ -20,11 +20,14 @@
 
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
+import org.jetbrains.annotations.NotNull;
+
+import static eu.quanticol.moonlight.signal.online.Update.asTimeChain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,47 +46,60 @@ public class SpatialComputation
                              DistanceStructure<S, ?>,
                              List<R>> op;
 
-    Iterator<Pair<T, SpatialModel<S>>> spaceItr;
     Pair<T, SpatialModel<S>> currSpace;
     Pair<T, SpatialModel<S>> nextSpace;
 
-    public SpatialComputation(LocationService<T, S> locationService,
+    public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
                                        DistanceStructure<S, ?>> distance,
                               BiFunction<IntFunction<R>,
                                                   DistanceStructure<S, ?>,
                                                   List<R>> operator)
     {
-        if (locationService.isEmpty())
-            throw new UnsupportedOperationException("The location Service " +
-                    "must not be empty!");
-
+        checkLocationServiceValidity(locationService);
         locSvc = locationService;
         dist = distance;
         op = operator;
     }
 
+    private void checkLocationServiceValidity(LocationService<T, S> locSvc)
+    {
+        if (locSvc.isEmpty())
+            throw new UnsupportedOperationException("The location Service " +
+                                                    "must not be empty!");
+    }
+
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u)
     {
-        List<Update<T, List<R>>> results = new ArrayList<>();
 
-        spaceItr = locSvc.times();
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
 
         T t = u.getStart();
         T tNext = u.getEnd();
         IntFunction<R> spatialSignal = i -> u.getValue().get(i);
 
-        tNext = seekSpace(t, tNext);
+        tNext = seekSpace(t, tNext, spaceItr);
 
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
 
         f.checkDistance(0, 0); //TODO: Done to force pre-computation of distance matrix
 
+        return computeOp(t, tNext, f, spatialSignal, spaceItr);
+    }
+
+    private List<Update<T, List<R>>> computeOp(
+            T t, T tNext,
+            DistanceStructure<S, ?> f,
+            IntFunction<R> spatialSignal,
+            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    {
+        List<Update<T, List<R>>> results = new ArrayList<>();
+
         results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
 
         while (nextSpace != null &&
-               nextSpace.getFirst().compareTo(u.getEnd()) < 0)
+                nextSpace.getFirst().compareTo(tNext) < 0)
         {
             currSpace = nextSpace;
             t = currSpace.getFirst();
@@ -98,19 +114,52 @@ public class SpatialComputation
         return results;
     }
 
-    private T seekSpace(T start, T end) {
-        T value = end;
+    public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups)
+    {
+        TimeChain<T, List<R>> results =  new TimeChain<>(ups.getEnd());
+
+        for(int i = 0; i < ups.size(); i++) {
+            Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
+            SegmentInterface<T, List<R>> up = ups.get(i);
+            T t = up.getStart();
+            T tNext = i != ups.size() - 1 ? ups.get(i + 1).getStart() : ups.getEnd();
+            IntFunction<R> spatialSignal = j -> up.getValue().get(j);
+            tNext = seekSpace(t, tNext, spaceItr);
+            SpatialModel<S> sm = currSpace.getSecond();
+            DistanceStructure<S, ?> f = dist.apply(sm);
+            f.checkDistance(0, 0); //TODO: Done to force pre-computation of distance matrix
+            computeOpChain(t, tNext, f, spatialSignal, spaceItr)
+                    .forEach(results::add);
+        }
+
+        return results;
+    }
+
+    private TimeChain<T, List<R>> computeOpChain(
+            T t, T tNext,
+            DistanceStructure<S, ?> f,
+            IntFunction<R> spatialSignal,
+            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    {
+        return asTimeChain(computeOp(t, tNext, f, spatialSignal, spaceItr));
+    }
+
+    private T seekSpace(T start, T end,
+                        Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    {
         currSpace = spaceItr.next();
         getNext(spaceItr);
         while(nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0) {
             currSpace = nextSpace;
             nextSpace = getNext(spaceItr);
         }
+        return fromNextSpaceOrCurrent(end);
+    }
 
+    private T fromNextSpaceOrCurrent(T fallback) {
         if(nextSpace != null)
-            value = nextSpace.getFirst();
-
-        return value;
+            return nextSpace.getFirst();
+        return fallback;
     }
 
 

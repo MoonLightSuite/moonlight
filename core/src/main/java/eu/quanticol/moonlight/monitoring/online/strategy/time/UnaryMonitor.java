@@ -94,7 +94,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
         List<TimeChain<Double, AbstractInterval<R>>> outputUpdates = new ArrayList<>();
 
         for(TimeChain<Double, AbstractInterval<R>> argU : argUpdates) {
-            outputUpdates.addAll(BooleanComputation.unarySequence(argU, op));
+            outputUpdates.add(BooleanComputation.unarySequence(argU, op));
         }
 
         outputUpdates.forEach(rho::refine);

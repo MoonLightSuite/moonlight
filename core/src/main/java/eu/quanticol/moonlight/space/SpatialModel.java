@@ -30,11 +30,11 @@ import java.util.Set;
 
 /**
  * This interface is implemented by classes describing a spatial model. This is
- * a labelled graph where nodes are identified by integers, while edges have type <code>T</code>.
+ * a labelled graph where nodes are identified by integers, while edges have type <code>E</code>.
  *
- * @param <T> the type of values on edges.
+ * @param <E> the type of values on edges.
  */
-public interface SpatialModel<T> {
+public interface SpatialModel<E> {
 
     /**
      * Returns the value of the edge connecting <code>src</code> to
@@ -46,7 +46,7 @@ public interface SpatialModel<T> {
      * @return the value associated with the edge between src and trg,
      *         or null if it does not exist.
      */
-    T get(int src, int trg);
+    E get(int src, int trg);
 
     /**
      * @return the number of locations in the model.
@@ -60,7 +60,7 @@ public interface SpatialModel<T> {
      * @param l a location.
      * @return the list of exiting edges from <code>l</code>.
      */
-    List<Pair<Integer, T>> next(int l);
+    List<Pair<Integer, E>> next(int l);
 
     /**
      * Returns the list of incoming edges in <code>l</code>.
@@ -69,7 +69,7 @@ public interface SpatialModel<T> {
      * @param l a location.
      * @return the list of incoming edges in <code>l</code>.
      */
-    List<Pair<Integer, T>> previous(int l);
+    List<Pair<Integer, E>> previous(int l);
 
     /**
      * @return the set of locations in the model.

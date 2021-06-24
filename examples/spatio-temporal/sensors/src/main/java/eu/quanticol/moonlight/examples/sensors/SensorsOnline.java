@@ -8,7 +8,6 @@ import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;

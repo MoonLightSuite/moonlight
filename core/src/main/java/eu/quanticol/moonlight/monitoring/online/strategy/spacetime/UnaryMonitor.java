@@ -97,7 +97,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
                 new ArrayList<>();
 
         for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
-            output.addAll(BooleanComputation.unarySequence(argU, op));
+            output.add(BooleanComputation.unarySequence(argU, op));
         }
 
         for(TimeChain<Double, List<AbstractInterval<R>>> us : output) {

@@ -28,9 +28,13 @@ import java.util.function.BiPredicate;
 /**
  * Algorithms for basic signal primitives, precisely
  * <ul>
- *     <li> {@link #refine} for refining a signal given an update</li>
- *     <li> {@link #refineChain} for refining a signal given a sequence of updates</li>
- *     <li> {@link #select} for selecting a fragment of a signal given some bounds</li>
+ *   <li> {@link #refine} for refining a signal given an update</li>
+ *   <li> {@link #refineChain} for refining a signal
+ *        given a sequence of updates
+ *   </li>
+ *   <li> {@link #select} for selecting a fragment of a signal
+ *        given some bounds
+ *   </li>
  * </ul>
  */
 public class Signals {
@@ -49,7 +53,8 @@ public class Signals {
             Update<Double, V> u = nextUpdate(utr, updates.getEnd());
 
             while (true) {
-                if (stillRefining(itr, current, u, refinable, prevV, s.getEnd())) {
+                if (stillRefining(itr, current, u, refinable, prevV, s.getEnd()))
+                {
                     // Save the "next" as the new "current".
                     prevV = current.getValue();
                     current = itr.next();

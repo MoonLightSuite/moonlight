@@ -28,35 +28,44 @@ import eu.quanticol.moonlight.util.Triple;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
+
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.*;
 
 /**
- * @author loreti
+ * This class is a helper class for computing the right distance on dynamic
+ * models for Reach and Escape algorithms.
  *
+ * @param <E> Type of edge labels of the spatial model.
+ * @param <A>
+ * @author loreti
  */
-public class DistanceStructure<T, A> {
-
-    private final Function<T, A> distance;
-
+public class DistanceStructure<E, A> {
     private final DistanceDomain<A> domain;
 
+    /**
+     * Lower and upper bound of the spatial operator being computed
+     * e.g. <code>escape_[a, b] P</code> means
+     * <code>lowerBound == a</code> and <code>upperBound == b</code>
+     */
     private final A lowerBound;
-
     private final A upperBound;
 
-    private final SpatialModel<T> model;
+    private final SpatialModel<E> model;
 
-    private HashMap<Integer, HashMap<Integer, A>> distanceMatrix;
+    private final Function<E, A> distance;
+    private Map<Integer, Map<Integer, A>> distanceMatrix;
 
-    public DistanceStructure(Function<T, A> distance, DistanceDomain<A> domain, A lowerBound,
+    public DistanceStructure(Function<E, A> distance,
+                             DistanceDomain<A> domain,
+                             A lowerBound,
                              A upperBound,
-                             SpatialModel<T> model) {
+                             SpatialModel<E> model)
+    {
         super();
         this.distance = distance;
         this.domain = domain;
@@ -72,19 +81,12 @@ public class DistanceStructure<T, A> {
         throw new UnsupportedOperationException("Requesting size of empty model");
     }
 
-    public A getLowerBound() {
-        return lowerBound;
-    }
-
-    public A getUpperBound() {
-        return upperBound;
-    }
-
+    //TODO: a getter with side effects...refactor asap
     public A getDistance(int i, int j) {
         if (distanceMatrix == null) {
             computeDistanceMatrix();
         }
-        HashMap<Integer, A> m = distanceMatrix.get(i);
+        Map<Integer, A> m = distanceMatrix.get(i);
         if (m != null) {
         	return m.getOrDefault(j, domain.infinity());
         }
@@ -95,7 +97,7 @@ public class DistanceStructure<T, A> {
         if (i == j) {
             return domain.zero();
         } else {
-            T e = model.get(i, j);
+            E e = model.get(i, j);
             if (e == null) {
                 return domain.infinity();
             } else {
@@ -107,7 +109,7 @@ public class DistanceStructure<T, A> {
     private void computeDistanceMatrix() {
         distanceMatrix = new HashMap<>();
         IntStream.range(0, model.size()).forEach(i -> {
-            HashMap<Integer, A> map = new HashMap<>();
+            Map<Integer, A> map = new HashMap<>();
             map.put(i, domain.zero());
             distanceMatrix.put(i, map);
         });
@@ -115,16 +117,16 @@ public class DistanceStructure<T, A> {
                 IntStream
                         .range(0, model.size())
                         .boxed()
-                        .map(i -> new Pair<Integer, Pair<Integer, A>>(i, new Pair<Integer, A>(i, domain.zero())))
+                        .map(i -> new Pair<>(i, new Pair<>(i, domain.zero())))
                         .collect(Collectors.toCollection(LinkedList::new));
         while (!queue.isEmpty()) {
             Pair<Integer, Pair<Integer, A>> p = queue.poll();
             int l1 = p.getFirst();
             int l2 = p.getSecond().getFirst();
             A d1 = p.getSecond().getSecond();
-            for (Pair<Integer, T> e : model.previous(l1)) {
+            for (Pair<Integer, E> e : model.previous(l1)) {
                 A newD = domain.sum(distance.apply(e.getSecond()), d1);
-                HashMap<Integer, A> map = distanceMatrix.get(e.getFirst());
+                Map<Integer, A> map = distanceMatrix.get(e.getFirst());
                 A oldD = map.getOrDefault(l2, domain.infinity());
                 if (domain.less(newD, oldD)) {
                     map.put(l2, newD);
@@ -139,28 +141,29 @@ public class DistanceStructure<T, A> {
     }
 
     public <R> List<R> escape(SignalDomain<R> mDomain, IntFunction<R> s) {
-        HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
-        ArrayList<HashMap<Integer,R>> pending = IntStream
-              .range(0, model.size()).boxed()
+        int size = model.size();
+        Map<Integer, Map<Integer, R>> map = initEscapeMap(s, size);
+        List<Map<Integer,R>> pending = IntStream
+              .range(0, size).boxed()
               .map((Integer i) -> {
-            	  HashMap<Integer,R> m = new HashMap<>();
+            	  Map<Integer,R> m = new HashMap<>();
             	  m.put(i, s.apply(i));
             	  return m;
               }).collect(Collectors.toCollection(ArrayList::new));
+
         boolean flag = true;
-        
         while (flag) {
         	flag = false;
-        	ArrayList<HashMap<Integer,R>> newPending = IntStream
+        	List<Map<Integer,R>> newPending = IntStream
         			.range(0, model.size()).boxed().map(i -> new HashMap<Integer,R>())
         			.collect(Collectors.toCollection(ArrayList::new));
-        	for( int l1=0 ; l1<model.size() ; l1++ ) {
-        		for( Entry<Integer, R> e : pending.get(l1).entrySet()) {
+        	for(int l1 = 0; l1 < model.size(); l1++) {
+        		for(Entry<Integer, R> e : pending.get(l1).entrySet()) {
         			int l2 = e.getKey();
         			R v = e.getValue();
-                    for (Pair<Integer, T> pre : model.previous(l1)) {
+                    for (Pair<Integer, E> pre : model.previous(l1)) {
                         int l = pre.getFirst();
-                        HashMap<Integer, R> m1 = map.get(l);
+                        Map<Integer, R> m1 = map.get(l);
                         R v1 = m1.getOrDefault(l2, mDomain.min());
                         R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
                         if (!mDomain.equalTo(v1, newV)) {
@@ -169,59 +172,53 @@ public class DistanceStructure<T, A> {
                             flag = true;
                         }
                     }
-        		};
+        		}
         	}
         	pending = newPending;	
         }
         return extractEscapeValues(mDomain, map);
     }
 
-//    public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
-//        HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
-//        LinkedList<Pair<Integer, Pair<Integer, R>>> queue =
-//                IntStream
-//                        .range(0, model.size()).boxed()
-//                        .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
-//                        .collect(Collectors.toCollection(LinkedList::new));
-//        while (!queue.isEmpty()) {
-//            System.out.println(queue.size());
-//            Pair<Integer, Pair<Integer, R>> p = queue.poll();
-//            int l1 = p.getFirst();
-//            int l2 = p.getSecond().getFirst();
-//            R v = p.getSecond().getSecond();
-//            for (Pair<Integer, T> pre : model.previous(l1)) {
-//                int l = pre.getFirst();
-//                HashMap<Integer, R> m1 = map.get(l);
-//                R v1 = m1.getOrDefault(l2, mDomain.min());
-//                R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
-//                if (!mDomain.equalTo(v1, newV)) {
-//                    m1.put(l2, newV);
-//                    queue.add(new Pair<>(l, new Pair<>(l2, newV)));
-//                }
-//            }
-//
-//        }
-//        return extractEscapeValues(mDomain, map);
-//    }
+    public <R> Map<Integer, Map<Integer, R>> initEscapeMap(IntFunction<R> s,
+                                                           int size)
+    {
+        Map<Integer, Map<Integer, R>> toReturn = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            Map<Integer, R> iR = new HashMap<>();
+            iR.put(i, s.apply(i));
+            toReturn.put(i, iR);
+        }
+        return toReturn;
+    }
 
-    public <R> List<R> reach(SignalDomain<R> mDomain, IntFunction<R> s1, IntFunction<R> s2) {
 
+    public <R> List<R> reach(SignalDomain<R> mDomain,
+                             IntFunction<R> s1,
+                             IntFunction<R> s2)
+    {
         List<Map<A, R>> reachFunc = new ArrayList<>();
         List<Triple<Integer, A, R>> queue = new LinkedList<>();
 
-        for(int i = 0; i < model.size(); i++) {
-            Map<A, R> map = new HashMap<>();
-            queue.add(new Triple<>(i, domain.zero(), s2.apply(i)));
-            map.put(domain.zero(), s2.apply(i));
-            reachFunc.add(map);
-        }
+        initReach(s2, reachFunc, queue);
 
         reachCore(queue, reachFunc, mDomain, s1);
 
         return collectReachValue(mDomain, reachFunc);
     }
 
-    public <R> void reachCore(List<Triple<Integer, A, R>> queue,
+    private <R> void initReach(IntFunction<R> s2,
+                               List<Map<A, R>> reachFunc,
+                               List<Triple<Integer, A, R>> queue)
+    {
+        for(int i = 0; i < model.size(); i++) {
+            Map<A, R> map = new HashMap<>();
+            queue.add(new Triple<>(i, domain.zero(), s2.apply(i)));
+            map.put(domain.zero(), s2.apply(i));
+            reachFunc.add(map);
+        }
+    }
+
+    private <R> void reachCore(List<Triple<Integer, A, R>> queue,
                               List<Map<A, R>> reachFunc,
                               SignalDomain<R> mDomain,
                               IntFunction<R> s1)
@@ -231,7 +228,7 @@ public class DistanceStructure<T, A> {
             int l1 = t1.getFirst();
             A d1 = t1.getSecond();
             R v1 = t1.getThird();
-            for (Pair<Integer, T> pre : model.previous(l1)) {
+            for (Pair<Integer, E> pre : model.previous(l1)) {
                 int l2 = pre.getFirst();
                 A d2 = domain.sum(distance.apply(pre.getSecond()), d1);
                 if (domain.lessOrEqual(d2, upperBound)) {
@@ -245,49 +242,9 @@ public class DistanceStructure<T, A> {
         }
     }
 
-    public <R> List<R> oldReach(SignalDomain<R> mDomain, IntFunction<R> s1, IntFunction<R> s2) {
-        List<Map<A, R>> reachFunction =
-                IntStream.range(0, model.size()).boxed()
-                        .map(i -> new HashMap<A, R>())
-                        .collect(Collectors.toCollection(ArrayList::new));
-        List<Triple<Integer, A, R>> queue =
-                IntStream.range(0, model.size()).boxed()
-                        .map(i -> new Triple<>(i, domain.zero(), s2.apply(i)))
-                        .collect(Collectors.toCollection(LinkedList::new));
-        queue.forEach(t -> reachFunction.get(t.getFirst()).put(t.getSecond(), t.getThird()));
-
-        reachCore(queue, reachFunction, mDomain, s1);
-
-        return collectReachValue(mDomain, reachFunction);
-    }
-
-    private <R> Triple<Integer, A, R> combine(SignalDomain<R> mDomain, int l,
-                                              A d, R v, Map<A, R> fr)
-    {
-        R v1 = fr.get(d);
-        if (v1 != null) {
-            R v2 = mDomain.disjunction(v, v1);
-            if (!mDomain.equalTo(v1,v2)) {
-                fr.put(d, v2);
-                return new Triple<>(l, d, v2);
-            }
-        } else {
-            Triple<Integer, A, R> t = new Triple<>(l, d, v);
-            fr.put(d, v);
-            return t;
-        }
-        return null;
-    }
-
     private <R> List<R> collectReachValue(SignalDomain<R> mDomain,
                                           List<Map<A, R>> reachFunction)
     {
-//        return IntStream
-//                .range(0, model.size()).boxed()
-//                .map(i -> reachFunction.get(i))
-//                .map(rf -> computeReachValue(mDomain, rf))
-//                .collect(Collectors.toCollection(ArrayList::new));
-
         return reachFunction.stream()
                             .map(rf -> computeReachValue(mDomain, rf))
                             .collect(Collectors.toCollection(ArrayList::new));
@@ -302,11 +259,14 @@ public class DistanceStructure<T, A> {
                 .reduce(mDomain.min(), mDomain::disjunction);
     }
 
-    private <R> ArrayList<R> extractEscapeValues(SignalDomain<R> mDomain, HashMap<Integer, HashMap<Integer, R>> map) {
+    private <R> ArrayList<R> extractEscapeValues(
+            SignalDomain<R> mDomain,
+            Map<Integer, Map<Integer, R>> map)
+    {
         ArrayList<R> toReturn = mDomain.createArray(model.size());
         for (int i = 0; i < model.size(); i++) {
             R value = mDomain.min();
-            HashMap<Integer, R> mI = map.get(i);
+            Map<Integer, R> mI = map.get(i);
             for (Entry<Integer, R> k : mI.entrySet()) {
                 if (checkDistance(getDistance(i, k.getKey()))) {
                     value = mDomain.disjunction(value, k.getValue());
@@ -321,29 +281,78 @@ public class DistanceStructure<T, A> {
         return domain.lessOrEqual(lowerBound, d) && domain.lessOrEqual(d, upperBound);
     }
 
-    private <R> HashMap<Integer, HashMap<Pair<Integer, R>, A>> initReachMap(SignalDomain<R> mDomain,
-                                                                            Function<Integer, R> s2) {
-        HashMap<Integer, HashMap<Pair<Integer, R>, A>> toReturn = new HashMap<>();
+    public static <T> DistanceStructure<T, Double> buildDistanceStructure(
+            SpatialModel<T> model,
+            Function<T, Double> distance,
+            double lowerBound,
+            double upperBound)
+    {
+        return new DistanceStructure<>(distance, new DoubleDistance(),
+                lowerBound, upperBound, model);
+    }
+
+    // UNUSED STUFF...
+
+    private <R> Map<Integer, Map<Pair<Integer, R>, A>> initReachMap(
+            IntFunction<R> s2)
+    {
+        Map<Integer, Map<Pair<Integer, R>, A>> toReturn = new HashMap<>();
         for (int i = 0; i < model.size(); i++) {
-            HashMap<Pair<Integer, R>, A> iR = new HashMap<>();
-            iR.put(new Pair<Integer, R>(i, s2.apply(i)), domain.zero());
+            Map<Pair<Integer, R>, A> iR = new HashMap<>();
+            iR.put(new Pair<>(i, s2.apply(i)), domain.zero());
             toReturn.put(i, iR);
         }
         return toReturn;
     }
 
-    private <R> HashMap<Integer, HashMap<Integer, R>> initEscapeMap(SignalDomain<R> mDomain,
-                                                                    IntFunction<R> s) {
-        HashMap<Integer, HashMap<Integer, R>> toReturn = new HashMap<>();
-        for (int i = 0; i < model.size(); i++) {
-            HashMap<Integer, R> iR = new HashMap<>();
-            iR.put(i, s.apply(i));
-            toReturn.put(i, iR);
-        }
-        return toReturn;
+    private <R> ArrayList<ArrayList<R>> createMatrix(
+            int rows,
+            int columns,
+            BiFunction<Integer, Integer, R> init)
+    {
+        return IntStream
+                .range(0, rows)
+                .mapToObj(x -> createArray(columns, y -> init.apply(x, y)))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-//	private <R> HashMap<Integer, HashMap<Integer, Pair<R, A>>> initEscapeMap(SignalDomain<R> mDomain,
+    private <R> ArrayList<R> createArray(int size, IntFunction<R> init) {
+        return IntStream
+                .range(0, size)
+                .mapToObj(init)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
+
+//    public <R> ArrayList<R> escape(SignalDomain<R> mDomain, Function<Integer, R> s) {
+//        HashMap<Integer, HashMap<Integer, R>> map = initEscapeMap(mDomain, s);
+//        LinkedList<Pair<Integer, Pair<Integer, R>>> queue =
+//                IntStream
+//                        .range(0, model.size()).boxed()
+//                        .map(i -> new Pair<>(i, new Pair<>(i, s.apply(i))))
+//                        .collect(Collectors.toCollection(LinkedList::new));
+//        while (!queue.isEmpty()) {
+//            System.out.println(queue.size());
+//            Pair<Integer, Pair<Integer, R>> p = queue.poll();
+//            int l1 = p.getFirst();
+//            int l2 = p.getSecond().getFirst();
+//            R v = p.getSecond().getSecond();
+//            for (Pair<Integer, E> pre : model.previous(l1)) {
+//                int l = pre.getFirst();
+//                HashMap<Integer, R> m1 = map.get(l);
+//                R v1 = m1.getOrDefault(l2, mDomain.min());
+//                R newV = mDomain.disjunction(v1, mDomain.conjunction(s.apply(l), v));
+//                if (!mDomain.equalTo(v1, newV)) {
+//                    m1.put(l2, newV);
+//                    queue.add(new Pair<>(l, new Pair<>(l2, newV)));
+//                }
+//            }
+//
+//        }
+//        return extractEscapeValues(mDomain, map);
+//    }
+// 	private <R> HashMap<Integer, HashMap<Integer, Pair<R, A>>> initEscapeMap(SignalDomain<R> mDomain,
 //			Function<Integer, R> s2) {
 //		HashMap<Integer, HashMap<Integer, Pair<R, A>>> toReturn = new HashMap<>();
 //		for( int i=0 ; i<model.size() ; i++ ) {
@@ -353,94 +362,4 @@ public class DistanceStructure<T, A> {
 //		}
 //		return toReturn;
 //	}
-
-    public static <T, A, R> List<R> everywhere(SignalDomain<R> dModule,
-                                               IntFunction<R> s,
-                                               DistanceStructure<T, A> ds)
-    {
-        ArrayList<R> values = dModule.createArray(ds.getModelSize());
-        for (int i = 0; i < ds.getModelSize(); i++) {
-            R v = dModule.max();
-            for (int j = 0; j < ds.getModelSize(); j++) {
-                if (ds.checkDistance(i, j)) {
-                    v = dModule.conjunction(v, s.apply(j));
-                }
-            }
-            values.set(i, v);
-        }
-        return values;
-    }
-
-    public static <T, A, R> List<R> somewhere(SignalDomain<R> dModule,
-                                              IntFunction<R> s,
-                                              DistanceStructure<T, A> ds)
-    {
-        ArrayList<R> values = dModule.createArray(ds.getModelSize());
-        for (int i = 0; i < ds.getModelSize(); i++) {
-            R v = dModule.min();
-            for (int j = 0; j < ds.getModelSize(); j++) {
-                if (ds.checkDistance(i, j)) {
-                    v = dModule.disjunction(v, s.apply(j));
-                }
-            }
-            values.set(i, v);
-        }
-        return values;
-    }
-
-    public static <T, A, R> List<R> somewhereParallel(SignalDomain<R> dModule,
-                                                      IntFunction<R> s,
-                                                      DistanceStructure<T, A> ds)
-    {
-        return IntStream
-                .range(0, ds.getModelSize())
-                .boxed()
-                .parallel()
-                .map(i -> {
-                    R v = dModule.min();
-                    for (int j = 0; j < ds.getModelSize(); j++) {
-                        if (ds.checkDistance(i, j)) {
-                            v = dModule.disjunction(v, s.apply(j));
-                        }
-                    }
-                    return v;
-                }).collect(Collectors.toList());
-    }
-
-    public static <T, A, R> List<R> everywhereParallel(SignalDomain<R> dModule,
-                                                       IntFunction<R> s,
-                                                       DistanceStructure<T, A> ds)
-    {
-        return IntStream
-                .range(0, ds.getModelSize())
-                .boxed()
-                .parallel()
-                .map(i -> {
-                    R v = dModule.max();
-                    for (int j = 0; j < ds.getModelSize(); j++) {
-                        if (ds.checkDistance(i, j)) {
-                            v = dModule.conjunction(v, s.apply(j));
-                        }
-                    }
-                    return v;
-                }).collect(Collectors.toList());
-    }
-
-    private <R> ArrayList<ArrayList<R>> createMatrix(int rows, int columns, BiFunction<Integer, Integer, R> init) {
-        return IntStream
-                .range(0, rows)
-                .mapToObj(x -> createArray(columns, y -> init.apply(x, y)))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private <R> ArrayList<R> createArray(int size, Function<Integer, R> init) {
-        return IntStream
-                .range(0, size)
-                .mapToObj(x -> init.apply(x))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public static <T> DistanceStructure<T, Double> buildDistanceStructure( SpatialModel<T> model , Function<T,Double> distance , double lowerBound, double upperBound) {
-    	return new DistanceStructure<T, Double>(distance, new DoubleDistance(), lowerBound, upperBound, model);
-    }
 }

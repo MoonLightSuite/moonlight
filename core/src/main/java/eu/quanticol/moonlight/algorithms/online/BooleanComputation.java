@@ -84,17 +84,15 @@ public class BooleanComputation {
      */
     public static
     <T extends Comparable<T> & Serializable, R>
-    List<TimeChain<T, R>> unarySequence(TimeChain<T, R> us, UnaryOperator<R> op)
+    TimeChain<T, R> unarySequence(TimeChain<T, R> us, UnaryOperator<R> op)
     {
         List<SegmentInterface<T, R>> ls =
             us.stream()
               .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
               .collect(Collectors.toList());
 
-        List<TimeChain<T, R>> results = new ArrayList<>();
-        results.add(new TimeChain<>(ls, us.getEnd()));
 
-        return results;
+        return new TimeChain<>(ls, us.getEnd());
     }
 
     public static
@@ -289,7 +287,7 @@ public class BooleanComputation {
     private static
     <T extends Comparable<T> & Serializable, R>
     void rightApplySequence(TimeChain<T, R> s, List<SegmentInterface<T, R>> outputUps,
-                    BinaryOperator<R> op, TimeChain<T, R> inputUps)
+                            BinaryOperator<R> op, TimeChain<T, R> inputUps)
     {
         ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
         ChainIterator<SegmentInterface<T, R>> utr = inputUps.chainIterator();

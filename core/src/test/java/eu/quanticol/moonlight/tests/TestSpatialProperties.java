@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -145,7 +146,7 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> 1.0, new DoubleDistance(), 0.0, range, model);
-        List<Boolean> result = DistanceStructure.somewhere(
+        List<Boolean> result = SpaceUtilities.somewhere(
                 new BooleanDomain(),
                 (i) -> i == TestUtils.gridIndexOf(relevantR, relevantC, columns),
                 ds
@@ -166,7 +167,7 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
-        List<Boolean> result = DistanceStructure.everywhere(
+        List<Boolean> result = SpaceUtilities.everywhere(
                 new BooleanDomain(),
                 (i) -> i != TestUtils.gridIndexOf(relevantR, relevantC, columns),
                 ds

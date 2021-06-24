@@ -6,6 +6,9 @@ import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.space.SpatialModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -147,6 +150,10 @@ public class TestUtils {
             locService.add(time[i], graph);
         }
         return locService;
+    }
+
+    public static <E> List<E> listOf(E...elements) {
+        return new ArrayList<>(Arrays.asList(elements));
     }
 
 }

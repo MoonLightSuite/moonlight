@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.algorithms.SpaceOperator;
+import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
@@ -70,6 +71,6 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
     private List<R> everywhereOp(IntFunction<R> spatialSignal,
 								 DistanceStructure<S, ?> ds)
     {
-	    return DistanceStructure.everywhere(domain, spatialSignal, ds);
+	    return SpaceUtilities.everywhere(domain, spatialSignal, ds);
     }
 }

@@ -273,5 +273,6 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
                 ", end=" + end +
                 '}';
     }
+
 }
 

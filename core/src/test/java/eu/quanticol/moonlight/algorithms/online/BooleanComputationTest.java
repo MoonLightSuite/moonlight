@@ -49,7 +49,7 @@ class BooleanComputationTest {
         TimeChain<Integer, Integer> ups = basicUpdateChain();
 
         TimeChain<Integer, Integer> r = BooleanComputation
-                .unarySequence(ups, BooleanComputationTest::not).get(0);
+                .unarySequence(ups, BooleanComputationTest::not);
 
         // First update
         assertEquals(ups.get(0).getStart(), r.get(0).getStart());

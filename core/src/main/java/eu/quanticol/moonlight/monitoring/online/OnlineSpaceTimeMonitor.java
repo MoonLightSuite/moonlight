@@ -34,10 +34,10 @@ import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.online.Update;
 
 
-import static eu.quanticol.moonlight.space.DistanceStructure.somewhere;
-import static eu.quanticol.moonlight.space.DistanceStructure.somewhereParallel;
-import static eu.quanticol.moonlight.space.DistanceStructure.everywhereParallel;
-import static eu.quanticol.moonlight.space.DistanceStructure.everywhere;
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.somewhere;
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.somewhereParallel;
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.everywhereParallel;
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.everywhere;
 
 import java.util.HashMap;
 import java.util.List;
