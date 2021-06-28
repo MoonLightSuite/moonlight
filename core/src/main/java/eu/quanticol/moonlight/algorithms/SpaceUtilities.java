@@ -5,7 +5,6 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.util.Triple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntFunction;
@@ -70,9 +69,10 @@ public class SpaceUtilities {
         return values;
     }
 
-    public static <T, A, R> List<R> somewhereParallel(SignalDomain<R> dModule,
-                                                      IntFunction<R> s,
-                                                      DistanceStructure<T, A> ds)
+    public static <T, A, R> List<R> somewhereParallel(
+            SignalDomain<R> dModule,
+            IntFunction<R> s,
+            DistanceStructure<T, A> ds)
     {
         return IntStream
                 .range(0, ds.getModelSize())
@@ -89,9 +89,10 @@ public class SpaceUtilities {
                 }).collect(Collectors.toList());
     }
 
-    public static <T, A, R> List<R> everywhereParallel(SignalDomain<R> dModule,
-                                                       IntFunction<R> s,
-                                                       DistanceStructure<T, A> ds)
+    public static <T, A, R> List<R> everywhereParallel(
+            SignalDomain<R> dModule,
+            IntFunction<R> s,
+            DistanceStructure<T, A> ds)
     {
         return IntStream
                 .range(0, ds.getModelSize())

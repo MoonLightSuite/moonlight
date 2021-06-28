@@ -10,6 +10,7 @@ import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -18,30 +19,85 @@ import static eu.quanticol.moonlight.util.TestUtils.listOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpatialComputationTest {
-
     private static final SignalDomain<Double> DOUBLES = new DoubleDomain();
-
+    private static final boolean PARALLEL = true;
+    private static final boolean SEQUENTIAL = false;
 
     @Test
     void testEmptyLocationService() {
         LocationService<Double, Double> locSvc = new LocationServiceList<>();
 
         assertThrows(UnsupportedOperationException.class,
-                     () -> somewhere(locSvc));
+                     () -> somewhere(locSvc, SEQUENTIAL));
     }
 
-
     @Test
-    void test1() {
+    void testSomewhereSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-
-
-
-        SpatialComputation<Double, Double, Double> op = somewhere(locSvc);
+        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+                                                                  SEQUENTIAL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
-        TimeChain<Double, List<Double>> result = op.computeUnaryChain(ups);
-        System.out.println(result);
+
+        TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
+        TimeChain<Double, List<Double>> resultOO = processUpdates(ups, op);
+
+        assertEquals(resultOO, resultIO);
+    }
+
+    @Test
+    void testEverywhereSingleToChainEquality() {
+        SpatialModel<Double> m = basicGraph();
+        LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
+        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+                                                                   SEQUENTIAL);
+        TimeChain<Double, List<Double>> ups = basicUpdates();
+
+        TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
+        TimeChain<Double, List<Double>> resultOO = processUpdates(ups, op);
+
+        assertEquals(resultOO, resultIO);
+    }
+
+    @Test
+    void testSomewhereParallelSingleToChainEquality() {
+        SpatialModel<Double> m = basicGraph();
+        LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
+        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+                                                                  PARALLEL);
+        TimeChain<Double, List<Double>> ups = basicUpdates();
+
+        TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
+        TimeChain<Double, List<Double>> resultOO = processUpdates(ups, op);
+
+        assertEquals(resultOO, resultIO);
+    }
+
+    @Test
+    void testEverywhereParallelSingleToChainEquality() {
+        SpatialModel<Double> m = basicGraph();
+        LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
+        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+                                                                   PARALLEL);
+        TimeChain<Double, List<Double>> ups = basicUpdates();
+
+        TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
+        TimeChain<Double, List<Double>> resultOO = processUpdates(ups, op);
+
+        assertEquals(resultOO, resultIO);
+    }
+
+    @Test
+    void testEscapeSingleToChainEquality() {
+        SpatialModel<Double> m = basicGraph();
+        LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
+        SpatialComputation<Double, Double, Double> op = escape(locSvc);
+        TimeChain<Double, List<Double>> ups = basicUpdates();
+
+        TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
+        TimeChain<Double, List<Double>> resultOO = processUpdates(ups, op);
+
+        assertEquals(resultOO, resultIO);
     }
 
     private static TimeChain<Double, List<Double>> basicUpdates() {
@@ -55,6 +111,40 @@ class SpatialComputationTest {
     }
 
     private static SpatialComputation<Double, Double, Double> somewhere(
+            LocationService<Double, Double> locSvc, boolean parallel)
+    {
+        // Distance bounds of the spatial operators
+        double min = 0;
+        double max = 5;
+
+        if(!parallel)
+            return new SpatialComputation<>(locSvc,
+                                            distance(min, max),
+                                           SpatialComputationTest::somewhereOp);
+        else
+            return new SpatialComputation<>(locSvc,
+                                            distance(min, max),
+                                SpatialComputationTest::somewhereOpParallel);
+    }
+
+    private static SpatialComputation<Double, Double, Double> everywhere(
+            LocationService<Double, Double> locSvc, boolean parallel)
+    {
+        // Distance bounds of the spatial operators
+        double min = 0;
+        double max = 5;
+
+        if(!parallel)
+            return new SpatialComputation<>(locSvc,
+                                            distance(min, max),
+                                          SpatialComputationTest::everywhereOp);
+        else
+            return new SpatialComputation<>(locSvc,
+                                            distance(min, max),
+                                  SpatialComputationTest::everywhereOpParallel);
+    }
+
+    private static SpatialComputation<Double, Double, Double> escape(
             LocationService<Double, Double> locSvc)
     {
         // Distance bounds of the spatial operators
@@ -62,8 +152,8 @@ class SpatialComputationTest {
         double max = 5;
 
         return new SpatialComputation<>(locSvc,
-                                        distance(min, max),
-                                        SpatialComputationTest::somewhereOp);
+                distance(min, max),
+                SpatialComputationTest::escapeOp);
     }
 
     /**
@@ -104,6 +194,20 @@ class SpatialComputationTest {
     }
 
 
+
+    private TimeChain<Double, List<Double>> processUpdates(
+            TimeChain<Double, List<Double>> updates,
+            SpatialComputation<Double, Double, Double> op)
+    {
+        List<Update<Double, List<Double>>> upsOO = updates.toUpdates();
+        List<Update<Double, List<Double>>> result = new ArrayList<>();
+        for(Update<Double, List<Double>> u: upsOO)
+            result.addAll(op.computeUnary(u));
+
+        return Update.asTimeChain(result);
+    }
+
+
     public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>
     distance(double lowerBound, double upperBound)
     {
@@ -118,6 +222,30 @@ class SpatialComputationTest {
                                             DistanceStructure<Double, ?> ds)
     {
         return SpaceUtilities.somewhere(DOUBLES, s, ds);
+    }
+
+    private static List<Double> everywhereOp(IntFunction<Double> s,
+                                             DistanceStructure<Double, ?> ds)
+    {
+        return SpaceUtilities.everywhere(DOUBLES, s, ds);
+    }
+
+    private static List<Double> somewhereOpParallel(IntFunction<Double> s,
+                                            DistanceStructure<Double, ?> ds)
+    {
+        return SpaceUtilities.somewhereParallel(DOUBLES, s, ds);
+    }
+
+    private static List<Double> everywhereOpParallel(IntFunction<Double> s,
+                                             DistanceStructure<Double, ?> ds)
+    {
+        return SpaceUtilities.everywhereParallel(DOUBLES, s, ds);
+    }
+
+    private static List<Double> escapeOp(IntFunction<Double> s,
+                                         DistanceStructure<Double, ?> ds)
+    {
+        return ds.escape(DOUBLES, s);
     }
 
 }
