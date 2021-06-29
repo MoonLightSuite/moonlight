@@ -66,22 +66,20 @@ public class UnaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
                                         argumentMonitor.monitor(signalUpdate);
 
-        List<Update<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
                                                             new ArrayList<>();
 
-        for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
-            updates.addAll(BooleanComputation.unary(argU, op));
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+            updates.add(BooleanComputation.unarySequence(argU, op));
         }
 
-        for(Update<Double, List<AbstractInterval<R>>> u : updates) {
-            rho.refine(u);
-        }
+        updates.forEach(rho::refine);
 
         return updates;
     }
@@ -100,9 +98,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
             output.add(BooleanComputation.unarySequence(argU, op));
         }
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> us : output) {
-            rho.refine(us);
-        }
+        output.forEach(rho::refine);
 
         return output;
     }

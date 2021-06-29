@@ -66,12 +66,12 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
     }
 
     @Override
-    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        Update<Double, List<AbstractInterval<R>>> u =
-                BooleanComputation.atom(signalUpdate, atomicFunction);
-        List<Update<Double, List<AbstractInterval<R>>>> updates =
+        TimeChain<Double, List<AbstractInterval<R>>> u =
+                BooleanComputation.atomSequence(signalUpdate, atomicFunction);
+        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
                 new ArrayList<>();
         updates.add(u);
         rho.refine(u);

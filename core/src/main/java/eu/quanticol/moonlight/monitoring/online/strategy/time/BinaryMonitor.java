@@ -71,30 +71,30 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
-        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<TimeChain<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
-        List<Update<Double, AbstractInterval<R>>> firstArgUps =
+        List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =
                 firstArg.monitor(signalUpdate);
-        List<Update<Double, AbstractInterval<R>>> secondArgUps =
+        List<TimeChain<Double, AbstractInterval<R>>> secondArgUps =
                 secondArg.monitor(signalUpdate);
 
 
         TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
         TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
-        for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
+        for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
             TimeChain<Double, AbstractInterval<R>> c2 =
                     s2.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c2, argU, opFunction));
+            updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
-        for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
+        for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
             TimeChain<Double, AbstractInterval<R>> c1 =
                 s1.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c1, argU, opFunction));
+            updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);

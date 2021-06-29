@@ -63,8 +63,7 @@ public class AtomicMonitor<V, R extends Comparable<R>>
         this.rho = new OnlineSignal<>(interpretation);
     }
 
-    @Override
-    public List<Update<Double, AbstractInterval<R>>> monitor(
+    public List<Update<Double, AbstractInterval<R>>> monitorOld(
             Update<Double, V> signalUpdate)
     {
         Update<Double, AbstractInterval<R>> u =
@@ -74,6 +73,16 @@ public class AtomicMonitor<V, R extends Comparable<R>>
         rho.refine(u);
 
         return updates;
+    }
+
+    @Override
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+            Update<Double, V> signalUpdate)
+    {
+        List<Update<Double, V>> updates  = new ArrayList<>();
+        updates.add(signalUpdate);
+        return monitor(Update.asTimeChain(updates));
+
     }
 
     @Override

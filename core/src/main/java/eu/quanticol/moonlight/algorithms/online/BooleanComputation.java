@@ -54,6 +54,15 @@ public class BooleanComputation {
         return new TimeChain<>(ls, us.getEnd());
     }
 
+    public static
+    <T extends Comparable<T> & Serializable, V, R>
+    TimeChain<T, R> atomSequence(Update<T, V> u, Function<V, R> op)
+    {
+        List<Update<T, R>> ups = new ArrayList<>();
+        ups.add(atom(u, op));
+        return Update.asTimeChain(ups);
+    }
+
     /**
      *
      * @param u update of the operand
