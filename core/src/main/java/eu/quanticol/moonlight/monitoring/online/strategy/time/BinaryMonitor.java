@@ -87,19 +87,15 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
         for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
-            if(!argU.isEmpty()) {
                 TimeChain<Double, AbstractInterval<R>> c2 =
                         s2.select(argU.getStart(), argU.getEnd());
                 updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
-            }
         }
 
         for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
-            if(!argU.isEmpty()) {
                 TimeChain<Double, AbstractInterval<R>> c1 =
                         s1.select(argU.getStart(), argU.getEnd());
                 updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
-            }
         }
 
         updates.forEach(rho::refine);

@@ -77,7 +77,9 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public TimeChain<Double, List<AbstractInterval<D>>> select(Double from, Double to) {
+    public TimeChain<Double, List<AbstractInterval<D>>> select(Double from,
+                                                               Double to)
+    {
         return Signals.select(segments, from, to);
     }
 
