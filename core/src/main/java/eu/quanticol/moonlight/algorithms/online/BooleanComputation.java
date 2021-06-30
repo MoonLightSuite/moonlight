@@ -300,33 +300,35 @@ public class BooleanComputation {
     {
         ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
         ChainIterator<SegmentInterface<T, R>> utr = inputUps.chainIterator();
-        SegmentInterface<T, R> curr;
-        T nextTime;
-        SegmentInterface<T, R> last = new TimeSegment<>(inputUps.getEnd(), null);
-        SegmentInterface<T, R> fst = utr.next();
-        SegmentInterface<T, R> snd = utr.tryPeekNext(last);
+        SegmentInterface<T, R> currUpdate = utr.next();
+        SegmentInterface<T, R> nextUpdate = utr.tryPeekNext(lastNode(inputUps.getEnd()));
 
         while(itr.hasNext()) {
-            curr = itr.next();
-            nextTime = tryPeekNextStart(itr, s.getEnd());
+            SegmentInterface<T, R> curr = itr.next();
+            SegmentInterface<T, R> next = itr.tryPeekNext(lastNode(s.getEnd()));
 
-            if(curr.getStart().compareTo(snd.getStart()) < 0
-                    && nextTime.compareTo(fst.getStart()) >= 0)
+            if(curr.compareTo(nextUpdate) < 0
+                    && next.compareTo(currUpdate) >= 0)
             {
-                T end = min(nextTime, snd.getStart());
-                T start = max(curr.getStart(), fst.getStart());
+                T end = min(next, nextUpdate).getStart();
+                T start = max(curr, currUpdate).getStart();
                 if(!start.equals(end)) {
                     SegmentInterface<T, R> r = new TimeSegment<>(start,
-                                    op.apply(fst.getValue(), curr.getValue()));
+                                    op.apply(currUpdate.getValue(), curr.getValue()));
                     outputUps.add(r);
 
                     if(utr.hasNext()) {
-                        fst = utr.next();
-                        snd = utr.tryPeekNext(last);
+                        currUpdate = utr.next();
+                        nextUpdate = utr.tryPeekNext(lastNode(inputUps.getEnd()));
                     }
                 }
             }
         }
+    }
+
+    private static <T extends Comparable<T> & Serializable, R>
+    SegmentInterface<T, R> lastNode(T end) {
+        return new TimeSegment<>(end, null);
     }
 
     private static <R extends Comparable<R>> R max(R a, R b) {

@@ -20,8 +20,6 @@
 
 package eu.quanticol.moonlight.signal.online;
 
-import java.io.Serializable;
-
 /**
  * The basic interface to represent time segments.
  * Note that for memory-efficiency reasons, the ending of the
@@ -33,6 +31,7 @@ import java.io.Serializable;
  * @see TimeChain for a data structure that exploits them
  */
 public interface SegmentInterface <T extends Comparable<T>, V>
+        extends Comparable<SegmentInterface<T, V>>
 {
     /**
      * @return the value of the segment
@@ -50,4 +49,10 @@ public interface SegmentInterface <T extends Comparable<T>, V>
      *         store the ending of the Segment.
      */
     T getEnd() throws UnsupportedOperationException;
+
+
+    default int compareTo(SegmentInterface<T, V> segment) {
+        return getStart().compareTo(segment.getStart());
+    }
+
 }
