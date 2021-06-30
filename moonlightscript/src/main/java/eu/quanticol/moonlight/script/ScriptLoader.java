@@ -28,6 +28,16 @@ public class ScriptLoader {
         return new ScriptLoader(CharStreams.fromString(code));
     }
 
+    public static MoonLightScript loadFromFile(String fileName) throws IOException {
+        ScriptLoader loader = ScriptLoader.loaderFromFile(fileName);
+        return loader.getScript();
+    }
+
+    public static MoonLightScript loadFromCode(String code) throws IOException {
+        ScriptLoader loader = ScriptLoader.loaderFromCode(code);
+        return loader.getScript();
+    }
+
     public ScriptLoader(CharStream source) {
         this.source = source;
         this.errors = Collections.synchronizedList(new LinkedList<>());
@@ -51,7 +61,7 @@ public class ScriptLoader {
         return errors.isEmpty();
     }
 
-    private MoonLightScript loadScript(CharStream source) {
+    private MoonLightScript loadScript() {
         if (!loadModel()) {return null;};
         if (!validate()) {return null;};
         if (validator.isSpatial()) {
@@ -180,6 +190,6 @@ public class ScriptLoader {
 
 
     public MoonLightScript getScript() {
-        return loadScript(source);
+        return loadScript();
     }
 }
