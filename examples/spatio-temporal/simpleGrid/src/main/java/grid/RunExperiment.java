@@ -1,66 +1,132 @@
 package grid;
 
-import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.formula.BooleanDomain;
+import eu.quanticol.moonlight.formula.DoubleDistance;
+import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.SpatialModel;
-import eu.quanticol.moonlight.util.Triple;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 
 public class RunExperiment {
 
     public static void main(String[] args) {
+        List<Integer> sizeGrid = Arrays.asList(10, 100, 1000, 10000);
+        List<Integer> tLength = Arrays.asList(1, 10, 100, 1000);
+        int n = 10;
 
-        //first experiment
-        Triple<Integer, Integer, Integer> sizeGrid = new Triple<>(10, 30, 10);
-        Triple<Integer, Integer, Integer> tLength = new Triple<>(10, 30, 10);
-        Experiment experiment = new Experiment(RunExperiment::getMonitorSomewhere, "somewhere(x>=0.2)", sizeGrid, tLength);
-        experiment.run(2);
+        System.out.println("numberOfExperiment: " + n);
+        System.out.println("=========================");
+        System.out.println("Boolean Monitor");
+        System.out.println("=========================");
+        //P1
+        Experiment experiment = new Experiment(RunExperiment::getMonitorReachBoolean, "(x<=0.5)reach[0,30](x>0.5)", sizeGrid, tLength);
+        experiment.run(n);
 
-        //second experiment
-        sizeGrid = new Triple<>(10, 30, 10);
-        tLength = new Triple<>(10, 30, 10);
-        experiment = new Experiment(RunExperiment::getMonitorReach, "(x>=0.2)reach(x<0.2)", sizeGrid, tLength);
-        experiment.run(2);
+        //P2
+        experiment = new Experiment(RunExperiment::getMonitorEscapeBoolean, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //P3
+        experiment = new Experiment(RunExperiment::getMonitorSomewhereBoolean, "somewhere[0,30](x>=0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //SPT1
+        experiment = new Experiment(RunExperiment::getMonitorSPTReachBoolean, "(x<=0.5)reach[0,30]eventually(x>0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //TSP1
+        experiment = new Experiment(RunExperiment::getMonitorTSPReachBoolean, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
+        experiment.run(n);
+
+        System.out.println("=========================");
+        System.out.println("MinMax Monitor");
+        System.out.println("=========================");
+        //P1
+        experiment = new Experiment(RunExperiment::getMonitorReachMinMax, "(x<=0.5)reach[0,30](x>0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //P2
+        experiment = new Experiment(RunExperiment::getMonitorEscapeMinMax, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //P3
+        experiment = new Experiment(RunExperiment::getMonitorSomewhereMinMax, "somewhere[0,30](x>=0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //SPT1
+        experiment = new Experiment(RunExperiment::getMonitorSPTReachMinMax, "(x<=0.5)reach[0,30]eventually(x>0.5)", sizeGrid, tLength);
+        experiment.run(n);
+
+        //TSP1
+        experiment = new Experiment(RunExperiment::getMonitorTSPReachMinMax, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
+        experiment.run(n);
+
 
     }
 
-    private static SpatialTemporalMonitor getMonitorSomewhere(SpatialModel<Double> grid) {
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 5., grid);
-        distanceFunctions.put("dist", x -> predist);
-        HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
-        atomic.put("simpleAtomic", p -> (x -> (x - 0.2)));
-        SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
-                atomic,
-                distanceFunctions,
-                new DoubleDomain(),
-                true);
-
-        Formula somewhere = new SomewhereFormula("dist", new AtomicFormula("simpleAtomic"));
-        return monitor.monitor(
-                somewhere, null);
+    private static <T> SpatialTemporalMonitor<Double, Double, T> atomicSignal(Function<Double, T> predicate) {
+        return SpatialTemporalMonitor.atomicMonitor(predicate);
     }
 
-    private static SpatialTemporalMonitor getMonitorReach(SpatialModel<Double> grid) {
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 5., grid);
-        distanceFunctions.put("dist", x -> predist);
-        HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
-        atomic.put("simpleAtomicRight", p -> (x -> (-x + 0.2)));
-        atomic.put("simpleAtomicLeft", p -> (x -> (x - 0.2)));
-        SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
-                atomic,
-                distanceFunctions,
-                new DoubleDomain(),
-                true);
+    private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
+        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+    }
 
-        Formula somewhere = new ReachFormula(new AtomicFormula("simpleAtomicLeft"), "dist", new AtomicFormula("simpleAtomicRight"));
-        return monitor.monitor(
-                somewhere, null);
+    private static SpatialTemporalMonitor getMonitorEscapeBoolean() {
+        SpatialTemporalMonitor<Double, Double, Boolean> atomic = atomicSignal(x -> x > 0.5);
+        return SpatialTemporalMonitor.escapeMonitor(atomic, distance(5, Double.MAX_VALUE), new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorEscapeMinMax() {
+        SpatialTemporalMonitor<Double, Double, Double> atomic = atomicSignal(x -> x - 0.5);
+        return SpatialTemporalMonitor.somewhereMonitor(atomic, distance(5, Double.MAX_VALUE), new DoubleDomain());
+    }
+
+
+    private static SpatialTemporalMonitor getMonitorSomewhereBoolean() {
+        SpatialTemporalMonitor<Double, Double, Boolean> atomic = atomicSignal(x -> x > 0.5);
+        return SpatialTemporalMonitor.somewhereMonitor(atomic, distance(0, 30), new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorSomewhereMinMax() {
+        SpatialTemporalMonitor<Double, Double, Double> atomic = atomicSignal(x -> x - 0.5);
+        return SpatialTemporalMonitor.somewhereMonitor(atomic, distance(0, 30), new DoubleDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorReachBoolean() {
+        SpatialTemporalMonitor<Double, Double, Boolean> left = atomicSignal(x -> x <= 0.5);
+        SpatialTemporalMonitor<Double, Double, Boolean> right = atomicSignal(x -> x > 0.5);
+        return SpatialTemporalMonitor.reachMonitor(left, distance(0, 30), right, new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorReachMinMax() {
+        SpatialTemporalMonitor<Double, Double, Double> left = atomicSignal(x -> 0.5 - x);
+        SpatialTemporalMonitor<Double, Double, Double> right = atomicSignal(x -> x - 0.5);
+        return SpatialTemporalMonitor.reachMonitor(left, distance(0, 30), right, new DoubleDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorSPTReachBoolean() {
+        SpatialTemporalMonitor<Double, Double, Boolean> left = atomicSignal(x -> x <= 0.5);
+        SpatialTemporalMonitor<Double, Double, Boolean> right = SpatialTemporalMonitor.eventuallyMonitor(atomicSignal(x -> x > 0.5), new BooleanDomain());
+        return SpatialTemporalMonitor.reachMonitor(left, distance(0, 30), right, new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorSPTReachMinMax() {
+        SpatialTemporalMonitor<Double, Double, Double> left = atomicSignal(x -> 0.5 - x);
+        SpatialTemporalMonitor<Double, Double, Double> right = SpatialTemporalMonitor.eventuallyMonitor(atomicSignal(x -> x - 0.5), new DoubleDomain());
+        return SpatialTemporalMonitor.reachMonitor(left, distance(0, 30), right, new DoubleDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorTSPReachBoolean() {
+        return SpatialTemporalMonitor.globallyMonitor(getMonitorReachBoolean(), new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorTSPReachMinMax() {
+        return SpatialTemporalMonitor.globallyMonitor(getMonitorReachMinMax(), new DoubleDomain());
     }
 }
