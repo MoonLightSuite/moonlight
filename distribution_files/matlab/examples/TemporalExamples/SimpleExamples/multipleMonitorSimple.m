@@ -15,7 +15,7 @@ moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");
 moonlightScript.setBooleanDomain();
 
 %% STEP 4: getting the monitor associated with a target formula
-FutureMonitor = moonlightScript.getMonitor("future");
+FutureMonitor = moonlightScript.getMonitor("future2");
 
 %% STEP 5: monitor the signal 
-FutureMonitorResult = FutureMonitor.monitor(time,values);
+FutureMonitorResult = FutureMonitor.monitor(time,values)

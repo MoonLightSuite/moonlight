@@ -2,3 +2,4 @@ signal { real x; real y}
 domain boolean;
 formula future = globally [0, 0.2] (x >y) ;
 formula past = historically [0, 0.2]  (x > y);
+formula future2 =  globally{(x>0) -> globally [0, 0.2] (x >y)} ;

@@ -2,6 +2,7 @@ package grid;
 
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.LocationServiceList;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.TestUtils;
@@ -52,8 +53,10 @@ public class Experiment {
         Random rand = new Random(1);
         SpatialTemporalSignal<Double> signal = createSpatioTemporalSignal(sizeGrid * sizeGrid, 0, 1, tLength, (t, l) -> rand.nextDouble());
         LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, tLength, grid);
+        LocationServiceList<Double> staticLocService = new LocationServiceList<Double>();
+        staticLocService.add(0,grid);
         long startingTime = System.currentTimeMillis();
-        monitor.monitor(locService, signal);
+        monitor.monitor(staticLocService, signal);
         long endingTime = System.currentTimeMillis();
         float duration = (float) ((endingTime - startingTime) / 1000.0);
         return duration;
