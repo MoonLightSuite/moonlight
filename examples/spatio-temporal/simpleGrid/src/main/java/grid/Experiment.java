@@ -56,7 +56,7 @@ public class Experiment {
         LocationServiceList<Double> staticLocService = new LocationServiceList<Double>();
         staticLocService.add(0,grid);
         long startingTime = System.currentTimeMillis();
-        monitor.monitor(staticLocService, signal);
+        monitor.monitor(locService, signal);
         long endingTime = System.currentTimeMillis();
         float duration = (float) ((endingTime - startingTime) / 1000.0);
         return duration;

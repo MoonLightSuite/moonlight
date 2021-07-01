@@ -15,8 +15,8 @@ import java.util.function.Function;
 public class RunExperiment {
 
     public static void main(String[] args) {
-        List<Integer> sizeGrid = Arrays.asList(4,16,32);
-        List<Integer> tLength = Arrays.asList(10,100);
+        List<Integer> sizeGrid = Arrays.asList(32);
+        List<Integer> tLength = Arrays.asList(10,100, 1000);
         int n = 2;
 
         System.out.println("numberOfExperiment: " + n);
@@ -43,13 +43,13 @@ public class RunExperiment {
         experiment = new Experiment(RunExperiment::getMonitorTSPReachBoolean, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
         experiment.run(n);
 
-        //SPT2
-        experiment = new Experiment(RunExperiment::getMonitorSPTSomewhereBoolean, "somewhere[0,30]eventually(x>0.5)", sizeGrid, tLength);
-        experiment.run(n);
-
-        //TSP2
-        experiment = new Experiment(RunExperiment::getMonitorTSPSomewhereBoolean, "globally{somewhere[0,30](x>0.5)}", sizeGrid, tLength);
-        experiment.run(n);
+//        //SPT2
+//        experiment = new Experiment(RunExperiment::getMonitorSPTSomewhereBoolean, "somewhere[0,30]eventually(x>0.5)", sizeGrid, tLength);
+//        experiment.run(n);
+//
+//        //TSP2
+//        experiment = new Experiment(RunExperiment::getMonitorTSPSomewhereBoolean, "globally{somewhere[0,30](x>0.5)}", sizeGrid, tLength);
+//        experiment.run(n);
 
         System.out.println("=========================");
         System.out.println("MinMax Monitor");
@@ -74,13 +74,13 @@ public class RunExperiment {
         experiment = new Experiment(RunExperiment::getMonitorTSPReachMinMax, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
         experiment.run(n);
 
-        //SPT2
-        experiment = new Experiment(RunExperiment::getMonitorSPTSomewhereMinMax, "somewhere[0,30]eventually(x>0.5)", sizeGrid, tLength);
-        experiment.run(n);
-
-        //TSP2
-        experiment = new Experiment(RunExperiment::getMonitorTSPSomewhereMinMax, "globally{somewhere[0,30](x>0.5)}", sizeGrid, tLength);
-        experiment.run(n);
+//        //SPT2
+//        experiment = new Experiment(RunExperiment::getMonitorSPTSomewhereMinMax, "somewhere[0,30]eventually(x>0.5)", sizeGrid, tLength);
+//        experiment.run(n);
+//
+//        //TSP2
+//        experiment = new Experiment(RunExperiment::getMonitorTSPSomewhereMinMax, "globally{somewhere[0,30](x>0.5)}", sizeGrid, tLength);
+//        experiment.run(n);
 
 
     }
