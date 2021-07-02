@@ -295,7 +295,8 @@ public class BooleanComputation {
 
     private static
     <T extends Comparable<T> & Serializable, R>
-    void rightApplySequence(TimeChain<T, R> s, List<SegmentInterface<T, R>> outputUps,
+    void rightApplySequence(TimeChain<T, R> s,
+                            List<SegmentInterface<T, R>> outputUps,
                             BinaryOperator<R> op, TimeChain<T, R> inputUps)
     {
         ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
