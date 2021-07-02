@@ -2,10 +2,12 @@ package grid;
 
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.LocationService;
+import eu.quanticol.moonlight.signal.LocationServiceList;
 import eu.quanticol.moonlight.signal.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.TestUtils;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +17,8 @@ import java.util.stream.IntStream;
 import static eu.quanticol.moonlight.util.TestUtils.createSpatioTemporalSignal;
 
 public class Experiment {
+
+    private static final DecimalFormat df = new DecimalFormat("0.###");
 
     private final Supplier<SpatialTemporalMonitor> spatialTemporalMonitorSupplier;
     private final String formulaName;
@@ -45,13 +49,15 @@ public class Experiment {
         double[] times = IntStream.range(0, n).mapToDouble(i -> execTime(function.get(), grid, sizeGrid, tLength)).toArray();
         double mean = Arrays.stream(times).summaryStatistics().getAverage();
         double variance = Arrays.stream(times).map(time -> (time - mean) * (time - mean)).sum() / (n - 1);
-        System.out.println(sizeGrid + "," + tLength + "," + mean + "," + Math.sqrt(variance));
+        System.out.println(sizeGrid + "," + tLength + "," + df.format(mean) + "," + df.format(Math.sqrt(variance)));
     }
 
     private static float execTime(SpatialTemporalMonitor monitor, SpatialModel<Double> grid, int sizeGrid, int tLength) {
         Random rand = new Random(1);
         SpatialTemporalSignal<Double> signal = createSpatioTemporalSignal(sizeGrid * sizeGrid, 0, 1, tLength, (t, l) -> rand.nextDouble());
-        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, 0.0, grid);
+        LocationService<Double> locService = TestUtils.createLocServiceStatic(0, 1, tLength, grid);
+        LocationServiceList<Double> staticLocService = new LocationServiceList<Double>();
+        staticLocService.add(0,grid);
         long startingTime = System.currentTimeMillis();
         monitor.monitor(locService, signal);
         long endingTime = System.currentTimeMillis();
