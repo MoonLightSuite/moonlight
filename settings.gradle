@@ -18,4 +18,6 @@ include 'distribution_files:java'
 include 'examples:temporal:simpleTemporal'
 include 'moonlightscript'
 findProject(':examples:temporal:simpleTemporal')?.name = 'simpleTemporal'
+include 'examples:spatio-temporal:simpleGrid'
+findProject(':examples:spatio-temporal:simpleGrid')?.name = 'simpleGrid'
 

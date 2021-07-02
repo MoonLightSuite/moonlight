@@ -21,5 +21,4 @@ public interface DistanceDomain<R> {
 
     boolean equalTo(R x, R y);
 
-
 }

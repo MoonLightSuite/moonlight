@@ -77,8 +77,11 @@ public class SpatialTemporalMonitorReach<E,S,T> implements SpatialTemporalMonito
                 toReturn.add(time, f.escape(domain,(values::get)));
             }
             time = nextTime;
-            current = (next!=null?next:current);
-            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+            if ((next!=null)&&(next.getFirst()==time)) {
+                current = next;
+                f = distance.apply(current.getSecond());
+                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+            }
         }
         return toReturn;
 	}

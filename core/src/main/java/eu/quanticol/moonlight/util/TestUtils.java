@@ -126,7 +126,7 @@ public class TestUtils {
     }
 
     public static LocationService<Double> createLocServiceStatic(double start, double dt, double end, SpatialModel<Double> graph) {
-        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        LocationServiceList<Double> locService = new LocationServiceList<>();
         double time = start;
         while (time < end) {
             double current = time;

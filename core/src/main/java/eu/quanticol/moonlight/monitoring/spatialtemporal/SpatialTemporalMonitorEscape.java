@@ -62,15 +62,18 @@ public class SpatialTemporalMonitorEscape<E,S,T> implements SpatialTemporalMonit
     		toReturn.add(time, f.escape(domain, spatialSignal));
     		double nextTime = cursor.forward();
     		while ((next != null)&&(next.getFirst()<nextTime)) {
-    			current = next;	
+    			current = next;
     			time = current.getFirst();
     			next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
     			f = distance.apply(current.getSecond());
     			toReturn.add(time, f.escape(domain, spatialSignal));
     		}
     		time = nextTime;
-            current = (next!=null?next:current);
-            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+    		if ((next!=null)&&(next.getFirst()==time)) {
+				current = next;
+				f = distance.apply(current.getSecond());
+				next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+			}
     	}
     	//TODO: Manage end of signal!
     	return toReturn;

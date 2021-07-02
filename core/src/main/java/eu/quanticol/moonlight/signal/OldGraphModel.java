@@ -3,32 +3,27 @@
  */
 package eu.quanticol.moonlight.signal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import eu.quanticol.moonlight.util.Pair;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import eu.quanticol.moonlight.util.Pair;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 /**
  * @author loreti
  *
  */
-public class GraphModel<T> implements SpatialModel<T> {
+public class OldGraphModel<T> implements SpatialModel<T> {
 
 	private final ArrayList<HashMap<Integer,T>> edges;
-	
+
 	private final ArrayList<List<Pair<Integer,T>>> outEdges;
-	
+
 	private final ArrayList<List<Pair<Integer,T>>> inEdges;
 
 	private int size;
-	
-	public GraphModel( int size ) {
+
+	public OldGraphModel(int size ) {
 		this.size = size;
 		this.edges = new ArrayList<>(size);
 		this.outEdges = new ArrayList<>(size);

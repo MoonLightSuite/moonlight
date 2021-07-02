@@ -66,8 +66,11 @@ public class SpatialTemporalMonitorEverywhere<E,S,T> implements SpatialTemporalM
                 toReturn.add(time, f.everywhere(domain, spatialSignal));
             }
             time = nextTime;
-            current = (next!=null?next:current);
-            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);            
+            if ((next!=null)&&(next.getFirst()==time)) {
+                current = next;
+                f = distance.apply(current.getSecond());
+                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+            }
         }
         //TODO: Manage end of signal!
         return toReturn;
