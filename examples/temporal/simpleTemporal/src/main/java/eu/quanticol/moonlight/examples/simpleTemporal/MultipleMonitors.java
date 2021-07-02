@@ -24,8 +24,8 @@ import java.util.stream.IntStream;
 public class MultipleMonitors {
     public static void main(String[] args) throws IOException, URISyntaxException {
         //fromJava();
-        //fromFileScript();
-        fromStringScript();
+        fromFileScript();
+        //fromStringScript();
     }
 
     private static void fromJava() {
