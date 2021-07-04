@@ -90,7 +90,17 @@ public class TemporalMonitorDefinition {
     }
 
     public <S> TemporalMonitor<MoonLightRecord,S> getMonitorFromDouble(SignalDomain<S> domain, double[] values) {
-        return getMonitor(domain, arguments.fromDoubleArray(values));
+        return getMonitor(domain, evalArgumentFromDoubleArray(values));
+    }
+
+    private MoonLightRecord evalArgumentFromDoubleArray(double[] values) {
+        if (this.arguments == null) {
+            return null;
+        }
+        if (values == null) {
+            values = new double[0];
+        }
+        return this.arguments.fromDoubleArray(values);
     }
 
     public <S> TemporalMonitor<MoonLightRecord,S> getMonitorFromObject(SignalDomain<S> domain, Object[] values) {

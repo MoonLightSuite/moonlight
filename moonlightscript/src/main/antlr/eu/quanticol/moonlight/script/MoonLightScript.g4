@@ -58,10 +58,10 @@ scriptSignal:
 
 scriptSpace:
 	'space' '{'
-/*		('locations' '{' (locationVariables += variableDeclaration ';')+ '}')?
-		('edges' '{' */
+/*		('locations' '{' (locationVariables += variableDeclaration ';')+ '}')?*/
+		('edges' '{'
 		(edgeVariables += variableDeclaration ';')+
-/*		 '}')*/
+		 '}')
 	 '}'
 ;
 

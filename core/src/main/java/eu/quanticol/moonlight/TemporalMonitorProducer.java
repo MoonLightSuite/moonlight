@@ -4,9 +4,12 @@ import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.formula.SignalDomain;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.MoonLightRecord;
+import eu.quanticol.moonlight.signal.RecordHandler;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.DoubleStream;
 
 @FunctionalInterface
 public interface TemporalMonitorProducer {
@@ -189,6 +192,15 @@ public interface TemporalMonitorProducer {
             @Override
             public <S> TemporalMonitor<MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
                 return TemporalMonitor.sinceMonitor(left.apply(domain,args), interval.apply(args), right.apply(domain,args), domain);
+            }
+        };
+    }
+
+    static TemporalMonitorProducer produceCall(TemporalMonitorProducer temporalMonitorProducer, RecordHandler callee, List<Function<MoonLightRecord, Double>> functionArgument) {
+        return new TemporalMonitorProducer() {
+            @Override
+            public <S> TemporalMonitor<MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
+                return temporalMonitorProducer.apply(domain,callee.fromDoubleArray(functionArgument.stream().mapToDouble(f -> f.apply(args)).toArray()));
             }
         };
     }

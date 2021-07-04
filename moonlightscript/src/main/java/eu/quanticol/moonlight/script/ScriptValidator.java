@@ -45,6 +45,7 @@ public class ScriptValidator {
             TypeEnvironment te = typeEnvironment.addLocal(getLocalContext(scriptFormulaContext.parameters));
             TypeChecker tc = new TypeChecker(errors,te, TypeChecker.EvaluationContext.STATE,isSpatial);
             tc.checkBoolean(scriptFormulaContext.formula);
+            typeEnvironment.addFormula(scriptFormulaContext.name.getText(), scriptFormulaContext.parameters.stream().map(p -> MoonLightType.typeOf(p.type.getText())).toArray(MoonLightType[]::new));
         }
 
     }
@@ -71,7 +72,7 @@ public class ScriptValidator {
 
     private void recordLocationVariable(MoonLightScriptParser.VariableDeclarationContext variableDeclarationContext) {
         if (checkForDuplicatedName(variableDeclarationContext.name.getText(), variableDeclarationContext)) {
-            typeEnvironment.addLoction(variableDeclarationContext.name.getText(), MoonLightType.typeOf(variableDeclarationContext.type.getText()));
+            typeEnvironment.addLocation(variableDeclarationContext.name.getText(), MoonLightType.typeOf(variableDeclarationContext.type.getText()));
             symbols.put(variableDeclarationContext.name.getText(), variableDeclarationContext);
         }
     }

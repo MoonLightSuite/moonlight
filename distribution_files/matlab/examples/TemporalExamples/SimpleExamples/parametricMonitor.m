@@ -10,7 +10,7 @@ values = trajFunction(time);   % x,y
 %this object is an implementation of ScriptLoader class, please 
 %refer to the doc of this class for more details (ex. write in console 
 %"doc ScriptLoader" ) please, open parametricMonitor.mls 
-moonlightScript = ScriptLoader.loadFromFile("parametricMonitor");
+moonlightScript = ScriptLoader.loadFromFile("parametricMonitor.mls");
 
 % generate the monitor for each property, as default it is taken the
 % semantincs of the .mls script, in this case a boolean semantics

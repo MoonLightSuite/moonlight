@@ -17,7 +17,7 @@ plotGraph(inputModel, 1 , 'node');
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
-moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript");
+moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript.mls");
 
 %moonlightScript.setMinMaxDomain(); % for the quantitative semantics
 moonlightScript.setBooleanDomain();

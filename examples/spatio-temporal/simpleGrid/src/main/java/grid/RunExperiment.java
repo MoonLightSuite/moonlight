@@ -15,8 +15,8 @@ import java.util.function.Function;
 public class RunExperiment {
 
     public static void main(String[] args) {
-        List<Integer> sizeGrid = Arrays.asList(4,16,32);
-        List<Integer> tLength = Arrays.asList(10,100);
+        List<Integer> sizeGrid = Arrays.asList(4,16,32);//4,16,32
+        List<Integer> tLength = Arrays.asList(1,10,100);//10,100
         int n = 2;
 
         System.out.println("numberOfExperiment: " + n);
@@ -26,6 +26,7 @@ public class RunExperiment {
 
         //P1
         Experiment experiment = new Experiment(RunExperiment::firstExp, "firstExp", sizeGrid, tLength);
+        long start;
         experiment.run(n);
 //
 //        //P1
@@ -33,8 +34,8 @@ public class RunExperiment {
 //        experiment.run(n);
 
         //P2
-        experiment = new Experiment(RunExperiment::getMonitorEscapeBoolean, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
-        experiment.run(n);
+//        experiment = new Experiment(RunExperiment::getMonitorEscapeBoolean, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
+//        experiment.run(n);
 
 //        //P3
 //        experiment = new Experiment(RunExperiment::getMonitorSomewhereBoolean, "somewhere[0,30](x>=0.5)", sizeGrid, tLength);
@@ -48,6 +49,13 @@ public class RunExperiment {
 //        experiment = new Experiment(RunExperiment::getMonitorTSPReachBoolean, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
 //        experiment.run(n);
 
+        //SPT2
+//        experiment = new Experiment(RunExperiment::getMonitorSPT2Boolean, "somewhere[0,30](eventually(x>=0.5))", sizeGrid, tLength);
+//        experiment.run(n);
+
+        //TSP2
+        experiment = new Experiment(RunExperiment::getMonitorTSP2Boolean, "eventually(somewhere[0,30](x>=0.5))", sizeGrid, tLength);
+        experiment.run(n);
 
 
         System.out.println("=========================");
@@ -58,8 +66,8 @@ public class RunExperiment {
 //        experiment.run(n);
 
         //P2
-        experiment = new Experiment(RunExperiment::getMonitorEscapeMinMax, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
-        experiment.run(n);
+//        experiment = new Experiment(RunExperiment::getMonitorEscapeMinMax, "escape[5,INF](x>=0.5)", sizeGrid, tLength);
+//        experiment.run(n);
 
 //        //P3
 //        experiment = new Experiment(RunExperiment::getMonitorSomewhereMinMax, "somewhere[0,30](x>=0.5)", sizeGrid, tLength);
@@ -73,7 +81,13 @@ public class RunExperiment {
 //        experiment = new Experiment(RunExperiment::getMonitorTSPReachMinMax, "globally{(x<=0.5)reach[0,30](x>0.5)}", sizeGrid, tLength);
 //        experiment.run(n);
 
+        //SPT2
+//        experiment = new Experiment(RunExperiment::getMonitorSPT2MinMax, "somewhere[0,30](eventually(x>=0.5))", sizeGrid, tLength);
+//        experiment.run(n);
 
+        //TSP2
+        experiment = new Experiment(RunExperiment::getMonitorTSP2MinMax, "eventually(somewhere[0,30](x>=0.5))", sizeGrid, tLength);
+        experiment.run(n);
 
 
     }
@@ -100,13 +114,38 @@ public class RunExperiment {
 
     private static SpatialTemporalMonitor getMonitorEscapeMinMax() {
         SpatialTemporalMonitor<Double, Double, Double> atomic = atomicSignal(x -> x - 0.5);
-        return SpatialTemporalMonitor.somewhereMonitor(atomic, distance(5, Double.MAX_VALUE), new DoubleDomain());
+        return SpatialTemporalMonitor.escapeMonitor(atomic, distance(5, Double.MAX_VALUE), new DoubleDomain());
     }
 
 
     private static SpatialTemporalMonitor getMonitorSomewhereBoolean() {
         SpatialTemporalMonitor<Double, Double, Boolean> atomic = atomicSignal(x -> x > 0.5);
         return SpatialTemporalMonitor.somewhereMonitor(atomic, distance(0, 30), new BooleanDomain());
+    }
+
+    private static SpatialTemporalMonitor getMonitorSPT2Boolean() {
+        BooleanDomain domain = new BooleanDomain();
+        SpatialTemporalMonitor<Double, Double, Boolean> atomic = atomicSignal(x -> x > 0.5);
+        return SpatialTemporalMonitor.somewhereMonitor(SpatialTemporalMonitor.eventuallyMonitor(atomic,domain), distance(0, 30), domain);
+    }
+
+    private static SpatialTemporalMonitor getMonitorTSP2Boolean() {
+        BooleanDomain domain = new BooleanDomain();
+        SpatialTemporalMonitor<Double, Double, Boolean> atomic = atomicSignal(x -> x > 0.5);
+        return SpatialTemporalMonitor.eventuallyMonitor(SpatialTemporalMonitor.somewhereMonitor(atomic, distance(0, 30), domain),domain);
+    }
+
+
+    private static SpatialTemporalMonitor getMonitorSPT2MinMax() {
+        DoubleDomain domain = new DoubleDomain();
+        SpatialTemporalMonitor<Double, Double, Double> atomic = atomicSignal(x -> x - 0.5);
+        return SpatialTemporalMonitor.somewhereMonitor(SpatialTemporalMonitor.eventuallyMonitor(atomic,domain), distance(0, 30), domain);
+    }
+
+    private static SpatialTemporalMonitor getMonitorTSP2MinMax() {
+        DoubleDomain domain = new DoubleDomain();
+        SpatialTemporalMonitor<Double, Double, Double> atomic = atomicSignal(x -> x - 0.5);
+        return SpatialTemporalMonitor.eventuallyMonitor(SpatialTemporalMonitor.somewhereMonitor(atomic, distance(0, 30), domain),domain);
     }
 
     private static SpatialTemporalMonitor getMonitorSomewhereMinMax() {

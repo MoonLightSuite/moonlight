@@ -102,7 +102,7 @@ public class ScriptLoader {
         DefaultNameResolver resolver = new DefaultNameResolver(repository,constants);
         String defaultMonitor = null;
         for (MoonLightScriptParser.ScriptFormulaContext f: this.model.formulas) {
-            TemporalMonitoringGenerator evaluator = new TemporalMonitoringGenerator(producers,resolver,formulaParameters.get(f.name.getText()),signalHandler);
+            TemporalMonitoringGenerator evaluator = new TemporalMonitoringGenerator(producers,resolver,formulaParameters,formulaParameters.get(f.name.getText()),signalHandler);
             producers.put(f.name.getText(), evaluator.eval(f.formula));
             if ((defaultMonitor == null)||(f.isDefault != null)) {
                 defaultMonitor = f.name.getText();

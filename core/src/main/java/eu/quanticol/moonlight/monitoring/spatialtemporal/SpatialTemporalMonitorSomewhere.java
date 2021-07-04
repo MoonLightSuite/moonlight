@@ -38,11 +38,14 @@ public class SpatialTemporalMonitorSomewhere<E,S,T> implements SpatialTemporalMo
 
     private SpatialTemporalSignal<T> computeSomewhereDynamic(
             LocationService<E> l, SpatialTemporalSignal<T> s) {
+
         SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s.getNumberOfLocations());
         if (l.isEmpty()) {
             return toReturn;
         }
+
         ParallelSignalCursor<T> cursor = s.getSignalCursor(true);
+
         Iterator<Pair<Double, SpatialModel<E>>> locationServiceIterator = l.times();
         Pair<Double, SpatialModel<E>> current = locationServiceIterator.next();
         Pair<Double, SpatialModel<E>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
@@ -51,11 +54,12 @@ public class SpatialTemporalMonitorSomewhere<E,S,T> implements SpatialTemporalMo
             current = next;
             next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
         }
+
         //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
+        SpatialModel<E> sm = current.getSecond();
+        DistanceStructure<E, ?> f = distance.apply(sm);
         while (!cursor.completed() && !Double.isNaN(time)) {
             Function<Integer, T> spatialSignal = cursor.getValue();
-            SpatialModel<E> sm = current.getSecond();
-            DistanceStructure<E, ?> f = distance.apply(sm);
             toReturn.add(time, f.somewhere(domain, spatialSignal));
             double nextTime = cursor.forward();
             while ((next != null)&&(next.getFirst()<nextTime)) {
@@ -77,4 +81,47 @@ public class SpatialTemporalMonitorSomewhere<E,S,T> implements SpatialTemporalMo
         return toReturn;
 
     }
+
+//    private SpatialTemporalSignal<T> computeSomewhereDynamic(
+//            LocationService<E> l, SpatialTemporalSignal<T> s) {
+//        SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s.getNumberOfLocations());
+//        if (l.isEmpty()) {
+//            return toReturn;
+//        }
+//        ParallelSignalCursor<T> cursor = s.getSignalCursor(true);
+//        Iterator<Pair<Double, SpatialModel<E>>> locationServiceIterator = l.times();
+//        Pair<Double, SpatialModel<E>> current = locationServiceIterator.next();
+//        Pair<Double, SpatialModel<E>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+//        double time = cursor.getTime();
+//        while ((next != null)&&(next.getFirst()<=time)) {
+//            current = next;
+//            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+//        }
+//        //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
+//        while (!cursor.completed() && !Double.isNaN(time)) {
+//            Function<Integer, T> spatialSignal = cursor.getValue();
+//            SpatialModel<E> sm = current.getSecond();
+//            DistanceStructure<E, ?> f = distance.apply(sm);
+//            toReturn.add(time, f.somewhere(domain, spatialSignal));
+//            double nextTime = cursor.forward();
+//            while ((next != null)&&(next.getFirst()<nextTime)) {
+//                current = next;
+//                time = current.getFirst();
+//                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+//                f = distance.apply(current.getSecond());
+//                toReturn.add(time, f.somewhere(domain, spatialSignal));
+//            }
+//            time = nextTime;
+//            if ((next!=null)&&(next.getFirst()==time)) {
+//                current = next;
+//                f = distance.apply(current.getSecond());
+//                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
+//            }
+//        }
+//
+//        //TODO: Manage end of signal!
+//        return toReturn;
+//
+//    }
+
 }

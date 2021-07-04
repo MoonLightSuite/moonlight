@@ -24,9 +24,9 @@ public class TestSpatialTemporalMonitoring {
     public final static String CODE_SINGLE_ATOMIC = "signal { real x;\n" +
             " real y;\n " +
             "}\n" +
-            "space { " +
+            "space { edges {" +
             " real a;\n" +
-            " real b;\n " +
+            " real b; }\n " +
             "}\n" +
             "domain boolean;\n" +
             "formula lessThanZeroX = (x < 0);\n" +

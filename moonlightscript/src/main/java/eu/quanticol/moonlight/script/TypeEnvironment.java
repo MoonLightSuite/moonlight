@@ -11,6 +11,7 @@ public class TypeEnvironment {
     private Set<String> signal;
     private Set<String> location;
     private Set<String> constants;
+    private Set<String> parameters;
 
     public TypeEnvironment() {
         this(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
@@ -43,7 +44,7 @@ public class TypeEnvironment {
         edges.add(name);
     }
 
-    public synchronized void addLoction(String name, MoonLightType type) {
+    public synchronized void addLocation(String name, MoonLightType type) {
         add(name, type);
         location.add(name);
     }
@@ -75,11 +76,11 @@ public class TypeEnvironment {
         switch (evaluationContext) {
             case NONE:
             case INTERVAL:
-                return constants.contains(name);
+                return constants.contains(name)||typeEnvironment.containsKey(name);
             case EDGE:
-                return edges.contains(name)||constants.contains(name);
+                return edges.contains(name)||constants.contains(name)||typeEnvironment.containsKey(name);
             case STATE:
-                return constants.contains(name)||signal.contains(name)||location.contains(name)||formulas.containsKey(name);
+                return constants.contains(name)||signal.contains(name)||location.contains(name)||formulas.containsKey(name)||typeEnvironment.containsKey(name);
         }
         return false;
     }

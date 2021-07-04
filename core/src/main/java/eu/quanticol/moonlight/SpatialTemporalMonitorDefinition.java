@@ -100,8 +100,19 @@ public class SpatialTemporalMonitorDefinition {
     }
 
     public <S> SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,S> getMonitorFromDouble(SignalDomain<S> domain, double[] values) {
-        return getMonitor(domain, arguments.fromDoubleArray(values));
+        return getMonitor(domain, evalArgumentFromDoubleArray(values));
     }
+
+    private MoonLightRecord evalArgumentFromDoubleArray(double[] values) {
+        if (this.arguments == null) {
+            return null;
+        }
+        if (values == null) {
+            values = new double[0];
+        }
+        return this.arguments.fromDoubleArray(values);
+    }
+
 
     public <S> SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,S> getMonitorFromObject(SignalDomain<S> domain, Object[] values) {
         return getMonitor(domain, arguments.fromObjectArray(values));

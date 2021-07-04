@@ -189,4 +189,7 @@ public class TemporalScriptComponent<S> {
         return definition.getArguments().getVariables();
     }
 
+    public RecordHandler getSignalHandler() {
+        return this.definition.getSignalRecordHandler();
+    }
 }

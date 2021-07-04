@@ -13,7 +13,7 @@ numframe = 1;
 plotGraph(inputModel, numframe , 'node');
 
 %% property  
-moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript");
+moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript.mls");
 moonlightScript.setBooleanDomain();
 % P1 = ( nodeType==3 ) reach (hop)[0, 1] ( nodeType==2 );
 boolSpTempMonitor = moonlightScript.getMonitor("P1");

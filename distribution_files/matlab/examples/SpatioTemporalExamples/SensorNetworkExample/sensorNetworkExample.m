@@ -32,14 +32,14 @@ inputModel =spatialModelv;
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
-moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript");
+moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript.mls");
 
 % list of formulas in the monitor object
 moonlightScript.getMonitors()
 
 % generate the monitor for property
 % P1 = (nodeType==3) reach (hop)[0, 1] (nodeType==2 | nodeType==1 ) ;
-% as default it is taken the semantics of the .mls script, in this case a boolean semantics 
+% as default it is taken the semantics of the .mls script, in this case a boolean semantics
 P1Monitor = moonlightScript.getMonitor("P1");
 
 % we can set the semantics using
@@ -61,9 +61,9 @@ resultReachMonitor = P1Monitor.monitor(inputModel,time,values);
 % resultParamMonitor = PparMonitor.monitor(inputModel,time,values, 1);
 % %evaluate escapeFormula
 % resultEscapeMonitor = P2monitor.monitor(inputModel,time,values);
-% 
+%
 % %evaluate SomeWhereFormula
-resultSomeMonitor = P3Monitor.monitor(inputModel,time,values,inf);
+resultSomeMonitor = P3Monitor.monitor(inputModel,time,values);
 
 %% plots
 plotResults(inputModel, resultReachMonitor, true);

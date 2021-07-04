@@ -165,4 +165,8 @@ public class SpatialTemporalScriptComponent<S> {
     public String[] getVariables() {
         return definition.getSignalRecordHandler().getVariables();
     }
+
+    public RecordHandler getSignalHandler() {
+        return this.definition.getSignalRecordHandler();
+    }
 }

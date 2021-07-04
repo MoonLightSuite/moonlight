@@ -15,7 +15,7 @@ plotFrames = true; % to enable or disable the plot of the graph
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
-moonlightScript = ScriptLoader.loadFromFile("patternMonitorScript");
+moonlightScript = ScriptLoader.loadFromFile("patternMonitorScript.mls");
 
 %% STEP 3 (optional): change the domain on the fly
 moonlightScript.setMinMaxDomain();

@@ -38,15 +38,16 @@ public class Experiment {
         System.out.println("sizeGrid,tLength,mean,std");
         for (Integer s : sizeGrid) {
             for (Integer t : tLength) {
+                //long start = System.currentTimeMillis();
                 execute(n, spatialTemporalMonitorSupplier, s, t);
-
+                //System.out.println("> "+(System.currentTimeMillis()-start)/(n*1000.0));
             }
         }
     }
 
     private void execute(int n, Supplier<SpatialTemporalMonitor> function, int sizeGrid, int tLength) {
         SpatialModel<Double> grid = TestUtils.createGridModel(sizeGrid, sizeGrid, false, 1.0);
-        double[] times = IntStream.range(0, n).mapToDouble(i -> execTime(function.get(), grid, sizeGrid, tLength)).toArray();
+        double[] times = IntStream.range(0, n).sequential().mapToDouble(i -> execTime(function.get(), grid, sizeGrid, tLength)).toArray();
         double mean = Arrays.stream(times).summaryStatistics().getAverage();
         double variance = Arrays.stream(times).map(time -> (time - mean) * (time - mean)).sum() / (n - 1);
         System.out.println(sizeGrid + "," + tLength + "," + df.format(mean) + "," + df.format(Math.sqrt(variance)));
