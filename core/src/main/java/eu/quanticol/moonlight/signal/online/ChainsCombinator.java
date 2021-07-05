@@ -1,7 +1,29 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.signal.online;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
-import java.util.function.BinaryOperator;
+import java.util.function.BiConsumer;
 
 /**
  * Given a primary and a secondary chain, it mutates the primary chain 
@@ -21,9 +43,15 @@ import java.util.function.BinaryOperator;
  *                                .
  * </pre>
  * 
- * 
+ *  TODO: Note that the iterator doesn't deal with duplicates in the output,
+ *        it just returns the elements to be evaluated.
+ *        This is a deliberate design decision to keep SRP (it just iterates),
+ *        but depending on feedbacks, this can be changed.
+ *
  * @param <T> Type on which the order relation is defined
  * @param <V> Type of which the values will be combined in the resulting chain
+ *
+ * @author Ennio Visconti
  */
 public class ChainsCombinator
         <T extends Comparable<T> & Serializable, V>
@@ -38,40 +66,36 @@ public class ChainsCombinator
     SegmentInterface<T, V> secondaryCurr;
     SegmentInterface<T, V> secondaryNext;
 
-    public ChainsCombinator(TimeChain<T, V> primaryChain,
-                            TimeChain<T, V> secondaryChain)
+    public ChainsCombinator(@NotNull TimeChain<T, V> primaryChain,
+                            @NotNull TimeChain<T, V> secondaryChain)
     {
         if(primaryChain.isEmpty() || secondaryChain.isEmpty())
             throw new IllegalArgumentException("Both chains must not be empty");
 
         primary = primaryChain.chainIterator();
         secondary = secondaryChain.chainIterator();
-        primaryEnd = new TimeSegment<>(primaryChain.getEnd(), null);
-        secondaryEnd = new TimeSegment<>(secondaryChain.getEnd(), null);
+
+
+        primaryEnd = endingSegment(primaryChain);
+        secondaryEnd = endingSegment(secondaryChain);
     }
 
-    public void forEach(BinaryOperator<SegmentInterface<T, V>> operation)
+    public void forEach(BiConsumer<SegmentInterface<T, V>,
+                                   SegmentInterface<T, V>> operation)
     {
         movePrimary();
         moveSecondary();
         do {
-            if (notYetRelevant()) {
+            if(notYetRelevant()) {
                 movePrimary();
                 continue;
             }
-
-            if (notAnymoreRelevant()) {
+            if(notAnymoreRelevant()) {
                 moveSecondary();
+                continue;
             }
-
             process(operation);
         } while(stillToProcess());
-    }
-
-    private void process(BinaryOperator<SegmentInterface<T, V>> op)
-    {
-        op.apply(primaryCurr, secondaryCurr);
-        moveSecondary();
     }
 
     private void movePrimary() {
@@ -84,17 +108,36 @@ public class ChainsCombinator
         secondaryNext = secondary.tryPeekNext(secondaryEnd);
     }
 
-    private boolean stillToProcess() {
-        return secondaryEnd.compareTo(primaryCurr) > 0;
-    }
-
-    private boolean notAnymoreRelevant()
-    {
+    private boolean notAnymoreRelevant() {
         return primaryCurr.compareTo(secondaryNext) > 0;
     }
 
-    private boolean notYetRelevant()
-    {
+    private boolean notYetRelevant() {
         return primaryNext.compareTo(secondaryCurr) <= 0;
+    }
+
+    private void process(BiConsumer<SegmentInterface<T, V>,
+                                    SegmentInterface<T, V>> op)
+    {
+        op.accept(primaryCurr, secondaryCurr);
+        if(secondaryProcessingNotComplete())
+            movePrimary();
+        else
+            moveSecondary();
+    }
+
+    private boolean secondaryProcessingNotComplete() {
+        return primaryNext.compareTo(secondaryNext) < 0;
+    }
+
+    private boolean stillToProcess() {
+        return !secondaryEnd.equals(secondaryCurr);
+    }
+
+    private SegmentInterface<T, V> endingSegment(TimeChain<T, V> chain) {
+        // not sure this is a smart idea, we are saying there is a last
+        // element that starts at the last allowed time and has the last value
+        // therefore potentially resulting in infinite loops
+        return new TimeSegment<>(chain.getEnd(), chain.getLast().getValue());
     }
 }

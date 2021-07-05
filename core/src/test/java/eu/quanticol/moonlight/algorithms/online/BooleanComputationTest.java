@@ -24,7 +24,8 @@ class BooleanComputationTest {
 
         List<Update<Double, AbstractInterval<Double>>> r = new ArrayList<>();
         for(Update<Double, AbstractInterval<Double>> u: ups1) {
-            r.addAll(binary(dataSecond(), u, intervalOr()));
+            addIfNotDuplicated(r, binary(dataSecond(), u, intervalOr()));
+            //r.addAll(binary(dataSecond(), u, intervalOr()));
         }
         TimeChain<Double, AbstractInterval<Double>> r1 = Update.asTimeChain(r);
 
@@ -33,6 +34,37 @@ class BooleanComputationTest {
 
         assertEquals(r1, r2);
 
+    }
+
+    private void addIfNotDuplicated(
+            List<Update<Double, AbstractInterval<Double>>> r,
+            List<Update<Double, AbstractInterval<Double>>> data
+    )
+    {
+        for(Update<Double, AbstractInterval<Double>> u : data) {
+           if(r.isEmpty() ||
+                   !r.get(r.size() - 1).getValue().equals(u.getValue()))
+               r.add(u);
+           else {
+               Update<Double, AbstractInterval<Double>> last =
+                       r.remove(r.size() - 1);
+               r.add(combine(last, u));
+           }
+        }
+    }
+
+    private static <T extends Comparable<T>, V> Update<T, V> combine(
+            Update<T, V> first,
+            Update<T, V> second)
+    {
+        if(first.getEnd().equals(second.getStart()) &&
+                first.getValue().equals(second.getValue()))
+            return new Update<>(first.getStart(),
+                                second.getEnd(),
+                                first.getValue());
+        throw new IllegalArgumentException("Updates cannot be combined; " +
+                                           "first: " + first +
+                                           " and \nsecond: " + second);
     }
 
     private static List<Update<Double, AbstractInterval<Double>>> updatesFirst()

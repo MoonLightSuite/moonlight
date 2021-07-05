@@ -113,7 +113,7 @@ public class BooleanComputation {
         List<SegmentInterface<T, R>> updates = new ArrayList<>(us.size());
         //TimeChain<T, R> c1 = s.select(us.getFirst().getStart(), us.getEnd());
 
-        rightApplySequence(c1, updates, op, us);  // TODO: this should be different for
+        applyChain(c1, updates, op, us);  // TODO: this should be different for
                                                   //       left and right operands
 
         return new TimeChain<>(updates, us.getEnd());
@@ -291,6 +291,29 @@ public class BooleanComputation {
                 updates.add(r);
             }
         }
+    }
+
+    private static <T extends Comparable<T> & Serializable, R>
+    void applyChain(TimeChain<T, R> s,
+                    List<SegmentInterface<T, R>> output,
+                    BinaryOperator<R> op, TimeChain<T, R> inputUps)
+    {
+        ChainsCombinator<T, R> itr = new ChainsCombinator<>(s, inputUps);
+        itr.forEach((segment, update) -> binaryOp(segment, update, output, op));
+    }
+
+    private static <T extends Comparable<T> & Serializable, R>
+    void binaryOp(SegmentInterface<T, R> left,
+                  SegmentInterface<T, R> right,
+                  List<SegmentInterface<T, R>> output,
+                  BinaryOperator<R> op)
+    {
+        T start = max(left, right).getStart();
+        R value = op.apply(right.getValue(), left.getValue());
+        SegmentInterface<T, R> r = new TimeSegment<>(start, value);
+        int last = output.size() - 1;
+        if(output.isEmpty() || !output.get(last).getValue().equals(value))
+            output.add(r);
     }
 
     private static
