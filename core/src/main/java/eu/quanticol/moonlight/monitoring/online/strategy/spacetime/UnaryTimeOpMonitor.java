@@ -71,25 +71,25 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
                 argumentMonitor.monitor(signalUpdate);
 
         TimeChain<Double, List<AbstractInterval<R>>> s =
                 argumentMonitor.getResult().getSegments();
 
-        List<Update<Double, List<AbstractInterval<R>>>> updates = new ArrayList<>();
+        List<TimeChain<Double, List<AbstractInterval<R>>>> updates = new ArrayList<>();
 
-        for(Update<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
             updates.addAll(TemporalComputation.slidingWindow(s,
                                                              argU,
                                                              horizon,
                                                              op));
         }
 
-        for(Update<Double, List<AbstractInterval<R>>> u: updates) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> u: updates) {
             rho.refine(u);
         }
 

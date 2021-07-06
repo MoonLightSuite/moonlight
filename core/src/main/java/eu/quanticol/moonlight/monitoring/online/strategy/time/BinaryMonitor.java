@@ -33,6 +33,7 @@ import eu.quanticol.moonlight.signal.online.Update;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Strategy to interpret (online) an atomic predicate on the signal of interest.
@@ -71,30 +72,30 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
-        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<TimeChain<Double, AbstractInterval<R>>> updates = new ArrayList<>();
 
-        List<Update<Double, AbstractInterval<R>>> firstArgUps =
-                firstArg.monitor(signalUpdate);
-        List<Update<Double, AbstractInterval<R>>> secondArgUps =
-                secondArg.monitor(signalUpdate);
+        List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =
+                firstArg.monitor(signalUpdate).stream().filter(x -> !x.isEmpty()).collect(Collectors.toList());
+        List<TimeChain<Double, AbstractInterval<R>>> secondArgUps =
+                secondArg.monitor(signalUpdate).stream().filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
 
         TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
         TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
 
-        for(Update<Double, AbstractInterval<R>> argU : firstArgUps) {
-            TimeChain<Double, AbstractInterval<R>> c2 =
-                    s2.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c2, argU, opFunction));
+        for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
+                TimeChain<Double, AbstractInterval<R>> c2 =
+                        s2.select(argU.getStart(), argU.getEnd());
+                updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
-        for(Update<Double, AbstractInterval<R>> argU: secondArgUps) {
-            TimeChain<Double, AbstractInterval<R>> c1 =
-                s1.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c1, argU, opFunction));
+        for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
+                TimeChain<Double, AbstractInterval<R>> c1 =
+                        s1.select(argU.getStart(), argU.getEnd());
+                updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);

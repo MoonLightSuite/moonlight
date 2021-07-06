@@ -7,13 +7,97 @@ import static eu.quanticol.moonlight.algorithms.online.BooleanComputation.*;
 
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 class BooleanComputationTest {
+
+
+    @Test
+    void testSpecial() {
+        List<Update<Double, AbstractInterval<Double>>> ups1 = updatesFirst();
+
+        List<Update<Double, AbstractInterval<Double>>> r = new ArrayList<>();
+        for(Update<Double, AbstractInterval<Double>> u: ups1) {
+            addIfNotDuplicated(r, binary(dataSecond(), u, intervalOr()));
+            //r.addAll(binary(dataSecond(), u, intervalOr()));
+        }
+        TimeChain<Double, AbstractInterval<Double>> r1 = Update.asTimeChain(r);
+
+        TimeChain<Double, AbstractInterval<Double>> r2 =
+           binarySequence(dataSecond(), Update.asTimeChain(ups1), intervalOr());
+
+        assertEquals(r1, r2);
+
+    }
+
+    private void addIfNotDuplicated(
+            List<Update<Double, AbstractInterval<Double>>> r,
+            List<Update<Double, AbstractInterval<Double>>> data
+    )
+    {
+        for(Update<Double, AbstractInterval<Double>> u : data) {
+           if(r.isEmpty() ||
+                   !r.get(r.size() - 1).getValue().equals(u.getValue()))
+               r.add(u);
+           else {
+               Update<Double, AbstractInterval<Double>> last =
+                       r.remove(r.size() - 1);
+               r.add(combine(last, u));
+           }
+        }
+    }
+
+    private static <T extends Comparable<T>, V> Update<T, V> combine(
+            Update<T, V> first,
+            Update<T, V> second)
+    {
+        if(first.getEnd().equals(second.getStart()) &&
+                first.getValue().equals(second.getValue()))
+            return new Update<>(first.getStart(),
+                                second.getEnd(),
+                                first.getValue());
+        throw new IllegalArgumentException("Updates cannot be combined; " +
+                                           "first: " + first +
+                                           " and \nsecond: " + second);
+    }
+
+    private static List<Update<Double, AbstractInterval<Double>>> updatesFirst()
+    {
+        List<Update<Double, AbstractInterval<Double>>> updates =
+                new ArrayList<>();
+        updates.add(new Update<>(0.0, 3.0, new AbstractInterval<>(-1.0, -1.0)));
+        updates.add(new Update<>(3.0, 5.0, new AbstractInterval<>(-2.0, -2.0)));
+        updates.add(new Update<>(5.0, 9.0, new AbstractInterval<>(-2.0,
+                Double.POSITIVE_INFINITY)));
+
+        return updates;
+    }
+
+    private static TimeChain<Double, AbstractInterval<Double>> dataSecond() {
+        TimeChain<Double, AbstractInterval<Double>> data = new TimeChain<>(
+                Double.POSITIVE_INFINITY);
+        data.add(new TimeSegment<>(0.0, new AbstractInterval<>(1.0, 1.0)));
+        data.add(new TimeSegment<>(4.0, new AbstractInterval<>(-2.0, -2.0)));
+        data.add(new TimeSegment<>(8.0, new AbstractInterval<>(1.0, 1.0)));
+        data.add(new TimeSegment<>(13.0, new AbstractInterval<>(-1.0, -1.0)));
+        data.add(new TimeSegment<>(19.0,
+                new AbstractInterval<>(Double.NEGATIVE_INFINITY,
+                        Double.POSITIVE_INFINITY)));
+
+        return data;
+    }
+
+    private static BinaryOperator<AbstractInterval<Double>> intervalOr() {
+        return (x, y) -> new AbsIntervalDomain<>(new DoubleDomain())
+                .disjunction(x, y);
+    }
+
 
     @Test
     void atomTest() {
@@ -63,7 +147,7 @@ class BooleanComputationTest {
     @Test
     void binaryTest() {
         Update<Integer, Integer> u = basicUpdate();
-        TimeChain<Integer, Integer> chain = basicUpdateChain();
+        TimeChain<Integer, Integer> chain = basicUpdateChain(); //TODO: should be used basicSignalChain instead
 
         List<Update<Integer, Integer>> r = binary(chain, u,
                                                   BooleanComputationTest::and);

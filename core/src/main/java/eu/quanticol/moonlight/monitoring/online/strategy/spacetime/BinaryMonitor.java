@@ -70,15 +70,15 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
                                                             new ArrayList<>();
 
-        List<Update<Double, List<AbstractInterval<R>>>> firstArgUps =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> firstArgUps =
                                                 firstArg.monitor(signalUpdate);
-        List<Update<Double, List<AbstractInterval<R>>>> secondArgUps =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> secondArgUps =
                                                 secondArg.monitor(signalUpdate);
 
 
@@ -87,16 +87,16 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         TimeSignal<Double, List<AbstractInterval<R>>> s2 =
                                                         secondArg.getResult();
 
-        for(Update<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
             TimeChain<Double, List<AbstractInterval<R>>> c2 =
                     s2.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c2, argU, opFunction));
+            updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
-        for(Update<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
             TimeChain<Double, List<AbstractInterval<R>>> c1 =
                 s1.select(argU.getStart(), argU.getEnd());
-            updates.addAll(BooleanComputation.binary(c1, argU, opFunction));
+            updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);

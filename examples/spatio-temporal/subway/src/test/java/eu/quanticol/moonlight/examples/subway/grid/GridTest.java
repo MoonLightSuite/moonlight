@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.subway.grid;
 
 import eu.quanticol.moonlight.domain.DoubleDistance;
-import eu.quanticol.moonlight.examples.subway.Erlang;
+import eu.quanticol.moonlight.examples.subway.Subway;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class GridTest {
 
     private static final String NETWORK_FILE = "adjacent_matrix_milan_grid_21x21.txt";
     private static final InputStream NETWORK_SOURCE =
-            Objects.requireNonNull(Erlang.class
+            Objects.requireNonNull(Subway.class
                     .getResourceAsStream(NETWORK_FILE));
 
     @Test

@@ -42,7 +42,15 @@ public interface OnlineMonitor<T extends Comparable<T> & Serializable, V, R>
      * @param signalUpdate update of the input signal
      * @return a list of updates to the interpretation signal
      */
-    List<Update<T, R>> monitor(Update<T, V> signalUpdate);
+    //List<Update<T, R>> monitor(Update<T, V> signalUpdate);
+
+    /**
+     * Execution starter of the monitoring process. It returns a list of updates
+     * to the interpretation signal computed at the previous step.
+     * @param signalUpdate update of the input signal
+     * @return a list of updates to the interpretation signal
+     */
+    List<TimeChain<T, R>> monitor(Update<T, V> signalUpdate);
 
     /**
      * Execution starter of the monitoring process. It returns a list of update

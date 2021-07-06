@@ -78,15 +78,15 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<Update<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<Update<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
                                                             new ArrayList<>();
 
-        List<Update<Double, List<AbstractInterval<R>>>> firstArgUps =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> firstArgUps =
                                                 firstArg.monitor(signalUpdate);
-        List<Update<Double, List<AbstractInterval<R>>>> secondArgUps =
+        List<TimeChain<Double, List<AbstractInterval<R>>>> secondArgUps =
                                                 secondArg.monitor(signalUpdate);
 
         TimeSignal<Double, List<AbstractInterval<R>>> s1 =
@@ -94,11 +94,11 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
         TimeSignal<Double, List<AbstractInterval<R>>> s2 =
                                                         secondArg.getResult();
 
-        for(Update<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
             //updates.addAll(spacialOp.binary(s2, argU, opFunction));
         }
 
-        for(Update<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
             //updates.addAll(SpatialComputation.binary(s1, argU, opFunction));
         }
 
