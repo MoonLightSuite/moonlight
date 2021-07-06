@@ -22,6 +22,8 @@ package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 
+import java.util.function.BiFunction;
+
 /**
  * This extension of Semiring introduces some elements that are key for
  * signal interpretation.
@@ -100,4 +102,23 @@ public interface SignalDomain<R> extends Semiring<R> {
 	R computeGreaterThan(double v1, double v2);
 	
 	R computeGreaterOrEqualThan(double v1, double v2);
+
+	static <S> BiFunction<Double, Double,S> getOperator(SignalDomain<S> domain, String op) {
+		if ("<".equals(op)) {
+			return domain::computeLessThan;
+		}
+		if ("<=".equals(op)) {
+			return domain::computeLessOrEqualThan;
+		}
+		if ("==".equals(op)) {
+			return domain::computeEqualTo;
+		}
+		if (">=".equals(op)) {
+			return domain::computeGreaterOrEqualThan;
+		}
+		if (">".equals(op)) {
+			return domain::computeGreaterThan;
+		}
+		return (x,y) -> domain.min();
+	}
 }

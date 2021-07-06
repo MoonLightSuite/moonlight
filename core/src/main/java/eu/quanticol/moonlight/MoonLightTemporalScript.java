@@ -3,19 +3,45 @@ package eu.quanticol.moonlight;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
-public abstract class MoonLightTemporalScript implements MoonLightScript {
+public class MoonLightTemporalScript implements MoonLightScript {
 
-    private final String[] formulas;
+    private final Map<String,TemporalMonitorDefinition> monitors;
+    private final String defaultMonitor;
     private SignalDomain<?> domain;
 
-    public MoonLightTemporalScript(String[] formulas) {
-        this.formulas = formulas;
+    public MoonLightTemporalScript(String defaultMonitor, SignalDomain<?> domain, TemporalMonitorDefinition[] monitors) {
+        if (monitors.length == 0) {
+            throw new IllegalArgumentException("At least a monitor should be provided!");
+        }
+        if (defaultMonitor == null) {
+            throw new IllegalArgumentException("Default monitor should be a non null value!");
+        }
+        this.monitors = new TreeMap<>();
+        Arrays.stream(monitors).forEach(d -> this.monitors.put(d.getName(),d));
+        if (!this.monitors.containsKey(defaultMonitor)) {
+            throw new IllegalArgumentException("No definition for the given default monitor is provided!");
+        }
+        this.defaultMonitor = defaultMonitor;
+        this.domain = domain;
     }
 
-    public abstract TemporalScriptComponent<?> selectTemporalComponent(String name);
 
-    public abstract TemporalScriptComponent<?> selectDefaultTemporalComponent();
+    public TemporalScriptComponent<?> selectTemporalComponent(String name) {
+        if (monitors.containsKey(name)) {
+            return new TemporalScriptComponent<>(monitors.get(name),domain);
+        }
+        throw new IllegalArgumentException(String.format("Monitor %s is unknown.",name));
+    }
+
+
+    public TemporalScriptComponent<?> selectDefaultTemporalComponent() {
+        return new TemporalScriptComponent<>(monitors.get(defaultMonitor),getMonitoringDomain());
+    }
 
     public void setMonitoringDomain(SignalDomain<?> domain) {
         this.domain = domain;
@@ -27,7 +53,7 @@ public abstract class MoonLightTemporalScript implements MoonLightScript {
 
     @Override
     public String[] getMonitors() {
-        return formulas;
+        return monitors.keySet().toArray(new String[0]);
     }
 
     @Override

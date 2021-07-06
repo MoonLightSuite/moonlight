@@ -130,8 +130,11 @@ public class SpaceOperator {
                 toReturn.add(time, operator.apply(spatialSignal, f));
             }
             time = nextTime;
-            current = (next != null ? next : current);
-            next = getNext(locSvcIterator);
+            if ((next != null) && (next.getFirst() == time)) {
+                current = next;
+                f = distance.apply(current.getSecond());
+                next = (locSvcIterator.hasNext() ? locSvcIterator.next() : null);
+            }
         }
         //TODO: Manage end of signal!
         return toReturn;
@@ -163,8 +166,11 @@ public class SpaceOperator {
                 toReturn.add(time, f.escape(domain, spatialSignal));
             }
             time = nextTime;
-            current = (next != null ? next : current);
-            next = getNext(locSvcIterator);
+            if ((next != null) && (next.getFirst() == time)) {
+                current = next;
+                f = distance.apply(current.getSecond());
+                next = (locSvcIterator.hasNext() ? locSvcIterator.next() : null);
+            }
         }
         //TODO: Manage end of signal!
         return toReturn;

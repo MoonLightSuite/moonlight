@@ -39,6 +39,18 @@ public class Utils {
         //utility class
     }
 
+    public static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
+        Signal<T> signal = new Signal<>();
+        double time = start;
+        while (time <= end) {
+            signal.add(time, f.apply(time));
+            time += dt;
+        }
+        signal.endAt(end);
+        return signal;
+    }
+
+
     public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
         SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(size);
         double time = start;
@@ -137,34 +149,24 @@ public class Utils {
         return locService;
     }
 
-    public static LocationService<Double, Double> createLocServiceStaticFromTimeTraj(double [] time ,SpatialModel<Double> graph) {
-        LocationServiceList<Double> locService = new LocationServiceList<>();
-        for (double v : time) {
-            locService.add(v, graph);
-        }
-        return locService;
-    }
-
-
-    public static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
-        Signal<T> signal = new Signal<>();
-        double time = start;
-        while (time <= end) {
-            signal.add(time, f.apply(time));
-            time += dt;
-        }
-        signal.endAt(end);
-        return signal;
-    }
-
     public static LocationService<Double, Double> createLocServiceStatic(double start, double dt, double end, SpatialModel<Double> graph) {
         LocationServiceList<Double> locService = new LocationServiceList<>();
         double time = start;
         while (time < end) {
+            double current = time;
             locService.add(time, graph);
             time += dt;
         }
         locService.add(end,graph);
         return locService;
     }
+
+    public static LocationService<Double, Double> createLocServiceStaticFromTimeTraj(double [] time , SpatialModel<Double> graph) {
+        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        for (int i = 0; i < time.length; i++) {
+            locService.add(time[i], graph);
+        }
+        return locService;
+    }
+
 }

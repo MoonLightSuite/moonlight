@@ -1,0 +1,10 @@
+signal { real A; real B; }
+space { edges { int hop; } }
+domain minmax;
+formula lowValues = (A<=0.5) ;
+formula highValues = (A>0.5);
+formula reachability = lowValues & (lowValues reach[0, 3] highValues);
+formula reachP = lowValues  reach[0, 6] (! (lowValues | highValues));
+formula surround0 = lowValues & (! reachP);
+formula escP = escape[6, 60] lowValues;
+formula surround = lowValues & ((!reachP) & (!escP));

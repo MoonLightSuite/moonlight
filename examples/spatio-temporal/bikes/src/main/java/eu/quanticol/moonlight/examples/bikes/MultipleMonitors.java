@@ -6,11 +6,13 @@ import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
+import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
-import eu.quanticol.moonlight.xtext.ScriptLoader;
+import simhya.matlab.SimHyAModel;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,7 +24,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 public class MultipleMonitors {
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, MoonLightScriptLoaderException {
         //fromJava();
         //fromFileScript();
         fromStringScript();
@@ -56,12 +58,11 @@ public class MultipleMonitors {
 
     }
 
-    private static void fromFileScript() throws URISyntaxException, IOException {
+    private static void fromFileScript() throws URISyntaxException, IOException, MoonLightScriptLoaderException {
         // Load File Script
         URL multipleMonitorsUri = MultipleMonitors.class.getResource("booleanmonitor.mls");
         String multipleMonitorsPath = Paths.get(multipleMonitorsUri.toURI()).toString();
-        ScriptLoader scriptLoader = new ScriptLoader();
-        MoonLightScript moonLightScript = scriptLoader.loadFile(multipleMonitorsPath);
+        MoonLightScript moonLightScript = ScriptLoader.loaderFromFile(multipleMonitorsPath).getScript();
         TemporalScriptComponent<?> booleanMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
 
@@ -78,7 +79,7 @@ public class MultipleMonitors {
         printResults(monitorValuesB);
     }
 
-    private static void fromStringScript() throws IOException {
+    private static void fromStringScript() throws IOException, MoonLightScriptLoaderException {
         // Write a monitor script
         //@formatter:off
         String script = "signal { real x; real y;}\n" +
@@ -86,8 +87,7 @@ public class MultipleMonitors {
                 "formula main = globally ( x - y );\n";
         //@formatter:on
         // Load script
-        ScriptLoader scriptLoader = new ScriptLoader();
-        MoonLightScript moonLightScript = scriptLoader.compileScript(script);
+        MoonLightScript moonLightScript = ScriptLoader.loaderFromCode(script).getScript();
         // Choose the monitor
         TemporalScriptComponent<?> quantitativeMonitorScript = moonLightScript.temporal().selectDefaultTemporalComponent();
 
@@ -104,7 +104,7 @@ public class MultipleMonitors {
                 "domain boolean;\n" +
                 "formula globally ( x > y );\n";
 
-        moonLightScript = scriptLoader.compileScript(script);
+        moonLightScript = ScriptLoader.loaderFromCode(script).getScript();
         // Choose the monitor
 
         // Choose the monitor

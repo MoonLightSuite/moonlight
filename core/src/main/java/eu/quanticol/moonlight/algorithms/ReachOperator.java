@@ -88,8 +88,11 @@ public class ReachOperator {
                 toReturn.add(time, f.escape(domain,(values::get)));
             }
             time = nextTime;
-            current = (next != null ? next : current);
-            next = getNext(locSvcIterator);
+            if ((next != null) && (next.getFirst() == time)) {
+                current = next;
+                f = distance.apply(current.getSecond());
+                next = (locSvcIterator.hasNext() ? locSvcIterator.next() : null);
+            }
         }
         return toReturn;
     }

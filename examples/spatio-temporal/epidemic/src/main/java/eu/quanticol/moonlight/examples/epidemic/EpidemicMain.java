@@ -10,12 +10,12 @@ import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.space.SpatialModel;
-import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -79,8 +79,7 @@ public class EpidemicMain {
                 SpatialTemporalSignal<MoonLightRecord> input_signal = readerT.load(rhT, fileT);
 
                 // monitor from script
-                ScriptLoader sl = new ScriptLoader();
-                MoonLightScript script = sl.compileScript(code);
+                MoonLightScript script = ScriptLoader.loaderFromCode(code).getScript();
                 MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
                 spatialTemporalScript.setBooleanDomain();
                 SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("dang_days");

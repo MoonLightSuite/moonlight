@@ -5,9 +5,10 @@ classdef ScriptLoader
             % loadFromFile  load a moonLightScript from file.
             %   loadFromFile(filename) load a script from a file named
             %   filename
-            ScriptLoader.loadInnerFromFile(filename);
+            % ScriptLoader.loadInnerFromFile(filename);
             warning('off','all');
-            moonlightScript=MoonlightScript(eval("moonlight.script.Script"+filename));
+            % moonlightScript=MoonlightScript(eval("moonlight.script.Script"+filename));
+            moonlightScript=MoonlightScript(eu.quanticol.moonlight.script.ScriptLoader.loadFromFile(which(filename)));
             warning('on','all');
         end
         function moonlightScript = loadFromText(stringArray)
@@ -21,16 +22,18 @@ classdef ScriptLoader
             %   "formula future = globally [0, 0.2]  (x > y);"...
             %   "formula past = historically [0, 0.2]  (x > y);"
             %   ];
-            fileName = strcat("moonlight",extractBefore(char(java.util.UUID.randomUUID),"-"));
-            monlightScriptPath=fullfile(tempdir,"moonlight",fileName+".mls");
-            monlightScriptFile = fopen(monlightScriptPath,'w');
-            for line = stringArray
-                fprintf(monlightScriptFile, strcat(line,"\n"));
-            end
-            ScriptLoader.loadInnerFromText(fileName,monlightScriptPath);
-            warning('off','all');
-            moonlightScript=MoonlightScript(eval("moonlight.script.Script"+fileName));
-            warning('on','all');
+            moonlightScript=MoonlightScript(eu.quanticol.moonlight.script.ScriptLoader.loadFromCode(strjoin(stringArray,'\n')));
+
+            % fileName = strcat("moonlight",extractBefore(char(java.util.UUID.randomUUID),"-"));
+            % monlightScriptPath=fullfile(tempdir,"moonlight",fileName+".mls");
+            % monlightScriptFile = fopen(monlightScriptPath,'w');
+            %for line = stringArray
+            %    fprintf(monlightScriptFile, strcat(line,"\n"));
+            %end
+            %ScriptLoader.loadInnerFromText(fileName,monlightScriptPath);
+            %warning('off','all');
+            %moonlightScript=MoonlightScript(eval("moonlight.script.Script"+fileName));
+            %warning('on','all');
         end
     end
     methods(Static, Access = private)

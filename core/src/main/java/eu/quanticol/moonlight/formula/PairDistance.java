@@ -42,4 +42,5 @@ public class PairDistance<D1,D2> implements DistanceDomain<Pair<D1,D2>> {
     public boolean equalTo(Pair<D1, D2> x, Pair<D1, D2> y) {
         return firstDomain.equalTo(x.getFirst(),y.getFirst())&&secondDomain.equalTo(x.getSecond(), y.getSecond());
     }
+
 }

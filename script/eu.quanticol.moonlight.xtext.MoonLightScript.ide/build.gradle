@@ -1,5 +1,0 @@
-dependencies {
-	compile project(':script:eu.quanticol.moonlight.xtext.MoonLightScript')
-	compile "org.eclipse.xtext:org.eclipse.xtext.ide:${xtextVersion}"
-	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.ide:${xtextVersion}"
-}

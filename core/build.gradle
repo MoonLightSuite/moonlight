@@ -1,13 +1,8 @@
-repositories {
-    maven {url 'https://oss.sonatype.org/content/repositories/snapshots/'}
-}
-
 dependencies {
     implementation 'com.github.sh0nk:matplotlib4j:0.5.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    testImplementation 'com.github.sh0nk:matplotlib4j:0.5.1-SNAPSHOT'
+    implementation 'org.jgrapht:jgrapht-core:1.5.1'
     compile 'org.jetbrains:annotations:16.0.2'
-    compile "com.google.guava:guava:21.0"
 }
 
 jar {

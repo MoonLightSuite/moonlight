@@ -3,19 +3,42 @@ package eu.quanticol.moonlight;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
-public abstract class MoonLightSpatialTemporalScript implements MoonLightScript {
+public class MoonLightSpatialTemporalScript implements MoonLightScript {
 
-    private final String[] spatialTemporalMonitors;
+    private final Map<String,SpatialTemporalMonitorDefinition> monitors;
+    private final String defaultMonitor;
     private SignalDomain<?> domain;
 
-    public MoonLightSpatialTemporalScript(String[] spatialTemporalMonitors) {
-        this.spatialTemporalMonitors = spatialTemporalMonitors;
+    public MoonLightSpatialTemporalScript(String defaultMonitor, SignalDomain<?> domain, SpatialTemporalMonitorDefinition[] monitors) {
+        if (monitors.length == 0) {
+            throw new IllegalArgumentException("At least a monitor should be provided!");
+        }
+        if (defaultMonitor == null) {
+            throw new IllegalArgumentException("Default monitor should be a non null value!");
+        }
+        this.monitors = new TreeMap<>();
+        Arrays.stream(monitors).forEach(d -> this.monitors.put(d.getName(), d));
+        if (!this.monitors.containsKey(defaultMonitor)) {
+            throw new IllegalArgumentException("No definition for the given default monitor is provided!");
+        }
+        this.defaultMonitor = defaultMonitor;
+        this.domain = domain;
     }
 
-    public abstract SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name);
+    public SpatialTemporalScriptComponent<?> selectSpatialTemporalComponent(String name) {
+        if (monitors.containsKey(name)) {
+            return new SpatialTemporalScriptComponent<>(monitors.get(name),domain);
+        }
+        throw new IllegalArgumentException(String.format("Monitor %s is unknown.",name));
+    }
 
-    public abstract SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent();
+    public SpatialTemporalScriptComponent<?> selectDefaultSpatialTemporalComponent() {
+        return selectSpatialTemporalComponent(defaultMonitor);
+    }
 
     public void setMonitoringDomain(SignalDomain<?> domain) {
         this.domain = domain;
@@ -27,14 +50,14 @@ public abstract class MoonLightSpatialTemporalScript implements MoonLightScript 
 
     @Override
     public String[] getMonitors() {
-        return spatialTemporalMonitors;
+        return monitors.keySet().toArray(new String[0]);
     }
 
     @Override
     public String getInfoMonitor(String name) {
-        SpatialTemporalScriptComponent<?> c = selectSpatialTemporalComponent(name);
-        if (c != null) {
-            return c.getInfo();
+        SpatialTemporalMonitorDefinition d = monitors.get(name);
+        if (d != null) {
+            return d.getInfo();
         } else {
             return "Spatial-temporal monitor " + name + " is unknown!";
         }

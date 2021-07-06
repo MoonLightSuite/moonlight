@@ -23,19 +23,13 @@ repositories {
 dependencies {
     compile project(":core")
     compile project(":api")
-    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript")
-    compile project(":script:eu.quanticol.moonlight.xtext.MoonLightScript.ide")
-    implementation "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
+    compile project(":moonlightscript")
 }
 
 application {
     // Define the main class for the application.
     mainClassName = 'eu.quanticol.moonlight.MoonLightConsole'
-}
-
-test {
-    // Use junit platform for unit tests
-    useJUnitPlatform()
+    applicationName = "mlconsole"
 }
 
 jar {
@@ -49,7 +43,12 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
-task distribution(type: Copy, dependsOn:[jar]) {
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
+
+task distribution(type: Copy, dependsOn:[jar, installDist]) {
     println "exec distribution Task!"
     copy {
         from jar

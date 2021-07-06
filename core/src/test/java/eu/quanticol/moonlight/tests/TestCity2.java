@@ -65,7 +65,7 @@ class TestCity2 {
 
 
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,city);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 0.5,city);
 
         ///// Properties  //////
         HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Boolean>>> atomicFormulas = new HashMap<>();

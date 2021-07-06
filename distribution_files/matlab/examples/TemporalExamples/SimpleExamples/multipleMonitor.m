@@ -13,7 +13,7 @@ values = trajFunction(time);
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
-moonlightScript = ScriptLoader.loadFromFile("multipleMonitors");
+moonlightScript = ScriptLoader.loadFromFile("multipleMonitors.mls");
 
 % list of formulas in the monitor object
 moonlightScript.getMonitors()

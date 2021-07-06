@@ -54,7 +54,7 @@ class TestSpaceOnline {
         ForkJoinPool customThreadPool = new ForkJoinPool(12);
 
         TimeSignal<Double, List<AbstractInterval<Double>>> r =
-                m.monitor(null);
+                m.monitor((TimeChain<Double, List<Double>>) null);
 
         TimeChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
 

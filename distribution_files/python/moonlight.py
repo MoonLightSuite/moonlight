@@ -40,17 +40,22 @@ class ScriptLoader:
     @staticmethod
     def loadFromText(script):
         '''load the script from a string-variable'''
-        moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
-        return MoonlightScript(moonlightScript.compileScript(script))
+        # moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
+        # return MoonlightScript(moonlightScript.compileScript(script))
+        ScriptLoader = autoclass('eu.quanticol.moonlight.script.ScriptLoader')
+        return MoonlightScript(ScriptLoader.loadFromCode(script))
+
     
     @staticmethod
     def loadFromFile(path):
         '''load the script from a file'''
-        moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
-        with open(path) as file:
-            script = file.read()
-        return MoonlightScript(moonlightScript.compileScript(script))
-    
+        # moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
+        # with open(path) as file:
+        #     script = file.read()
+        #return MoonlightScript(moonlightScript.compileScript(script))
+        ScriptLoader = autoclass('eu.quanticol.moonlight.script.ScriptLoader')
+        return MoonlightScript(ScriptLoader.loadFromFile(script))
+
           
 class TemporalScriptComponent():
      def __init__(self,moonlight_monitor):

@@ -20,8 +20,6 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.domain.Interval;
-
 /**
  * A <code>DataHandler</code> is used to manage input/output of a signal value
  * of type <code>S</code>.
@@ -79,7 +77,7 @@ public interface DataHandler<S> {
      * @param s data item to represent.
      * @return double representation of <code>s</code>.
      */
-    double doubleOf(S s);
+    double doubleOf(Object s);
 
     /**
      * Check if the object <code>o</code> is a valid data type.
@@ -162,8 +160,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Double aDouble) {
-            return aDouble;
+        public double doubleOf(Object aDouble) {
+            if (aDouble instanceof Double) {
+                return (Double) aDouble;
+            }
+            return Double.NaN;
         }
 
         @Override
@@ -242,8 +243,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Integer integer) {
-            return integer.doubleValue();
+        public double doubleOf(Object integer) {
+            if (integer instanceof Integer) {
+                return (Integer) integer;
+            }
+            return Double.NaN;
         }
 
         @Override
@@ -282,7 +286,7 @@ public interface DataHandler<S> {
          * @throws IllegalValueException if <code>value</code> is not a double.
          */
         @Override
-        public Boolean fromObject(Object value) {
+        public Boolean fromObject(Object value) throws IllegalValueException {
             if (value == null) {
                 return false;
             }
@@ -293,7 +297,7 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public Boolean fromString(String str) {
+        public Boolean fromString(String str) throws IllegalValueException {
             return Boolean.parseBoolean(str);
         }
 
@@ -314,8 +318,11 @@ public interface DataHandler<S> {
         }
 
         @Override
-        public double doubleOf(Boolean aBoolean) {
-            return aBoolean? 1.0 : -1.0;
+        public double doubleOf(Object aBoolean) {
+            if (aBoolean instanceof Boolean) {
+                return (((Boolean) aBoolean)?1.0:-1.0);
+            }
+            return Double.NaN;
         }
 
         @Override
@@ -328,93 +335,6 @@ public interface DataHandler<S> {
             return true;
         }
 
-
-    };
-
-    /**
-     * A data handler for intervals.
-     */
-    DataHandler<Interval> INTERVAL = new DataHandler<Interval>() {
-
-        @Override
-        public Class<Interval> getTypeOf() {
-            return Interval.class;
-        }
-
-        /**
-         * If  <code>value</code> is a Number, an interval generated from
-         * the doubleValue is returned.
-         * If <code>value</code> is null, an empty interval is returned.
-         * Otherwise an {@link IllegalValueException} is thrown.
-         *
-         * @param value data to convert
-         * @return an Interval value
-         * @throws IllegalValueException if <code>value</code> is neither  a
-         *                               number nor an interval.
-         */
-        @Override
-        public Interval fromObject(Object value) {
-            if(value == null) {
-                throw new IllegalValueException("Expected a number or an interval. "
-                                               + "Received: null");
-            }
-            if (value instanceof Double) {
-                return new Interval((Double) value);
-            }
-            if (value instanceof Number) {
-                return new Interval(((Number) value).doubleValue());
-            }
-            if (value instanceof Interval) {
-                return (Interval) value;
-            }
-
-            throw new IllegalValueException("Expected a number or an interval. "
-                                           + "Received: " + value.toString());
-        }
-
-        @Override
-        public Interval fromString(String str) {
-            try {
-                return new Interval(Double.parseDouble(str));
-            } catch (NumberFormatException e) {
-                throw  new IllegalValueException(e);
-            }
-        }
-
-        @Override
-        public Interval fromDouble(double value) {
-            return new Interval(value);
-        }
-
-        @Override
-        public String stringOf(Interval interval) {
-            return interval.toString();
-        }
-
-        @Override
-        public double doubleOf(Interval interval) {
-            if(interval.getStart().equals(interval.getEnd())
-                    && !interval.isOpenOnRight())
-                return interval.getStart();
-            else
-                throw new IllegalValueException("Expected a valid interval. " +
-                                                "Received: " + interval.toString());
-        }
-
-        @Override
-        public boolean checkObjectValue(Object o) {
-            return (o instanceof Interval);
-        }
-
-        @Override
-        public boolean checkStringValue(String value) {
-            try {
-                Double.parseDouble(value);
-                return true;
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
 
     };
 

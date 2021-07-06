@@ -28,7 +28,7 @@ classdef SpatialTemporalScriptComponent
             end
             javaGraphModel = self.toJavaGraphModel([ graph ]);
             javaSignal = self.toJavaSignal(values);
-            result=self.ScriptComponent.monitorToObjectArrayAdjacencyList([time(1)],javaGraphModel,time,javaSignal,parameters);
+            result=self.ScriptComponent.monitorToDoubleArrayAdjacencyList([time(1)],javaGraphModel,time,javaSignal,parameters);
         end
         function result = monitor(self, graph, time, values, parameters)
             % monitor get the result of monitoring a spatial-temporal trajectory

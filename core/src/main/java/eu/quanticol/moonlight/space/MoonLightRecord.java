@@ -76,4 +76,8 @@ public class MoonLightRecord {
 	public Object[] getValues() {
 		return Arrays.copyOf(values,values.length);
 	}
+
+	public double getDoubleOf(int i) {
+		return handlers.apply(i).doubleOf(values[i]);
+	}
 }
