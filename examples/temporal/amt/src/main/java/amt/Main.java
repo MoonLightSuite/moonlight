@@ -70,7 +70,7 @@ public class Main {
         String aliasFile = alias.getAbsolutePath();
         String vcdFile = clock.getAbsolutePath();
         comp.setShowCompilerOutput(true);
-        try {
+        try(FileWriter writer = new FileWriter("ao")) {
             comp.compile(stlPropFile, vcdFile, InputTraceType.VCD, aliasFile);
             if (!comp.isErrorFound()) {
                 comp.evaluate();
@@ -85,7 +85,6 @@ public class Main {
                 System.out.println(comp.getErrors().toString());
                 Assert.fail();
             }
-            FileWriter writer = new FileWriter("ao");
             DiagnosticsReportGenerator aa = new DiagnosticsReportGenerator(writer);
             XStlContext visit = aa.visit(comp.getXstlSpec(), comp.getContext(), true);
             System.out.println("");
@@ -94,6 +93,7 @@ public class Main {
         } catch (Exception var7) {
             var7.printStackTrace();
             Assert.fail();
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -158,38 +158,39 @@ public class Main {
 
                     String measurementsFilename = arguments.getMeasurementsReportFilename();
                     Iterator var14;
-                    if (!measurementsFilename.isEmpty()) {
-                        FileWriter writer = new FileWriter(measurementsFilename);
-                        writer.write("Name");
-                        writer.write(", ");
-                        writer.write("Number of segments");
-                        writer.write(", ");
-                        writer.write("Minimum value");
-                        writer.write(", ");
-                        writer.write("Maximum value");
-                        writer.write(", ");
-                        writer.write("Average value");
-                        writer.write("\n");
-                        XStlContext context = comp.getContext();
-                        List<Measurement> measurementList = context.getMeasurements();
-                        var14 = measurementList.iterator();
-
-                        while (var14.hasNext()) {
-                            Measurement measurement = (Measurement) var14.next();
-                            writer.write(measurement.getName());
+                    try(FileWriter writer = new FileWriter(measurementsFilename)) {
+                        if (!measurementsFilename.isEmpty()) {
+                            writer.write("Name");
                             writer.write(", ");
-                            writer.write(Integer.toString(measurement.getSegmentList().size()));
+                            writer.write("Number of segments");
                             writer.write(", ");
-                            writer.write(measurement.getMin().toString());
+                            writer.write("Minimum value");
                             writer.write(", ");
-                            writer.write(measurement.getMax().toString());
+                            writer.write("Maximum value");
                             writer.write(", ");
-                            writer.write(measurement.getAverage().toString());
+                            writer.write("Average value");
                             writer.write("\n");
-                        }
+                            XStlContext context = comp.getContext();
+                            List<Measurement> measurementList = context.getMeasurements();
+                            var14 = measurementList.iterator();
 
-                        writer.flush();
-                        writer.close();
+                            while (var14.hasNext()) {
+                                Measurement measurement = (Measurement) var14.next();
+                                writer.write(measurement.getName());
+                                writer.write(", ");
+                                writer.write(Integer.toString(measurement.getSegmentList().size()));
+                                writer.write(", ");
+                                writer.write(measurement.getMin().toString());
+                                writer.write(", ");
+                                writer.write(measurement.getMax().toString());
+                                writer.write(", ");
+                                writer.write(measurement.getAverage().toString());
+                                writer.write("\n");
+                            }
+
+                            writer.flush();
+                            writer.close();
+                        }
                     }
 
                     DiagnosticsType diagnosticsType = arguments.getDiagnosticsType();
@@ -245,6 +246,7 @@ public class Main {
                     }
                 } catch (Exception var15) {
                     var15.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
 
                 if (comp.isErrorFound()) {

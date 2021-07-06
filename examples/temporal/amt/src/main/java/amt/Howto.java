@@ -64,6 +64,7 @@ public class Howto {
         } catch (Exception var7) {
             var7.printStackTrace();
             Assert.fail();
+            Thread.currentThread().interrupt();
         }
     }
 }

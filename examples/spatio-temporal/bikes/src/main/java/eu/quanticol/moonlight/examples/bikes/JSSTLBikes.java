@@ -7,6 +7,8 @@ import eu.quanticol.jsstl.core.monitor.*;
 import eu.quanticol.jsstl.core.space.GraphModel;
 import eu.quanticol.jsstl.core.signal.BooleanSignal;
 
+import java.util.Objects;
+
 public class JSSTLBikes {
     /**
      * The files containing the data to run the experiment
@@ -59,7 +61,9 @@ public class JSSTLBikes {
         }
 
 
-        BooleanSignal bt = result.spatialBoleanSignal.get(g.getLocation(0));
+        BooleanSignal bt = Objects.requireNonNull(result)
+                                  .spatialBoleanSignal
+                                  .get(g.getLocation(0));
 
         System.out.println("Boolean signal:" + bt);
         System.out.println("Satisfied: " + bt.getValueAt(0));

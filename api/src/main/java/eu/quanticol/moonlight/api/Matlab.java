@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class Matlab {
+    private Matlab() {}
 
     public static MoonLightScript loadFromFile(String filePath) throws IOException {
         return new ScriptLoader().loadFile(filePath);
@@ -21,7 +22,7 @@ public class Matlab {
         return new ScriptLoader().compileScript(fileContent);
     }
 
-    public static JavaCompiler pippo() {
+    public static JavaCompiler test() {
         return ToolProvider.getSystemJavaCompiler();
     }
 
@@ -42,11 +43,15 @@ public class Matlab {
         URL[] urls = new URL[]{url};
 
         // Create a new class loader with the directory
-        ClassLoader cl = new URLClassLoader(urls);
+        try(URLClassLoader cl = new URLClassLoader(urls)) {
 
-        // Load in the class; MyClass.class should be located in
-        // the directory file:/c:/myclasses/com/mycompany
-        return (MoonLightScript) cl.loadClass(className).newInstance();
+            // Load in the class; MyClass.class should be located in
+            // the directory file:/c:/myclasses/com/mycompany
+            return (MoonLightScript) cl.loadClass(className).newInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("");
+        }
     }
 
 

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -148,7 +149,7 @@ public class Bikes {
         }
 
         // We show the output
-        List<Signal<Boolean>> signals = result.getSignals();
+        List<Signal<Boolean>> signals = Objects.requireNonNull(result).getSignals();
         System.out.print("\nThe monitoring result of the phi1 property is: ");
         System.out.println(signals.get(0).valueAt(0));
         System.out.println("Execution stats:" + Arrays.toString(stats.analyze()));

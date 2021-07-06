@@ -42,13 +42,13 @@ public class RandomFormula {
         eng.disconnect();
     }
 
-    public static void mainLoop(String[] args) throws Exception {
-        for (int i = 1; i < 1; i++) {
-            for (int j = 2; j < 1; j++) {
-                System.out.println(i + "," + j + "-->" + test(i, j));
-            }
-        }
-    }
+//    public static void mainLoop(String[] args) throws Exception {
+//        for (int i = 1; i < 1; i++) {
+//            for (int j = 2; j < 1; j++) {
+//                System.out.println(i + "," + j + "-->" + test(i, j));
+//            }
+//        }
+//    }
 
 	public static double[][] generateValues(double[] time, ArrayList<Function<Double,Double>> functions) {
 		  double[][] values = new double[functions.size()][time.length];

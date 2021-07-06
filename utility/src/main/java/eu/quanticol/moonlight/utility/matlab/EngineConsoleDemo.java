@@ -76,6 +76,7 @@ public class EngineConsoleDemo {
             ml.disconnect();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }

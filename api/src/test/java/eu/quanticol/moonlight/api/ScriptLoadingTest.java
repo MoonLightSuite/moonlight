@@ -13,7 +13,6 @@ public class ScriptLoadingTest {
 
     @Test
     public void testLoadScript() throws IOException {
-        Matlab mlClass = new Matlab();
         URL url = ScriptLoadingTest.class.getClassLoader().getResource("multipleMonitors.mls");
         MoonLightScript script = Matlab.loadFromFile(url.getFile());
         assertTrue(script.isTemporal());

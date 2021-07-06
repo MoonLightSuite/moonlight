@@ -24,7 +24,7 @@ public class Sensor2 {
         List<Integer> typeOfNode = Arrays.asList(1, 3, 3, 3, 3);
 
         SpatialTemporalSignal<Integer> signal = createSpatioTemporalSignal(SIZE, 0, 1, 1.0,
-                (t, l) -> new Integer(typeOfNode.get(l)));
+                (t, l) -> typeOfNode.get(l));
 
     }
 
