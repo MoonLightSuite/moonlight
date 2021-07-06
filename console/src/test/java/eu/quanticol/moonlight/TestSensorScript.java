@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class TestSensorScript {
 
 	@Test
 	@Disabled
-	void test() throws IOException {		
+	void test() throws IOException, MoonLightScriptLoaderException {
 		MoonLightScript script = ScriptLoader.loaderFromCode(code).getScript();
 		assertTrue( script.isSpatialTemporal() );
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
@@ -66,7 +67,7 @@ class TestSensorScript {
 
 	@Test
 	@Disabled
-	void test2() throws IOException {
+	void test2() throws IOException, MoonLightScriptLoaderException {
 		MoonLightScript script = ScriptLoader.loaderFromCode(code2).getScript();
 		assertTrue( script.isSpatialTemporal() );
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
@@ -128,7 +129,7 @@ class TestSensorScript {
 
 	@Test
 	@Disabled
-	void test3() throws IOException {
+	void test3() throws IOException, MoonLightScriptLoaderException {
 		MoonLightScript script = ScriptLoader.loaderFromCode(code3).getScript();
 		assertTrue( script.isSpatialTemporal() );
 		MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();

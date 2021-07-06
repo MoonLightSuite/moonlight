@@ -9,9 +9,11 @@ import eu.quanticol.moonlight.signal.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialModel;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisitor<SpatialTemporalMonitorProducer> {
 
@@ -20,14 +22,16 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
     private final RecordHandler   edgeHandler;
     private final NameResolver    resolver;
     private final Map<String,SpatialTemporalMonitorProducer> producers;
+    private final Map<String, RecordHandler> formulaParameters;
 
 
-    public SpatialTemporalMonitoringGenerator(Map<String,SpatialTemporalMonitorProducer> producers, NameResolver resolver, RecordHandler inputHandler, RecordHandler signalHandler, RecordHandler edgeHandler) {
+    public SpatialTemporalMonitoringGenerator(Map<String,SpatialTemporalMonitorProducer> producers, NameResolver resolver, Map<String, RecordHandler> formulaParameters, RecordHandler inputHandler, RecordHandler signalHandler, RecordHandler edgeHandler) {
         this.inputHandler = inputHandler;
         this.signalHandler = signalHandler;
         this.resolver = resolver;
         this.producers = producers;
         this.edgeHandler = edgeHandler;
+        this.formulaParameters = formulaParameters;
     }
 
     @Override
@@ -118,7 +122,10 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
             return SpatialTemporalMonitorProducer.produceAtomic((r,s) -> s.getDoubleOf(idx) );
         }
         if (producers.containsKey(name)) {
-            return producers.get(name);
+            RecordHandler callee = formulaParameters.get(name);
+            ParametricExpressionEvaluator evaluator = new ParametricExpressionEvaluator(resolver,inputHandler);
+            List<Function<MoonLightRecord,Double>> args = ctx.args.stream().map(e -> e.accept(evaluator)).collect(Collectors.toList());
+            return SpatialTemporalMonitorProducer.produceCall(producers.get(name),callee,args);
         }
 
         return defaultResult();

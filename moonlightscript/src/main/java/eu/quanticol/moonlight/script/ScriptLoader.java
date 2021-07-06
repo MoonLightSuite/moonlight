@@ -28,12 +28,12 @@ public class ScriptLoader {
         return new ScriptLoader(CharStreams.fromString(code));
     }
 
-    public static MoonLightScript loadFromFile(String fileName) throws IOException {
+    public static MoonLightScript loadFromFile(String fileName) throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromFile(fileName);
         return loader.getScript();
     }
 
-    public static MoonLightScript loadFromCode(String code) throws IOException {
+    public static MoonLightScript loadFromCode(String code) throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(code);
         return loader.getScript();
     }
@@ -61,9 +61,10 @@ public class ScriptLoader {
         return errors.isEmpty();
     }
 
-    private MoonLightScript loadScript() {
-        if (!loadModel()) {return null;};
-        if (!validate()) {return null;};
+    private MoonLightScript loadScript() throws MoonLightScriptLoaderException {
+        if (!loadModel()||!validate()) {
+            throw new MoonLightScriptLoaderException(errors);
+        }
         if (validator.isSpatial()) {
             return generateSpatialScript();
         } else {
@@ -82,7 +83,7 @@ public class ScriptLoader {
         DefaultNameResolver resolver = new DefaultNameResolver(repository,constants);
         String defaultMonitor = null;
         for (MoonLightScriptParser.ScriptFormulaContext f: this.model.formulas) {
-            SpatialTemporalMonitoringGenerator evaluator = new SpatialTemporalMonitoringGenerator(producers,resolver,formulaParameters.get(f.name.getText()), signalHandler, edgeHandler);
+            SpatialTemporalMonitoringGenerator evaluator = new SpatialTemporalMonitoringGenerator(producers,resolver,formulaParameters, formulaParameters.get(f.name.getText()), signalHandler, edgeHandler);
             producers.put(f.name.getText(), evaluator.eval(f.formula));
             if ((defaultMonitor == null)||(f.isDefault != null)) {
                 defaultMonitor = f.name.getText();
@@ -189,7 +190,7 @@ public class ScriptLoader {
     }
 
 
-    public MoonLightScript getScript() {
+    public MoonLightScript getScript() throws MoonLightScriptLoaderException {
         return loadScript();
     }
 }

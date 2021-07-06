@@ -139,7 +139,7 @@ public class TestSpatialTemporalMonitoring {
     private final RecordHandler recordHandler = new RecordHandler(DataHandler.REAL, DataHandler.REAL);
     private final RecordHandler edgeHandler = new RecordHandler(DataHandler.REAL, DataHandler.REAL);
 
-    private static MoonLightSpatialTemporalScript getMonitor(String code) throws IOException {
+    private static MoonLightSpatialTemporalScript getMonitor(String code) throws IOException, MoonLightScriptLoaderException {
         return ScriptLoader.loaderFromCode(code).getScript().spatialTemporal();
     }
 
@@ -186,7 +186,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testLessThanZeroX() throws IOException {
+    void testLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("lessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -196,7 +196,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testLessThanZeroY() throws IOException {
+    void testLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("lessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -206,7 +206,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEventuallyLessThanZeroX() throws IOException {
+    void testEventuallyLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("eventuallyLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -216,7 +216,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEventuallyLessThanZeroY() throws IOException {
+    void testEventuallyLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("eventuallyLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -226,7 +226,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEventuallyBLessThanZeroX() throws IOException {
+    void testEventuallyBLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("eventuallyBLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -236,7 +236,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEventuallyBLessThanZeroY() throws IOException {
+    void testEventuallyBLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("eventuallyBLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -246,7 +246,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testGloballyLessThanZeroX() throws IOException {
+    void testGloballyLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("globallyLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -256,7 +256,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testGloballyLessThanZeroY() throws IOException {
+    void testGloballyLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("globallyLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -266,7 +266,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testGloballyBLessThanZeroX() throws IOException {
+    void testGloballyBLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("globallyBLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -276,7 +276,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testGloballyBLessThanZeroY() throws IOException {
+    void testGloballyBLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("globallyBLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -286,7 +286,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testOnceLessThanZeroX() throws IOException {
+    void testOnceLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("onceLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -296,7 +296,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testOnceLessThanZeroY() throws IOException {
+    void testOnceLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("onceLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -306,7 +306,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testOnceBLessThanZeroX() throws IOException {
+    void testOnceBLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("onceBLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -316,7 +316,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testOnceBLessThanZeroY() throws IOException {
+    void testOnceBLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("onceBLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -326,7 +326,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testHistoricallyLessThanZeroX() throws IOException {
+    void testHistoricallyLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("historicallyLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -336,7 +336,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testHistoricallyLessThanZeroY() throws IOException {
+    void testHistoricallyLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("historicallyLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -346,7 +346,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testHistoricallyBLessThanZeroX() throws IOException {
+    void testHistoricallyBLessThanZeroX() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("historicallyBLessThanZeroX");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -356,7 +356,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testHistoricallyBLessThanZeroY() throws IOException {
+    void testHistoricallyBLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("historicallyBLessThanZeroY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -366,7 +366,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testUntilXY() throws IOException {
+    void testUntilXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("untilXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -376,7 +376,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testUntilBXY() throws IOException {
+    void testUntilBXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("untilBXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -386,7 +386,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testSinceXY() throws IOException {
+    void testSinceXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("sinceXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -396,7 +396,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testSinceBXY() throws IOException {
+    void testSinceBXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("sinceBXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -406,7 +406,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testAndXY() throws IOException {
+    void testAndXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("andXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -416,7 +416,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testOrXY() throws IOException {
+    void testOrXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("orXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -426,7 +426,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testNotXY() throws IOException {
+    void testNotXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("impliesXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -436,7 +436,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testImpliesXY() throws IOException {
+    void testImpliesXY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("notXY");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -446,7 +446,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testSomeWhereOneLessThanZeroY() throws IOException {
+    void testSomeWhereOneLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("somewhereXYOne");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -456,7 +456,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testSomeWhereTwpLessThanZeroY() throws IOException {
+    void testSomeWhereTwpLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("somewhereXYTwo");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -466,7 +466,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEveryWhereOneLessThanZeroY() throws IOException {
+    void testEveryWhereOneLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("everywhereXYOne");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -476,7 +476,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEveryWhereTwoLessThanZeroY() throws IOException {
+    void testEveryWhereTwoLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("everywhereXYTwo");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -486,7 +486,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEscapeOneLessThanZeroY() throws IOException {
+    void testEscapeOneLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("escapeXYOne");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -496,7 +496,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testEscapeTwoLessThanZeroY() throws IOException {
+    void testEscapeTwoLessThanZeroY() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("escapeXYTwo");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -506,7 +506,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testReachXYOne() throws IOException {
+    void testReachXYOne() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("reachXYOne");
         double[] timePoints = getTimePoints(0,0.5,100);
@@ -516,7 +516,7 @@ public class TestSpatialTemporalMonitoring {
     }
 
     @Test
-    void testReachXYTwo() throws IOException {
+    void testReachXYTwo() throws IOException, MoonLightScriptLoaderException {
         MoonLightSpatialTemporalScript script = getMonitor(CODE_SINGLE_ATOMIC);
         SpatialTemporalScriptComponent<?> t = script.selectSpatialTemporalComponent("reachXYTwo");
         double[] timePoints = getTimePoints(0,0.5,100);

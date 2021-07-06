@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.formula.BooleanDomain;
 import eu.quanticol.moonlight.formula.DoubleDomain;
 import eu.quanticol.moonlight.formula.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
@@ -22,7 +23,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 public class MultipleMonitors {
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, MoonLightScriptLoaderException {
         //fromJava();
         fromFileScript();
         //fromStringScript();
@@ -56,7 +57,7 @@ public class MultipleMonitors {
 
     }
 
-    private static void fromFileScript() throws URISyntaxException, IOException {
+    private static void fromFileScript() throws URISyntaxException, IOException, MoonLightScriptLoaderException {
         // Load File Script
         URL multipleMonitorsUri = MultipleMonitors.class.getResource("booleanmonitor.mls");
         String multipleMonitorsPath = Paths.get(multipleMonitorsUri.toURI()).toString();
@@ -77,7 +78,7 @@ public class MultipleMonitors {
         printResults(monitorValuesB);
     }
 
-    private static void fromStringScript() throws IOException {
+    private static void fromStringScript() throws IOException, MoonLightScriptLoaderException {
         // Write a monitor script
         //@formatter:off
         String script = "signal { real x; real y;}\n" +

@@ -6,8 +6,10 @@ import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DistanceStructure;
 import eu.quanticol.moonlight.signal.MoonLightRecord;
+import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.SpatialModel;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -231,4 +233,15 @@ public interface SpatialTemporalMonitorProducer {
             }
         };
     }
+
+    static SpatialTemporalMonitorProducer produceCall(SpatialTemporalMonitorProducer spatialTemporalMonitorProducer, RecordHandler callee, List<Function<MoonLightRecord, Double>> functionArgument) {
+        return new SpatialTemporalMonitorProducer() {
+            @Override
+            public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
+                return spatialTemporalMonitorProducer.apply(domain,callee.fromDoubleArray(functionArgument.stream().mapToDouble(f -> f.apply(args)).toArray()));
+            }
+        };
+    }
+
+
 }

@@ -169,4 +169,8 @@ public class SpatialTemporalScriptComponent<S> {
     public RecordHandler getSignalHandler() {
         return this.definition.getSignalRecordHandler();
     }
+
+    public RecordHandler getEdgeHandler() {
+        return this.definition.getEdgeRecordHandler();
+    }
 }

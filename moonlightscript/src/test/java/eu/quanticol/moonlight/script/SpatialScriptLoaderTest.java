@@ -63,13 +63,13 @@ class SpatialScriptLoaderTest {
             "formula PE = escape(hop)[2, inf] (nodeType==3) ;\n";
 
     @Test
-    void shouldLoadAScriptFromCode() throws IOException {
+    void shouldLoadAScriptFromCode() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(CITY_CODE);
         assertNotNull( loader.getScript() );
     }
 
     @Test
-    void shouldLoadAScriptFromCodeAndItsSpatial() throws IOException {
+    void shouldLoadAScriptFromCodeAndItsSpatial() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(CITY_CODE);
         MoonLightScript script = loader.getScript();
         assertFalse(script.isTemporal());
@@ -77,7 +77,7 @@ class SpatialScriptLoaderTest {
     }
 
     @Test
-    void shouldLoadAScriptFromCodeAndItsSpatialWithTheRightMonitors() throws IOException {
+    void shouldLoadAScriptFromCodeAndItsSpatialWithTheRightMonitors() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(CITY_CODE);
         MoonLightScript script = loader.getScript();
         assertEquals( 2, script.getMonitors().length);
@@ -86,13 +86,13 @@ class SpatialScriptLoaderTest {
     }
 
     @Test
-    void shouldLoadAScriptFromCode2() throws IOException {
+    void shouldLoadAScriptFromCode2() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(CODE);
         assertNotNull( loader.getScript() );
     }
 
     @Test
-    void shouldLoadAScriptFromPattern() throws IOException {
+    void shouldLoadAScriptFromPattern() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(PATTERN);
         MoonLightScript script = loader.getScript();
         assertNotNull(script);
@@ -102,13 +102,13 @@ class SpatialScriptLoaderTest {
     }
 
     @Test
-    void shouldLoadAScriptFromCalling() throws IOException {
+    void shouldLoadAScriptFromCalling() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(CALLING_FORMULA);
         assertNotNull( loader.getScript() );
     }
 
     @Test
-    void shouldLoadAScriptFromSensor() throws IOException {
+    void shouldLoadAScriptFromSensor() throws IOException, MoonLightScriptLoaderException {
         ScriptLoader loader = ScriptLoader.loaderFromCode(SENSOR);
         assertNotNull( loader.getScript() );
     }
