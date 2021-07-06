@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 
 import java.net.URISyntaxException;
@@ -33,7 +33,7 @@ public class Pattern {
         // %%%%%%%%%%  GRAPH  %%%%%%%%% //
 
         // Designing the grid
-        SpatialModel<Double> gridModel = TestUtils.createGridModel(32, 32, false, 1.0);
+        SpatialModel<Double> gridModel = Utils.createGridModel(32, 32, false, 1.0);
 
 
         // %%%%%%%%%%%%% Connection with Matlab %%%%%%%%%%%%/////////
@@ -48,8 +48,8 @@ public class Pattern {
 
 
         BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
-        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1.0, gridFunction);
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, Atraj.length-1.0,gridModel);
+        SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1.0, gridFunction);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, Atraj.length-1.0,gridModel);
 
     /*    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
             oos.writeObject(Atraj);

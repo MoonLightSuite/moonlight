@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ class TestSpaceOnline {
     void testSomewhere() {
         SpatialModel<Double> grid = generateNGrid(N);
         LocationService<Double, Double> locSvc =
-                TestUtils.createLocServiceStatic(0, 1, T, grid);
+                Utils.createLocServiceStatic(0, 1, T, grid);
 
 
         HashMap<String, Function<Double, AbstractInterval<Double>>>
@@ -112,7 +112,7 @@ class TestSpaceOnline {
                     cityMap.put(new Pair<>(toArray(i,j, d) , n), 1.0);
             }
 
-        return TestUtils.createSpatialModel(d * d, cityMap);
+        return Utils.createSpatialModel(d * d, cityMap);
     }
 
     private static Update<Double, List<Double>> basicUpdate(int n) {

@@ -1,19 +1,31 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.space.SpatialModel;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -21,23 +33,11 @@ import java.util.function.Function;
 /**
  * @author loreti
  */
-public class TestUtils {
+public class Utils {
 
-    private TestUtils() {
+    private Utils() {
         //utility class
     }
-
-    public static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
-        Signal<T> signal = new Signal<>();
-        double time = start;
-        while (time <= end) {
-            signal.add(time, f.apply(time));
-            time += dt;
-        }
-        signal.endAt(end);
-        return signal;
-    }
-
 
     public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
         SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(size);
@@ -120,7 +120,7 @@ public class TestUtils {
 
     public static LocationService<Double, Double> createLocServiceFromSetMatrix(Object[] cgraph1) {
         double[][] matrix;
-        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+        LocationServiceList<Double> locService = new LocationServiceList<>();
         for (int k = 0; k < cgraph1.length; k++) {
             double t = ((float) k);
             matrix = (double[][]) cgraph1[(int) Math.floor(t)];
@@ -137,53 +137,34 @@ public class TestUtils {
         return locService;
     }
 
-    public static LocationService<Double, Double> createLocServiceStatic(double start, double dt, double end,SpatialModel<Double> graph) {
-        LocationServiceList<Double> locService = new LocationServiceList<Double>();
+    public static LocationService<Double, Double> createLocServiceStaticFromTimeTraj(double [] time ,SpatialModel<Double> graph) {
+        LocationServiceList<Double> locService = new LocationServiceList<>();
+        for (double v : time) {
+            locService.add(v, graph);
+        }
+        return locService;
+    }
+
+
+    public static <T> Signal<T> createSignal(double start, double end, double dt, Function<Double, T> f) {
+        Signal<T> signal = new Signal<>();
+        double time = start;
+        while (time <= end) {
+            signal.add(time, f.apply(time));
+            time += dt;
+        }
+        signal.endAt(end);
+        return signal;
+    }
+
+    public static LocationService<Double, Double> createLocServiceStatic(double start, double dt, double end, SpatialModel<Double> graph) {
+        LocationServiceList<Double> locService = new LocationServiceList<>();
         double time = start;
         while (time < end) {
-            double current = time;
             locService.add(time, graph);
             time += dt;
         }
         locService.add(end,graph);
         return locService;
     }
-
-    public static LocationService<Double, Double> createLocServiceStaticFromTimeTraj(double [] time ,SpatialModel<Double> graph) {
-        LocationServiceList<Double> locService = new LocationServiceList<Double>();
-        for (int i = 0; i < time.length; i++) {
-            locService.add(time[i], graph);
-        }
-        return locService;
-    }
-
-    public static <E> List<E> listOf(E...elements) {
-        return new ArrayList<>(Arrays.asList(elements));
-    }
-
-    public static <T extends Comparable<T> & Serializable, V>
-    List<TimeChain<T, V>> toChains(List<Update<T, V>> ups)
-    {
-        List<TimeChain<T, V>> result = new ArrayList<>();
-
-        for(int i = 0; i < ups.size(); i++) {
-            SegmentInterface<T, V> s = new TimeSegment<>(ups.get(i).getStart(),
-                    ups.get(i).getValue());
-            if(i > 0 && s.getStart().equals(ups.get(i - 1).getEnd())) {
-                int lastIndex = result.size() - 1;
-                TimeChain<T, V> last = result.get(lastIndex);
-                TimeChain<T, V> newChain = new TimeChain<>(last.toList(),
-                        ups.get(i).getEnd());
-                newChain.add(s);
-                result.set(lastIndex, newChain);
-            } else {
-                result.add(new TimeChain<>(s, ups.get(i).getEnd()));
-            }
-        }
-
-        return result;
-    }
-
-
-
 }

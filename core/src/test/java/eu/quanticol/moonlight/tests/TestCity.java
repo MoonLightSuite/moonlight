@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class TestCity {
         cityMap.put(new Pair<>(1, 6), 4.0);
         cityMap.put(new Pair<>(6, 3), 15.0);
         cityMap.put(new Pair<>(3, 6), 15.0);
-        return TestUtils.createSpatialModel(SIZE, cityMap);
+        return Utils.createSpatialModel(SIZE, cityMap);
     }
 
 }

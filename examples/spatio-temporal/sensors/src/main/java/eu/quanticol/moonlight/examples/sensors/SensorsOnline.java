@@ -17,7 +17,7 @@ import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Stopwatch;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
 import java.net.URISyntaxException;
@@ -54,7 +54,7 @@ public class SensorsOnline {
 
         Object[] graph = runModel(eng);
 
-        locSvc = TestUtils.createLocServiceFromSetMatrix(graph);
+        locSvc = Utils.createLocServiceFromSetMatrix(graph);
 
         atomicFormulas = new HashMap<>();
         atomicFormulas.put("type1", p -> (x -> x.getFirst() == 1));

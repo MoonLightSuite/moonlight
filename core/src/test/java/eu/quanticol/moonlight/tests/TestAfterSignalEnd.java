@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.util.Triple;
 import org.junit.jupiter.api.Test;
 
@@ -153,7 +153,7 @@ class TestAfterSignalEnd {
 
 
         //// We are considering a static Location Service ///
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, T, network);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, T, network);
 
 
         // Now we can monitor the system for the satisfaction of our Peak Management property
@@ -214,6 +214,6 @@ class TestAfterSignalEnd {
         cityMap.put(new Pair<>(6, 3), 15.0);
         cityMap.put(new Pair<>(3, 6), 15.0);
 
-        return TestUtils.createSpatialModel(SIZE, cityMap);
+        return Utils.createSpatialModel(SIZE, cityMap);
     }
 }

@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ class TestSpatialProperties {
     @Test
     void testGraphBuild() {
         int size = 10;
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
         assertNotNull(model);
     }
@@ -39,7 +39,7 @@ class TestSpatialProperties {
     @Test
     void testGraphBuildEdges() {
         int size = 10;
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
         assertNotNull(model);
         for (int i = 0; i < size; i++) {
@@ -62,7 +62,7 @@ class TestSpatialProperties {
         map.put(new Pair<>(2, 3), 1.0);
         map.put(new Pair<>(1, 3), 5.0);
 
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        SpatialModel<Double> model = Utils.createSpatialModel(size, map);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         assertNotNull(model);
@@ -76,7 +76,7 @@ class TestSpatialProperties {
     @Test
     void testDistanceStructure() {
         int size = 3;
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
@@ -90,7 +90,7 @@ class TestSpatialProperties {
     @Test
     void testDistanceStructure2() {
         int size = 3;
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (((y == ((x + 1) % size)) || (x == ((y + 1) % size))) ? 1.0 : null));
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (((y == ((x + 1) % size)) || (x == ((y + 1) % size))) ? 1.0 : null));
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
@@ -107,9 +107,9 @@ class TestSpatialProperties {
         int columns = 1000;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                int idx = TestUtils.gridIndexOf(i, j, columns);
+                int idx = Utils.gridIndexOf(i, j, columns);
                 assertEquals(i * columns + j, idx);
-                Pair<Integer, Integer> loc = TestUtils.gridLocationOf(idx, rows, columns);
+                Pair<Integer, Integer> loc = Utils.gridLocationOf(idx, rows, columns);
                 assertEquals(i, loc.getFirst().intValue());
                 assertEquals(j, loc.getSecond().intValue());
             }
@@ -120,7 +120,7 @@ class TestSpatialProperties {
     void testDistanceOnGrid() {
         int rows = 40;
         int columns = 40;
-        SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 20.0, model);
         for (int i1 = 0; i1 < rows; i1++) {
             for (int j1 = 0; j1 < columns; j1++) {
@@ -128,7 +128,7 @@ class TestSpatialProperties {
                     for (int j2 = 0; j2 < columns; j2++) {
                         assertEquals(
                                 Math.abs(i1 - i2) + Math.abs(j1 - j2),
-                                ds.getDistance(TestUtils.gridIndexOf(i1, j1, columns), TestUtils.gridIndexOf(i2, j2, columns)), 0.0,
+                                ds.getDistance(Utils.gridIndexOf(i1, j1, columns), Utils.gridIndexOf(i2, j2, columns)), 0.0,
                                 "d(<" + i1 + "," + j1 + ">,<" + i2 + "," + j2 + ">): ");
                     }
                 }
@@ -144,16 +144,16 @@ class TestSpatialProperties {
         double range = 10.0;
         int relevantC = 5;
         int relevantR = 5;
-        SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> 1.0, new DoubleDistance(), 0.0, range, model);
         List<Boolean> result = SpaceUtilities.somewhere(
                 new BooleanDomain(),
-                (i) -> i == TestUtils.gridIndexOf(relevantR, relevantC, columns),
+                (i) -> i == Utils.gridIndexOf(relevantR, relevantC, columns),
                 ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) <= range, result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) <= range, result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
@@ -165,16 +165,16 @@ class TestSpatialProperties {
         double range = 10.0;
         int relevantC = 5;
         int relevantR = 5;
-        SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
         List<Boolean> result = SpaceUtilities.everywhere(
                 new BooleanDomain(),
-                (i) -> i != TestUtils.gridIndexOf(relevantR, relevantC, columns),
+                (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns),
                 ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range, result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range, result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
@@ -186,19 +186,19 @@ class TestSpatialProperties {
         double range = 2.1;
         int wallC = 2;
         int wallR = 2;
-        SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), range, Double.POSITIVE_INFINITY, model);
         List<Boolean> result = ds.escape(
                 new BooleanDomain(),
                 (i) -> {
-                    Pair<Integer, Integer> p = TestUtils.gridLocationOf(i, rows, columns);
+                    Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
                     return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
                             || ((p.getFirst() <= wallC) && (p.getSecond().equals(wallR))));
                 }
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals((i > wallR) || (j > wallC), result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals((i > wallR) || (j > wallC), result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
@@ -209,21 +209,21 @@ class TestSpatialProperties {
         int rows = 5;
         int columns = 5;
         double range = 10.0;
-        SpatialModel<Double> model = TestUtils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
         List<Boolean> result = ds.reach(
                 new BooleanDomain(),
                 (i) -> {
-                    Pair<Integer, Integer> p = TestUtils.gridLocationOf(i, rows, columns);
+                    Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
                     return (p.getFirst() % 2 == 0) || (p.getSecond() % 2 == 0);
                 }, i -> {
-                    Pair<Integer, Integer> p = TestUtils.gridLocationOf(i, rows, columns);
+                    Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
                     return (p.getFirst() == 4) && (p.getSecond() == 4);
                 }
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals((i % 2 == 0) || (j % 2 == 0), result.get(TestUtils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals((i % 2 == 0) || (j % 2 == 0), result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
             }
         }
     }
@@ -373,7 +373,7 @@ class TestSpatialProperties {
         map.put(new Pair<>(2, 3), 1.0);
         map.put(new Pair<>(1, 3), 5.0);
 
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        SpatialModel<Double> model = Utils.createSpatialModel(size, map);
         DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
 
         assertNotNull(model);
@@ -404,13 +404,13 @@ class TestSpatialProperties {
         map.put(new Pair<>(4, 2), 1.0);
         map.put(new Pair<>(4, 3), 1.0);
 
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, map);
+        SpatialModel<Double> model = Utils.createSpatialModel(size, map);
         List<Integer> typeOfNode = Arrays.asList(1, 3, 3, 3, 3);
 
-        SpatialTemporalSignal<Integer> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 1.0,
+        SpatialTemporalSignal<Integer> signal = Utils.createSpatioTemporalSignal(size, 0, 1, 1.0,
                 (t, l) -> new Integer(typeOfNode.get(l)));
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 1,model);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 1,model);
 
         System.out.println(signal.valuesatT(0));
 

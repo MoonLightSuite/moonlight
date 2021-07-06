@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.util.TestUtils.listOf;
+import static eu.quanticol.moonlight.TestUtils.listOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpatialComputationTest {

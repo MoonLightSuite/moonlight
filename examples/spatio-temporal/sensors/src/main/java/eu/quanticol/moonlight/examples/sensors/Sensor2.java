@@ -5,7 +5,7 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class Sensor2 {
         map.put(new Pair<>(4, 1), 1.0);
         map.put(new Pair<>(4, 2), 1.0);
         map.put(new Pair<>(4, 3), 1.0);
-        return TestUtils.createSpatialModel(SIZE, map);
+        return Utils.createSpatialModel(SIZE, map);
     }
 
     private static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {

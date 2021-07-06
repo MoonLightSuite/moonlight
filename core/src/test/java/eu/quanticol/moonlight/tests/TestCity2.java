@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.util.Triple;
 
 class TestCity2 {
@@ -60,12 +60,12 @@ class TestCity2 {
         List<String> places = Arrays.asList("BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop");
         List<Boolean> taxiAvailability = Arrays.asList(false, false, true, false, false, true, false);
         List<Integer> peopleAtPlaces = Arrays.asList(3, 145, 67, 243, 22, 103, 6);
-        SpatialTemporalSignal<Triple<String, Boolean, Integer>> signal = TestUtils.createSpatioTemporalSignal(SIZE, 0, 1, 20.0,
+        SpatialTemporalSignal<Triple<String, Boolean, Integer>> signal = Utils.createSpatioTemporalSignal(SIZE, 0, 1, 20.0,
                 (t, l) -> new Triple<>(places.get(l), taxiAvailability.get(l), peopleAtPlaces.get(l)));
 
 
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,city);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,city);
 
         ///// Properties  //////
         HashMap<String, Function<Parameters, Function<Triple<String, Boolean, Integer>, Boolean>>> atomicFormulas = new HashMap<>();
@@ -233,7 +233,7 @@ class TestCity2 {
         cityMap.put(new Pair<>(1, 6), 4.0);
         cityMap.put(new Pair<>(6, 3), 15.0);
         cityMap.put(new Pair<>(3, 6), 15.0);
-        return TestUtils.createSpatialModel(SIZE, cityMap);
+        return Utils.createSpatialModel(SIZE, cityMap);
     }
 
 }

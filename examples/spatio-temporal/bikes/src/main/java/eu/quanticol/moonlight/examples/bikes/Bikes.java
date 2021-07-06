@@ -17,7 +17,7 @@ import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.util.Pair;
 
-import static eu.quanticol.moonlight.util.TestUtils.*;
+import static eu.quanticol.moonlight.util.Utils.*;
 import static java.util.Arrays.copyOfRange;
 
 import java.io.IOException;

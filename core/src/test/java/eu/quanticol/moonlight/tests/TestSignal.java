@@ -23,7 +23,7 @@ import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.BiFunction;
@@ -67,7 +67,7 @@ class TestSignal {
 
     @Test
     void testCreations2() {
-        Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> true);
+        Signal<Boolean> s = Utils.createSignal(0.0, 100, 1.0, x -> true);
         assertEquals(0.0, s.start(), 0.0, "start:");
         assertEquals(100.0, s.end(), 0.0, "end:");
         assertEquals(1, s.size());
@@ -75,7 +75,7 @@ class TestSignal {
 
     @Test
     void testIterator() {
-        Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
+        Signal<Boolean> s = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
         SignalCursor<Boolean> si = s.getIterator(true);
         double time = 0.0;
         while (time < 100) {
@@ -88,7 +88,7 @@ class TestSignal {
 
     @Test
     void testUnaryApply() {
-        Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
+        Signal<Boolean> s = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
         assertEquals(0.0, s.start(), 0.0, "start:");
         assertEquals(100.0, s.end(), 0.0, "end:");
         assertEquals(101, s.size());
@@ -97,14 +97,14 @@ class TestSignal {
 
     @Test
     void testUnaryApply2() {
-        Signal<Boolean> s = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
+        Signal<Boolean> s = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
         checkSignal(s, 0.0, 100, 101, (x, y) -> (x <= 100 ? y == (!(x.intValue() % 2 == 0)) : y), (x, y) -> (y - x) == 1.0);
     }
 
     @Test
     void testBinaryApply() {
-        Signal<Boolean> s1 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
-        Signal<Boolean> s2 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0).apply(x -> !x);
+        Signal<Boolean> s1 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
+        Signal<Boolean> s2 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0).apply(x -> !x);
         Signal<Boolean> s3 = Signal.apply(s1, (x, y) -> x || y, s2);
         checkSignal(s3, 0.0, 100, 1, (x, y) -> true, (x, y) -> (x == 0.0) && (y == 100.0));
     }
@@ -121,8 +121,8 @@ class TestSignal {
 
     @Test
     void testBinaryApply2() {
-        Signal<Boolean> s1 = TestUtils.createSignal(50.0, 150, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
-        Signal<Boolean> s2 = TestUtils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0).apply(x -> !x);
+        Signal<Boolean> s1 = Utils.createSignal(50.0, 150, 1.0, x -> x.intValue() % 2 == 0).apply(x -> !x);
+        Signal<Boolean> s2 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0).apply(x -> !x);
         Signal<Boolean> s3 = Signal.apply(s1, (x, y) -> x || y, s2);
         checkSignal(s3, 50.0, 100, 1, (x, y) -> true, (x, y) -> (x == 50.0) && (y == 100.0));
     }
@@ -130,7 +130,7 @@ class TestSignal {
 
     @Test
     void testSlidingWindow1() {
-        Signal<Double> s1 = TestUtils.createSignal(0.0, 20.0, 0.4, Math::sin);
+        Signal<Double> s1 = Utils.createSignal(0.0, 20.0, 0.4, Math::sin);
         SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.33, Math::min, true);
         Signal<Double> s2 = w.apply(s1);
         assertNotNull(s2);
@@ -139,7 +139,7 @@ class TestSignal {
 
     @Test
     void testSlidingWindow2() {
-        Signal<Double> s1 = TestUtils.createSignal(0.0, 10, 0.45, x -> ((((int) (x * 2)) % 2 == 0) ? -1.0 : 1.0));
+        Signal<Double> s1 = Utils.createSignal(0.0, 10, 0.45, x -> ((((int) (x * 2)) % 2 == 0) ? -1.0 : 1.0));
         SlidingWindow<Double> w = new SlidingWindow<>(0.25, 5.75, Math::min, true);
         Signal<Double> s2 = w.apply(s1);
         assertNotNull(s2);

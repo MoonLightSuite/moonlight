@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -109,7 +109,7 @@ class TestPast {
 
     @Test
     void testOnce2() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.1, x -> x);
         Formula once = new OnceFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
@@ -129,7 +129,7 @@ class TestPast {
 
     @Test
     void testHistorically2() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
@@ -149,7 +149,7 @@ class TestPast {
 
     @Test
     void testSince() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula since = new SinceFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
@@ -170,7 +170,7 @@ class TestPast {
 
     @Test
     void testUnboundedSince() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula since = new SinceFormula(new AtomicFormula("test1"), new AtomicFormula("test2"));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
@@ -192,7 +192,7 @@ class TestPast {
 
     @Test
     void testHistoricallyFailsInternally() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 0.4, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 0.4, 0.1, x -> x);
         // errore per  Interval(0.1, 0.3)
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
@@ -236,7 +236,7 @@ class TestPast {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
         double expectedOutputUpperBound = signalUpperBound;
         Function<Double, Double> atomicFormula = d -> d;
-        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.historicallyMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
                 new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
         Signal<Double> output = monitor.monitor(signal);
@@ -251,7 +251,7 @@ class TestPast {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
         double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
-        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.onceMonitor(TemporalMonitor.atomicMonitor(atomicFormula),
                 new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
         Signal<Double> output = monitor.monitor(signal);
@@ -266,7 +266,7 @@ class TestPast {
         double expectedOutputLowerBound = signalLowerBound + formulaUpperBound;
         double expectedOutputUpperBound = signalUpperBound;// + formulaLowerBound;
         Function<Double, Double> atomicFormula = d -> d;
-        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(signalLowerBound, signalUpperBound, 0.1, x -> x);
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(atomicFormula), new Interval(formulaLowerBound, formulaUpperBound), TemporalMonitor.atomicMonitor(atomicFormula), new DoubleDomain());
         Signal<Double> output = monitor.monitor(signal);
         assertAll(
@@ -281,7 +281,7 @@ class TestPast {
         double[] data = new double[] {78.14615476784513, 78.14615476784513, 78.14615476784513, 49.32833677512347, 78.14615476784513, 78.14615476784513, 15.088930843502473, 13.600775161732201, 78.14615476784513, 78.14615476784513, 78.14615476784513, 10.225363954402809, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 53.84903640734902, 78.14615476784513, 78.14615476784513, 17.35050134722348, 78.14615476784513, 78.14615476784513, 11.320109628444415, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.57040798944532, 78.14615476784513, 78.14615476784513, 12.543275489281049, 37.60403715028482, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 31.75348812335425, 78.14615476784513, 22.48618936147245, 78.14615476784513, 78.14615476784513, 15.426093867210874, 78.14615476784513, 78.14615476784513, 78.14615476784513, 14.98326593236601, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.732347941994501, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 14.044184169968752, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 11.450306589781787, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.062792963221874, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 15.885603702724088, 78.14615476784513, 78.14615476784513, 24.21713641205337, 78.14615476784513, 78.14615476784513, 14.787016365717582, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.434537580430526, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 12.374053377935622, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513, 13.526585452360093, 17.28258736416524, 78.14615476784513, 78.14615476784513, 12.585073579443236, 78.14615476784513, 78.14615476784513, 78.14615476784513, 78.14615476784513};
         HashMap<Double, Double> dataMap = new HashMap<>();
         for (int i=500; i <= 693; ++i) dataMap.put((double)i, data[i - 500]);
-        Signal<Double> signal = TestUtils.createSignal(500.0, 693.0, 1, dataMap::get);
+        Signal<Double> signal = Utils.createSignal(500.0, 693.0, 1, dataMap::get);
         TemporalMonitor<Double, Double> mQ2 = TemporalMonitor.onceMonitor(
                 TemporalMonitor.notMonitor(TemporalMonitor.atomicMonitor(x -> x - 2.8E9), new DoubleDomain()), new DoubleDomain(), new Interval(60, 116));
         Signal<Double> soutQ2 = mQ2.monitor(signal);
@@ -291,7 +291,7 @@ class TestPast {
 
     @Test
     void testHistoricallyWrongSimpleLaura() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 0.5, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 0.5, 0.1, x -> x);
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
@@ -317,7 +317,7 @@ class TestPast {
         for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
 
         // segnale su [0.0, 199.0] con le variabili di sopra
-        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+        Signal<Pair<Double, Double>> signal = Utils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
 
         // TemporalMonitor corrispondente a:
         //⃟ I=[60.0, 84.0]
@@ -345,7 +345,7 @@ class TestPast {
         for (int i=start; i <= end; ++i) dataMap2.put((double)i, (!data2[i - start]) ? 0.0 : 1.0);
 
         // segnale su [0.0, 199.0] con le variabili di sopra
-        Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
+        Signal<Pair<Double, Double>> signal = Utils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
 
         // TemporalMonitor corrispondente a:
         // I=[24.0, 49.0]

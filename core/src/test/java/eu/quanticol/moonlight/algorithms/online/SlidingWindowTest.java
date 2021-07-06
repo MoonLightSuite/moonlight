@@ -291,6 +291,7 @@ class SlidingWindowTest {
         assertEquals(expected, results);
     }
 
+    @Disabled("Should define some proper assertions")
     @Test
     void complexEv() {
         Interval opHorizon = new Interval(0.0, 1.0);

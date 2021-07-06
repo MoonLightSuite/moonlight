@@ -180,7 +180,7 @@ class TestTemporalMonitoring {
         double formulaUpperBound = 0.3;
         double expectedOutputLowerBound = signalLowerBound;
         double expectedOutputUpperBound = signalUpperBound - formulaUpperBound;
-        Signal<Double> signal = TestUtils.createSignal(signalLowerBound, signalUpperBound, step, x -> x);
+        Signal<Double> signal = Utils.createSignal(signalLowerBound, signalUpperBound, step, x -> x);
         Formula phi = new EventuallyFormula(new AtomicFormula("test"), new Interval(formulaLowerBound, formulaUpperBound));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));

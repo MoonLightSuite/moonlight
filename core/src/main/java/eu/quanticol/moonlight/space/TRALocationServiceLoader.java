@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Load a location service in tra form from a file or string. A tra structure has the following structure:
@@ -82,10 +83,10 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
     private LocationService<Double, MoonLightRecord> parseLocationService(int size, RecordHandler handler, Iterator<Row> iterator) throws IllegalFileFormat {
         LocationServiceList<MoonLightRecord> loc = new LocationServiceList<>();
         Row row = nextNotEmpty(iterator);
-        if (isTimeRow(row)) {
+        if (isTimeRow(Objects.requireNonNull(row))) {
             do {
                 double time = parseTime(row);
-                row = nextNotEmpty(iterator);
+                row = Objects.requireNonNull(nextNotEmpty(iterator));
                 loc.add( time , parseGraph(handler, size, getNumberOfTransitions(row) , iterator));
                 row = nextNotEmpty(iterator);
             } while( row != null );
@@ -102,7 +103,7 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
     private SpatialModel<MoonLightRecord> parseGraph(RecordHandler handler, int size, int numberOfTransitions, Iterator<Row> iterator) throws IllegalFileFormat {
         GraphModel<MoonLightRecord> model = new GraphModel<>(size);
         for( int i=0 ; i<numberOfTransitions ; i++ ) {
-            Row row = nextNotEmpty(iterator);
+            Row row = Objects.requireNonNull(nextNotEmpty(iterator));
             addTransition(row,model,handler);
         }
         return model;
@@ -117,13 +118,11 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
                 MoonLightRecord v = handler.fromStringArray(elements,2,elements.length);
                 model.add(src,v,trg);
                 return ;
-            } catch (NumberFormatException e) {
-
-            } catch (IllegalValueException e) {
-
+            } catch (NumberFormatException | IllegalValueException e) {
+                e.printStackTrace();
             }
         }
-        throw new IllegalFileFormat("Syntax error at line "+row.get(0)+": expected <int> <int> <val1>;...;<valn>, found "+row.get(0));
+        throw illegal(row.get(0), "<int> <int> <val1>;...;<valn>");
     }
 
     private boolean isDeclarationOfTransition(Row row) {
@@ -143,18 +142,21 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
             try {
                 return Integer.parseInt(row.get(0).substring(TRANSITIONS_KEY.length()).trim());
             } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
-        throw new IllegalFileFormat("Syntax error at line "+row.get(0)+": expected "+TRANSITIONS_KEY+" <int>, found "+row.get(0));
+        throw illegal(row.get(0), TRANSITIONS_KEY + " <int>");
     }
 
     private double parseTime(Row row) throws IllegalFileFormat {
         if (row.get(0).startsWith(TIME_KEY)) {
             try {
                 return Double.parseDouble(row.get(0).substring(TIME_KEY.length()).trim());
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
-        throw new IllegalFileFormat("Syntax error at line "+row.get(0)+": expected "+TIME_KEY+" <double>, found "+row.get(0));
+        throw illegal(row.get(0), TIME_KEY + " <double>");
     }
 
     private boolean isTimeRow(Row row) {
@@ -192,10 +194,16 @@ public class TRALocationServiceLoader extends AbstractFileByRowReader implements
         if (element.startsWith(LOCATIONS_KEY)) {
             try {
                 return Integer.parseInt(element.substring(LOCATIONS_KEY.length()).trim());
-            } catch (NumberFormatException e)  {}
+            } catch (NumberFormatException e)  {
+                e.printStackTrace();
+            }
         }
         throw new IllegalFileFormat("Error: '" + LOCATIONS_KEY + " <int>' is expected, found " +element);
     }
 
+    private static IllegalFileFormat illegal(String line, String expected) {
+        return new IllegalFileFormat("Syntax error at line " + line +
+                ": expected " + expected + " , found " + line);
+    }
 
 }

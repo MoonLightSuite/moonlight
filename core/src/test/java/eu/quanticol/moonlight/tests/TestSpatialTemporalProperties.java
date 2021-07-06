@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.ObjectSerializer;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ class TestSpatialTemporalProperties {
 
     void testSPTGridBuild() throws ClassNotFoundException, IOException {
         int size = 32;
-        SpatialModel<Double> grid = TestUtils.createGridModel(size, size, false, 1.0);
+        SpatialModel<Double> grid = Utils.createGridModel(size, size, false, 1.0);
         String trajectoryPath = TestSpatialTemporalProperties.class.getResource("trajectory.storage").getPath();
         double[][][] trajectory = ObjectSerializer.deserialize(trajectoryPath, double[][][].class);
 
@@ -42,8 +42,8 @@ class TestSpatialTemporalProperties {
         //      SpatioTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignalFromGrid(trajectory[0].length, trajectory[0][0].length, 0, 1, trajectory.length - 1, gridFunction);
 
 
-        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
+        SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 6.0, 10., grid);
@@ -79,7 +79,7 @@ class TestSpatialTemporalProperties {
     @Test
     void testSPTsignalGraphBuild() {
         int size = 5;
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.5, 3.0, model);
@@ -94,8 +94,8 @@ class TestSpatialTemporalProperties {
         Formula reach = new ReachFormula(new AtomicFormula("simpleAtomicl"), "dist6", new AtomicFormula("simpleAtomich"));
         Formula escape = new EscapeFormula("dist6", new AtomicFormula("simpleAtomicl"));
 
-        SpatialTemporalSignal<Double> signal = TestUtils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
+        SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignal(size, 0, 1, 10, (t, l) -> t * l);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,model);
         SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
@@ -127,9 +127,9 @@ class TestSpatialTemporalProperties {
         int size = 10;
         HashMap<String, Function<Parameters, Function<Pair<Double, Double>, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x.getFirst() + x.getSecond() - 2)));
-        SpatialModel<Double> model = TestUtils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
-        SpatialTemporalSignal<Pair<Double, Double>> signal = TestUtils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> new Pair<>(t * l / 2, t * l / 2));
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,model);
+        SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
+        SpatialTemporalSignal<Pair<Double, Double>> signal = Utils.createSpatioTemporalSignal(size, 0, 0.1, 10, (t, l) -> new Pair<>(t * l / 2, t * l / 2));
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,model);
         SpatialTemporalMonitoring<Double, Pair<Double, Double>, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 new HashMap<>(),

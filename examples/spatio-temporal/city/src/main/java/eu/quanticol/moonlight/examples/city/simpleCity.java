@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class simpleCity {
 
 
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = TestUtils.createLocServiceStatic(0, 1, 20.0,city);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,city);
 
 
         ////  P1 = "isThereATaxi" ////
@@ -82,7 +82,7 @@ public class simpleCity {
         cityMap.put(new Pair<>(5, 1), 1.0);
         cityMap.put(new Pair<>(5, 2), 1.0);
         cityMap.put(new Pair<>(5, 3), 1.0);
-        return TestUtils.createSpatialModel(SIZE, cityMap);
+        return Utils.createSpatialModel(SIZE, cityMap);
     }
 
     private static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {

@@ -1,12 +1,12 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.TestUtils;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.util.Plotter;
-import eu.quanticol.moonlight.util.TestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 

@@ -7,7 +7,7 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ class TestFormulae {
 
     @Test
     void testEventually() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.1, x -> x);
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
@@ -49,7 +49,7 @@ class TestFormulae {
 
     @Test
     void testAlways() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula globally = new GloballyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
@@ -70,7 +70,7 @@ class TestFormulae {
     @Disabled("Based on old monitor")
     @Test
     void testUntil() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula until = new UntilFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
 //        TemporalMonitoringOld<Double, Double> monitoring = new TemporalMonitoringOld<>(new DoubleDomain());
 //        monitoring.addProperty("test1", p -> (x -> 1.0));
@@ -89,7 +89,7 @@ class TestFormulae {
     
     @Test
     void testUntilNew() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.25, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.25, x -> x);
         Formula until = new UntilFormula(new AtomicFormula("test1"), new AtomicFormula("test2"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> 1.0));
@@ -110,7 +110,7 @@ class TestFormulae {
 
     @Test
     void testOnce() {
-        Signal<Double> signal = TestUtils.createSignal(0.0, 10.0, 0.1, x -> x);
+        Signal<Double> signal = Utils.createSignal(0.0, 10.0, 0.1, x -> x);
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));

@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.xtext.ScriptLoader;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class MultipleMonitors {
 
     private static void fromJava() {
         // Get signal
-        Signal<Pair<Double,Double>> signal = TestUtils.createSignal(0.0, 50, 1.0, x -> new Pair<>( x, 3 * x));
+        Signal<Pair<Double,Double>> signal = Utils.createSignal(0.0, 50, 1.0, x -> new Pair<>( x, 3 * x));
 
 
         // Build the property (Boolean Semantics)

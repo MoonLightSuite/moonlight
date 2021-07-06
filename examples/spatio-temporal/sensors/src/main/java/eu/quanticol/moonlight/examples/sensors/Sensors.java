@@ -11,7 +11,7 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
-import eu.quanticol.moonlight.util.TestUtils;
+import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
 import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
@@ -41,7 +41,7 @@ public class Sensors {
         Object[] cgraph1 = eng.getVariable("cgraph1");
         Object[] cgraph2 = eng.getVariable("cgraph2");
         MatlabExecutor.close();
-        LocationService<Double, Double> tConsumer = TestUtils.createLocServiceFromSetMatrix(cgraph1);
+        LocationService<Double, Double> tConsumer = Utils.createLocServiceFromSetMatrix(cgraph1);
         SpatialTemporalSignal<Pair<Integer, Integer>> spatialTemporalSignal = new SpatialTemporalSignal<>(nodesType.length);
         IntStream.range(0, (int) nodes - 1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
 
