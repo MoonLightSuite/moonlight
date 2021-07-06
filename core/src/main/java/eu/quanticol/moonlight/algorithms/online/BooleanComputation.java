@@ -104,6 +104,15 @@ public class BooleanComputation {
         return new TimeChain<>(ls, us.getEnd());
     }
 
+    /**
+     * // TODO: this should be different for left and right operands
+     * @param c1 input signal of first argument
+     * @param us updates of second argument
+     * @param op operation to be performed (e.g. and/or)
+     * @param <T> time domain of the signals
+     * @param <R> evaluation domain of the semantics
+     * @return a chain of sequential updates
+     */
     public static
     <T extends Comparable<T> & Serializable, R>
     TimeChain<T, R> binarySequence(TimeChain<T, R> c1,
@@ -111,13 +120,9 @@ public class BooleanComputation {
                                    BinaryOperator<R> op)
     {
         List<SegmentInterface<T, R>> updates = new ArrayList<>(us.size());
-        //TimeChain<T, R> c1 = s.select(us.getFirst().getStart(), us.getEnd());
-
-        applyChain(c1, updates, op, us);  // TODO: this should be different for
-                                                  //       left and right operands
-
+        ChainsCombinator<T, R> itr = new ChainsCombinator<>(c1, us);
+        itr.forEach((segment, update) -> binaryOp(segment, update, updates, op));
         return new TimeChain<>(updates, us.getEnd());
-
     }
 
 
@@ -128,134 +133,10 @@ public class BooleanComputation {
                               BinaryOperator<R> op)
     {
         List<Update<T, R>> updates;
-
         updates = rightApply(c1, op, u);  // TODO: this should be different for
                                            //       left and right operands
-
         return updates;
     }
-
-    /**
-     * Computes a list of updates to the robustness signal of a binary operator.
-     *
-     * 1 - if not overlapping, execute in parallel
-     * 2 - if overlapping:
-     *      2.1 - update the intersection with:
-     *              U = (intersect.t_min, intersect.t_max, OP(u1,u2)
-     *      2.2 - foreach segment as sss1 in s1.select:
-     *              if sss1.start < u2.end:
-     *                  try:
-     *                      end = s1.select.peekNext();
-     *                  ups.add(sss1.start, min(end, u2.end), OP(u1, sss1))
-     *      2.2 - same for s2
-     */
-    /*
-    public static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    List<Update<T, R>> binary(SignalInterface<T, R> s1,
-                              SignalInterface<T, R> s2,
-                              Update<T, R> u1, Update<T, R> u2,
-                              BinaryOperator<R> op)
-    {
-        List<Update<T, R>> updates = new ArrayList<>();
-        SegmentChain<T, R> p1 = s1.select(u2.getStart(), u2.getEnd());
-        SegmentChain<T, R> p2 = s2.select(u1.getStart(), u1.getEnd());
-        T tMin = max(u1.getStart(), u2.getStart());
-        T tMax = min(u1.getEnd(), u2.getEnd());
-
-        if(tMin.compareTo(tMax) > 0) {  // u1 and u2 are not overlapping
-            parallelExec(p1, updates, op, u2);
-            parallelExec(p2, updates, op, u1);
-        } else {                        // u1 and u2 are overlapping
-            updates.add(new Update<>(tMin, tMax,
-                                     op.apply(u1.getValue(),u2.getValue())));
-
-            // u1 starts before intersection so we must operate up to tMin
-            if(u1.getStart().compareTo(tMin) < 0)
-                overlappingBefore(p2, updates, op, u1, tMin);
-
-            // ... u1 ends after the intersection
-            if(u1.getEnd().compareTo(tMax) > 0)
-                overlappingAfter(p2, updates, op, u1, tMax);
-
-            // u2 starts before the intersection ...
-            if(u2.getStart().compareTo(tMin) < 0)
-                overlappingBefore(p1, updates, op, u2, tMin);
-
-            // ... u2 end after the intersection
-            if(u2.getEnd().compareTo(tMax) > 0)
-                overlappingAfter(p1, updates, op, u2, tMax);
-
-        }
-
-        return updates;
-    }
-
-    public static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    List<Update<T, R>> binaryLeft(SignalInterface<T, R> s2,
-                                  Update<T, R> u1,
-                                  BinaryOperator<R> op)
-    {
-        List<Update<T, R>> updates = new ArrayList<>();
-        SegmentChain<T, R> p2 = s2.select(u1.getStart(), u1.getEnd());
-        T tMin = u1.getStart();
-        T tMax = u1.getEnd();
-
-        parallelExec(p2, updates, op, u1);
-
-        return updates;
-    }
-
-    private static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    void overlappingBefore(SegmentChain<T, R> s,
-                         List<Update<T, R>> updates,
-                         BinaryOperator<R> op,
-                         Update<T, R> u, T tMin)
-    {
-        ChainIterator<SegmentInterface<T, R>> itr = s.diffIterator();
-        SegmentInterface<T, R> curr;
-
-        while(itr.hasNext()) {
-            curr = itr.next();
-            if(curr.getStart().compareTo(tMin) < 0) {
-                T nextStart = tryPeekNextStart(itr, s.getEnd());
-
-                T end = min(nextStart, tMin);
-                T start = max(curr.getStart(), u.getStart());
-                Update<T, R> r = new Update<>(start, end,
-                        op.apply(u.getValue(), curr.getValue()));
-                updates.add(r);
-            }
-        }
-    }
-
-    private static
-    <T extends Comparable<T> & Serializable, R extends Comparable<R>>
-    void overlappingAfter(SegmentChain<T, R> s,
-                          List<Update<T, R>> updates,
-                          BinaryOperator<R> op,
-                          Update<T, R> u, T tMax)
-    {
-        ChainIterator<SegmentInterface<T, R>> itr = s.diffIterator();
-        SegmentInterface<T, R> curr;
-
-        while(itr.hasNext()) {
-            curr = itr.next();
-            T nextStart = tryPeekNextStart(itr, s.getEnd());
-
-            if(curr.getStart().compareTo(tMax) > 0 ||
-               nextStart.compareTo(tMax) > 0)
-            {
-                T end = min(nextStart, u.getEnd());
-                T start = max(curr.getStart(), tMax);
-                Update<T, R> r = new Update<>(start, end,
-                        op.apply(u.getValue(), curr.getValue()));
-                updates.add(r);
-            }
-        }
-    }*/
 
     private static
     <T extends Comparable<T> & Serializable, R>
@@ -294,15 +175,6 @@ public class BooleanComputation {
     }
 
     private static <T extends Comparable<T> & Serializable, R>
-    void applyChain(TimeChain<T, R> s,
-                    List<SegmentInterface<T, R>> output,
-                    BinaryOperator<R> op, TimeChain<T, R> inputUps)
-    {
-        ChainsCombinator<T, R> itr = new ChainsCombinator<>(s, inputUps);
-        itr.forEach((segment, update) -> binaryOp(segment, update, output, op));
-    }
-
-    private static <T extends Comparable<T> & Serializable, R>
     void binaryOp(SegmentInterface<T, R> left,
                   SegmentInterface<T, R> right,
                   List<SegmentInterface<T, R>> output,
@@ -314,45 +186,6 @@ public class BooleanComputation {
         int last = output.size() - 1;
         if(output.isEmpty() || !output.get(last).getValue().equals(value))
             output.add(r);
-    }
-
-    private static
-    <T extends Comparable<T> & Serializable, R>
-    void rightApplySequence(TimeChain<T, R> s,
-                            List<SegmentInterface<T, R>> outputUps,
-                            BinaryOperator<R> op, TimeChain<T, R> inputUps)
-    {
-        ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
-        ChainIterator<SegmentInterface<T, R>> utr = inputUps.chainIterator();
-        SegmentInterface<T, R> currUpdate = utr.next();
-        SegmentInterface<T, R> nextUpdate = utr.tryPeekNext(lastNode(inputUps.getEnd()));
-
-        while(itr.hasNext()) {
-            SegmentInterface<T, R> curr = itr.next();
-            SegmentInterface<T, R> next = itr.tryPeekNext(lastNode(s.getEnd()));
-
-            if(curr.compareTo(nextUpdate) < 0
-                    && next.compareTo(currUpdate) >= 0)
-            {
-                T end = min(next, nextUpdate).getStart();
-                T start = max(curr, currUpdate).getStart();
-                if(!start.equals(end)) {
-                    SegmentInterface<T, R> r = new TimeSegment<>(start,
-                                    op.apply(currUpdate.getValue(), curr.getValue()));
-                    outputUps.add(r);
-
-                    if(utr.hasNext()) {
-                        currUpdate = utr.next();
-                        nextUpdate = utr.tryPeekNext(lastNode(inputUps.getEnd()));
-                    }
-                }
-            }
-        }
-    }
-
-    private static <T extends Comparable<T> & Serializable, R>
-    SegmentInterface<T, R> lastNode(T end) {
-        return new TimeSegment<>(end, null);
     }
 
     private static <R extends Comparable<R>> R max(R a, R b) {

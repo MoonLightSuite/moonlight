@@ -3,8 +3,7 @@ package eu.quanticol.moonlight.io.parsing;
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AdjacencyExtractorTest {
 

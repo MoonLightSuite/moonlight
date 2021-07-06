@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * <em>EXPERIMENTAL:</em> Utility class for tracking execution time.
+ */
 public class Stopwatch {
     private static final Map<UUID, Pair<Long, Long>> sessions = new HashMap<>();
     private final UUID sessionId;

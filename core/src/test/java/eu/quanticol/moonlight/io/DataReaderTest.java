@@ -1,14 +1,9 @@
-package eu.quanticol.moonlight.examples.subway.io;
+package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
-import eu.quanticol.moonlight.io.DataReader;
-import eu.quanticol.moonlight.io.FileType;
-import eu.quanticol.moonlight.io.UnsupportedFileTypeException;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,10 +14,10 @@ class DataReaderTest {
                                                     "file system";
 
     private final String[] files = {
-                                        "small_TXT.txt"
-                                    ,   "small_CSV.csv"
-                                    ,   "long_header_CSV.csv"
-                                    ,   "unknown.unk"
+                                        "dataFormats/small_TXT.txt"
+                                    ,   "dataFormats/small_CSV.csv"
+                                    ,   "dataFormats/long_header_CSV.csv"
+                                    ,   "dataFormats/unknown.unk"
                                    };
     private final FileType[] types = {  FileType.TEXT
                                       , FileType.CSV
@@ -36,9 +31,6 @@ class DataReaderTest {
         InputStream source = getClass().getClassLoader().getResourceAsStream(files[0]);
 
         if(source != null) {
-            //File file = new File(source.getFile());
-            //String path = file.getAbsolutePath();
-
             EmptyStrategy str = new EmptyStrategy();
             DataReader<Boolean> rdr = new DataReader<>(source, types[0], str);
 
@@ -48,8 +40,10 @@ class DataReaderTest {
 
             assertEquals(3, str.header_count);
             assertEquals(2, str.line_sum);
-        } else
+        } else {
             LOG.warning(FILE_SYSTEM_ERROR);
+            fail();
+        }
     }
 
 
@@ -58,9 +52,6 @@ class DataReaderTest {
         InputStream source = getClass().getClassLoader().getResourceAsStream(files[1]);
 
         if(source != null) {
-            //File file = new File(source.getFile());
-            //String path = file.getAbsolutePath();
-
             EmptyStrategy str = new EmptyStrategy();
             DataReader<Boolean> rdr = new DataReader<>(source, types[1], str);
 
@@ -70,8 +61,10 @@ class DataReaderTest {
 
             assertEquals(4, str.header_count);
             assertEquals(2, str.line_sum);
-        } else
+        } else {
             LOG.warning(FILE_SYSTEM_ERROR);
+            fail();
+        }
     }
 
     @Test
@@ -79,9 +72,6 @@ class DataReaderTest {
         InputStream source = getClass().getClassLoader().getResourceAsStream(files[2]);
 
         if(source != null) {
-//            File file = new File(source.getFile());
-//            String path = file.getAbsolutePath();
-
             EmptyStrategy str = new EmptyStrategy();
             DataReader<Boolean> rdr = new DataReader<>(source, types[2], str);
 
@@ -91,8 +81,10 @@ class DataReaderTest {
 
             assertEquals(672, str.header_count);
             assertEquals(1421.099239665429, str.line_sum);
-        } else
+        } else {
             LOG.warning(FILE_SYSTEM_ERROR);
+            fail();
+        }
     }
 
     @Test
@@ -100,15 +92,14 @@ class DataReaderTest {
         InputStream source = getClass().getClassLoader().getResourceAsStream(files[3]);
 
         if(source != null) {
-//            File file = new File(source.getFile());
-//            String path = file.getAbsolutePath();
-
             EmptyStrategy str = new EmptyStrategy();
             DataReader<Boolean> rdr = new DataReader<>(source, null, str);
 
             assertThrows(UnsupportedFileTypeException.class, rdr::read);
-        } else
+        } else {
             LOG.warning(FILE_SYSTEM_ERROR);
+            fail();
+        }
     }
 
 
