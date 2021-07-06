@@ -28,6 +28,8 @@ import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.*;
 import eu.quanticol.moonlight.signal.online.SpaceTimeSignal;
+import eu.quanticol.moonlight.signal.online.TimeChain;
+import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
@@ -111,6 +113,18 @@ FormulaVisitor<Parameters,
 
         if(update != null)
             m.monitor(update);
+
+        return (SpaceTimeSignal<Double, AbstractInterval<R>>) m.getResult();
+    }
+
+    public SpaceTimeSignal<Double, AbstractInterval<R>>
+    monitor(TimeChain<Double, List<V>> updates)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> m =
+                formula.accept(this, null);
+
+        if(updates != null)
+            m.monitor(updates);
 
         return (SpaceTimeSignal<Double, AbstractInterval<R>>) m.getResult();
     }

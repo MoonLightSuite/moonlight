@@ -107,9 +107,7 @@ public class AFCSettings {
     {
         MatlabEngine eng = MatlabEngine.startMatlab();
         String localPath = localPath() ;
-
         eng.eval("addpath(\"" + localPath + "\")");
-
         return eng;
     }
 

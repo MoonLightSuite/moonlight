@@ -54,7 +54,8 @@ public class AFCMoonlightRunner {
         repeatedRunner("In-Order " + LAST_TIME,
                        s -> moonlight(false, LAST_TIME, stopwatches),
                        stopwatches, output);
-        repeatedRunner("OO-Order " + LAST_TIME, s -> moonlight(true, LAST_TIME, stopwatches),
+        repeatedRunner("OO-Order " + LAST_TIME,
+                        s -> moonlight(true, LAST_TIME, stopwatches),
                        stopwatches, output);
 
         LOG.info("------> Experiment results (sec):");
@@ -71,8 +72,6 @@ public class AFCMoonlightRunner {
     private static String intToString(Number v) {
         return String.valueOf(v.intValue());
     }
-
-
 
     static void moonlight(boolean shuffle, Number lastT, List<Stopwatch> s)
     {
