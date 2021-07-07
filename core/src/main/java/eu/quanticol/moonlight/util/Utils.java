@@ -21,11 +21,16 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.space.SpatialModel;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;

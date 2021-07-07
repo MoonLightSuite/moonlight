@@ -35,7 +35,9 @@ public class Stopwatch {
         if(session != null && session.getSecond() != null) {
             return session.getSecond() - session.getFirst();
         } else
-            throw new UnsupportedOperationException("The requested session never started or never ended");
+            throw new UnsupportedOperationException("The requested session " +
+                                                    "never started or never " +
+                                                    "ended");
     }
 
     public long getDuration() {
@@ -43,7 +45,8 @@ public class Stopwatch {
         if(session != null && session.getSecond() != null) {
             return session.getSecond() - session.getFirst();
         } else
-            throw new UnsupportedOperationException("The requested session never ended");
+            throw new UnsupportedOperationException("The requested session " +
+                                                    "never ended");
     }
 
     public static Map<UUID, Pair<Long, Long>> getSessions() {

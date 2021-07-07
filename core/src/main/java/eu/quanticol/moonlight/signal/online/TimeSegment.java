@@ -1,5 +1,7 @@
 package eu.quanticol.moonlight.signal.online;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -21,7 +23,7 @@ public class TimeSegment<T extends Comparable<T>, V>
     private final T start;
     private final V value;
 
-    public TimeSegment(T start, V value) {
+    public TimeSegment(@NotNull T start, @NotNull V value) {
         this.start = start;
         this.value = value;
     }

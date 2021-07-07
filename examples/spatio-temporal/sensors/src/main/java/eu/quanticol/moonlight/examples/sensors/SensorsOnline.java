@@ -27,8 +27,13 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Note: requires Matlab R2020a+ & Machine Learning toolbox plugin
+ * in running environment
+ */
 public class SensorsOnline {
     private static Map<String,
                        Function<Parameters,
@@ -52,17 +57,17 @@ public class SensorsOnline {
     private static Double[] nodesType;
 
     public static void main(String[] args) {
-
+        //TODO populate input signal with more
         Object[] graph = Objects.requireNonNull(runSimulator());
         locSvc = Utils.createLocServiceFromSetMatrix(graph);
 
         setAtomicFormulas();
         setDistanceFunctions();
-
         Formula sWhere = formula();
 
         checkOffline(sWhere);
         checkOnline(sWhere);
+        checkOnlineShuffled(sWhere);
     }
 
     private static Object[] runSimulator() {
@@ -124,32 +129,73 @@ public class SensorsOnline {
     private static void checkOffline(Formula f)
     {
         SpatialTemporalSignal<Pair<Integer, Integer>> stSignal =
-                                  new SpatialTemporalSignal<>(nodesType.length);
+                generateSTSignal();
 
-        IntStream.range(0, (int) nodes - 1)
-                 .forEach(i -> stSignal
-                                    .add(i, (location ->
-                                            new Pair<>(nodesType[location]
-                                                        .intValue(), i)
-                                            )
-                                        )
-                         );
 
-        //TODO populate input signal
-
-        // Actual monitoring...
-        Stopwatch rec = Stopwatch.start();
         SpatialTemporalMonitor<Double, Pair<Integer, Integer>, Boolean>
                 m = new SpatialTemporalMonitoring<>(atomicFormulas,
                                                     distanceFunctions,
                                                     new BooleanDomain(),
                                                     false)
                                 .monitor(f, null);
+
+        // Actual monitoring...
+        Stopwatch rec = Stopwatch.start();
+        SpatialTemporalSignal<Boolean> sOut = m.monitor(locSvc, stSignal);
         rec.stop();
 
-        SpatialTemporalSignal<Boolean> sOut = m.monitor(locSvc, stSignal);
+        System.out.println("Offline execution time: " + rec.getDuration() +
+                           "ms");
+
         List<Signal<Boolean>> signals = sOut.getSignals();
-        System.out.println(signals.get(0));
+    }
+
+    private static SpatialTemporalSignal<Pair<Integer, Integer>>
+    generateSTSignal()
+    {
+        SpatialTemporalSignal<Pair<Integer, Integer>> stSignal =
+                new SpatialTemporalSignal<>(nodesType.length);
+
+        IntStream.range(0, (int) nodes - 1)
+                .forEach(time -> stSignal
+                        .add(time, (location ->
+                                        new Pair<>(nodesType[location]
+                                                .intValue(), time)
+                                   )
+                            )
+                );
+        return stSignal;
+    }
+
+    private static List<TimeChain<Double, List<Pair<Integer, Integer>>>>
+    generateSTUpdates()
+    {
+        List<TimeChain<Double, List<Pair<Integer, Integer>>>> result  =
+                new ArrayList<>();
+        TimeChain<Double, List<Pair<Integer, Integer>>> chain =
+                new TimeChain<>(nodes - 1);
+        result.add(chain);
+
+        IntStream.range(0, (int) nodes - 1)
+                .forEach(time ->
+                        {
+                            List<Pair<Integer, Integer>> locations =
+                                    spaceDataFromTime(time);
+                            SegmentInterface<Double,
+                                            List<Pair<Integer, Integer>>>
+                                    segment = new TimeSegment<>((double) time,
+                                                                locations);
+                            chain.add(segment);
+                    }
+                );
+
+        return result;
+    }
+
+    private static List<Pair<Integer, Integer>> spaceDataFromTime(int time) {
+        return IntStream.range(0, (int) nodes).boxed().map(location ->
+                new Pair<>(nodesType[location].intValue(), time)
+        ).collect(Collectors.toList());
     }
 
     private static void checkOnline(Formula f)
@@ -160,11 +206,34 @@ public class SensorsOnline {
                 onlineMonitorInit(f);
 
         List<TimeChain<Double, List<Pair<Integer, Integer>>>> updates =
-                new ArrayList<>();
-        //TODO populate updates
+                generateSTUpdates();
+
         updates.forEach(m::monitor);
 
         rec.stop();
+
+        System.out.println("Online execution time: " + rec.getDuration() +
+                           "ms");
+    }
+
+    private static void checkOnlineShuffled(Formula f)
+    {
+        Stopwatch rec = Stopwatch.start();
+
+        OnlineSpaceTimeMonitor<Double, Pair<Integer, Integer>, Boolean> m =
+                onlineMonitorInit(f);
+
+        List<Update<Double, List<Pair<Integer, Integer>>>> updates =
+                generateSTUpdates().get(0).toUpdates();
+
+        Collections.shuffle(updates, new Random(6));
+
+        updates.forEach(m::monitor);
+
+        rec.stop();
+
+        System.out.println("Online shuffled execution time: " +
+                           rec.getDuration() + "ms");
     }
 
     private static
@@ -174,7 +243,7 @@ public class SensorsOnline {
         Map<String, Function<Pair<Integer,Integer>, AbstractInterval<Boolean>>>
             atoms = setOnlineAtoms();
 
-        return new OnlineSpaceTimeMonitor<>(f, 0, new BooleanDomain(),
+        return new OnlineSpaceTimeMonitor<>(f, (int) nodes, new BooleanDomain(),
                                             locSvc, atoms, distanceFunctions);
     }
 

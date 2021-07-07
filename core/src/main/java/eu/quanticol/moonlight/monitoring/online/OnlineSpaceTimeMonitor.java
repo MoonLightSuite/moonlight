@@ -29,11 +29,11 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.online.strategy.spacetime.*;
 import eu.quanticol.moonlight.signal.online.SpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.online.Update;
+import org.jetbrains.annotations.NotNull;
 
 
 import static eu.quanticol.moonlight.algorithms.SpaceUtilities.somewhere;
@@ -67,8 +67,6 @@ FormulaVisitor<Parameters,
     private final LocationService<Double, S> locSvc;
 
     private final boolean parallel;
-
-    //TODO: refactor this in some cleaner way
     private final int size;
 
 
@@ -106,13 +104,16 @@ FormulaVisitor<Parameters,
     }
 
     public SpaceTimeSignal<Double, AbstractInterval<R>>
-    monitor(Update<Double, List<V>> update)
+    monitor(@NotNull Update<Double, List<V>> update)
     {
         OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> m =
                                     formula.accept(this, null);
 
-        if(update != null)
-            m.monitor(update);
+        if(update.getValue().size() != size)
+            throw new IllegalArgumentException("The update doesn't match the " +
+                                               "expected size of the signal");
+
+        m.monitor(update);
 
         return (SpaceTimeSignal<Double, AbstractInterval<R>>) m.getResult();
     }
