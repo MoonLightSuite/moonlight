@@ -71,27 +71,11 @@ public class Pollution {
                 new OnlineSpaceTimeMonitor<>(formula1(), space.size(), d,
                         ls, atoms(), dist());
 
-        TimeSignal<Double, List<AbstractInterval<Double>>> s =
-                                new OnlineSpaceTimeSignal<>(space.size(), d);
-
+        TimeSignal<Double, List<AbstractInterval<Double>>> s;
         //updates = updates.subList(0, 2000);
+        s = m.monitor(Update.asTimeChain(updates));
 
-        for(Update<Double, List<Double>> u : updates) {
-            s = m.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
-
-        List<Double> rhoUp = s.getSegments().stream()
-                              .map(i -> i.getValue().get(0).getEnd())
-                              .collect(Collectors.toList());
-        List<Double> rhoDown = s.getSegments().stream()
-                                .map(i -> i.getValue().get(0).getEnd())
-                                .collect(Collectors.toList());
-        rhoDown = new ArrayList<>();
-        rhoDown.add(1.0);
-        rhoUp = new ArrayList<>();
-        rhoUp.add(1.0);
-        plt.plot(rhoUp, rhoDown, "F1");
+        plt.plotOne(s.getSegments(), "F1", 0);
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
         LOG.info(() -> "Monitoring result of F1: " + output.getSegments());
@@ -134,13 +118,7 @@ public class Pollution {
         System.out.println("F2 Parallel time#2: " + rec.getDuration());
 
 
-        rhoUp = s.getSegments().stream()
-                .map(i -> i.getValue().get(0).getEnd())
-                .collect(Collectors.toList());
-        rhoDown = s.getSegments().stream()
-                .map(i -> i.getValue().get(0).getEnd())
-                .collect(Collectors.toList());
-        //plot(rhoDown, rhoUp, "F2");
+        plt.plotOne(s.getSegments(), "F2", 0);
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
         //LOG.info(() -> "Monitoring result of F2: " + output2.getSegments());

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
@@ -81,6 +82,35 @@ public class Plotter {
             asyncShow(() -> plotInterval(dataDown, dataUp, name));
         else
             plotInterval(dataDown, dataUp, name);
+    }
+
+    public void plotAll(TimeChain<Double, List<AbstractInterval<Double>>> data,
+                        String name)
+    {
+        int locations = data.getFirst().getValue().size();
+        IntStream.range(0, locations)
+                 .forEach(location -> plotOne(data, name, location));
+
+    }
+
+    public void plotOne(TimeChain<Double, List<AbstractInterval<Double>>> data,
+                        String name, int location)
+    {
+            List<Double> dataDown =
+                    replaceInfinite(data.stream()
+                            .map(x -> x.getValue().get(location).getStart())
+                            .collect(Collectors.toList()));
+            List<Double> dataUp =
+                    replaceInfinite(data.stream()
+                            .map(x -> x.getValue().get(location).getEnd())
+                            .collect(Collectors.toList()));
+
+            String locName = name + "@loc-" + location;
+            if(isAsync)
+                asyncShow(() -> plotInterval(dataDown, dataUp, locName));
+            else
+                plotInterval(dataDown, dataUp, locName);
+
     }
 
     private Plot createPlot(String name) {
