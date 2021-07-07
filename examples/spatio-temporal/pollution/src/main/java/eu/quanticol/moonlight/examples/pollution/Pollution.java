@@ -93,6 +93,8 @@ public class Pollution {
         rec.stop();
         System.out.println("F2 Sequential time: " + rec.getDuration());
 
+        plt.plotOne(s.getSegments(), "F21", 0);
+
         rec = Stopwatch.start();
         OnlineSpaceTimeMonitor<Double, Double, Double> m3 =
                 new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
