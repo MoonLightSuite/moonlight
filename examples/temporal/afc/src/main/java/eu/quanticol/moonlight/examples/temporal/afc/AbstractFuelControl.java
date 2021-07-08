@@ -20,20 +20,20 @@
 
 package eu.quanticol.moonlight.examples.temporal.afc;
 
-import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.signal.online.SegmentInterface;
 import eu.quanticol.moonlight.signal.online.TimeSegment;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
+import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.*;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCMoonlightRunner.moonlight;
-import static eu.quanticol.moonlight.examples.temporal.afc.AFCMoonlightRunner.moonlightChain;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
 
 public class AbstractFuelControl {
@@ -43,26 +43,19 @@ public class AbstractFuelControl {
     private static final List<String> output = new ArrayList<>();
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
-
-    private static final Plotter plt = new Plotter();
-
     public static void main(String[] args) {
-        repeatedRunner("In-Order M", s -> moonlightChain(false, LAST_TIME, s),
+        repeatedRunner("In-Order M", s -> moonlight(false, LAST_TIME, s, true),
                        stopwatches, output);
 
-        repeatedRunner("Out-Of-Order M", s -> moonlight(true, LAST_TIME, s),
+        repeatedRunner("Out-Of-Order M", s -> moonlight(true, LAST_TIME, s, false),
                        stopwatches, output);
 
-        repeatedRunner("Breach",
-                        s -> runInMatlab(eng -> runBreach(eng, s)),
+        repeatedRunner("Breach", AbstractFuelControl::runBreach,
                        stopwatches, output);
 
         LOG.info("------> Experiment results (sec):");
 
         output.forEach(LOG::info);
-
-        AFCSimulatorRunner.main(null);
 
         if(PLOTTING)
             plt.plot(Arrays.stream(input)
@@ -72,10 +65,18 @@ public class AbstractFuelControl {
                     "|AF-AFRef|");
     }
 
-    private static void runBreach(MatlabEngine eng, List<Stopwatch> s) {
-            putVar(eng, "tot", LAST_TIME);
+    private static void runBreach(List<Stopwatch> s) {
+        MatlabRunner matlab;
+        try {
+            matlab = new MatlabRunner(localPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UnknownError("Unable to run Breach");
+        }
+        matlab.putVar("tot", LAST_TIME);
+
             List<SegmentInterface<Double, AbstractInterval<Double>>>
-                    breach = executeBreach(eng, s);
+                    breach = executeBreach(matlab, s);
 
             List<Double> bStart = IntStream.range(0, breach.size())
                     .boxed()
@@ -96,18 +97,18 @@ public class AbstractFuelControl {
     }
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
-    executeBreach(MatlabEngine eng, List<Stopwatch> stopwatches)
+    executeBreach(MatlabRunner matlab, List<Stopwatch> stopwatches)
     {
         Stopwatch rec = Stopwatch.start();
-        eval(eng, "afc_breach_monitoring");
+        matlab.eval("afc_breach_monitoring");
         long duration = rec.stop();
         stopwatches.add(rec);
 
         LOG.info("Breach Execution Time (sec): " + duration / 1000.);
 
-        double[] rhoLow = getVar(eng, "rho_low");
-        double[] rhoUp = getVar(eng, "rho_up");
-        input = getVar(eng, "input");
+        double[] rhoLow = matlab.getVar("rho_low");
+        double[] rhoUp = matlab.getVar("rho_up");
+        input = matlab.getVar("input");
 
         assert rhoLow != null;
         assert rhoUp != null;

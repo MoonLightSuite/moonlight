@@ -14,12 +14,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.AFC_ATOM;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.ITERATIONS;
 
 public class AFCHelpers {
    private AFCHelpers() {}  // Hidden constructor
-
-    private static final String AFC_ATOM = "bigError";
 
     static List<List<Double>> handleData(List<List<SegmentInterface<Double,
                                          AbstractInterval<Double>>>> data)
@@ -53,7 +52,7 @@ public class AFCHelpers {
         tot = (tot / ITERATIONS) / 1000.; // Converted to seconds
 
         output.add(title + " Execution time (avg over " + ITERATIONS + "):" +
-                tot);
+                   tot);
 
         stopwatches.clear();
     }
@@ -95,26 +94,27 @@ public class AFCHelpers {
         return updates;
     }
 
-    static OnlineTimeMonitor<Double, Double> instrument() {
-        Formula f = new GloballyFormula(
-                new OrFormula(
-                        new NegationFormula(new AtomicFormula(AFC_ATOM)),
-                        new EventuallyFormula(
-                                new NegationFormula(
-                                        new AtomicFormula(AFC_ATOM))
-                                , new Interval(0.0, 1.0))
-                ),
-                new Interval(10.0, 30.0));
-
+    static Formula afcFormula() {
         // alw_[10, 30] ((abs(AF[t]-AFRef[t]) > 0.05) =>
         //               (ev_[0, 1] (abs(AF[t]-AFRef[t]) < 0.05)))
+       return new GloballyFormula(
+               new OrFormula(
+                       new NegationFormula(new AtomicFormula(AFC_ATOM)),
+                       new EventuallyFormula(
+                               new NegationFormula(
+                                       new AtomicFormula(AFC_ATOM))
+                               , new Interval(0.0, 1.0))
+               ),
+               new Interval(10.0, 30.0));
+    }
+
+    static OnlineTimeMonitor<Double, Double> instrument() {
+        Formula f = afcFormula();
 
         HashMap<String, Function<Double, AbstractInterval<Double>>>
                 atoms = new HashMap<>();
-
-        atoms.put(AFC_ATOM,
-                trc -> new AbstractInterval<>(trc - 0.05,
-                        trc - 0.05));
+        atoms.put(AFC_ATOM, trc -> new AbstractInterval<>(trc - 0.05,
+                                                          trc - 0.05));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }

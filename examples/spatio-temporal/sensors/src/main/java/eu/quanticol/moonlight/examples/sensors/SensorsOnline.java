@@ -1,7 +1,5 @@
 package eu.quanticol.moonlight.examples.sensors;
 
-import com.mathworks.engine.MatlabEngine;
-
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.Formula;
@@ -19,13 +17,13 @@ import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Stopwatch;
 import eu.quanticol.moonlight.util.Utils;
+import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
 import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,6 +42,9 @@ public class SensorsOnline {
                                DistanceStructure<Double, ?>>> distanceFunctions;
 
     private static LocationService<Double, Double> locSvc;
+
+    private static final String MATLAB_SCRIPT = "sensorNetworkExample.m";
+    private static final String LOCAL_PATH = getLocalPath();
 
     // Device types
     private static final String COORDINATOR = "type1";
@@ -70,23 +71,23 @@ public class SensorsOnline {
         checkOnlineShuffled(sWhere);
     }
 
-    private static Object[] runSimulator() {
+    private static String getLocalPath() {
+        URL url = Objects.requireNonNull(
+                SensorsOnline.class.getResource(MATLAB_SCRIPT));
+
+        String localPath = null;
         try {
-            MatlabEngine eng = MatlabEngine.startMatlab();
-            URL url = Objects.requireNonNull(
-                    SensorsOnline.class.getResource("mobility.m"));
-            String localPath = Paths.get(url.toURI())
-                                    .getParent().toAbsolutePath().toString();
-            eng.eval("addpath(\"" + localPath + "\")");
-            return runModel(eng);
-        } catch (InterruptedException |
-                 URISyntaxException |
-                 ExecutionException e)
-        {
+            localPath = Paths.get(url.toURI())
+                    .getParent().toAbsolutePath().toString();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
-            Thread.currentThread().interrupt();
-            return new Object[0];
         }
+
+        return localPath;
+    }
+
+    private static Object[] runSimulator() {
+        return runModel(new MatlabRunner(LOCAL_PATH));
     }
 
     private static Formula formula() {
@@ -108,20 +109,18 @@ public class SensorsOnline {
         atomicFormulas.put(END_DEVICE, p -> (x -> x.getFirst() == 3));
     }
 
-    private static Object[] runModel(MatlabEngine eng)
-            throws ExecutionException, InterruptedException
+    private static Object[] runModel(MatlabRunner matlab)
     {
         /// Trace generation
-        eng.eval("mobility");
+        matlab.eval("mobility");
 
         // Reading results
-        nodes = eng.getVariable("num_nodes");
-        nodesType = MatlabDataConverter.getArray(eng
-                                                  .getVariable("nodes_type"),
+        nodes = matlab.getVar("num_nodes");
+        nodesType = MatlabDataConverter.getArray(matlab.getVar("nodes_type"),
                                                  Double.class);
 
-        Object[] cGraph1 = eng.getVariable("cgraph1");
-        Object[] cGraph2 = eng.getVariable("cgraph2");
+        Object[] cGraph1 = matlab.getVar("cgraph1");
+        Object[] cGraph2 = matlab.getVar("cgraph2");
 
         return cGraph1;
     }
@@ -130,7 +129,6 @@ public class SensorsOnline {
     {
         SpatialTemporalSignal<Pair<Integer, Integer>> stSignal =
                 generateSTSignal();
-
 
         SpatialTemporalMonitor<Double, Pair<Integer, Integer>, Boolean>
                 m = new SpatialTemporalMonitoring<>(atomicFormulas,

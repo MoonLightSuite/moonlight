@@ -45,17 +45,18 @@ public class AFCMoonlightRunner {
     private static final List<List<SegmentInterface<
             Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
-    private static final boolean PLOTTING = false;
-
     private static final Plotter plt = new Plotter();
 
     public static void main(String[] args) {
-
         repeatedRunner("In-Order " + LAST_TIME,
-                       s -> moonlight(false, LAST_TIME, stopwatches),
+                       s -> moonlight(false,
+                                      LAST_TIME, stopwatches, true),
                        stopwatches, output);
         repeatedRunner("OO-Order " + LAST_TIME,
-                        s -> moonlight(true, LAST_TIME, stopwatches),
+                        s -> moonlight(true,
+                                       LAST_TIME,
+                                       stopwatches,
+                                      false),
                        stopwatches, output);
 
         LOG.info("------> Experiment results (sec):");
@@ -73,11 +74,14 @@ public class AFCMoonlightRunner {
         return String.valueOf(v.intValue());
     }
 
-    static void moonlight(boolean shuffle, Number lastT, List<Stopwatch> s)
+    static void moonlight(boolean shuffle,
+                          Number lastT,
+                          List<Stopwatch> s,
+                          boolean asChain)
     {
         String id = intToString(lastT);
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-                moonlightColl = execMoonlight(shuffle, id, s);
+                moonlightColl = execMoonlight(shuffle, id, s, asChain);
         List<SegmentInterface<Double, AbstractInterval<Double>>>
                 moonlight = moonlightColl.get(moonlightColl.size() - 1);
 
@@ -92,40 +96,36 @@ public class AFCMoonlightRunner {
             plt.plot(mStart, mEnd, "Moonlight");
     }
 
-    static void moonlightChain(boolean shuffle, Number lastT,
-                               List<Stopwatch> s)
-    {
-        String id = intToString(lastT);
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-                moonlightColl = execChainMoonlight(shuffle, id, s);
-        List<SegmentInterface<Double, AbstractInterval<Double>>>
-                moonlight = moonlightColl.get(moonlightColl.size() - 1);
-
-        results.add(moonlight);
-
-        List<List<Double>> mRes = handleData(moonlightColl);
-
-        List<Double> mStart = mRes.get(0);
-        List<Double> mEnd = mRes.get(1);
-
-        if (PLOTTING)
-            plt.plot(mStart, mEnd, "Moonlight");
-    }
-
-    static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-    execMoonlight(boolean shuffle, String id, List<Stopwatch> stopwatches)
-    {
+    static List<Update<Double, Double>> loadData(String id, boolean shuffle) {
         ParsingStrategy<double[][]> st = new RawTrajectoryExtractor(1);
         FileType type = FileType.CSV;
         double[] input = new DataReader<>(dataPath(id), type, st).read()[0];
 
-        List<Update<Double, Double>> updates = genUpdates(input, shuffle,
-                                                          SCALE, RND_SEED);
+        return genUpdates(input, shuffle,SCALE, RND_SEED);
+    }
+
+    static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    execMoonlight(boolean shuffle, String id,
+                  List<Stopwatch> stopwatches,
+                  boolean asChain)
+    {
+        List<Update<Double, Double>> updates = loadData(id, shuffle);
         OnlineTimeMonitor<Double, Double> m = instrument();
 
+        if(asChain)
+            return evaluateChain(updates, m, stopwatches);
+        else
+            return evaluateUpdates(updates, m, stopwatches);
+    }
+
+    private static
+    List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    evaluateUpdates(List<Update<Double, Double>> updates,
+                    OnlineTimeMonitor<Double, Double> m,
+                    List<Stopwatch> stopwatches)
+    {
         List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
-
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
         for (Update<Double, Double> u : updates) {
@@ -137,30 +137,25 @@ public class AFCMoonlightRunner {
         return result;
     }
 
-    static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-    execChainMoonlight(boolean shuffle, String id, List<Stopwatch> stopwatches)
+
+    private static
+    List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    evaluateChain(List<Update<Double, Double>> updates,
+                  OnlineTimeMonitor<Double, Double> m,
+                  List<Stopwatch> stopwatches)
     {
-        ParsingStrategy<double[][]> st = new RawTrajectoryExtractor(1);
-        FileType type = FileType.CSV;
-        double[] input = new DataReader<>(dataPath(id), type, st).read()[0];
-
-        List<Update<Double, Double>> updates = genUpdates(input, shuffle,
-                                                          SCALE, RND_SEED);
-        OnlineTimeMonitor<Double, Double> m = instrument();
-
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
-                result = new ArrayList<>();
-
         TimeChain<Double, Double> chain = Update.asTimeChain(updates);
 
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
         TimeChain<Double, AbstractInterval<Double>> r =
-                                            m.monitor(chain).getSegments();
+                m.monitor(chain).getSegments();
         rec.stop();
-        result.add(r.toList());
         stopwatches.add(rec);
 
+        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+                result = new ArrayList<>();
+        result.add(r.toList());
         return result;
     }
 

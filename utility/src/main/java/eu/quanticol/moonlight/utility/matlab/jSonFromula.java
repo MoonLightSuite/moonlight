@@ -6,6 +6,10 @@ import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 
+/**
+ * @deprecated : unclear purpose
+ */
+@Deprecated
 public class jSonFromula {
 
 

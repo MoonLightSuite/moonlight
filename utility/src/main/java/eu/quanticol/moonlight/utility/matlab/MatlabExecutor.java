@@ -3,6 +3,10 @@ package eu.quanticol.moonlight.utility.matlab;
 import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;
 
+/**
+ * @deprecated : unclear purpose
+ */
+@Deprecated
 public class MatlabExecutor {
 
     private static MatlabEngine engine;
