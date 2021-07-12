@@ -23,4 +23,5 @@ distribution_files/python/.ipynb_checkpoints/
 distribution_files/python/jar/
 distribution_files/java/build
 distribution_files/java/lib/moonlight.jar
+distribution_files/console/
 !distribution_files/matlab/moonlight/script/.placeHolder
