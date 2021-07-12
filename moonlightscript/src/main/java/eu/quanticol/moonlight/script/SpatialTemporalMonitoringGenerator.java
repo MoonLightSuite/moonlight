@@ -5,7 +5,7 @@ import eu.quanticol.moonlight.domain.DistanceDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.space.SpatialModel;
 

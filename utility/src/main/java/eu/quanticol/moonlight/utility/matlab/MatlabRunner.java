@@ -71,10 +71,6 @@ public class MatlabRunner {
         }
     }
 
-    public MatlabEngine getEngine() {
-        return engine;
-    }
-
     private void impossible(String s, Exception e) {
         throw new IllegalArgumentException(s, e);
     }

@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.space;
 
 import java.util.Iterator;
 
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.util.Pair;
 
@@ -60,7 +61,7 @@ public interface LocationService<T, E> {
 	boolean isEmpty();
 
 	static LocationService<Double, MoonLightRecord> buildLocationServiceFromAdjacencyMatrix(int locations, RecordHandler edgeRecordHandler, double[] locationTimeArray,
-                                                                                    String[][][][] graph) {
+                                                                                            String[][][][] graph) {
 		LocationServiceList<MoonLightRecord> toReturn = new LocationServiceList<>();
 		for( int i=0 ; i<locationTimeArray.length ; i++ ) {
 			toReturn.add(locationTimeArray[i], SpatialModel.buildSpatialModelFromAdjacencyMatrix(locations,edgeRecordHandler,graph[i]));

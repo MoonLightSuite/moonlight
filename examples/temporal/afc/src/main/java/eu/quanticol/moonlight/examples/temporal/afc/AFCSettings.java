@@ -34,7 +34,7 @@ public class AFCSettings {
     private AFCSettings() {}
 
     // Configurations
-    public static final double LAST_TIME = 1000;
+    public static final double LAST_TIME =  20;
     public static final double SCALE = 0.1;
     public static final int ITERATIONS = 1;
     public static final boolean PLOTTING = false;

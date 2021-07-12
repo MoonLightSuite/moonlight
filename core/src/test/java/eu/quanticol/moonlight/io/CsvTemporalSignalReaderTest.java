@@ -21,7 +21,6 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.util.SignalGenerator;
 import org.junit.jupiter.api.Test;
 

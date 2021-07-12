@@ -1,7 +1,6 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

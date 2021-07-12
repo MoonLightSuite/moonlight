@@ -16,7 +16,7 @@ import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;

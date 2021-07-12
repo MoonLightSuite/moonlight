@@ -6,7 +6,6 @@ package eu.quanticol.moonlight.io;
 import java.io.File;
 import java.io.IOException;
 
-import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 

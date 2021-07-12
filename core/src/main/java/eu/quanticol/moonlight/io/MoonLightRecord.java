@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.space;
+package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 

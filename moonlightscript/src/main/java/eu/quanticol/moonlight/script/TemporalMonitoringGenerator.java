@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.TemporalMonitorProducer;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.util.List;
