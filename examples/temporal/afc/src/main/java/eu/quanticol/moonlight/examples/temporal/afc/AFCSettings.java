@@ -41,7 +41,7 @@ public class AFCSettings {
 
     // Utilities
     public static final Logger LOG = Logger.getLogger("AFC Log");
-    public static final Plotter plt = new Plotter();
+    public static final Plotter plt = new Plotter(10.0);
 
     // Atom
     public static final String AFC_ATOM = "bigError";

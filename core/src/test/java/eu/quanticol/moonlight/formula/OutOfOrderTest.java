@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OutOfOrderTest {
     private static final String POSITIVE_X = "x > 0";
-    private static final Plotter plt = new Plotter();
+    private static final Plotter plt = new Plotter(10.0);
 
     private static final boolean PLOTTING = false;
     private static final int RND_SEED = 1;  // TODO: vary seeds

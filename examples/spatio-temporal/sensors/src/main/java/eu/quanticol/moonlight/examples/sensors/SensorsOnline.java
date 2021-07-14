@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
 public class SensorsOnline {
     // Experiment observation settings
     private static final int RND_SEED = 17;
-    private static final Plotter plt = new Plotter();
+    private static final Plotter plt = new Plotter(10.0);
     private static final int ITERATIONS = 100;
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
     private static final Logger LOG = Logger.getLogger("SensorsOnline");

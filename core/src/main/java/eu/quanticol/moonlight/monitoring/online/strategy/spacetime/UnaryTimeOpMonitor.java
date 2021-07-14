@@ -108,9 +108,9 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
 
         for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
             result.addAll(TemporalComputation.slidingWindow(s,
-                    argU,
-                    horizon,
-                    op));
+                                                            argU,
+                                                            horizon,
+                                                            op));
         }
 
         for(TimeChain<Double, List<AbstractInterval<R>>> u: result) {

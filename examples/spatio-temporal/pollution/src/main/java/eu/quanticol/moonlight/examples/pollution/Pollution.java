@@ -1,29 +1,25 @@
 package eu.quanticol.moonlight.examples.pollution;
 
 import eu.quanticol.moonlight.domain.*;
+import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.DataReader;
+import eu.quanticol.moonlight.io.DataWriter;
 import eu.quanticol.moonlight.io.FileType;
 import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.GloballyFormula;
-import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
+import eu.quanticol.moonlight.signal.online.TimeChain;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.space.StaticLocationService;
-
-import com.github.sh0nk.matplotlib4j.Plot;
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Function;
@@ -33,100 +29,123 @@ import java.util.stream.Collectors;
 
 public class Pollution {
     private static final Logger LOG = Logger.getLogger(Pollution.class.getName());
-
     private static final String SPACE_FILE = "lombardy_dist.csv";
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
-    private static final String NOT_CRITICAL_NO2 = "notCriticalNO2";
+    private static final String CRITICAL_NO2 = "criticalNO2";
+    private static final String DISTANCE = "nearby";
+    private static final double P_THRESHOLD = 400;
 
 
-    private static final Plotter plt = new Plotter();
+    private static LocationService<Double, Double> ls;
+    private static int size;
+
+
+    private static final Plotter plt = new Plotter(200.0);
 
     private static double km(double meters) {
         return meters * 1000;
     }
 
+
+
     public static void main(String[] argv) {
         LOG.setLevel(Level.ALL);
+
+        SpatialModel<Double> space = loadSpatialModel();
+        size = space.size();
+        ls = new StaticLocationService<>(space);
+        LOG.info(() -> "The space model has: " + size + " nodes.");
+        TimeChain<Double, List<Double>> updates = importUpdates(space.size());
+        LOG.info("Signal loaded correctly!");
+
+        execute("F1", formula1(), updates, false);
+        //execute("F1-Parallel", formula1(), space.size(), updates, true);
+
+        //execute("F2", formula2(), updates, false);
+        //execute("F2-Parallel", formula2(), space.size(), updates, true);
+    }
+
+    private static SpatialModel<Double> loadSpatialModel() {
         InputStream file = Pollution.class.getResourceAsStream(SPACE_FILE);
         ParsingStrategy<SpatialModel<Double>> ex = new AdjacencyExtractor();
         DataReader<SpatialModel<Double>> data = new DataReader<>(file,
                                                                  FileType.CSV,
                                                                  ex);
-        SpatialModel<Double> space = data.read();
-
-        LocationService<Double, Double> ls = new StaticLocationService<>(space);
-        SignalDomain<Double> d = new DoubleDomain();
-
-        LOG.info(() -> "The space model has: " + space.size() + " nodes.");
-
-
-        List<Update<Double, List<Double>>> updates = importUpdates(space.size());
-
-        LOG.info("Signal loaded correctly!");
-
-
-        OnlineSpaceTimeMonitor<Double, Double, Double> m =
-                new OnlineSpaceTimeMonitor<>(formula1(), space.size(), d,
-                        ls, atoms(), dist());
-
-        TimeSignal<Double, List<AbstractInterval<Double>>> s;
-        //updates = updates.subList(0, 2000);
-        s = m.monitor(Update.asTimeChain(updates));
-
-        plt.plotOne(s.getSegments(), "F1", 0);
-
-        final TimeSignal<Double, List<AbstractInterval<Double>>> output = s;
-        LOG.info(() -> "Monitoring result of F1: " + output.getSegments());
-
-
-        Stopwatch rec = Stopwatch.start();
-        OnlineSpaceTimeMonitor<Double, Double, Double> m2 =
-                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
-                                         ls, atoms(), dist());
-
-        for(Update<Double, List<Double>> u : updates) {
-            s = m2.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
-        rec.stop();
-        System.out.println("F2 Sequential time: " + rec.getDuration());
-
-        plt.plotOne(s.getSegments(), "F2-sequential", 0);
-
-        rec = Stopwatch.start();
-        OnlineSpaceTimeMonitor<Double, Double, Double> m3 =
-                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
-                        ls, atoms(), dist(), true);
-
-        for(Update<Double, List<Double>> u : updates) {
-            s = m3.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
-        rec.stop();
-        System.out.println("F2 Parallel time: " + rec.getDuration());
-
-        rec = Stopwatch.start();
-        OnlineSpaceTimeMonitor<Double, Double, Double> m4 =
-                new OnlineSpaceTimeMonitor<>(formula2(), space.size(), d,
-                        ls, atoms(), dist(), true);
-
-        for(Update<Double, List<Double>> u : updates) {
-            s = m4.monitor(u);
-            //LOG.info(() -> "Monitoring for " + u + " completed!");
-        }
-        rec.stop();
-        System.out.println("F2 Parallel time#2: " + rec.getDuration());
-
-
-        plt.plotOne(s.getSegments(), "F2-parallel", 0);
-
-        final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
-        //LOG.info(() -> "Monitoring result of F2: " + output2.getSegments());
-
+        return data.read();
     }
 
-    private static List<Update<Double, List<Double>>> importUpdates(int size) {
+    private static void execute(String name,
+                                Formula f,
+                                TimeChain<Double, List<Double>> updates,
+                                boolean parallel)
+    {
+        SignalDomain<Double> d = new DoubleDomain();
+        OnlineSpaceTimeMonitor<Double, Double, Double> m =
+                new OnlineSpaceTimeMonitor<>(f, size, d,
+                        ls, atoms(), dist(), parallel);
+
+        TimeSignal<Double, List<AbstractInterval<Double>>> s = null;
+
+        Stopwatch rec = Stopwatch.start();
+
+        plt.plotOne(updates, name, 51, "input");
+
+//        List<Update<Double, List<Double>>> ups = updates.toUpdates().subList(0, 500);
+//        for(Update<Double, List<Double>> u: ups)
+//            s = m.monitor(u);
+        s = m.monitor(updates);
+        rec.stop();
+
+        LOG.info("Execution Time of Monitor " + name +
+                ": " + rec.getDuration() + "ms");
+        plt.plotOne(s.getSegments(), name, 51);
+        //LOG.info("Monitoring result of " + name + ": " + s.getSegments());
+
+        storeResults(s.getSegments(), name);
+    }
+
+    private static void storeResults(
+            TimeChain<Double, List<AbstractInterval<Double>>> data,
+            String name)
+    {
+        PrintingStrategy<double[][]> st = new RawTrajectoryExtractor(size);
+        List<Update<Double, List<AbstractInterval<Double>>>> trace = data.toUpdates();
+        int times = trace.size();
+        int locations = trace.get(0).getValue().size();
+        double[][] resultUp = new double[times][locations];
+        double[][] resultDown = new double[times][locations];
+
+        for(int t = 0; t < times; t++) {
+            for( int l = 0; l < locations; l++) {
+                AbstractInterval<Double> value = trace.get(t).getValue().get(l);
+                double valueUp = flattenInfinity(value.getEnd());
+                double valueDown = flattenInfinity(value.getStart());
+                resultUp[t][l] = valueUp;
+                resultDown[t][l] = valueDown;
+            }
+        }
+        resultUp = transposeMatrix(resultUp);
+        resultDown = transposeMatrix(resultDown);
+
+        LOG.info("Saving output in: " + name);
+        new DataWriter<>(name + "_up.csv", FileType.CSV, st).write(resultUp);
+        new DataWriter<>(name + "_down.csv", FileType.CSV, st).write(resultDown);
+    }
+
+    private static double flattenInfinity(Double value) {
+        double fallback = 1000;
+        if(value.equals(Double.POSITIVE_INFINITY))
+            value = fallback;
+        else if(value.equals(Double.NEGATIVE_INFINITY)) {
+            value = (- fallback);
+        }
+//        LOG.warning("Infinite value detected, substituting it with "
+//                    + fallback);
+        return value;
+    }
+
+    private static TimeChain<Double, List<Double>> importUpdates(int size) {
         ParsingStrategy<double[][]> ex = new RawTrajectoryExtractor(size);
         InputStream file = Pollution.class.getResourceAsStream(SIGNAL_FILE);
         double[][] trace = new DataReader<>(file, FileType.CSV, ex).read();
@@ -143,7 +162,7 @@ public class Pollution {
                                            .collect(Collectors.toList())));
         }
 
-        return updates;
+        return Update.asTimeChain(updates);
     }
 
     private static
@@ -153,46 +172,20 @@ public class Pollution {
         Map<String,
             Function<SpatialModel<Double>,
             DistanceStructure<Double, ?>>> ds = new HashMap<>();
-        ds.put("nearby",  g -> distance(0.0, km(10)).apply(g));
+        ds.put(DISTANCE,  g -> distance(0.0, km(10)).apply(g));
         return ds;
     }
 
     private static Formula formula1() {
-        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
+        Formula atomX = new AtomicFormula(CRITICAL_NO2);
 
-        return new GloballyFormula(atomX, new Interval(0, 3));
+        return new EventuallyFormula(atomX, new Interval(0, 3));
     }
 
     private static Formula formula2() {
-        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
+        Formula atomX = new AtomicFormula(CRITICAL_NO2);
 
-        return new SomewhereFormula("nearby", atomX);
-    }
-
-    private static void plot(List<Double> dataDown, List<Double> dataUp, String name)
-    {
-        try {
-            Plot plt = Plot.create();
-            plt.plot()
-                    .add(dataUp)
-                    .label("rho_up");
-            plt.plot()
-                    .add(dataDown)
-                    .label("rho_down");
-//        plt.plot()
-//                .add(Arrays.stream(breachInput)
-//                           .boxed().collect(Collectors.toList()))
-//                .label("input");
-            plt.xlabel("times");
-            plt.ylabel("robustness");
-            //plt.text(1, 0.5, "text");
-            plt.title(name);
-            plt.legend();
-            plt.show();
-        } catch (PythonExecutionException| IOException e) {
-            System.err.println("unable to plot!");
-            e.printStackTrace();
-        }
+        return new SomewhereFormula(DISTANCE, atomX);
     }
 
     private static
@@ -201,8 +194,9 @@ public class Pollution {
         HashMap<String, Function<Double, AbstractInterval<Double>>>
                 atoms = new HashMap<>();
 
-        // notCriticalNO2 is the atomic proposition: NO2 < k
-        atoms.put(NOT_CRITICAL_NO2, trc -> new AbstractInterval<>(trc, trc));
+        // criticalNO2 is the atomic proposition: NO2 > k
+        atoms.put(CRITICAL_NO2, trc -> new AbstractInterval<>(trc,
+                                                                  trc));
 
         return atoms;
     }
@@ -216,7 +210,12 @@ public class Pollution {
     }
 
 
-    public static Function<SpatialModel<Double>, DistanceStructure<Double, Double>> distance(double lowerBound, double upperBound) {
-        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
+    static Function<SpatialModel<Double>, DistanceStructure<Double, Double>>
+    distance(double lowerBound, double upperBound)
+    {
+        return g -> new DistanceStructure<>(x -> x,
+                                            new DoubleDistance(),
+                                            lowerBound, upperBound,
+                                            g);
     }
 }

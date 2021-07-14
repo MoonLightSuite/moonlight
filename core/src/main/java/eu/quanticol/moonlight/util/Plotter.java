@@ -22,13 +22,16 @@ public class Plotter {
     private final List<Thread> threads;
     private final boolean isAsync;
 
-    public Plotter() {
-        this(true);
+    private final double infinity;
+
+    public Plotter(double maxValue) {
+        this(true, maxValue);
     }
 
-    public Plotter(boolean async) {
+    public Plotter(boolean async, double maxValue) {
         threads = new ArrayList<>();
         isAsync = async;
+        infinity = maxValue;
     }
 
     /**
@@ -113,6 +116,22 @@ public class Plotter {
 
     }
 
+    public void plotOne(TimeChain<Double, List<Double>> data,
+                        String name, int location, String label)
+    {
+        List<Double> values =
+                replaceInfinite(data.stream()
+                        .map(x -> x.getValue().get(location))
+                        .collect(Collectors.toList()));
+
+        String locName = name + "@loc-" + location;
+        if(isAsync)
+            asyncShow(() -> plotSingle(values, locName, label));
+        else
+            plotSingle(values, locName, label);
+
+    }
+
     private Plot createPlot(String name) {
         Plot plt = Plot.create();
         plt.xlabel("times");
@@ -159,9 +178,9 @@ public class Plotter {
         t.start();
     }
 
-    private static List<Double> replaceInfinite(List<Double> vs) {
-        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ?  10 : v)
-                .map(v -> v.equals(Double.NEGATIVE_INFINITY) ? -10 : v)
+    private List<Double> replaceInfinite(List<Double> vs) {
+        vs = vs.stream().map(v -> v.equals(Double.POSITIVE_INFINITY) ?  infinity : v)
+                .map(v -> v.equals(Double.NEGATIVE_INFINITY) ? - infinity : v)
                 .collect(Collectors.toList());
         return vs;
     }

@@ -45,7 +45,7 @@ public class AFCMoonlightRunner {
     private static final List<List<SegmentInterface<
             Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
-    private static final Plotter plt = new Plotter();
+    private static final Plotter plt = new Plotter(10.0);
 
     public static void main(String[] args) {
         repeatedRunner("In-Order " + LAST_TIME,
