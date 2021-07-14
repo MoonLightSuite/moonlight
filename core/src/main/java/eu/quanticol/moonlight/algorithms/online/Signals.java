@@ -235,14 +235,15 @@ public class Signals {
     private static <V> void add(ChainIterator<SegmentInterface<Double, V>> itr,
                                 Double start, V vNew)
     {
-        if(!itr.peekPrevious().getValue().equals(vNew)) {
+        if(itr.hasPrevious() && !itr.peekPrevious().getValue().equals(vNew)) {
             itr.add(new TimeSegment<>(start, vNew));
         }
 
         if(itr.hasNext() && itr.peekNext().getValue().equals(vNew)) {
             itr.next();
             remove(itr);
-            itr.previous();
+            if(itr.hasPrevious())
+                itr.previous();
         }
     }
 

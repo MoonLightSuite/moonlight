@@ -98,7 +98,26 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
 
     @Override
     public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
-        return null;
+        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+                argumentMonitor.monitor(updates);
+
+        TimeChain<Double, List<AbstractInterval<R>>> s =
+                argumentMonitor.getResult().getSegments();
+
+        List<TimeChain<Double, List<AbstractInterval<R>>>> result = new ArrayList<>();
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+            result.addAll(TemporalComputation.slidingWindow(s,
+                    argU,
+                    horizon,
+                    op));
+        }
+
+        for(TimeChain<Double, List<AbstractInterval<R>>> u: result) {
+            rho.refine(u);
+        }
+
+        return result;
     }
 
     @Override

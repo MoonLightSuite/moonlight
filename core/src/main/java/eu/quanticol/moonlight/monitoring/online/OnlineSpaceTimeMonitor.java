@@ -168,6 +168,36 @@ FormulaVisitor<Parameters,
                         interpretation, size));
     }
 
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            OrFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> firstArg =
+                formula.getFirstArgument().accept(this, parameters);
+
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> secondArg =
+                formula.getSecondArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x -> new BinaryMonitor<>(firstArg, secondArg,
+                        listInterpretation::disjunction,
+                        interpretation, size));
+    }
+
+    @Override
+    public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
+            EventuallyFormula formula, Parameters parameters)
+    {
+        OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argMonitor =
+                formula.getArgument().accept(this, parameters);
+
+        return monitors.computeIfAbsent(formula.toString(),
+                x ->  new UnaryTimeOpMonitor<>(argMonitor,
+                        listInterpretation::disjunction,
+                        formula.getInterval(),
+                        interpretation, size));
+    }
+
 
     @Override
     public OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> visit(
