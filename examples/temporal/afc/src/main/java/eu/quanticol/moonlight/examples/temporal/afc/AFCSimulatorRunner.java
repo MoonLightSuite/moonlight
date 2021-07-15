@@ -30,22 +30,28 @@ import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
 import java.io.IOException;
 import java.util.*;
 
+import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.repeatedRunner;
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.*;
 
 public class AFCSimulatorRunner {
     private static final String OUTPUT_NAME = "/afc_sim_" + LAST_TIME + ".csv";
     private static final List<String> output = new ArrayList<>();
+    private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
     public static void main(String[] args) {
         LOG.info("Executing Breach AFC simulator...");
-        executeMoonlight();
+        repeatedRunner("AFC Simulator",
+                        s -> executeBreachSimulator(stopwatches),
+                        stopwatches, output);
+
+        //executeBreachSimulator(stopwatches);
         LOG.info("------> Experiment results (sec):");
         output.forEach(LOG::info);
     }
 
-    private static void executeMoonlight() {
+    static void executeBreachSimulator(List<Stopwatch> stopwatches) {
         // Matlab setup
-        MatlabRunner matlab = new MatlabRunner();
+        try(MatlabRunner matlab = new MatlabRunner(localPath())) {
         matlab.eval("clear");
         matlab.putVar("tot", LAST_TIME);
 
@@ -53,6 +59,7 @@ public class AFCSimulatorRunner {
         Stopwatch rec = Stopwatch.start();
         matlab.eval("afc_moonlight_monitoring");
         long duration = rec.stop();
+        stopwatches.add(rec);
         output.add("Simulink Model execution time: " + duration / 1000.);
 
         double[] input = matlab.getVar("input");
@@ -61,6 +68,11 @@ public class AFCSimulatorRunner {
         input2[0] = input;
 
         storeResults(input2);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to access local path", e);
+        }
     }
 
     private static void storeResults(double[][] data) {

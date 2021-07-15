@@ -1,11 +1,12 @@
 package eu.quanticol.moonlight.utility.matlab;
 
+import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-public class MatlabRunner {
+public class MatlabRunner implements AutoCloseable {
     private final MatlabEngine engine;
 
     public MatlabRunner(String path) {
@@ -29,17 +30,6 @@ public class MatlabRunner {
             e.printStackTrace();
             Thread.currentThread().interrupt();
             throw new UnknownError("Unable to initialize matlab");
-        }
-    }
-
-    public void executeAndDie(Consumer<MatlabEngine> f) {
-        try {
-            f.accept(engine);
-            engine.close();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-            throw new UnknownError("Unable to execute " + f +"in matlab");
         }
     }
 
@@ -71,11 +61,17 @@ public class MatlabRunner {
         }
     }
 
-    public MatlabEngine getEngine() {
-        return engine;
-    }
-
     private void impossible(String s, Exception e) {
         throw new IllegalArgumentException(s, e);
+    }
+
+    @Override
+    public void close() {
+        try {
+            engine.close();
+        } catch (EngineException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to terminate MATLAB's engine");
+        }
     }
 }
