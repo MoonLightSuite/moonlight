@@ -52,6 +52,7 @@ public class AbstractFuelControl {
         repeatedRunner("Breach", AbstractFuelControl::runBreach,
                        stopwatches, output);
 
+
         LOG.info("------> Experiment results (sec):");
 
         output.forEach(LOG::info);
@@ -65,14 +66,8 @@ public class AbstractFuelControl {
     }
 
     private static void runBreach(List<Stopwatch> s) {
-        MatlabRunner matlab;
-        try {
-            matlab = new MatlabRunner(localPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new UnknownError("Unable to run Breach");
-        }
-        matlab.putVar("tot", LAST_TIME);
+        try (MatlabRunner matlab = new MatlabRunner(localPath())) {
+            matlab.putVar("tot", LAST_TIME);
 
             List<SegmentInterface<Double, AbstractInterval<Double>>>
                     breach = executeBreach(matlab, s);
@@ -93,6 +88,12 @@ public class AbstractFuelControl {
 
             if (PLOTTING)
                 plt.plot(bStart, bEnd, "Breach");
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UnknownError("Unable to run Breach");
+        }
     }
 
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
