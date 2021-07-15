@@ -32,16 +32,18 @@ public class Pollution {
     private static final String SPACE_FILE = "lombardy_dist.csv";
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
-    private static final String CRITICAL_NO2 = "criticalNO2";
+    private static final String NOT_CRITICAL_NO2 = "NO2 < K";
     private static final String DISTANCE = "nearby";
-    private static final double P_THRESHOLD = 400;
+    private static final double K = 400;
 
 
     private static LocationService<Double, Double> ls;
     private static int size;
 
+    private static final double MAX_VALUE = 1000.0;
 
-    private static final Plotter plt = new Plotter(200.0);
+
+    private static final Plotter plt = new Plotter(MAX_VALUE);
 
     private static double km(double meters) {
         return meters * 1000;
@@ -60,10 +62,10 @@ public class Pollution {
         LOG.info("Signal loaded correctly!");
 
         execute("F1", formula1(), updates, false);
-        //execute("F1-Parallel", formula1(), space.size(), updates, true);
+        execute("F1-Parallel", formula1(), updates, true);
 
-        //execute("F2", formula2(), updates, false);
-        //execute("F2-Parallel", formula2(), space.size(), updates, true);
+        execute("F2", formula2(), updates, false);
+        execute("F2-Parallel", formula2(), updates, true);
     }
 
     private static SpatialModel<Double> loadSpatialModel() {
@@ -89,9 +91,9 @@ public class Pollution {
 
         Stopwatch rec = Stopwatch.start();
 
-        plt.plotOne(updates, name, 51, "input");
+        //plt.plotOne(updates, name, 51, "input");
 
-//        List<Update<Double, List<Double>>> ups = updates.toUpdates().subList(0, 500);
+//        List<Update<Double, List<Double>>> ups = updates.toUpdates();
 //        for(Update<Double, List<Double>> u: ups)
 //            s = m.monitor(u);
         s = m.monitor(updates);
@@ -99,7 +101,7 @@ public class Pollution {
 
         LOG.info("Execution Time of Monitor " + name +
                 ": " + rec.getDuration() + "ms");
-        plt.plotOne(s.getSegments(), name, 51);
+        //plt.plotOne(s.getSegments(), name, 51);
         //LOG.info("Monitoring result of " + name + ": " + s.getSegments());
 
         storeResults(s.getSegments(), name);
@@ -134,11 +136,10 @@ public class Pollution {
     }
 
     private static double flattenInfinity(Double value) {
-        double fallback = 1000;
         if(value.equals(Double.POSITIVE_INFINITY))
-            value = fallback;
+            value = MAX_VALUE;
         else if(value.equals(Double.NEGATIVE_INFINITY)) {
-            value = (- fallback);
+            value = - MAX_VALUE;
         }
 //        LOG.warning("Infinite value detected, substituting it with "
 //                    + fallback);
@@ -177,15 +178,15 @@ public class Pollution {
     }
 
     private static Formula formula1() {
-        Formula atomX = new AtomicFormula(CRITICAL_NO2);
+        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
 
-        return new EventuallyFormula(atomX, new Interval(0, 3));
+        return new GloballyFormula(atomX, new Interval(0, 3));
     }
 
     private static Formula formula2() {
-        Formula atomX = new AtomicFormula(CRITICAL_NO2);
+        Formula atomY = new AtomicFormula(NOT_CRITICAL_NO2);
 
-        return new SomewhereFormula(DISTANCE, atomX);
+        return new SomewhereFormula(DISTANCE, atomY);
     }
 
     private static
@@ -195,10 +196,30 @@ public class Pollution {
                 atoms = new HashMap<>();
 
         // criticalNO2 is the atomic proposition: NO2 > k
-        atoms.put(CRITICAL_NO2, trc -> new AbstractInterval<>(trc,
-                                                                  trc));
+//        atoms.put(CRITICAL_NO2, trc -> {
+//            AbstractInterval<Double> v = doubleToInterval(trc);
+//            return new AbstractInterval<>(v.getStart() - K, v.getEnd() - K);
+//        });
+
+        // notCriticalNO2 is the atomic proposition: NO2 < k
+        atoms.put(NOT_CRITICAL_NO2, trc -> {
+            AbstractInterval<Double> v = doubleToInterval(trc);
+            return new AbstractInterval<>(K - v.getEnd(), K - v.getStart());
+        });
 
         return atoms;
+    }
+
+    private static AbstractInterval<Double> doubleToInterval(Double value) {
+        // We add the artificial offset of +20 and then we can safely
+        // add the [-15, +15] offset, so that we don't have degenerate
+        // traces having values < 0 (which would be unfeasible observations)
+        double fixedValue = value + 20;
+        if(value.equals(Double.NEGATIVE_INFINITY))
+            return new AbstractInterval<>(Double.NEGATIVE_INFINITY,
+                                          Double.POSITIVE_INFINITY);
+
+        return new AbstractInterval<>(fixedValue - 15, fixedValue + 15);
     }
 
     public static double[][] transposeMatrix(double [][] m){
