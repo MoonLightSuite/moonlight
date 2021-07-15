@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;

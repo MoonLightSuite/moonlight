@@ -11,7 +11,6 @@ import eu.quanticol.moonlight.formula.Formula;
 import eu.quanticol.moonlight.formula.GloballyFormula;
 import eu.quanticol.moonlight.formula.SomewhereFormula;
 import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
-import eu.quanticol.moonlight.signal.online.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.signal.online.TimeSignal;
 import eu.quanticol.moonlight.signal.online.Update;
 import eu.quanticol.moonlight.space.DistanceStructure;
@@ -93,7 +92,7 @@ public class Pollution {
         rec.stop();
         System.out.println("F2 Sequential time: " + rec.getDuration());
 
-        plt.plotOne(s.getSegments(), "F21", 0);
+        plt.plotOne(s.getSegments(), "F2-sequential", 0);
 
         rec = Stopwatch.start();
         OnlineSpaceTimeMonitor<Double, Double, Double> m3 =
@@ -120,7 +119,7 @@ public class Pollution {
         System.out.println("F2 Parallel time#2: " + rec.getDuration());
 
 
-        plt.plotOne(s.getSegments(), "F2", 0);
+        plt.plotOne(s.getSegments(), "F2-parallel", 0);
 
         final TimeSignal<Double, List<AbstractInterval<Double>>> output2 = s;
         //LOG.info(() -> "Monitoring result of F2: " + output2.getSegments());

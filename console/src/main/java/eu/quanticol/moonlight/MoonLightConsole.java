@@ -8,11 +8,10 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;

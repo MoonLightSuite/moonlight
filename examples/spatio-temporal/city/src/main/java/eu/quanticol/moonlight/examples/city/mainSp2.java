@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;

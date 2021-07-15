@@ -30,7 +30,7 @@ package eu.quanticol.moonlight.formula;
  * @see BinaryFormula
  * @see TemporalFormula
  *
- * @see FormulaVisitor implementations for understand how the formula is visited
+ * @see FormulaVisitor implementations to understand how the formula is visited
  */
 public interface Formula {
 

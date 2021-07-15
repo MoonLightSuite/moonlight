@@ -14,7 +14,7 @@ import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.space.SpatialModel;
 
 import java.io.File;

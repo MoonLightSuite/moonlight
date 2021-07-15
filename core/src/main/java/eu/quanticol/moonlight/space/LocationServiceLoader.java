@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.space;
 
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.signal.RecordHandler;
 

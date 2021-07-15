@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 
 import java.util.Map;
 

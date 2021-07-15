@@ -20,7 +20,6 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 
 import java.io.File;

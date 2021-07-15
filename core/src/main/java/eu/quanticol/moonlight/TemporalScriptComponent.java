@@ -24,14 +24,13 @@ import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.function.BiFunction;
 
 /**
  * An instance of this class an be used to instantiate a monitor of given property.

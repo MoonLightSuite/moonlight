@@ -2,7 +2,6 @@ package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.MoonLightRecord;
 import eu.quanticol.moonlight.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 

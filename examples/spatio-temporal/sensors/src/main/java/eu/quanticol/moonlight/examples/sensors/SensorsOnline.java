@@ -43,7 +43,7 @@ public class SensorsOnline {
 
     private static LocationService<Double, Double> locSvc;
 
-    private static final String MATLAB_SCRIPT = "sensorNetworkExample.m";
+    private static final String MATLAB_SCRIPT = "sensorNetworkExample";
     private static final String LOCAL_PATH = getLocalPath();
 
     // Device types
@@ -73,7 +73,7 @@ public class SensorsOnline {
 
     private static String getLocalPath() {
         URL url = Objects.requireNonNull(
-                SensorsOnline.class.getResource(MATLAB_SCRIPT));
+                SensorsOnline.class.getResource(MATLAB_SCRIPT + ".m"));
 
         String localPath = null;
         try {
@@ -112,10 +112,11 @@ public class SensorsOnline {
     private static Object[] runModel(MatlabRunner matlab)
     {
         /// Trace generation
-        matlab.eval("mobility");
+        matlab.eval(MATLAB_SCRIPT);
 
         // Reading results
         nodes = matlab.getVar("num_nodes");
+        Object data = matlab.getVar("inputValues");
         nodesType = MatlabDataConverter.getArray(matlab.getVar("nodes_type"),
                                                  Double.class);
 

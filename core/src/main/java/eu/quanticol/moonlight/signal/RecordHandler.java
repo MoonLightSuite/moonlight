@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.space.MoonLightRecord;
+import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Arrays;
