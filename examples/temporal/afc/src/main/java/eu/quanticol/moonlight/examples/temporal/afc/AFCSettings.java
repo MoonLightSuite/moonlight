@@ -34,9 +34,9 @@ public class AFCSettings {
     private AFCSettings() {}
 
     // Configurations
-    public static final double LAST_TIME =  20;
+    public static final double LAST_TIME =  1000;
     public static final double SCALE = 0.1;
-    public static final int ITERATIONS = 100;
+    public static final int ITERATIONS = 1;
     public static final boolean PLOTTING = false;
 
     // Utilities
@@ -58,7 +58,19 @@ public class AFCSettings {
         }
     }
 
-    public static InputStream dataPath(String id) {
+    public static String dataPath() throws IOException {
+        try {
+            URL url = AFCSettings.class
+                    .getResource("data/AFDiff_50.mat");
+            return Paths.get(Objects.requireNonNull(url).toURI())
+                    .getParent().toAbsolutePath().toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new IOException("Unable to access the matlab scripts");
+        }
+    }
+
+    public static InputStream dataStream(String id) {
         String path = "data/afc_sim_" + id + ".csv";
         InputStream stream = AFCSettings.class.getResourceAsStream(path);
 

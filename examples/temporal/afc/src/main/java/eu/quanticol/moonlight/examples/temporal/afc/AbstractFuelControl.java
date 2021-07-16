@@ -43,10 +43,12 @@ public class AbstractFuelControl {
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
 
     public static void main(String[] args) {
-        repeatedRunner("In-Order M", s -> moonlight(false, LAST_TIME, s, true),
+        repeatedRunner("In-Order M",
+                       s -> moonlight(false, LAST_TIME, s, true),
                        stopwatches, output);
 
-        repeatedRunner("Out-Of-Order M", s -> moonlight(true, LAST_TIME, s, false),
+        repeatedRunner("Out-Of-Order M",
+                       s -> moonlight(true, LAST_TIME, s, false),
                        stopwatches, output);
 
         repeatedRunner("Breach", AbstractFuelControl::runBreach,
@@ -67,7 +69,9 @@ public class AbstractFuelControl {
 
     private static void runBreach(List<Stopwatch> s) {
         try (MatlabRunner matlab = new MatlabRunner(localPath())) {
+            matlab.addPath(dataPath());
             matlab.putVar("tot", LAST_TIME);
+            matlab.eval("AFC_Online_FromFile");
 
             List<SegmentInterface<Double, AbstractInterval<Double>>>
                     breach = executeBreach(matlab, s);
@@ -99,8 +103,10 @@ public class AbstractFuelControl {
     private static List<SegmentInterface<Double, AbstractInterval<Double>>>
     executeBreach(MatlabRunner matlab, List<Stopwatch> stopwatches)
     {
+
+        matlab.putVar("tot2", LAST_TIME);
         Stopwatch rec = Stopwatch.start();
-        matlab.eval("afc_breach_monitoring");
+        matlab.eval("AFC_Online_FromFile2");
         long duration = rec.stop();
         stopwatches.add(rec);
 
@@ -108,7 +114,7 @@ public class AbstractFuelControl {
 
         double[] rhoLow = matlab.getVar("rho_low");
         double[] rhoUp = matlab.getVar("rho_up");
-        input = matlab.getVar("input");
+        //input = matlab.getVar("input");
 
         assert rhoLow != null;
         assert rhoUp != null;

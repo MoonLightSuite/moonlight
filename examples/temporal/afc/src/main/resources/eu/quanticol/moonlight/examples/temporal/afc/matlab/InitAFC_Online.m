@@ -14,7 +14,7 @@ ki = 0.14;
 warning('off', 'Simulink:LoadSave:EncodingMismatch')
 mdl = 'AFC_Online';
 
-max_rob = 20;
+max_rob = inf;
 sig_names = 'AF,AFref';
 phi_st = 'AF[t]>0';
 phi_stop = 'AF[t]>0';

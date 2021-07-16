@@ -19,7 +19,6 @@ InitAFC_Online2()
 
 %max_rob = +inf;          % estimate of maximum robust satisfaction of a formula (default to +inf)
 sig_names = 'AF,AFref';   % declares signal names used in the specification
-
 %%
 % Set parameters for one simulation and run.
 BrAFC_Online.SetParam({'max_rob','Pedal_Angle_pulse_period', 'Pedal_Angle_pulse_amp'}, [max_rob, 12, 50]);

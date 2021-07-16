@@ -99,7 +99,7 @@ public class AFCMoonlightRunner {
     static List<Update<Double, Double>> loadData(String id, boolean shuffle) {
         ParsingStrategy<double[][]> st = new RawTrajectoryExtractor(1);
         FileType type = FileType.CSV;
-        double[] input = new DataReader<>(dataPath(id), type, st).read()[0];
+        double[] input = new DataReader<>(dataStream(id), type, st).read()[0];
 
         return genUpdates(input, shuffle,SCALE, RND_SEED);
     }

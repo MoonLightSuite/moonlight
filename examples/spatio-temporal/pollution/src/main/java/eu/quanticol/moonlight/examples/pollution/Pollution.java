@@ -33,6 +33,7 @@ public class Pollution {
     private static final String SIGNAL_FILE = "lombardy_no2.csv";
 
     private static final String NOT_CRITICAL_NO2 = "NO2 < K";
+    private static final String CRITICAL_NO2 = "NO2 > K";
     private static final String DISTANCE = "nearby";
     private static final double K = 400;
 
@@ -62,10 +63,10 @@ public class Pollution {
         LOG.info("Signal loaded correctly!");
 
         execute("F1", formula1(), updates, false);
-        execute("F1-Parallel", formula1(), updates, true);
+        //execute("F1-Parallel", formula1(), updates, true);
 
-        execute("F2", formula2(), updates, false);
-        execute("F2-Parallel", formula2(), updates, true);
+        //execute("F2", formula2(), updates, false);
+        //execute("F2-Parallel", formula2(), updates, true);
     }
 
     private static SpatialModel<Double> loadSpatialModel() {
@@ -101,7 +102,7 @@ public class Pollution {
 
         LOG.info("Execution Time of Monitor " + name +
                 ": " + rec.getDuration() + "ms");
-        //plt.plotOne(s.getSegments(), name, 51);
+        plt.plotOne(s.getSegments(), name, 51);
         //LOG.info("Monitoring result of " + name + ": " + s.getSegments());
 
         storeResults(s.getSegments(), name);
@@ -178,9 +179,9 @@ public class Pollution {
     }
 
     private static Formula formula1() {
-        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
+        Formula atomX = new AtomicFormula(CRITICAL_NO2);
 
-        return new GloballyFormula(atomX, new Interval(0, 3));
+        return new EventuallyFormula(atomX, new Interval(0, 3));
     }
 
     private static Formula formula2() {
@@ -196,10 +197,10 @@ public class Pollution {
                 atoms = new HashMap<>();
 
         // criticalNO2 is the atomic proposition: NO2 > k
-//        atoms.put(CRITICAL_NO2, trc -> {
-//            AbstractInterval<Double> v = doubleToInterval(trc);
-//            return new AbstractInterval<>(v.getStart() - K, v.getEnd() - K);
-//        });
+        atoms.put(CRITICAL_NO2, trc -> {
+            AbstractInterval<Double> v = doubleToInterval(trc);
+            return new AbstractInterval<>(v.getStart() - K, v.getEnd() - K);
+        });
 
         // notCriticalNO2 is the atomic proposition: NO2 < k
         atoms.put(NOT_CRITICAL_NO2, trc -> {
