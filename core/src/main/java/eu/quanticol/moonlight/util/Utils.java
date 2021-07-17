@@ -135,6 +135,42 @@ public class Utils {
         return new Pair<>(r, c);
     }
 
+    public static<T> GraphModel<T> createGraphFromMatlabData(int nodes,
+                                             int[][] edges,
+                                             T[] weights)
+    {
+        final int SOURCE = 0;
+        final int DESTINATION = 1;
+        GraphModel<T> space = new GraphModel<>(nodes);
+        if(edges.length != weights.length)
+            throw new IllegalArgumentException("Mismatching edges provided");
+
+        for(int i= 0; i < edges.length; i++) {
+            space.add(edges[i][SOURCE] - 1,     //Matlab indices fix
+                      weights[i],
+                      edges[i][DESTINATION] - 1); //Matlab indices fix
+        }
+
+        return space;
+    }
+
+    public static<T> LocationService<Double, T>
+    createLocationServiceFromTimesAndModels(double[] times,
+                                            SpatialModel<T>[] models)
+    {
+        LocationServiceList<T> locSvc = new LocationServiceList<>();
+        if(times.length != models.length)
+            throw new IllegalArgumentException("Mismatched arguments provided");
+
+        for(int i = 0; i < times.length; i++) {
+            locSvc.add(times[i], models[i]);
+        }
+
+        return locSvc;
+    }
+
+
+
     public static LocationService<Double, Double> createLocServiceFromSetMatrix(Object[] cgraph1) {
         double[][] matrix;
         LocationServiceList<Double> locService = new LocationServiceList<>();
@@ -166,10 +202,13 @@ public class Utils {
         return locService;
     }
 
-    public static LocationService<Double, Double> createLocServiceStaticFromTimeTraj(double [] time , SpatialModel<Double> graph) {
-        LocationServiceList<Double> locService = new LocationServiceList<Double>();
-        for (int i = 0; i < time.length; i++) {
-            locService.add(time[i], graph);
+    public static LocationService<Double, Double>
+    createLocServiceStaticFromTimeTraj(double [] time ,
+                                       SpatialModel<Double> graph)
+    {
+        LocationServiceList<Double> locService = new LocationServiceList<>();
+        for (double v : time) {
+            locService.add(v, graph);
         }
         return locService;
     }

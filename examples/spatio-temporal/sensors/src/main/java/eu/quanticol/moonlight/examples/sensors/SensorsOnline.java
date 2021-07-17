@@ -14,19 +14,18 @@ import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
-import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
-import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static eu.quanticol.moonlight.util.Utils.*;
 
 /**
  * Note: requires Matlab R2020a+ & Machine Learning toolbox plugin
@@ -36,7 +35,7 @@ public class SensorsOnline {
     // Experiment observation settings
     private static final int RND_SEED = 17;
     private static final Plotter plt = new Plotter(10.0);
-    private static final int ITERATIONS = 100;
+    private static final int ITERATIONS = 1;
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
     private static final Logger LOG = Logger.getLogger("SensorsOnline");
     private static final List<String> output = new ArrayList<>();
@@ -44,6 +43,10 @@ public class SensorsOnline {
     // Matlab settings
     private static final String MATLAB_SCRIPT = "sensorNetworkExample";
     private static final String LOCAL_PATH = getLocalPath();
+
+    // Experiment settings
+    private static final int TIME_STEPS = 50;
+    private static final int NODES = 200;
 
 
     private static Map<String,
@@ -71,14 +74,13 @@ public class SensorsOnline {
     // Distance functions
     private static final String DISTANCE = "dist";
 
-    private static final double nodes = 10.0;
-    private static Double[] nodesType;
-    private static double[] temperature;
+    private static double[] times;
+    private static int[][] nodesType;
+    private static double[][] temperature;
 
     public static void main(String[] args) {
         MatlabRunner matlab = new MatlabRunner(LOCAL_PATH);
-        Object[] graph = Objects.requireNonNull(runSimulator(matlab));
-        locSvc = Utils.createLocServiceFromSetMatrix(graph);
+        runSimulator(matlab);
         setAtomicFormulas();
         setDistanceFunctions();
 
@@ -91,10 +93,6 @@ public class SensorsOnline {
         repeatedRunner("F2 offline", () -> checkOffline(f2));
         repeatedRunner("F2 online IO", () -> checkOnline(f2, false));
         repeatedRunner("F2 online OOO", () -> checkOnline(f2, true));
-
-//        checkOffline(f2);
-//        checkOnline(f2, false);
-//        checkOnline(f2, true);
 
         output.forEach(LOG::info);
     }
@@ -170,23 +168,62 @@ public class SensorsOnline {
         atomicFormulas.put(NORMAL_HUMIDITY, p -> (x -> x.getSecond() < OK_H));
     }
 
-    private static Object[] runSimulator(MatlabRunner matlab)
+    private static void runSimulator(MatlabRunner matlab)
     {
+        matlab.putVar("num_nodes", NODES);
+
         /// Trace generation
         matlab.eval(MATLAB_SCRIPT);
 
-
         // Reading results
-        //nodes = matlab.getVar("num_nodes");
-        temperature = matlab.getVar("temperature");
-        //Object data = matlab.getVar("inputValues");
-        nodesType = MatlabDataConverter.getArray(matlab.getVar("nodes_type"),
-                                                 Double.class);
+        times = matlab.getVar("time");
+        nodesType = new int[times.length][NODES];
+        temperature = new double[times.length][NODES];
+        loadLocationServiceData(matlab);
+        loadSignalData(matlab);
+//        //Object data = matlab.getVar("inputValues");
+//        nodesType = MatlabDataConverter.getArray(matlab.getVar("nodes_type"),
+//                                                 Double.class);
+//
+//
+//        //TODO hack, please rewrite
+//        MatlabRunner matlab2 = new MatlabRunner(LOCAL_PATH);
+//        matlab2.eval("mobility");
+//        return matlab2.getVar("cgraph1");
+    }
 
-        //TODO hack, please rewrite
-        MatlabRunner matlab2 = new MatlabRunner(LOCAL_PATH);
-        matlab2.eval("mobility");
-        return matlab2.getVar("cgraph1");
+    private static void loadSignalData(MatlabRunner matlab) {
+        for(int i = 0; i < times.length; i++) {
+            int idx = i + 1;    // Matlab index offset
+            matlab.eval("types = int32(cell2mat(spatialModelc{" + idx +
+                        ", 1}.Nodes.nodeType))");
+            matlab.eval("temperature = spatialModelc{" + idx +
+                        ", 1}.Nodes.temperature");
+            nodesType[i] = matlab.getVar("types");
+            temperature[i] = matlab.getVar("temperature");
+        }
+    }
+
+
+
+    private static void loadLocationServiceData(MatlabRunner matlab) {
+        List<SpatialModel<Double>> models = new ArrayList<>();
+        for(int i = 1; i <= times.length; i++) {
+            matlab.eval("edges = int32(spatialModelc{" + i +
+                        ", 1}.Edges.EndNodes);");
+            matlab.eval("weights = spatialModelc{" + i +
+                        ", 1}.Edges.Weights(:,1);");
+            int[][] edges = matlab.getVar("edges");
+            double[] weightsData = matlab.getVar("weights");
+            Double[] weights = Arrays.stream(weightsData)
+                    .boxed().toArray(Double[]::new);
+            SpatialModel<Double> graph = createGraphFromMatlabData(NODES,
+                                                                    edges,
+                                                                    weights);
+            models.add(graph);
+        }
+        SpatialModel<Double>[] graphs = models.toArray(new SpatialModel[0]);
+        locSvc = createLocationServiceFromTimesAndModels(times, graphs);
 
     }
 
@@ -217,14 +254,13 @@ public class SensorsOnline {
     generateSTSignal()
     {
         SpatialTemporalSignal<Pair<Integer, Double>> stSignal =
-                new SpatialTemporalSignal<>((int) nodes);
+                new SpatialTemporalSignal<>(NODES);
 
-        IntStream.range(0, (int) nodes - 1)
+        IntStream.range(0, NODES - 1)
                 .forEach(time -> stSignal
                         .add(time, (location ->
-                                        new Pair<>(nodesType[location]
-                                                        .intValue(),
-                                                   temperature[location])
+                                        new Pair<>(nodesType[time][location],
+                                                   temperature[time][location])
                                    )
                             )
                 );
@@ -237,10 +273,10 @@ public class SensorsOnline {
         List<TimeChain<Double, List<Pair<Integer, Double>>>> result  =
                 new ArrayList<>();
         TimeChain<Double, List<Pair<Integer, Double>>> chain =
-                new TimeChain<>(nodes - 1);
+                new TimeChain<>(times[times.length - 1]);
         result.add(chain);
 
-        IntStream.range(0, (int) nodes - 1)
+        IntStream.range(0, NODES - 1)
                 .forEach(time ->
                         {
                             List<Pair<Integer, Double>> locations =
@@ -257,8 +293,8 @@ public class SensorsOnline {
     }
 
     private static List<Pair<Integer, Double>> spaceDataFromTime(int time) {
-        return IntStream.range(0, (int) nodes).boxed().map(location ->
-                new Pair<>(nodesType[location].intValue(), temperature[location])
+        return IntStream.range(0, NODES).boxed().map(location ->
+                new Pair<>(nodesType[time][location], temperature[time][location])
         ).collect(Collectors.toList());
     }
 
@@ -295,7 +331,7 @@ public class SensorsOnline {
         Map<String, Function<Pair<Integer,Double>, AbstractInterval<Double>>>
             atoms = setOnlineAtoms();
 
-        return new OnlineSpaceTimeMonitor<>(f, (int) nodes, new DoubleDomain(),
+        return new OnlineSpaceTimeMonitor<>(f, NODES, new DoubleDomain(),
                                             locSvc, atoms, distanceFunctions);
     }
 

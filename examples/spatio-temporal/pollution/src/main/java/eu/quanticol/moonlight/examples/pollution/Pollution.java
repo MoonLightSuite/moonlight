@@ -35,13 +35,13 @@ public class Pollution {
     private static final String NOT_CRITICAL_NO2 = "NO2 < K";
     private static final String CRITICAL_NO2 = "NO2 > K";
     private static final String DISTANCE = "nearby";
-    private static final double K = 400;
+    private static final double K = 60;
 
 
     private static LocationService<Double, Double> ls;
     private static int size;
 
-    private static final double MAX_VALUE = 1000.0;
+    private static final double MAX_VALUE = 100.0;
 
 
     private static final Plotter plt = new Plotter(MAX_VALUE);
@@ -102,7 +102,8 @@ public class Pollution {
 
         LOG.info("Execution Time of Monitor " + name +
                 ": " + rec.getDuration() + "ms");
-        plt.plotOne(s.getSegments(), name, 51);
+        //plt.plotOne(s.getSegments(), name, 51);
+        plt.plotAll(s.getSegments(), name);
         //LOG.info("Monitoring result of " + name + ": " + s.getSegments());
 
         storeResults(s.getSegments(), name);
