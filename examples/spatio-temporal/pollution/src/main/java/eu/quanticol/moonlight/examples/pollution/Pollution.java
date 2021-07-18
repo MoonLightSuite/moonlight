@@ -35,7 +35,7 @@ public class Pollution {
     private static final String NOT_CRITICAL_NO2 = "NO2 < K";
     private static final String CRITICAL_NO2 = "NO2 > K";
     private static final String DISTANCE = "nearby";
-    private static final double K = 60;
+    private static final double K = 50;
 
 
     private static LocationService<Double, Double> ls;
@@ -63,10 +63,8 @@ public class Pollution {
         LOG.info("Signal loaded correctly!");
 
         execute("F1", formula1(), updates, false);
-        //execute("F1-Parallel", formula1(), updates, true);
 
-        //execute("F2", formula2(), updates, false);
-        //execute("F2-Parallel", formula2(), updates, true);
+        execute("F2", formula2(), updates, false);
     }
 
     private static SpatialModel<Double> loadSpatialModel() {
@@ -102,8 +100,8 @@ public class Pollution {
 
         LOG.info("Execution Time of Monitor " + name +
                 ": " + rec.getDuration() + "ms");
-        //plt.plotOne(s.getSegments(), name, 51);
-        plt.plotAll(s.getSegments(), name);
+        plt.plotOne(s.getSegments(), name, 51);
+        //plt.plotAll(s.getSegments(), name);
         //LOG.info("Monitoring result of " + name + ": " + s.getSegments());
 
         storeResults(s.getSegments(), name);
@@ -180,7 +178,7 @@ public class Pollution {
     }
 
     private static Formula formula1() {
-        Formula atomX = new AtomicFormula(CRITICAL_NO2);
+        Formula atomX = new AtomicFormula(NOT_CRITICAL_NO2);
 
         return new EventuallyFormula(atomX, new Interval(0, 3));
     }

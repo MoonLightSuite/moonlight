@@ -45,8 +45,8 @@ public class SensorsOnline {
     private static final String LOCAL_PATH = getLocalPath();
 
     // Experiment settings
-    private static final int TIME_STEPS = 50;
-    private static final int NODES = 20;
+    private static final double TIME_STEPS = 100.0;
+    private static final int NODES = 100;
 
 
     private static Map<String,
@@ -91,10 +91,10 @@ public class SensorsOnline {
                         () -> checkOnline(f1, false, false));
         repeatedRunner("F1 online IO Parallel",
                 () -> checkOnline(f1, false, true));
-        repeatedRunner("F1 online OOO",
-                        () -> checkOnline(f1, true, false));
-        repeatedRunner("F1 online OOO Parallel",
-                () -> checkOnline(f1, true, true));
+//        repeatedRunner("F1 online OOO",
+//                        () -> checkOnline(f1, true, false));
+//        repeatedRunner("F1 online OOO Parallel",
+//                () -> checkOnline(f1, true, true));
 
         Formula f2 = formula2();
         repeatedRunner("F2 offline", () -> checkOffline(f2));
@@ -102,10 +102,10 @@ public class SensorsOnline {
                         () -> checkOnline(f2, false, false));
         repeatedRunner("F2 online IO Parallel",
                 () -> checkOnline(f2, false, true));
-        repeatedRunner("F2 online OOO",
-                        () -> checkOnline(f2, true, false));
-        repeatedRunner("F2 online OOO Parallel",
-                () -> checkOnline(f2, true, true));
+//        repeatedRunner("F2 online OOO",
+//                        () -> checkOnline(f2, true, false));
+//        repeatedRunner("F2 online OOO Parallel",
+//                () -> checkOnline(f2, true, true));
 
 
         output.forEach(LOG::info);
@@ -185,6 +185,7 @@ public class SensorsOnline {
     private static void runSimulator(MatlabRunner matlab)
     {
         matlab.putVar("num_nodes", NODES);
+        matlab.putVar("numSteps", TIME_STEPS);
 
         /// Trace generation
         matlab.eval(MATLAB_SCRIPT);
@@ -270,7 +271,7 @@ public class SensorsOnline {
         SpatialTemporalSignal<Pair<Integer, Double>> stSignal =
                 new SpatialTemporalSignal<>(NODES);
 
-        IntStream.range(0, NODES - 1)
+        IntStream.range(0, times.length)
                 .forEach(time -> stSignal
                         .add(time, (location ->
                                         new Pair<>(nodesType[time][location],
@@ -290,7 +291,7 @@ public class SensorsOnline {
                 new TimeChain<>(times[times.length - 1]);
         result.add(chain);
 
-        IntStream.range(0, NODES - 1)
+        IntStream.range(0, times.length)
                 .forEach(time ->
                         {
                             List<Pair<Integer, Double>> locations =
