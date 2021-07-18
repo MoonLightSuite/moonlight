@@ -1,5 +1,5 @@
 % sensor network example
-numSteps        = 50;   % number of frames
+%numSteps        = double(50);   % number of frames
 %num_nodes       = 20;    % number of nodes
 %% generation of the data (spatial model, time, values)
 framePlot = false; % to enable or disable the plot of the graph

@@ -45,8 +45,8 @@ public class SensorsOnline {
     private static final String LOCAL_PATH = getLocalPath();
 
     // Experiment settings
-    private static final int TIME_STEPS = 50;
-    private static final int NODES = 200;
+    private static final double TIME_STEPS = 100.0;
+    private static final int NODES = 100;
 
 
     private static Map<String,
@@ -85,12 +85,12 @@ public class SensorsOnline {
         setDistanceFunctions();
 
         Formula f1 = formula1();
-        repeatedRunner("F1 offline", () -> checkOffline(f1));
+        //repeatedRunner("F1 offline", () -> checkOffline(f1));
         repeatedRunner("F1 online IO", () -> checkOnline(f1, false));
         repeatedRunner("F1 online OOO", () -> checkOnline(f1, true));
 
         Formula f2 = formula2();
-        repeatedRunner("F2 offline", () -> checkOffline(f2));
+        //repeatedRunner("F2 offline", () -> checkOffline(f2));
         repeatedRunner("F2 online IO", () -> checkOnline(f2, false));
         repeatedRunner("F2 online OOO", () -> checkOnline(f2, true));
 
@@ -171,6 +171,7 @@ public class SensorsOnline {
     private static void runSimulator(MatlabRunner matlab)
     {
         matlab.putVar("num_nodes", NODES);
+        matlab.putVar("numSteps", TIME_STEPS);
 
         /// Trace generation
         matlab.eval(MATLAB_SCRIPT);
@@ -256,7 +257,7 @@ public class SensorsOnline {
         SpatialTemporalSignal<Pair<Integer, Double>> stSignal =
                 new SpatialTemporalSignal<>(NODES);
 
-        IntStream.range(0, NODES - 1)
+        IntStream.range(0, times.length)
                 .forEach(time -> stSignal
                         .add(time, (location ->
                                         new Pair<>(nodesType[time][location],
@@ -276,7 +277,7 @@ public class SensorsOnline {
                 new TimeChain<>(times[times.length - 1]);
         result.add(chain);
 
-        IntStream.range(0, NODES - 1)
+        IntStream.range(0, times.length)
                 .forEach(time ->
                         {
                             List<Pair<Integer, Double>> locations =
