@@ -45,9 +45,8 @@ public class SensorsOnline {
     private static final String LOCAL_PATH = getLocalPath();
 
     // Experiment settings
-    private static final double TIME_STEPS = 100.0;
-    private static final int NODES = 100;
-
+    private static final double TIME_STEPS = 30.0;
+    private static final int NODES = 5;
 
     private static Map<String,
                        Function<Parameters,
@@ -73,6 +72,7 @@ public class SensorsOnline {
 
     // Distance functions
     private static final String DISTANCE = "dist";
+    private static final String DISTANCE2 = "dist2";
 
     private static double[] times;
     private static int[][] nodesType;
@@ -85,27 +85,25 @@ public class SensorsOnline {
         setDistanceFunctions();
 
         Formula f1 = formula1();
-        repeatedRunner("F1 offline",
-                        () -> checkOffline(f1));
+        repeatedRunner("F1 offline", () -> checkOffline(f1));
         repeatedRunner("F1 online IO",
-                        () -> checkOnline(f1, false, false));
+                () -> checkOnline(f1, false, false));
         repeatedRunner("F1 online IO Parallel",
                 () -> checkOnline(f1, false, true));
-//        repeatedRunner("F1 online OOO",
-//                        () -> checkOnline(f1, true, false));
-//        repeatedRunner("F1 online OOO Parallel",
-//                () -> checkOnline(f1, true, true));
 
         Formula f2 = formula2();
         repeatedRunner("F2 offline", () -> checkOffline(f2));
         repeatedRunner("F2 online IO",
                         () -> checkOnline(f2, false, false));
         repeatedRunner("F2 online IO Parallel",
-                () -> checkOnline(f2, false, true));
-//        repeatedRunner("F2 online OOO",
-//                        () -> checkOnline(f2, true, false));
-//        repeatedRunner("F2 online OOO Parallel",
-//                () -> checkOnline(f2, true, true));
+                        () -> checkOnline(f2, false, true));
+
+//        Formula f3 = formula3();
+//        repeatedRunner("F3 offline", () -> checkOffline(f3));
+//        repeatedRunner("F3 online IO",
+//                () -> checkOnline(f3, false, false));
+//        repeatedRunner("F3 online IO Parallel",
+//                () -> checkOnline(f3, false, true));
 
 
         output.forEach(LOG::info);
@@ -160,9 +158,15 @@ public class SensorsOnline {
         return new EverywhereFormula(DISTANCE, someWhere);
     }
 
-    private static Formula formula() {
-        Formula isType1 = new AtomicFormula(COORDINATOR);
-        return new SomewhereFormula(DISTANCE, isType1);
+    private static Formula formula3() {
+        Formula highHumidity = new AtomicFormula(HIGH_HUMIDITY);
+        Formula normalHumidity = new AtomicFormula(NORMAL_HUMIDITY);
+        Formula escapeHumidity = new EscapeFormula(DISTANCE2, normalHumidity);
+        
+//        return new OrFormula(new NegationFormula(highHumidity),
+//                new EventuallyFormula(escapeHumidity,
+//                        new Interval(0, T)));
+        return escapeHumidity;
     }
 
     private static void setDistanceFunctions() {
@@ -170,6 +174,10 @@ public class SensorsOnline {
         distanceFunctions.put(DISTANCE,
                 m -> new DistanceStructure<>(x -> x , new DoubleDistance(),
                         0.0, 10.0, m));
+
+        distanceFunctions.put(DISTANCE2,
+                m -> new DistanceStructure<>(x -> x , new DoubleDistance(),
+                        0.0, 2.0, m));
     }
 
     private static void setAtomicFormulas() {
@@ -196,15 +204,6 @@ public class SensorsOnline {
         temperature = new double[times.length][NODES];
         loadLocationServiceData(matlab);
         loadSignalData(matlab);
-//        //Object data = matlab.getVar("inputValues");
-//        nodesType = MatlabDataConverter.getArray(matlab.getVar("nodes_type"),
-//                                                 Double.class);
-//
-//
-//        //TODO hack, please rewrite
-//        MatlabRunner matlab2 = new MatlabRunner(LOCAL_PATH);
-//        matlab2.eval("mobility");
-//        return matlab2.getVar("cgraph1");
     }
 
     private static void loadSignalData(MatlabRunner matlab) {
