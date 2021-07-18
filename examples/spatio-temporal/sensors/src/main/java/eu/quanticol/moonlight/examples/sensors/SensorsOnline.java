@@ -46,7 +46,7 @@ public class SensorsOnline {
 
     // Experiment settings
     private static final int TIME_STEPS = 50;
-    private static final int NODES = 200;
+    private static final int NODES = 20;
 
 
     private static Map<String,
@@ -85,14 +85,28 @@ public class SensorsOnline {
         setDistanceFunctions();
 
         Formula f1 = formula1();
-        repeatedRunner("F1 offline", () -> checkOffline(f1));
-        repeatedRunner("F1 online IO", () -> checkOnline(f1, false));
-        repeatedRunner("F1 online OOO", () -> checkOnline(f1, true));
+        repeatedRunner("F1 offline",
+                        () -> checkOffline(f1));
+        repeatedRunner("F1 online IO",
+                        () -> checkOnline(f1, false, false));
+        repeatedRunner("F1 online IO Parallel",
+                () -> checkOnline(f1, false, true));
+        repeatedRunner("F1 online OOO",
+                        () -> checkOnline(f1, true, false));
+        repeatedRunner("F1 online OOO Parallel",
+                () -> checkOnline(f1, true, true));
 
         Formula f2 = formula2();
         repeatedRunner("F2 offline", () -> checkOffline(f2));
-        repeatedRunner("F2 online IO", () -> checkOnline(f2, false));
-        repeatedRunner("F2 online OOO", () -> checkOnline(f2, true));
+        repeatedRunner("F2 online IO",
+                        () -> checkOnline(f2, false, false));
+        repeatedRunner("F2 online IO Parallel",
+                () -> checkOnline(f2, false, true));
+        repeatedRunner("F2 online OOO",
+                        () -> checkOnline(f2, true, false));
+        repeatedRunner("F2 online OOO Parallel",
+                () -> checkOnline(f2, true, true));
+
 
         output.forEach(LOG::info);
     }
@@ -298,12 +312,12 @@ public class SensorsOnline {
         ).collect(Collectors.toList());
     }
 
-    private static void checkOnline(Formula f, boolean shuffle)
+    private static void checkOnline(Formula f, boolean shuffle, boolean parallel)
     {
 
 
         OnlineSpaceTimeMonitor<Double, Pair<Integer, Double>, Double> m =
-                onlineMonitorInit(f);
+                onlineMonitorInit(f, parallel);
 
         List<Update<Double, List<Pair<Integer, Double>>>> updates =
                 generateSTUpdates().get(0).toUpdates();
@@ -326,13 +340,14 @@ public class SensorsOnline {
 
     private static
     OnlineSpaceTimeMonitor<Double, Pair<Integer, Double>, Double>
-    onlineMonitorInit(Formula f)
+    onlineMonitorInit(Formula f, boolean parallel)
     {
         Map<String, Function<Pair<Integer,Double>, AbstractInterval<Double>>>
             atoms = setOnlineAtoms();
 
         return new OnlineSpaceTimeMonitor<>(f, NODES, new DoubleDomain(),
-                                            locSvc, atoms, distanceFunctions);
+                                            locSvc, atoms, distanceFunctions,
+                                            parallel);
     }
 
     private static
