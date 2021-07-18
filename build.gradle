@@ -38,13 +38,13 @@ subprojects {
 
     clean.doFirst {
         delete "${rootDir}/output/"
-        println "deleating jars in  ${rootDir}/output/"
+        println "deleting jars in  ${rootDir}/output/"
         delete "${rootDir}/distribution/"
-        println "deleating jars in  ${rootDir}/distribution/"
+        println "deleting jars in  ${rootDir}/distribution/"
         delete "${rootDir}/distribution_files/java/lib/moonlight.jar"
-        println "deleating ${rootDir}/distribution_files/java/lib/moonlight.jar"
+        println "deleting ${rootDir}/distribution_files/java/lib/moonlight.jar"
         delete "${rootDir}/distribution_files/matlab/moonlight/jar/"
-        println "deleating jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/"
+        println "deleting jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/"
         delete "${rootDir}/distribution_files/python/jar/"
         println "${rootDir}/distribution_files/python/jar/"
 
