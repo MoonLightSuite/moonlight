@@ -62,6 +62,14 @@ task distribution(type: Copy, dependsOn:[jar, installDist]) {
         from jar
         into rootProject.file("distribution_files/python/jar")
     }
+    copy {
+        from "$buildDir/install/mlconsole/"
+        into rootProject.file("distribution_files/console/")
+    }
+    copy {
+        from jar
+        into rootProject.file("distribution_files/console/lib/")
+    }
 }
 
 task release(type: Copy, dependsOn: distribution) {
