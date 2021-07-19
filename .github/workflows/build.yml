@@ -25,14 +25,14 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Codecov setup
+    - name: Gradle distribution
+      run: ./gradlew check
+    - name: Codecov update
       uses: codecov/codecov-action@v1
       with:
-        token: CODECOV_TOKEN 
-        files: ./coverage1.xml,./coverage2.xml # optional
+        token: "e55b13c2-bff0-49c1-81e8-0fe254c2955e"
+        #files: ./coverage1.xml,./coverage2.xml # optional
         flags: unittests # optional
         name: codecov-umbrella # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
-        env:
-          CODECOV_TOKEN="e55b13c2-bff0-49c1-81e8-0fe254c2955e"
