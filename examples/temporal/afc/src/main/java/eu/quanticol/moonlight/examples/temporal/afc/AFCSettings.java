@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.examples.temporal.afc;
 
+import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.util.Plotter;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class AFCSettings {
     private AFCSettings() {}
@@ -40,7 +40,7 @@ public class AFCSettings {
     public static final boolean PLOTTING = false;
 
     // Utilities
-    public static final Logger LOG = Logger.getLogger("AFC Log");
+    public static final Logger LOG = Logger.getLogger();
     public static final Plotter plt = new Plotter(10.0);
 
     // Atom

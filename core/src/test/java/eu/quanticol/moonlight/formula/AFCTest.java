@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.DataReader;
-import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
 import eu.quanticol.moonlight.signal.online.*;

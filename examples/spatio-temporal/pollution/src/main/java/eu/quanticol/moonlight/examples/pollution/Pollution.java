@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.DataWriter;
-import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.PrintingStrategy;

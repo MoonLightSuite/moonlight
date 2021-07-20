@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.io.DataReader;
-import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
@@ -67,7 +67,7 @@ public class AFCMoonlightRunner {
         if(results.get(0).equals(results.get(1)))
             LOG.info("Results match");
         else
-            LOG.severe("Results don't match");
+            LOG.fatal("Results don't match");
     }
 
     private static String intToString(Number v) {

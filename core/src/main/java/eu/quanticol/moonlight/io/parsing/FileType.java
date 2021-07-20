@@ -1,6 +1,4 @@
-package eu.quanticol.moonlight.io;
-
-import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
+package eu.quanticol.moonlight.io.parsing;
 
 /**
  * Enum collecting the files supported by the parsing strategies

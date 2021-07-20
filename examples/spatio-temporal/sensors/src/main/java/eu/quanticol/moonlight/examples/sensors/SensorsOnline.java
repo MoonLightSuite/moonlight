@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.sensors;
 
+import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
@@ -21,7 +22,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,7 +37,7 @@ public class SensorsOnline {
     private static final Plotter plt = new Plotter(10.0);
     private static final int ITERATIONS = 1;
     private static final List<Stopwatch> stopwatches = new ArrayList<>();
-    private static final Logger LOG = Logger.getLogger("SensorsOnline");
+    private static final Logger LOG = Logger.getLogger();
     private static final List<String> output = new ArrayList<>();
 
     // Matlab settings

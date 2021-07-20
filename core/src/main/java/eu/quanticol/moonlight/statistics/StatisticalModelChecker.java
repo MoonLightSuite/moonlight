@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.statistics;
 
+import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.statistics.SignalStatistics.Statistics;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.space.LocationService;
@@ -28,7 +29,6 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * The StatisticalModelChecker is a class for evaluating a property over
@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  * @see Statistics for info about the result format
  */
 public class StatisticalModelChecker<S, T, R> {
-    private static final Logger LOG = Logger.getLogger(StatisticalModelChecker.class.getName());
+    private static final Logger LOG = Logger.getLogger();
 
     /**
      * Input Parameters
@@ -107,7 +107,7 @@ public class StatisticalModelChecker<S, T, R> {
                 ));
 
             threads.add(t);
-            LOG.fine("Thread starting.");
+            LOG.info("Thread starting.");
             t.start();
 
             i++;
@@ -118,7 +118,7 @@ public class StatisticalModelChecker<S, T, R> {
             }
             results.addAll(stats.getResults());
         } catch(InterruptedException e) {
-            LOG.severe("Thread crashed! " + e.getMessage());
+            LOG.fatal("Thread crashed! " + e.getMessage());
             Thread.currentThread().interrupt();
         }
 

@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.io;
 
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 
 import java.io.*;

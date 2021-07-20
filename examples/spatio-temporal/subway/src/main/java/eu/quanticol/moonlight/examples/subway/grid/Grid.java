@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.examples.subway.grid;
 
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
-import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;

@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;

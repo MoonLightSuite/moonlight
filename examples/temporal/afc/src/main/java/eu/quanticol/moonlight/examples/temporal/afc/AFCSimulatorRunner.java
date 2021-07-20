@@ -21,13 +21,14 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.io.DataWriter;
-import eu.quanticol.moonlight.io.FileType;
+import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.util.Stopwatch;
 import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 
 import static eu.quanticol.moonlight.examples.temporal.afc.AFCHelpers.repeatedRunner;
@@ -44,7 +45,6 @@ public class AFCSimulatorRunner {
                         s -> executeBreachSimulator(stopwatches),
                         stopwatches, output);
 
-        //executeBreachSimulator(stopwatches);
         LOG.info("------> Experiment results (sec):");
         output.forEach(LOG::info);
     }
@@ -71,7 +71,7 @@ public class AFCSimulatorRunner {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Unable to access local path", e);
+            throw new UncheckedIOException("Unable to access local path", e);
         }
     }
 
@@ -80,7 +80,7 @@ public class AFCSimulatorRunner {
 
         try {
             String destination = localPath() + OUTPUT_NAME;
-            LOG.info(() -> "Saving output in: " + destination);
+            LOG.info("Saving output in: " + destination);
             new DataWriter<>(destination, FileType.CSV, st).write(data);
         } catch (IOException e) {
             e.printStackTrace();

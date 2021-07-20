@@ -18,13 +18,13 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.signal;
+package eu.quanticol.moonlight.space;
 
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.signal.DataHandler;
+import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.space.SpatialModel;
-import eu.quanticol.moonlight.space.TRALocationServiceLoader;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

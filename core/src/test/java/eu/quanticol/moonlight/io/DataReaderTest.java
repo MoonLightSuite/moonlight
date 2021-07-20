@@ -1,15 +1,16 @@
 package eu.quanticol.moonlight.io;
 
+import eu.quanticol.moonlight.io.parsing.FileType;
+import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataReaderTest {
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private final Logger LOG = Logger.getLogger();
     private static final String FILE_SYSTEM_ERROR = "Problems accessing the " +
                                                     "file system";
 
@@ -41,7 +42,7 @@ class DataReaderTest {
             assertEquals(3, str.header_count);
             assertEquals(2, str.line_sum);
         } else {
-            LOG.warning(FILE_SYSTEM_ERROR);
+            LOG.warn(FILE_SYSTEM_ERROR);
             fail();
         }
     }
@@ -62,7 +63,7 @@ class DataReaderTest {
             assertEquals(4, str.header_count);
             assertEquals(2, str.line_sum);
         } else {
-            LOG.warning(FILE_SYSTEM_ERROR);
+            LOG.warn(FILE_SYSTEM_ERROR);
             fail();
         }
     }
@@ -82,7 +83,7 @@ class DataReaderTest {
             assertEquals(672, str.header_count);
             assertEquals(1421.099239665429, str.line_sum);
         } else {
-            LOG.warning(FILE_SYSTEM_ERROR);
+            LOG.warn(FILE_SYSTEM_ERROR);
             fail();
         }
     }
@@ -97,14 +98,14 @@ class DataReaderTest {
 
             assertThrows(UnsupportedFileTypeException.class, rdr::read);
         } else {
-            LOG.warning(FILE_SYSTEM_ERROR);
+            LOG.warn(FILE_SYSTEM_ERROR);
             fail();
         }
     }
 
 
     /**
-     * Mocked Parsing Strategy
+     * Mocked Parsing Strategy Mock
      */
     static class EmptyStrategy implements ParsingStrategy<Boolean> {
         int header_count = 0;
