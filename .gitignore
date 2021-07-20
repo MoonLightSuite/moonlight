@@ -33,3 +33,6 @@ distribution_files/console/
 /examples/temporal/amt/lib/gamt.jar!/grammars/VcdDraftLexer.tokens
 distribution_files/console/
 !distribution_files/matlab/moonlight/script/.placeHolder
+
+# log4j log file
+jsbml.log
