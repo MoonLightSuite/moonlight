@@ -47,14 +47,9 @@ public class TimeSegment<T extends Comparable<T>, V>
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        try {
-            @SuppressWarnings("unchecked")
-            TimeSegment<T, V> that = (TimeSegment<T, V>) o;
-            return start.equals(that.start) && value.equals(that.value);
-        } catch (ClassCastException e) {
-            return false;
-        }
+        if (!(o instanceof TimeSegment)) return false;
+        TimeSegment<?, ?> that = (TimeSegment<?, ?>) o;
+        return Objects.equals(start, that.start) && Objects.equals(value, that.value);
     }
 
     @Override

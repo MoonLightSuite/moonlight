@@ -43,10 +43,10 @@ import java.util.function.BiConsumer;
  *                                .
  * </pre>
  * 
- *  TODO: Note that the iterator doesn't deal with duplicates in the output,
+ *  Note: the iterator doesn't deal with duplicates in the output,
  *        it just returns the elements to be evaluated.
  *        This is a deliberate design decision to keep SRP (it just iterates),
- *        but depending on feedbacks, this can be changed.
+ *        but, depending on feedbacks, this can be changed.
  *
  * @param <T> Type on which the order relation is defined
  * @param <V> Type of which the values will be combined in the resulting chain
