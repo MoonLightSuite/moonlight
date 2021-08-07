@@ -43,7 +43,23 @@ subprojects {
         println "${rootDir}/distribution_files/python/jar/"
 
     }
+
     publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = 'moonlight-core'
+                from components.java
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+
+            }
+        }
         repositories {
             maven {
                 name = "GitHubPackages"
