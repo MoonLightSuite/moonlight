@@ -2,7 +2,7 @@ subprojects {
     apply plugin: "maven-publish"
     ext.xtextVersion = '2.18.0.M3'
     group = 'eu.quanticol.moonlight'
-    version = '1.0-SNAPSHOT'
+    version = '0.3-SNAPSHOT'
     description = 'MoonLight: a light-weight framework for runtime monitoring'
     status = 'status'
 

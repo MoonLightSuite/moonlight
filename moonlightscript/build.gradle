@@ -3,8 +3,6 @@ plugins {
     id 'antlr'
 }
 
-version 'unspecified'
-
 repositories {
     mavenCentral()
 }
