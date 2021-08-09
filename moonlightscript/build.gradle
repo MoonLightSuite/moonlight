@@ -3,19 +3,21 @@ plugins {
     id 'antlr'
 }
 
+version 'unspecified'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation project(":core")
+    compile project(":core")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     antlr "org.antlr:antlr4:4.8" // use ANTLR version 4
 
-    implementation group: 'org.antlr', name: 'ST4', version: '4.3'
+    compile group: 'org.antlr', name: 'ST4', version: '4.3'
 
 }
 

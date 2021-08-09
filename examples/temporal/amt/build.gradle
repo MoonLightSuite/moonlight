@@ -1,3 +1,3 @@
 dependencies {
-    implementation fileTree(dir: "lib", include: "gamt.jar")
+    compile fileTree(dir: "lib", include: "gamt.jar")
 }

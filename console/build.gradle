@@ -15,18 +15,15 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
-}
-
-test {
-    // Use junit platform for unit tests
-    useJUnitPlatform()
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
 }
 
 dependencies {
-    implementation project(":core")
-    implementation project(":api")
-    implementation project(":moonlightscript")
+    compile project(":core")
+    compile project(":api")
+    compile project(":moonlightscript")
 }
 
 application {
@@ -35,14 +32,6 @@ application {
     applicationName = "mlconsole"
 }
 
-repositories {
-    mavenCentral()
-}
-
-// disabled as not allowed in gradle 7+:
-//      - compile task is not allowed anymore
-//      - copying task require duplicatesStrategy
-/*
 jar {
     archiveFileName = 'moonlight.jar'
     manifest {
@@ -52,6 +41,11 @@ jar {
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
 }
 
 task distribution(type: Copy, dependsOn:[jar, installDist]) {
@@ -82,7 +76,7 @@ task release(type: Copy, dependsOn: distribution) {
     from rootProject.file("distribution_files/")
     into rootProject.file("distribution/")
 }
-*/
+
 //task distributionZip(type: Zip, dependsOn: distribution) {
 //    archiveFileName = "moonlight.zip"
 //    destinationDirectory = file("$rootDir/distribution/")

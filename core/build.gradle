@@ -1,10 +1,6 @@
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
-}
-
-repositories {
-    mavenCentral()
 }
 
 jar {
