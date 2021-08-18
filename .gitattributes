@@ -1,0 +1,2 @@
+# Exclude jupyter notebook files from language stats
+*.ipynb linguist-vendored
