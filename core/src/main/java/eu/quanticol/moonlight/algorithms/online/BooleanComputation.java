@@ -105,7 +105,7 @@ public class BooleanComputation {
     }
 
     /**
-     * // TODO: this should be different for left and right operands
+     * TODO: this should be different for left and right operands
      * @param c1 input signal of first argument
      * @param us updates of second argument
      * @param op operation to be performed (e.g. and/or)

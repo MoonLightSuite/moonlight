@@ -27,11 +27,11 @@ import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
@@ -41,10 +41,9 @@ import java.util.function.IntFunction;
 public class ReachOperator
         <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
 {
-
-    /*private final LocationService<T, S> locSvc;
+    private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<Function<Integer, R>,
+    /*private final BiFunction<Function<Integer, R>,
             DistanceStructure<S, ?>,
             List<R>> op;*/
 
@@ -52,23 +51,24 @@ public class ReachOperator
     Pair<T, SpatialModel<S>> currSpace;
     Pair<T, SpatialModel<S>> nextSpace;
 
-    public ReachOperator(LocationService<T, S> locationService,
-                              Function<SpatialModel<S>,
-                                      DistanceStructure<S, ?>> distance,
-                              BiFunction<Function<Integer, R>,
-                                      DistanceStructure<S, ?>,
-                                      List<R>> operator)
+    public ReachOperator(@NotNull LocationService<T, S> locationService,
+                         Function<SpatialModel<S>,
+                                  DistanceStructure<S, ?>> distance,
+                         SignalDomain<R> domain,
+                         SpatialTemporalSignal<R> s1,
+                         SpatialTemporalSignal<R> s2)
     {
-        if (locationService.isEmpty())
-            throw new UnsupportedOperationException("The location Service " +
-                    "must not be empty!");
-
-        //locSvc = locationService;
-       // dist = distance;
-        //op = operator;
+        checkLocationServiceValidity(locationService);
+        locSvc = locationService;
+        dist = distance;
     }
 
-    private ReachOperator() {} // Hidden constructor
+    private void checkLocationServiceValidity(LocationService<T, S> locSvc)
+    {
+        if (locSvc.isEmpty())
+            throw new UnsupportedOperationException("The location Service " +
+                    "must not be empty!");
+    }
 
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,

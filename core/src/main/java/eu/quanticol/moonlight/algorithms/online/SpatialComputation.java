@@ -71,21 +71,15 @@ public class SpatialComputation
 
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u)
     {
-
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
-
         T t = u.getStart();
         T tNext = u.getEnd();
-        IntFunction<R> spatialSignal = i -> u.getValue().get(i);
-
         tNext = seekSpace(t, tNext, spaceItr);
 
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
-
-        f.checkDistance(0, 0); //TODO: Done to force pre-computation of distance matrix
-
-        return computeOp(t, tNext, f, spatialSignal, spaceItr);
+        final List<List<Update<T, List<R>>>> result = new ArrayList<>();
+        doCompute(t, tNext, u.getValue(),
+                    (a, b, c, d, e) -> result.add(computeOp(a, b, c, d, e)));
+        return result.get(0);
     }
 
     private List<Update<T, List<R>>> computeOp(
@@ -117,22 +111,41 @@ public class SpatialComputation
     public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups)
     {
         TimeChain<T, List<R>> results =  new TimeChain<>(ups.getEnd());
+        final int LAST = ups.size() - 1;
 
         for(int i = 0; i < ups.size(); i++) {
-            Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
             SegmentInterface<T, List<R>> up = ups.get(i);
             T t = up.getStart();
-            T tNext = i != ups.size() - 1 ? ups.get(i + 1).getStart() : ups.getEnd();
-            IntFunction<R> spatialSignal = j -> up.getValue().get(j);
-            tNext = seekSpace(t, tNext, spaceItr);
-            SpatialModel<S> sm = currSpace.getSecond();
-            DistanceStructure<S, ?> f = dist.apply(sm);
-            f.checkDistance(0, 0); //TODO: Done to force pre-computation of distance matrix
-            computeOpChain(t, tNext, f, spatialSignal, spaceItr)
-                    .forEach(results::add);
+            T tNext = i != LAST ? ups.get(i + 1).getStart() : ups.getEnd();
+
+            doCompute(t, tNext, up.getValue(),
+                        (a,b,c,d,e) ->
+                            computeOpChain(a, b, c, d, e).forEach(results::add)
+                    );
         }
 
         return results;
+    }
+
+    private void doCompute(T t, T tNext, List<R> value,
+                    FiveParameterFunction<T, T, DistanceStructure<S, ?>,
+                    IntFunction<R>,
+                    Iterator<Pair<T, SpatialModel<S>>>> op)
+    {
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
+        IntFunction<R> spatialSignal = value::get;
+        tNext = seekSpace(t, tNext, spaceItr);
+        SpatialModel<S> sm = currSpace.getSecond();
+        DistanceStructure<S, ?> f = dist.apply(sm);
+        f.checkDistance(0, 0); //TODO: Done to force pre-computation
+                                    // of distance matrix
+
+        op.accept(t, tNext, f, spatialSignal, spaceItr);
+    }
+
+    @FunctionalInterface
+    public interface FiveParameterFunction<T, U, V, W, X> {
+        void accept(T t, U u, V v, W w, X x);
     }
 
     private TimeChain<T, List<R>> computeOpChain(
@@ -149,11 +162,15 @@ public class SpatialComputation
     {
         currSpace = spaceItr.next();
         getNext(spaceItr);
-        while(nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0) {
+        while(nextSpaceBeforeNextStart(start)) {
             currSpace = nextSpace;
             nextSpace = getNext(spaceItr);
         }
         return fromNextSpaceOrCurrent(end);
+    }
+
+    private boolean nextSpaceBeforeNextStart(T start) {
+        return nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0;
     }
 
     private T fromNextSpaceOrCurrent(T fallback) {

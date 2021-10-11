@@ -74,6 +74,7 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
             int time = t;
             add(t, i -> setSignal(i, time));
         }
+        this.endAt(length);
         //System.out.println("Completed Signal Initialization");
 
         data.clear();
