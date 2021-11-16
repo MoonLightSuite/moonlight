@@ -1,6 +1,6 @@
 dependencies {
-    compile project(":core")
-    compile project(":moonlightscript")
+    implementation project(":core")
+    implementation project(":moonlightscript")
 }
 jar {
     archiveFileName= 'moonlightAPI.jar'

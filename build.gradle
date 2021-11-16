@@ -1,3 +1,8 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
 subprojects {
     apply plugin: "maven-publish"
     ext.xtextVersion = '2.18.0.M3'
@@ -18,7 +23,7 @@ subprojects {
     compileTestJava.options.encoding = "UTF-8"
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     test {
@@ -32,13 +37,13 @@ subprojects {
 
     clean.doFirst {
         delete "${rootDir}/output/"
-        println "deleating jars in  ${rootDir}/output/"
+        println "deleting jars in  ${rootDir}/output/"
         delete "${rootDir}/distribution/"
-        println "deleating jars in  ${rootDir}/distribution/"
+        println "deleting jars in  ${rootDir}/distribution/"
         delete "${rootDir}/distribution_files/java/lib/moonlight.jar"
-        println "deleating ${rootDir}/distribution_files/java/lib/moonlight.jar"
+        println "deleting ${rootDir}/distribution_files/java/lib/moonlight.jar"
         delete "${rootDir}/distribution_files/matlab/moonlight/jar/"
-        println "deleating jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/"
+        println "deleting jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/"
         delete "${rootDir}/distribution_files/python/jar/"
         println "${rootDir}/distribution_files/python/jar/"
 
@@ -74,6 +79,14 @@ subprojects {
 
     jacocoTestReport {
         reports {
+            /*
+                In gradle 8 this must be changed to:
+            */
+               // xml.required
+               // html.required
+            /*
+                ... but it seems Codecov doesn't support it yet!
+             */
             xml.enabled true
             html.enabled false
         }

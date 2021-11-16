@@ -1,2 +1,2 @@
-# Exclude jupyter notebook files from language stats
+# Exclude jupyter notebook files from language stats on github.com
 *.ipynb linguist-vendored

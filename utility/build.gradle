@@ -1,6 +1,7 @@
 dependencies {
-    compile project(":core")
-    //compile fileTree(dir: "lib", include: "engine.jar")
-    compile fileTree(dir: "lib", include: "engine2019.jar")
-    compile group: 'org.n52.matlab', name: 'matlab-control', version: '5.0.0'
+    implementation project(":core")
+    //implementation fileTree(dir: "lib", include: "engine.jar")
+    //implementation fileTree(dir: "lib", include: "engine2019.jar")
+    implementation fileTree(dir: "lib", include: "engine2021.jar")
+    implementation group: 'org.n52.matlab', name: 'matlab-control', version: '5.0.0'
 }
