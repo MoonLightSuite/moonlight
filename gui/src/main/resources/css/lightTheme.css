@@ -1,0 +1,19 @@
+.dialog {
+    -fx-background-color: #cccccc;
+}
+.dialog > *.label.content{
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.dialog:header *.header-panel{
+    -fx-background-color: #b9b9b9;
+}
+.dialog:header *.header-panel *.label{
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+    -fx-fill: #cbcbcb;
+}
+FontAwesomeIcon:hover {
+    -fx-cursor: hand;
+}
+

@@ -1,0 +1,38 @@
+graph {
+    fill-color: #3f474f;
+}
+node {
+    size: 20px;
+    stroke-mode: none;
+    fill-color: #629ea9, #4e75a8;
+    fill-mode: gradient-diagonal1;
+    text-alignment: center;
+    text-color: white;
+    text-size: 10;
+}
+node:clicked {
+    stroke-mode: plain;
+    stroke-color: white;
+    fill-color: green, lightgreen;
+    fill-mode: gradient-diagonal1;
+}
+edge {
+    text-alignment: center;
+    text-background-mode: plain;
+    text-background-color: white;
+    text-size: 10;
+    /*text-color: white;*/
+    fill-color: white;
+}
+
+edge.multiple {
+    text-offset: 10px, 10px;
+}
+
+node.filtered{
+    fill-color: #e382bf;
+    stroke-mode: plain;
+    stroke-color: rgb(213, 59, 156);
+}
+
+

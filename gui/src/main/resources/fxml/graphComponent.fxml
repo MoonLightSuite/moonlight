@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.SubScene?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="graphComponent" prefHeight="551.0" prefWidth="458.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.graph.JavaFXGraphController">
+   <children>
+      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Graph Visualization" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <font>
+            <Font size="18.0" fx:id="x1" />
+         </font>
+      </Label>
+      <TabPane layoutY="44.0" onMouseExited="#deselectNodeTable" prefHeight="531.0" prefWidth="446.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
+         <tabs>
+            <Tab text="Plotting">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <SplitPane dividerPositions="0.63" layoutY="-4.0" orientation="VERTICAL" prefHeight="482.0" prefWidth="458.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <items>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <Label fx:id="graphType" layoutX="136.0" layoutY="-31.0" prefHeight="27.0" prefWidth="171.0" textAlignment="RIGHT" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-31.0">
+                                       <font>
+                                          <Font name="System Italic" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <BorderPane fx:id="borderPane" minHeight="0.0" minWidth="0.0" styleClass=".borderpane" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <center>
+                                          <SubScene fx:id="scene" height="266.0" visible="false" width="457.0" BorderPane.alignment="CENTER">
+                                            <root>
+                                              <Region />
+                                            </root>
+                                          </SubScene>
+                                       </center></BorderPane>
+                                    <Slider fx:id="slider" blockIncrement="0.1" disable="true" layoutY="264.0" majorTickUnit="1.0" max="50.0" maxHeight="40.0" minHeight="40.0" minorTickCount="0" prefHeight="40.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="148.0" prefWidth="445.0">
+                                 <children>
+                                    <BorderPane onMouseExited="#deselectFiltersTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <center>
+                                          <fx:include fx:id="filtersComponent" source="filtersComponent.fxml" />
+                                       </center>
+                                       <bottom>
+                                          <AnchorPane maxHeight="20.0" minHeight="0.0" prefHeight="20.0" style="-fx-border-color: lightgrey;">
+                                             <children>
+                                                <Label fx:id="infoNode" maxHeight="20.0" minHeight="0.0" prefHeight="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </bottom>
+                                    </BorderPane>
+                                 </children>
+                              </AnchorPane>
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Nodes ">
+               <content>
+                  <fx:include fx:id="nodeTableComponent" source="nodeTableComponent.fxml" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
