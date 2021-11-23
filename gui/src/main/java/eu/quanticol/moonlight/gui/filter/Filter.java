@@ -11,3 +11,4 @@ public interface Filter {
 
     double getValue();
 }
+

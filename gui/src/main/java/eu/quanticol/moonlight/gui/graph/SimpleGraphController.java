@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class SimpleGraphController implements GraphController {
+public class SimpleGraphController implements GraphController{
 
     private static SimpleGraphController instance = null;
     private List<TimeGraph> graphList;
@@ -86,49 +86,22 @@ public class SimpleGraphController implements GraphController {
         }
     }
 
-
-//    public void createStaticNodesVector(String line) {
-//
-//
-//
-//
-//        int node = 0;
-//        ArrayList<ArrayList<String>> nodes = new ArrayList<>();
-//        String[] elements = line.split(",");
-//        double time = Double.parseDouble(elements[0]);
-//        int index = 1;
-//        while (index < elements.length) {
-//            ArrayList<String> vector = new ArrayList<>();
-//            for (int i = 1; i <= 5; i++) {
-//                vector.add(elements[index]);
-//                index++;
+//    public void getNodesValues(String line) {
+//        String[] lineToArray = line.split(", ");
+//        int index = 0;
+//        for (int node = 0; node < this.staticGraph.getNodeCount(); node++) {
+//            if (index < lineToArray.length) {
+//                ArrayList<String> attributesOneNode = new ArrayList<>();
+//                for (int i = 0; i <= 2; i++) {
+//                    attributesOneNode.add(lineToArray[index]);
+//                    index++;
+//                }
+//                Node n = this.staticGraph.getNode(String.valueOf(node));
+//                n.setAttribute("Attributes", attributesOneNode);
+//                addPositionsStaticGraph(n, attributesOneNode);
 //            }
-//            Optional<TimeGraph> t = graphList.stream().filter(graph -> graph.getGraphFromTime(time) != null).findFirst();
-//            if (t.isPresent()) {
-//                t.get().getGraph().getNode(node).setAttribute("time" + time, vector);
-//            }
-//            node++;
-//            nodes.add(vector);
 //        }
-//        addPositionsDynamicGraph(elements, nodes);
 //    }
-
-    public void getNodesValues(String line) {
-        String[] lineToArray = line.split(", ");
-        int index = 0;
-        for (int node = 0; node < this.staticGraph.getNodeCount(); node++) {
-            if (index < lineToArray.length) {
-                ArrayList<String> attributesOneNode = new ArrayList<>();
-                for (int i = 0; i <= 2; i++) {
-                    attributesOneNode.add(lineToArray[index]);
-                    index++;
-                }
-                Node n = this.staticGraph.getNode(String.valueOf(node));
-                n.setAttribute("Attributes", attributesOneNode);
-                addPositionsStaticGraph(n, attributesOneNode);
-            }
-        }
-    }
 
     private void addPositionsStaticGraph(Node node, ArrayList<String> elements) {
         node.setAttribute("x", elements.get(0));

@@ -8,16 +8,21 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.net.URL;
+import java.util.Objects;
+
 /**
  * Class for fxml load
  */
 public class JavaFxApp extends Application {
 
     public void start(Stage stage) throws Exception {
-        VBox root = FXMLLoader.load(getClass().getResource("/fxml/mainComponent.fxml"));
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        URL file = classLoader.getResource("fxml/mainComponent.fxml");
+        VBox root = FXMLLoader.load(Objects.requireNonNull(file));
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.getIcons().add(new Image("/images/ML.png"));
+        stage.getIcons().add(new Image((Objects.requireNonNull(classLoader.getResource("images/ML.png"))).toString()));
         stage.setTitle("MoonLightViewer");
         stage.initStyle(StageStyle.DECORATED);
         stage.show();

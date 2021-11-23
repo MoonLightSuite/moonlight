@@ -14,6 +14,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -51,10 +53,13 @@ public class JavaFXChartController {
     RadioButton linear = new RadioButton();
     @FXML
     RadioButton logarithmic = new RadioButton();
+    @FXML
+    Label attributes;
 
     private JavaFXMainController mainController;
 
-    private ChartBuilder cb = new SimpleChartBuilder();
+    private final ChartBuilder cb = new SimpleChartBuilder();
+
 
     public void injectMainController(JavaFXMainController mainController) {
         this.mainController = mainController;
@@ -68,46 +73,76 @@ public class JavaFXChartController {
     public void createDataFromGraphs(List<TimeGraph> timeGraph) {
         resetCharts();
         lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph));
-        showToolTip(lineChart);
         lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph));
-        showToolTip(lineChartLog);
-        linearSelected();
-        initLists();
+        init();
     }
+
 
     /**
      * Adds a toolTip to all nodes of series.
      *
-     * @param l  lineChart
+     * @param l lineChart
      */
-    private void showToolTip(LineChart<Number,Number> l){
+    private void showToolTip(LineChart<Number, Number> l) {
         for (XYChart.Series<Number, Number> s : l.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
                 Tooltip t = new Tooltip(s.getName());
                 t.setShowDelay(Duration.seconds(0));
-                Tooltip.install(d.getNode(),t);
+                Tooltip.install(d.getNode(), t);
             }
         }
     }
 
+
     public void createSeriesFromStaticGraph(String line) {
-        List<Series<Number, Number>> series = cb.getSeriesFromStaticGraph(line);
-        lineChart.getData().addAll(series);
-        lineChartLog.getData().addAll(series);
+        lineChart.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLinear(), true));
+        lineChartLog.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLog(), false));
     }
 
 
-    public void addDataToSeries(String line) {
+    public void addLineDataToSeries(String line) {
         String[] attributes = line.split(",");
         cb.addAttributes(attributes);
-        cb.addData(lineChart, attributes);
-        cb.addData(lineChartLog, attributes);
+        cb.addLineData(lineChart.getData().stream().toList(), attributes);
+        cb.addLineData(lineChartLog.getData().stream().toList(), attributes);
     }
 
 
-    public void init() {
+    private void init() {
         linearSelected();
         initLists();
+        showToolTip(lineChart);
+        showToolTip(lineChartLog);
+    }
+
+    public void initStatic() {
+        linearSelected();
+        initLists();
+        addListener(lineChart);
+        addListener(lineChartLog);
+        showToolTip(lineChart);
+        showToolTip(lineChartLog);
+    }
+
+    private void addListener(LineChart<Number, Number> chart) {
+        for (Series<Number, Number> s : chart.getData()) {
+            for (XYChart.Data<Number, Number> d : s.getData()) {
+                d.getNode().setOnMouseClicked(event -> {
+                    int id = Integer.parseInt(s.getName().substring(5));
+                    Double time = d.getXValue().doubleValue();
+                    String v = d.getYValue().toString();
+                    for (ArrayList<String> a : cb.getAttributes())
+                        if (Double.valueOf(a.get(0)).equals(time) && (a.get(id * 5 + 5).replaceAll("\\s+", "")).equals(v))
+                            attributes.setText("X: " + a.get(id * 5 + 1) + ", Y: " + a.get(id * 5 + 2) + ", direction: " + a.get(id * 5 + 3) + ", speed: " + a.get(id * 5 + 4) + ", v: " + a.get(id * 5 + 5));
+                });
+            }
+        }
+    }
+
+    @FXML
+    public void clearLabel(MouseEvent event) {
+        if (!event.getTarget().getClass().equals(StackPane.class))
+            attributes.setText(" ");
     }
 
     /**
@@ -220,12 +255,14 @@ public class JavaFXChartController {
         new Thread(() -> {
             try {
                 Thread.sleep(500);
-                lineChart.getData().forEach(series -> Platform.runLater(() -> {
-                    if (series.getName().equals(name)) {
-                        series.getNode().setVisible(!series.getNode().isVisible());
-                        series.getData().forEach(data -> data.getNode().setVisible(!data.getNode().isVisible()));
-                    }
-                }));
+                Platform.runLater(() -> {
+                    lineChart.getData().forEach(series -> {
+                        if (series.getName().equals(name)) {
+                            series.getNode().setVisible(!series.getNode().isVisible());
+                            series.getData().forEach(data -> data.getNode().setVisible(!data.getNode().isVisible()));
+                        }
+                    });
+                });
 //                Thread.sleep(500);
             } catch (InterruptedException e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -318,8 +355,4 @@ public class JavaFXChartController {
         variables.getSelectionModel().clearSelection();
     }
 
-
-    public void setDataForStaticGraph(String line) {
-
-    }
 }

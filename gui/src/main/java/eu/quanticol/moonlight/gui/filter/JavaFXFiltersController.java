@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
+import eu.quanticol.moonlight.gui.io.FiltersLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.io.JsonFiltersLoader;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,6 +18,7 @@ import org.graphstream.graph.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -46,8 +48,12 @@ public class JavaFXFiltersController {
     private JavaFXChartController chartController;
     private final ArrayList<Node> nodes = new ArrayList<>();
     private FiltersController filtersController;
-    private final JsonFiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
+    private final FiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
     private final ArrayList<FilterGroup> filterGroups = new ArrayList<>();
+
+    public TableView<Filter> getTableFilters() {
+        return tableFilters;
+    }
 
     public void injectGraphController(JavaFXMainController mainController, JavaFXGraphController graphController, JavaFXChartController chartController) {
         this.mainController = mainController ;
@@ -63,10 +69,6 @@ public class JavaFXFiltersController {
         attribute.getItems().forEach(menuItem -> menuItem.setOnAction(event -> attribute.setText(menuItem.getText())));
         operator.getItems().forEach(menuItem -> menuItem.setOnAction(event -> operator.setText(menuItem.getText())));
         filtersController = SimpleFiltersController.getInstance();
-    }
-
-    public TableView<Filter> getTableFilters(){
-        return tableFilters;
     }
 
     /**
@@ -111,8 +113,7 @@ public class JavaFXFiltersController {
                             setGraphic(null);
                         else {
                             setGraphic(btn);
-                            btn.setGraphic(new ImageView("images/remove.png"));
-                        }
+                            btn.setGraphic(new ImageView((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/remove.png"))).toString()));                        }
                     }
                 };
             }
@@ -205,7 +206,8 @@ public class JavaFXFiltersController {
             Optional<String> result = setDialog("Save filters in Json file");
             result.ifPresent(name -> {
                 try {
-                    jsonFiltersLoader.saveToJson(filters, filterGroups, name, mainController.getTheme());
+                    String filterInfo = jsonFiltersLoader.saveToJson(filters, filterGroups, name);
+                    d.info(filterInfo);
                 } catch (IOException e) {
                     d.error(e.getMessage());
                 }
@@ -219,6 +221,7 @@ public class JavaFXFiltersController {
      */
     @FXML
     private void openImportDialogInput() {
+        ArrayList<Filter> filters = new ArrayList<>();
         DialogBuilder d = new DialogBuilder(mainController.getTheme());
         if (graphController.getCsvRead()) {
             Optional<String> result = setDialog("Import filters from Json file");
@@ -226,14 +229,15 @@ public class JavaFXFiltersController {
                 try {
                     tableFilters.getItems().clear();
                     if (graphController.getCsvRead()) {
-                        if (jsonFiltersLoader.loadFromJson(name, tableFilters)) {
+                        if (jsonFiltersLoader.getFromJson(name, filters)) {
+                            tableFilters.getItems().addAll(filters);
                             setCellValueFactory();
                             tableFilters.getItems().forEach(this::checkFilter);
                         } else
                             d.warning("Filter not found.");
                     } else
                         d.warning("Insert attributes!");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     d.error(e.getMessage());
                 }
             });
@@ -262,7 +266,7 @@ public class JavaFXFiltersController {
      * @param filter {@link Filter} to add
      */
     private void addFilter(Filter filter) {
-        ObservableList<Filter> filters = tableFilters.getItems();
+        ArrayList<Filter> filters = new ArrayList<>(tableFilters.getItems());
         if (!filters.contains(filter)) {
             filtersController.validationFilter(filter,filters);
             tableFilters.getItems().add(filter);
@@ -279,9 +283,8 @@ public class JavaFXFiltersController {
      */
     private void checkFilter(Filter f) {
         chartController.deselectAllSeries();
-        for (TimeGraph g : graphController.getGraphList()) {
-            filtersController.checkFilter(f,tableFilters.getItems(),nodes,g,getTimes());
-        }
+        ArrayList<Filter> filters = new ArrayList<>(tableFilters.getItems());
+        graphController.getGraphList().forEach(g -> filtersController.checkFilter(f,filters,nodes,g,getTimes()));
         nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
     }
 }

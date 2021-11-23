@@ -98,7 +98,7 @@ public class SimpleMouseManager implements MouseManager {
     }
 
     private void mouseButtonPressOnElement(GraphicElement element,
-                                             MouseEvent event) {
+                                           MouseEvent event) {
         view.freezeElement(element, true);
         if (event.getButton() == MouseButton.SECONDARY) {
             element.setAttribute("ui.selected");
@@ -108,7 +108,7 @@ public class SimpleMouseManager implements MouseManager {
     }
 
     private void mouseButtonReleaseOffElement(GraphicElement element,
-                                                MouseEvent event) {
+                                              MouseEvent event) {
         view.freezeElement(element, false);
         if (event.getButton() != MouseButton.SECONDARY) {
             element.removeAttribute("ui.clicked");
@@ -245,4 +245,3 @@ public class SimpleMouseManager implements MouseManager {
     }
 
 }
-

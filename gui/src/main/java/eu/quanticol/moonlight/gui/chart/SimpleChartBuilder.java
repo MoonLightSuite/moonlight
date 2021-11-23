@@ -1,11 +1,8 @@
 package eu.quanticol.moonlight.gui.chart;
 
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import org.apache.commons.lang3.StringUtils;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,21 +14,37 @@ import java.util.Optional;
  */
 public class SimpleChartBuilder implements ChartBuilder {
 
-    private final List<List<String>> attributes = new ArrayList<>();
+    private final ArrayList<ArrayList<String>> attributes = new ArrayList<>();
 
-    public List<List<String>> getAttributes() {
+    public ArrayList<ArrayList<String>> getAttributes() {
         return attributes;
     }
 
     public void addAttributes(String[] attributes) {
-        this.attributes.add(Arrays.asList(attributes));
+        ArrayList<String> a = new ArrayList<>(Arrays.stream(attributes).toList());
+        this.attributes.add(a);
     }
 
-    private ArrayList<XYChart.Series<Number, Number>> list = new ArrayList<>();
+    private final ArrayList<XYChart.Series<Number, Number>> listLinear = new ArrayList<>();
 
+    private final ArrayList<XYChart.Series<Number, Number>> listLog = new ArrayList<>();
+
+    public ArrayList<XYChart.Series<Number, Number>> getListLinear() {
+        return listLinear;
+    }
+
+    public ArrayList<XYChart.Series<Number, Number>> getListLog() {
+        return listLog;
+    }
+
+
+    /**
+     * Clears the lists of series
+     */
     @Override
     public void clearList() {
-        list.clear();
+        listLinear.clear();
+        listLog.clear();
     }
 
 
@@ -58,26 +71,20 @@ public class SimpleChartBuilder implements ChartBuilder {
         return series;
     }
 
+    /**
+     * Creates series of a chart from a file of a static graph
+     */
     @Override
-    public ArrayList<XYChart.Series<Number, Number>> getSeriesFromStaticGraph(String line) {
+    public ArrayList<XYChart.Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<XYChart.Series<Number, Number>> list, boolean first) {
         int index = 5;
         int node = 0;
         XYChart.Series<Number, Number> series = null;
-        String[] attributes = line.split(",");
+        String[] attributes = line.split(", ");
         double time = Double.parseDouble(attributes[0]);
+        checkFirst(first, attributes);
         for (int i = 0; i < 5; i++) {
-            List<String> timeAttributes = Arrays.asList(attributes);
-            this.attributes.add(timeAttributes);
             int finalNode = node;
-            if (list.stream().noneMatch(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode))) {
-                series = new XYChart.Series<>();
-                series.setName("Node " + node);
-                list.add(series);
-            } else {
-                Optional<XYChart.Series<Number, Number>> series1 = list.stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
-                if (series1.isPresent())
-                    series = series1.get();
-            }
+            series = getSeries(list, node, series, finalNode);
             double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
             series.getData().add(new XYChart.Data<>(time, variable));
             node++;
@@ -87,45 +94,57 @@ public class SimpleChartBuilder implements ChartBuilder {
     }
 
 
+    /**
+     * Creates and returns a series if it doesn't exist or returns the existing series
+     *
+     */
+    private XYChart.Series<Number, Number> getSeries(ArrayList<XYChart.Series<Number, Number>> list, int node, XYChart.Series<Number, Number> series, int finalNode) {
+        if (list.stream().noneMatch(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode))) {
+            series = new XYChart.Series<>();
+            series.setName("Node " + node);
+            list.add(series);
+        } else {
+            Optional<XYChart.Series<Number, Number>> series1 = list.stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
+            if (series1.isPresent())
+                series = series1.get();
+        }
+        return series;
+    }
+
+    /**
+     * Checks if the attributes have already been added
+     *
+     */
+    private void checkFirst(boolean first, String[] attributes) {
+        if(first) {
+            ArrayList<String> timeAttributes = new ArrayList<>(Arrays.asList(attributes));
+            this.attributes.add(timeAttributes);
+        }
+    }
+
+
+    /**
+     * Adds data to the chart from an array of attributes
+     *
+     */
     @Override
-    public void addData(LineChart<Number, Number> lineChart, String[] attributes) {
+    public void addLineData(List<XYChart.Series<Number, Number>> series, String[] attributes) {
         int index = 5;
         int node = 0;
-        XYChart.Series<Number, Number> series = null;
+        XYChart.Series<Number, Number> numberSeries = null;
         double time = Double.parseDouble(attributes[0]);
         for (int i = 0; i < 5; i++) {
             int finalNode = node;
-            Optional<XYChart.Series<Number, Number>> series1 = lineChart.getData().stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
+            Optional<XYChart.Series<Number, Number>> series1 = series.stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
             if (series1.isPresent())
-                series = series1.get();
+                numberSeries = series1.get();
             double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
-            series.getData().add(new XYChart.Data<>(time, variable));
+            numberSeries.getData().add(new XYChart.Data<>(time, variable));
             node++;
             index += 5;
         }
     }
 
-//    @Override
-//    public List<XYChart.Series<Number, Number>> getSeriesFromNodes(Graph staticGraph) {
-//        List<XYChart.Series<Number, Number>> series = new ArrayList<>();
-//        int totSeries = staticGraph.getNodeCount();
-//        int node = 0;
-//        while (node < totSeries) {
-//            XYChart.Series<Number, Number> seriesX = new XYChart.Series<>();
-//            seriesX.setName("Node " + node);
-//            addData(seriesX, staticGraph.getNode(String.valueOf(node)));
-//            series.add(seriesX);
-//            node++;
-//        }
-//        return series;
-//    }
-//
-//    private void addData(XYChart.Series<Number, Number> series, Node node) {
-//        String attributes = node.getAttribute("Attributes").toString();
-//        String[] a = attributes.split(", ");
-//        double variable = Double.parseDouble(StringUtils.substringBefore(a[2], "]"));
-//        series.getData().add(new XYChart.Data<>(, variable));
-//    }
 
     /**
      * Add all data of a series

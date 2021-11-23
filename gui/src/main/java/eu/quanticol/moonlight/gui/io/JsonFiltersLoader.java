@@ -9,40 +9,47 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.scene.control.TableView;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
 
 /**
- * This class implements the {@link JsonLoader} interface and is responsible to save and import filters.
+ * This class implements the {@link FiltersLoader} interface and is responsible to save and import filters.
  */
-public class JsonFiltersLoader implements JsonLoader {
+public class JsonFiltersLoader implements FiltersLoader {
+
+    private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     /**
      * Saves filters in a Json file.
+     *
+     * @param filters       filters to save
+     * @param filterGroups  filterGroups already present
+     * @param name          name of filters to save
+     * @return              a string for dialog
      */
-    public void saveToJson(ArrayList<Filter> filters, ArrayList<FilterGroup> filterGroups, String name, String theme) throws IOException {
+    public String saveToJson(ArrayList<Filter> filters, ArrayList<FilterGroup> filterGroups, String name) throws IOException {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Filter.class, interfaceSerializer(SimpleFilter.class))
                 .registerTypeAdapter(FilterGroup.class, interfaceSerializer(SimpleFilterGroup.class))
                 .create();
-        File file = new File("src/main/resources/json/filters.json");
+        File file = new File((Objects.requireNonNull(classLoader.getResource("json/filters.json"))).getFile());
         if (file.length() != 0)
             readJsonFile(filterGroups,gson);
-        writeJsonFile(gson,filters,filterGroups,name,theme);
+        return writeJsonFile(gson,filters,filterGroups,name);
     }
 
     /**
      * Reads an arrayList of filters in the Json File.
      *
-     * @param gson gson instance
+     * @param filterGroups  filterGroups already present
+     * @param gson          gson instance
      */
     private void readJsonFile(ArrayList<FilterGroup> filterGroups, Gson gson) throws IOException {
         ArrayList<FilterGroup> fromJson = getListFromJson(gson);
@@ -53,13 +60,13 @@ public class JsonFiltersLoader implements JsonLoader {
     }
 
     /**
-     * Takes filters from Json file
+     * Takes filtersGroup from Json file
      *
      * @param gson gson instance
-     * @return     arrayList of filters
      */
     private ArrayList<FilterGroup> getListFromJson(Gson gson) throws IOException {
-        Reader reader = Files.newBufferedReader(Paths.get("src/main/resources/json/filters.json"));
+        File file = new File((Objects.requireNonNull(classLoader.getResource("json/filters.json"))).getFile());
+        Reader reader = new FileReader(file);
         Type filterListType = new TypeToken<ArrayList<FilterGroup>>() {}.getType();
         ArrayList<FilterGroup> fromJson = gson.fromJson(reader,filterListType);
         reader.close();
@@ -69,55 +76,65 @@ public class JsonFiltersLoader implements JsonLoader {
     /**
      * Writes filters in a Json file.
      *
-     * @param gson  gson instance
-     * @param filters filters to write
+     * @param gson         gson instance
+     * @param filters      filters to write
+     * @param filterGroups filterGroups already present
+     * @param name         name of filters to save
+     * @return             a string for dialog
      */
-    private void writeJsonFile(Gson gson, ArrayList<Filter> filters,ArrayList<FilterGroup> filterGroups, String name, String theme) throws IOException {
-        DialogBuilder d = new DialogBuilder(theme);
-        Writer writer = Files.newBufferedWriter(Paths.get("src/main/resources/json/filters.json"));
+    private String writeJsonFile(Gson gson, ArrayList<Filter> filters,ArrayList<FilterGroup> filterGroups, String name) throws IOException {
+        String checkGroup;
+        File file = new File((Objects.requireNonNull(classLoader.getResource("json/filters.json"))).getFile());
+        Writer writer = new FileWriter(file);
         FilterGroup filterGroup = new SimpleFilterGroup(name, filters);
         boolean filterGroupPresent = filterGroups.stream().anyMatch(f -> f.equals(filterGroup));
         boolean filtersPresent = filterGroups.stream().anyMatch(f -> f.getFilters().equals(filterGroup.getFilters()));
         boolean namePresent = filterGroups.stream().anyMatch(f -> f.getName().equals(name));
         if(!(filtersPresent || namePresent || filterGroupPresent)) {
             filterGroups.add(filterGroup);
-            d.info(name + " filter saved with success!");
+            checkGroup = name + " filter saved with success!";
         } else
-            checkFilterGroup(d,namePresent,filterGroupPresent);
+            checkGroup = checkFilterGroup(namePresent,filterGroupPresent);
         gson.toJson(filterGroups, writer);
         writer.close();
+        return checkGroup;
     }
 
     /**
      * Check the filterGroup when user save filters on file.
-     *
-     * @param d                    dialogBuilder
      * @param namePresent          boolean that say if the name of filters is already present
      * @param filterGroupPresent   boolean that say if the filterGroup is already present
+     * @return                     a string for dialog
      */
-    private void checkFilterGroup(DialogBuilder d, boolean namePresent, boolean filterGroupPresent){
+    private String checkFilterGroup(boolean namePresent, boolean filterGroupPresent){
+        String checkGroup;
         if(filterGroupPresent)
-            d.warning("Name and filters already present!");
+            checkGroup = "Name and filters already present!";
         else if(namePresent)
-            d.warning("Name already present!");
-        else d.warning("Filters already present!");
+            checkGroup ="Name already present!";
+        else
+            checkGroup ="Filters already present!";
+        return checkGroup;
     }
 
     /**
-     * Loads filters take from Json file on table.
+     * Takes the filtersGroup searched by the user from a Json file.
      *
+     * @param name      name of filters
+     * @param filters   list of filters
+     * @return  true if file contains filters, else false
      */
-    public boolean loadFromJson(String name, TableView<Filter> tableView) throws IOException {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Filter.class, interfaceSerializer(SimpleFilter.class))
-                    .registerTypeAdapter(FilterGroup.class, interfaceSerializer(SimpleFilterGroup.class))
-                    .create();
-            ArrayList<FilterGroup> fromJson = getListFromJson(gson);
-            if(fromJson != null){
-                Optional<FilterGroup> filterGroup = fromJson.stream().filter(f -> f.getName().equals(name)).findFirst();
-                filterGroup.ifPresent(group -> tableView.getItems().addAll(group.getFilters()));
-                return filterGroup.isPresent();
-            } else
-                throw new IOException("Filters not found");
+    public boolean getFromJson(String name, ArrayList<Filter> filters) throws IOException {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Filter.class, interfaceSerializer(SimpleFilter.class))
+                .registerTypeAdapter(FilterGroup.class, interfaceSerializer(SimpleFilterGroup.class))
+                .create();
+        ArrayList<FilterGroup> fromJson = getListFromJson(gson);
+        if(fromJson != null){
+            Optional<FilterGroup> filterGroup = fromJson.stream().filter(f -> f.getName().equals(name)).findFirst();
+            filterGroup.ifPresent(group -> filters.addAll(group.getFilters()));
+            return filterGroup.isPresent();
+        } else
+            throw new IOException("File is empty");
     }
 }

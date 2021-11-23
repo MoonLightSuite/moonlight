@@ -187,10 +187,6 @@ public class JavaFXGraphController {
 
     }
 
-//    private void disableAutoLayout() {
-//        viewers.forEach(Viewer::disableAutoLayout);
-//    }
-
     /**
      * Creates vectors for every node in a single instant
      *
@@ -199,10 +195,6 @@ public class JavaFXGraphController {
     private void createNodesVector(String line) {
         graphController.createNodesVector(line);
     }
-
-//    private void createStaticNodesVector(String line) {
-//        graphController.createStaticNodesVector(line);
-//    }
 
     private void createPositions(String line) {
         graphController.createPositions(line);
@@ -215,16 +207,14 @@ public class JavaFXGraphController {
             resetCharts();
             createSeriesFromStaticGraph(line);
             while (((line = br.readLine()) != null)) {
-                addDataToSeries(line);
-//            createStaticNodesVector(line);
+                addLineDataToSeries(line);
             }
-            chartController.init();
+            chartController.initStatic();
         }
-//        graphController.getNodesValues(br);
     }
 
-    private void addDataToSeries(String line) {
-        chartController.addDataToSeries(line);
+    private void addLineDataToSeries(String line) {
+        chartController.addLineDataToSeries(line);
     }
 
     private void createSeriesFromStaticGraph(String line) {
@@ -239,7 +229,6 @@ public class JavaFXGraphController {
             createNodesVector(line);
         }
         graphList = graphController.getGraphList();
-//        disableAutoLayout();
     }
 
     private void resetCharts() {
@@ -257,7 +246,7 @@ public class JavaFXGraphController {
             graphVisualization = graphController.createGraphFromFile(file);
             graphList = graphController.getGraphList();
             for (TimeGraph g : graphList) {
-                g.getGraph().setAttribute("ui.stylesheet", this.theme);
+                g.getGraph().setAttribute("ui.stylesheet", "url('" + this.theme + "')");
             }
             if (graphVisualization.equals(GraphType.STATIC)) {
                 slider.setDisable(true);
@@ -277,7 +266,8 @@ public class JavaFXGraphController {
     private void showStaticGraph(Graph staticGraph) {
         if (staticGraph.hasAttribute("ui.stylesheet"))
             staticGraph.removeAttribute("ui.stylesheet");
-        staticGraph.setAttribute("ui.stylesheet", this.theme);
+        staticGraph.setAttribute("ui.stylesheet", "url('" + this.theme + "')");
+        this.currentGraph = staticGraph;
         FxViewer v = new FxViewer(staticGraph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         v.addDefaultView(false, new FxGraphRenderer());
         if (this.csvRead)
@@ -364,7 +354,6 @@ public class JavaFXGraphController {
         for (TimeGraph t : graphList) {
             FxViewer viewer = new FxViewer(t.getGraph(), FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
             viewer.addView(String.valueOf(t.getTime()), new FxGraphRenderer());
-//            viewer.enableAutoLayout();
             viewers.add(viewer);
         }
     }
@@ -408,7 +397,7 @@ public class JavaFXGraphController {
         g.ifPresent(timeGraph -> currentGraph = g.get().getGraph());
         if (graph.hasAttribute("ui.stylesheet"))
             graph.removeAttribute("ui.stylesheet");
-        graph.setAttribute("ui.stylesheet", this.theme);
+        graph.setAttribute("ui.stylesheet", "url('" + this.theme + "')");
     }
 
     @FXML

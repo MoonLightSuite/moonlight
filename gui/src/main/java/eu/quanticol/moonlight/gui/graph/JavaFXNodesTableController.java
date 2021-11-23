@@ -29,7 +29,7 @@ public class JavaFXNodesTableController {
     public void initTable() {
         List<Integer> items = new ArrayList<>();
         for (int i = 0; i < graphController.getTotNodes(); i++) {
-                items.add(i);
+            items.add(i);
         }
         nodesTable.getItems().clear();
         for (int n : items) {

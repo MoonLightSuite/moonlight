@@ -17,8 +17,8 @@ subprojects {
     apply plugin: 'jacoco'
     apply from: rootDir.absolutePath + '/module.gradle'
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 16
+    targetCompatibility = 16
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 

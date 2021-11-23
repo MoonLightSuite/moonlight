@@ -20,7 +20,6 @@ public interface GraphController {
 
     void createPositions(String line);
 
-    void getNodesValues(String line);
-
     GraphType createGraphFromFile(File file) throws IOException;
 }
+
