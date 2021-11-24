@@ -70,7 +70,6 @@ public class JavaFXMainController {
      */
     private void loadTheme() {
         try {
-            JsonThemeLoader.getThemeFromJson();
             themeLoader = JsonThemeLoader.getThemeFromJson();
             initializeThemes();
         } catch (Exception e) {
