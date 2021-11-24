@@ -16,15 +16,16 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class JsonFiltersLoaderTest {
 
     FiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
-    static File file = new File((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("json/filters.json"))).getFile());
+    static String path = System.getProperty("user.home") + File.separator + "MoonLightConfig" + File.separator + "filters.json";
+    static File file = new File(path);
     static ArrayList<FilterGroup> filterGroups = new ArrayList<>();
     static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Filter.class, interfaceSerializer(SimpleFilter.class))
@@ -33,6 +34,9 @@ class JsonFiltersLoaderTest {
 
     @Test
     void saveToJsonTest() throws IOException {
+        file.getParentFile().mkdirs();
+        if(!file.exists())
+            file.createNewFile();
         ArrayList<Filter> filters = new ArrayList<>();
         ArrayList<FilterGroup> filterGroups = new ArrayList<>();
         Filter filter = new SimpleFilter("Value", "=",0.0);
@@ -52,6 +56,9 @@ class JsonFiltersLoaderTest {
 
     @Test
     void getFromJsonTest() throws IOException {
+        file.getParentFile().mkdirs();
+        if(!file.exists())
+            file.createNewFile();
         new FileWriter(file,false).close();
         ArrayList<Filter> filters = new ArrayList<>();
         ArrayList<FilterGroup> filterGroups = new ArrayList<>();
@@ -70,6 +77,9 @@ class JsonFiltersLoaderTest {
     @Test
     @BeforeAll
     static void resetFile() throws IOException {
+        file.getParentFile().mkdirs();
+        if(!file.exists())
+            file.createNewFile();
         Reader reader = new FileReader(file);
         Type filterListType = new TypeToken<ArrayList<FilterGroup>>() {}.getType();
         ArrayList<FilterGroup> filterGroups1 = gson.fromJson(reader,filterListType);
@@ -81,6 +91,9 @@ class JsonFiltersLoaderTest {
     @Test
     @AfterAll
     static void reset() throws IOException {
+        file.getParentFile().mkdirs();
+        if(!file.exists())
+            file.createNewFile();
         new FileWriter(file,false).close();
         Writer writer = new FileWriter(file);
         gson.toJson(filterGroups, writer);
