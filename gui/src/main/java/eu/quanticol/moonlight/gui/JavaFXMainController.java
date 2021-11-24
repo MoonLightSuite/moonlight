@@ -30,8 +30,6 @@ public class JavaFXMainController {
     VBox root;
     @FXML
     Menu menuCSV;
-//    @FXML
-//    HBox bar;
 
     private ThemeLoader themeLoader = new JsonThemeLoader();
 
@@ -74,7 +72,7 @@ public class JavaFXMainController {
             initializeThemes();
         } catch (Exception e) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-            DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.json")).toString());
+            DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning(e.getMessage());
         }
     }
@@ -143,52 +141,4 @@ public class JavaFXMainController {
             d.warning("Failed saving theme.");
         }
     }
-
-
-//    /**
-//     * Closes window and terminate the application run
-//     */
-//    @FXML
-//    private void close() {
-//        Platform.exit();
-//    }
-//
-//    /**
-//     * Maximize the size of window
-//     */
-//    @FXML
-//    private void maximize() {
-//        Stage stage = (Stage) root.getScene().getWindow();
-//        stage.setMaximized(!stage.isMaximized());
-//    }
-//
-//    /**
-//     * Minimize the window to icon
-//     */
-//    @FXML
-//    private void minimize() {
-//        Stage stage = (Stage) root.getScene().getWindow();
-//        stage.setIconified(true);
-//    }
-//
-//    private double x, y;
-//
-//    /**
-//     * Performs drag of window (on vbox)
-//     */
-//    @FXML
-//    private void dragged(MouseEvent event) {
-//        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//        stage.setX(event.getScreenX() - x);
-//        stage.setY(event.getScreenY() - y);
-//    }
-//
-//    /**
-//     * Gets positions of scene when mouse is pressed (on vbox)
-//     */
-//    @FXML
-//    private void pressed(MouseEvent event) {
-//        x = event.getSceneX();
-//        y = event.getSceneY();
-//    }
 }

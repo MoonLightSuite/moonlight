@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import eu.quanticol.moonlight.gui.util.LogarithmicAxis?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
+<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
    <children>
       <Label alignment="CENTER" layoutX="24.0" layoutY="24.0" style="&#10;" text="Chart Visualization" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <font>
@@ -27,7 +28,7 @@
          <items>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="374.0" prefWidth="401.0">
                <children>
-                  <LineChart fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                  <LineChart fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                      <xAxis>
                         <NumberAxis label="Time" side="BOTTOM" fx:id="xLAxis" />
                      </xAxis>
@@ -35,7 +36,7 @@
                         <LogarithmicAxis fx:id="yLAxis" prefHeight="407.0" prefWidth="21.0" side="LEFT" />
                      </yAxis>
                   </LineChart>
-                  <LineChart fx:id="lineChart" layoutX="10.0" layoutY="9.0" legendSide="RIGHT" legendVisible="false" styleClass="lineChart.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                  <LineChart fx:id="lineChart" layoutX="10.0" layoutY="9.0" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" styleClass="lineChart.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                      <xAxis>
                         <NumberAxis label="Time" side="BOTTOM" fx:id="xAxis" />
                      </xAxis>
@@ -43,6 +44,10 @@
                         <NumberAxis fx:id="yAxis" side="LEFT" />
                      </yAxis>
                   </LineChart>
+                  <Label fx:id="attributes" layoutX="109.0" layoutY="313.0" prefHeight="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding></Label>
                </children>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="445.0">

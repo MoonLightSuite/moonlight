@@ -11,6 +11,7 @@ import java.util.Objects;
 /**
  * Class to load the theme and save it
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class JsonThemeLoader implements ThemeLoader {
 
     private String generalTheme;
@@ -40,6 +41,9 @@ public class JsonThemeLoader implements ThemeLoader {
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "theme.json";
         File userFile = new File(path);
+        userFile.getParentFile().mkdirs();
+        if(!userFile.exists())
+            userFile.createNewFile();
         Writer writer = new FileWriter(userFile);
         gson.toJson(this, writer);
         writer.close();
@@ -48,7 +52,6 @@ public class JsonThemeLoader implements ThemeLoader {
     /**
      * Gets the theme from a json file
      *
-     * @return
      */
     public static ThemeLoader getThemeFromJson() throws IOException, URISyntaxException {
         Gson gson = new Gson();
@@ -56,6 +59,7 @@ public class JsonThemeLoader implements ThemeLoader {
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "theme.json";
         File userFile = new File(path);
+        userFile.getParentFile().mkdirs();
         if (!userFile.exists()) {
             if (userFile.createNewFile())
                 fromJson = initializeFile();
@@ -80,8 +84,4 @@ public class JsonThemeLoader implements ThemeLoader {
         fromJson.saveToJson();
         return fromJson;
     }
-
-
 }
-
-
