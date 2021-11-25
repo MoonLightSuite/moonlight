@@ -76,6 +76,10 @@ public class SimpleGraphController implements GraphController{
         addPositionsDynamicGraph(elements, nodes);
     }
 
+    /**
+     * Sets positions of nodes
+     *
+     */
     public void createPositions(String line) {
         String[] array = line.split(",");
         int index = 1;
@@ -103,10 +107,6 @@ public class SimpleGraphController implements GraphController{
 //        }
 //    }
 
-    private void addPositionsStaticGraph(Node node, ArrayList<String> elements) {
-        node.setAttribute("x", elements.get(0));
-        node.setAttribute("y", elements.get(1));
-    }
 
     /**
      * Gets positions from the .csv file and adds them to the node coordinates

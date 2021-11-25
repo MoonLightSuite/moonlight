@@ -1,10 +1,10 @@
 package eu.quanticol.moonlight.gui.chart;
 
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import org.graphstream.graph.Graph;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +12,8 @@ import java.util.List;
  * Interface for a builder of charts from a graph
  */
 public interface ChartBuilder {
+
+    ArrayList<XYChart.Series<Number, Number>> createSeriesForConstantChart(File file) throws IOException;
 
     /**
      * Create series of a chart from nodes in a graph

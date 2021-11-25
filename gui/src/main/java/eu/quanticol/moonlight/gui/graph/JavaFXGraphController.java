@@ -23,10 +23,7 @@ import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.Viewer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +72,7 @@ public class JavaFXGraphController {
     public List<TimeGraph> getGraphList() {
         return graphList;
     }
+
 
     public void setTheme(String theme) {
         this.theme = theme;
@@ -147,6 +145,40 @@ public class JavaFXGraphController {
     }
 
     /**
+     * Opens explorer with only .csv files
+     */
+    public void openBooleanCsvExplorer() {
+        chartController.reset();
+        File file = open("CSV Files", "*.csv");
+        if (file != null) {
+            try {
+                readBooleanCSV(file);
+            } catch (Exception e) {
+                DialogBuilder d = new DialogBuilder(mainController.getTheme());
+                e.printStackTrace();
+                d.error("Failed to load chart data.");
+            }
+        } else {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.info("No file chosen.");
+        }
+    }
+
+    private void readBooleanCSV(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (graphVisualization.equals(GraphType.STATIC))
+            graphController.createPositions(line);
+            if (graphVisualization.equals(GraphType.DYNAMIC))
+                graphController.createNodesVector(line);
+        }
+        chartController.initConstantChart(file);
+        this.csvRead =true;
+}
+
+
+    /**
      * Reset all lists and info
      */
     private void resetAll() {
@@ -196,10 +228,16 @@ public class JavaFXGraphController {
         graphController.createNodesVector(line);
     }
 
+    /**
+     * Sets positions of nodes
+     */
     private void createPositions(String line) {
         graphController.createPositions(line);
     }
 
+    /**
+     * Reads attributes of nodes of a static graph from a file and creates positions and charts
+     */
     private void getStaticAttributesFromCsv(BufferedReader br) throws IOException {
         String line = br.readLine();
         if (line != null) {
@@ -213,15 +251,23 @@ public class JavaFXGraphController {
         }
     }
 
+    /**
+     * For each line of a file adds data to the charts
+     */
     private void addLineDataToSeries(String line) {
         chartController.addLineDataToSeries(line);
     }
 
+    /**
+     * Creates the series of charts corresponding to nodes of a static graph
+     */
     private void createSeriesFromStaticGraph(String line) {
         chartController.createSeriesFromStaticGraph(line);
     }
 
-
+    /**
+     * Gets attributes of nodes of a dynamic graph from a file
+     */
     private void getDynamicAttributesFromCsv(BufferedReader br) throws IOException {
         graphController.setGraphList(graphList);
         String line;
@@ -263,6 +309,9 @@ public class JavaFXGraphController {
         }
     }
 
+    /**
+     * Shows the static graph
+     */
     private void showStaticGraph(Graph staticGraph) {
         if (staticGraph.hasAttribute("ui.stylesheet"))
             staticGraph.removeAttribute("ui.stylesheet");

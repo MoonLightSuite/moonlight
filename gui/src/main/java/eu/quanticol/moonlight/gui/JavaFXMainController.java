@@ -101,6 +101,12 @@ public class JavaFXMainController {
         graphComponentController.openCSVExplorer();
     }
 
+
+    @FXML
+    private void openBooleanCsvExplorer() {
+        graphComponentController.openBooleanCsvExplorer();
+    }
+
     /**
      * Open the explorer to choose a .tra file
      */

@@ -48,6 +48,14 @@
                      <padding>
                         <Insets left="10.0" right="10.0" />
                      </padding></Label>
+                  <LineChart fx:id="constantChart" legendSide="RIGHT" legendVisible="false" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                    <xAxis>
+                      <NumberAxis side="BOTTOM" fx:id="xCAxis" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="yCAxis" side="LEFT" />
+                    </yAxis>
+                  </LineChart>
                </children>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="445.0">

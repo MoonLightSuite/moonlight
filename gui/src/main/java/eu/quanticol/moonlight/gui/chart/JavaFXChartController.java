@@ -18,6 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
@@ -36,11 +38,17 @@ public class JavaFXChartController {
     @FXML
     LogarithmicAxis yLAxis = new LogarithmicAxis();
     @FXML
+    NumberAxis yCAxis = new NumberAxis();
+    @FXML
+    NumberAxis xCAxis = new NumberAxis();
+    @FXML
     ListView<CheckBox> list;
     @FXML
     LineChart<Number, Number> lineChartLog = new LineChart<>(xLAxis, yLAxis);
     @FXML
     LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+    @FXML
+    LineChart<Number, Number> constantChart = new LineChart<>(xCAxis, yCAxis);
     @FXML
     TableView<Series<Number, Number>> variables;
     @FXML
@@ -93,13 +101,18 @@ public class JavaFXChartController {
         }
     }
 
-
+    /**
+     * Creates series from attributes in a file of a static graph
+     */
     public void createSeriesFromStaticGraph(String line) {
         lineChart.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLinear(), true));
         lineChartLog.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLog(), false));
     }
 
 
+    /**
+     * For a line of a file with attributes, add data to the charts
+     */
     public void addLineDataToSeries(String line) {
         String[] attributes = line.split(",");
         cb.addAttributes(attributes);
@@ -124,6 +137,9 @@ public class JavaFXChartController {
         showToolTip(lineChartLog);
     }
 
+    /**
+     * Writes on a label the attributes of a node clicked in the charts
+     */
     private void addListener(LineChart<Number, Number> chart) {
         for (Series<Number, Number> s : chart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
@@ -152,25 +168,33 @@ public class JavaFXChartController {
     public void initialize() {
         lineChartLog.setVisible(false);
         lineChartLog.setAnimated(false);
+        constantChart.setVisible(false);
+        constantChart.setAnimated(false);
         lineChart.setAnimated(false);
     }
 
     @FXML
     private void logarithmicSelected() {
         lineChart.setVisible(false);
+        constantChart.setVisible(false);
         lineChartLog.setVisible(true);
         linear.setSelected(false);
         logarithmic.requestFocus();
         logarithmic.setSelected(true);
+        linear.setVisible(true);
+        logarithmic.setVisible(true);
     }
 
     @FXML
     private void linearSelected() {
         lineChartLog.setVisible(false);
+        constantChart.setVisible(false);
         lineChart.setVisible(true);
         linear.setSelected(true);
         linear.requestFocus();
         logarithmic.setSelected(false);
+        linear.setVisible(true);
+        logarithmic.setVisible(true);
     }
 
     private void initLists() {
@@ -183,7 +207,14 @@ public class JavaFXChartController {
      */
     private void initVariablesList() {
         List<Series<Number, Number>> items = new ArrayList<>();
-        lineChart.getData().forEach(e -> {
+        if (lineChart.isVisible() || lineChartLog.isVisible())
+            initList(items, lineChart);
+        else initList(items, constantChart);
+        setMinMaxValueFactory();
+    }
+
+    private void initList(List<Series<Number, Number>> items, LineChart<Number, Number> chart) {
+        chart.getData().forEach(e -> {
             if (e != null)
                 items.add(e);
         });
@@ -191,14 +222,15 @@ public class JavaFXChartController {
         for (Series<Number, Number> m : items) {
             variables.getItems().add(m);
         }
-        setMinMaxValueFactory();
     }
 
     public void reset() {
         this.lineChartLog.getData().clear();
         this.lineChart.getData().clear();
+        this.constantChart.getData().clear();
         this.list.getItems().clear();
         this.variables.getItems().clear();
+        variables.setDisable(false);
     }
 
     public void resetCharts() {
@@ -222,7 +254,16 @@ public class JavaFXChartController {
         if (list != null && !list.getItems().isEmpty())
             list.getItems().clear();
         final ObservableList<CheckBox> variables = FXCollections.observableArrayList();
-        for (Series<Number, Number> series : lineChart.getData()) {
+        if (lineChart.isVisible() || lineChartLog.isVisible())
+            checkBoxInit(variables, lineChart);
+        else if (constantChart.isVisible())
+            checkBoxInit(variables, constantChart);
+        if (!variables.isEmpty())
+            list.getItems().addAll(variables);
+    }
+
+    private void checkBoxInit(ObservableList<CheckBox> variables, LineChart<Number, Number> chart) {
+        for (Series<Number, Number> series : chart.getData()) {
             CheckBox ck = new CheckBox(series.getName());
             ck.setSelected(true);
             ck.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -231,8 +272,6 @@ public class JavaFXChartController {
             });
             variables.add(ck);
         }
-        if (!variables.isEmpty())
-            list.getItems().addAll(variables);
     }
 
     /**
@@ -241,8 +280,11 @@ public class JavaFXChartController {
      * @param name name of the series
      */
     private void changeVisibility(String name) {
-        changeSingleChartVisibility(name, lineChart);
-        changeSingleChartVisibility(name, lineChartLog);
+        if (lineChart.isVisible() || lineChartLog.isVisible()) {
+            changeSingleChartVisibility(name, lineChart);
+            changeSingleChartVisibility(name, lineChartLog);
+        } else
+            changeSingleChartVisibility(name, constantChart);
     }
 
     /**
@@ -259,7 +301,10 @@ public class JavaFXChartController {
                     lineChart.getData().forEach(series -> {
                         if (series.getName().equals(name)) {
                             series.getNode().setVisible(!series.getNode().isVisible());
-                            series.getData().forEach(data -> data.getNode().setVisible(!data.getNode().isVisible()));
+                            series.getData().forEach(data -> {
+                                if (data.getNode() != null)
+                                    data.getNode().setVisible(!data.getNode().isVisible());
+                            });
                         }
                     });
                 });
@@ -354,5 +399,23 @@ public class JavaFXChartController {
     private void deselectSeriesTable() {
         variables.getSelectionModel().clearSelection();
     }
+
+
+    public void initConstantChart(File file) throws IOException {
+        resetCharts();
+        deselectInconstantCharts();
+        constantChart.getData().addAll(cb.createSeriesForConstantChart(file));
+        initLists();
+        showToolTip(constantChart);
+    }
+
+    private void deselectInconstantCharts() {
+        lineChart.setVisible(false);
+        lineChartLog.setVisible(false);
+        linear.setVisible(false);
+        logarithmic.setVisible(false);
+        constantChart.setVisible(true);
+    }
+
 
 }

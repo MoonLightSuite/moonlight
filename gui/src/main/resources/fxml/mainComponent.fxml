@@ -38,7 +38,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/lightTheme.css" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXMainController">
+<VBox fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/lightTheme.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXMainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -49,7 +49,8 @@
         </Menu>
             <Menu fx:id="menuCSV" disable="true" mnemonicParsing="false" text="Load attributes">
                <items>
-            <MenuItem mnemonicParsing="false" onAction="#openCsvExplorer" text="Open.." />
+            <MenuItem mnemonicParsing="false" onAction="#openCsvExplorer" text="Open piecewise linear" />
+                  <MenuItem mnemonicParsing="false" onAction="#openBooleanCsvExplorer" text="Open constant stepwise" />
                </items></Menu>
             <Menu mnemonicParsing="false" text="Appearance">
               <items>
