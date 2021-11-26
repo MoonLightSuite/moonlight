@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleChartBuilderTest {
 
-
     @Test
     void getSeriesFromNodesTest() {
         Graph graph = new SingleGraph("0");

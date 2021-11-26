@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
+<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
    <children>
       <Label alignment="CENTER" layoutX="24.0" layoutY="24.0" style="&#10;" text="Chart Visualization" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <font>

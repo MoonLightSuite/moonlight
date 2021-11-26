@@ -82,6 +82,18 @@ public class JavaFXFiltersController {
     }
 
     /**
+     * Checks if the value entered by the user contains only numbers.
+     *
+     * @return   string of value
+     */
+    public String getValue(){
+        if(text.getText().matches("[0-9]+"))
+            return text.getText();
+        else
+            throw new IllegalArgumentException("Value must contains only numbers.");
+    }
+
+    /**
      * Matches the {@link Filter} fields with the columns of the table.
      */
     private void setCellValueFactory() {
@@ -179,7 +191,7 @@ public class JavaFXFiltersController {
         try {
             if (graphController.getCsvRead()) {
                 if (!(text.getText().equals("") || attribute.getText().equals("Attribute") || operator.getText().equals("Operator"))) {
-                    double value = Double.parseDouble(text.getText());
+                    double value = Double.parseDouble(getValue());
                     Filter filter = new SimpleFilter(attribute.getText(), operator.getText(), value);
                     addFilter(filter);
                 } else if (!tableFilters.getItems().isEmpty()) {

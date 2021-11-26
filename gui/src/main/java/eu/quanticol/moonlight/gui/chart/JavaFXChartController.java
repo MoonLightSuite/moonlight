@@ -416,6 +416,4 @@ public class JavaFXChartController {
         logarithmic.setVisible(false);
         constantChart.setVisible(true);
     }
-
-
 }
