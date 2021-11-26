@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface for a builder of charts from a graph
+ * Interface that defines a builder of charts from a graph
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */

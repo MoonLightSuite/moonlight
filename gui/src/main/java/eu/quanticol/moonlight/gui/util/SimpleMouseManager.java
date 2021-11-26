@@ -18,7 +18,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 /**
- * Class to manage mouse events on a graph. Implements {@link MouseManager}
+ * Class that implements the {@link MouseManager} interface to manage mouse events on a graph
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
@@ -65,6 +65,7 @@ public class SimpleMouseManager implements MouseManager {
     /**
      * Add a listener to a property that changes
      *
+     * @param listener listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
@@ -210,6 +211,9 @@ public class SimpleMouseManager implements MouseManager {
 
     /**
      * Select series in a chart of the corresponding clicked node
+     *
+     * @param curElement current element
+     * @param e          mouseEvent
      */
     private void mouseButtonTwoClickOnElement(GraphicElement curElement, MouseEvent e) {
         if (e.getButton() == MouseButton.PRIMARY) {
@@ -229,6 +233,9 @@ public class SimpleMouseManager implements MouseManager {
 
     /**
      * Displays attributes of a clicked node
+     *
+     * @param element        current element
+     * @param event          mouseEvent
      */
     protected void mouseButtonClickOnElement(GraphicElement element,
                                              MouseEvent event) {
@@ -253,5 +260,4 @@ public class SimpleMouseManager implements MouseManager {
             element.removeAttribute("ui.clicked");
         }
     }
-
 }

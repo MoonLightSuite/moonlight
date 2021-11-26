@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.gui.graph;
 import org.graphstream.graph.Graph;
 
 /**
- * A graph with a time instant
+ * Interface that defines a graph with a time instant
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */

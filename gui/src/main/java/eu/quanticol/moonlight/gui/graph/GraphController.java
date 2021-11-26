@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Defines how to create graphs
+ * Interface that defines a controller for graphs
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */

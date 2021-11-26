@@ -16,9 +16,14 @@ import java.util.List;
 
 /**
  * Class that creates a logarithmic axis for a {@link javafx.scene.chart.LineChart}
+ *
+ * @author Kevin Senechal mailto: kevin.senechal@dooapp.com
  */
 public class LogarithmicAxis extends ValueAxis<Number> {
 
+    /**
+     * The time of animation in ms
+     */
     private static final double ANIMATION_TIME = 2000;
     private final Timeline lowerRangeTimeline = new Timeline();
     private final Timeline upperRangeTimeline = new Timeline();
@@ -30,6 +35,13 @@ public class LogarithmicAxis extends ValueAxis<Number> {
         bindLogBoundsToDefaultBounds();
     }
 
+    /**
+     * Validate the bounds by throwing an exception if the values are not conform
+     * to the mathematics log interval: [0,Double.MAX_VALUE]
+     *
+     * @param lowerBound  loweBound
+     * @param upperBound  upperBound
+     */
     private void validateBounds(double lowerBound, double upperBound) throws IllegalLogarithmicRangeException {
         if (lowerBound < 0 || upperBound < 0 || lowerBound > upperBound) {
             throw new IllegalLogarithmicRangeException(
@@ -37,6 +49,9 @@ public class LogarithmicAxis extends ValueAxis<Number> {
         }
     }
 
+    /**
+     * Bind our logarithmic bounds with the super class bounds.
+     */
     private void bindLogBoundsToDefaultBounds() {
         logLowerBound.bind(new DoubleBinding() {{super.bind(lowerBoundProperty());}
             @Override

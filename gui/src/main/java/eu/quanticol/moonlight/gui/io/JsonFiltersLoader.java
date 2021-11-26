@@ -16,7 +16,7 @@ import java.util.Optional;
 import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
 
 /**
- * This class implements the {@link FiltersLoader} interface and is responsible to save and import filters.
+ * Class that implements the {@link FiltersLoader} interface and is responsible to save and import filters
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
@@ -29,7 +29,6 @@ public class JsonFiltersLoader implements FiltersLoader {
      * @param filters      filters to save
      * @param filterGroups filterGroups already present
      * @param name         name of filters to save
-     *
      * @return a string for dialog
      */
     public String saveToJson(ArrayList<Filter> filters, ArrayList<FilterGroup> filterGroups, String name) throws IOException {
@@ -89,8 +88,7 @@ public class JsonFiltersLoader implements FiltersLoader {
      * @param filters      filters to write
      * @param filterGroups filterGroups already present
      * @param name         name of filters to save
-     *
-     * @return a string for dialog
+     * @return             a string for dialog
      */
     private String writeJsonFile(Gson gson, ArrayList<Filter> filters, ArrayList<FilterGroup> filterGroups, String name) throws IOException {
         String checkGroup;
@@ -130,8 +128,7 @@ public class JsonFiltersLoader implements FiltersLoader {
      *
      * @param namePresent        boolean that say if the name of filters is already present
      * @param filterGroupPresent boolean that say if the filterGroup is already present
-     *
-     * @return a string for dialog
+     * @return                   a string for dialog
      */
     private String checkFilterGroup(boolean namePresent, boolean filterGroupPresent) {
         String checkGroup;
@@ -149,8 +146,7 @@ public class JsonFiltersLoader implements FiltersLoader {
      *
      * @param name    name of filters
      * @param filters list of filters
-     *
-     * @return true if file contains filters, else false
+     * @return        true if file contains filters, else false
      */
     public boolean getFromJson(String name, ArrayList<Filter> filters) throws IOException {
         Gson gson = new GsonBuilder()

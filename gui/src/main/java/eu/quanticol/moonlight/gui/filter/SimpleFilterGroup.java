@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * This class implements the {@link FilterGroup} interface and is responsible to define a group of filters.
+ * Class that implements the {@link FilterGroup} interface and is responsible to define a group of filters
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */

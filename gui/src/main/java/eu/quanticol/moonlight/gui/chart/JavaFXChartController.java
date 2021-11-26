@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 /**
- * Controller for a chart
+ * Controller of JavaFX for a chart
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
@@ -105,6 +105,8 @@ public class JavaFXChartController {
 
     /**
      * Creates series from attributes in a file of a static graph
+     *
+     * @param line line to read
      */
     public void createSeriesFromStaticGraph(String line) {
         lineChart.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLinear(), true));
@@ -114,6 +116,8 @@ public class JavaFXChartController {
 
     /**
      * For a line of a file with attributes, add data to the charts
+     *
+     * @param line to read
      */
     public void addLineDataToSeries(String line) {
         String[] attributes = line.split(",");
@@ -141,6 +145,8 @@ public class JavaFXChartController {
 
     /**
      * Writes on a label the attributes of a node clicked in the charts
+     *
+     * @param chart lineChart
      */
     private void addListener(LineChart<Number, Number> chart) {
         for (Series<Number, Number> s : chart.getData()) {
@@ -247,7 +253,6 @@ public class JavaFXChartController {
     public void selectAllSeries() {
         list.getItems().forEach(checkBox -> checkBox.setSelected(true));
     }
-
 
     /**
      * Initialize all checkbox in a list and their listener
@@ -371,7 +376,8 @@ public class JavaFXChartController {
     /**
      * Return the min value of a series
      *
-     * @return min value
+     * @param series  all series
+     * @return        min value
      */
     public Number getMinSeries(Series<Number, Number> series) {
         OptionalDouble d = series.getData().stream().mapToDouble(num -> num.getYValue().doubleValue()).min();
@@ -383,7 +389,8 @@ public class JavaFXChartController {
     /**
      * Return the max value of a series
      *
-     * @return max value
+     * @param series all series
+     * @return       max value
      */
     public Number getMaxSeries(Series<Number, Number> series) {
         OptionalDouble d = series.getData().stream().mapToDouble(num -> num.getYValue().doubleValue()).max();

@@ -38,14 +38,6 @@ public class JavaFXMainController {
 
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    public JavaFXChartController getChartComponentController() {
-        return chartComponentController;
-    }
-
-    public JavaFXGraphController getGraphComponentController() {
-        return graphComponentController;
-    }
-
     public String getTheme() {
         return themeLoader.getGeneralTheme();
     }
@@ -53,7 +45,6 @@ public class JavaFXMainController {
     public VBox getRoot() {
         return this.root;
     }
-
 
     /**
      * Gets all info and controllers from the others fxml files included and inject this {@link JavaFXMainController} in its nested controllers.
@@ -97,14 +88,16 @@ public class JavaFXMainController {
     }
 
     /**
-     * Open the explorer to choose a .csv file
+     * Open the explorer to choose a .csv file for pieceWise linear visualization
      */
     @FXML
     private void openCsvExplorer() {
         graphComponentController.openCSVExplorer();
     }
 
-
+    /**
+     * Open the explorer to choose a .csv file for stepWise constant visualization
+     */
     @FXML
     private void openConstantCsvExplorer() {
         graphComponentController.openConstantCsvExplorer();

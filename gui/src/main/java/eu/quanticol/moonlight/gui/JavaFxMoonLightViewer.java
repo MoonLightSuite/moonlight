@@ -12,12 +12,18 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * Class for fxml load
- * 
+ * This class is responsible for the principle window of app
+ *
  * @author Albanese Clarissa, Sorritelli Greta
  */
 public class JavaFxMoonLightViewer extends Application {
 
+    /**
+     * Launch the principle stage.
+     *
+     * @param stage           Stage to open.
+     * @throws Exception      Exception.
+     */
     public void start(Stage stage) throws Exception {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         URL file = classLoader.getResource("fxml/mainComponent.fxml");

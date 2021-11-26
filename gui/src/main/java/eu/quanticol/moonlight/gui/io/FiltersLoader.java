@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * An Interface that defines how to load filters on or from a .json file
+ * Interface that defines how to load filters on/from a .json file
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */

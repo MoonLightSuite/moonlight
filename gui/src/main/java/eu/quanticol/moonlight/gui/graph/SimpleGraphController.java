@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Creates graphs
+ * Class that implements the {@link GraphController} interface and is responsible to create graphs
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
@@ -36,7 +36,6 @@ public class SimpleGraphController implements GraphController{
             instance = new SimpleGraphController();
         return instance;
     }
-
 
     public List<TimeGraph> getGraphList() {
         return graphList;
@@ -84,6 +83,7 @@ public class SimpleGraphController implements GraphController{
     /**
      * Sets positions of nodes
      *
+     * @param line a string of a time instant with all info about nodes
      */
     public void createPositions(String line) {
         String[] array = line.split(",");
@@ -98,6 +98,9 @@ public class SimpleGraphController implements GraphController{
 
     /**
      * Gets positions from the .csv file and adds them to the node coordinates
+     *
+     * @param elements attributes of a node
+     * @param nodes    nodes of graph
      */
     private void addPositionsDynamicGraph(String[] elements, ArrayList<ArrayList<String>> nodes) {
         for (TimeGraph g : graphList) {
@@ -116,6 +119,7 @@ public class SimpleGraphController implements GraphController{
      * Create a graph from a file
      *
      * @param file file to read
+     * @return     type of graph
      */
     public GraphType createGraphFromFile(File file) throws IOException {
         idGraph = 0;
@@ -198,6 +202,10 @@ public class SimpleGraphController implements GraphController{
 
     /**
      * Creates nodes and then an edge between two of them
+     *
+     * @param line     line to read
+     * @param graph    graph in which to add edge
+     * @param totNodes total number of nodes
      */
     private void createEdge(String line, Graph graph, int totNodes) {
         createNodes(graph, totNodes);
@@ -206,6 +214,9 @@ public class SimpleGraphController implements GraphController{
 
     /**
      * Create and edge between two nodes
+     *
+     * @param line     line to read
+     * @param graph    graph in which to add edge
      */
     private void createEdge(String line, Graph graph) {
         String[] elements = line.split(",");

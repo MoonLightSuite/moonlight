@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class controller of a table of nodes
+ * Controller of JavaFX for a table of nodes
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
