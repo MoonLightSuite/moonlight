@@ -4,6 +4,8 @@ import org.graphstream.graph.Graph;
 
 /**
  * A graph with a time instant. Implements {@link TimeGraph}
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class SimpleTimeGraph implements TimeGraph {
 

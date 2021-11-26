@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * Class controller of a table of nodes
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class JavaFXNodesTableController {
 

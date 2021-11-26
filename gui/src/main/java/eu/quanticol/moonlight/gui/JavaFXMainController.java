@@ -12,8 +12,11 @@ import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 
+
 /**
  * Main controller of the application. It has other controllers nested in it.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class JavaFXMainController {
 
@@ -103,8 +106,8 @@ public class JavaFXMainController {
 
 
     @FXML
-    private void openBooleanCsvExplorer() {
-        graphComponentController.openBooleanCsvExplorer();
+    private void openConstantCsvExplorer() {
+        graphComponentController.openConstantCsvExplorer();
     }
 
     /**

@@ -2,6 +2,8 @@ package eu.quanticol.moonlight.gui.util;
 
 /**
  * Interface for a dialog window
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public interface Dialog {
 

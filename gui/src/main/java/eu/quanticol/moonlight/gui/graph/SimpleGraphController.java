@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Creates graphs
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class SimpleGraphController implements GraphController{
 
     private static SimpleGraphController instance = null;
@@ -89,23 +94,6 @@ public class SimpleGraphController implements GraphController{
             index += 4;
         }
     }
-
-//    public void getNodesValues(String line) {
-//        String[] lineToArray = line.split(", ");
-//        int index = 0;
-//        for (int node = 0; node < this.staticGraph.getNodeCount(); node++) {
-//            if (index < lineToArray.length) {
-//                ArrayList<String> attributesOneNode = new ArrayList<>();
-//                for (int i = 0; i <= 2; i++) {
-//                    attributesOneNode.add(lineToArray[index]);
-//                    index++;
-//                }
-//                Node n = this.staticGraph.getNode(String.valueOf(node));
-//                n.setAttribute("Attributes", attributesOneNode);
-//                addPositionsStaticGraph(n, attributesOneNode);
-//            }
-//        }
-//    }
 
 
     /**

@@ -7,6 +7,8 @@ import javafx.stage.StageStyle;
 
 /**
  * Class that implements {@link Dialog} to show dialog window
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class DialogBuilder implements Dialog {
 

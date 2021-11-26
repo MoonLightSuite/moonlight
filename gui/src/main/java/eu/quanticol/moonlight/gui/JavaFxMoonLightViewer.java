@@ -13,8 +13,10 @@ import java.util.Objects;
 
 /**
  * Class for fxml load
+ * 
+ * @author Albanese Clarissa, Sorritelli Greta
  */
-public class JavaFxApp extends Application {
+public class JavaFxMoonLightViewer extends Application {
 
     public void start(Stage stage) throws Exception {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();

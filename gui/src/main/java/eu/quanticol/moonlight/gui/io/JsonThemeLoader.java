@@ -10,6 +10,8 @@ import java.util.Objects;
 
 /**
  * Class to load the theme and save it
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class JsonThemeLoader implements ThemeLoader {
@@ -76,6 +78,10 @@ public class JsonThemeLoader implements ThemeLoader {
     }
 
 
+    /**
+     * Initialize an empty file for themes
+     *
+     */
     private static ThemeLoader initializeFile() throws IOException, URISyntaxException {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         ThemeLoader fromJson = new JsonThemeLoader();

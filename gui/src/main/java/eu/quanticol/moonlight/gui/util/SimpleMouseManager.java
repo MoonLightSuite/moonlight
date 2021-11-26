@@ -19,6 +19,8 @@ import java.util.Optional;
 
 /**
  * Class to manage mouse events on a graph. Implements {@link MouseManager}
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class SimpleMouseManager implements MouseManager {
     private View view;
@@ -134,6 +136,9 @@ public class SimpleMouseManager implements MouseManager {
         }
     };
 
+    /**
+     * Blocks the drag behaviour of nodes
+     */
     private final  EventHandler<MouseEvent> mouseDragged = event -> {
     };
 
@@ -203,6 +208,9 @@ public class SimpleMouseManager implements MouseManager {
         chartController.selectAllSeries();
     }
 
+    /**
+     * Select series in a chart of the corresponding clicked node
+     */
     private void mouseButtonTwoClickOnElement(GraphicElement curElement, MouseEvent e) {
         if (e.getButton() == MouseButton.PRIMARY) {
             curElement.setAttribute("ui.clicked");
@@ -219,7 +227,9 @@ public class SimpleMouseManager implements MouseManager {
         chartController.selectOnlyOneSeries("Node " + n.getId());
     }
 
-
+    /**
+     * Displays attributes of a clicked node
+     */
     protected void mouseButtonClickOnElement(GraphicElement element,
                                              MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {

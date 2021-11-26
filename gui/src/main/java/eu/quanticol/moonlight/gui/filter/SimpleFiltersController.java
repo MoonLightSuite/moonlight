@@ -5,6 +5,11 @@ import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 
+/**
+ * A controller for filters
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class SimpleFiltersController implements FiltersController {
 
     private static SimpleFiltersController instance= null;

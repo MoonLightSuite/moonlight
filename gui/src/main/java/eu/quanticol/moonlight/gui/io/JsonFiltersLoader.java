@@ -17,6 +17,8 @@ import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
 
 /**
  * This class implements the {@link FiltersLoader} interface and is responsible to save and import filters.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class JsonFiltersLoader implements FiltersLoader {

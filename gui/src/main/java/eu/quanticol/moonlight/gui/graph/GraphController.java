@@ -6,6 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Defines how to create graphs
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public interface GraphController {
 
     List<TimeGraph> getGraphList();

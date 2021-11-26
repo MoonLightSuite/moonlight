@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * This class implements the {@link Filter} interface and is responsible to define a filter.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class SimpleFilter implements Filter {
 

@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 
 /**
  * Class of serializing and deserializing for Json.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public final class Serializer<T> implements JsonSerializer<T>, JsonDeserializer<T> {
 

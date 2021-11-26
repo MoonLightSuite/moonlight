@@ -50,7 +50,7 @@
             <Menu fx:id="menuCSV" disable="true" mnemonicParsing="false" text="Load attributes">
                <items>
             <MenuItem mnemonicParsing="false" onAction="#openCsvExplorer" text="Open piecewise linear" />
-                  <MenuItem mnemonicParsing="false" onAction="#openBooleanCsvExplorer" text="Open constant stepwise" />
+                  <MenuItem mnemonicParsing="false" onAction="#openConstantCsvExplorer" text="Open constant stepwise" />
                </items></Menu>
             <Menu mnemonicParsing="false" text="Appearance">
               <items>

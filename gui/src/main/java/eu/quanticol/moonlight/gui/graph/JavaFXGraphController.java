@@ -30,6 +30,8 @@ import java.util.Optional;
 
 /**
  * Controller for graphs
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class JavaFXGraphController {
 
@@ -147,12 +149,12 @@ public class JavaFXGraphController {
     /**
      * Opens explorer with only .csv files
      */
-    public void openBooleanCsvExplorer() {
+    public void openConstantCsvExplorer() {
         chartController.reset();
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
-                readBooleanCSV(file);
+                readConstantCSV(file);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
                 e.printStackTrace();
@@ -164,7 +166,11 @@ public class JavaFXGraphController {
         }
     }
 
-    private void readBooleanCSV(File file) throws IOException {
+    /**
+     * Reads a .csv file as a file with constants attributes
+     *
+     */
+    private void readConstantCSV(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {

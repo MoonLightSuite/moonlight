@@ -15,30 +15,36 @@ import java.util.Optional;
 
 /**
  * Class that builds a simple chart from a {@link TimeGraph}
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class SimpleChartBuilder implements ChartBuilder {
 
     private final ArrayList<ArrayList<String>> attributes = new ArrayList<>();
 
-    public ArrayList<ArrayList<String>> getAttributes() {
-        return attributes;
-    }
-
-    public void addAttributes(String[] attributes) {
-        ArrayList<String> a = new ArrayList<>(Arrays.stream(attributes).toList());
-        this.attributes.add(a);
-    }
-
     private final ArrayList<Series<Number, Number>> listLinear = new ArrayList<>();
 
     private final ArrayList<Series<Number, Number>> listLog = new ArrayList<>();
 
+    @Override
     public ArrayList<Series<Number, Number>> getListLinear() {
         return listLinear;
     }
 
+    @Override
     public ArrayList<Series<Number, Number>> getListLog() {
         return listLog;
+    }
+
+    @Override
+    public ArrayList<ArrayList<String>> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public void addAttributes(String[] attributes) {
+        ArrayList<String> a = new ArrayList<>(Arrays.stream(attributes).toList());
+        this.attributes.add(a);
     }
 
 
@@ -52,6 +58,10 @@ public class SimpleChartBuilder implements ChartBuilder {
     }
 
 
+    /**
+     * Reads a file and create series
+     *
+     */
     @Override
     public ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file) throws IOException {
         FileInputStream fIn = new FileInputStream(file);
@@ -67,6 +77,10 @@ public class SimpleChartBuilder implements ChartBuilder {
         return createSeriesFromMatrix(matrix);
     }
 
+    /**
+     * Builds a matrix for the values of a constant chart
+     *
+     */
     private void populateMatrix(BufferedReader br, int columns, Double[][] matrix) throws IOException {
         String line;
         int rows;
@@ -90,6 +104,10 @@ public class SimpleChartBuilder implements ChartBuilder {
         return rows;
     }
 
+    /**
+     * Creates series from a matrix of values
+     *
+     */
     private ArrayList<Series<Number, Number>> createSeriesFromMatrix(Double[][] matrix) {
         ArrayList<Series<Number, Number>> list = new ArrayList<>();
         //per ogni colonna
@@ -118,6 +136,7 @@ public class SimpleChartBuilder implements ChartBuilder {
      *
      * @return a list of all series
      */
+    @Override
     public List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph) {
         List<Series<Number, Number>> series = new ArrayList<>();
         int totSeries = timeGraph.get(0).getGraph().getNodeCount();

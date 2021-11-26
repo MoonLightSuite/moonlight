@@ -26,6 +26,8 @@ import java.util.OptionalDouble;
 
 /**
  * Controller for a chart
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
  */
 public class JavaFXChartController {
 
@@ -399,7 +401,6 @@ public class JavaFXChartController {
     private void deselectSeriesTable() {
         variables.getSelectionModel().clearSelection();
     }
-
 
     public void initConstantChart(File file) throws IOException {
         resetCharts();
