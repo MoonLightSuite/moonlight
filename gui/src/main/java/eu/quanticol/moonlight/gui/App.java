@@ -7,7 +7,7 @@ import javafx.application.Application;
  *
  * @author Albanese Clarissa, Sorritelli Greta
  */
-public class MoonLightViewer {
+public class App {
 
     public static void main(String[] args) {
         launchGui();

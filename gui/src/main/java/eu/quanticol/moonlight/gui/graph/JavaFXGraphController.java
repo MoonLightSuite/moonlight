@@ -307,21 +307,27 @@ public class JavaFXGraphController {
             graphController.setGraphList(graphList);
             graphVisualization = graphController.createGraphFromFile(file);
             graphList = graphController.getGraphList();
-            for (TimeGraph g : graphList) {
+            for (TimeGraph g : graphList)
                 g.getGraph().setAttribute("ui.stylesheet", "url('" + this.theme + "')");
-            }
-            if (graphVisualization.equals(GraphType.STATIC)) {
-                slider.setDisable(true);
-                showStaticGraph(graphController.getStaticGraph());
-            } else if (graphVisualization.equals(GraphType.DYNAMIC)) {
-                createViews();
-                createTimeSlider();
-                changeGraphView(String.valueOf(graphList.get(0).getTime()));
-            }
+            createGraph();
         } catch (Exception e) {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
             e.printStackTrace();
             dialogBuilder.error("Failed to generate graph.");
+        }
+    }
+
+    /**
+     * Creates a static or dynamic graph
+     */
+    private void createGraph() {
+        if (graphVisualization.equals(GraphType.STATIC)) {
+            slider.setDisable(true);
+            showStaticGraph(graphController.getStaticGraph());
+        } else if (graphVisualization.equals(GraphType.DYNAMIC)) {
+            createViews();
+            createTimeSlider();
+            changeGraphView(String.valueOf(graphList.get(0).getTime()));
         }
     }
 
@@ -340,33 +346,30 @@ public class JavaFXGraphController {
         if (this.csvRead)
             v.disableAutoLayout();
         else v.enableAutoLayout();
-        FxViewPanel panel = (FxViewPanel) v.getDefaultView();
+        setSceneProperties((FxViewPanel) v.getDefaultView());
+        SimpleMouseManager sm = new SimpleMouseManager(staticGraph, chartController);
+        sm.addPropertyChangeListener(evt -> {
+            if (evt.getPropertyName().equals("LabelProperty"))
+                infoNode.setText(evt.getNewValue().toString());
+        });
+        v.getDefaultView().setMouseManager(sm);
+    }
+
+    /**
+     * Sets the scene's properties
+     *
+     * @param panel fxViewPanel
+     */
+    private void setSceneProperties(FxViewPanel panel) {
         scene.setRoot(panel);
         borderPane.setCenter(scene);
         scene.setVisible(true);
         scene.heightProperty().bind(borderPane.heightProperty());
         scene.widthProperty().bind(borderPane.widthProperty());
-        SimpleMouseManager sm = new SimpleMouseManager(staticGraph, chartController);
-        sm.addPropertyChangeListener(evt -> {
-            if (evt.getPropertyName().equals("LabelProperty")) {
-                infoNode.setText(evt.getNewValue().toString());
-            }
-        });
-        v.getDefaultView().setMouseManager(sm);
-
     }
 
     private void createTimeSlider() {
-        slider.setDisable(false);
-        time.clear();
-        for (TimeGraph t : graphList) {
-            time.add(t.getTime());
-        }
-        slider.setMin(time.get(0));
-        slider.setMax(time.size() - 1);
-        slider.setValue(time.get(0));
-        slider.setMajorTickUnit(1);
-        slider.setMinorTickCount(0);
+        setSlider();
         slider.setLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(Double object) {
@@ -380,6 +383,18 @@ public class JavaFXGraphController {
             }
         });
         addListenersToSlider();
+    }
+
+    private void setSlider() {
+        slider.setDisable(false);
+        time.clear();
+        for (TimeGraph t : graphList)
+            time.add(t.getTime());
+        slider.setMin(time.get(0));
+        slider.setMax(time.size() - 1);
+        slider.setValue(time.get(0));
+        slider.setMajorTickUnit(1);
+        slider.setMinorTickCount(0);
     }
 
     private void addListenersToSlider() {
@@ -440,17 +455,11 @@ public class JavaFXGraphController {
             if (this.csvRead)
                 v.disableAutoLayout();
             else v.enableAutoLayout();
-            FxViewPanel panel = (FxViewPanel) v.getView(String.valueOf(time));
-            scene.setRoot(panel);
-            borderPane.setCenter(scene);
-            scene.setVisible(true);
-            scene.heightProperty().bind(borderPane.heightProperty());
-            scene.widthProperty().bind(borderPane.widthProperty());
+            setSceneProperties((FxViewPanel) v.getView(String.valueOf(time)));
             SimpleMouseManager sm = new SimpleMouseManager(graph, time, chartController);
             sm.addPropertyChangeListener(evt -> {
-                if (evt.getPropertyName().equals("LabelProperty")) {
+                if (evt.getPropertyName().equals("LabelProperty"))
                     infoNode.setText(evt.getNewValue().toString());
-                }
             });
             v.getView(String.valueOf(time)).setMouseManager(sm);
         }

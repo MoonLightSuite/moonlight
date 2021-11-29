@@ -235,22 +235,12 @@ public class JavaFXFiltersController {
      */
     @FXML
     private void openImportDialogInput() {
-        ArrayList<Filter> filters = new ArrayList<>();
         DialogBuilder d = new DialogBuilder(mainController.getTheme());
         if (graphController.getCsvRead()) {
             Optional<String> result = setDialog("Import filters from Json file");
             result.ifPresent(name -> {
                 try {
-                    tableFilters.getItems().clear();
-                    if (graphController.getCsvRead()) {
-                        if (jsonFiltersLoader.getFromJson(name, filters)) {
-                            tableFilters.getItems().addAll(filters);
-                            setCellValueFactory();
-                            tableFilters.getItems().forEach(this::checkFilter);
-                        } else
-                            d.warning("Filter not found.");
-                    } else
-                        d.warning("Insert attributes!");
+                    importFilters(d, name);
                 } catch (Exception e) {
                     d.error(e.getMessage());
                 }
@@ -258,6 +248,26 @@ public class JavaFXFiltersController {
         }
         else
             d.warning("Insert attributes.");
+    }
+
+    /**
+     * Import filters from file.
+     *
+     * @param d     dialogBuilder
+     * @param name  name of group of filters to import
+     */
+    private void importFilters(DialogBuilder d, String name) throws IOException {
+        ArrayList<Filter> filters = new ArrayList<>();
+        tableFilters.getItems().clear();
+        if (graphController.getCsvRead()) {
+            if (jsonFiltersLoader.getFromJson(name, filters)) {
+                tableFilters.getItems().addAll(filters);
+                setCellValueFactory();
+                tableFilters.getItems().forEach(this::checkFilter);
+            } else
+                d.warning("Filter not found.");
+        } else
+            d.warning("Insert attributes!");
     }
 
     /**

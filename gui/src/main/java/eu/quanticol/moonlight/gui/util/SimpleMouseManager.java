@@ -191,12 +191,10 @@ public class SimpleMouseManager implements MouseManager {
             curElement = view.findGraphicElementAt(types, e.getX(), e.getY());
             if (curElement != null) {
                 if (e.getButton().equals(MouseButton.PRIMARY)) {
-                    if (e.getClickCount() == 1) {
+                    if (e.getClickCount() == 1)
                         mouseButtonClickOnElement(curElement, e);
-                    }
-                    if (e.getClickCount() > 1) {
+                    if (e.getClickCount() > 1)
                         mouseButtonTwoClickOnElement(curElement, e);
-                    }
                 }
             } else {
                 selectAll();
@@ -245,19 +243,29 @@ public class SimpleMouseManager implements MouseManager {
             if (n1.isPresent()) {
                 Node n = graph.getNode(n1.get().getId());
                 Object attribute = n.getAttribute("time" + this.time);
-                if(attribute != null) {
-                    String s = attribute.toString();
-                    String[] list = s.substring(1, s.length() - 1).split(", ");
-                    String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", direction: " + list[2] + ", speed: " + list[3] + ", v: " + list[4];
-                    setLabel(newLabel);
-                } else if((attribute = n.getAttribute("Attributes")) != null) {
-                    String s = attribute.toString();
-                    String[] list = s.substring(1, s.length() - 1).split(", ");
-                    String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", v: " + list[2];
-                    setLabel(newLabel);
-                }
+                setAttributesOnLabel(n, attribute);
             }
             element.removeAttribute("ui.clicked");
+        }
+    }
+
+    /**
+     * Sets node's attributes on label
+     *
+     * @param n            node
+     * @param attribute    attributes of node
+     */
+    private void setAttributesOnLabel(Node n, Object attribute) {
+        if(attribute != null) {
+            String s = attribute.toString();
+            String[] list = s.substring(1, s.length() - 1).split(", ");
+            String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", direction: " + list[2] + ", speed: " + list[3] + ", v: " + list[4];
+            setLabel(newLabel);
+        } else if((attribute = n.getAttribute("Attributes")) != null) {
+            String s = attribute.toString();
+            String[] list = s.substring(1, s.length() - 1).split(", ");
+            String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", v: " + list[2];
+            setLabel(newLabel);
         }
     }
 }
