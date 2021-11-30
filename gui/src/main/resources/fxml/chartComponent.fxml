@@ -15,89 +15,102 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
-   <children>
-      <Label alignment="CENTER" layoutX="24.0" layoutY="24.0" style="&#10;" text="Chart Visualization" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
-         <font>
-            <Font size="18.0" fx:id="x1" />
-         </font>
-      </Label>
-      <RadioButton fx:id="linear" layoutX="201.0" layoutY="30.0" mnemonicParsing="false" onAction="#linearSelected" selected="true" text="Linear" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="20.0" />
-      <RadioButton fx:id="logarithmic" layoutX="296.0" layoutY="30.0" mnemonicParsing="false" onAction="#logarithmicSelected" text="Logarithmic" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="20.0" />
-      <SplitPane dividerPositions="0.65" layoutY="55.0" orientation="VERTICAL" prefHeight="520.0" prefWidth="430.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
-         <items>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="374.0" prefWidth="401.0">
-               <children>
-                  <LineChart fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                     <xAxis>
-                        <NumberAxis label="Time" side="BOTTOM" fx:id="xLAxis" />
-                     </xAxis>
-                     <yAxis>
-                        <LogarithmicAxis fx:id="yLAxis" prefHeight="407.0" prefWidth="21.0" side="LEFT" />
-                     </yAxis>
-                  </LineChart>
-                  <LineChart fx:id="lineChart" layoutX="10.0" layoutY="9.0" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" styleClass="lineChart.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                     <xAxis>
-                        <NumberAxis label="Time" side="BOTTOM" fx:id="xAxis" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis fx:id="yAxis" side="LEFT" />
-                     </yAxis>
-                  </LineChart>
-                  <Label fx:id="attributes" layoutX="109.0" layoutY="313.0" prefHeight="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                     <padding>
-                        <Insets left="10.0" right="10.0" />
-                     </padding></Label>
-                  <LineChart fx:id="constantChart" legendSide="RIGHT" legendVisible="false" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                    <xAxis>
-                      <NumberAxis side="BOTTOM" fx:id="xCAxis" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis fx:id="yCAxis" side="LEFT" />
-                    </yAxis>
-                  </LineChart>
-               </children>
+<AnchorPane fx:id="chartComponent" minWidth="350.0" prefHeight="574.0" prefWidth="429.0"
+            xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="eu.quanticol.moonlight.gui.chart.JavaFXChartController">
+   <Label alignment="CENTER" layoutX="24.0" layoutY="24.0" style="&#10;" text="Chart Visualization"
+          textAlignment="CENTER" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <font>
+         <Font size="18.0"/>
+      </font>
+   </Label>
+   <RadioButton fx:id="linear" layoutX="201.0" layoutY="30.0" mnemonicParsing="false" onAction="#linearSelected"
+                selected="true" text="Linear" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="20.0"/>
+   <RadioButton fx:id="logarithmic" layoutX="296.0" layoutY="30.0" mnemonicParsing="false"
+                onAction="#logarithmicSelected" text="Logarithmic" AnchorPane.rightAnchor="15.0"
+                AnchorPane.topAnchor="20.0"/>
+   <SplitPane dividerPositions="0.65" layoutY="55.0" orientation="VERTICAL" prefHeight="520.0" prefWidth="430.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="45.0">
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="374.0" prefWidth="401.0">
+         <LineChart fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel"
+                    styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="10.0"
+                    AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <xAxis>
+               <NumberAxis label="Time" side="BOTTOM" fx:id="xLAxis"/>
+            </xAxis>
+            <yAxis>
+               <LogarithmicAxis fx:id="yLAxis" prefHeight="407.0" prefWidth="21.0" side="LEFT"/>
+            </yAxis>
+         </LineChart>
+         <LineChart fx:id="lineChart" layoutX="10.0" layoutY="9.0" legendSide="RIGHT" legendVisible="false"
+                    onMouseClicked="#clearLabel" styleClass="lineChart.css" AnchorPane.bottomAnchor="10.0"
+                    AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <xAxis>
+               <NumberAxis label="Time" side="BOTTOM" fx:id="xAxis"/>
+            </xAxis>
+            <yAxis>
+               <NumberAxis fx:id="yAxis" side="LEFT"/>
+            </yAxis>
+         </LineChart>
+         <Label fx:id="attributes" layoutX="109.0" layoutY="313.0" prefHeight="22.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <padding>
+               <Insets left="10.0" right="10.0"/>
+            </padding>
+         </Label>
+         <LineChart fx:id="constantChart" legendSide="RIGHT" legendVisible="false" visible="false"
+                    AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+                    AnchorPane.topAnchor="10.0">
+            <xAxis>
+               <NumberAxis side="BOTTOM" fx:id="xCAxis"/>
+            </xAxis>
+            <yAxis>
+               <NumberAxis fx:id="yCAxis" side="LEFT"/>
+            </yAxis>
+         </LineChart>
+      </AnchorPane>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="445.0">
+         <SplitPane dividerPositions="0.35" layoutX="-2.0" layoutY="-2.0" prefHeight="151.0" prefWidth="448.0"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
+            <AnchorPane prefHeight="151.0" prefWidth="154.0">
+               <BorderPane minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <center>
+                     <ListView fx:id="list" focusTraversable="false" onMouseExited="#deselectSeriesList"
+                               BorderPane.alignment="CENTER"/>
+                  </center>
+                  <top>
+                     <AnchorPane minWidth="0.0" BorderPane.alignment="CENTER">
+                        <Button minWidth="0.0" mnemonicParsing="false"
+                                onAction="#selectAllSeries" text="Select all" textOverrun="CLIP"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.topAnchor="0.0"/>
+                        <Button alignment="CENTER_RIGHT" minWidth="0.0"
+                                mnemonicParsing="false" onAction="#deselectAllSeries" text="Deselect all"
+                                textOverrun="CLIP" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                     </AnchorPane>
+                  </top>
+               </BorderPane>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="445.0">
-               <children>
-                  <SplitPane dividerPositions="0.35" layoutX="-2.0" layoutY="-2.0" prefHeight="151.0" prefWidth="448.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <items>
-                        <AnchorPane prefHeight="151.0" prefWidth="154.0">
-                           <children>
-                              <BorderPane minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <center>
-                                    <ListView fx:id="list" focusTraversable="false" onMouseExited="#deselectSeriesList" BorderPane.alignment="CENTER" />
-                                 </center>
-                                 <top>
-                                    <AnchorPane minWidth="0.0" BorderPane.alignment="CENTER">
-                                       <children>
-                                        <Button fx:id="selectAll" minWidth="0.0" mnemonicParsing="false" onAction="#selectAllSeries" text="Select all" textOverrun="CLIP" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <Button fx:id="deselectAll" alignment="CENTER_RIGHT" minWidth="0.0" mnemonicParsing="false" onAction="#deselectAllSeries" text="Deselect all" textOverrun="CLIP" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </top>
-                              </BorderPane>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="142.0" prefWidth="278.0">
-                           <children>
-                              <TableView fx:id="variables" editable="true" focusTraversable="false" layoutX="10.0" layoutY="10.0" onMouseExited="#deselectSeriesTable" prefHeight="145.6" prefWidth="274.4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <columns>
-                                    <TableColumn fx:id="nameVColumn" prefWidth="73.60003358125687" text="Variable" />
-                                    <TableColumn fx:id="minColumn" prefWidth="103.19996643066406" text="Min value" />
-                                    <TableColumn fx:id="maxColumn" prefWidth="99.20002746582031" text="Max value" />
-                                 </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
-                     </items>
-                  </SplitPane>
-               </children>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="142.0" prefWidth="278.0">
+               <TableView fx:id="variables" editable="true" focusTraversable="false" layoutX="10.0"
+                          layoutY="10.0" onMouseExited="#deselectSeriesTable" prefHeight="145.6"
+                          prefWidth="274.4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <columns>
+                     <TableColumn fx:id="nameVColumn" prefWidth="73.60003358125687" text="Variable"/>
+                     <TableColumn fx:id="minColumn" prefWidth="103.19996643066406" text="Min value"/>
+                     <TableColumn fx:id="maxColumn" prefWidth="99.20002746582031" text="Max value"/>
+                  </columns>
+                  <columnResizePolicy>
+                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                  </columnResizePolicy>
+               </TableView>
             </AnchorPane>
-         </items>
-      </SplitPane>
-   </children>
+         </SplitPane>
+      </AnchorPane>
+   </SplitPane>
 </AnchorPane>

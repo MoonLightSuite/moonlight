@@ -4,15 +4,16 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.graph.JavaFXNodesTableController">
-   <children>
-      <TableView fx:id="nodesTable" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <columns>
-            <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Node" />
-         </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
-   </children>
+<AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="eu.quanticol.moonlight.gui.graph.JavaFXNodesTableController">
+   <TableView fx:id="nodesTable" focusTraversable="false" prefHeight="200.0" prefWidth="200.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+      <columns>
+         <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Node"/>
+      </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+      </columnResizePolicy>
+   </TableView>
 </AnchorPane>
