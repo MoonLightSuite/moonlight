@@ -156,7 +156,7 @@ public class JavaFXFiltersController {
      * Resets all filters added from graphs and filtersTable.
      */
     @FXML
-    private void resetFilters() {
+    public void resetFilters() {
         graphController.getGraphList().forEach(timeGraph -> {
             int countNodes = timeGraph.getGraph().getNodeCount();
             for (int i = 0; i < countNodes; i++)

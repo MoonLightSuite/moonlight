@@ -75,6 +75,7 @@ public class JavaFXGraphController {
         return graphList;
     }
 
+    public Slider getSlider(){ return slider;}
 
     public void setTheme(String theme) {
         this.theme = theme;
@@ -100,6 +101,7 @@ public class JavaFXGraphController {
      * @return            the file chosen
      */
     private File open(String description, String extensions) {
+        filtersComponentController.resetFilters();
         FileChooser fileChooser = new FileChooser();
         Stage stage = (Stage) mainController.getRoot().getScene().getWindow();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(description, extensions);

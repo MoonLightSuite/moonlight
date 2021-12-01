@@ -52,7 +52,7 @@ public class JavaFXMainController {
      */
     @FXML
     public void initialize() {
-        this.chartComponentController.injectMainController(this);
+        this.chartComponentController.injectMainController(this, graphComponentController);
         this.graphComponentController.injectMainController(this, chartComponentController);
         loadTheme();
     }

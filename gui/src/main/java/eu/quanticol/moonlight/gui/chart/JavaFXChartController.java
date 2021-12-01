@@ -1,5 +1,7 @@
 package eu.quanticol.moonlight.gui.chart;
 
+import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
+import eu.quanticol.moonlight.gui.util.LineChartWithMarkers;
 import eu.quanticol.moonlight.gui.util.LogarithmicAxis;
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
@@ -46,11 +48,11 @@ public class JavaFXChartController {
     @FXML
     ListView<CheckBox> list;
     @FXML
-    LineChart<Number, Number> lineChartLog = new LineChart<>(xLAxis, yLAxis);
+    LineChartWithMarkers<Number,Number> lineChartLog = new LineChartWithMarkers<>(xLAxis, yLAxis);
     @FXML
-    LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+    LineChartWithMarkers<Number,Number> lineChart = new LineChartWithMarkers<>(xAxis,yAxis);
     @FXML
-    LineChart<Number, Number> constantChart = new LineChart<>(xCAxis, yCAxis);
+    LineChartWithMarkers<Number,Number> constantChart = new LineChartWithMarkers<>(xCAxis, yCAxis);
     @FXML
     TableView<Series<Number, Number>> variables;
     @FXML
@@ -67,12 +69,13 @@ public class JavaFXChartController {
     Label attributes;
 
     private JavaFXMainController mainController;
+    private JavaFXGraphController javaFXGraphController;
 
     private final ChartBuilder cb = new SimpleChartBuilder();
 
-
-    public void injectMainController(JavaFXMainController mainController) {
+    public void injectMainController(JavaFXMainController mainController, JavaFXGraphController graphController) {
         this.mainController = mainController;
+        this.javaFXGraphController = graphController;
     }
 
     /**
@@ -89,18 +92,29 @@ public class JavaFXChartController {
 
 
     /**
-     * Adds a toolTip to all nodes of series.
+     * Adds a toolTip to all nodes of series
      *
      * @param l lineChart
      */
     private void showToolTip(LineChart<Number, Number> l) {
-        for (XYChart.Series<Number, Number> s : l.getData()) {
+        for (Series<Number, Number> s : l.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
                 Tooltip t = new Tooltip(s.getName());
                 t.setShowDelay(Duration.seconds(0));
                 Tooltip.install(d.getNode(), t);
             }
         }
+    }
+
+    /**
+     * Loads a vertical line to a lineChart
+     *
+     * @param lineChart lineChart which to add line
+     */
+    private void loadVerticalLine(LineChartWithMarkers<Number,Number> lineChart){
+        XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(0, 0);
+        lineChart.addVerticalValueMarker(verticalMarker);
+        javaFXGraphController.getSlider().valueProperty().bindBidirectional(verticalMarker.XValueProperty());
     }
 
     /**
@@ -132,6 +146,8 @@ public class JavaFXChartController {
         initLists();
         showToolTip(lineChart);
         showToolTip(lineChartLog);
+        loadVerticalLine(lineChart);
+        loadVerticalLine(lineChartLog);
     }
 
     public void initStatic() {
@@ -415,6 +431,7 @@ public class JavaFXChartController {
         constantChart.getData().addAll(cb.createSeriesForConstantChart(file));
         initLists();
         showToolTip(constantChart);
+        loadVerticalLine(constantChart);
     }
 
     private void deselectInconstantCharts() {
