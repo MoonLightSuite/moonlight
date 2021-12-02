@@ -10,6 +10,7 @@ node {
     text-color: white;
     text-size: 10;
 }
+
 node:clicked {
     stroke-mode: plain;
     stroke-color: white;
@@ -21,7 +22,6 @@ edge {
     text-background-mode: plain;
     text-background-color: white;
     text-size: 10;
-    /*text-color: white;*/
     fill-color: white;
 }
 

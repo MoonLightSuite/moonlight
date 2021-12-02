@@ -1,4 +1,4 @@
-package App.filter;
+package eu.quanticol.moonlight.gui.filter;
 
 import eu.quanticol.moonlight.gui.filter.Filter;
 import eu.quanticol.moonlight.gui.filter.FiltersController;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleFiltersControllerTest {
 
-    FiltersController filtersController = SimpleFiltersController.getInstance();
+    final FiltersController filtersController = SimpleFiltersController.getInstance();
 
     @Test
     void validationFilterTest() {

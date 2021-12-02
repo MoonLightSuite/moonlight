@@ -1,7 +1,6 @@
 package eu.quanticol.moonlight.gui.chart;
 
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 
 import java.io.File;

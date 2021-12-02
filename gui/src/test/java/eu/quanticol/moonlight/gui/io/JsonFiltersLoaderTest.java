@@ -1,4 +1,4 @@
-package App.io;
+package eu.quanticol.moonlight.gui.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 class JsonFiltersLoaderTest {
 
-    FiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
-    static String path = System.getProperty("user.home") + File.separator + "MoonLightConfig" + File.separator + "filters.json";
-    static File file = new File(path);
-    static ArrayList<FilterGroup> filterGroups = new ArrayList<>();
-    static Gson gson = new GsonBuilder()
+    final FiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
+    static final String path = System.getProperty("user.home") + File.separator + "MoonLightConfig" + File.separator + "filters.json";
+    static final File file = new File(path);
+    static final ArrayList<FilterGroup> filterGroups = new ArrayList<>();
+    static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Filter.class, interfaceSerializer(SimpleFilter.class))
             .registerTypeAdapter(FilterGroup.class, interfaceSerializer(SimpleFilterGroup.class))
             .create();
