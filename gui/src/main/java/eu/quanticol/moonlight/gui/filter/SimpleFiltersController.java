@@ -69,7 +69,7 @@ public class SimpleFiltersController implements FiltersController {
      */
     private boolean getVector(Node n, Double t, Filter f) {
         String attributes = n.getAttribute("time" + t).toString();
-        String[] vector = attributes.replaceAll("^\\s*\\[|\\]\\s*$", "").split("\\s*,\\s*");
+        String[] vector = attributes.replaceAll("^\\s*\\[|]\\s*$", "").split("\\s*,\\s*");
         return checkAttribute(f.getAttribute(), f.getOperator(), f.getValue(), vector);
     }
 

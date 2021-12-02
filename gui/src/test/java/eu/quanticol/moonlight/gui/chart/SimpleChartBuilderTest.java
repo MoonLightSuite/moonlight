@@ -1,4 +1,4 @@
-package App.chart;
+package eu.quanticol.moonlight.gui.chart;
 
 import eu.quanticol.moonlight.gui.chart.SimpleChartBuilder;
 import eu.quanticol.moonlight.gui.graph.SimpleTimeGraph;

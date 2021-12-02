@@ -10,6 +10,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.shape.Line;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -47,6 +48,22 @@ public class LineChartWithMarkers<X,Y> extends LineChart<X,Y>{
         marker.setNode(line);
         getPlotChildren().add(line);
         verticalMarkers.add(marker);
+    }
+
+    /**
+     * Removes a vertical line
+     *
+     */
+    public void removeVerticalValueMarker() {
+        ArrayList<Data<X,Y>> markers = new ArrayList<>(verticalMarkers);
+        for (Data<X,Y> marker: markers) {
+            Objects.requireNonNull(marker);
+            if (marker.getNode() != null) {
+                getPlotChildren().remove(marker.getNode());
+                marker.setNode(null);
+            }
+            verticalMarkers.remove(marker);
+        }
     }
 
     /**

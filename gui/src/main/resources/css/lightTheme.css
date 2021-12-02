@@ -13,7 +13,4 @@
     -fx-font-style: italic;
     -fx-fill: #cbcbcb;
 }
-FontAwesomeIcon:hover {
-    -fx-cursor: hand;
-}
 

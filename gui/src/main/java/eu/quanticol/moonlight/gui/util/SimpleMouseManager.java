@@ -185,7 +185,7 @@ public class SimpleMouseManager implements MouseManager {
      * If it is clicked a node, it is displayed its information and/or selected the corresponding series in the chart
      * If it is clicked outside a node, the chart series are restored
      */
-    EventHandler<MouseEvent> mouseClicked = new EventHandler<>() {
+    final EventHandler<MouseEvent> mouseClicked = new EventHandler<>() {
         @Override
         public void handle(MouseEvent e) {
             curElement = view.findGraphicElementAt(types, e.getX(), e.getY());

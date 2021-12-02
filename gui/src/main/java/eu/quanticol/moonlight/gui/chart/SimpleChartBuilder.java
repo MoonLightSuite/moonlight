@@ -6,10 +6,7 @@ import javafx.scene.chart.XYChart.Series;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Class that implements the {@link ChartBuilder} interface and builds a simple chart from a {@link TimeGraph}
@@ -59,7 +56,8 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Reads a file and create series
      *
      * @param file file to read
-     * @return     ArrayList of series
+     *
+     * @return ArrayList of series
      */
     @Override
     public ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file) throws IOException {
@@ -110,7 +108,8 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Creates series from a matrix of values
      *
      * @param matrix matrix
-     * @return       ArrayList of series
+     *
+     * @return ArrayList of series
      */
     private ArrayList<Series<Number, Number>> createSeriesFromMatrix(Double[][] matrix) {
         ArrayList<Series<Number, Number>> list = new ArrayList<>();
@@ -120,12 +119,9 @@ public class SimpleChartBuilder implements ChartBuilder {
             series.setName("Node " + column);
             //per ogni riga
             for (int row = 0; row < matrix.length; row++) {
-                if (row == 0)
-                    series.getData().add(new Data<>(matrix[row][0], matrix[row][column + 1]));
-                else {
+                if (row != 0)
                     series.getData().add(new Data<>(matrix[row][0], matrix[row - 1][column + 1]));
-                    series.getData().add(new Data<>(matrix[row][0], matrix[row][column + 1]));
-                }
+                series.getData().add(new Data<>(matrix[row][0], matrix[row][column + 1]));
             }
             list.add(series);
         }
@@ -136,7 +132,8 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Gets all nodes info and create a relative series for each
      *
      * @param timeGraph a {@link TimeGraph}
-     * @return          a list of all series
+     *
+     * @return a list of all series
      */
     @Override
     public List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph) {
@@ -161,7 +158,8 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @param line  line to read
      * @param list  list of series
      * @param first boolean
-     * @return      ArrayList of series
+     *
+     * @return ArrayList of series
      */
     @Override
     public ArrayList<Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<Series<Number, Number>> list, boolean first) {
@@ -186,11 +184,12 @@ public class SimpleChartBuilder implements ChartBuilder {
     /**
      * Creates and returns a series if it doesn't exist or returns the existing series
      *
-     * @param list       list of series
-     * @param node       id of node
-     * @param series     series
-     * @param finalNode  id of final node
-     * @return           series
+     * @param list      list of series
+     * @param node      id of node
+     * @param series    series
+     * @param finalNode id of final node
+     *
+     * @return series
      */
     private Series<Number, Number> getSeries(ArrayList<Series<Number, Number>> list, int node, Series<Number, Number> series, int finalNode) {
         if (list.stream().noneMatch(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode))) {
@@ -237,7 +236,7 @@ public class SimpleChartBuilder implements ChartBuilder {
             if (series1.isPresent())
                 numberSeries = series1.get();
             double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
-            numberSeries.getData().add(new Data<>(time, variable));
+            Objects.requireNonNull(numberSeries).getData().add(new Data<>(time, variable));
             node++;
             index += 5;
         }

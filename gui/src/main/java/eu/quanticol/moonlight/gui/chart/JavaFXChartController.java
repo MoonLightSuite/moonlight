@@ -90,7 +90,6 @@ public class JavaFXChartController {
         init();
     }
 
-
     /**
      * Adds a toolTip to all nodes of series
      *
@@ -112,9 +111,22 @@ public class JavaFXChartController {
      * @param lineChart lineChart which to add line
      */
     private void loadVerticalLine(LineChartWithMarkers<Number,Number> lineChart){
-        XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(0, 0);
+       XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(0, 0);
         lineChart.addVerticalValueMarker(verticalMarker);
-        javaFXGraphController.getSlider().valueProperty().bindBidirectional(verticalMarker.XValueProperty());
+        ArrayList<Double> time = javaFXGraphController.getTime();
+        javaFXGraphController.getSlider().valueProperty().addListener((obs, oldValue, newValue) -> {
+            Double value = javaFXGraphController.nearest(time, newValue.doubleValue());
+            Platform.runLater(() -> verticalMarker.setXValue(value));
+        });
+    }
+
+    /**
+     * Removes a vertical line to all lineCharts
+     */
+    public void removeVerticalLine() {
+        lineChart.removeVerticalValueMarker();
+        lineChartLog.removeVerticalValueMarker();
+        constantChart.removeVerticalValueMarker();
     }
 
     /**
@@ -254,6 +266,7 @@ public class JavaFXChartController {
         this.constantChart.getData().clear();
         this.list.getItems().clear();
         this.variables.getItems().clear();
+        this.removeVerticalLine();
         variables.setDisable(false);
     }
 
@@ -320,17 +333,15 @@ public class JavaFXChartController {
         new Thread(() -> {
             try {
                 Thread.sleep(500);
-                Platform.runLater(() -> {
-                    lineChart.getData().forEach(series -> {
-                        if (series.getName().equals(name)) {
-                            series.getNode().setVisible(!series.getNode().isVisible());
-                            series.getData().forEach(data -> {
-                                if (data.getNode() != null)
-                                    data.getNode().setVisible(!data.getNode().isVisible());
-                            });
-                        }
-                    });
-                });
+                Platform.runLater(() -> lineChart.getData().forEach(series -> {
+                    if (series.getName().equals(name)) {
+                        series.getNode().setVisible(!series.getNode().isVisible());
+                        series.getData().forEach(data -> {
+                            if (data.getNode() != null)
+                                data.getNode().setVisible(!data.getNode().isVisible());
+                        });
+                    }
+                }));
 //                Thread.sleep(500);
             } catch (InterruptedException e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());

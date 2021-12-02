@@ -10,10 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Class that implements the {@link GraphController} interface and is responsible to create graphs
@@ -132,7 +129,7 @@ public class SimpleGraphController implements GraphController{
                 idGraph++;
                 staticGraph(line, br, staticGraph, totNodes);
                 return GraphType.STATIC;
-            } else if (!line.contains(",")) {
+            } else if (!Objects.requireNonNull(line).contains(",")) {
                 dynamicGraph(line, br, totNodes);
                 return GraphType.DYNAMIC;
             }
@@ -222,18 +219,11 @@ public class SimpleGraphController implements GraphController{
         String[] elements = line.split(",");
         String vertex1 = elements[0];
         String vertex2 = elements[1];
-        String edge = elements[2];
         boolean exist = graph.edges().anyMatch(edge1 -> (edge1.getSourceNode().equals(graph.getNode(vertex1)) || edge1.getSourceNode().equals(graph.getNode(vertex2))) && (edge1.getTargetNode().equals(graph.getNode(vertex2)) || edge1.getTargetNode().equals(graph.getNode(vertex1))));
         Edge e = graph.addEdge("id" + idGraph, graph.getNode(vertex1), graph.getNode(vertex2));
         idGraph++;
-//        e.setAttribute("ui.label", edge);
         if (exist)
-            e.setAttributes(Map.of(
-//                    "ui.label", edge,
-                    "ui.class", "multiple"
-            ));
-//        else
-//            e.setAttribute("ui.label", edge);
+            e.setAttribute("ui.class", "multiple");
     }
 
     /**
