@@ -279,6 +279,7 @@ public class JavaFXFiltersController {
     private Optional<String> setDialog(String title){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
+        dialog.getDialogPane().getStylesheets().add(mainController.getTheme());
         dialog.setHeaderText("Enter filters name:");
         dialog.setContentText("Name:");
         return dialog.showAndWait();
