@@ -208,7 +208,7 @@ public class JavaFXFiltersController {
             reset();
         } catch (Exception e) {
             reset();
-            dialogBuilder.error(e.getMessage());
+            dialogBuilder.error("Failed saving filter.");
         }
     }
 
@@ -226,7 +226,7 @@ public class JavaFXFiltersController {
                     String filterInfo = jsonFiltersLoader.saveToJson(filters, filterGroups, name);
                     d.info(filterInfo);
                 } catch (IOException e) {
-                    d.error(e.getMessage());
+                    d.error("Failed saving filters on file.");
                 }
             });
         } else
@@ -245,7 +245,7 @@ public class JavaFXFiltersController {
                 try {
                     importFilters(d, name);
                 } catch (Exception e) {
-                    d.error(e.getMessage());
+                    d.error("Failed importing filters from file.");
                 }
             });
         }

@@ -85,9 +85,14 @@ public class JavaFXChartController {
      */
     public void createDataFromGraphs(List<TimeGraph> timeGraph) {
         resetCharts();
-        lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph));
-        lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph));
-        init();
+        try {
+            lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph));
+            lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph));
+            init();
+        } catch (Exception e){
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed to load chart data. Open an other file.");
+        }
     }
 
     /**
@@ -139,7 +144,6 @@ public class JavaFXChartController {
         lineChartLog.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLog(), false));
     }
 
-
     /**
      * For a line of a file with attributes, add data to the charts
      *
@@ -151,7 +155,6 @@ public class JavaFXChartController {
         cb.addLineData(lineChart.getData().stream().toList(), attributes);
         cb.addLineData(lineChartLog.getData().stream().toList(), attributes);
     }
-
 
     private void init() {
         linearSelected();
@@ -342,24 +345,11 @@ public class JavaFXChartController {
                         });
                     }
                 }));
-//                Thread.sleep(500);
             } catch (InterruptedException e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
-                d.error(e.getMessage());
+                d.error("Failed updating chart.");
             }
         }).start();
-
-
-//        new Thread(() -> {
-//                for (Series<Number, Number> series : lineChart.getData()) {
-//                    Platform.runLater(() -> {
-//                        if (series.getName().equals(name)) {
-//                            series.getNode().setVisible(!series.getNode().isVisible());
-//                            series.getData().forEach(data -> data.getNode().setVisible(series.getNode().isVisible()));
-//                        }
-//                    });
-//                }
-//        }).start();
     }
 
     /**

@@ -30,13 +30,11 @@ public class JavaFXNodesTableController {
      */
     public void initTable() {
         List<Integer> items = new ArrayList<>();
-        for (int i = 0; i < graphController.getTotNodes(); i++) {
+        for (int i = 0; i < graphController.getTotNodes(); i++)
             items.add(i);
-        }
         nodesTable.getItems().clear();
-        for (int n : items) {
+        for (int n : items)
             nodesTable.getItems().add("Node "+ n);
-        }
         setCellValueFactory();
     }
 

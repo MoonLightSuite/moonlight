@@ -77,7 +77,6 @@ public class JsonThemeLoader implements ThemeLoader {
         return fromJson;
     }
 
-
     /**
      * Initialize an empty file for themes
      */

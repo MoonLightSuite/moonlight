@@ -16,7 +16,6 @@ public class SimpleFilterGroup implements FilterGroup {
     public SimpleFilterGroup(String name, ArrayList<Filter> filters){
         this.name = name;
         this.filters = filters;
-
     }
 
     public ArrayList<Filter> getFilters() {

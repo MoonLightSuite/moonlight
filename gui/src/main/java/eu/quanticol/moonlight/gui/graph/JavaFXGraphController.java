@@ -161,7 +161,6 @@ public class JavaFXGraphController {
                     chartController.createDataFromGraphs(graphList);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
-                e.printStackTrace();
                 d.error("Failed to load chart data.");
             }
         } else {
@@ -181,7 +180,6 @@ public class JavaFXGraphController {
                 readConstantCSV(file);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
-                e.printStackTrace();
                 d.error("Failed to load chart data.");
             }
         } else {
@@ -206,7 +204,6 @@ public class JavaFXGraphController {
         chartController.initConstantChart(file);
         this.csvRead =true;
 }
-
 
     /**
      * Reset all lists and info
@@ -241,9 +238,9 @@ public class JavaFXGraphController {
      */
     private void readCSV(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
-        if (graphVisualization.equals(GraphType.STATIC)) {
+        if (graphVisualization.equals(GraphType.STATIC))
             getStaticAttributesFromCsv(br);
-        } else
+            else
             getDynamicAttributesFromCsv(br);
         this.csvRead = true;
 
@@ -310,9 +307,8 @@ public class JavaFXGraphController {
     private void getDynamicAttributesFromCsv(BufferedReader br) throws IOException {
         graphController.setGraphList(graphList);
         String line;
-        while (((line = br.readLine()) != null)) {
+        while (((line = br.readLine()) != null))
             createNodesVector(line);
-        }
         graphList = graphController.getGraphList();
     }
 
@@ -335,7 +331,6 @@ public class JavaFXGraphController {
             createGraph();
         } catch (Exception e) {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
-            e.printStackTrace();
             dialogBuilder.error("Failed to generate graph.");
         }
     }

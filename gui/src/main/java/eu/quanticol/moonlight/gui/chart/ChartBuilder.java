@@ -40,7 +40,6 @@ public interface ChartBuilder {
      */
     void addLineData(List<Series<Number, Number>> series, String[] attributes);
 
-
     ArrayList<ArrayList<String>> getAttributes();
 
     ArrayList<Series<Number, Number>> getListLinear();

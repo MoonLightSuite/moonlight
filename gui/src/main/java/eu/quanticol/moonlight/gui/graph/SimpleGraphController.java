@@ -68,9 +68,8 @@ public class SimpleGraphController implements GraphController{
                 index++;
             }
             Optional<TimeGraph> t = graphList.stream().filter(graph -> graph.getGraphFromTime(time) != null).findFirst();
-            if (t.isPresent()) {
+            if (t.isPresent())
                 t.get().getGraph().getNode(node).setAttribute("time" + time, vector);
-            }
             node++;
             nodes.add(vector);
         }
@@ -153,9 +152,8 @@ public class SimpleGraphController implements GraphController{
                     instantGraph(time, linesEdges, totNodes);
                     linesEdges.clear();
                     time = Double.parseDouble(line);
-                } else {
+                } else
                     linesEdges.add(line);
-                }
             } else {
                 instantGraph(time, linesEdges, totNodes);
                 linesEdges.clear();
@@ -175,9 +173,8 @@ public class SimpleGraphController implements GraphController{
         Graph graph = new MultiGraph("id" + idGraph);
         idGraph++;
         createNodes(graph, totNodes);
-        for (String l : linesEdges) {
+        for (String l : linesEdges)
             createEdge(l, graph);
-        }
         TimeGraph tg = new SimpleTimeGraph(graph, time);
         graphList.add(tg);
     }
@@ -192,9 +189,8 @@ public class SimpleGraphController implements GraphController{
      */
     private void staticGraph(String line, BufferedReader br, Graph graph, int totNodes) throws IOException {
         createEdge(line, graph, totNodes);
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
             createEdge(line, graph);
-        }
     }
 
     /**

@@ -42,7 +42,6 @@ public class SimpleChartBuilder implements ChartBuilder {
         this.attributes.add(a);
     }
 
-
     /**
      * Clears the lists of series
      */
@@ -56,7 +55,6 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Reads a file and create series
      *
      * @param file file to read
-     *
      * @return ArrayList of series
      */
     @Override
@@ -132,7 +130,6 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Gets all nodes info and create a relative series for each
      *
      * @param timeGraph a {@link TimeGraph}
-     *
      * @return a list of all series
      */
     @Override
@@ -180,7 +177,6 @@ public class SimpleChartBuilder implements ChartBuilder {
         return list;
     }
 
-
     /**
      * Creates and returns a series if it doesn't exist or returns the existing series
      *
@@ -188,7 +184,6 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @param node      id of node
      * @param series    series
      * @param finalNode id of final node
-     *
      * @return series
      */
     private Series<Number, Number> getSeries(ArrayList<Series<Number, Number>> list, int node, Series<Number, Number> series, int finalNode) {
@@ -216,7 +211,6 @@ public class SimpleChartBuilder implements ChartBuilder {
             this.attributes.add(timeAttributes);
         }
     }
-
 
     /**
      * Adds data to the chart from an array of attributes
