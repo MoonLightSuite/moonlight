@@ -14,3 +14,30 @@
     -fx-fill: #cbcbcb;
 }
 
+.leftSide {
+    -fx-background-color: lightgrey;
+}
+
+.buttonHome {
+    -fx-background-color: lightgrey;
+    -fx-background-radius: 0;
+}
+
+.buttonHome:hover {
+    -fx-background-color: #4e75a8;
+}
+
+.rightSide {
+    -fx-background-color: white;
+}
+
+.searchArea {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+}
+
+.searchArea .content {
+    -fx-text-fill: gray;
+}
+

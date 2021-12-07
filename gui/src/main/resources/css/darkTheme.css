@@ -36,4 +36,31 @@
     -fx-fill: #292929;
 }
 
+.leftSide {
+    -fx-background-color: #505056;
+}
+
+.buttonHome {
+    -fx-background-color: #505056;
+    -fx-background-radius: 0;
+}
+
+.buttonHome:hover {
+    -fx-background-color: #4e75a8;
+}
+
+.rightSide {
+    -fx-background-color: #5b5b5b;
+}
+
+.searchArea {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+}
+
+.searchArea .content {
+    -fx-text-fill: #737373;
+}
+
 

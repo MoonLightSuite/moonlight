@@ -143,4 +143,6 @@ public class JavaFXMainController {
             d.warning("Failed loading theme.");
         }
     }
+
+
 }

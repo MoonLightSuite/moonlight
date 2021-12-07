@@ -26,12 +26,13 @@ public class JavaFxMoonLightViewer extends Application {
      */
     public void start(Stage stage) throws Exception {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        URL file = classLoader.getResource("fxml/mainComponent.fxml");
+//        URL file = classLoader.getResource("fxml/mainComponent.fxml");
+        URL file = classLoader.getResource("fxml/homeComponent.fxml");
         VBox root = FXMLLoader.load(Objects.requireNonNull(file));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.getIcons().add(new Image((Objects.requireNonNull(classLoader.getResource("images/ML.png"))).toString()));
-        stage.setTitle("MoonLightViewer");
+        stage.setTitle("Welcome to MoonLight");
         stage.initStyle(StageStyle.DECORATED);
         stage.show();
     }
