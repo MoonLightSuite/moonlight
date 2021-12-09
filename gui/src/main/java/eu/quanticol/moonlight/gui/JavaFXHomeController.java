@@ -1,8 +1,6 @@
 package eu.quanticol.moonlight.gui;
 
-import eu.quanticol.moonlight.gui.filter.SimpleFiltersController;
-import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
-import eu.quanticol.moonlight.gui.io.ThemeLoader;
+import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,22 +8,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class JavaFXHomeController {
 
-
     @FXML
     VBox root;
-
     @FXML
     Button projectsButton;
     @FXML
@@ -34,10 +31,8 @@ public class JavaFXHomeController {
     GridPane projectsPane;
     @FXML
     GridPane themePane;
-
     @FXML
-    ListView<String> recentFiles;
-
+    ListView<RecentFile> recentFiles;
     @FXML
     MenuButton theme;
     @FXML
@@ -46,18 +41,22 @@ public class JavaFXHomeController {
     MenuItem darkTheme;
 
     private ThemeLoader themeLoader = new JsonThemeLoader();
-
+    private final FilesLoader filesLoader = new JsonFilesLoader();
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     public String getTheme() {
         return themeLoader.getGeneralTheme();
     }
 
+    public ListView<RecentFile> getRecentFiles() {
+        return recentFiles;
+    }
 
-    public void initialize() {
+    public void initialize() throws IOException {
         showProjectPane();
         loadTheme();
         initThemeMenu();
+        loadFilesOnList();
     }
 
     private void initThemeMenu() {
@@ -95,7 +94,6 @@ public class JavaFXHomeController {
             root.getStylesheets().add(themeLoader.getGeneralTheme());
         }
     }
-
 
     @FXML
     private void showProjectPane() {
@@ -158,5 +156,44 @@ public class JavaFXHomeController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Load recent files on list
+     */
+    @FXML
+    private void loadFilesOnList() throws IOException {
+        String path = System.getProperty("user.home");
+        path += File.separator + "MoonLightConfig" + File.separator + "files.json";
+        File userFile = new File(path);
+        if(userFile.length() != 0) {
+            ArrayList<RecentFile> files = filesLoader.getFilesFromJson();
+            for (int i = files.size()-1; i >= 0; i--)
+                recentFiles.getItems().add(files.get(i));
+            addImagesToFiles();
+        }
+    }
+
+    /**
+     * Adds icons to recent files
+     */
+    private void addImagesToFiles() {
+        recentFiles.setCellFactory(param -> new ListCell<>() {
+            private final ImageView displayImage = new ImageView();
+            @Override
+            public void updateItem(RecentFile file, boolean empty) {
+                super.updateItem(file, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    if (file.getType() == FileType.TRA)
+                        displayImage.setImage(new Image((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/graph.png"))).toString()));
+                    if(file.getType() == FileType.CSV)
+                        displayImage.setImage(new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/chart.png")).toString()));
+                    setText(file.getPathFile());
+                    setGraphic(displayImage);
+                }
+            }
+        });
     }
 }

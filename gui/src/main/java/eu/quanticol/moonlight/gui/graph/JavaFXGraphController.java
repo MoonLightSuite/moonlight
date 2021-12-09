@@ -3,6 +3,9 @@ package eu.quanticol.moonlight.gui.graph;
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.filter.JavaFXFiltersController;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
+import eu.quanticol.moonlight.gui.io.FileType;
+import eu.quanticol.moonlight.gui.io.FilesLoader;
+import eu.quanticol.moonlight.gui.io.JsonFilesLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
@@ -68,6 +71,7 @@ public class JavaFXGraphController {
     private final Label label = new Label();
     private final ArrayList<Double> time = new ArrayList<>();
     private RunnableSlider runnable = null;
+    private final FilesLoader jsonFilesLoader= new JsonFilesLoader();
 
     /**
      * Listener for slider that updates the label of slider thumb and the graph visualized
@@ -134,10 +138,11 @@ public class JavaFXGraphController {
     /**
      * Opens explorer with only .tra files
      */
-    public void openTraExplorer() {
+    public void openTraExplorer() throws IOException {
         System.setProperty("org.graphstream.ui", "javafx");
         File file = open("TRA Files", "*.tra");
         if (file != null) {
+            addRecentFile(file.getPath(),FileType.TRA);
             resetAll();
             createGraphFromFile(file);
             nodeTableComponentController.initTable();
@@ -145,7 +150,6 @@ public class JavaFXGraphController {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
         }
-
     }
 
     /**
@@ -155,6 +159,7 @@ public class JavaFXGraphController {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
+                addRecentFile(file.getPath(),FileType.CSV);
                 chartController.reset();
                 readCSV(file);
                 if (graphVisualization.equals(GraphType.DYNAMIC))
@@ -176,6 +181,7 @@ public class JavaFXGraphController {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
+                addRecentFile(file.getPath(),FileType.CSV);
                 chartController.reset();
                 readConstantCSV(file);
             } catch (Exception e) {
@@ -186,6 +192,18 @@ public class JavaFXGraphController {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
         }
+    }
+
+    /**
+     * Adds the file opened into a json file and into the recent list
+     *
+     * @param file      path of file
+     * @param fileType  type of file
+     */
+    private void addRecentFile(String file, FileType fileType) throws IOException {
+        jsonFilesLoader.saveToJson(file, fileType);
+//        if(!homeController.getFiles().contains(file))
+//            homeController.getFiles().add(file);
     }
 
     /**

@@ -10,6 +10,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -28,7 +29,6 @@ public class JavaFXMainController {
     AnchorPane graphComponent;
     @FXML
     JavaFXGraphController graphComponentController;
-
     @FXML
     VBox root;
     @FXML
@@ -107,7 +107,7 @@ public class JavaFXMainController {
      * Open the explorer to choose a .tra file
      */
     @FXML
-    private void openTraExplorer() {
+    private void openTraExplorer() throws IOException {
         graphComponentController.openTraExplorer();
         menuCSV.setDisable(false);
     }
