@@ -131,7 +131,7 @@
                               </ButtonBar>
                               <AnchorPane GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
                                  <children>
-                                    <ListView fx:id="recentFiles" focusTraversable="false" styleClass="rightSide" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ListView fx:id="recentFiles" fixedCellSize="40.0" focusTraversable="false" styleClass="rightSide" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                            </children>
