@@ -1,7 +1,5 @@
 package eu.quanticol.moonlight.gui.io;
 
-import eu.quanticol.moonlight.gui.filter.Filter;
-
 import java.util.Objects;
 
 /**

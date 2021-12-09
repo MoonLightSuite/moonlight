@@ -2,15 +2,14 @@ package eu.quanticol.moonlight.gui;
 
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
-import eu.quanticol.moonlight.gui.io.ThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -46,6 +45,12 @@ public class JavaFXMainController {
     public VBox getRoot() {
         return this.root;
     }
+
+    public JavaFXGraphController getGraphController(){
+        return this.graphComponentController;
+    }
+
+    public JavaFXHomeController getHomeController() { return this.homeController; }
 
     public void setHomeController(JavaFXHomeController homeController) {
         this.homeController = homeController;
@@ -116,8 +121,27 @@ public class JavaFXMainController {
      */
     @FXML
     private void openTraExplorer() throws IOException {
-        graphComponentController.openTraExplorer();
+        graphComponentController.openTRAExplorer();
         menuCSV.setDisable(false);
+    }
+
+    /**
+     * Open the file .tra choose from recent files
+     *
+     * @param file   file to open
+     */
+    public void openTra(File file) throws IOException {
+        graphComponentController.openRecentTRA(file);
+        menuCSV.setDisable(false);
+    }
+
+    /**
+     * Open the file .csv choose from recent files
+     *
+     * @param file   file to open
+     */
+    public void openCSV(File file) {
+        graphComponentController.openRecentCSV(file);
     }
 
     /**

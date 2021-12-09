@@ -52,11 +52,7 @@ public class JavaFXHomeController {
 
     private final FilesLoader filesLoader = new JsonFilesLoader();
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-
-    public ListView<RecentFile> getRecentFiles() {
-        return recentFiles;
-    }
-
+    private JavaFXMainController mainController = null;
     /**
      * Initialize all
      */
@@ -68,6 +64,23 @@ public class JavaFXHomeController {
         loadTheme();
         initThemeMenu();
         loadFilesOnList();
+        addListenerToList();
+    }
+
+    /**
+     * Adds mouseListener on doubleClick on listView
+     */
+    private void addListenerToList(){
+        recentFiles.setOnMouseClicked(click -> {
+            RecentFile recentFile = recentFiles.getSelectionModel().getSelectedItem();
+            if (click.getClickCount() == 2) {
+                if (recentFile.getType() == FileType.TRA)
+                     openProjectTRA(recentFile);
+                if (recentFile.getType() == FileType.CSV) {
+                    openProjectCSV(recentFile);
+                }
+            }
+        });
     }
 
     /**
@@ -198,17 +211,13 @@ public class JavaFXHomeController {
     @FXML
     private void openInputSignal() {
         try {
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
             Parent newRoot = fxmlLoader.load();
             JavaFXMainController mainController = fxmlLoader.getController();
             mainController.setHomeController(this);
+            this.mainController = mainController;
             Stage stage = new Stage();
-            stage.setTitle("MoonLight");
-            stage.initStyle(StageStyle.DECORATED);
-            stage.setScene(new Scene(newRoot));
-            Image icon = new Image(Objects.requireNonNull(classLoader.getResource("images/ML.png")).toString());
-            stage.getIcons().add(icon);
+            setStage(newRoot, stage);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,10 +225,58 @@ public class JavaFXHomeController {
     }
 
     /**
-     * Load recent files on list
+     * Opens the window for input signal analysis of a recent file .tra
+     *
+     * @param recentFile file to open
      */
-    @FXML
-    private void loadFilesOnList() throws IOException {
+    private void openProjectTRA(RecentFile recentFile) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
+            Parent newRoot = fxmlLoader.load();
+            JavaFXMainController mainController = fxmlLoader.getController();
+            mainController.setHomeController(this);
+            this.mainController = mainController;
+            Stage stage = new Stage();
+            setStage(newRoot, stage);
+            stage.show();
+            File file = new File(recentFile.getPathFile());
+            mainController.openTra(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the recent .csv file on the opened window
+     *
+     * @param recentFile  file to open
+     */
+    private void openProjectCSV(RecentFile recentFile){
+        if(mainController != null) {
+            File file = new File(recentFile.getPathFile());
+            mainController.openCSV(file);
+        }
+    }
+
+    /**
+     * Sets properties of stage
+     *
+     * @param newRoot  root of scene
+     * @param stage    stage
+     */
+    private void setStage(Parent newRoot, Stage stage) {
+        stage.setTitle("MoonLight");
+        stage.initStyle(StageStyle.DECORATED);
+        stage.setScene(new Scene(newRoot));
+        Image icon = new Image(Objects.requireNonNull(classLoader.getResource("images/ML.png")).toString());
+        stage.getIcons().add(icon);
+    }
+
+    /**
+     * Load recent files on the listView
+     */
+    public void loadFilesOnList() throws IOException {
+        recentFiles.getItems().clear();
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "files.json";
         File userFile = new File(path);
@@ -227,20 +284,21 @@ public class JavaFXHomeController {
             ArrayList<RecentFile> files = filesLoader.getFilesFromJson();
             for (int i = files.size()-1; i >= 0; i--)
                 recentFiles.getItems().add(files.get(i));
-            addImagesToFiles();
+            addImagesToList();
         }
     }
 
     /**
-     * Adds icons to recent files
+     * Adds icons to recent files in listView
      */
-    private void addImagesToFiles() {
+    private void addImagesToList() {
         recentFiles.setCellFactory(param -> new ListCell<>() {
             private final ImageView displayImage = new ImageView();
             @Override
             public void updateItem(RecentFile file, boolean empty) {
                 super.updateItem(file, empty);
                 if (empty) {
+                    setText(null);
                     setGraphic(null);
                 } else {
                     if (file.getType() == FileType.TRA)

@@ -3,9 +3,7 @@ package eu.quanticol.moonlight.gui.graph;
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.filter.JavaFXFiltersController;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
-import eu.quanticol.moonlight.gui.io.FileType;
-import eu.quanticol.moonlight.gui.io.FilesLoader;
-import eu.quanticol.moonlight.gui.io.JsonFilesLoader;
+import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
@@ -138,14 +136,31 @@ public class JavaFXGraphController {
     /**
      * Opens explorer with only .tra files
      */
-    public void openTraExplorer() throws IOException {
+    public void openTRAExplorer() throws IOException {
         System.setProperty("org.graphstream.ui", "javafx");
         File file = open("TRA Files", "*.tra");
+        loadTRA(file);
+    }
+
+    /**
+     * Opens the chosen .tra file from recent
+     */
+    public void openRecentTRA(File file) throws IOException {
+        System.setProperty("org.graphstream.ui", "javafx");
+        loadTRA(file);
+    }
+
+    /**
+     * Loads the .tra file
+     *
+     * @param file   file .tra
+     */
+    private void loadTRA(File file) throws IOException {
         if (file != null) {
-            addRecentFile(file.getPath(),FileType.TRA);
             resetAll();
             createGraphFromFile(file);
             nodeTableComponentController.initTable();
+            addRecentFile(file.getPath(), FileType.TRA);
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
@@ -158,19 +173,40 @@ public class JavaFXGraphController {
     public void openCSVExplorer() {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
-            try {
-                addRecentFile(file.getPath(),FileType.CSV);
-                chartController.reset();
-                readCSV(file);
-                if (graphVisualization.equals(GraphType.DYNAMIC))
-                    chartController.createDataFromGraphs(graphList);
-            } catch (Exception e) {
-                DialogBuilder d = new DialogBuilder(mainController.getTheme());
-                d.error("Failed to load chart data.");
-            }
+            loadCSV(file);
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
+        }
+    }
+
+    /**
+     * Opens the chosen .csv file from recent
+     */
+    public void openRecentCSV(File file){
+        if (file != null) {
+            loadCSV(file);
+        } else {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.info("No file chosen.");
+        }
+    }
+
+    /**
+     * Loads the .csv file
+     *
+     * @param file   file .csv
+     */
+    private void loadCSV(File file) {
+        try {
+            chartController.reset();
+            readCSV(file);
+            if (graphVisualization.equals(GraphType.DYNAMIC))
+                chartController.createDataFromGraphs(graphList);
+            addRecentFile(file.getPath(), FileType.CSV);
+        } catch (Exception e) {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed to load chart data.");
         }
     }
 
@@ -181,9 +217,9 @@ public class JavaFXGraphController {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
-                addRecentFile(file.getPath(),FileType.CSV);
                 chartController.reset();
                 readConstantCSV(file);
+                addRecentFile(file.getPath(),FileType.CSV);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
                 d.error("Failed to load chart data.");
@@ -202,8 +238,7 @@ public class JavaFXGraphController {
      */
     private void addRecentFile(String file, FileType fileType) throws IOException {
         jsonFilesLoader.saveToJson(file, fileType);
-//        if(!homeController.getFiles().contains(file))
-//            homeController.getFiles().add(file);
+        mainController.getHomeController().loadFilesOnList();
     }
 
     /**
