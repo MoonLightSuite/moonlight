@@ -131,6 +131,10 @@ public class JavaFXMainController {
             initializeThemes();
             JsonThemeLoader.getInstance().saveToJson();
             homeController.loadTheme();
+            JsonThemeLoader.getInstance().addPropertyChangeListener(evt -> {
+                if (evt.getPropertyName().equals("GeneralTheme") || evt.getPropertyName().equals("GraphTheme"))
+                    loadTheme();
+            });
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
@@ -148,6 +152,10 @@ public class JavaFXMainController {
             initializeThemes();
             JsonThemeLoader.getInstance().saveToJson();
             homeController.loadTheme();
+            JsonThemeLoader.getInstance().addPropertyChangeListener(evt -> {
+                if (evt.getPropertyName().equals("GeneralTheme") || evt.getPropertyName().equals("GraphTheme"))
+                    loadTheme();
+            });
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");

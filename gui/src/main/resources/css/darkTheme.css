@@ -53,10 +53,8 @@
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-background-color: transparent;
-}
-
-.searchArea .content {
     -fx-text-fill: white;
+    -fx-prompt-text-fill: #a9a9a9;
 }
 
 .separator {

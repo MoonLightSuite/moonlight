@@ -39,6 +39,7 @@ public class JavaFXHomeController {
     GridPane themePane;
     @FXML
     ListView<RecentFile> recentFiles;
+    @FXML
     ImageView logo;
     @FXML
     ImageView search;

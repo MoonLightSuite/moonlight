@@ -51,107 +51,123 @@
 
 <VBox fx:id="root" minHeight="600.0" minWidth="770.0" prefHeight="600.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXHomeController">
    <children>
-      <GridPane prefHeight="617.0" prefWidth="770.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.2000366210938" minWidth="10.0" prefWidth="606.3999877929688" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <GridPane prefHeight="581.0" prefWidth="386.0" styleClass="leftSide">
+            <GridPane minHeight="600.0" minWidth="770.0" prefHeight="600.0" prefWidth="770.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="590.0" prefWidth="590.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="85.0" minHeight="85.0" prefHeight="85.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="515.8000122070313" minHeight="10.0" prefHeight="515.8000122070313" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="600.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ImageView fx:id="logo" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </ImageView>
-                  <Label prefHeight="18.0" prefWidth="84.0" text="MoonLight">
-                     <GridPane.margin>
-                        <Insets left="50.0" />
-                     </GridPane.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                  <AnchorPane GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="projectsButton" alignment="BASELINE_LEFT" layoutX="23.0" layoutY="14.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showProjectPane" prefHeight="35.0" styleClass="buttonHome" text="Projects" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <Button fx:id="themeButton" alignment="BASELINE_LEFT" layoutX="-1.0" layoutY="61.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showThemePane" prefHeight="35.0" styleClass="buttonHome" text="Theme" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                        <GridPane minHeight="600.0" minWidth="180.0" prefHeight="600.0" prefWidth="180.0" styleClass="leftSide" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="85.0" minHeight="85.0" prefHeight="85.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="515.0" prefHeight="515.0" vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <ImageView fx:id="logo" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </ImageView>
+                              <Label prefHeight="18.0" prefWidth="84.0" text="MoonLight">
+                                 <GridPane.margin>
+                                    <Insets left="50.0" />
+                                 </GridPane.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane minHeight="515.0" minWidth="180.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="projectsButton" alignment="BASELINE_LEFT" layoutX="23.0" layoutY="14.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showProjectPane" prefHeight="35.0" styleClass="buttonHome" text="Projects" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="themeButton" alignment="BASELINE_LEFT" layoutX="-1.0" layoutY="61.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showThemePane" prefHeight="35.0" styleClass="buttonHome" text="Theme" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <GridPane fx:id="projectsPane" minHeight="600.0" minWidth="590.0" prefHeight="600.0" prefWidth="590.0" styleClass="rightSide" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="590.0" prefWidth="590.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="82.0" minHeight="82.0" prefHeight="82.0" vgrow="ALWAYS" />
+                            <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="513.0" prefHeight="513.0" vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <ImageView fx:id="search" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </ImageView>
+                              <TextField maxWidth="250.0" prefHeight="30.0" prefWidth="250.0" promptText="Search file" styleClass="searchArea">
+                                 <GridPane.margin>
+                                    <Insets left="40.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Separator maxHeight="1.0" minHeight="1.0" prefHeight="1.0" GridPane.rowIndex="1" />
+                              <ButtonBar prefHeight="86.0" prefWidth="330.0">
+                                <buttons>
+                                  <Button mnemonicParsing="false" text="Monitor" />
+                                    <Button mnemonicParsing="false" text="Script" />
+                                    <Button mnemonicParsing="false" onAction="#openInputSignal" text="Input Signal" />
+                                </buttons>
+                                 <GridPane.margin>
+                                    <Insets left="300.0" right="10.0" />
+                                 </GridPane.margin>
+                              </ButtonBar>
+                              <AnchorPane GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                                 <children>
+                                    <ListView fx:id="recentFiles" focusTraversable="false" styleClass="rightSide" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                        <GridPane fx:id="themePane" disable="true" minHeight="600.0" minWidth="590.0" prefHeight="600.0" prefWidth="590.0" styleClass="rightSide" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="TOP_LEFT" text="Color theme" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" top="30.0" />
+                                 </GridPane.margin>
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <MenuButton fx:id="theme" mnemonicParsing="false" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                                <items>
+                                  <MenuItem fx:id="lightTheme" mnemonicParsing="false" text="Light Theme" />
+                                  <MenuItem fx:id="darkTheme" mnemonicParsing="false" text="Dark Theme" />
+                                </items>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" top="70.0" />
+                                 </GridPane.margin>
+                              </MenuButton>
+                           </children>
+                        </GridPane>
                      </children>
                   </AnchorPane>
                </children>
             </GridPane>
-            <GridPane fx:id="projectsPane" prefHeight="606.0" prefWidth="590.0" styleClass="rightSide" GridPane.columnIndex="1">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints maxHeight="82.0" minHeight="82.0" prefHeight="82.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <ImageView fx:id="search" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </ImageView>
-                  <TextField maxWidth="250.0" prefHeight="30.0" prefWidth="250.0" promptText="Search file" styleClass="searchArea">
-                     <GridPane.margin>
-                        <Insets left="40.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <Separator maxHeight="1.0" minHeight="1.0" prefHeight="1.0" GridPane.rowIndex="1" />
-                  <ButtonBar prefHeight="86.0" prefWidth="330.0">
-                    <buttons>
-                      <Button mnemonicParsing="false" text="Monitor" />
-                        <Button mnemonicParsing="false" text="Script" />
-                        <Button mnemonicParsing="false" onAction="#openInputSignal" text="Input Signal" />
-                    </buttons>
-                     <GridPane.margin>
-                        <Insets left="300.0" right="10.0" />
-                     </GridPane.margin>
-                  </ButtonBar>
-                  <ListView fx:id="recentFiles" prefHeight="514.0" prefWidth="590.0" styleClass="rightSide" GridPane.rowIndex="2" />
-               </children>
-            </GridPane>
-            <GridPane fx:id="themePane" disable="true" styleClass="rightSide" visible="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label alignment="TOP_LEFT" text="Color theme" GridPane.halignment="LEFT" GridPane.valignment="TOP">
-                     <GridPane.margin>
-                        <Insets left="10.0" top="30.0" />
-                     </GridPane.margin>
-                     <font>
-                        <Font name="System Bold" size="15.0" />
-                     </font>
-                  </Label>
-                  <MenuButton fx:id="theme" mnemonicParsing="false" GridPane.halignment="LEFT" GridPane.valignment="TOP">
-                    <items>
-                      <MenuItem fx:id="lightTheme" mnemonicParsing="false" text="Light Theme" />
-                      <MenuItem fx:id="darkTheme" mnemonicParsing="false" text="Dark Theme" />
-                    </items>
-                     <GridPane.margin>
-                        <Insets left="10.0" top="70.0" />
-                     </GridPane.margin>
-                  </MenuButton>
-               </children>
-            </GridPane>
          </children>
-      </GridPane>
+      </AnchorPane>
    </children>
 </VBox>

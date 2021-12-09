@@ -34,6 +34,8 @@ public class JavaFxMoonLightViewer extends Application {
         stage.getIcons().add(new Image((Objects.requireNonNull(classLoader.getResource("images/ML.png"))).toString()));
         stage.setTitle("Welcome to MoonLight");
         stage.initStyle(StageStyle.DECORATED);
+        stage.setMinHeight(root.getMinHeight() + 40);
+        stage.setMinWidth(root.getMinWidth() + 20);
         stage.show();
     }
 }
