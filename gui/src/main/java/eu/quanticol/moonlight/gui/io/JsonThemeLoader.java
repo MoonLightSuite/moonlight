@@ -1,8 +1,12 @@
 package eu.quanticol.moonlight.gui.io;
 
 import com.google.gson.Gson;
+import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
+import com.sun.javafx.property.adapter.PropertyDescriptor;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
@@ -18,22 +22,50 @@ public class JsonThemeLoader implements ThemeLoader {
 
     private String generalTheme;
     private String graphTheme;
+    private static JsonThemeLoader themeLoader = null;
+
+    private final transient PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    private JsonThemeLoader() {
+        this.generalTheme = null;
+        this.graphTheme = null;
+    }
+
+    public static JsonThemeLoader getInstance() {
+        if (themeLoader == null)
+            themeLoader = new JsonThemeLoader();
+        return themeLoader;
+}
 
     public String getGeneralTheme() {
         return generalTheme;
     }
 
-    public void setGeneralTheme(String generalTheme) {
-        this.generalTheme = generalTheme;
+    public void setGeneralTheme(String newTheme) {
+        String oldTheme = this.generalTheme;
+        this.generalTheme = newTheme;
+        this.propertyChangeSupport.firePropertyChange("GeneralTheme", oldTheme, newTheme);
     }
 
     public String getGraphTheme() {
         return graphTheme;
     }
 
-    public void setGraphTheme(String graphTheme) {
-        this.graphTheme = graphTheme;
+    public void setGraphTheme(String newTheme) {
+        String oldTheme = this.graphTheme;
+        this.graphTheme = newTheme;
+        this.propertyChangeSupport.firePropertyChange("GraphTheme", oldTheme, newTheme);
     }
+
+    /**
+     * Add a listener to a property that changes
+     *
+     * @param listener listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
 
     /**
      * Save the theme chosen in a json file
@@ -55,37 +87,34 @@ public class JsonThemeLoader implements ThemeLoader {
      * Gets the theme from a json file
      *
      */
-    public static ThemeLoader getThemeFromJson() throws IOException, URISyntaxException {
+    public void getThemeFromJson() throws IOException, URISyntaxException {
         Gson gson = new Gson();
-        ThemeLoader fromJson = null;
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "theme.json";
         File userFile = new File(path);
         userFile.getParentFile().mkdirs();
         if (!userFile.exists()) {
             if (userFile.createNewFile())
-                fromJson = initializeFile();
+                initializeFile();
         } else {
             Reader reader = new FileReader(userFile);
             Type theme = new TypeToken<JsonThemeLoader>() {
             }.getType();
-            fromJson = gson.fromJson(reader, theme);
-            if (fromJson == null)
-                fromJson = initializeFile();
+            themeLoader = gson.fromJson(reader, theme);
+            if (themeLoader.getGeneralTheme() == null) {
+                initializeFile();
+            }
             reader.close();
         }
-        return fromJson;
     }
 
     /**
      * Initialize an empty file for themes
      */
-    private static ThemeLoader initializeFile() throws IOException, URISyntaxException {
+    private void initializeFile() throws IOException, URISyntaxException {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        ThemeLoader fromJson = new JsonThemeLoader();
-        fromJson.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
-        fromJson.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
-        fromJson.saveToJson();
-        return fromJson;
+        themeLoader.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
+        themeLoader.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
+        themeLoader.saveToJson();
     }
 }

@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.gui.io.ThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -34,16 +35,20 @@ public class JavaFXMainController {
     @FXML
     Menu menuCSV;
 
-    private ThemeLoader themeLoader = new JsonThemeLoader();
+    private JavaFXHomeController homeController = null;
 
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     public String getTheme() {
-        return themeLoader.getGeneralTheme();
+        return  JsonThemeLoader.getInstance().getGeneralTheme();
     }
 
     public VBox getRoot() {
         return this.root;
+    }
+
+    public void setHomeController(JavaFXHomeController homeController) {
+        this.homeController = homeController;
     }
 
     /**
@@ -60,10 +65,13 @@ public class JavaFXMainController {
     /**
      * Loads the theme
      */
-    private void loadTheme() {
+    public void loadTheme() {
         try {
-            themeLoader = JsonThemeLoader.getThemeFromJson();
             initializeThemes();
+            JsonThemeLoader.getInstance().addPropertyChangeListener(evt -> {
+                if (evt.getPropertyName().equals("GeneralTheme") || evt.getPropertyName().equals("GraphTheme"))
+                    loadTheme();
+            });
         } catch (Exception e) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
@@ -78,13 +86,13 @@ public class JavaFXMainController {
         if (root.getStylesheets() != null) {
             if (!root.getStylesheets().isEmpty())
                 root.getStylesheets().clear();
-            root.getStylesheets().add(themeLoader.getGeneralTheme());
+            root.getStylesheets().add(JsonThemeLoader.getInstance().getGeneralTheme());
         }
         if (this.graphComponentController.getCurrentGraph() != null && this.graphComponentController.getCurrentGraph().hasAttribute("ui.stylesheet")) {
             this.graphComponentController.getCurrentGraph().removeAttribute("ui.stylesheet");
-            this.graphComponentController.getCurrentGraph().setAttribute("ui.stylesheet",  "url('" + themeLoader.getGraphTheme() + "')");
+            this.graphComponentController.getCurrentGraph().setAttribute("ui.stylesheet",  "url('" + JsonThemeLoader.getInstance().getGraphTheme() + "')");
         }
-        graphComponentController.setTheme(themeLoader.getGraphTheme());
+        graphComponentController.setTheme(JsonThemeLoader.getInstance().getGraphTheme());
     }
 
     /**
@@ -118,10 +126,11 @@ public class JavaFXMainController {
     @FXML
     private void loadDarkTheme() {
         try {
-            themeLoader.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/darkTheme.css")).toString());
-            themeLoader.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphDarkTheme.css")).toURI().toString());
-            themeLoader.saveToJson();
+            JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/darkTheme.css")).toString());
+            JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphDarkTheme.css")).toURI().toString());
             initializeThemes();
+            JsonThemeLoader.getInstance().saveToJson();
+            homeController.loadTheme();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
@@ -134,15 +143,14 @@ public class JavaFXMainController {
     @FXML
     private void loadLightTheme() {
         try {
-            themeLoader.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
-            themeLoader.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
-            themeLoader.saveToJson();
+            JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
+            JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
             initializeThemes();
+            JsonThemeLoader.getInstance().saveToJson();
+            homeController.loadTheme();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
         }
     }
-
-
 }

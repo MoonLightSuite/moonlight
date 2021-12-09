@@ -54,11 +54,7 @@ public class RunnableSlider implements Runnable {
                     }
                 } catch (InterruptedException e) {
                     DialogBuilder d;
-                    try {
-                        d = new DialogBuilder(JsonThemeLoader.getThemeFromJson().getGeneralTheme());
-                    } catch (IOException | URISyntaxException ex) {
-                        d = new DialogBuilder(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("css/lightTheme.css")).toString());
-                    }
+                    d = new DialogBuilder(JsonThemeLoader.getInstance().getGeneralTheme());
                     d.error("Failed loading slider animation");
                 }
             }).start();

@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
@@ -26,9 +27,8 @@ public class JavaFxMoonLightViewer extends Application {
      */
     public void start(Stage stage) throws Exception {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//        URL file = classLoader.getResource("fxml/mainComponent.fxml");
-        URL file = classLoader.getResource("fxml/homeComponent.fxml");
-        VBox root = FXMLLoader.load(Objects.requireNonNull(file));
+        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/homeComponent.fxml"));
+        VBox root = fxmlLoader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.getIcons().add(new Image((Objects.requireNonNull(classLoader.getResource("images/ML.png"))).toString()));

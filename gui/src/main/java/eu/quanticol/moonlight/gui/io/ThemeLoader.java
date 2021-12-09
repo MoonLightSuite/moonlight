@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.gui.io;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 /**
@@ -16,6 +17,8 @@ public interface ThemeLoader {
     String getGraphTheme();
 
     void setGraphTheme(String graphTheme);
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
     void saveToJson() throws IOException;
 }

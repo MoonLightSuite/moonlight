@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.gui;
 
 import eu.quanticol.moonlight.gui.io.*;
+import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Home controller of the application.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class JavaFXHomeController {
 
     @FXML
@@ -33,6 +39,9 @@ public class JavaFXHomeController {
     GridPane themePane;
     @FXML
     ListView<RecentFile> recentFiles;
+    ImageView logo;
+    @FXML
+    ImageView search;
     @FXML
     MenuButton theme;
     @FXML
@@ -40,29 +49,55 @@ public class JavaFXHomeController {
     @FXML
     MenuItem darkTheme;
 
-    private ThemeLoader themeLoader = new JsonThemeLoader();
     private final FilesLoader filesLoader = new JsonFilesLoader();
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-
-    public String getTheme() {
-        return themeLoader.getGeneralTheme();
-    }
 
     public ListView<RecentFile> getRecentFiles() {
         return recentFiles;
     }
 
+    /**
+     * Initialize all
+     */
     public void initialize() throws IOException {
+        initImages();
+        initButtons();
         showProjectPane();
+        projectsButton.setStyle("-fx-background-color: #788aaf");
         loadTheme();
         initThemeMenu();
         loadFilesOnList();
     }
 
+    /**
+     * Initialize menu buttons
+     */
+    private void initButtons() {
+        try {
+            JsonThemeLoader.getInstance().getThemeFromJson();
+        } catch (Exception e ) {
+            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+            DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
+            d.warning("Failed loading theme.");
+        }
+        projectsButton.setOnMouseClicked(event -> {
+            projectsButton.setStyle("-fx-background-color: #788aaf");
+            themeButton.setStyle(" -fx-background-color: transparent");
+        });
+        themeButton.setOnMouseClicked(event -> {
+            themeButton.setStyle("-fx-background-color: #788aaf");
+            projectsButton.setStyle("-fx-background-color: transparent");
+        });
+    }
+
+    private void initImages() {
+        Image image = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
+        logo.setImage(image);
+        Image image2 = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/search.png")).toString());
+        search.setImage(image2);
+    }
+
     private void initThemeMenu() {
-        if (themeLoader.getGeneralTheme().equals(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString()))
-            theme.setText("Light Theme");
-        else theme.setText("Dark Theme");
         lightTheme.setOnAction(event -> {
             selectLightTheme();
             theme.setText(lightTheme.getText());
@@ -76,9 +111,9 @@ public class JavaFXHomeController {
     /**
      * Loads the theme
      */
-    private void loadTheme() {
+    public void loadTheme() {
         try {
-            themeLoader = JsonThemeLoader.getThemeFromJson();
+            JsonThemeLoader.getInstance().getThemeFromJson();
             initializeThemes();
         } catch (Exception e) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -87,65 +122,86 @@ public class JavaFXHomeController {
         }
     }
 
+    /**
+     * Changes theme of the window
+     */
     private void initializeThemes() {
         if (root.getStylesheets() != null) {
             if (!root.getStylesheets().isEmpty())
                 root.getStylesheets().clear();
-            root.getStylesheets().add(themeLoader.getGeneralTheme());
+            root.getStylesheets().add(JsonThemeLoader.getInstance().getGeneralTheme());
         }
+        if (JsonThemeLoader.getInstance() != null)
+            if (JsonThemeLoader.getInstance().getGeneralTheme().equals(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString()))
+                theme.setText("Light Theme");
+            else theme.setText("Dark Theme");
     }
 
+    /**
+     * Shows the pane relative to projects
+     */
     @FXML
     private void showProjectPane() {
         projectsPane.setVisible(true);
         projectsPane.setDisable(false);
         themePane.setVisible(false);
         themePane.setDisable(true);
-        projectsButton.setStyle("-fx-background-color: #4e75a8");
-        themeButton.setStyle("-fx-background-color: lightgrey");
     }
 
+    /**
+     * Shows the pane relative to themes
+     */
     @FXML
     private void showThemePane() {
         projectsPane.setVisible(false);
         projectsPane.setDisable(true);
         themePane.setVisible(true);
         themePane.setDisable(false);
-        projectsButton.setStyle("-fx-background-color: lightgrey");
-        themeButton.setStyle("-fx-background-color: #4e75a8");
     }
 
+    /**
+     * Selects the light theme
+     */
     @FXML
     private void selectLightTheme() {
         try {
-            themeLoader.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
-            themeLoader.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
-            themeLoader.saveToJson();
+            JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
+            JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
             initializeThemes();
+            JsonThemeLoader.getInstance().saveToJson();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
         }
     }
 
+    /**
+     * Selects the dark theme
+     */
     @FXML
     private void selectDarkTheme() {
         try {
-            themeLoader.setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/darkTheme.css")).toString());
-            themeLoader.setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphDarkTheme.css")).toURI().toString());
-            themeLoader.saveToJson();
+            JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/darkTheme.css")).toString());
+            JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphDarkTheme.css")).toURI().toString());
             initializeThemes();
+            JsonThemeLoader.getInstance().saveToJson();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
         }
     }
 
+    /**
+     * Opens the window for input signal analysis
+     */
     @FXML
     private void openInputSignal() {
         try {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-            Parent newRoot = FXMLLoader.load(Objects.requireNonNull(classLoader.getResource("fxml/mainComponent.fxml")));
+            FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
+            Parent newRoot = fxmlLoader.load();
+            JavaFXMainController mainController = fxmlLoader.getController();
+            mainController.setHomeController(this);
             Stage stage = new Stage();
             stage.setTitle("MoonLight");
             stage.initStyle(StageStyle.DECORATED);
