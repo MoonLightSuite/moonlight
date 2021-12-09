@@ -41,7 +41,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -50,7 +49,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" minHeight="600.0" minWidth="770.0" prefHeight="600.0" prefWidth="770.0" stylesheets="@../css/lightTheme.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXHomeController">
+<VBox fx:id="root" minHeight="600.0" minWidth="770.0" prefHeight="600.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXHomeController">
    <children>
       <GridPane prefHeight="617.0" prefWidth="770.0">
         <columnConstraints>
@@ -70,10 +69,7 @@
                 <RowConstraints maxHeight="515.8000122070313" minHeight="10.0" prefHeight="515.8000122070313" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/ML.png" />
-                     </image>
+                  <ImageView fx:id="logo" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <GridPane.margin>
                         <Insets left="10.0" />
                      </GridPane.margin>
@@ -88,7 +84,7 @@
                   </Label>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="projectsButton" alignment="BASELINE_LEFT" defaultButton="true" layoutX="23.0" layoutY="14.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showProjectPane" prefHeight="35.0" styleClass="buttonHome" text="Projects" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Button fx:id="projectsButton" alignment="BASELINE_LEFT" layoutX="23.0" layoutY="14.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showProjectPane" prefHeight="35.0" styleClass="buttonHome" text="Projects" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <Button fx:id="themeButton" alignment="BASELINE_LEFT" layoutX="-1.0" layoutY="61.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#showThemePane" prefHeight="35.0" styleClass="buttonHome" text="Theme" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
                      </children>
                   </AnchorPane>
@@ -104,10 +100,7 @@
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/search%20(1).png" />
-                     </image>
+                  <ImageView fx:id="search" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <GridPane.margin>
                         <Insets left="10.0" />
                      </GridPane.margin>
@@ -117,7 +110,7 @@
                         <Insets left="40.0" />
                      </GridPane.margin>
                   </TextField>
-                  <Separator prefHeight="3.0" prefWidth="590.0" GridPane.rowIndex="1" />
+                  <Separator maxHeight="1.0" minHeight="1.0" prefHeight="1.0" GridPane.rowIndex="1" />
                   <ButtonBar prefHeight="86.0" prefWidth="330.0">
                     <buttons>
                       <Button mnemonicParsing="false" text="Monitor" />
@@ -128,10 +121,10 @@
                         <Insets left="300.0" right="10.0" />
                      </GridPane.margin>
                   </ButtonBar>
-                  <ListView fx:id="recentFiles" prefHeight="514.0" prefWidth="590.0" GridPane.rowIndex="2" />
+                  <ListView fx:id="recentFiles" prefHeight="514.0" prefWidth="590.0" styleClass="rightSide" GridPane.rowIndex="2" />
                </children>
             </GridPane>
-            <GridPane fx:id="themePane" disable="true" visible="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+            <GridPane fx:id="themePane" disable="true" styleClass="rightSide" visible="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>

@@ -45,10 +45,6 @@
     -fx-background-radius: 0;
 }
 
-.buttonHome:hover {
-    -fx-background-color: #4e75a8;
-}
-
 .rightSide {
     -fx-background-color: #5b5b5b;
 }
@@ -60,7 +56,10 @@
 }
 
 .searchArea .content {
-    -fx-text-fill: #737373;
+    -fx-text-fill: white;
 }
 
+.separator {
+    -fx-background-color: grey;
+}
 
