@@ -32,6 +32,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -40,9 +41,13 @@
 
 <VBox fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/lightTheme.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.JavaFXMainController">
     <MenuBar VBox.vgrow="NEVER">
+      <Menu mnemonicParsing="false">
+         <graphic>
+            <FontAwesomeIcon fx:id="homeImage" glyphName="HOME" onMouseClicked="#backHome" size="1.5em" styleClass="home" />
+         </graphic>
+      </Menu>
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#openTraExplorer" text="Open.." />
-         <MenuItem mnemonicParsing="false" onAction="#backHome" text="Back home" />
          <MenuItem mnemonicParsing="false" onAction="#closeProject" text="Close project" />
         </Menu>
         <Menu fx:id="menuCSV" disable="true" mnemonicParsing="false" text="Load attributes">

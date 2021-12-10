@@ -1,11 +1,14 @@
 package eu.quanticol.moonlight.gui;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -34,6 +37,8 @@ public class JavaFXMainController {
     VBox root;
     @FXML
     Menu menuCSV;
+    @FXML
+    FontAwesomeIcon homeImage;
 
     private JavaFXHomeController homeController = null;
 
@@ -207,4 +212,5 @@ public class JavaFXMainController {
             d.warning("Failed loading theme.");
         }
     }
+
 }

@@ -216,7 +216,8 @@ public class JavaFXHomeController {
     @FXML
     private void openInputSignal() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
+            FXMLLoader fxmlLoader;
+            fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
             Parent newRoot = fxmlLoader.load();
             JavaFXMainController mainController = fxmlLoader.getController();
             mainController.setHomeController(this);
@@ -228,6 +229,7 @@ public class JavaFXHomeController {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Opens the window for input signal analysis of a recent file .tra
