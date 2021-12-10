@@ -114,7 +114,7 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </ImageView>
-                              <TextField maxWidth="250.0" prefHeight="30.0" prefWidth="250.0" promptText="Search file" styleClass="searchArea">
+                              <TextField fx:id="searchField" maxWidth="250.0" prefHeight="30.0" prefWidth="250.0" promptText="Search file" styleClass="searchArea">
                                  <GridPane.margin>
                                     <Insets left="40.0" />
                                  </GridPane.margin>
@@ -139,6 +139,11 @@
                                        </styleClass></ListView>
                                  </children>
                               </AnchorPane>
+                              <ImageView fx:id="reset" fitHeight="21.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <GridPane.margin>
+                                    <Insets left="295.0" />
+                                 </GridPane.margin>
+                              </ImageView>
                            </children>
                         </GridPane>
                         <GridPane fx:id="themePane" disable="true" minHeight="600.0" minWidth="590.0" prefHeight="600.0" prefWidth="590.0" styleClass="rightSide" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

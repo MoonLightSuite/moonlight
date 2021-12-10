@@ -1,9 +1,11 @@
 package eu.quanticol.moonlight.gui;
 
 import eu.quanticol.moonlight.gui.io.*;
-import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
-import javafx.event.EventHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +13,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -30,6 +31,8 @@ import java.util.Objects;
 public class JavaFXHomeController {
 
     @FXML
+    TextField searchField;
+    @FXML
     VBox root;
     @FXML
     Button projectsButton;
@@ -43,6 +46,8 @@ public class JavaFXHomeController {
     ListView<RecentFile> recentFiles;
     @FXML
     ImageView logo;
+    @FXML
+    ImageView reset;
     @FXML
     ImageView search;
     @FXML
@@ -68,6 +73,12 @@ public class JavaFXHomeController {
         initThemeMenu();
         loadFilesOnList();
         addListenerToList();
+        addListenersToSearch();
+    }
+
+    private void resetSearch(){
+        searchField.setText("");
+        reset.setVisible(false);
     }
 
     /**
@@ -86,6 +97,38 @@ public class JavaFXHomeController {
                 }
             }
         });
+    }
+
+    /**
+     * Adds listener when user writes or deletes on the search textField
+     */
+    private void addListenersToSearch(){
+        searchField.setOnKeyPressed(press -> {
+            search();
+            reset.setVisible(true);
+            reset.setImage(new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/cancel.png")).toString()));
+        });
+        searchField.addEventFilter(Event.ANY, e -> reset.setVisible(!searchField.getText().equals("")));
+        reset.setOnMouseClicked(click -> {
+            searchField.setText("");
+            reset.setVisible(false);
+        });
+    }
+
+    /**
+     * Searches in recent files from user input
+     */
+    private void search() {
+        FilteredList<RecentFile> filteredData = new FilteredList<>(recentFiles.getItems(), p -> true);
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(file -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+                String lowerCaseFilter = newValue.toLowerCase();
+                return file.getPathFile().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+        recentFiles.setItems(filteredData);
     }
 
     /**
@@ -225,6 +268,7 @@ public class JavaFXHomeController {
             Stage stage = new Stage();
             setStage(newRoot, stage);
             stage.showAndWait();
+            resetSearch();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -248,6 +292,7 @@ public class JavaFXHomeController {
             stage.show();
             File file = new File(recentFile.getPathFile());
             mainController.openTra(file);
+            resetSearch();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -283,14 +328,16 @@ public class JavaFXHomeController {
      * Load recent files on the listView
      */
     public void loadFilesOnList() throws IOException {
-        recentFiles.getItems().clear();
+        ObservableList<RecentFile> filesList = FXCollections.observableArrayList();
+        recentFiles.setItems(filesList);
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "files.json";
         File userFile = new File(path);
         if(userFile.length() != 0) {
             ArrayList<RecentFile> files = filesLoader.getFilesFromJson();
             for (int i = files.size()-1; i >= 0; i--)
-                recentFiles.getItems().add(files.get(i));
+                filesList.add(files.get(i));
+            recentFiles.setItems(filesList);
             addImagesToList();
         }
     }
