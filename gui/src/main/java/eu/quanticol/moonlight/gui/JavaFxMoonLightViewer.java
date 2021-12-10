@@ -36,6 +36,7 @@ public class JavaFxMoonLightViewer extends Application {
         stage.initStyle(StageStyle.DECORATED);
         stage.setMinHeight(root.getMinHeight() + 40);
         stage.setMinWidth(root.getMinWidth() + 20);
+        JavaFXMainController.setPrincipal(stage);
         stage.show();
     }
 }

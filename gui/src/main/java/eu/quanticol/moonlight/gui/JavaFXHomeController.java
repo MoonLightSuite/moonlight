@@ -3,6 +3,7 @@ package eu.quanticol.moonlight.gui;
 import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -53,6 +55,7 @@ public class JavaFXHomeController {
     private final FilesLoader filesLoader = new JsonFilesLoader();
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private JavaFXMainController mainController = null;
+
     /**
      * Initialize all
      */
@@ -73,11 +76,13 @@ public class JavaFXHomeController {
     private void addListenerToList(){
         recentFiles.setOnMouseClicked(click -> {
             RecentFile recentFile = recentFiles.getSelectionModel().getSelectedItem();
-            if (click.getClickCount() == 2) {
-                if (recentFile.getType() == FileType.TRA)
-                     openProjectTRA(recentFile);
-                if (recentFile.getType() == FileType.CSV) {
-                    openProjectCSV(recentFile);
+            if(recentFile != null) {
+                if (click.getClickCount() == 2) {
+                    if (recentFile.getType() == FileType.TRA)
+                        openProjectTRA(recentFile);
+                    if (recentFile.getType() == FileType.CSV) {
+                        openProjectCSV(recentFile);
+                    }
                 }
             }
         });

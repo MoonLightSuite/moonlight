@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,8 @@ public class JavaFXMainController {
 
     private JavaFXHomeController homeController = null;
 
+    private static Stage principal = null;
+
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     public String getTheme() {
@@ -46,9 +49,7 @@ public class JavaFXMainController {
         return this.root;
     }
 
-    public JavaFXGraphController getGraphController(){
-        return this.graphComponentController;
-    }
+    public static void setPrincipal(Stage stage) { principal = stage; }
 
     public JavaFXHomeController getHomeController() { return this.homeController; }
 
@@ -142,6 +143,27 @@ public class JavaFXMainController {
      */
     public void openCSV(File file) {
         graphComponentController.openRecentCSV(file);
+    }
+
+    /**
+     * Closes the project opened
+     */
+    @FXML
+    private void closeProject(){
+        Stage stage = (Stage) root.getScene().getWindow();
+        stage.close();
+        backHome();
+    }
+
+    /**
+     * Backs to the home of the app
+     */
+    @FXML
+    private void backHome(){
+        if(principal!= null && principal.isShowing())
+            principal.toFront();
+        if(!(principal == null || principal.isShowing()))
+            principal.show();
     }
 
     /**
