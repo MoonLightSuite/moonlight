@@ -1,0 +1,106 @@
+plugins {
+    `java`
+    `maven-publish`
+    `eclipse`
+    `jacoco`
+    `distribution`
+}
+
+subprojects {
+
+    ext.xtextVersion = "2.18.0.M3"
+    group = "eu.quanticol.moonlight"
+    version = "1.0-SNAPSHOT"
+    description = "MoonLight: a light-weight framework for runtime monitoring"
+    status = "status"
+
+//    apply plugin: "java"
+//    apply plugin: "eclipse"
+//    apply plugin: "distribution"
+//    apply plugin: "jacoco"
+
+    // TODO: restore
+//    task ("create-dirs") {
+//        doLast {
+//            sourceSets*.java.srcDirs*.each { it.mkdirs() }
+//            sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+//        }
+//    }
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+        testImplementation ("org.junit.jupiter:junit-jupiter-api:5.4.2")
+        testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    }
+
+    clean.doFirst {
+        delete ("${rootDir}/output/")
+        println ("deleting jars in  ${rootDir}/output/")
+        delete ("${rootDir}/distribution/")
+        println ("deleting jars in  ${rootDir}/distribution/")
+        delete ("${rootDir}/distribution_files/java/lib/moonlight.jar")
+        println ("deleting ${rootDir}/distribution_files/java/lib/moonlight.jar")
+        delete ("${rootDir}/distribution_files/matlab/moonlight/jar/")
+        println ("deleting jars in  ${rootDir}/distribution_files/matlab/moonlight/jar/")
+        delete ("${rootDir}/distribution_files/python/jar/")
+        println ("${rootDir}/distribution_files/python/jar/")
+
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = "moonlight-core"
+                from (components["java"])
+                versionMapping {
+                    usage("java-api") {
+                        fromResolutionOf("runtimeClasspath")
+                    }
+                    usage("java-runtime") {
+                        fromResolutionResult()
+                    }
+                }
+
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/MoonlightSuite/MoonLight")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+            /*
+                In gradle 8 this must be changed to:
+            */
+               // xml.required
+               // html.required
+            /*
+                ... but it seems Codecov doesn"t support it yet!
+             */
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+
+    check.dependsOn(jacocoTestReport)
+}

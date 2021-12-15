@@ -1,0 +1,19 @@
+// == Define locations for build logic ==
+pluginManagement {
+    repositories {
+        mavenCentral()
+    }
+    includeBuild("../build-logic")
+}
+
+// == Define locations for components ==
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+// == Define the inner structure of this component ==
+rootProject.name = "core" // the component name
+include("monitor-core")
+include("utility")

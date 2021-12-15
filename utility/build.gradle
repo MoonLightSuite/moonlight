@@ -1,7 +1,0 @@
-dependencies {
-    implementation project(":core")
-    //implementation fileTree(dir: "lib", include: "engine.jar")
-    //implementation fileTree(dir: "lib", include: "engine2019.jar")
-    implementation fileTree(dir: "lib", include: "engine2021.jar")
-    implementation group: 'org.n52.matlab', name: 'matlab-control', version: '5.0.0'
-}
