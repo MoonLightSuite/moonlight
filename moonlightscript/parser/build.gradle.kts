@@ -4,6 +4,7 @@ plugins {
 }
 
 //version("unspecified")
+group = "${group}.script"
 
 dependencies {
     implementation("eu.quanticol.moonlight.core:monitor-core")

@@ -1,0 +1,9 @@
+plugins {
+    id("eu.quanticol.java-library")
+}
+
+dependencies {
+    implementation("eu.quanticol.moonlight.core:monitor-core")
+    implementation("eu.quanticol.moonlight.core:utility")
+    implementation("org.n52.matlab:matlab-control:5.0.0")
+}

@@ -13,7 +13,6 @@ subprojects {
         implementation("eu.quanticol.moonlight.script:parser")
 
 
-        //implementation fileTree(dir: buildCommonDir + "/lib", include: ["*.jar"])
         implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
         /* JSSTL Dependencies */

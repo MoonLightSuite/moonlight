@@ -3,10 +3,11 @@ plugins {
     id("application") // plugin to add support for building a CLI application.
 }
 
+group = "${group}.api"
+
 dependencies {
     implementation("eu.quanticol.moonlight.core:monitor-core")
-    //implementation(project(":api"))
-    //implementation(project(":moonlightscript"))
+    implementation("eu.quanticol.moonlight.script:parser")
 }
 
 application {

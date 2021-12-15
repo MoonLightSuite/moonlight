@@ -1,9 +1,8 @@
 // The repositories from which we are fetching the libraries
 dependencyResolutionManagement {
-    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
-        //gradlePluginPortal()
+        gradlePluginPortal()
     }
 }
 

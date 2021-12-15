@@ -345,7 +345,7 @@ class TestPast {
         Signal<Pair<Double, Double>> signal = TestUtils.createSignal((double) start, (double) end, 1.0, x -> new Pair<>(dataMap1.get(x), dataMap2.get(x)));
 
         // TemporalMonitor corrispondente a:
-        // ⟏ I=[24.0, 49.0]
+        //  I=[24.0, 49.0]
         // └──isByGuardrail is false
         TemporalMonitor<Pair<Double, Double>, Double> mQ2 = TemporalMonitor.historicallyMonitor(
                 TemporalMonitor.atomicMonitor(x -> {if (x.getSecond() == 0) {return 1.0;} else {return -1.0;}}), new DoubleDomain(), new Interval(24, 49));

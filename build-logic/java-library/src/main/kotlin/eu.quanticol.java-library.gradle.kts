@@ -5,6 +5,8 @@ plugins {
 }
 
 group = "eu.quanticol.moonlight"
+version = "1.0-SNAPSHOT"
+description = "MoonLight: a light-weight framework for runtime monitoring"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -13,7 +15,7 @@ java {
 
 dependencies {
 //    implementation(platform("java-platform"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 tasks.test {

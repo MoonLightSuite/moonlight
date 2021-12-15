@@ -1,15 +1,13 @@
 plugins {
-    id("java-library")
+    id("eu.quanticol.java-library")
 }
 
-group = "${group}.api"
-
+val libDir = "../../lib"
 
 dependencies {
     implementation("eu.quanticol.moonlight.core:monitor-core")
     implementation("eu.quanticol.moonlight.core:utility")
     implementation("eu.quanticol.moonlight.script:parser")
+
+    implementation(fileTree(mapOf("dir" to libDir, "include" to listOf("*.jar"))))
 }
-//tasks.jar {
-//    archiveFileName= "moonlightAPI.jar"
-//}
