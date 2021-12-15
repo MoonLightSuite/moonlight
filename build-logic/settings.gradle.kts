@@ -9,4 +9,4 @@ dependencyResolutionManagement {
 // We aggregate all the build logic in a single project
 rootProject.name = "build-logic"
 include("java-library")
-//include("report-aggregation")
+include("report-aggregation")

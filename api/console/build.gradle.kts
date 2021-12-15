@@ -5,6 +5,7 @@ plugins {
 
 group = "${group}.api"
 
+
 dependencies {
     implementation("eu.quanticol.moonlight.core:monitor-core")
     implementation("eu.quanticol.moonlight.script:parser")
@@ -33,60 +34,59 @@ tasks.jar {
     exclude ("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
 }
 
-val DEPRECATED = "Dangerous copying strategy adopted for legacy code, should be refactored. " +
-                 "See https://docs.gradle.org/current/userguide/upgrading_version_5.html#implicit_duplicate_strategy_for_copy_or_archive_tasks_has_been_deprecated"
-
-tasks.named("installDist") {
-    logger.warn(DEPRECATED)
-    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-tasks.named("distTar") {
-    logger.warn(DEPRECATED)
-    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-tasks.named("distZip") {
-    logger.warn(DEPRECATED)
-    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
+//val DEPRECATED = "Dangerous copying strategy adopted for legacy code, should be refactored. " +
+//                 "See https://docs.gradle.org/current/userguide/upgrading_version_5.html#implicit_duplicate_strategy_for_copy_or_archive_tasks_has_been_deprecated"
+//
+//tasks.matching{it.name in listOf("installDist", "distTar", "distZip")}
+//    .configureEach {
+//    logger.warn(DEPRECATED)
+//    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//}
 
 tasks.register<Copy>("distribution") {
     logger.info("exec distribution Task!")
     dependsOn("jar")
     dependsOn("installDist")
 
-    logger.warn(DEPRECATED)
+    //logger.warn(DEPRECATED)
     //duplicatesStrategy(DuplicatesStrategy.INCLUDE)
 
     copy {
         from("jar")
-        into(rootProject.file("distribution_files/java/lib/"))
-        into(rootProject.file("distribution_files/matlab/moonlight/jar"))
-        into(rootProject.file("distribution_files/python/jar"))
-        into(rootProject.file("distribution_files/console/lib/"))
+        into(rootProject.file("../distribution_files/java/lib/"))
+        into(rootProject.file("../distribution_files/matlab/moonlight/jar"))
+        into(rootProject.file("../distribution_files/python/jar"))
+        into(rootProject.file("../distribution_files/console/lib/"))
     }
 
     copy {
         from("$buildDir/install/mlconsole/")
-        into(rootProject.file("distribution_files/console/"))
+        into(rootProject.file("../distribution_files/console/"))
     }
 
 }
-
-//tasks.withType<Copy> {
-//    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-//}
 
 tasks.register<Copy>("release") {
     dependsOn("distribution")
 
     copy {
-        from(rootProject.file("distribution_files/"))
-        into(rootProject.file("distribution/"))
+        from(rootProject.file("../distribution_files/"))
+        into(rootProject.file("../distribution/"))
     }
 }
 
-//task distributionZip(type: Zip, dependsOn: distribution) {
-//    archiveFileName = "moonlight.zip"
-//    destinationDirectory = file("$rootDir/distribution/")
-//    from "$rootDir/distribution/"
-//}
+tasks.named<Delete>("clean") {
+    doFirst {
+        delete ("${rootDir}/../output/")
+        println ("deleting jars in ${rootDir}/../output/")
+        delete ("${rootDir}/../distribution/")
+        println ("deleting jars in ${rootDir}/../distribution/")
+        delete ("${rootDir}/../distribution_files/java/lib/moonlight.jar")
+        println ("deleting ${rootDir}/../distribution_files/java/lib/moonlight.jar")
+        delete ("${rootDir}/../distribution_files/matlab/moonlight/jar/")
+        println ("deleting jars in ${rootDir}/../distribution_files/matlab/moonlight/jar/")
+        delete ("${rootDir}/../distribution_files/python/jar/")
+        println ("${rootDir}/../distribution_files/python/jar/")
+    }
+}
+

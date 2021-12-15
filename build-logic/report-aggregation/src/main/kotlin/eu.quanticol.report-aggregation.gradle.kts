@@ -63,6 +63,6 @@ val codeCoverageReport by tasks.registering(JacocoReport::class) {
 }
 
 // Make JaCoCo report generation part of the 'check' lifecycle phase
-tasks.check {
+tasks.named("check") {
     dependsOn(codeCoverageReport)
 }
