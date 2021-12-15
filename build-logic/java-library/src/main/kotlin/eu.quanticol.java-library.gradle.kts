@@ -13,6 +13,16 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+tasks {
+    // to allow UTF-8 characters in comments
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+    compileTestJava {
+        options.encoding = "UTF-8"
+    }
+}
+
 dependencies {
 //    implementation(platform("java-platform"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
