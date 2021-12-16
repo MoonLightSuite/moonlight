@@ -25,13 +25,13 @@ class SimpleGraphControllerTest {
     final File fileStatic = new File((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("static.tra"))).getFile());
     final File fileDynamic = new File((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("dynamic.tra"))).getFile());
 
-
+//todo
     @Test
     void createNodesVectorTest() throws IOException {
         graphController.setGraphList(timeGraphList);
         graphController.createGraphFromFile(fileDynamic);
         String line = "0,3,17,1,0.8,0,14,13,3,0.6,0,9,13,2,0.05,0,25,16,5,0.1,0,14,16,5,0.6,0";
-        graphController.createNodesVector(line);
+//        graphController.createNodesVector(line);
         List<Node> nodesWithVector = new ArrayList<>();
         graphController.getGraphList().forEach(g -> {
             for (int i = 0; i < 5; i++)
@@ -45,11 +45,12 @@ class SimpleGraphControllerTest {
         assertEquals("3, 17, 1, 0.8, 0",vectorNode0.replaceAll("\\[", "").replaceAll("]",""));
     }
 
+    //todo
     @Test
     void createPositionsTest() throws IOException {
         graphController.createGraphFromFile(fileStatic);
         String line = "0,3,17,1,0,0,14,19,3,0,0";
-        graphController.createPositions(line);
+//        graphController.createPositions(line);
         Graph graph = graphController.getStaticGraph();
         String id = String.valueOf(0);
         String id1 = String.valueOf(1);

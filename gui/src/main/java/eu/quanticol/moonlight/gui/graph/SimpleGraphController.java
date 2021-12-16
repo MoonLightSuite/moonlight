@@ -64,7 +64,7 @@ public class SimpleGraphController implements GraphController{
      *
      * @param line a string of a time instant with all info about nodes
      */
-    public void createNodesVector(String line) {
+    public void createNodesVector(String line, String x, String y) {
         int node = 0;
         ArrayList<ArrayList<String>> nodes = new ArrayList<>();
         String[] elements = line.split(",");
@@ -82,7 +82,7 @@ public class SimpleGraphController implements GraphController{
             node++;
             nodes.add(vector);
         }
-        addPositionsDynamicGraph(elements, nodes);
+        addPositionsDynamicGraph(elements, nodes, x, y);
     }
 
     /**
@@ -90,10 +90,10 @@ public class SimpleGraphController implements GraphController{
      *
      * @param line a string of a time instant with all info about nodes
      */
-    public void createPositions(String line) {
+    public void createPositions(String line, String x, String y) {
         String[] array = line.split(",");
-        int columnX = columnsAttributes.indexOf("x");
-        int columnY = columnsAttributes.indexOf("y");
+        int columnX = columnsAttributes.indexOf(x);
+        int columnY = columnsAttributes.indexOf(y);
         for (int i = 0; i < staticGraph.getNodeCount(); i++){
             staticGraph.getNode(String.valueOf(i)).setAttribute("x", array[columnX]);
             staticGraph.getNode(String.valueOf(i)).setAttribute("y", array[columnY]);
@@ -109,13 +109,13 @@ public class SimpleGraphController implements GraphController{
      * @param elements attributes of a node
      * @param nodes    nodes of graph
      */
-    private void addPositionsDynamicGraph(String[] elements, ArrayList<ArrayList<String>> nodes) {
+    private void addPositionsDynamicGraph(String[] elements, ArrayList<ArrayList<String>> nodes, String x, String y) {
         for (TimeGraph g : graphList) {
             if (g.getTime() == Double.parseDouble(elements[0])) {
                 for (int i = 0; i < nodes.size(); i++) {
                     if (g.getGraph().getNode(String.valueOf(i)) != null) {
-                        g.getGraph().getNode(String.valueOf(i)).setAttribute("x", nodes.get(i).get(0));
-                        g.getGraph().getNode(String.valueOf(i)).setAttribute("y", nodes.get(i).get(1));
+                        g.getGraph().getNode(String.valueOf(i)).setAttribute("x", nodes.get(i).get(columnsAttributes.indexOf(x)));
+                        g.getGraph().getNode(String.valueOf(i)).setAttribute("y", nodes.get(i).get(columnsAttributes.indexOf(y)));
                     }
                 }
             }

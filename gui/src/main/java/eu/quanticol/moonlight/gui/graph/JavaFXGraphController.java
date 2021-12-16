@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.util.LinkAttributes;
+import eu.quanticol.moonlight.gui.util.LinkPositions;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -15,14 +16,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -40,6 +37,10 @@ import org.graphstream.ui.view.Viewer;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -78,6 +79,7 @@ public class JavaFXGraphController {
     private RunnableSlider runnable = null;
     private final FilesLoader jsonFilesLoader= new JsonFilesLoader();
     private ArrayList<String> columnsAttributes = new ArrayList<>();
+    LinkPositions linkController = null;
     private String positionX = null;
     private String positionY = null;
 
@@ -112,7 +114,7 @@ public class JavaFXGraphController {
         this.theme = theme;
     }
 
-    public void injectMainController(JavaFXMainController mainController, JavaFXChartController chartComponentController) {
+    public void injectMainController(JavaFXMainController mainController, JavaFXChartController chartComponentController){
         this.mainController = mainController;
         this.chartController = chartComponentController;
         initialize();
@@ -257,14 +259,15 @@ public class JavaFXGraphController {
      * Reads a .csv file as a file with constants attributes
      *
      */
+    //todo
     private void readConstantCSV(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
-            if (graphVisualization.equals(GraphType.STATIC))
-            graphController.createPositions(line);
-            if (graphVisualization.equals(GraphType.DYNAMIC))
-                graphController.createNodesVector(line);
+//            if (graphVisualization.equals(GraphType.STATIC))
+//            graphController.createPositions(line);
+//            if (graphVisualization.equals(GraphType.DYNAMIC))
+//                graphController.createNodesVector(line);
         }
         chartController.initConstantChart(file);
         this.csvRead =true;
@@ -317,7 +320,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createNodesVector(String line) {
-        graphController.createNodesVector(line);
+        graphController.createNodesVector(line, linkController.getColumnX(),linkController.getColumnY());
     }
 
     /**
@@ -326,7 +329,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createPositions(String line) {
-        graphController.createPositions(line);
+        graphController.createPositions(line, linkController.getColumnX(), linkController.getColumnY());
     }
 
     /**
@@ -388,11 +391,12 @@ public class JavaFXGraphController {
         controller.getScroll().setContent(gridpane);
     }
 
-    private void associateAttributesColumns(String line) {
-        String[] split = line.split(";");
+    private void associateAttributesColumns(String line) throws IOException {
+        String[] split = line.split(",");
         ArrayList<String> array = new ArrayList<>(Arrays.asList(split));
         columnsAttributes = array;
         graphController.setColumnsAttributes(array);
+        openWindowChoosePosition();
     }
 
     /**
@@ -423,9 +427,10 @@ public class JavaFXGraphController {
         String line = br.readLine();
         if(line.contains("time")) {
             associateAttributesColumns(line);
+            while (((line = br.readLine()) != null))
+                createNodesVector(line);
         } else {
             openAssociateAttributesWindow(line);
-            createNodesVector(line);
             while (((line = br.readLine()) != null))
                 createNodesVector(line);
         }
@@ -683,5 +688,20 @@ public class JavaFXGraphController {
     @FXML
     private void deselectNodeTable() {
         nodeTableComponentController.nodesTable.getSelectionModel().clearSelection();
+    }
+
+    private void openWindowChoosePosition() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader( ClassLoader.getSystemClassLoader().getResource("fxml/choosePositions.fxml"));
+        Parent root = fxmlLoader.load();
+        linkController = fxmlLoader.getController();
+        linkController.setAttributes(columnsAttributes);
+        linkController.setTheme(mainController.getTheme());
+        linkController.addColumnsToMenuButtons();
+        Stage stage = new Stage();
+        linkController.setStage(stage);
+        stage.setScene(new Scene(root));
+        stage.setTitle("Choose Positions");
+        stage.initStyle(StageStyle.DECORATED);
+        stage.showAndWait();
     }
 }

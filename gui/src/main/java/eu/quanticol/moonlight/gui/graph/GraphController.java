@@ -26,9 +26,9 @@ public interface GraphController {
 
     void setGraphList(List<TimeGraph> graphList);
 
-    void createNodesVector(String line);
+    void createNodesVector(String line, String x, String y);
 
-    void createPositions(String line);
+    void createPositions(String line, String x, String y);
 
     GraphType createGraphFromFile(File file) throws IOException;
 }
