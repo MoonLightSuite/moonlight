@@ -5,7 +5,7 @@ import eu.quanticol.moonlight.gui.filter.JavaFXFiltersController;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
-import eu.quanticol.moonlight.gui.util.LinkAttributes;
+import eu.quanticol.moonlight.gui.util.AttributesLinker;
 import eu.quanticol.moonlight.gui.util.LinkPositions;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
@@ -21,10 +21,10 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -80,8 +80,6 @@ public class JavaFXGraphController {
     private final FilesLoader jsonFilesLoader= new JsonFilesLoader();
     private ArrayList<String> columnsAttributes = new ArrayList<>();
     LinkPositions linkController = null;
-    private String positionX = null;
-    private String positionY = null;
 
     /**
      * Listener for slider that updates the label of slider thumb and the graph visualized
@@ -220,6 +218,7 @@ public class JavaFXGraphController {
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.error("Failed to load chart data.");
+            e.printStackTrace();
         }
     }
 
@@ -320,7 +319,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createNodesVector(String line) {
-        graphController.createNodesVector(line, linkController.getColumnX(),linkController.getColumnY());
+        graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY());
     }
 
     /**
@@ -344,7 +343,9 @@ public class JavaFXGraphController {
                 associateAttributesColumns(line);
             } else {
                 openAssociateAttributesWindow(line);
-                createPositions(line);
+                if(linkController.getColumnX() != null && linkController.getColumnY() != null) {
+                    createPositions(line);
+                }
                 resetCharts();
                 createSeriesFromStaticGraph(line);
                 while (((line = br.readLine()) != null))
@@ -354,10 +355,11 @@ public class JavaFXGraphController {
         }
     }
 
-    private void openAssociateAttributesWindow(String line) {
-        String[] split = line.split(";");
+    private void openAssociateAttributesWindow(String line) throws IOException {
+        String[] split = line.split(",");
         int totalAttributes = (split.length - 1) / graphController.getTotNodes();
         openWindow(totalAttributes);
+        openWindowChoosePosition();
     }
 
     private void openWindow(int totalAttributes) {
@@ -366,30 +368,29 @@ public class JavaFXGraphController {
             fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("fxml/associateAttributes.fxml"));
             Parent newRoot = fxmlLoader.load();
             Stage stage = new Stage();
-            LinkAttributes controller = fxmlLoader.getController();
+            AttributesLinker controller = fxmlLoader.getController();
             initializeWindow(newRoot, stage, totalAttributes, controller);
+            columnsAttributes = controller.getNames();
+            graphController.setColumnsAttributes(columnsAttributes);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, LinkAttributes controller) {
+    private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, AttributesLinker controller) {
         stage.setTitle("MoonLight");
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(new Scene(newRoot));
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
         stage.getIcons().add(icon);
+        controller.addLabels(totalAttributes);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        controller.getAnchor().getStylesheets().add(mainController.getTheme());
+        stage.setResizable(false);
         stage.showAndWait();
-        GridPane gridpane = new GridPane();
-        for(int i = 1; i <= totalAttributes; i++) {
-            Label column = new Label("Column " + i);
-            TextField name = new TextField("Insert name of column");
-            gridpane.add(column, 0, i - 1); // column=1 row=0
-            gridpane.add(name, 1, i - 1);
-        }
-        controller.getScroll().setContent(gridpane);
     }
+
 
     private void associateAttributesColumns(String line) throws IOException {
         String[] split = line.split(",");
@@ -427,13 +428,12 @@ public class JavaFXGraphController {
         String line = br.readLine();
         if(line.contains("time")) {
             associateAttributesColumns(line);
-            while (((line = br.readLine()) != null))
-                createNodesVector(line);
         } else {
             openAssociateAttributesWindow(line);
-            while (((line = br.readLine()) != null))
-                createNodesVector(line);
+            createNodesVector(line);
         }
+        while (((line = br.readLine()) != null))
+            createNodesVector(line);
         graphList = graphController.getGraphList();
     }
 
