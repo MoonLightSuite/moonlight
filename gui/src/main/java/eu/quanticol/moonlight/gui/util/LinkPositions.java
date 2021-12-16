@@ -15,6 +15,10 @@ public class LinkPositions {
     MenuButton y = new MenuButton();
 
     private ArrayList<String> attributes = new ArrayList<>();
+    private String columnX = null;
+    private String columnY = null;
+    private String theme;
+    private Stage stage;
 
     public String getColumnX() {
         return columnX;
@@ -23,11 +27,6 @@ public class LinkPositions {
     public String getColumnY() {
         return columnY;
     }
-
-    private String columnX = null;
-    private String columnY = null;
-    private String theme;
-    private Stage stage;
 
     public void addColumnsToMenuButtons() {
         for (int i = 1; i < attributes.size(); i++) {
@@ -64,6 +63,12 @@ public class LinkPositions {
     @FXML
     private void closeWindow(){
         this.stage.close();
+    }
+
+    @FXML
+    private void reset(){
+        x.setText("Column");
+        y.setText("Column");
     }
 
     public void setColumnX(String columnX) {

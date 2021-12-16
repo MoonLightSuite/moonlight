@@ -166,7 +166,7 @@ public class SimpleChartBuilder implements ChartBuilder {
         String[] attributes = line.split(", ");
         double time = Double.parseDouble(attributes[0]);
         checkFirst(first, attributes);
-        for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5 && index <= attributes.length; i++) {
             int finalNode = node;
             series = getSeries(list, node, series, finalNode);
             double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
@@ -224,7 +224,7 @@ public class SimpleChartBuilder implements ChartBuilder {
         int node = 0;
         Series<Number, Number> numberSeries = null;
         double time = Double.parseDouble(attributes[0]);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5 && index <= attributes.length; i++) {
             int finalNode = node;
             Optional<Series<Number, Number>> series1 = series.stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
             if (series1.isPresent())

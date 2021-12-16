@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="209.0" prefWidth="419.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.util.LinkPositions">
    <children>
       <Label layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="202.0" text="Choose columns for positions ">
@@ -18,7 +17,8 @@
       <Label layoutX="70.0" layoutY="105.0" text="position Y" />
       <MenuButton layoutX="232.0" layoutY="60.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Column" fx:id="x" />
       <MenuButton fx:id="y" layoutX="232.0" layoutY="101.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Column" />
-      <Button layoutX="351.0" layoutY="170.0" mnemonicParsing="false" onAction="#saveColumns" text="Save " />
-      <Button layoutX="289.0" layoutY="170.0" mnemonicParsing="false" onAction="#closeWindow" text="Cancel" />
+      <Button layoutX="361.0" layoutY="170.0" mnemonicParsing="false" onAction="#saveColumns" text="Save " />
+      <Button layoutX="14.0" layoutY="170.0" mnemonicParsing="false" onAction="#closeWindow" text="Cancel" />
+      <Button layoutX="309.0" layoutY="170.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
    </children>
 </AnchorPane>

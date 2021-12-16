@@ -341,18 +341,22 @@ public class JavaFXGraphController {
         if (line != null) {
             if(line.contains("time")) {
                 associateAttributesColumns(line);
-            } else {
+                line = br.readLine();
+            } else
                 openAssociateAttributesWindow(line);
-                if(linkController.getColumnX() != null && linkController.getColumnY() != null) {
-                    createPositions(line);
-                }
-                resetCharts();
-                createSeriesFromStaticGraph(line);
-                while (((line = br.readLine()) != null))
-                    addLineDataToSeries(line);
-                chartController.initStatic();
-            }
+            linkPositions(br, line);
         }
+    }
+
+    private void linkPositions(BufferedReader br, String line) throws IOException {
+        if(linkController.getColumnX() != null && linkController.getColumnY() != null)
+            createPositions(line);
+        resetCharts();
+        createSeriesFromStaticGraph(line);
+        do
+            addLineDataToSeries(line);
+        while (((line = br.readLine()) != null));
+        chartController.initStatic();
     }
 
     private void openAssociateAttributesWindow(String line) throws IOException {
