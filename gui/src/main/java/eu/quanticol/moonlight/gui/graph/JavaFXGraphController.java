@@ -5,22 +5,31 @@ import eu.quanticol.moonlight.gui.filter.JavaFXFiltersController;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
+import eu.quanticol.moonlight.gui.util.LinkAttributes;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.graphstream.graph.Graph;
@@ -30,9 +39,7 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.Viewer;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -70,6 +77,9 @@ public class JavaFXGraphController {
     private final ArrayList<Double> time = new ArrayList<>();
     private RunnableSlider runnable = null;
     private final FilesLoader jsonFilesLoader= new JsonFilesLoader();
+    private ArrayList<String> columnsAttributes = new ArrayList<>();
+    private String positionX = null;
+    private String positionY = null;
 
     /**
      * Listener for slider that updates the label of slider thumb and the graph visualized
@@ -197,6 +207,7 @@ public class JavaFXGraphController {
      *
      * @param file   file .csv
      */
+    //todo
     private void loadCSV(File file) {
         try {
             chartController.reset();
@@ -213,13 +224,14 @@ public class JavaFXGraphController {
     /**
      * Opens explorer with only .csv files for constant stepWise visualization
      */
+    //todo
     public void openConstantCsvExplorer() {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
                 chartController.reset();
                 readConstantCSV(file);
-                addRecentFile(file.getPath(),FileType.CSV);
+                addRecentFile(file.getPath(), FileType.CSV);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
                 d.error("Failed to load chart data.");
@@ -325,13 +337,62 @@ public class JavaFXGraphController {
     private void getStaticAttributesFromCsv(BufferedReader br) throws IOException {
         String line = br.readLine();
         if (line != null) {
-            createPositions(line);
-            resetCharts();
-            createSeriesFromStaticGraph(line);
-            while (((line = br.readLine()) != null))
-                addLineDataToSeries(line);
-            chartController.initStatic();
+            if(line.contains("time")) {
+                associateAttributesColumns(line);
+            } else {
+                openAssociateAttributesWindow(line);
+                createPositions(line);
+                resetCharts();
+                createSeriesFromStaticGraph(line);
+                while (((line = br.readLine()) != null))
+                    addLineDataToSeries(line);
+                chartController.initStatic();
+            }
         }
+    }
+
+    private void openAssociateAttributesWindow(String line) {
+        String[] split = line.split(";");
+        int totalAttributes = (split.length - 1) / graphController.getTotNodes();
+        openWindow(totalAttributes);
+    }
+
+    private void openWindow(int totalAttributes) {
+        try {
+            FXMLLoader fxmlLoader;
+            fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("fxml/associateAttributes.fxml"));
+            Parent newRoot = fxmlLoader.load();
+            Stage stage = new Stage();
+            LinkAttributes controller = fxmlLoader.getController();
+            initializeWindow(newRoot, stage, totalAttributes, controller);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, LinkAttributes controller) {
+        stage.setTitle("MoonLight");
+        stage.initStyle(StageStyle.DECORATED);
+        stage.setScene(new Scene(newRoot));
+        Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
+        stage.getIcons().add(icon);
+        stage.showAndWait();
+        GridPane gridpane = new GridPane();
+        for(int i = 1; i <= totalAttributes; i++) {
+            Label column = new Label("Column " + i);
+            TextField name = new TextField("Insert name of column");
+            gridpane.add(column, 0, i - 1); // column=1 row=0
+            gridpane.add(name, 1, i - 1);
+        }
+        controller.getScroll().setContent(gridpane);
+    }
+
+    private void associateAttributesColumns(String line) {
+        String[] split = line.split(";");
+        ArrayList<String> array = new ArrayList<>(Arrays.asList(split));
+        columnsAttributes = array;
+        graphController.setColumnsAttributes(array);
     }
 
     /**
@@ -359,9 +420,15 @@ public class JavaFXGraphController {
      */
     private void getDynamicAttributesFromCsv(BufferedReader br) throws IOException {
         graphController.setGraphList(graphList);
-        String line;
-        while (((line = br.readLine()) != null))
+        String line = br.readLine();
+        if(line.contains("time")) {
+            associateAttributesColumns(line);
+        } else {
+            openAssociateAttributesWindow(line);
             createNodesVector(line);
+            while (((line = br.readLine()) != null))
+                createNodesVector(line);
+        }
         graphList = graphController.getGraphList();
     }
 

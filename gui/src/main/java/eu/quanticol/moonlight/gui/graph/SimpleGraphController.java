@@ -24,6 +24,15 @@ public class SimpleGraphController implements GraphController{
     private Graph staticGraph;
     private int idGraph = 0;
     private int totNodes = 0;
+    private ArrayList<String> columnsAttributes = new ArrayList<>();
+
+    public ArrayList<String> getColumnsAttributes() {
+        return columnsAttributes;
+    }
+
+    public void setColumnsAttributes(ArrayList<String> columnsAttributes) {
+        this.columnsAttributes = columnsAttributes;
+    }
 
     private SimpleGraphController() {
     }
@@ -83,11 +92,13 @@ public class SimpleGraphController implements GraphController{
      */
     public void createPositions(String line) {
         String[] array = line.split(",");
-        int index = 1;
+        int columnX = columnsAttributes.indexOf("x");
+        int columnY = columnsAttributes.indexOf("y");
         for (int i = 0; i < staticGraph.getNodeCount(); i++){
-            staticGraph.getNode(String.valueOf(i)).setAttribute("x", array[index]);
-            staticGraph.getNode(String.valueOf(i)).setAttribute("y", array[++index]);
-            index += 4;
+            staticGraph.getNode(String.valueOf(i)).setAttribute("x", array[columnX]);
+            staticGraph.getNode(String.valueOf(i)).setAttribute("y", array[columnY]);
+            columnX += (columnsAttributes.size() - 1);
+            columnY += (columnsAttributes.size() - 1);
         }
     }
 

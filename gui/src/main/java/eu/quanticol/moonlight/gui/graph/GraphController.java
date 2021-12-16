@@ -4,6 +4,7 @@ import org.graphstream.graph.Graph;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ import java.util.List;
 public interface GraphController {
 
     List<TimeGraph> getGraphList();
+
+    ArrayList<String> getColumnsAttributes();
+
+    void setColumnsAttributes(ArrayList<String> columnsAttributes);
 
     int getTotNodes();
 
