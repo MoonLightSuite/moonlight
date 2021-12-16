@@ -318,8 +318,8 @@ public class JavaFXGraphController {
      *
      * @param line a string of a time instant with all info about nodes
      */
-    private void createNodesVector(String line) {
-        graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY());
+    private void createNodesVector(String line, boolean present) {
+        graphController.createNodesVector(line, linkController.getColumnX(),linkController.getColumnY(), present);
     }
 
     /**
@@ -428,13 +428,22 @@ public class JavaFXGraphController {
         String line = br.readLine();
         if(line.contains("time")) {
             associateAttributesColumns(line);
-        } else {
+            line = br.readLine();
+        } else
             openAssociateAttributesWindow(line);
-            createNodesVector(line);
-        }
-        while (((line = br.readLine()) != null))
-            createNodesVector(line);
+        linkAttributes(br,line);
         graphList = graphController.getGraphList();
+    }
+
+    private void linkAttributes(BufferedReader br, String line) throws IOException {
+        if(linkController.getColumnX() == null && linkController.getColumnY() == null)
+            do
+                createNodesVector(line,false);
+            while (((line = br.readLine()) != null));
+         else
+            do
+                createNodesVector(line,true);
+            while (((line = br.readLine()) != null));
     }
 
     private void resetCharts() {

@@ -64,7 +64,7 @@ public class SimpleGraphController implements GraphController{
      *
      * @param line a string of a time instant with all info about nodes
      */
-    public void createNodesVector(String line, String x, String y) {
+    public void createNodesVector(String line, String x, String y, boolean present) {
         int node = 0;
         ArrayList<ArrayList<String>> nodes = new ArrayList<>();
         String[] elements = line.split(",");
@@ -82,7 +82,8 @@ public class SimpleGraphController implements GraphController{
             node++;
             nodes.add(vector);
         }
-        addPositionsDynamicGraph(elements, nodes, x, y);
+        if(present)
+            addPositionsDynamicGraph(elements, nodes, x, y);
     }
 
     /**

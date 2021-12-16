@@ -24,8 +24,8 @@ public class LinkPositions {
         return columnY;
     }
 
-    private String columnX;
-    private String columnY;
+    private String columnX = null;
+    private String columnY = null;
     private String theme;
     private Stage stage;
 
@@ -46,14 +46,24 @@ public class LinkPositions {
 
     @FXML
     private void saveColumns(){
-        if(!x.getText().equals(y.getText())) {
-            setColumnX(x.getText());
-            setColumnY(y.getText());
-            this.stage.close();
-        } else {
+        if(!(x.getText().equals("Column") || y.getText().equals("Column"))) {
+            if (!x.getText().equals(y.getText())) {
+                setColumnX(x.getText());
+                setColumnY(y.getText());
+                this.stage.close();
+            } else {
+                DialogBuilder dialogBuilder = new DialogBuilder(theme);
+                dialogBuilder.error("Choose two different columns!");
+            }
+        }else {
             DialogBuilder dialogBuilder = new DialogBuilder(theme);
-            dialogBuilder.error("Choose two different columns!");
+            dialogBuilder.error("Insert columns!");
         }
+    }
+
+    @FXML
+    private void closeWindow(){
+        this.stage.close();
     }
 
     public void setColumnX(String columnX) {

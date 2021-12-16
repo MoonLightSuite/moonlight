@@ -26,7 +26,7 @@ public interface GraphController {
 
     void setGraphList(List<TimeGraph> graphList);
 
-    void createNodesVector(String line, String x, String y);
+    void createNodesVector(String line, String x, String y, boolean present);
 
     void createPositions(String line, String x, String y);
 
