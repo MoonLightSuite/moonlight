@@ -42,7 +42,7 @@
              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            </rowConstraints>
          </GridPane>
-         <LineChartWithMarkers fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" prefHeight="340.0" prefWidth="427.0" styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <LineChartWithMarkers fx:id="lineChartLog" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" prefHeight="340.0" prefWidth="427.0" styleClass="lineChart.css" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <xAxis>
                <NumberAxis label="Time" side="BOTTOM" fx:id="xLAxis" />
             </xAxis>
@@ -50,7 +50,7 @@
                <LogarithmicAxis fx:id="yLAxis" prefHeight="407.0" prefWidth="21.0" side="LEFT" />
             </yAxis>
          </LineChartWithMarkers>
-         <LineChartWithMarkers fx:id="lineChart" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" prefHeight="340.0" prefWidth="427.0" styleClass="lineChart.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <LineChartWithMarkers fx:id="lineChart" legendSide="RIGHT" legendVisible="false" onMouseClicked="#clearLabel" prefHeight="340.0" prefWidth="427.0" styleClass="lineChart.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <xAxis>
                <NumberAxis label="Time" side="BOTTOM" fx:id="xAxis" />
             </xAxis>
@@ -58,7 +58,7 @@
                <NumberAxis fx:id="yAxis" side="LEFT" />
             </yAxis>
          </LineChartWithMarkers>
-         <LineChartWithMarkers fx:id="constantChart" legendSide="RIGHT" legendVisible="false" prefHeight="340.0" prefWidth="427.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <LineChartWithMarkers fx:id="constantChart" legendSide="RIGHT" legendVisible="false" prefHeight="340.0" prefWidth="427.0" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <xAxis>
                <NumberAxis side="BOTTOM" fx:id="xCAxis" />
             </xAxis>
@@ -66,7 +66,7 @@
                <NumberAxis fx:id="yCAxis" side="LEFT" />
             </yAxis>
          </LineChartWithMarkers>
-         <MenuButton fx:id="attribute" focusTraversable="false" layoutX="333.0" layoutY="314.0" mnemonicParsing="false" text="Attribute" AnchorPane.rightAnchor="14.0" />
+         <MenuButton fx:id="attribute" focusTraversable="false" layoutX="333.0" layoutY="314.0" mnemonicParsing="false" text="Attribute" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
       </AnchorPane>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="445.0">
          <SplitPane dividerPositions="0.35" layoutX="-2.0" layoutY="-2.0" prefHeight="151.0" prefWidth="448.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

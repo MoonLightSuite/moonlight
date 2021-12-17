@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.gui.util;
 
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
+import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +15,7 @@ import org.graphstream.ui.view.util.MouseManager;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -23,6 +25,7 @@ import java.util.Optional;
  * @author Albanese Clarissa, Sorritelli Greta
  */
 public class SimpleMouseManager implements MouseManager {
+
     private View view;
     private GraphicGraph gGraph;
     final private EnumSet<InteractiveElement> types;
@@ -31,17 +34,20 @@ public class SimpleMouseManager implements MouseManager {
     private PropertyChangeSupport propertyChangeSupport;
     private String label = "";
     private JavaFXChartController chartController;
+    private JavaFXGraphController graphController;
+
 
     public SimpleMouseManager(EnumSet<InteractiveElement> types) {
         this.types = types;
     }
 
-    public SimpleMouseManager(Graph graph, Double time, JavaFXChartController chartController) {
+    public SimpleMouseManager(Graph graph, Double time, JavaFXChartController chartController, JavaFXGraphController graphController) {
         this(EnumSet.of(InteractiveElement.NODE, InteractiveElement.SPRITE));
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.time = time;
         this.graph = graph;
         this.chartController = chartController;
+        this.graphController = graphController;
     }
 
     public SimpleMouseManager(Graph graph, JavaFXChartController chartController) {
@@ -50,6 +56,7 @@ public class SimpleMouseManager implements MouseManager {
         this.graph = graph;
         this.chartController = chartController;
     }
+
 
     /**
      * Set the value of the label about node info
@@ -73,8 +80,9 @@ public class SimpleMouseManager implements MouseManager {
 
     /**
      * Initialize all the listeners, the view, and the graph
+     *
      * @param graph a graphical graph
-     * @param view the view used
+     * @param view  the view used
      */
     public void init(GraphicGraph graph, View view) {
         this.view = view;
@@ -140,7 +148,7 @@ public class SimpleMouseManager implements MouseManager {
     /**
      * Blocks the drag behaviour of nodes
      */
-    private final  EventHandler<MouseEvent> mouseDragged = event -> {
+    private final EventHandler<MouseEvent> mouseDragged = event -> {
     };
 
     private final EventHandler<MouseEvent> mouseRelease = new EventHandler<>() {
@@ -232,8 +240,8 @@ public class SimpleMouseManager implements MouseManager {
     /**
      * Displays attributes of a clicked node
      *
-     * @param element        current element
-     * @param event          mouseEvent
+     * @param element current element
+     * @param event   mouseEvent
      */
     protected void mouseButtonClickOnElement(GraphicElement element,
                                              MouseEvent event) {
@@ -252,16 +260,22 @@ public class SimpleMouseManager implements MouseManager {
     /**
      * Sets node's attributes on label
      *
-     * @param n            node
-     * @param attribute    attributes of node
+     * @param n         node
+     * @param attribute attributes of node
      */
     private void setAttributesOnLabel(Node n, Object attribute) {
-        if(attribute != null) {
+        if (attribute != null) {
             String s = attribute.toString();
             String[] list = s.substring(1, s.length() - 1).split(", ");
-            String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", direction: " + list[2] + ", speed: " + list[3] + ", v: " + list[4];
-            setLabel(newLabel);
-        } else if((attribute = n.getAttribute("Attributes")) != null) {
+            StringBuilder toShow = new StringBuilder("Node " + n.getId() + " attributes: ");
+            for (int i = 1; i < graphController.getColumnsAttributes().size(); i++) {
+                toShow.append(graphController.getColumnsAttributes().get(i));
+                toShow.append(": ").append(list[i - 1]).append(", ");
+            }
+            toShow.deleteCharAt(toShow.length() - 1);
+            setLabel(toShow.toString());
+        } else if ((attribute = n.getAttribute("Attributes")) != null) {
+            //todo
             String s = attribute.toString();
             String[] list = s.substring(1, s.length() - 1).split(", ");
             String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", v: " + list[2];

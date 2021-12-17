@@ -2,20 +2,22 @@ package eu.quanticol.moonlight.gui;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
+import eu.quanticol.moonlight.gui.filter.Filter;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
-import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
+import eu.quanticol.moonlight.gui.io.ProjectSaver;
+import eu.quanticol.moonlight.gui.io.SimpleProjectSaver;
+import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -159,6 +161,25 @@ public class JavaFXMainController {
         Stage stage = (Stage) root.getScene().getWindow();
         stage.close();
         backHome();
+    }
+
+    @FXML
+    private void saveProject() {
+        ProjectSaver p = new SimpleProjectSaver(graphComponentController, chartComponentController);
+        p.setTra(graphComponentController.getTra());
+        p.setCsv(graphComponentController.getCsv());
+        p.setFilters(new ArrayList<>(graphComponentController.getFiltersComponentController().getTableFilters().getItems().stream().toList()));
+        p.setColumnsAttributes(graphComponentController.getColumnsAttributes());
+        //todo
+//        p.setIndexOfAttributeChart(chartComponentController.);
+        p.setStage(root);
+        p.saveProject();
+
+    }
+
+    @FXML
+    private void openProject() {
+
     }
 
 

@@ -2,17 +2,23 @@ package eu.quanticol.moonlight.gui.util;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Class that links columns name to attribute of a csv file.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class AttributesLinker {
 
     @FXML

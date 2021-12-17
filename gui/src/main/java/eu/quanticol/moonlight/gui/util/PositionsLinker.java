@@ -7,6 +7,11 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Class that links columns to positions from a csv file.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class PositionsLinker {
 
     @FXML

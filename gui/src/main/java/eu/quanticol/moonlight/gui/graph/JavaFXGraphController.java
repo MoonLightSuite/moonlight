@@ -83,6 +83,8 @@ public class JavaFXGraphController {
     private ArrayList<String> columnsAttributes = new ArrayList<>();
     private PositionsLinker linkController = null;
     private File csv = null;
+    private File tra = null;
+
 
     /**
      * Listener for slider that updates the label of slider thumb and the graph visualized
@@ -95,12 +97,32 @@ public class JavaFXGraphController {
         });
     };
 
-    public ArrayList<String> getColumnsAttributes() {
-        return columnsAttributes;
+    public JavaFXFiltersController getFiltersComponentController() {
+        return filtersComponentController;
+    }
+
+    public void setFiltersComponentController(JavaFXFiltersController filtersComponentController) {
+        this.filtersComponentController = filtersComponentController;
     }
 
     public File getCsv() {
         return csv;
+    }
+
+    public File getTra() {
+        return tra;
+    }
+
+    public void setCsv(File csv) {
+        this.csv = csv;
+    }
+
+    public void setTra(File tra) {
+        this.tra = tra;
+    }
+
+    public ArrayList<String> getColumnsAttributes() {
+        return columnsAttributes;
     }
 
     public ArrayList<Double> getTime() {
@@ -182,6 +204,7 @@ public class JavaFXGraphController {
             chartController.clearMenuButton();
             resetAll();
             createGraphFromFile(file);
+            tra = file;
             nodeTableComponentController.initTable();
             addRecentFile(file.getPath(), FileType.TRA);
         } else {
@@ -729,7 +752,7 @@ public class JavaFXGraphController {
                 v.disableAutoLayout();
             else v.enableAutoLayout();
             setSceneProperties((FxViewPanel) v.getView(String.valueOf(time)));
-            SimpleMouseManager sm = new SimpleMouseManager(graph, time, chartController);
+            SimpleMouseManager sm = new SimpleMouseManager(graph, time, chartController, this);
             sm.addPropertyChangeListener(evt -> {
                 if (evt.getPropertyName().equals("LabelProperty"))
                     infoNode.setText(evt.getNewValue().toString());
@@ -776,7 +799,11 @@ public class JavaFXGraphController {
         linkController.setStage(stage);
         stage.setScene(new Scene(root));
         stage.setTitle("Choose Positions");
-        stage.initStyle(StageStyle.DECORATED);
+        Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
+        stage.getIcons().add(icon);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        mainController.getRoot().getStylesheets().add(mainController.getTheme());
+        stage.setResizable(false);
         stage.showAndWait();
     }
 
