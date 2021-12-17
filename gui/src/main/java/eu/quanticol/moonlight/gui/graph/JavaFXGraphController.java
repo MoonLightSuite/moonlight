@@ -253,6 +253,7 @@ public class JavaFXGraphController {
             chartController.reset();
             readCSV(file);
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
+                resetCharts();
                 chartController.createDataFromGraphs(graphList, 0);
                 chartController.getAttribute().setText(columnsAttributes.get(1));
             }

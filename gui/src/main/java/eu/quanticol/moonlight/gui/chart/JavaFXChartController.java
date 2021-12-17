@@ -1,19 +1,15 @@
 package eu.quanticol.moonlight.gui.chart;
 
+import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
+import eu.quanticol.moonlight.gui.graph.TimeGraph;
+import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.util.LineChartWithMarkers;
 import eu.quanticol.moonlight.gui.util.LogarithmicAxis;
-import eu.quanticol.moonlight.gui.graph.TimeGraph;
-import eu.quanticol.moonlight.gui.JavaFXMainController;
-import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -21,16 +17,16 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalDouble;
-import java.util.stream.Stream;
 
 /**
  * Controller of JavaFX for a chart
@@ -95,7 +91,6 @@ public class JavaFXChartController {
      * @param timeGraph a {@link TimeGraph}
      */
     public void createDataFromGraphs(List<TimeGraph> timeGraph, int index) {
-        resetCharts();
         try {
             lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
             lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
@@ -253,8 +248,10 @@ public class JavaFXChartController {
         } else {
             if (constantChart.isVisible())
                 createDataFromConstantGraph();
-            else
+            else {
+                resetChartsWithoutMarker();
                 createDataFromGraphs(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1);
+            }
         }
     }
 
@@ -303,7 +300,7 @@ public class JavaFXChartController {
      * Reloads chart of a constant graph from file .csv
      */
     private void createDataFromConstantGraph() {
-        resetCharts();
+        resetChartsWithoutMarker();
         deselectInconstantCharts();
         try {
             constantChart.getData().addAll(cb.createSeriesForConstantChart(javaFXGraphController.getCsv(),javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText())));
@@ -325,7 +322,7 @@ public class JavaFXChartController {
             if (line != null) {
                 if (line.contains("time"))
                     line = br.readLine();
-                resetCharts();
+                resetChartsWithoutMarker();
                 createSeriesFromStaticGraph(line,javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
                 do
                     addLineDataToSeries(line,javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
@@ -374,6 +371,16 @@ public class JavaFXChartController {
     public void resetCharts() {
         cb.clearList();
         reset();
+    }
+
+    public void resetChartsWithoutMarker() {
+        cb.clearList();
+        this.lineChartLog.getData().clear();
+        this.lineChart.getData().clear();
+        this.constantChart.getData().clear();
+        this.list.getItems().clear();
+        this.variables.getItems().clear();
+        variables.setDisable(false);
     }
 
     /**
