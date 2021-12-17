@@ -39,21 +39,12 @@ public class PositionsLinker {
         y.getItems().forEach(menuItem -> menuItem.setOnAction(event -> y.setText(menuItem.getText())));
     }
 
-    public void setAttributes(ArrayList<String> attributes) {
-        this.attributes = attributes;
-    }
-
     @FXML
     private void saveColumns(){
         if(!(x.getText().equals("Column") || y.getText().equals("Column"))) {
-            if (!x.getText().equals(y.getText())) {
-                setColumnX(x.getText());
-                setColumnY(y.getText());
+                this.columnX = x.getText();
+                this.columnY = y.getText();
                 this.stage.close();
-            } else {
-                DialogBuilder dialogBuilder = new DialogBuilder(theme);
-                dialogBuilder.error("Choose two different columns!");
-            }
         }else {
             DialogBuilder dialogBuilder = new DialogBuilder(theme);
             dialogBuilder.error("Insert columns!");
@@ -71,17 +62,14 @@ public class PositionsLinker {
         y.setText("Column");
     }
 
-    public void setColumnX(String columnX) {
-        this.columnX = columnX;
-    }
-
-    public void setColumnY(String columnY) {
-        this.columnY = columnY;
+    public void setAttributes(ArrayList<String> attributes) {
+        this.attributes = attributes;
     }
 
     public void setTheme(String theme) {
         this.theme = theme;
     }
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }

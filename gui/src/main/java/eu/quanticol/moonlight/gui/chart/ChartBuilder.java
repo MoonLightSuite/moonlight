@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ChartBuilder {
 
-    ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file) throws IOException;
+    ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file, int index) throws IOException;
 
     /**
      * Create series of a chart from nodes in a graph

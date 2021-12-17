@@ -62,17 +62,22 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @return ArrayList of series
      */
     @Override
-    public ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file) throws IOException {
+    public ArrayList<Series<Number, Number>> createSeriesForConstantChart(File file, int index) throws IOException {
         FileInputStream fIn = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(fIn));
         String line = br.readLine();
+        if(line.contains("time"))
+            line = br.readLine();
         String[] attributes = line.split(", ");
-        int columns = ((attributes.length - 1) / 5) + 1;
+        int columns = ((attributes.length - 1) / (graphController.getColumnsAttributes().size() - 1)) + 1;
         int rows = calculateRows(br);
         fIn.getChannel().position(0);
         br = new BufferedReader(new InputStreamReader(fIn));
+        line = br.readLine();
         Double[][] matrix = new Double[rows][columns];
-        populateMatrix(br, columns, matrix);
+        if(line.contains("time"))
+            line = br.readLine();
+        populateMatrix(br, columns, matrix, index, line);
         return createSeriesFromMatrix(matrix);
     }
 
@@ -83,19 +88,20 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @param columns columns of matrix
      * @param matrix  matrix
      */
-    private void populateMatrix(BufferedReader br, int columns, Double[][] matrix) throws IOException {
-        String line;
-        int rows;
-        rows = 0;
-        while ((line = br.readLine()) != null) {
+    private void populateMatrix(BufferedReader br, int columns, Double[][] matrix, int indexAttribute, String line) throws IOException {
+        int rows = 0;
+        do {
             String[] array = line.split(", ");
             int index = 0;
-            for (int i = 0; i < columns; i++) {
+            matrix[rows][0] = Double.valueOf(array[index]);
+            index += indexAttribute;
+            for (int i = 1; i < columns; i++) {
                 matrix[rows][i] = Double.valueOf(array[index]);
-                index += 5;
+                index += graphController.getColumnsAttributes().size() - 1;
             }
             rows++;
         }
+        while ((line = br.readLine()) != null);
     }
 
     private int calculateRows(BufferedReader br) throws IOException {
@@ -116,14 +122,14 @@ public class SimpleChartBuilder implements ChartBuilder {
     private ArrayList<Series<Number, Number>> createSeriesFromMatrix(Double[][] matrix) {
         ArrayList<Series<Number, Number>> list = new ArrayList<>();
         //per ogni colonna
-        for (int column = 0; column < matrix[0].length - 1; column++) {
+        for (int column = 0; column < matrix[0].length -1 ; column++) {
             Series<Number, Number> series = new Series<>();
             series.setName("Node " + column);
             //per ogni riga
             for (int row = 0; row < matrix.length; row++) {
                 if (row != 0)
-                    series.getData().add(new Data<>(matrix[row][0], matrix[row - 1][column + 1]));
-                series.getData().add(new Data<>(matrix[row][0], matrix[row][column + 1]));
+                    series.getData().add(new Data<>(matrix[row][0], matrix[row - 1][column+1]));
+                series.getData().add(new Data<>(matrix[row][0], matrix[row][column+1]));
             }
             list.add(series);
         }

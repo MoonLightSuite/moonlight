@@ -10,8 +10,6 @@ import eu.quanticol.moonlight.gui.util.PositionsLinker;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -97,6 +95,10 @@ public class JavaFXGraphController {
         });
     };
 
+    public ArrayList<String> getColumnsAttributes() {
+        return columnsAttributes;
+    }
+
     public File getCsv() {
         return csv;
     }
@@ -177,6 +179,7 @@ public class JavaFXGraphController {
      */
     private void loadTRA(File file) throws IOException {
         if (file != null) {
+            chartController.clearMenuButton();
             resetAll();
             createGraphFromFile(file);
             nodeTableComponentController.initTable();
@@ -193,6 +196,7 @@ public class JavaFXGraphController {
     public void openCSVExplorer() {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
+            chartController.clearMenuButton();
             csv = file;
             loadCSV(file);
             linkButton.setDisable(false);
@@ -227,7 +231,7 @@ public class JavaFXGraphController {
             readCSV(file);
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
                 chartController.createDataFromGraphs(graphList, 0);
-                chartController.getList1().getSelectionModel().selectFirst();
+                chartController.getAttribute().setText(columnsAttributes.get(1));
             }
             addRecentFile(file.getPath(), FileType.CSV);
         } catch (Exception e) {
@@ -240,11 +244,11 @@ public class JavaFXGraphController {
     /**
      * Opens explorer with only .csv files for constant stepWise visualization
      */
-    //todo
     public void openConstantCsvExplorer() {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
+                chartController.clearMenuButton();
                 chartController.reset();
                 csv = file;
                 readConstantCSV(file);
@@ -253,6 +257,7 @@ public class JavaFXGraphController {
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
                 d.error("Failed to load chart data.");
+                e.printStackTrace();
             }
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -274,17 +279,19 @@ public class JavaFXGraphController {
     /**
      * Reads a .csv file as a file with constants attributes
      */
-    //todo
     private void readConstantCSV(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line = br.readLine();
         if (line.contains("time")) {
             associateAttributesColumns(line);
-        } else {
-            openAssociateAttributesWindow(line);
+            line = br.readLine();
         }
+         else
+            openAssociateAttributesWindow(line);
         constantAttributesLink(br, line);
         chartController.initConstantChart(file);
+        chartController.loadAttributesList(columnsAttributes);
+        chartController.getAttribute().setText(columnsAttributes.get(1));
         this.csvRead = true;
     }
 
@@ -390,7 +397,7 @@ public class JavaFXGraphController {
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
             chartController.loadAttributesList(columnsAttributes);
-            chartController.getList1().getSelectionModel().selectFirst();
+            chartController.getAttribute().setText(columnsAttributes.get(1));
         }
     }
 
@@ -433,7 +440,6 @@ public class JavaFXGraphController {
         }
     }
 
-
     private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, AttributesLinker controller) {
         stage.setTitle("MoonLight");
         stage.initStyle(StageStyle.DECORATED);
@@ -446,7 +452,6 @@ public class JavaFXGraphController {
         stage.setResizable(false);
         stage.showAndWait();
     }
-
 
     private void associateAttributesColumns(String line) throws IOException {
         String[] split = line.split(",");
@@ -708,7 +713,6 @@ public class JavaFXGraphController {
             viewers.add(viewer);
         }
     }
-
 
     /**
      * Change viewer in order to display a different graph
