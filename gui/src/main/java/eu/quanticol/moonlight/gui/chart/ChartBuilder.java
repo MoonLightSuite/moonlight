@@ -22,12 +22,12 @@ public interface ChartBuilder {
      * @param timeGraph a {@link TimeGraph}
      * @return a list of series created
      */
-    List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph);
+    List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph, int index);
 
     /**
      * Creates series of a chart from a file of a static graph
      */
-    ArrayList<Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<Series<Number, Number>> list, boolean first);
+    ArrayList<Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<Series<Number, Number>> list, boolean first,int index);
 
     /**
      * Clears the lists of series
@@ -38,7 +38,7 @@ public interface ChartBuilder {
      * Adds data to the chart from an array of attributes
      *
      */
-    void addLineData(List<Series<Number, Number>> series, String[] attributes);
+    void addLineData(List<Series<Number, Number>> series, String[] attributes, int index);
 
     ArrayList<ArrayList<String>> getAttributes();
 

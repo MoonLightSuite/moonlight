@@ -8,8 +8,12 @@ import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -17,14 +21,16 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.stream.Stream;
 
 /**
  * Controller of JavaFX for a chart
@@ -33,6 +39,15 @@ import java.util.OptionalDouble;
  */
 public class JavaFXChartController {
 
+    @FXML
+    GridPane grid;
+
+    public ListView<String> getList1() {
+        return list1;
+    }
+
+    @FXML
+    ListView<String> list1;
     @FXML
     NumberAxis yAxis = new NumberAxis();
     @FXML
@@ -70,6 +85,7 @@ public class JavaFXChartController {
 
     private JavaFXMainController mainController;
     private JavaFXGraphController javaFXGraphController;
+    private static final ArrayList<LineChartWithMarkers<Number,Number>> chartList = new ArrayList<>();
 
     private final ChartBuilder cb = new SimpleChartBuilder();
 
@@ -78,20 +94,22 @@ public class JavaFXChartController {
         this.javaFXGraphController = graphController;
     }
 
+
     /**
      * Create a chart from a {@link TimeGraph} using a {@link ChartBuilder}
      *
      * @param timeGraph a {@link TimeGraph}
      */
-    public void createDataFromGraphs(List<TimeGraph> timeGraph) {
+    public void createDataFromGraphs(List<TimeGraph> timeGraph, int index) {
         resetCharts();
         try {
-            lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph));
-            lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph));
+            lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
+            lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
             init();
         } catch (Exception e){
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.error("Failed to load chart data. Open an other file.");
+            e.printStackTrace();
         }
     }
 
@@ -139,9 +157,9 @@ public class JavaFXChartController {
      *
      * @param line line to read
      */
-    public void createSeriesFromStaticGraph(String line) {
-        lineChart.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLinear(), true));
-        lineChartLog.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLog(), false));
+    public void createSeriesFromStaticGraph(String line, int index) {
+        lineChart.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLinear(), true, index));
+        lineChartLog.getData().addAll(cb.getSeriesFromStaticGraph(line, cb.getListLog(), false, index));
     }
 
     /**
@@ -149,11 +167,11 @@ public class JavaFXChartController {
      *
      * @param line to read
      */
-    public void addLineDataToSeries(String line) {
+    public void addLineDataToSeries(String line, int index) {
         String[] attributes = line.split(",");
         cb.addAttributes(attributes);
-        cb.addLineData(lineChart.getData().stream().toList(), attributes);
-        cb.addLineData(lineChartLog.getData().stream().toList(), attributes);
+        cb.addLineData(lineChart.getData().stream().toList(), attributes,index);
+        cb.addLineData(lineChartLog.getData().stream().toList(), attributes,index);
     }
 
     private void init() {
@@ -201,6 +219,57 @@ public class JavaFXChartController {
     }
 
     /**
+     * Creates a listView with radioButtons for choose the attribute's series
+     *
+     * @param names names of attributes
+     */
+    public void loadAttributesList(ArrayList<String> names){
+        ArrayList<String> attributes = new ArrayList<>();
+        for (int i = 1; i <= names.size()-1 ; i++)
+            attributes.add(names.get(i));
+        ObservableList<String> list = FXCollections.observableList(attributes);
+        this.list1.setItems(list);
+        this.list1.setCellFactory(param -> new RadioListCell());
+    }
+
+    /**
+     * Inherited class for add radioButtons to listView
+     */
+    private static class RadioListCell extends ListCell<String> {
+
+        RadioButton radioButton;
+        ChangeListener<Boolean> radioListener = (src, ov, nv) -> radioChanged(nv);
+        WeakChangeListener<Boolean> weakRadioListener = new WeakChangeListener<>(radioListener);
+
+        public RadioListCell() {
+            radioButton = new RadioButton();
+            radioButton.selectedProperty().addListener(weakRadioListener);
+            radioButton.setFocusTraversable(false);
+            radioButton.setMaxWidth(Double.MAX_VALUE);
+        }
+
+        protected void radioChanged(boolean selected) {
+            if (selected && getListView() != null && !isEmpty() && getIndex() >= 0)
+                getListView().getSelectionModel().select(getIndex());
+        }
+
+        @Override
+        public void updateItem(String obj, boolean empty) {
+            super.updateItem(obj, empty);
+            if (empty) {
+                setText(null);
+                setGraphic(null);
+                radioButton.setToggleGroup(null);
+            } else {
+                radioButton.setText(obj);
+                radioButton.setToggleGroup(new ToggleGroup());
+                radioButton.setSelected(isSelected());
+                setGraphic(radioButton);
+            }
+        }
+    }
+
+    /**
      * Initializes the two charts
      */
     @FXML
@@ -210,6 +279,7 @@ public class JavaFXChartController {
         constantChart.setVisible(false);
         constantChart.setAnimated(false);
         lineChart.setAnimated(false);
+        addListenerToList();
     }
 
     @FXML
@@ -239,6 +309,42 @@ public class JavaFXChartController {
     private void initLists() {
         initVariablesList();
         showList();
+    }
+
+    /**
+     * Adds listener to listView
+     */
+    private void addListenerToList() {
+        list1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(javaFXGraphController.getGraphList().size() == 0)
+                createDataFromStaticGraph();
+            else
+                createDataFromGraphs(javaFXGraphController.getGraphList(),list1.getSelectionModel().getSelectedIndex());
+        });
+    }
+
+    /**
+     * Reloads chart from file .csv
+     */
+    private void createDataFromStaticGraph() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(javaFXGraphController.getCsv()));
+            String line = br.readLine();
+            if (line != null) {
+                if (line.contains("time"))
+                    line = br.readLine();
+                resetCharts();
+                createSeriesFromStaticGraph(line,list1.getSelectionModel().getSelectedIndex() + 1);
+                do
+                    addLineDataToSeries(line,list1.getSelectionModel().getSelectedIndex() + 1);
+                while (((line = br.readLine()) != null));
+                initStatic();
+            }
+        } catch (Exception e) {
+            DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
+            dialogBuilder.error("Failed to load chart data");
+            e.printStackTrace();
+        }
     }
 
     /**

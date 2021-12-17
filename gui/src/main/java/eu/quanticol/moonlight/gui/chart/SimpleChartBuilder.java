@@ -1,5 +1,7 @@
 package eu.quanticol.moonlight.gui.chart;
 
+import eu.quanticol.moonlight.gui.graph.GraphController;
+import eu.quanticol.moonlight.gui.graph.SimpleGraphController;
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
@@ -20,6 +22,8 @@ public class SimpleChartBuilder implements ChartBuilder {
     private final ArrayList<Series<Number, Number>> listLinear = new ArrayList<>();
 
     private final ArrayList<Series<Number, Number>> listLog = new ArrayList<>();
+
+    private final GraphController graphController = SimpleGraphController.getInstance();
 
     @Override
     public ArrayList<Series<Number, Number>> getListLinear() {
@@ -130,10 +134,11 @@ public class SimpleChartBuilder implements ChartBuilder {
      * Gets all nodes info and create a relative series for each
      *
      * @param timeGraph a {@link TimeGraph}
-     * @return a list of all series
+     * @param index     index of attribute
+     * @return          a list of all series
      */
     @Override
-    public List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph) {
+    public List<Series<Number, Number>> getSeriesFromNodes(List<TimeGraph> timeGraph, int index) {
         List<Series<Number, Number>> series = new ArrayList<>();
         int totSeries = timeGraph.get(0).getGraph().getNodeCount();
         ArrayList<Double> times = new ArrayList<>();
@@ -142,7 +147,7 @@ public class SimpleChartBuilder implements ChartBuilder {
         while (node < totSeries) {
             Series<Number, Number> seriesX = new Series<>();
             seriesX.setName("Node " + node);
-            addData(seriesX, times, timeGraph, node);
+            addData(seriesX, times, timeGraph, node, index);
             series.add(seriesX);
             node++;
         }
@@ -155,24 +160,24 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @param line  line to read
      * @param list  list of series
      * @param first boolean
+     * @param index index of attribute
      *
      * @return ArrayList of series
      */
     @Override
-    public ArrayList<Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<Series<Number, Number>> list, boolean first) {
-        int index = 5;
+    public ArrayList<Series<Number, Number>> getSeriesFromStaticGraph(String line, ArrayList<Series<Number, Number>> list, boolean first, int index) {
         int node = 0;
         Series<Number, Number> series = null;
         String[] attributes = line.split(", ");
         double time = Double.parseDouble(attributes[0]);
         checkFirst(first, attributes);
-            for (int i = 0; i < 5 && index <= attributes.length; i++) {
+            for (int i = 0; i < index && index < attributes.length; i++) {
             int finalNode = node;
             series = getSeries(list, node, series, finalNode);
-            double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
+            double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]").replace('[',' '));
             series.getData().add(new Data<>(time, variable));
             node++;
-            index += 5;
+            index += graphController.getColumnsAttributes().size() - 1 ;
         }
         return list;
     }
@@ -217,22 +222,22 @@ public class SimpleChartBuilder implements ChartBuilder {
      *
      * @param series     list of series
      * @param attributes attributes of node
+     * @param index      index of attribute
      */
     @Override
-    public void addLineData(List<Series<Number, Number>> series, String[] attributes) {
-        int index = 5;
+    public void addLineData(List<Series<Number, Number>> series, String[] attributes, int index) {
         int node = 0;
         Series<Number, Number> numberSeries = null;
         double time = Double.parseDouble(attributes[0]);
-        for (int i = 0; i < 5 && index <= attributes.length; i++) {
+        for (int i = 0; i < index && index < attributes.length; i++) {
             int finalNode = node;
             Optional<Series<Number, Number>> series1 = series.stream().filter(numberNumberSeries -> numberNumberSeries.getName().equals("Node " + finalNode)).findFirst();
             if (series1.isPresent())
                 numberSeries = series1.get();
-            double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]"));
+            double variable = Double.parseDouble(StringUtils.substringBefore(attributes[index], "]").replace('[',' '));
             Objects.requireNonNull(numberSeries).getData().add(new Data<>(time, variable));
             node++;
-            index += 5;
+            index += graphController.getColumnsAttributes().size() - 1;
         }
     }
 
@@ -243,14 +248,15 @@ public class SimpleChartBuilder implements ChartBuilder {
      * @param times      list of time instants
      * @param timeGraph  list of {@link TimeGraph}
      * @param seriesNode id of a node in a graph
+     * @param index      index of attribute
      */
-    private void addData(Series<Number, Number> series, ArrayList<Double> times, List<TimeGraph> timeGraph, int seriesNode) {
+    private void addData(Series<Number, Number> series, ArrayList<Double> times, List<TimeGraph> timeGraph, int seriesNode, int index) {
         for (double t : times) {
             for (TimeGraph graph : timeGraph) {
                 if (graph.getTime() == t) {
                     String attributes = graph.getGraph().getNode(seriesNode).getAttribute("time" + t).toString();
                     String[] a = attributes.split(", ");
-                    double variable = Double.parseDouble(StringUtils.substringBefore(a[4], "]"));
+                    double variable = Double.parseDouble(StringUtils.substringBefore(a[index], "]").replace('[',' '));
                     series.getData().add(new Data<>(t, variable));
                 }
             }

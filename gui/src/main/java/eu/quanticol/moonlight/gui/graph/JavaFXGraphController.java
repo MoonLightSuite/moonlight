@@ -10,6 +10,8 @@ import eu.quanticol.moonlight.gui.util.PositionsLinker;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -94,6 +96,10 @@ public class JavaFXGraphController {
             changeGraphView(String.valueOf(value));
         });
     };
+
+    public File getCsv() {
+        return csv;
+    }
 
     public ArrayList<Double> getTime() {
         return time;
@@ -187,8 +193,8 @@ public class JavaFXGraphController {
     public void openCSVExplorer() {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
-            loadCSV(file);
             csv = file;
+            loadCSV(file);
             linkButton.setDisable(false);
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -215,13 +221,14 @@ public class JavaFXGraphController {
      *
      * @param file file .csv
      */
-    //todo
     private void loadCSV(File file) {
         try {
             chartController.reset();
             readCSV(file);
-            if (graphVisualization.equals(GraphType.DYNAMIC))
-                chartController.createDataFromGraphs(graphList);
+            if (graphVisualization.equals(GraphType.DYNAMIC)) {
+                chartController.createDataFromGraphs(graphList, 0);
+                chartController.getList1().getSelectionModel().selectFirst();
+            }
             addRecentFile(file.getPath(), FileType.CSV);
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -239,8 +246,8 @@ public class JavaFXGraphController {
         if (file != null) {
             try {
                 chartController.reset();
-                readConstantCSV(file);
                 csv = file;
+                readConstantCSV(file);
                 linkButton.setDisable(false);
                 addRecentFile(file.getPath(), FileType.CSV);
             } catch (Exception e) {
@@ -382,6 +389,8 @@ public class JavaFXGraphController {
             } else
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
+            chartController.loadAttributesList(columnsAttributes);
+            chartController.getList1().getSelectionModel().selectFirst();
         }
     }
 
@@ -453,7 +462,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void addLineDataToSeries(String line) {
-        chartController.addLineDataToSeries(line);
+        chartController.addLineDataToSeries(line,1);
     }
 
     /**
@@ -462,7 +471,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createSeriesFromStaticGraph(String line) {
-        chartController.createSeriesFromStaticGraph(line);
+        chartController.createSeriesFromStaticGraph(line,1);
     }
 
     /**
@@ -478,7 +487,8 @@ public class JavaFXGraphController {
             line = br.readLine();
         } else
             openAssociateAttributesWindow(line);
-        linkAttributes(br, line);
+        linkAttributes(br,line);
+        chartController.loadAttributesList(columnsAttributes);
         graphList = graphController.getGraphList();
     }
 
