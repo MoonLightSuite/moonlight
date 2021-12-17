@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.io.*;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import eu.quanticol.moonlight.gui.util.AttributesLinker;
-import eu.quanticol.moonlight.gui.util.LinkPositions;
+import eu.quanticol.moonlight.gui.util.PositionsLinker;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -64,6 +64,8 @@ public class JavaFXGraphController {
     Slider slider;
     @FXML
     SubScene scene;
+    @FXML
+    Button linkButton;
 
     private List<TimeGraph> graphList = new ArrayList<>();
     private Graph currentGraph;
@@ -77,9 +79,10 @@ public class JavaFXGraphController {
     private final Label label = new Label();
     private final ArrayList<Double> time = new ArrayList<>();
     private RunnableSlider runnable = null;
-    private final FilesLoader jsonFilesLoader= new JsonFilesLoader();
+    private final FilesLoader jsonFilesLoader = new JsonFilesLoader();
     private ArrayList<String> columnsAttributes = new ArrayList<>();
-    LinkPositions linkController = null;
+    private PositionsLinker linkController = null;
+    private File csv = null;
 
     /**
      * Listener for slider that updates the label of slider thumb and the graph visualized
@@ -112,7 +115,7 @@ public class JavaFXGraphController {
         this.theme = theme;
     }
 
-    public void injectMainController(JavaFXMainController mainController, JavaFXChartController chartComponentController){
+    public void injectMainController(JavaFXMainController mainController, JavaFXChartController chartComponentController) {
         this.mainController = mainController;
         this.chartController = chartComponentController;
         initialize();
@@ -130,10 +133,11 @@ public class JavaFXGraphController {
      *
      * @param description description of file to choose
      * @param extensions  extension of a file to choose
-     * @return            the file chosen
+     *
+     * @return the file chosen
      */
     private File open(String description, String extensions) {
-        if(runnable != null && slider != null)
+        if (runnable != null && slider != null)
             runnable.shutdown();
         filtersComponentController.resetFilters();
         FileChooser fileChooser = new FileChooser();
@@ -163,7 +167,7 @@ public class JavaFXGraphController {
     /**
      * Loads the .tra file
      *
-     * @param file   file .tra
+     * @param file file .tra
      */
     private void loadTRA(File file) throws IOException {
         if (file != null) {
@@ -184,6 +188,8 @@ public class JavaFXGraphController {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             loadCSV(file);
+            csv = file;
+            linkButton.setDisable(false);
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
@@ -193,9 +199,11 @@ public class JavaFXGraphController {
     /**
      * Opens the chosen .csv file from recent
      */
-    public void openRecentCSV(File file){
+    public void openRecentCSV(File file) {
         if (file != null) {
             loadCSV(file);
+            csv = file;
+            linkButton.setDisable(false);
         } else {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.info("No file chosen.");
@@ -205,7 +213,7 @@ public class JavaFXGraphController {
     /**
      * Loads the .csv file
      *
-     * @param file   file .csv
+     * @param file file .csv
      */
     //todo
     private void loadCSV(File file) {
@@ -232,6 +240,8 @@ public class JavaFXGraphController {
             try {
                 chartController.reset();
                 readConstantCSV(file);
+                csv = file;
+                linkButton.setDisable(false);
                 addRecentFile(file.getPath(), FileType.CSV);
             } catch (Exception e) {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -246,8 +256,8 @@ public class JavaFXGraphController {
     /**
      * Adds the file opened into a json file and into the recent list
      *
-     * @param file      path of file
-     * @param fileType  type of file
+     * @param file     path of file
+     * @param fileType type of file
      */
     private void addRecentFile(String file, FileType fileType) throws IOException {
         jsonFilesLoader.saveToJson(file, fileType);
@@ -256,21 +266,47 @@ public class JavaFXGraphController {
 
     /**
      * Reads a .csv file as a file with constants attributes
-     *
      */
     //todo
     private void readConstantCSV(File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = br.readLine()) != null) {
-//            if (graphVisualization.equals(GraphType.STATIC))
-//            graphController.createPositions(line);
-//            if (graphVisualization.equals(GraphType.DYNAMIC))
-//                graphController.createNodesVector(line);
+        String line = br.readLine();
+        if (line.contains("time")) {
+            associateAttributesColumns(line);
+        } else {
+            openAssociateAttributesWindow(line);
         }
+        constantAttributesLink(br, line);
         chartController.initConstantChart(file);
-        this.csvRead =true;
-}
+        this.csvRead = true;
+    }
+
+    /**
+     * Associates attributes from constant visualization
+     */
+    private void constantAttributesLink(BufferedReader br, String line) throws IOException {
+        if (linkController.getColumnX() == null && linkController.getColumnY() == null)
+            do {
+                if (graphVisualization.equals(GraphType.DYNAMIC))
+                    graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), false);
+            }
+            while (((line = br.readLine()) != null));
+        else
+            constantPositionsLink(br, line);
+    }
+
+    /**
+     * Associates positions from constant visualization
+     */
+    private void constantPositionsLink(BufferedReader br, String line) throws IOException {
+        do {
+            if (graphVisualization.equals(GraphType.STATIC))
+                graphController.createPositions(line, linkController.getColumnX(), linkController.getColumnY());
+            if (graphVisualization.equals(GraphType.DYNAMIC))
+                graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), true);
+        }
+        while (((line = br.readLine()) != null));
+    }
 
     /**
      * Reset all lists and info
@@ -285,6 +321,7 @@ public class JavaFXGraphController {
         resetSlider();
         csvRead = false;
         infoNode.setText(" ");
+        linkButton.setDisable(true);
     }
 
     private void resetSlider() {
@@ -307,7 +344,7 @@ public class JavaFXGraphController {
         BufferedReader br = new BufferedReader(new FileReader(file));
         if (graphVisualization.equals(GraphType.STATIC))
             getStaticAttributesFromCsv(br);
-            else
+        else
             getDynamicAttributesFromCsv(br);
         this.csvRead = true;
 
@@ -319,7 +356,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createNodesVector(String line, boolean present) {
-        graphController.createNodesVector(line, linkController.getColumnX(),linkController.getColumnY(), present);
+        graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), present);
     }
 
     /**
@@ -339,7 +376,7 @@ public class JavaFXGraphController {
     private void getStaticAttributesFromCsv(BufferedReader br) throws IOException {
         String line = br.readLine();
         if (line != null) {
-            if(line.contains("time")) {
+            if (line.contains("time")) {
                 associateAttributesColumns(line);
                 line = br.readLine();
             } else
@@ -348,8 +385,11 @@ public class JavaFXGraphController {
         }
     }
 
+    /**
+     * Associates attributes from linear visualization
+     */
     private void linkPositions(BufferedReader br, String line) throws IOException {
-        if(linkController.getColumnX() != null && linkController.getColumnY() != null)
+        if (linkController.getColumnX() != null && linkController.getColumnY() != null)
             createPositions(line);
         resetCharts();
         createSeriesFromStaticGraph(line);
@@ -359,6 +399,9 @@ public class JavaFXGraphController {
         chartController.initStatic();
     }
 
+    /**
+     * Opens a window for associate parameters of a csv file
+     */
     private void openAssociateAttributesWindow(String line) throws IOException {
         String[] split = line.split(",");
         int totalAttributes = (split.length - 1) / graphController.getTotNodes();
@@ -430,23 +473,23 @@ public class JavaFXGraphController {
     private void getDynamicAttributesFromCsv(BufferedReader br) throws IOException {
         graphController.setGraphList(graphList);
         String line = br.readLine();
-        if(line.contains("time")) {
+        if (line.contains("time")) {
             associateAttributesColumns(line);
             line = br.readLine();
         } else
             openAssociateAttributesWindow(line);
-        linkAttributes(br,line);
+        linkAttributes(br, line);
         graphList = graphController.getGraphList();
     }
 
     private void linkAttributes(BufferedReader br, String line) throws IOException {
-        if(linkController.getColumnX() == null && linkController.getColumnY() == null)
+        if (linkController.getColumnX() == null && linkController.getColumnY() == null)
             do
-                createNodesVector(line,false);
+                createNodesVector(line, false);
             while (((line = br.readLine()) != null));
-         else
+        else
             do
-                createNodesVector(line,true);
+                createNodesVector(line, true);
             while (((line = br.readLine()) != null));
     }
 
@@ -490,7 +533,7 @@ public class JavaFXGraphController {
     /**
      * Shows the static graph
      *
-     * @param staticGraph  static Graph
+     * @param staticGraph static Graph
      */
     private void showStaticGraph(Graph staticGraph) {
         if (staticGraph.hasAttribute("ui.stylesheet"))
@@ -543,12 +586,14 @@ public class JavaFXGraphController {
 
     /**
      * Returns the nearest element of a double in an arraylist
-     * @param time arraylist of double
+     *
+     * @param time  arraylist of double
      * @param index double to compare
+     *
      * @return the nearest number in the arraylist
      */
     public double nearest(ArrayList<Double> time, double index) {
-        if(!time.isEmpty()) {
+        if (!time.isEmpty()) {
             double nearest = time.get(0);
             double current = Double.MAX_VALUE;
             for (Double d : time) {
@@ -703,8 +748,11 @@ public class JavaFXGraphController {
         nodeTableComponentController.nodesTable.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Opens a window to choose which parameters use as positions
+     */
     private void openWindowChoosePosition() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader( ClassLoader.getSystemClassLoader().getResource("fxml/choosePositions.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("fxml/choosePositions.fxml"));
         Parent root = fxmlLoader.load();
         linkController = fxmlLoader.getController();
         linkController.setAttributes(columnsAttributes);
@@ -716,5 +764,55 @@ public class JavaFXGraphController {
         stage.setTitle("Choose Positions");
         stage.initStyle(StageStyle.DECORATED);
         stage.showAndWait();
+    }
+
+    /**
+     * Changes parameters to use as positions
+     */
+    @FXML
+    private void reloadPositions() {
+        try {
+            openWindowChoosePosition();
+            if (csv != null && linkController.getColumnX() != null && linkController.getColumnY() != null) {
+                switch (graphVisualization) {
+                    case STATIC -> reloadStaticPositions();
+                    case DYNAMIC -> reloadDynamicPositions();
+                }
+            }
+        } catch (IOException e) {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed link positions");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reloads positions of a dynamic graph
+     */
+    private void reloadDynamicPositions() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(csv));
+        String line = br.readLine();
+        if (line != null) {
+            if (line.contains("time")) {
+                line = br.readLine();
+            }
+            do
+                createNodesVector(line, true);
+            while (((line = br.readLine()) != null));
+        }
+    }
+
+    /**
+     * Reloads positions of a static graph
+     */
+    private void reloadStaticPositions() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(csv));
+        String line = br.readLine();
+        if (line != null) {
+            if (line.contains("time")) {
+                line = br.readLine();
+            }
+            createPositions(line);
+        }
     }
 }

@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class LinkPositions {
+public class PositionsLinker {
 
     @FXML
     MenuButton x = new MenuButton();

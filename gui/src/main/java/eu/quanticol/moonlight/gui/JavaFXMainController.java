@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -159,6 +160,7 @@ public class JavaFXMainController {
         stage.close();
         backHome();
     }
+
 
     /**
      * Backs to the home of the app
