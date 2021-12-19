@@ -43,7 +43,7 @@ jobs:
         run: ./gradlew check
         
       - name: Codecov update
-        uses: codecov/codecov-action@v2.1
+        uses: codecov/codecov-action@v2
         with:
           token: "e55b13c2-bff0-49c1-81e8-0fe254c2955e"
           files: ./codeCoverageReport.xml # optional
