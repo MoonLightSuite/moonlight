@@ -46,7 +46,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: "e55b13c2-bff0-49c1-81e8-0fe254c2955e"
-          files: ./build/reports/codeCoverageReport/codeCoverageReport.xml # optional
+          files: ./reports/codeCoverageReport/codeCoverageReport.xml # optional
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
