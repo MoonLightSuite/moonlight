@@ -4,14 +4,14 @@ plugins {
 }
 
 // Configurations to declare dependencies
-val aggregate by configurations.creating {
+val aggregate: Configuration by configurations.creating {
     isVisible = false
     isCanBeResolved = false
     isCanBeConsumed = false
 }
 
 // Resolvable configuration to resolve the classes of all dependencies
-val classPath by configurations.creating {
+val classPath: Configuration by configurations.creating {
     isVisible = false
     isCanBeResolved = true
     isCanBeConsumed = false
@@ -25,7 +25,7 @@ val classPath by configurations.creating {
 }
 
 // A resolvable configuration to collect source code
-val sourcesPath by configurations.creating {
+val sourcesPath: Configuration by configurations.creating {
     isVisible = false
     isCanBeResolved = true
     isCanBeConsumed = false
@@ -38,7 +38,7 @@ val sourcesPath by configurations.creating {
 }
 
 // A resolvable configuration to collect JaCoCo coverage data
-val coverageDataPath by configurations.creating {
+val coverageDataPath: Configuration by configurations.creating {
     isVisible = false
     isCanBeResolved = true
     isCanBeConsumed = false
@@ -52,13 +52,20 @@ val coverageDataPath by configurations.creating {
 
 // Register a code coverage report task to generate the aggregated report
 val codeCoverageReport by tasks.registering(JacocoReport::class) {
-    additionalClassDirs(classPath.filter { it.isDirectory() })
+    additionalClassDirs(classPath.filter { it.isDirectory })
     additionalSourceDirs(sourcesPath.incoming.artifactView { lenient(true) }.files)
-    executionData(coverageDataPath.incoming.artifactView { lenient(true) }.files.filter { it.exists() })
+    executionData(coverageDataPath.incoming.artifactView { lenient(true) }
+                                  .files.filter { it.exists() }
+                                  .filter { !it.name.contains("engine2021.jar") })
 
     reports {
-        html.required.set(true)
+        // xml is usually used to integrate code coverage with
+        // other tools like SonarQube, Coveralls or Codecov
         xml.required.set(true)
+
+        // HTML reports can be used to see code coverage
+        // without any external tools
+        html.required.set(true)
     }
 }
 

@@ -2,7 +2,7 @@ plugins {
     id("eu.quanticol.java-library")
 }
 
-group = "${group}.core"
+group = "${group}.engine"
 
 dependencies {
     implementation("com.google.code.gson:gson:2.8.5")

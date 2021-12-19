@@ -5,7 +5,7 @@ plugins {
 val libDir = "../../lib"
 
 dependencies {
-    implementation("eu.quanticol.moonlight.core:monitor-core")
+    implementation("eu.quanticol.moonlight.engine:core")
 
     /* GAMT Dependency */
     implementation(fileTree(mapOf("dir" to libDir, "include" to "gamt.jar")))

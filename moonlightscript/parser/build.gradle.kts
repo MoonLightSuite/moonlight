@@ -7,7 +7,7 @@ plugins {
 group = "${group}.script"
 
 dependencies {
-    implementation("eu.quanticol.moonlight.core:monitor-core")
+    implementation("eu.quanticol.moonlight.engine:core")
     implementation("org.antlr:ST4:4.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")

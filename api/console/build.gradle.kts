@@ -1,5 +1,5 @@
 plugins {
-    id("java-library")
+    id("eu.quanticol.java-library")
     id("application") // plugin to add support for building a CLI application.
 }
 
@@ -7,7 +7,7 @@ group = "${group}.api"
 
 
 dependencies {
-    implementation("eu.quanticol.moonlight.core:monitor-core")
+    implementation("eu.quanticol.moonlight.engine:core")
     implementation("eu.quanticol.moonlight.script:parser")
 }
 

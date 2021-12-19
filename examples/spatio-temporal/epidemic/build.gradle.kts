@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation("eu.quanticol.moonlight.core:monitor-core")
+    implementation("eu.quanticol.moonlight.engine:core")
     implementation("eu.quanticol.moonlight.script:parser")
 }
