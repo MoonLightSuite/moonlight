@@ -43,10 +43,11 @@ jobs:
         run: ./gradlew check
         
       - name: Codecov update
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.1
         with:
           token: "e55b13c2-bff0-49c1-81e8-0fe254c2955e"
-          files: ./reports/codeCoverageReport/codeCoverageReport.xml # optional
+          files: ./codeCoverageReport.xml # optional
+          directory: ./build/reports/codeCoverageReport # optional
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
