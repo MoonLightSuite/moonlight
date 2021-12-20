@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="graphComponent" prefHeight="551.0" prefWidth="458.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.graph.JavaFXGraphController">
+<AnchorPane fx:id="graphComponent" minWidth="280.0" prefHeight="551.0" prefWidth="458.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.quanticol.moonlight.gui.graph.JavaFXGraphController">
    <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" style="&#10;" text="Graph Visualization" textAlignment="CENTER" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
       <font>
          <Font size="18.0" />

@@ -1,9 +1,5 @@
 package eu.quanticol.moonlight.gui.graph;
 
-import eu.quanticol.moonlight.gui.graph.GraphController;
-import eu.quanticol.moonlight.gui.graph.GraphType;
-import eu.quanticol.moonlight.gui.graph.SimpleGraphController;
-import eu.quanticol.moonlight.gui.graph.TimeGraph;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.junit.jupiter.api.AfterEach;
@@ -25,32 +21,46 @@ class SimpleGraphControllerTest {
     final File fileStatic = new File((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("static.tra"))).getFile());
     final File fileDynamic = new File((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("dynamic.tra"))).getFile());
 
-//todo
     @Test
     void createNodesVectorTest() throws IOException {
         graphController.setGraphList(timeGraphList);
         graphController.createGraphFromFile(fileDynamic);
+        ArrayList<String> attributes = new ArrayList<>();
+        attributes.add("time");
+        attributes.add("x");
+        attributes.add("y");
+        attributes.add("direction");
+        attributes.add("speed");
+        attributes.add("v");
+        graphController.setColumnsAttributes(attributes);
         String line = "0,3,17,1,0.8,0,14,13,3,0.6,0,9,13,2,0.05,0,25,16,5,0.1,0,14,16,5,0.6,0";
-//        graphController.createNodesVector(line);
+        graphController.createNodesVector(line,"x","y", true);
         List<Node> nodesWithVector = new ArrayList<>();
         graphController.getGraphList().forEach(g -> {
             for (int i = 0; i < 5; i++)
                 if(g.getGraph().getNode(String.valueOf(i)).hasAttribute("time" + 0.0))
                     nodesWithVector.add(g.getGraph().getNode(String.valueOf(i)));
         });
-        assertEquals(5,nodesWithVector.size());
         assertTrue(nodesWithVector.stream().allMatch(n -> n.hasAttribute("x")));
         assertTrue(nodesWithVector.stream().allMatch(n -> n.hasAttribute("y")));
+        assertEquals(5,nodesWithVector.size());
         String vectorNode0 = graphController.getGraphList().get(0).getGraph().getNode(String.valueOf(0)).getAttribute("time" + 0.0).toString();
         assertEquals("3, 17, 1, 0.8, 0",vectorNode0.replaceAll("\\[", "").replaceAll("]",""));
     }
 
-    //todo
     @Test
     void createPositionsTest() throws IOException {
         graphController.createGraphFromFile(fileStatic);
+        ArrayList<String> attributes = new ArrayList<>();
+        attributes.add("time");
+        attributes.add("x");
+        attributes.add("y");
+        attributes.add("direction");
+        attributes.add("speed");
+        attributes.add("v");
+        graphController.setColumnsAttributes(attributes);
         String line = "0,3,17,1,0,0,14,19,3,0,0";
-//        graphController.createPositions(line);
+        graphController.createPositions(line,"x","y");
         Graph graph = graphController.getStaticGraph();
         String id = String.valueOf(0);
         String id1 = String.valueOf(1);
@@ -84,5 +94,6 @@ class SimpleGraphControllerTest {
     @AfterEach
     void resetList(){
         timeGraphList.clear();
+        graphController.getColumnsAttributes().clear();
     }
 }

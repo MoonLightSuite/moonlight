@@ -40,6 +40,10 @@ public class SimpleChartBuilder implements ChartBuilder {
         return attributes;
     }
 
+    public GraphController getGraphController() {
+        return graphController;
+    }
+
     @Override
     public void addAttributes(String[] attributes) {
         ArrayList<String> a = new ArrayList<>(Arrays.stream(attributes).toList());
