@@ -8,8 +8,8 @@ publishing {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
             artifactId = rootProject.name
-            groupId = rootProject.group.toString()
-            version = rootProject.version.toString()
+            groupId = "eu.quanticol.moonlight"
+            version = "1.0-SNAPSHOT"
             from (components["java"])
             versionMapping {
                 usage("java-api") {
