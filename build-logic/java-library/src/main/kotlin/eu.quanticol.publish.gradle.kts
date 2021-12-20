@@ -7,6 +7,9 @@ publishing {
     publications {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
+            artifactId = rootProject.name
+            groupId = rootProject.group.toString()
+            version = rootProject.version.toString()
             from (components["java"])
             versionMapping {
                 usage("java-api") {
