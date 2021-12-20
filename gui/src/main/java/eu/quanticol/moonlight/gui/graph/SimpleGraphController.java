@@ -115,8 +115,8 @@ public class SimpleGraphController implements GraphController{
             if (g.getTime() == Double.parseDouble(elements[0])) {
                 for (int i = 0; i < nodes.size(); i++) {
                     if (g.getGraph().getNode(String.valueOf(i)) != null) {
-                        g.getGraph().getNode(String.valueOf(i)).setAttribute("x", nodes.get(i).get(columnsAttributes.indexOf(x)));
-                        g.getGraph().getNode(String.valueOf(i)).setAttribute("y", nodes.get(i).get(columnsAttributes.indexOf(y)));
+                        g.getGraph().getNode(String.valueOf(i)).setAttribute("x", nodes.get(i).get(columnsAttributes.indexOf(x) - 1));
+                        g.getGraph().getNode(String.valueOf(i)).setAttribute("y", nodes.get(i).get(columnsAttributes.indexOf(y) - 1));
                     }
                 }
             }

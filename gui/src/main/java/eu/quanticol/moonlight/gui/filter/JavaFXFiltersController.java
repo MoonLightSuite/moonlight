@@ -293,7 +293,7 @@ public class JavaFXFiltersController {
      *
      * @param filter {@link Filter} to add
      */
-    private void addFilter(Filter filter) {
+    public void addFilter(Filter filter) {
         ArrayList<Filter> filters = new ArrayList<>(tableFilters.getItems());
         if (!filters.contains(filter)) {
             filtersController.validationFilter(filter,filters);

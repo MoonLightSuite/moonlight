@@ -1,17 +1,17 @@
 package eu.quanticol.moonlight.gui.io;
 
+import eu.quanticol.moonlight.gui.chart.ChartVisualization;
 import eu.quanticol.moonlight.gui.filter.Filter;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public interface ProjectSaver {
 
     void saveProject();
 
-    void openProject();
+    ProjectSaver openProject();
 
     File getTra();
 
@@ -22,6 +22,10 @@ public interface ProjectSaver {
     File getCsv();
 
     void setCsv(File csv);
+
+    ChartVisualization getGraphVisualization();
+
+    void setGraphVisualization(ChartVisualization chartVisualization);
 
     ArrayList<String> getColumnsAttributes();
 
@@ -34,5 +38,13 @@ public interface ProjectSaver {
     ArrayList<Filter> getFilters();
 
     void setFilters(ArrayList<Filter> filters);
+
+    String getPositionX();
+
+    void setPositionX(String positionX);
+
+    String getPositionY();
+
+    void setPositionY(String positionY);
 
 }

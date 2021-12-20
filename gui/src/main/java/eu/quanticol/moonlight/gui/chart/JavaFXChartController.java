@@ -76,6 +76,8 @@ public class JavaFXChartController {
     private JavaFXGraphController javaFXGraphController;
     private final ChartBuilder cb = new SimpleChartBuilder();
 
+    private ChartVisualization chartVisualization;
+
     public void injectMainController(JavaFXMainController mainController, JavaFXGraphController graphController) {
         this.mainController = mainController;
         this.javaFXGraphController = graphController;
@@ -83,6 +85,14 @@ public class JavaFXChartController {
 
     public MenuButton getAttribute() {
         return attribute;
+    }
+
+    public ChartVisualization getGraphVisualization() {
+        return chartVisualization;
+    }
+
+    public void setGraphVisualization(ChartVisualization chartVisualization) {
+        this.chartVisualization = chartVisualization;
     }
 
     /**

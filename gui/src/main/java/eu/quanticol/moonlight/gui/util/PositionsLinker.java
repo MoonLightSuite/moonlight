@@ -33,6 +33,14 @@ public class PositionsLinker {
         return columnY;
     }
 
+    public void setColumnX(String columnX) {
+        this.columnX = columnX;
+    }
+
+    public void setColumnY(String columnY) {
+        this.columnY = columnY;
+    }
+
     public void addColumnsToMenuButtons() {
         for (int i = 1; i < attributes.size(); i++) {
             MenuItem menuItem1 = new MenuItem(attributes.get(i));

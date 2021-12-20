@@ -170,7 +170,10 @@ public class JavaFXMainController {
         p.setCsv(graphComponentController.getCsv());
         p.setFilters(new ArrayList<>(graphComponentController.getFiltersComponentController().getTableFilters().getItems().stream().toList()));
         p.setColumnsAttributes(graphComponentController.getColumnsAttributes());
+        p.setPositionX(graphComponentController.getLinkController().getColumnX());
+        p.setPositionY(graphComponentController.getLinkController().getColumnY());
         //todo
+        p.setGraphVisualization(chartComponentController.getGraphVisualization());
 //        p.setIndexOfAttributeChart(chartComponentController.);
         p.setStage(root);
         p.saveProject();
@@ -179,7 +182,8 @@ public class JavaFXMainController {
 
     @FXML
     private void openProject() {
-
+        ProjectSaver p = new SimpleProjectSaver(graphComponentController, chartComponentController);
+        p.openProject();
     }
 
 
