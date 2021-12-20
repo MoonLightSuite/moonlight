@@ -7,7 +7,7 @@ val deps = listOf("jsstl.core.jar", "SimHyA.jar")
 
 dependencies {
     implementation("eu.quanticol.moonlight.engine:core")
-    implementation("eu.quanticol.moonlight.script:parser")
+    implementation("eu.quanticol.moonlight:script")
 
     implementation(fileTree(mapOf("dir" to libDir, "include" to deps)))
 

@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     implementation("eu.quanticol.moonlight.engine:core")
-    implementation("eu.quanticol.moonlight.script:parser")
+    implementation("eu.quanticol.moonlight:script")
 }

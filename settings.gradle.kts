@@ -2,13 +2,8 @@
 // This is an empty umbrella build including all the component builds.
 // This build is not necessarily needed: component builds work independently.
 
-// == Define locations for build logic ==
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-    }
-    includeBuild("build-logic")
-}
+// == Main project's name ==
+rootProject.name = "moonlight" // the component name
 
 // == Define locations for components ==
 dependencyResolutionManagement {
@@ -17,6 +12,7 @@ dependencyResolutionManagement {
     }
 }
 
+// We include all the "sub"-projects in the build process:
 
 // == Common scripts ==
 includeBuild("build-logic")

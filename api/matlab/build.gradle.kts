@@ -8,7 +8,7 @@ group = "${group}.api"
 dependencies {
     implementation("eu.quanticol.moonlight.engine:core")
     implementation("eu.quanticol.moonlight.engine:utility")
-    implementation("eu.quanticol.moonlight.script:parser")
+    implementation("eu.quanticol.moonlight:script")
 }
 //tasks.jar {
 //    archiveFileName= "moonlightAPI.jar"

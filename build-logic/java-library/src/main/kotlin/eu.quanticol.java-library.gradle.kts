@@ -1,6 +1,5 @@
 plugins {
     id("java")
-   // id("java-platform")
     id("eu.quanticol.jacoco")
 }
 
@@ -15,16 +14,11 @@ java {
 
 tasks {
     // to allow UTF-8 characters in comments
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-    compileTestJava {
-        options.encoding = "UTF-8"
-    }
+    compileJava { options.encoding = "UTF-8" }
+    compileTestJava { options.encoding = "UTF-8" }
 }
 
 dependencies {
-//    implementation(platform("java-platform"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 

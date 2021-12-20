@@ -1,4 +1,8 @@
-// The repositories from which we are fetching the libraries
+// == Repository plugin collection ==
+// We collect in this project all the plugins that
+// will simplify tasks for the moonlight suite.
+
+// == Define fetching locations for libraries and dependencies ==
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
@@ -6,7 +10,8 @@ dependencyResolutionManagement {
     }
 }
 
+// == Define the inner structure of this component ==
+rootProject.name = "build-logic"    // the component name
 // We aggregate all the build logic in a single project
-rootProject.name = "build-logic"
 include("java-library")
 include("report-aggregation")

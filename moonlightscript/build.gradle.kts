@@ -4,7 +4,6 @@ plugins {
 }
 
 //version("unspecified")
-group = "${group}.script"
 
 dependencies {
     implementation("eu.quanticol.moonlight.engine:core")

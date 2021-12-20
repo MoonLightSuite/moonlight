@@ -5,6 +5,7 @@ plugins {
 
 publishing {
     publications {
+        // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
             from (components["java"])
             versionMapping {
@@ -19,6 +20,7 @@ publishing {
         }
     }
     repositories {
+        // We define the repository for GitHub Packages
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/MoonlightSuite/MoonLight")
