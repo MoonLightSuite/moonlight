@@ -41,6 +41,9 @@ public class PositionsLinker {
         this.columnY = columnY;
     }
 
+    /**
+     * Adds names of attributes to menuButton
+     */
     public void addColumnsToMenuButtons() {
         for (int i = 1; i < attributes.size(); i++) {
             MenuItem menuItem1 = new MenuItem(attributes.get(i));
@@ -52,6 +55,9 @@ public class PositionsLinker {
         y.getItems().forEach(menuItem -> menuItem.setOnAction(event -> y.setText(menuItem.getText())));
     }
 
+    /**
+     * Saves the columns for position chosen by the user
+     */
     @FXML
     private void saveColumns(){
         if(!(x.getText().equals("Column") || y.getText().equals("Column"))) {
@@ -69,6 +75,9 @@ public class PositionsLinker {
         this.stage.close();
     }
 
+    /**
+     * Resets menuButtons
+     */
     @FXML
     private void reset(){
         x.setText("Column");

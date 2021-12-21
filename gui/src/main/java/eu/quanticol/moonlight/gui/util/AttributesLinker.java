@@ -13,6 +13,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 /**
  * Class that links columns name to attribute of a csv file.
@@ -28,9 +29,14 @@ public class AttributesLinker {
 
     private final ArrayList<String> names = new ArrayList<>();
     private final ArrayList<TextField> texts = new ArrayList<>();
+    private String theme;
 
     public ArrayList<String> getNames() {
         return names;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public AnchorPane getAnchor() {
@@ -42,6 +48,11 @@ public class AttributesLinker {
         Platform.runLater(() -> anchor.requestFocus());
     }
 
+    /**
+     * Adds labels to window based on the attribute's number
+     *
+     * @param totalAttributes   number of attributes
+     */
     public void addLabels(int totalAttributes) {
         grid.setPadding(new Insets(10, 10, 10, 10));
         RowConstraints rowConstraints = new RowConstraints(50);
@@ -59,15 +70,42 @@ public class AttributesLinker {
         }
     }
 
-
+    /**
+     * Saves names entered by user to associate with columns
+     */
     @FXML
     private void saveAssociation() {
-        names.add("time");
-        for (TextField n : texts) {
-            names.add(n.getText());
-        }
-        Stage stage = (Stage) anchor.getScene().getWindow();
-        stage.close();
+        DialogBuilder dialogBuilder = new DialogBuilder(theme);
+        ArrayList<String> attributes = new ArrayList<>();
+        texts.forEach(t -> attributes.add(t.getText()));
+        if(texts.stream().noneMatch(t -> t.getText().equals(""))) {
+            if (!checkDuplicates(attributes)) {
+                names.add("time");
+                for (TextField n : texts)
+                    names.add(n.getText());
+                Stage stage = (Stage) anchor.getScene().getWindow();
+                stage.close();
+            } else {
+                dialogBuilder.warning("Insert columns with different names");
+                texts.forEach(t -> t.setText(""));
+            }
+        } else dialogBuilder.warning("Insert all columns names");
     }
 
+    /**
+     * Checks if into an arrayList there are duplicates
+     *
+     * @param array   arrayList to check
+     * @return        true if there are duplicates, false if there aren't
+     */
+    private boolean checkDuplicates(ArrayList<String> array) {
+        String tmp;
+        for (int i = 0; i < array.size(); i++) {
+            tmp = array.get(i);
+            for (int j = i+1; j< array.size(); j++)
+                if (array.get(j).equals(tmp))
+                    return true;
+        }
+        return false;
+    }
 }

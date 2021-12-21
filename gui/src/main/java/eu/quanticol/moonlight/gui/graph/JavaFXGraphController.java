@@ -11,6 +11,7 @@ import eu.quanticol.moonlight.gui.util.PositionsLinker;
 import eu.quanticol.moonlight.gui.util.SimpleMouseManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -488,6 +489,7 @@ public class JavaFXGraphController {
             Parent newRoot = fxmlLoader.load();
             Stage stage = new Stage();
             AttributesLinker controller = fxmlLoader.getController();
+            controller.setTheme(mainController.getTheme());
             initializeWindow(newRoot, stage, totalAttributes, controller);
             columnsAttributes = controller.getNames();
             graphController.setColumnsAttributes(columnsAttributes);
@@ -499,6 +501,7 @@ public class JavaFXGraphController {
     private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, AttributesLinker controller) {
         stage.setTitle("MoonLight");
         stage.initStyle(StageStyle.DECORATED);
+        stage.setOnCloseRequest(Event::consume);
         stage.setScene(new Scene(newRoot));
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
         stage.getIcons().add(icon);
