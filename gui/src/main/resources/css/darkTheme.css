@@ -37,10 +37,6 @@
     -fx-fill: #292929;
 }
 
-.home {
-    -fx-fill: white;
-}
-
 .list-cell:filled:hover {
     -fx-background-color: #0093FF7C;
     -fx-text-fill: white;
@@ -69,5 +65,9 @@
 
 .separator {
     -fx-background-color: grey;
+}
+
+.icon {
+    -fx-fill: white;
 }
 
