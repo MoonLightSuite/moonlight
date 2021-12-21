@@ -8,9 +8,9 @@ publishing {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
             artifactId = rootProject.name
-            groupId = "eu.quanticol.moonlight"
+            groupId = "eu.quanticol"
             version = "1.0-SNAPSHOT"
-            from (components["java"])
+            from (rootProject.components["java"])
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")
