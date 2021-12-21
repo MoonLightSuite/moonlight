@@ -96,6 +96,7 @@ public class SimpleChartBuilder implements ChartBuilder {
         int rows = 0;
         do {
             String[] array = line.split(", ");
+            addAttributes(array);
             int index = 0;
             matrix[rows][0] = Double.valueOf(array[index]);
             index += indexAttribute;

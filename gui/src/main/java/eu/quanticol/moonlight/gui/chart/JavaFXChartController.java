@@ -87,6 +87,10 @@ public class JavaFXChartController {
         return attribute;
     }
 
+    public void setAttributes(String attribute) {
+        attributes.setText(attribute);
+    }
+
     public ChartVisualization getGraphVisualization() {
         return chartVisualization;
     }
@@ -104,6 +108,7 @@ public class JavaFXChartController {
         try {
             lineChart.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
             lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
+            linearSelected();
             init();
         } catch (Exception e){
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
@@ -174,7 +179,6 @@ public class JavaFXChartController {
     }
 
     private void init() {
-        linearSelected();
         initLists();
         showToolTip(lineChart);
         showToolTip(lineChartLog);
@@ -183,12 +187,11 @@ public class JavaFXChartController {
     }
 
     public void initStatic() {
-        linearSelected();
         initLists();
-        addListener(lineChart);
-        addListener(lineChartLog);
         showToolTip(lineChart);
         showToolTip(lineChartLog);
+        addListener(lineChart);
+        addListener(lineChartLog);
     }
 
     /**
@@ -196,16 +199,25 @@ public class JavaFXChartController {
      *
      * @param chart lineChart
      */
-    private void addListener(LineChart<Number, Number> chart) {
+    public void addListener(LineChart<Number, Number> chart) {
+        ArrayList<String> columnsAttributes = javaFXGraphController.getColumnsAttributes();
+        int size = columnsAttributes.size() - 1;
         for (Series<Number, Number> s : chart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
                 d.getNode().setOnMouseClicked(event -> {
                     int id = Integer.parseInt(s.getName().substring(5));
                     Double time = d.getXValue().doubleValue();
                     String v = d.getYValue().toString();
+                    int index = columnsAttributes.indexOf(getAttribute().getText());
                     for (ArrayList<String> a : cb.getAttributes())
-                        if (Double.valueOf(a.get(0)).equals(time) && (a.get(id * 5 + 5).replaceAll("\\s+", "")).equals(v))
-                            attributes.setText("X: " + a.get(id * 5 + 1) + ", Y: " + a.get(id * 5 + 2) + ", direction: " + a.get(id * 5 + 3) + ", speed: " + a.get(id * 5 + 4) + ", v: " + a.get(id * 5 + 5));
+                        if (Double.valueOf(a.get(0)).equals(time) && (a.get((id * size) + index).replaceAll("\\s+", "")).equals(v)){
+                            StringBuilder toShow = new StringBuilder("Node " + id + " attributes: ");
+                            for (int i = 1; i < columnsAttributes.size(); i++) {
+                                toShow.append(columnsAttributes.get(i));
+                                toShow.append(": ").append(a.get(i+(size*id))).append(", ");
+                            }
+                            attributes.setText(String.valueOf(toShow));
+                        }
                 });
             }
         }
@@ -251,16 +263,21 @@ public class JavaFXChartController {
     private void changeChartSeries(MenuItem menuItem) {
         attribute.setText(menuItem.getText());
         if (javaFXGraphController.getGraphList().size() == 0) {
-            if (constantChart.isVisible())
+            if (constantChart.isVisible()) {
                 createDataFromConstantGraph();
-            else
+                addListener(constantChart);
+            } else {
                 createDataFromStaticGraph();
+                initStatic();
+            }
         } else {
             if (constantChart.isVisible())
                 createDataFromConstantGraph();
             else {
                 resetChartsWithoutMarker();
-                createDataFromGraphs(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1);
+                lineChart.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
+                lineChartLog.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
+                init();
             }
         }
     }
@@ -290,7 +307,7 @@ public class JavaFXChartController {
     }
 
     @FXML
-    private void linearSelected() {
+    public void linearSelected() {
         lineChartLog.setVisible(false);
         constantChart.setVisible(false);
         lineChart.setVisible(true);
@@ -337,7 +354,6 @@ public class JavaFXChartController {
                 do
                     addLineDataToSeries(line,javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
                 while (((line = br.readLine()) != null));
-                initStatic();
             }
         } catch (Exception e) {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
@@ -369,12 +385,16 @@ public class JavaFXChartController {
     }
 
     public void reset() {
+        clearChartData();
+        this.removeVerticalLine();
+    }
+
+    private void clearChartData() {
         this.lineChartLog.getData().clear();
         this.lineChart.getData().clear();
         this.constantChart.getData().clear();
         this.list.getItems().clear();
         this.variables.getItems().clear();
-        this.removeVerticalLine();
         variables.setDisable(false);
     }
 
@@ -385,12 +405,7 @@ public class JavaFXChartController {
 
     public void resetChartsWithoutMarker() {
         cb.clearList();
-        this.lineChartLog.getData().clear();
-        this.lineChart.getData().clear();
-        this.constantChart.getData().clear();
-        this.list.getItems().clear();
-        this.variables.getItems().clear();
-        variables.setDisable(false);
+        clearChartData();
     }
 
     /**
@@ -548,6 +563,10 @@ public class JavaFXChartController {
         initLists();
         showToolTip(constantChart);
         loadVerticalLine(constantChart);
+    }
+
+    public void addListenerConstantChart(){
+        addListener(this.constantChart);
     }
 
     private void deselectInconstantCharts() {

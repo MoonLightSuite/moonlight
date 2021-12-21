@@ -189,6 +189,9 @@ public class JavaFXGraphController {
         if (runnable != null && slider != null)
             runnable.shutdown();
         filtersComponentController.resetFilters();
+        linkController.setColumnX(null);
+        linkController.setColumnY(null);
+        chartController.setAttributes("");
         FileChooser fileChooser = new FileChooser();
         Stage stage = (Stage) mainController.getRoot().getScene().getWindow();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(description, extensions);
@@ -341,6 +344,8 @@ public class JavaFXGraphController {
         chartController.initConstantChart(file);
         chartController.loadAttributesList(columnsAttributes);
         chartController.getAttribute().setText(columnsAttributes.get(1));
+        if (graphVisualization.equals(GraphType.STATIC))
+            chartController.addListenerConstantChart();
         this.csvRead = true;
     }
 
@@ -461,6 +466,7 @@ public class JavaFXGraphController {
         do
             addLineDataToSeries(line);
         while (((line = br.readLine()) != null));
+        chartController.linearSelected();
         chartController.initStatic();
     }
 
