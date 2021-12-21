@@ -43,13 +43,24 @@
     <MenuBar VBox.vgrow="NEVER">
       <Menu mnemonicParsing="false">
          <graphic>
-            <FontAwesomeIcon fx:id="homeImage" glyphName="HOME" onMouseClicked="#backHome" size="1.5em" styleClass="home" />
+            <FontAwesomeIcon fx:id="homeImage" glyphName="HOME" onMouseClicked="#backHome" size="1.5em" styleClass="icon" />
          </graphic>
       </Menu>
         <Menu mnemonicParsing="false" text="File">
-            <MenuItem mnemonicParsing="false" onAction="#openTraExplorer" text="Open file" />
-         <MenuItem mnemonicParsing="false" onAction="#openProject" text="Open project" />
-         <MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save project" />
+            <MenuItem mnemonicParsing="false" onAction="#openTraExplorer" text="Open file">
+            <graphic>
+               <FontAwesomeIcon glyphName="FILE" styleClass="icon" />
+            </graphic></MenuItem>
+         <MenuItem mnemonicParsing="false" onAction="#openProject" text="Open project">
+            <graphic>
+               <FontAwesomeIcon glyphName="FOLDER" styleClass="icon" />
+            </graphic></MenuItem>
+         <MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save project as..." />
+         <MenuItem mnemonicParsing="false" text="Save all">
+            <graphic>
+               <FontAwesomeIcon glyphName="SAVE" styleClass="icon" />
+            </graphic>
+         </MenuItem>
          <MenuItem mnemonicParsing="false" onAction="#closeProject" text="Close project" />
         </Menu>
         <Menu fx:id="menuCSV" disable="true" mnemonicParsing="false" text="Load attributes">

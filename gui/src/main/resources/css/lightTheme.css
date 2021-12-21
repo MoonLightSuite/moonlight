@@ -17,10 +17,6 @@
     -fx-fill: #cbcbcb;
 }
 
-.home {
-    -fx-fill: black;
-}
-
 .list-cell:filled:hover {
     -fx-background-color: rgba(0, 147, 255, 0.49);
     -fx-text-fill: white;
@@ -53,3 +49,6 @@
     -fx-background-color: lightgrey;
 }
 
+.icon {
+    -fx-fill: black;
+}
