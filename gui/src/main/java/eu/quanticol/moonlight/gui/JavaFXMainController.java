@@ -47,6 +47,8 @@ public class JavaFXMainController {
 
     private static Stage principal = null;
 
+    ProjectSaver p = null;
+
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     public String getTheme() {
@@ -73,6 +75,7 @@ public class JavaFXMainController {
     public void initialize() {
         this.chartComponentController.injectMainController(this, graphComponentController);
         this.graphComponentController.injectMainController(this, chartComponentController);
+        p = new SimpleProjectSaver(graphComponentController, chartComponentController);
         loadTheme();
     }
 
@@ -165,7 +168,6 @@ public class JavaFXMainController {
 
     @FXML
     private void saveProject() {
-        ProjectSaver p = new SimpleProjectSaver(graphComponentController, chartComponentController);
         p.setTra(graphComponentController.getTra());
         p.setCsv(graphComponentController.getCsv());
         p.setFilters(new ArrayList<>(graphComponentController.getFiltersComponentController().getTableFilters().getItems().stream().toList()));
@@ -174,7 +176,7 @@ public class JavaFXMainController {
         p.setPositionY(graphComponentController.getLinkController().getColumnY());
         //todo
         p.setGraphVisualization(chartComponentController.getGraphVisualization());
-//        p.setIndexOfAttributeChart(chartComponentController.);
+        p.setIndexOfAttributeChart(chartComponentController.getIndexOfAttributes());
         p.setStage(root);
         p.saveProject();
 
@@ -182,7 +184,6 @@ public class JavaFXMainController {
 
     @FXML
     private void openProject() {
-        ProjectSaver p = new SimpleProjectSaver(graphComponentController, chartComponentController);
         p.openProject();
     }
 

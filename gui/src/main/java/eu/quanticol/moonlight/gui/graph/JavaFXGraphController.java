@@ -278,8 +278,8 @@ public class JavaFXGraphController {
             readCSV(file);
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
                 resetCharts();
-                chartController.createDataFromGraphs(graphList, 0);
-                chartController.getAttribute().setText(columnsAttributes.get(1));
+                chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes());
+                chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes() + 1));
             }
             addRecentFile(file.getPath(), FileType.CSV);
         } catch (Exception e) {
@@ -343,7 +343,7 @@ public class JavaFXGraphController {
         constantAttributesLink(br, line);
         chartController.initConstantChart(file);
         chartController.loadAttributesList(columnsAttributes);
-        chartController.getAttribute().setText(columnsAttributes.get(1));
+        chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
         if (graphVisualization.equals(GraphType.STATIC))
             chartController.addListenerConstantChart();
         this.csvRead = true;
@@ -451,7 +451,7 @@ public class JavaFXGraphController {
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
             chartController.loadAttributesList(columnsAttributes);
-            chartController.getAttribute().setText(columnsAttributes.get(1));
+            chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
         }
     }
 
@@ -497,13 +497,12 @@ public class JavaFXGraphController {
     }
 
     private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, AttributesLinker controller) {
-        stage.setTitle("MoonLight");
-        stage.initStyle(StageStyle.DECORATED);
+        stage.setTitle("Associate attributes");
+//        stage.initStyle(StageStyle.UNIFIED);
         stage.setScene(new Scene(newRoot));
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
         stage.getIcons().add(icon);
         controller.addLabels(totalAttributes);
-        stage.initModality(Modality.APPLICATION_MODAL);
         controller.getAnchor().getStylesheets().add(mainController.getTheme());
         stage.setResizable(false);
         stage.showAndWait();
@@ -524,7 +523,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void addLineDataToSeries(String line) {
-        chartController.addLineDataToSeries(line, 1);
+        chartController.addLineDataToSeries(line, chartController.getIndexOfAttributes());
     }
 
     /**
@@ -533,7 +532,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createSeriesFromStaticGraph(String line) {
-        chartController.createSeriesFromStaticGraph(line, 1);
+        chartController.createSeriesFromStaticGraph(line, chartController.getIndexOfAttributes());
     }
 
     /**
@@ -833,7 +832,7 @@ public class JavaFXGraphController {
         Stage stage = new Stage();
         linkController.setStage(stage);
         stage.setScene(new Scene(root));
-        stage.setTitle("Choose Positions");
+        stage.setTitle("Choose positions");
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
         stage.getIcons().add(icon);
         stage.initModality(Modality.APPLICATION_MODAL);

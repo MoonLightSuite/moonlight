@@ -52,11 +52,11 @@ public class JavaFXChartController {
     @FXML
     ListView<CheckBox> list;
     @FXML
-    LineChartWithMarkers<Number,Number> lineChartLog = new LineChartWithMarkers<>(xLAxis, yLAxis);
+    LineChartWithMarkers<Number, Number> lineChartLog = new LineChartWithMarkers<>(xLAxis, yLAxis);
     @FXML
-    LineChartWithMarkers<Number,Number> lineChart = new LineChartWithMarkers<>(xAxis,yAxis);
+    LineChartWithMarkers<Number, Number> lineChart = new LineChartWithMarkers<>(xAxis, yAxis);
     @FXML
-    LineChartWithMarkers<Number,Number> constantChart = new LineChartWithMarkers<>(xCAxis, yCAxis);
+    LineChartWithMarkers<Number, Number> constantChart = new LineChartWithMarkers<>(xCAxis, yCAxis);
     @FXML
     TableView<Series<Number, Number>> variables;
     @FXML
@@ -75,6 +75,7 @@ public class JavaFXChartController {
     private JavaFXMainController mainController;
     private JavaFXGraphController javaFXGraphController;
     private final ChartBuilder cb = new SimpleChartBuilder();
+    private int indexOfAttributes = 1;
 
     private ChartVisualization chartVisualization;
 
@@ -90,6 +91,15 @@ public class JavaFXChartController {
     public void setAttributes(String attribute) {
         attributes.setText(attribute);
     }
+
+    public int getIndexOfAttributes() {
+        return indexOfAttributes;
+    }
+
+    public void setIndexOfAttributes(int indexOfAttributes) {
+        this.indexOfAttributes = indexOfAttributes;
+    }
+
 
     public ChartVisualization getGraphVisualization() {
         return chartVisualization;
@@ -110,7 +120,7 @@ public class JavaFXChartController {
             lineChartLog.getData().addAll(cb.getSeriesFromNodes(timeGraph, index));
             linearSelected();
             init();
-        } catch (Exception e){
+        } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.error("Failed to load chart data. Open an other file.");
             e.printStackTrace();
@@ -137,8 +147,8 @@ public class JavaFXChartController {
      *
      * @param lineChart lineChart which to add line
      */
-    private void loadVerticalLine(LineChartWithMarkers<Number,Number> lineChart){
-       XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(0, 0);
+    private void loadVerticalLine(LineChartWithMarkers<Number, Number> lineChart) {
+        XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(0, 0);
         lineChart.addVerticalValueMarker(verticalMarker);
         ArrayList<Double> time = javaFXGraphController.getTime();
         javaFXGraphController.getSlider().valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -174,8 +184,8 @@ public class JavaFXChartController {
     public void addLineDataToSeries(String line, int index) {
         String[] attributes = line.split(",");
         cb.addAttributes(attributes);
-        cb.addLineData(lineChart.getData().stream().toList(), attributes,index);
-        cb.addLineData(lineChartLog.getData().stream().toList(), attributes,index);
+        cb.addLineData(lineChart.getData().stream().toList(), attributes, index);
+        cb.addLineData(lineChartLog.getData().stream().toList(), attributes, index);
     }
 
     private void init() {
@@ -210,11 +220,11 @@ public class JavaFXChartController {
                     String v = d.getYValue().toString();
                     int index = columnsAttributes.indexOf(getAttribute().getText());
                     for (ArrayList<String> a : cb.getAttributes())
-                        if (Double.valueOf(a.get(0)).equals(time) && (a.get((id * size) + index).replaceAll("\\s+", "")).equals(v)){
+                        if (Double.valueOf(a.get(0)).equals(time) && (a.get((id * size) + index).replaceAll("\\s+", "")).equals(v)) {
                             StringBuilder toShow = new StringBuilder("Node " + id + " attributes: ");
                             for (int i = 1; i < columnsAttributes.size(); i++) {
                                 toShow.append(columnsAttributes.get(i));
-                                toShow.append(": ").append(a.get(i+(size*id))).append(", ");
+                                toShow.append(": ").append(a.get(i + (size * id))).append(", ");
                             }
                             attributes.setText(String.valueOf(toShow));
                         }
@@ -229,7 +239,7 @@ public class JavaFXChartController {
             attributes.setText(" ");
     }
 
-    public void clearMenuButton(){
+    public void clearMenuButton() {
         attribute.setText("Attribute");
         attribute.getItems().clear();
     }
@@ -239,10 +249,10 @@ public class JavaFXChartController {
      *
      * @param names names of attributes
      */
-    public void loadAttributesList(ArrayList<String> names){
+    public void loadAttributesList(ArrayList<String> names) {
         ArrayList<String> attributes = new ArrayList<>();
         ArrayList<MenuItem> menuItems = new ArrayList<>();
-        for (int i = 1; i <= names.size()-1 ; i++)
+        for (int i = 1; i <= names.size() - 1; i++)
             attributes.add(names.get(i));
         attributes.forEach(a -> {
             MenuItem menuItem = new MenuItem();
@@ -258,7 +268,7 @@ public class JavaFXChartController {
     /**
      * Changes series into chart based on the attribute selected by the user
      *
-     * @param menuItem   menuItem selected
+     * @param menuItem menuItem selected
      */
     private void changeChartSeries(MenuItem menuItem) {
         attribute.setText(menuItem.getText());
@@ -277,6 +287,7 @@ public class JavaFXChartController {
                 resetChartsWithoutMarker();
                 lineChart.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
                 lineChartLog.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
+                indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1;
                 init();
             }
         }
@@ -330,7 +341,8 @@ public class JavaFXChartController {
         resetChartsWithoutMarker();
         deselectInconstantCharts();
         try {
-            constantChart.getData().addAll(cb.createSeriesForConstantChart(javaFXGraphController.getCsv(),javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText())));
+            constantChart.getData().addAll(cb.createSeriesForConstantChart(javaFXGraphController.getCsv(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText())));
+            indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -350,10 +362,11 @@ public class JavaFXChartController {
                 if (line.contains("time"))
                     line = br.readLine();
                 resetChartsWithoutMarker();
-                createSeriesFromStaticGraph(line,javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
+                createSeriesFromStaticGraph(line, javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
                 do
-                    addLineDataToSeries(line,javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
+                    addLineDataToSeries(line, javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()));
                 while (((line = br.readLine()) != null));
+                indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText());
             }
         } catch (Exception e) {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
@@ -523,8 +536,9 @@ public class JavaFXChartController {
     /**
      * Return the min value of a series
      *
-     * @param series  all series
-     * @return        min value
+     * @param series all series
+     *
+     * @return min value
      */
     public Number getMinSeries(Series<Number, Number> series) {
         OptionalDouble d = series.getData().stream().mapToDouble(num -> num.getYValue().doubleValue()).min();
@@ -537,7 +551,8 @@ public class JavaFXChartController {
      * Return the max value of a series
      *
      * @param series all series
-     * @return       max value
+     *
+     * @return max value
      */
     public Number getMaxSeries(Series<Number, Number> series) {
         OptionalDouble d = series.getData().stream().mapToDouble(num -> num.getYValue().doubleValue()).max();
@@ -559,13 +574,13 @@ public class JavaFXChartController {
     public void initConstantChart(File file) throws IOException {
         resetCharts();
         deselectInconstantCharts();
-        constantChart.getData().addAll(cb.createSeriesForConstantChart(file, 1));
+        constantChart.getData().addAll(cb.createSeriesForConstantChart(file, indexOfAttributes));
         initLists();
         showToolTip(constantChart);
         loadVerticalLine(constantChart);
     }
 
-    public void addListenerConstantChart(){
+    public void addListenerConstantChart() {
         addListener(this.constantChart);
     }
 

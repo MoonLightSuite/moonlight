@@ -33,6 +33,7 @@ public class SimpleProjectSaver implements ProjectSaver {
     private transient final JavaFXGraphController graphController;
     private transient final JavaFXChartController chartController;
     private transient Stage stage = null;
+    private transient String project = null;
 
     public SimpleProjectSaver(JavaFXGraphController graphController, JavaFXChartController chartController) {
         this.graphController = graphController;
@@ -150,6 +151,7 @@ public class SimpleProjectSaver implements ProjectSaver {
         else {
             try {
                 fromJson(file);
+                this.project = file.getAbsolutePath();
                 initializeProject();
                 return this;
             } catch (IOException e) {
@@ -192,6 +194,7 @@ public class SimpleProjectSaver implements ProjectSaver {
         if (graphController.getGraphVisualization().equals(GraphType.DYNAMIC))
             graphController.reloadDynamicPositions();
         else graphController.reloadStaticPositions();
+        chartController.setIndexOfAttributes(this.indexOfAttributeChart);
         if (this.chartVisualization.equals(ChartVisualization.PIECEWISE))
             graphController.openRecentCSV(new File(this.csv));
         else graphController.openConstantCsv(new File(this.csv));
@@ -200,4 +203,8 @@ public class SimpleProjectSaver implements ProjectSaver {
             graphController.getFiltersComponentController().addFilter(f);
         }
     }
+
+//    public void saveAll() {
+//        saveToJson(new File(this.project));
+//    }
 }
