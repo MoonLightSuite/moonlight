@@ -280,14 +280,15 @@ public class JavaFXMainController {
      */
     public void initializeProject(ProjectSaver p) throws IOException {
         initVariablesProject(p);
+        p.getGraphController().setPositionAssigned(true);
         p.getGraphController().openRecentTRA(p.getTra());
         if (p.getGraphController().getLinkController().getColumnX() != null && p.getGraphController().getLinkController().getColumnY() != null) {
-            p.getGraphController().setPositionAssigned(true);
             switch (p.getGraphController().getGraphVisualization()) {
                 case STATIC -> p.getGraphController().reloadStaticPositions();
                 case DYNAMIC -> p.getGraphController().reloadDynamicPositions();
             }
-        }
+        } else
+            p.getGraphController().setPositionAssigned(false);
         if (p.getChartVisualization().equals(ChartVisualization.PIECEWISE))
             p.getGraphController().openRecentCSV(p.getCsv());
         else p.getGraphController().openConstantCsv(p.getCsv());

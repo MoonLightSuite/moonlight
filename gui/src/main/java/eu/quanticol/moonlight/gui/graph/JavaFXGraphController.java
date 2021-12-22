@@ -282,7 +282,7 @@ public class JavaFXGraphController {
             readCSV(file);
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
                 resetCharts();
-                chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes() - 1);
+                chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes());
                 chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
             }
             addRecentFile(file.getPath(), FileType.CSV);
@@ -390,12 +390,12 @@ public class JavaFXGraphController {
         filtersComponentController.resetFiltersNewFile();
         chartController.reset();
         resetSlider();
-        positionAssigned = false;
         infoNode.setText(" ");
         linkButton.setDisable(true);
     }
 
     private void reset() {
+        positionAssigned = false;
         filtersComponentController.resetFilters();
         linkController.setColumnX(null);
         linkController.setColumnY(null);
@@ -801,7 +801,7 @@ public class JavaFXGraphController {
         Optional<FxViewer> fv = viewers.stream().filter(fxViewer -> fxViewer.getView(String.valueOf(time)) != null).findFirst();
         if (fv.isPresent()) {
             FxViewer v = fv.get();
-            if (this.positionAssigned)
+            if (positionAssigned)
                 v.disableAutoLayout();
             else v.enableAutoLayout();
             setSceneProperties((FxViewPanel) v.getView(String.valueOf(time)));
