@@ -7,7 +7,6 @@ import eu.quanticol.moonlight.gui.chart.ChartVisualization;
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
 import eu.quanticol.moonlight.gui.filter.Filter;
 import eu.quanticol.moonlight.gui.filter.SimpleFilter;
-import eu.quanticol.moonlight.gui.graph.GraphType;
 import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.scene.layout.VBox;
@@ -122,11 +121,6 @@ public class SimpleProjectSaver implements ProjectSaver {
     }
 
     @Override
-    public void setChartVisualization(ChartVisualization chartVisualization) {
-        this.chartVisualization = chartVisualization;
-    }
-
-    @Override
     public JavaFXGraphController getGraphController() {
         return graphController;
     }
@@ -188,13 +182,19 @@ public class SimpleProjectSaver implements ProjectSaver {
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Json Project", "*.json");
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showOpenDialog(stage);
+        openProject(file);
+    }
+
+    /**
+     * Opens a project
+     */
+    public void openProject(File file) {
         DialogBuilder d = new DialogBuilder(JsonThemeLoader.getInstance().getGeneralTheme());
         if (file == null)
             d.info("No file opened");
         else {
             try {
                 fromJson(file);
-//                initializeProject();
             } catch (IOException e) {
                 d.error("Failed importing project");
             }

@@ -18,8 +18,6 @@ public interface ProjectSaver {
 
     ChartVisualization getChartVisualization();
 
-    void setChartVisualization(ChartVisualization chartVisualization);
-
     JavaFXGraphController getGraphController();
 
     JavaFXChartController getChartController();
@@ -31,6 +29,8 @@ public interface ProjectSaver {
     void saveProject();
 
     void openProject();
+
+    void openProject(File file);
 
     File getTra();
 
