@@ -56,16 +56,14 @@
             <graphic>
                <FontAwesomeIcon glyphName="FOLDER_OPEN" styleClass="icon" />
             </graphic></MenuItem>
-         <MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save project as..." />
-         <MenuItem mnemonicParsing="false" text="Save all">
+         <MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save project as...">
             <graphic>
                <FontAwesomeIcon glyphName="SAVE" styleClass="icon">
                   <font>
                      <Font name="System Bold" size="12.0" />
                   </font>
                </FontAwesomeIcon>
-            </graphic>
-         </MenuItem>
+            </graphic></MenuItem>
          <MenuItem mnemonicParsing="false" onAction="#closeProject" text="Close project" />
         </Menu>
         <Menu fx:id="menuCSV" mnemonicParsing="false" text="Load attributes">

@@ -60,6 +60,7 @@ public class JavaFXHomeController {
     private final FilesLoader filesLoader = new JsonFilesLoader();
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private JavaFXMainController mainController = null;
+    private final ArrayList<JavaFXMainController> controllers = new ArrayList<>();
 
     /**
      * Initialize all
@@ -76,7 +77,11 @@ public class JavaFXHomeController {
         addListenersToSearch();
     }
 
-    private void resetSearch(){
+    public void addController(JavaFXMainController controller) {
+        controllers.add(controller);
+    }
+
+    private void resetSearch() {
         searchField.setText("");
         reset.setVisible(false);
     }
@@ -84,10 +89,10 @@ public class JavaFXHomeController {
     /**
      * Adds mouseListener on doubleClick on listView
      */
-    private void addListenerToList(){
+    private void addListenerToList() {
         recentFiles.setOnMouseClicked(click -> {
             RecentFile recentFile = recentFiles.getSelectionModel().getSelectedItem();
-            if(recentFile != null) {
+            if (recentFile != null) {
                 if (click.getClickCount() == 2) {
                     if (recentFile.getType() == FileType.TRA)
                         openProjectTRA(recentFile);
@@ -102,7 +107,7 @@ public class JavaFXHomeController {
     /**
      * Adds listener when user writes or deletes on the search textField
      */
-    private void addListenersToSearch(){
+    private void addListenersToSearch() {
         searchField.setOnKeyPressed(press -> {
             search();
             reset.setVisible(true);
@@ -137,7 +142,7 @@ public class JavaFXHomeController {
     private void initButtons() {
         try {
             JsonThemeLoader.getInstance().getThemeFromJson();
-        } catch (Exception e ) {
+        } catch (Exception e) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             d.warning("Failed loading theme.");
@@ -193,10 +198,21 @@ public class JavaFXHomeController {
                 root.getStylesheets().clear();
             root.getStylesheets().add(JsonThemeLoader.getInstance().getGeneralTheme());
         }
-        if (JsonThemeLoader.getInstance() != null)
+        if (JsonThemeLoader.getInstance() != null) {
             if (JsonThemeLoader.getInstance().getGeneralTheme().equals(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString()))
                 theme.setText("Light Theme");
             else theme.setText("Dark Theme");
+        }
+    }
+
+    /**
+     * Changes theme to all windows
+     */
+    public void changeThemeToAll() {
+        this.initializeThemes();
+        for (JavaFXMainController main : controllers) {
+            main.initializeThemes();
+        }
     }
 
     /**
@@ -229,7 +245,7 @@ public class JavaFXHomeController {
         try {
             JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
             JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphLightTheme.css")).toURI().toString());
-            initializeThemes();
+            changeThemeToAll();
             JsonThemeLoader.getInstance().saveToJson();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
@@ -245,7 +261,7 @@ public class JavaFXHomeController {
         try {
             JsonThemeLoader.getInstance().setGeneralTheme(Objects.requireNonNull(classLoader.getResource("css/darkTheme.css")).toString());
             JsonThemeLoader.getInstance().setGraphTheme(Objects.requireNonNull(classLoader.getResource("css/graphDarkTheme.css")).toURI().toString());
-            initializeThemes();
+            changeThemeToAll();
             JsonThemeLoader.getInstance().saveToJson();
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(Objects.requireNonNull(classLoader.getResource("css/lightTheme.css")).toString());
@@ -263,6 +279,7 @@ public class JavaFXHomeController {
             fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
             Parent newRoot = fxmlLoader.load();
             JavaFXMainController mainController = fxmlLoader.getController();
+            controllers.add(mainController);
             mainController.setHomeController(this);
             this.mainController = mainController;
             Stage stage = new Stage();
@@ -301,10 +318,10 @@ public class JavaFXHomeController {
     /**
      * Loads the recent .csv file on the opened window
      *
-     * @param recentFile  file to open
+     * @param recentFile file to open
      */
-    private void openProjectCSV(RecentFile recentFile){
-        if(mainController != null) {
+    private void openProjectCSV(RecentFile recentFile) {
+        if (mainController != null) {
             File file = new File(recentFile.getPathFile());
             mainController.openCSV(file);
         }
@@ -313,8 +330,8 @@ public class JavaFXHomeController {
     /**
      * Sets properties of stage
      *
-     * @param newRoot  root of scene
-     * @param stage    stage
+     * @param newRoot root of scene
+     * @param stage   stage
      */
     private void setStage(Parent newRoot, Stage stage) {
         stage.setTitle("MoonLight");
@@ -333,9 +350,9 @@ public class JavaFXHomeController {
         String path = System.getProperty("user.home");
         path += File.separator + "MoonLightConfig" + File.separator + "files.json";
         File userFile = new File(path);
-        if(userFile.length() != 0) {
+        if (userFile.length() != 0) {
             ArrayList<RecentFile> files = filesLoader.getFilesFromJson();
-            for (int i = files.size()-1; i >= 0; i--)
+            for (int i = files.size() - 1; i >= 0; i--)
                 filesList.add(files.get(i));
             recentFiles.setItems(filesList);
             addImagesToList();
@@ -348,6 +365,7 @@ public class JavaFXHomeController {
     private void addImagesToList() {
         recentFiles.setCellFactory(param -> new ListCell<>() {
             private final ImageView displayImage = new ImageView();
+
             @Override
             public void updateItem(RecentFile file, boolean empty) {
                 super.updateItem(file, empty);
@@ -357,7 +375,7 @@ public class JavaFXHomeController {
                 } else {
                     if (file.getType() == FileType.TRA)
                         displayImage.setImage(new Image((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/graph.png"))).toString()));
-                    if(file.getType() == FileType.CSV)
+                    if (file.getType() == FileType.CSV)
                         displayImage.setImage(new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/chart.png")).toString()));
                     setText(file.getPathFile());
                     setGraphic(displayImage);

@@ -20,6 +20,11 @@ import java.util.ArrayList;
 
 import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
 
+/**
+ * Class that implements the {@link ProjectSaver} interface and saves all files and settings of a project in a json file.
+ *
+ * @author Albanese Clarissa, Sorritelli Greta
+ */
 public class SimpleProjectSaver implements ProjectSaver {
 
     private String tra = null;
@@ -30,16 +35,18 @@ public class SimpleProjectSaver implements ProjectSaver {
     private ArrayList<Filter> filters = new ArrayList<>();
     private String positionX = null;
     private String positionY = null;
-    private transient final JavaFXGraphController graphController;
-    private transient final JavaFXChartController chartController;
+    private transient JavaFXGraphController graphController;
+    private transient JavaFXChartController chartController;
     private transient Stage stage = null;
-    private transient String project = null;
 
     public SimpleProjectSaver(JavaFXGraphController graphController, JavaFXChartController chartController) {
         this.graphController = graphController;
         this.chartController = chartController;
     }
 
+    /**
+     * @return whether if is visualized a piecewise or stepwise chart
+     */
     public ChartVisualization getGraphVisualization() {
         return chartVisualization;
     }
@@ -110,6 +117,39 @@ public class SimpleProjectSaver implements ProjectSaver {
     }
 
     @Override
+    public ChartVisualization getChartVisualization() {
+        return chartVisualization;
+    }
+
+    @Override
+    public void setChartVisualization(ChartVisualization chartVisualization) {
+        this.chartVisualization = chartVisualization;
+    }
+
+    @Override
+    public JavaFXGraphController getGraphController() {
+        return graphController;
+    }
+
+    @Override
+    public JavaFXChartController getChartController() {
+        return chartController;
+    }
+
+    @Override
+    public void setGraphController(JavaFXGraphController graphController) {
+        this.graphController = graphController;
+    }
+
+    @Override
+    public void setChartController(JavaFXChartController chartController) {
+        this.chartController = chartController;
+    }
+
+    /**
+     * Saves all files and settings in a json file chosen from the file explorer
+     */
+    @Override
     public void saveProject() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Json Project", "*.json");
@@ -139,8 +179,11 @@ public class SimpleProjectSaver implements ProjectSaver {
         }
     }
 
+    /**
+     * Opens a project saved in a json file, chosen from the file explorer
+     */
     @Override
-    public ProjectSaver openProject() {
+    public void openProject() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Json Project", "*.json");
         fileChooser.getExtensionFilters().add(extFilter);
@@ -151,15 +194,13 @@ public class SimpleProjectSaver implements ProjectSaver {
         else {
             try {
                 fromJson(file);
-                this.project = file.getAbsolutePath();
-                initializeProject();
-                return this;
+//                initializeProject();
             } catch (IOException e) {
                 d.error("Failed importing project");
             }
         }
-        return null;
     }
+
 
     private void fromJson(File file) throws IOException {
         Gson gson = new GsonBuilder()
@@ -174,6 +215,9 @@ public class SimpleProjectSaver implements ProjectSaver {
         reader.close();
     }
 
+    /**
+     * Saves the variables from a json file to the object of this class
+     */
     private void saveToObject(ProjectSaver projectSaver) {
         this.csv = projectSaver.getCsv().getAbsolutePath();
         this.tra = projectSaver.getTra().getAbsolutePath();
@@ -185,26 +229,4 @@ public class SimpleProjectSaver implements ProjectSaver {
         this.positionY = projectSaver.getPositionY();
     }
 
-    private void initializeProject() throws IOException {
-        graphController.setColumnsAttributes(this.columnsAttributes);
-        graphController.getLinkController().setColumnX(this.positionX);
-        graphController.getLinkController().setColumnY(this.positionY);
-        graphController.openRecentTRA(new File(this.tra));
-        graphController.setCsv(new File(this.csv));
-        if (graphController.getGraphVisualization().equals(GraphType.DYNAMIC))
-            graphController.reloadDynamicPositions();
-        else graphController.reloadStaticPositions();
-        chartController.setIndexOfAttributes(this.indexOfAttributeChart);
-        if (this.chartVisualization.equals(ChartVisualization.PIECEWISE))
-            graphController.openRecentCSV(new File(this.csv));
-        else graphController.openConstantCsv(new File(this.csv));
-        graphController.getFiltersComponentController().getTableFilters().getItems().clear();
-        for (Filter f : this.filters) {
-            graphController.getFiltersComponentController().addFilter(f);
-        }
-    }
-
-//    public void saveAll() {
-//        saveToJson(new File(this.project));
-//    }
 }

@@ -18,8 +18,6 @@ public interface ThemeLoader {
 
     void setGraphTheme(String graphTheme);
 
-    void addPropertyChangeListener(PropertyChangeListener listener);
-
     void saveToJson() throws IOException;
 }
 

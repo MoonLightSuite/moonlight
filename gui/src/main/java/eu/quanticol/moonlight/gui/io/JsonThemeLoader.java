@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 import com.sun.javafx.property.adapter.PropertyDescriptor;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -24,14 +26,12 @@ public class JsonThemeLoader implements ThemeLoader {
     private String graphTheme;
     private static JsonThemeLoader themeLoader = null;
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
     private JsonThemeLoader() {
         this.generalTheme = null;
         this.graphTheme = null;
     }
 
-    public static JsonThemeLoader getInstance() {
+    public static synchronized JsonThemeLoader getInstance() {
         if (themeLoader == null)
             themeLoader = new JsonThemeLoader();
         return themeLoader;
@@ -42,9 +42,7 @@ public class JsonThemeLoader implements ThemeLoader {
     }
 
     public void setGeneralTheme(String newTheme) {
-        String oldTheme = this.generalTheme;
         this.generalTheme = newTheme;
-        this.propertyChangeSupport.firePropertyChange("GeneralTheme", oldTheme, newTheme);
     }
 
     public String getGraphTheme() {
@@ -52,20 +50,8 @@ public class JsonThemeLoader implements ThemeLoader {
     }
 
     public void setGraphTheme(String newTheme) {
-        String oldTheme = this.graphTheme;
         this.graphTheme = newTheme;
-        this.propertyChangeSupport.firePropertyChange("GraphTheme", oldTheme, newTheme);
     }
-
-    /**
-     * Add a listener to a property that changes
-     *
-     * @param listener listener
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
 
     /**
      * Save the theme chosen in a json file

@@ -75,7 +75,7 @@ public class JavaFXGraphController {
     private JavaFXChartController chartController;
     private GraphController graphController;
     private JavaFXMainController mainController;
-    private boolean csvRead = false;
+    private boolean positionAssigned = false;
     private GraphType graphVisualization;
     private final ArrayList<FxViewer> viewers = new ArrayList<>();
     private final Label label = new Label();
@@ -144,8 +144,12 @@ public class JavaFXGraphController {
         return slider;
     }
 
-    public boolean getCsvRead() {
-        return this.csvRead;
+    public boolean getPositionAssigned() {
+        return this.positionAssigned;
+    }
+
+    public void setPositionAssigned(boolean positionAssigned) {
+        this.positionAssigned = positionAssigned;
     }
 
     public List<TimeGraph> getGraphList() {
@@ -244,6 +248,7 @@ public class JavaFXGraphController {
         if (file != null) {
             chartController.clearMenuButton();
             chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
+            chartController.setIndexOfAttributes(0);
             csv = file;
             loadCSV(file);
             linkButton.setDisable(false);
@@ -297,6 +302,7 @@ public class JavaFXGraphController {
         File file = open("CSV Files", "*.csv");
         if (file != null) {
             try {
+                chartController.setIndexOfAttributes(1);
                 openConstantCsv(file);
                 addRecentFile(file.getPath(), FileType.CSV);
             } catch (Exception e) {
@@ -339,7 +345,7 @@ public class JavaFXGraphController {
         if (line.contains("time")) {
             associateAttributesColumns(line);
             line = br.readLine();
-        } else
+        } else if (this.columnsAttributes.isEmpty())
             openAssociateAttributesWindow(line);
         constantAttributesLink(br, line);
         chartController.initConstantChart(file);
@@ -347,7 +353,6 @@ public class JavaFXGraphController {
         chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
         if (graphVisualization.equals(GraphType.STATIC))
             chartController.addListenerConstantChart();
-        this.csvRead = true;
     }
 
     /**
@@ -388,7 +393,7 @@ public class JavaFXGraphController {
         filtersComponentController.resetFiltersNewFile();
         chartController.reset();
         resetSlider();
-        csvRead = false;
+        positionAssigned = false;
         infoNode.setText(" ");
         linkButton.setDisable(true);
     }
@@ -415,7 +420,7 @@ public class JavaFXGraphController {
             getStaticAttributesFromCsv(br);
         else
             getDynamicAttributesFromCsv(br);
-        this.csvRead = true;
+//        this.positionAssigned = true;
 
     }
 
@@ -448,7 +453,7 @@ public class JavaFXGraphController {
             if (line.contains("time")) {
                 associateAttributesColumns(line);
                 line = br.readLine();
-            } else
+            } else if (this.columnsAttributes.isEmpty())
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
             chartController.loadAttributesList(columnsAttributes);
@@ -480,6 +485,8 @@ public class JavaFXGraphController {
         openWindow(totalAttributes);
         if (linkController.getColumnX() == null && linkController.getColumnY() == null)
             openWindowChoosePosition();
+        if (linkController.getColumnX() != null && linkController.getColumnY() != null)
+            this.positionAssigned = true;
     }
 
     private void openWindow(int totalAttributes) {
@@ -518,6 +525,9 @@ public class JavaFXGraphController {
         graphController.setColumnsAttributes(array);
         if (linkController.getColumnX() == null && linkController.getColumnY() == null)
             openWindowChoosePosition();
+        if (linkController.getColumnX() != null && linkController.getColumnY() != null)
+            this.positionAssigned = true;
+
     }
 
     /**
@@ -549,7 +559,7 @@ public class JavaFXGraphController {
         if (line.contains("time")) {
             associateAttributesColumns(line);
             line = br.readLine();
-        } else
+        } else if (this.columnsAttributes.isEmpty())
             openAssociateAttributesWindow(line);
         linkAttributes(br, line);
         chartController.loadAttributesList(columnsAttributes);
@@ -616,7 +626,7 @@ public class JavaFXGraphController {
         this.currentGraph = staticGraph;
         FxViewer v = new FxViewer(staticGraph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         v.addDefaultView(false, new FxGraphRenderer());
-        if (this.csvRead)
+        if (this.positionAssigned)
             v.disableAutoLayout();
         else v.enableAutoLayout();
         setSceneProperties((FxViewPanel) v.getDefaultView());
@@ -784,7 +794,7 @@ public class JavaFXGraphController {
         Optional<FxViewer> fv = viewers.stream().filter(fxViewer -> fxViewer.getView(String.valueOf(time)) != null).findFirst();
         if (fv.isPresent()) {
             FxViewer v = fv.get();
-            if (this.csvRead)
+            if (this.positionAssigned)
                 v.disableAutoLayout();
             else v.enableAutoLayout();
             setSceneProperties((FxViewPanel) v.getView(String.valueOf(time)));
@@ -828,7 +838,6 @@ public class JavaFXGraphController {
         FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("fxml/choosePositions.fxml"));
         fxmlLoader.setController(linkController);
         Parent root = fxmlLoader.load();
-//        linkController = fxmlLoader.getController();
         linkController.setAttributes(columnsAttributes);
         linkController.setTheme(mainController.getTheme());
         linkController.addColumnsToMenuButtons();
@@ -871,6 +880,7 @@ public class JavaFXGraphController {
         BufferedReader br = new BufferedReader(new FileReader(csv));
         String line = br.readLine();
         if (line != null) {
+            this.positionAssigned = true;
             if (line.contains("time")) {
                 line = br.readLine();
             }
@@ -887,6 +897,7 @@ public class JavaFXGraphController {
         BufferedReader br = new BufferedReader(new FileReader(csv));
         String line = br.readLine();
         if (line != null) {
+            this.positionAssigned = true;
             if (line.contains("time")) {
                 line = br.readLine();
             }

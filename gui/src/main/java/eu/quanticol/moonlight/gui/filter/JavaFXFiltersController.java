@@ -194,7 +194,7 @@ public class JavaFXFiltersController {
     private void saveFilter() {
         DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
         try {
-            if (graphController.getCsvRead()) {
+            if (graphController.getPositionAssigned()) {
                 if (!(text.getText().equals("") || attribute.getText().equals("Attribute") || operator.getText().equals("Operator"))) {
                     double value = Double.parseDouble(getValue());
                     Filter filter = new SimpleFilter(attribute.getText(), operator.getText(), value);
@@ -239,7 +239,7 @@ public class JavaFXFiltersController {
     @FXML
     private void openImportDialogInput() {
         DialogBuilder d = new DialogBuilder(mainController.getTheme());
-        if (graphController.getCsvRead()) {
+        if (graphController.getPositionAssigned()) {
             Optional<String> result = setDialog("Import filters from Json file");
             result.ifPresent(name -> {
                 try {
@@ -262,7 +262,7 @@ public class JavaFXFiltersController {
     private void importFilters(DialogBuilder d, String name) throws IOException {
         ArrayList<Filter> filters = new ArrayList<>();
         tableFilters.getItems().clear();
-        if (graphController.getCsvRead()) {
+        if (graphController.getPositionAssigned()) {
             if (jsonFiltersLoader.getFromJson(name, filters)) {
                 tableFilters.getItems().addAll(filters);
                 setCellValueFactory();
