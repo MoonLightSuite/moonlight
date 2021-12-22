@@ -96,11 +96,12 @@ public class JavaFXHomeController {
                 if (click.getClickCount() == 2) {
                     if (recentFile.getType() == FileType.TRA)
                         openProjectTRA(recentFile);
-                    if (recentFile.getType() == FileType.CSV) {
+                    if (recentFile.getType() == FileType.CSV)
                         openProjectCSV(recentFile);
+                    if(recentFile.getType() == FileType.JSON)
+                        openProject(recentFile);
                     }
                 }
-            }
         });
     }
 
@@ -330,6 +331,37 @@ public class JavaFXHomeController {
     }
 
     /**
+     * Loads the recent .json file on the opened window
+     *
+     * @param recentFile file to open
+     */
+    private void openProject(RecentFile recentFile) {
+        File file = new File(recentFile.getPathFile());
+        openNewProjectWindow();
+        mainController.openProjectFromHome(file);
+    }
+
+    /**
+     * Opens a new window with a project
+     */
+    private void openNewProjectWindow() {
+        try {
+            FXMLLoader fxmlLoader;
+            fxmlLoader = new FXMLLoader(classLoader.getResource("fxml/mainComponent.fxml"));
+            Parent newRoot = fxmlLoader.load();
+            JavaFXMainController mainController = fxmlLoader.getController();
+            this.addController(mainController);
+            this.mainController = mainController;
+            mainController.setHomeController(this);
+            mainController.setNewWindowController(mainController);
+            Stage stage = new Stage();
+            setStage(newRoot, stage);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
      * Sets properties of stage
      *
      * @param newRoot root of scene
@@ -379,6 +411,8 @@ public class JavaFXHomeController {
                         displayImage.setImage(new Image((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/graph.png"))).toString()));
                     if (file.getType() == FileType.CSV)
                         displayImage.setImage(new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/chart.png")).toString()));
+                    if(file.getType() == FileType.JSON)
+                        displayImage.setImage(new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/openProject.png")).toString()));
                     setText(file.getPathFile());
                     setGraphic(displayImage);
                 }

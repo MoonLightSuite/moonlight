@@ -52,6 +52,11 @@ public class JavaFXMainController {
     private static Stage principal = null;
     private ProjectSaver p = null;
     private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
+    public void setNewWindowController(JavaFXMainController newWindowController) {
+        this.newWindowController = newWindowController;
+    }
+
     private JavaFXMainController newWindowController = null;
 
     public String getTheme() {
@@ -190,12 +195,31 @@ public class JavaFXMainController {
     }
 
     /**
+     * Opens a project from recent files
+     */
+    public void openProjectFromHome(File file) {
+        try {
+            p.openProject(file);
+            homeController.loadFilesOnList();
+            if(newWindowController != null) {
+                p.setGraphController(newWindowController.graphComponentController);
+                p.setChartController(newWindowController.chartComponentController);
+                initializeProject(p);
+            }
+        } catch (IOException e) {
+            DialogBuilder d = new DialogBuilder(getTheme());
+            d.error("Failed opening project");
+        }
+    }
+
+    /**
      * Opens a project
      */
     @FXML
     private void openProject() {
         try {
             p.openProject();
+            homeController.loadFilesOnList();
             int choice = chooseWindow();
             switch (choice) {
                 case 0:

@@ -112,6 +112,11 @@ public class JavaFXGraphController {
         this.graphController.setColumnsAttributes(columnsAttributes);
     }
 
+    public FilesLoader getJsonFilesLoader() {
+        return jsonFilesLoader;
+    }
+
+
     public File getCsv() {
         return csv;
     }
@@ -277,8 +282,8 @@ public class JavaFXGraphController {
             readCSV(file);
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
                 resetCharts();
-                chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes());
-                chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes() + 1));
+                chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes() - 1);
+                chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
             }
             addRecentFile(file.getPath(), FileType.CSV);
         } catch (Exception e) {
@@ -397,6 +402,7 @@ public class JavaFXGraphController {
         chartController.setAttributes("");
         chartController.getAttribute().getItems().clear();
         filtersComponentController.getAttribute().getItems().clear();
+        chartController.setIndexOfAttributes(1);
     }
 
     private void resetSlider() {

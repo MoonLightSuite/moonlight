@@ -195,6 +195,7 @@ public class SimpleProjectSaver implements ProjectSaver {
         else {
             try {
                 fromJson(file);
+                graphController.getJsonFilesLoader().saveToJson(file.getPath(),FileType.JSON);
             } catch (IOException e) {
                 d.error("Failed importing project");
             }

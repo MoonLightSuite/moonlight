@@ -6,5 +6,5 @@ package eu.quanticol.moonlight.gui.io;
  * @author Albanese Clarissa, Sorritelli Greta
  */
 public enum FileType {
-    TRA, CSV
+    TRA, CSV, JSON
 }
