@@ -15,4 +15,8 @@ public interface FiltersController {
     void validationFilter(Filter filter, ArrayList<Filter> filters);
 
     void checkFilter(Filter f, ArrayList<Filter> filters, ArrayList<Node> nodes, TimeGraph g, ArrayList<Double> times);
+
+    void checkStaticFilter(Filter f, ArrayList<Filter> filters, ArrayList<Node> staticNodes);
+
+    void addAttributes(String[] attributes);
 }

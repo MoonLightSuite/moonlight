@@ -1,9 +1,16 @@
 package eu.quanticol.moonlight.gui.filter;
 
+import eu.quanticol.moonlight.gui.chart.ChartBuilder;
+import eu.quanticol.moonlight.gui.chart.SimpleChartBuilder;
+import eu.quanticol.moonlight.gui.graph.GraphController;
+import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
+import eu.quanticol.moonlight.gui.graph.SimpleGraphController;
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
 import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class that implements the {@link FiltersController} interface and defines a controller for filters
@@ -13,6 +20,14 @@ import java.util.ArrayList;
 public class SimpleFiltersController implements FiltersController {
 
     private static SimpleFiltersController instance= null;
+    private final GraphController graphController = SimpleGraphController.getInstance();
+    ArrayList<ArrayList<String>> attributes = new ArrayList<>();
+
+    @Override
+    public void addAttributes(String[] attributes) {
+        ArrayList<String> a = new ArrayList<>(Arrays.stream(attributes).toList());
+        this.attributes.add(a);
+    }
 
     private SimpleFiltersController() {}
 
@@ -60,6 +75,34 @@ public class SimpleFiltersController implements FiltersController {
     }
 
     /**
+     * Based on the filter entered by the user, checks if there are nodes
+     * in the static graph that correspond to it.
+     *
+     * @param f       {@link Filter} entered
+     * @param filters filters of table
+     */
+    public void checkStaticFilter(Filter f, ArrayList<Filter> filters, ArrayList<Node> staticNodes){
+        int index = graphController.getColumnsAttributes().indexOf(f.getAttribute());
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (ArrayList<String> line : attributes) {
+            int s = graphController.getColumnsAttributes().size() - 1;
+            for (int i = index; i < line.size(); i+=s) {
+                if(i < s) {
+                    if (checkOperator(f.getOperator(), Double.parseDouble(line.get(i)), f.getValue()))
+                        if(!indexes.contains(0))
+                            indexes.add(0);
+                } else
+                    if(checkOperator(f.getOperator(),Double.parseDouble(line.get(i)),f.getValue())) {
+                        int result = ((i - 1) / 5);
+                        if(!indexes.contains(result))
+                            indexes.add(result);
+                    }
+            }
+        }
+        indexes.forEach(i-> changeStyleStaticNodes(f, filters, staticNodes, indexes, i));
+}
+
+    /**
      * Takes attributes of node which will be compared with the filter.
      *
      * @param n node from which take the attributes
@@ -101,6 +144,31 @@ public class SimpleFiltersController implements FiltersController {
     }
 
     /**
+     * Adds or removes style on nodes of static graph when the user adds a filter.
+     *
+     * @param f               {@link Filter} added
+     * @param filters         filters of table
+     * @param staticNodes     nodes already filtered
+     * @param indexes         id of nodes to filtered
+     * @param i               index
+     */
+    private void changeStyleStaticNodes(Filter f, ArrayList<Filter> filters, ArrayList<Node> staticNodes, ArrayList<Integer> indexes, Integer i) {
+        Node n = graphController.getStaticGraph().getNode(String.valueOf(i));
+        if (filters.indexOf(f) == 0) {
+            if (!staticNodes.contains(n))
+                staticNodes.add(n);
+            n.setAttribute("ui.class", "filtered");
+        } else {
+            for (int j = 0; j < staticNodes.size(); j++) {
+                if (!indexes.contains(Integer.parseInt(staticNodes.get(j).getId()))) {
+                    staticNodes.get(j).removeAttribute("ui.class");
+                    staticNodes.remove(n);
+                }
+            }
+        }
+    }
+
+    /**
      * Check which attribute is selected.
      *
      * @param attribute attribute selected
@@ -112,17 +180,13 @@ public class SimpleFiltersController implements FiltersController {
     private boolean checkAttribute(String attribute, String operator, double value, String[] vector) {
         double v;
         boolean toShow = false;
-        if (attribute.equals("Direction")) {
-            v = Double.parseDouble(vector[2]);
-            toShow = checkOperator(operator, v, value);
-        }
-        if (attribute.equals("Speed")) {
-            v = Double.parseDouble(vector[3]);
-            toShow = checkOperator(operator, v, value);
-        }
-        if (attribute.equals("Value")) {
-            v = Double.parseDouble(vector[4]);
-            toShow = checkOperator(operator, v, value);
+        ArrayList<String> attributes = graphController.getColumnsAttributes();
+        for (int i = 1; i < attributes.size(); i++) {
+            if(attribute.equals(attributes.get(i))) {
+                //todo vedere se funziona con i-1 su quello dinamico
+                v = Double.parseDouble(vector[i - 1]);
+                toShow = checkOperator(operator, v, value);
+            }
         }
         return toShow;
     }

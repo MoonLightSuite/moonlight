@@ -1,8 +1,7 @@
 package eu.quanticol.moonlight.gui.filter;
 
 import eu.quanticol.moonlight.gui.chart.JavaFXChartController;
-import eu.quanticol.moonlight.gui.graph.TimeGraph;
-import eu.quanticol.moonlight.gui.graph.JavaFXGraphController;
+import eu.quanticol.moonlight.gui.graph.*;
 import eu.quanticol.moonlight.gui.JavaFXMainController;
 import eu.quanticol.moonlight.gui.io.FiltersLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
@@ -49,16 +48,26 @@ public class JavaFXFiltersController {
     private JavaFXGraphController graphController;
     private JavaFXChartController chartController;
     private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ArrayList<Node> staticNodes = new ArrayList<>();
     private FiltersController filtersController;
     private final FiltersLoader jsonFiltersLoader = new JsonFiltersLoader();
     private final ArrayList<FilterGroup> filterGroups = new ArrayList<>();
+    private final GraphController simpleGraphController = SimpleGraphController.getInstance();
 
     public TableView<Filter> getTableFilters() {
         return tableFilters;
     }
 
+    public FiltersController getFiltersController() {
+        return filtersController;
+    }
+
+    public MenuButton getAttribute() {
+        return attribute;
+    }
+
     public void injectGraphController(JavaFXMainController mainController, JavaFXGraphController graphController, JavaFXChartController chartController) {
-        this.mainController = mainController ;
+        this.mainController = mainController;
         this.graphController = graphController;
         this.chartController = chartController;
     }
@@ -68,7 +77,6 @@ public class JavaFXFiltersController {
      */
     @FXML
     public void initialize() {
-        attribute.getItems().forEach(menuItem -> menuItem.setOnAction(event -> attribute.setText(menuItem.getText())));
         operator.getItems().forEach(menuItem -> menuItem.setOnAction(event -> operator.setText(menuItem.getText())));
         filtersController = SimpleFiltersController.getInstance();
     }
@@ -86,13 +94,13 @@ public class JavaFXFiltersController {
     /**
      * Checks if the value entered by the user contains only numbers.
      *
-     * @return   string of value
+     * @return string of value
      */
-    public String getValue(){
+    public String getValue() {
         String value = text.getText();
-        if(value.contains(","))
-            value = value.replace(",",".");
-        if (value.matches("[0-9.]*"))
+        if (value.contains(","))
+            value = value.replace(",", ".");
+        if (value.matches("[0-9.-]*"))
             return value;
         else
             throw new IllegalArgumentException("Value must contains only numbers.");
@@ -117,12 +125,14 @@ public class JavaFXFiltersController {
             public TableCell<Filter, Void> call(TableColumn<Filter, Void> param) {
                 return new TableCell<>() {
                     private final Button btn = new Button();
+
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             Filter filter = getTableView().getItems().get(getIndex());
                             deleteFilter(filter);
                         });
                     }
+
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
@@ -130,7 +140,8 @@ public class JavaFXFiltersController {
                             setGraphic(null);
                         else {
                             setGraphic(btn);
-                            btn.setGraphic(new ImageView((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/remove.png"))).toString()));                        }
+                            btn.setGraphic(new ImageView((Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/remove.png"))).toString()));
+                        }
                     }
                 };
             }
@@ -151,6 +162,7 @@ public class JavaFXFiltersController {
         else {
             filters.remove(filter);
             nodes.clear();
+            staticNodes.clear();
             filters.forEach(this::checkFilter);
         }
     }
@@ -160,13 +172,20 @@ public class JavaFXFiltersController {
      */
     @FXML
     public void resetFilters() {
-        graphController.getGraphList().forEach(timeGraph -> {
-            int countNodes = timeGraph.getGraph().getNodeCount();
-            for (int i = 0; i < countNodes; i++)
-                timeGraph.getGraph().getNode(i).removeAttribute("ui.class");
-        });
+        if (simpleGraphController.getStaticGraph() == null) {
+            graphController.getGraphList().forEach(timeGraph -> {
+                int countNodes = timeGraph.getGraph().getNodeCount();
+                for (int i = 0; i < countNodes; i++)
+                    timeGraph.getGraph().getNode(i).removeAttribute("ui.class");
+            });
+        } else {
+            int nodes = simpleGraphController.getStaticGraph().getNodeCount();
+            for (int i = 0; i < nodes; i++)
+                simpleGraphController.getStaticGraph().getNode(i).removeAttribute("ui.class");
+        }
         tableFilters.getItems().clear();
         nodes.clear();
+        staticNodes.clear();
         chartController.selectAllSeries();
     }
 
@@ -176,6 +195,7 @@ public class JavaFXFiltersController {
     public void resetFiltersNewFile() {
         tableFilters.getItems().clear();
         nodes.clear();
+        staticNodes.clear();
     }
 
     /**
@@ -201,7 +221,10 @@ public class JavaFXFiltersController {
                     addFilter(filter);
                 } else if (!tableFilters.getItems().isEmpty()) {
                     chartController.deselectAllSeries();
-                    nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
+                    if (simpleGraphController.getStaticGraph() == null)
+                        nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
+                    else
+                        selectStaticSeries();
                 }
             } else
                 dialogBuilder.warning("No attributes found.");
@@ -209,6 +232,7 @@ public class JavaFXFiltersController {
         } catch (Exception e) {
             reset();
             dialogBuilder.error("Failed saving filter.");
+            e.printStackTrace();
         }
     }
 
@@ -248,16 +272,15 @@ public class JavaFXFiltersController {
                     d.error("Failed importing filters from file.");
                 }
             });
-        }
-        else
+        } else
             d.warning("Insert attributes.");
     }
 
     /**
      * Import filters from file.
      *
-     * @param d     dialogBuilder
-     * @param name  name of group of filters to import
+     * @param d    dialogBuilder
+     * @param name name of group of filters to import
      */
     private void importFilters(DialogBuilder d, String name) throws IOException {
         ArrayList<Filter> filters = new ArrayList<>();
@@ -274,12 +297,12 @@ public class JavaFXFiltersController {
     }
 
     /**
-     *Sets the properties of a dialogInput.
+     * Sets the properties of a dialogInput.
      *
      * @param title title of dialog
-     * @return      dialog showed
+     * @return dialog showed
      */
-    private Optional<String> setDialog(String title){
+    private Optional<String> setDialog(String title) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
         dialog.getDialogPane().getStylesheets().add(mainController.getTheme());
@@ -296,7 +319,7 @@ public class JavaFXFiltersController {
     public void addFilter(Filter filter) {
         ArrayList<Filter> filters = new ArrayList<>(tableFilters.getItems());
         if (!filters.contains(filter)) {
-            filtersController.validationFilter(filter,filters);
+            filtersController.validationFilter(filter, filters);
             tableFilters.getItems().add(filter);
             checkFilter(filter);
             reset();
@@ -307,12 +330,46 @@ public class JavaFXFiltersController {
 
     /**
      * Checks if there are nodes in the graph that correspond to it.
+     *
      * @param f filter to check
      */
     private void checkFilter(Filter f) {
         chartController.deselectAllSeries();
         ArrayList<Filter> filters = new ArrayList<>(tableFilters.getItems());
-        graphController.getGraphList().forEach(g -> filtersController.checkFilter(f,filters,nodes,g,getTimes()));
-        nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
+        if (graphController.getGraphVisualization() == GraphType.DYNAMIC) {
+            graphController.getGraphList().forEach(g -> filtersController.checkFilter(f, filters, nodes, g, getTimes()));
+            nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
+        } else if (graphController.getGraphVisualization() == GraphType.STATIC) {
+            filtersController.checkStaticFilter(f, filters, staticNodes);
+            selectStaticSeries();
+        }
+    }
+
+    /**
+     * Selects series from chart based on the filtered nodes of static graph
+     */
+    private void selectStaticSeries() {
+        int nodes = simpleGraphController.getStaticGraph().getNodeCount();
+        for (int i = 0; i < nodes; i++) {
+            Node n = simpleGraphController.getStaticGraph().getNode(i);
+            if (simpleGraphController.getStaticGraph().getNode(i).hasAttribute("ui.class"))
+                chartController.selectOneSeries(n.getId());
+        }
+    }
+
+    /**
+     * Loads attributes into the menuButton
+     */
+    public void loadAttributes() {
+        ArrayList<String> names = new ArrayList<>();
+        chartController.getAttribute().getItems().forEach(i -> names.add(i.getText()));
+        ArrayList<MenuItem> menuItems = new ArrayList<>();
+        names.forEach(a -> {
+            MenuItem menuItem = new MenuItem();
+            menuItem.setText(a);
+            menuItems.add(menuItem);
+        });
+        this.attribute.getItems().addAll(menuItems);
+        attribute.getItems().forEach(menuItem -> menuItem.setOnAction(event -> attribute.setText(menuItem.getText())));
     }
 }

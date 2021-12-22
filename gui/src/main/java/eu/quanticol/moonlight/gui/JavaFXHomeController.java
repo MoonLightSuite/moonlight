@@ -270,7 +270,8 @@ public class JavaFXHomeController {
             stage.showAndWait();
             resetSearch();
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed to load chart data");
         }
     }
 
@@ -294,7 +295,8 @@ public class JavaFXHomeController {
             mainController.openTra(file);
             resetSearch();
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed to load chart data");
         }
     }
 
