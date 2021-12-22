@@ -107,10 +107,6 @@ public class JavaFXGraphController {
         return filtersComponentController;
     }
 
-    public void setFiltersComponentController(JavaFXFiltersController filtersComponentController) {
-        this.filtersComponentController = filtersComponentController;
-    }
-
     public void setColumnsAttributes(ArrayList<String> columnsAttributes) {
         this.columnsAttributes = columnsAttributes;
         this.graphController.setColumnsAttributes(columnsAttributes);
@@ -193,10 +189,7 @@ public class JavaFXGraphController {
     private File open(String description, String extensions) {
         if (runnable != null && slider != null)
             runnable.shutdown();
-        filtersComponentController.resetFilters();
-        linkController.setColumnX(null);
-        linkController.setColumnY(null);
-        chartController.setAttributes("");
+        reset();
         FileChooser fileChooser = new FileChooser();
         Stage stage = (Stage) mainController.getRoot().getScene().getWindow();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(description, extensions);
@@ -262,15 +255,15 @@ public class JavaFXGraphController {
      * Opens the chosen .csv file from recent
      */
     public void openRecentCSV(File file) {
-        if (file != null) {
-            loadCSV(file);
-            chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
-            csv = file;
-            linkButton.setDisable(false);
-        } else {
-            DialogBuilder d = new DialogBuilder(mainController.getTheme());
-            d.info("No file chosen.");
-        }
+            if (file != null) {
+                loadCSV(file);
+                chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
+                csv = file;
+                linkButton.setDisable(false);
+            } else {
+                DialogBuilder d = new DialogBuilder(mainController.getTheme());
+                d.info("No file chosen.");
+            }
     }
 
     /**
@@ -291,7 +284,6 @@ public class JavaFXGraphController {
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.error("Failed to load chart data.");
-            e.printStackTrace();
         }
     }
 
@@ -398,6 +390,15 @@ public class JavaFXGraphController {
         linkButton.setDisable(true);
     }
 
+    private void reset() {
+        filtersComponentController.resetFilters();
+        linkController.setColumnX(null);
+        linkController.setColumnY(null);
+        chartController.setAttributes("");
+        chartController.getAttribute().getItems().clear();
+        filtersComponentController.getAttribute().getItems().clear();
+    }
+
     private void resetSlider() {
         slider.valueProperty().removeListener(sliderListener);
         slider.setLabelFormatter(null);
@@ -430,7 +431,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createNodesVector(String line, boolean present) {
-        graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), present);
+            graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), present);
     }
 
     /**
@@ -848,7 +849,7 @@ public class JavaFXGraphController {
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
         stage.getIcons().add(icon);
         stage.initModality(Modality.APPLICATION_MODAL);
-        mainController.getRoot().getStylesheets().add(mainController.getTheme());
+        stage.getScene().getStylesheets().add(mainController.getTheme());
         stage.setResizable(false);
         stage.showAndWait();
     }

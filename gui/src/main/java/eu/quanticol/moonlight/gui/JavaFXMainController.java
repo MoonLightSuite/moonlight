@@ -157,6 +157,8 @@ public class JavaFXMainController {
      * @param file file to open
      */
     public void openCSV(File file) {
+        Stage stage = (Stage) root.getScene().getWindow();
+        stage.toFront();
         graphComponentController.openRecentCSV(file);
     }
 

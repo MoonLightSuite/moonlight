@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -123,7 +124,6 @@ public class JavaFXChartController {
         } catch (Exception e) {
             DialogBuilder d = new DialogBuilder(mainController.getTheme());
             d.error("Failed to load chart data. Open an other file.");
-            e.printStackTrace();
         }
     }
 
@@ -184,6 +184,7 @@ public class JavaFXChartController {
     public void addLineDataToSeries(String line, int index) {
         String[] attributes = line.split(",");
         cb.addAttributes(attributes);
+        javaFXGraphController.getFiltersComponentController().getFiltersController().addAttributes(attributes);
         cb.addLineData(lineChart.getData().stream().toList(), attributes, index);
         cb.addLineData(lineChartLog.getData().stream().toList(), attributes, index);
     }
@@ -260,9 +261,8 @@ public class JavaFXChartController {
             menuItems.add(menuItem);
         });
         this.attribute.getItems().addAll(menuItems);
-        attribute.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
-            changeChartSeries(menuItem);
-        }));
+        attribute.getItems().forEach(menuItem -> menuItem.setOnAction(event -> changeChartSeries(menuItem)));
+        javaFXGraphController.getFiltersComponentController().loadAttributes();
     }
 
     /**
@@ -344,7 +344,8 @@ public class JavaFXChartController {
             constantChart.getData().addAll(cb.createSeriesForConstantChart(javaFXGraphController.getCsv(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText())));
             indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText());
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.error("Failed to load chart data");
         }
         initLists();
         showToolTip(constantChart);
@@ -371,7 +372,6 @@ public class JavaFXChartController {
         } catch (Exception e) {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
             dialogBuilder.error("Failed to load chart data");
-            e.printStackTrace();
         }
     }
 

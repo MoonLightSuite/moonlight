@@ -1,5 +1,7 @@
 package eu.quanticol.moonlight.gui.chart;
 
+import eu.quanticol.moonlight.gui.filter.FiltersController;
+import eu.quanticol.moonlight.gui.filter.SimpleFiltersController;
 import eu.quanticol.moonlight.gui.graph.GraphController;
 import eu.quanticol.moonlight.gui.graph.SimpleGraphController;
 import eu.quanticol.moonlight.gui.graph.TimeGraph;
@@ -24,6 +26,7 @@ public class SimpleChartBuilder implements ChartBuilder {
     private final ArrayList<Series<Number, Number>> listLog = new ArrayList<>();
 
     private final GraphController graphController = SimpleGraphController.getInstance();
+    private final FiltersController filtersController = SimpleFiltersController.getInstance();
 
     @Override
     public ArrayList<Series<Number, Number>> getListLinear() {
@@ -97,6 +100,7 @@ public class SimpleChartBuilder implements ChartBuilder {
         do {
             String[] array = line.split(", ");
             addAttributes(array);
+            filtersController.addAttributes(array);
             int index = 0;
             matrix[rows][0] = Double.valueOf(array[index]);
             index += indexAttribute;
