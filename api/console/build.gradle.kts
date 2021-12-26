@@ -50,25 +50,27 @@ tasks.register("distribution") {
     logger.info("exec distribution Task!")
     dependsOn("jar")
 
-    copy {
-        from("$buildDir/libs/")
-        into(rootProject.file("$rootDir/../distribution_files/java/lib/"))
-    }
+    doFirst {
+        copy {
+            from("$buildDir/libs/")
+            into(rootProject.file("$rootDir/../distribution_files/java/lib/"))
+        }
 
-    copy {
-        from("$buildDir/libs/")
-        into(rootProject.file("$rootDir/../distribution_files/matlab/moonlight/jar/"))
-    }
+        copy {
+            from("$buildDir/libs/")
+            into(rootProject.file("$rootDir/../distribution_files/matlab/moonlight/jar/"))
+        }
 
-    copy {
-        from("$buildDir/libs/")
-        into(rootProject.file("$rootDir/../distribution_files/python/jar/"))
-    }
+        copy {
+            from("$buildDir/libs/")
+            into(rootProject.file("$rootDir/../distribution_files/python/jar/"))
+        }
 
-    dependsOn("installDist")
-    copy {
-        from("$buildDir/install/mlconsole/")
-        into(rootProject.file("$rootDir/../distribution_files/console/"))
+        dependsOn("installDist")
+        copy {
+            from("$buildDir/install/mlconsole/")
+            into(rootProject.file("$rootDir/../distribution_files/console/"))
+        }
     }
 }
 
