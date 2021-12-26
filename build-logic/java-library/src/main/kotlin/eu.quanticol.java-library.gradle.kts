@@ -8,8 +8,8 @@ version = "1.0-SNAPSHOT"
 description = "MoonLight: a light-weight framework for runtime monitoring"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks {

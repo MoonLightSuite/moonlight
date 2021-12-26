@@ -28,7 +28,6 @@ tasks.jar {
             configurations.compileClasspath.get().map {
                 if (it.isDirectory) it else zipTree(it)
             }
-            //duplicatesStrategy(DuplicatesStrategy.WARN)
         })
     }
     exclude ("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
@@ -43,50 +42,56 @@ tasks.jar {
 //    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
 //}
 
-tasks.register<Copy>("distribution") {
+val moonlightJar: CopySpec = copySpec {
+    from("$buildDir/libs/")
+}
+
+tasks.register("distribution") {
     logger.info("exec distribution Task!")
     dependsOn("jar")
-    dependsOn("installDist")
-
-    //logger.warn(DEPRECATED)
-    //duplicatesStrategy(DuplicatesStrategy.INCLUDE)
 
     copy {
-        from("jar")
-        into(rootProject.file("../distribution_files/java/lib/"))
-        into(rootProject.file("../distribution_files/matlab/moonlight/jar"))
-        into(rootProject.file("../distribution_files/python/jar"))
-        into(rootProject.file("../distribution_files/console/lib/"))
+        from("$buildDir/libs/")
+        into(rootProject.file("${rootDir}/../distribution_files/java/lib/"))
     }
 
+    copy {
+        from("$buildDir/libs/")
+        into(rootProject.file("${rootDir}/../distribution_files/matlab/moonlight/jar/"))
+    }
+
+    copy {
+        from("$buildDir/libs/")
+        into(rootProject.file("${rootDir}/../distribution_files/python/jar/"))
+    }
+
+    dependsOn("installDist")
     copy {
         from("$buildDir/install/mlconsole/")
-        into(rootProject.file("../distribution_files/console/"))
+        into(rootProject.file("${rootDir}/../distribution_files/console/"))
     }
-
 }
 
 tasks.register<Copy>("release") {
+    println("Executing :console:release.")
     dependsOn("distribution")
 
-    copy {
-        from(rootProject.file("../distribution_files/"))
-        into(rootProject.file("../distribution/"))
-    }
+    from(rootProject.file("../distribution_files/"))
+    into(rootProject.file("../distribution/"))
 }
 
 tasks.named<Delete>("clean") {
     doFirst {
-        delete ("${rootDir}/../output/")
-        println ("deleting jars in ${rootDir}/../output/")
-        delete ("${rootDir}/../distribution/")
-        println ("deleting jars in ${rootDir}/../distribution/")
-        delete ("${rootDir}/../distribution_files/java/lib/moonlight.jar")
-        println ("deleting ${rootDir}/../distribution_files/java/lib/moonlight.jar")
-        delete ("${rootDir}/../distribution_files/matlab/moonlight/jar/")
-        println ("deleting jars in ${rootDir}/../distribution_files/matlab/moonlight/jar/")
-        delete ("${rootDir}/../distribution_files/python/jar/")
-        println ("${rootDir}/../distribution_files/python/jar/")
+        delete("${rootDir}/../distribution/")
+        logger.info("jars in ${rootDir}/../distribution/ deleted")
+        delete("${rootDir}/../distribution_files/java/lib/moonlight.jar")
+        logger.info("jars in ${rootDir}/../distribution_files/java/ deleted")
+        delete("${rootDir}/../distribution_files/matlab/moonlight/jar/")
+        logger.info("jars in ${rootDir}/../distribution_files/matlab/ deleted")
+        delete("${rootDir}/../distribution_files/python/jar/")
+        logger.info("jars in ${rootDir}/../distribution_files/python/ deleted")
+        delete("${rootDir}/../distribution_files/console/")
+        logger.info("jars in ${rootDir}/../distribution_files/console/ deleted")
     }
 }
 

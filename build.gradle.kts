@@ -31,5 +31,6 @@ dependencies {
     // Transitively collect coverage data from all features and their dependencies
     aggregate("eu.quanticol.moonlight.engine:core")
     aggregate("eu.quanticol.moonlight.engine:utility")
-    // TODO: add moonlightscript, examples, etc.
+    aggregate("eu.quanticol.moonlight:script")
+    // TODO: add examples, etc.
 }

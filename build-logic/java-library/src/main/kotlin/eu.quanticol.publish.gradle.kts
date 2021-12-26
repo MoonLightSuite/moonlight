@@ -8,6 +8,8 @@ publishing {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
             artifactId = rootProject.name
+            artifact("$rootDir/distribution/java/lib/moonlight.jar")
+                    //libsrootProject.file("${rootDir}/../api/python/jar/"))
             groupId = "eu.quanticol"
             version = "1.0-SNAPSHOT"
             from (rootProject.components["java"])

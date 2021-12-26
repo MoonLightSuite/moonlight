@@ -38,7 +38,9 @@ public class TestExpressionEvaluation {
 
     @Test
     public void shouldCorrectlyEvalConstant() {
-        assertEquals(10.0, evalDoubleExpression(Map.of("x",10.0),"x"));
+        Map<String, Double> map = new HashMap<>();
+        map.put("x", 10.0);
+        assertEquals(10.0, evalDoubleExpression(map,"x"));
     }
 
 
