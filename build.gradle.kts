@@ -26,6 +26,12 @@ tasks.named("clean") {
     dependsOn(gradle.includedBuild("api").task(":console:clean"))
 }
 
+// == Umbrella task to publish all ==
+// TODO: still wip, for now cleans important stuff
+tasks.named("publish") {
+    dependsOn("release")
+}
+
 
 dependencies {
     // Transitively collect coverage data from all features and their dependencies

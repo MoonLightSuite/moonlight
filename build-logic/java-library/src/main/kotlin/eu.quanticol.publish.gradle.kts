@@ -12,7 +12,7 @@ publishing {
                     //libsrootProject.file("${rootDir}/../api/python/jar/"))
             groupId = "eu.quanticol"
             version = "1.0-SNAPSHOT"
-            from (rootProject.components["java"])
+            //from (rootProject.components["java"])
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")
