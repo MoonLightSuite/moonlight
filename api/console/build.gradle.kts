@@ -52,23 +52,23 @@ tasks.register("distribution") {
 
     copy {
         from("$buildDir/libs/")
-        into(rootProject.file("${rootDir}/../distribution_files/java/lib/"))
+        into(rootProject.file("$rootDir/../distribution_files/java/lib/"))
     }
 
     copy {
         from("$buildDir/libs/")
-        into(rootProject.file("${rootDir}/../distribution_files/matlab/moonlight/jar/"))
+        into(rootProject.file("$rootDir/../distribution_files/matlab/moonlight/jar/"))
     }
 
     copy {
         from("$buildDir/libs/")
-        into(rootProject.file("${rootDir}/../distribution_files/python/jar/"))
+        into(rootProject.file("$rootDir/../distribution_files/python/jar/"))
     }
 
     dependsOn("installDist")
     copy {
         from("$buildDir/install/mlconsole/")
-        into(rootProject.file("${rootDir}/../distribution_files/console/"))
+        into(rootProject.file("$rootDir/../distribution_files/console/"))
     }
 }
 
@@ -76,22 +76,23 @@ tasks.register<Copy>("release") {
     println("Executing :console:release.")
     dependsOn("distribution")
 
-    from(rootProject.file("../distribution_files/"))
-    into(rootProject.file("../distribution/"))
+    from(rootProject.file("$rootDir/../distribution_files/"))
+    into(rootProject.file("$rootDir/../distribution/"))
+    logger.info("jar saved in $rootDir/../distribution/java/lib")
 }
 
 tasks.named<Delete>("clean") {
     doFirst {
-        delete("${rootDir}/../distribution/")
-        logger.info("jars in ${rootDir}/../distribution/ deleted")
-        delete("${rootDir}/../distribution_files/java/lib/moonlight.jar")
-        logger.info("jars in ${rootDir}/../distribution_files/java/ deleted")
-        delete("${rootDir}/../distribution_files/matlab/moonlight/jar/")
-        logger.info("jars in ${rootDir}/../distribution_files/matlab/ deleted")
-        delete("${rootDir}/../distribution_files/python/jar/")
-        logger.info("jars in ${rootDir}/../distribution_files/python/ deleted")
-        delete("${rootDir}/../distribution_files/console/")
-        logger.info("jars in ${rootDir}/../distribution_files/console/ deleted")
+        delete("$rootDir/../distribution/")
+        logger.info("jars in $rootDir/../distribution/ deleted")
+        delete("$rootDir/../distribution_files/java/lib/moonlight.jar")
+        logger.info("jars in $rootDir/../distribution_files/java/ deleted")
+        delete("$rootDir/../distribution_files/matlab/moonlight/jar/")
+        logger.info("jars in $rootDir/../distribution_files/matlab/ deleted")
+        delete("$rootDir/../distribution_files/python/jar/")
+        logger.info("jars in $rootDir/../distribution_files/python/ deleted")
+        delete("$rootDir/../distribution_files/console/")
+        logger.info("jars in $rootDir/../distribution_files/console/ deleted")
     }
 }
 
