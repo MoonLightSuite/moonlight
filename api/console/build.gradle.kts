@@ -80,15 +80,19 @@ tasks.register("distribution") {
 //  home/runner/work/MoonLight/MoonLight/ api/../distribution/java/lib
 // /home/runner/work/MoonLight/MoonLight/ distribution/java/lib/moonlight.jar
 
-tasks.register<Copy>("release") {
+tasks.register("release") {
     println("Executing :console:release.")
     dependsOn("distribution")
 
-    from(rootProject.file("$rootDir/../distribution_files/"))
-    into(rootProject.file("$rootDir/../distribution/"))
-    logger.info("jar saved in $rootDir/../distribution/java/lib")
-    val files = file("$rootDir/../distribution/java/lib").listFiles()?.map{ it.name }
-    logger.info("Folders: ${files.toString()}")
+    doFirst {
+        copy {
+            from(rootProject.file("$rootDir/../distribution_files/"))
+            into(rootProject.file("$rootDir/../distribution/"))
+            logger.info("jar saved in $rootDir/../distribution/java/lib")
+            val files = file("$rootDir/../distribution/java/lib").listFiles()?.map { it.name }
+            logger.info("Folders: ${files.toString()}")
+        }
+    }
 }
 
 tasks.named<Delete>("clean") {
