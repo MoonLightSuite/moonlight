@@ -51,7 +51,7 @@ tasks.register("distribution") {
     dependsOn("jar")
     dependsOn("installDist")
 
-    doFirst {
+    doLast {
         copy {
             from("$buildDir/libs/")
             into(rootProject.file("$rootDir/../distribution_files/java/lib/"))
@@ -84,7 +84,7 @@ tasks.register("release") {
     println("Executing :console:release.")
     dependsOn("distribution")
 
-    doFirst {
+    doLast {
         copy {
             from(rootProject.file("$rootDir/../distribution_files/"))
             into(rootProject.file("$rootDir/../distribution/"))
