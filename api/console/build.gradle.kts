@@ -71,6 +71,9 @@ tasks.register("distribution") {
             from("$buildDir/install/mlconsole/")
             into(rootProject.file("$rootDir/../distribution_files/console/"))
         }
+
+        val files = file("$rootDir/../distribution/java/lib").listFiles()?.map{ it.name }
+        logger.info("Folders: ${files.toString()}")
     }
 }
 
@@ -84,7 +87,7 @@ tasks.register<Copy>("release") {
     from(rootProject.file("$rootDir/../distribution_files/"))
     into(rootProject.file("$rootDir/../distribution/"))
     logger.info("jar saved in $rootDir/../distribution/java/lib")
-    val files = file("$rootDir/../distribution/java/lib").listFiles().map{ it.name }
+    val files = file("$rootDir/../distribution/java/lib").listFiles()?.map{ it.name }
     logger.info("Folders: ${files.toString()}")
 }
 
