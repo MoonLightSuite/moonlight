@@ -49,6 +49,7 @@ val moonlightJar: CopySpec = copySpec {
 tasks.register("distribution") {
     logger.info("exec distribution Task!")
     dependsOn("jar")
+    dependsOn("installDist")
 
     doFirst {
         copy {
@@ -66,7 +67,6 @@ tasks.register("distribution") {
             into(rootProject.file("$rootDir/../distribution_files/python/jar/"))
         }
 
-        dependsOn("installDist")
         copy {
             from("$buildDir/install/mlconsole/")
             into(rootProject.file("$rootDir/../distribution_files/console/"))
