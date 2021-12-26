@@ -72,7 +72,7 @@ tasks.register("distribution") {
             into(rootProject.file("$rootDir/../distribution_files/console/"))
         }
 
-        val files = file("$rootDir/../distribution/java/lib").listFiles()?.map{ it.name }
+        val files = file("$rootDir/../distribution_files/java/lib").listFiles()?.map{ it.name }
         logger.info("Folders: ${files.toString()}")
     }
 }
