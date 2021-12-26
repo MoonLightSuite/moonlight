@@ -1,5 +1,5 @@
 plugins {
-    id("java")
+    id("java-library")
     id("eu.quanticol.jacoco")
 }
 

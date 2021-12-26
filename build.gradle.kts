@@ -3,7 +3,6 @@
 // for convenience the tasks of the "sub"-projects
 plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
-    id("eu.quanticol.publish")              // for publishing the JAR online
 }
 
 // TODO: unclear whether still needed
@@ -28,8 +27,8 @@ tasks.named("clean") {
 
 // == Umbrella task to publish all ==
 // TODO: still wip, for now cleans important stuff
-tasks.named("publish") {
-    dependsOn("release")
+tasks.register("publish") {
+    dependsOn(gradle.includedBuild("api").task(":console:publish"))
 }
 
 

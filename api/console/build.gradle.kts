@@ -1,6 +1,7 @@
 plugins {
     id("eu.quanticol.java-library")
-    id("application") // plugin to add support for building a CLI application.
+    id("eu.quanticol.publish")              // for publishing the JAR online
+    id("application") // plugin to add support for building a CLI application
 }
 
 group = "${group}.api"
@@ -41,10 +42,6 @@ tasks.jar {
 //    logger.warn(DEPRECATED)
 //    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
 //}
-
-val moonlightJar: CopySpec = copySpec {
-    from("$buildDir/libs/")
-}
 
 tasks.register("distribution") {
     logger.info("exec distribution Task!")
