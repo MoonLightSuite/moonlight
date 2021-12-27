@@ -1,14 +1,8 @@
 package eu.quanticol.moonlight.gui.io;
 
 import com.google.gson.Gson;
-import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
-import com.sun.javafx.property.adapter.PropertyDescriptor;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;

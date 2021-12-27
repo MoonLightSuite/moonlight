@@ -103,12 +103,13 @@ public class SimpleGraphController implements GraphController{
         }
     }
 
-
     /**
      * Gets positions from the .csv file and adds them to the node coordinates
      *
      * @param elements attributes of a node
      * @param nodes    nodes of graph
+     * @param x        attribute of position x
+     * @param y        attribute of position y
      */
     private void addPositionsDynamicGraph(String[] elements, ArrayList<ArrayList<String>> nodes, String x, String y) {
         for (TimeGraph g : graphList) {

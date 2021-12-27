@@ -261,6 +261,7 @@ public class JavaFXGraphController {
      */
     public void openRecentCSV(File file) {
             if (file != null) {
+                chartController.setIndexOfAttributes(0);
                 loadCSV(file);
                 chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
                 csv = file;
@@ -269,6 +270,21 @@ public class JavaFXGraphController {
                 DialogBuilder d = new DialogBuilder(mainController.getTheme());
                 d.info("No file chosen.");
             }
+    }
+
+    /**
+     * Opens the chosen .csv file in the chosen project
+     */
+    public void openCSVFromProject(File file) {
+        if (file != null) {
+            loadCSV(file);
+            chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
+            csv = file;
+            linkButton.setDisable(false);
+        } else {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.info("No file chosen.");
+        }
     }
 
     /**
@@ -283,7 +299,7 @@ public class JavaFXGraphController {
             if (graphVisualization.equals(GraphType.DYNAMIC)) {
                 resetCharts();
                 chartController.createDataFromGraphs(graphList, chartController.getIndexOfAttributes());
-                chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
+                chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes() + 1));
             }
             addRecentFile(file.getPath(), FileType.CSV);
         } catch (Exception e) {
@@ -427,8 +443,6 @@ public class JavaFXGraphController {
             getStaticAttributesFromCsv(br);
         else
             getDynamicAttributesFromCsv(br);
-//        this.positionAssigned = true;
-
     }
 
     /**
@@ -464,7 +478,7 @@ public class JavaFXGraphController {
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
             chartController.loadAttributesList(columnsAttributes);
-            chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()));
+            chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()+1));
         }
     }
 
@@ -543,7 +557,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void addLineDataToSeries(String line) {
-        chartController.addLineDataToSeries(line, chartController.getIndexOfAttributes());
+        chartController.addLineDataToSeries(line, chartController.getIndexOfAttributes()+1);
     }
 
     /**
@@ -552,7 +566,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createSeriesFromStaticGraph(String line) {
-        chartController.createSeriesFromStaticGraph(line, chartController.getIndexOfAttributes());
+        chartController.createSeriesFromStaticGraph(line, chartController.getIndexOfAttributes()+1);
     }
 
     /**

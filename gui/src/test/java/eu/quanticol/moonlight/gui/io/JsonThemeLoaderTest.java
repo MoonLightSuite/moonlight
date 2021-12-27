@@ -2,8 +2,6 @@ package eu.quanticol.moonlight.gui.io;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
-import eu.quanticol.moonlight.gui.io.ThemeLoader;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -15,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JsonThemeLoaderTest {
 
@@ -68,8 +67,6 @@ class JsonThemeLoaderTest {
         assertEquals(fromJson.getGeneralTheme(), generalTheme);
         assertEquals(fromJson.getGraphTheme(), graphTheme);
     }
-
-
 
     @Test
     @AfterEach

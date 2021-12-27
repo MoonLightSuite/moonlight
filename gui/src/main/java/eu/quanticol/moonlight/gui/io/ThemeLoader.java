@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.gui.io;
 
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 /**
