@@ -4,9 +4,6 @@ import eu.quanticol.moonlight.gui.io.JsonThemeLoader;
 import eu.quanticol.moonlight.gui.util.DialogBuilder;
 import javafx.scene.control.Slider;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;

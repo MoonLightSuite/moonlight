@@ -3,11 +3,9 @@ package eu.quanticol.moonlight.gui.io;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import eu.quanticol.moonlight.gui.filter.Filter;
-import eu.quanticol.moonlight.gui.filter.FilterGroup;
-import eu.quanticol.moonlight.gui.filter.SimpleFilter;
-import eu.quanticol.moonlight.gui.filter.SimpleFilterGroup;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -15,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static eu.quanticol.moonlight.gui.io.Serializer.interfaceSerializer;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

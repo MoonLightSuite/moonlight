@@ -7,8 +7,6 @@ import eu.quanticol.moonlight.gui.filter.Filter;
 import eu.quanticol.moonlight.gui.filter.FilterGroup;
 import eu.quanticol.moonlight.gui.filter.SimpleFilter;
 import eu.quanticol.moonlight.gui.filter.SimpleFilterGroup;
-import eu.quanticol.moonlight.gui.io.FiltersLoader;
-import eu.quanticol.moonlight.gui.io.JsonFiltersLoader;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

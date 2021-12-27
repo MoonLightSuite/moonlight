@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 /**
  * Main controller of the application. It has other controllers nested in it.
  *
@@ -290,7 +289,7 @@ public class JavaFXMainController {
         } else
             p.getGraphController().setPositionAssigned(false);
         if (p.getChartVisualization().equals(ChartVisualization.PIECEWISE))
-            p.getGraphController().openRecentCSV(p.getCsv());
+            p.getGraphController().openCSVFromProject(p.getCsv());
         else p.getGraphController().openConstantCsv(p.getCsv());
         p.getGraphController().getFiltersComponentController().getTableFilters().getItems().clear();
         for (Filter f : p.getFilters()) {

@@ -229,5 +229,4 @@ public class SimpleProjectSaver implements ProjectSaver {
         this.positionX = projectSaver.getPositionX();
         this.positionY = projectSaver.getPositionY();
     }
-
 }

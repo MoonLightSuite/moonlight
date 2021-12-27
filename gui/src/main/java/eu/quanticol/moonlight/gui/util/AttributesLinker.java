@@ -13,7 +13,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Class that links columns name to attribute of a csv file.

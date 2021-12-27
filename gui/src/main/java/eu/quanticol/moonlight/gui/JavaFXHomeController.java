@@ -405,7 +405,6 @@ public class JavaFXHomeController {
     private void addImagesToList() {
         recentFiles.setCellFactory(param -> new ListCell<>() {
             private final ImageView displayImage = new ImageView();
-
             @Override
             public void updateItem(RecentFile file, boolean empty) {
                 super.updateItem(file, empty);
