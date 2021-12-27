@@ -126,14 +126,12 @@ public class JavaFXHomeController {
      */
     private void search() {
         FilteredList<RecentFile> filteredData = new FilteredList<>(recentFiles.getItems(), p -> true);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(file -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-                String lowerCaseFilter = newValue.toLowerCase();
-                return file.getPathFile().toLowerCase().contains(lowerCaseFilter);
-            });
-        });
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> filteredData.setPredicate(file -> {
+            if (newValue == null || newValue.isEmpty())
+                return true;
+            String lowerCaseFilter = newValue.toLowerCase();
+            return file.getPathFile().toLowerCase().contains(lowerCaseFilter);
+        }));
         recentFiles.setItems(filteredData);
     }
 
@@ -285,6 +283,8 @@ public class JavaFXHomeController {
             this.mainController = mainController;
             Stage stage = new Stage();
             setStage(newRoot, stage);
+            stage.setMinHeight(600);
+            stage.setMinWidth(900);
             stage.showAndWait();
             resetSearch();
         } catch (IOException e) {
@@ -306,8 +306,11 @@ public class JavaFXHomeController {
             JavaFXMainController mainController = fxmlLoader.getController();
             mainController.setHomeController(this);
             this.mainController = mainController;
+            controllers.add(mainController);
             Stage stage = new Stage();
             setStage(newRoot, stage);
+            stage.setMinHeight(600);
+            stage.setMinWidth(900);
             stage.show();
             File file = new File(recentFile.getPathFile());
             mainController.openTra(file);
@@ -356,9 +359,12 @@ public class JavaFXHomeController {
             mainController.setNewWindowController(mainController);
             Stage stage = new Stage();
             setStage(newRoot, stage);
+            stage.setMinHeight(600);
+            stage.setMinWidth(900);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.warning("Failed opening project");
         }
     }
     /**

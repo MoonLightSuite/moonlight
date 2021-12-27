@@ -321,9 +321,12 @@ public class JavaFXMainController {
             newWindowController = mainController;
             Stage stage = new Stage();
             setStage(newRoot, stage);
+            stage.setMinHeight(600);
+            stage.setMinWidth(900);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogBuilder d = new DialogBuilder(this.getTheme());
+            d.warning("Failed opening project");
         }
     }
 
