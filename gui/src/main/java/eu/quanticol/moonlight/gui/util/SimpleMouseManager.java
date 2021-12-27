@@ -15,7 +15,6 @@ import org.graphstream.ui.view.util.MouseManager;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -148,6 +147,7 @@ public class SimpleMouseManager implements MouseManager {
     /**
      * Blocks the drag behaviour of nodes
      */
+    @SuppressWarnings("unused")
     private final EventHandler<MouseEvent> mouseDragged = event -> {
     };
 
@@ -274,12 +274,6 @@ public class SimpleMouseManager implements MouseManager {
             }
             toShow.deleteCharAt(toShow.length() - 1);
             setLabel(toShow.toString());
-        } else if ((attribute = n.getAttribute("Attributes")) != null) {
-            //todo
-            String s = attribute.toString();
-            String[] list = s.substring(1, s.length() - 1).split(", ");
-            String newLabel = "Node " + n.getId() + " attributes:  x: " + list[0] + ", y: " + list[1] + ", v: " + list[2];
-            setLabel(newLabel);
         }
     }
 }
