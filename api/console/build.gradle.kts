@@ -1,7 +1,6 @@
 plugins {
     id("eu.quanticol.java-library")
-    id("eu.quanticol.publish")              // for publishing the JAR online
-    id("application") // plugin to add support for building a CLI application
+    id("application") // plugin to add support for building a CLI application.
 }
 
 group = "${group}.api"
