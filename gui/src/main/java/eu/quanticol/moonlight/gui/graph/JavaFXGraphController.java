@@ -417,6 +417,7 @@ public class JavaFXGraphController {
         linkController.setColumnY(null);
         chartController.setAttributes("");
         chartController.getAttribute().getItems().clear();
+        this.columnsAttributes.clear();
         filtersComponentController.getAttribute().getItems().clear();
         chartController.setIndexOfAttributes(1);
     }

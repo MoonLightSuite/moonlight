@@ -66,6 +66,14 @@ public class JavaFXFiltersController {
         return attribute;
     }
 
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<Node> getStaticNodes() {
+        return staticNodes;
+    }
+
     public void injectGraphController(JavaFXMainController mainController, JavaFXGraphController graphController, JavaFXChartController chartController) {
         this.mainController = mainController;
         this.graphController = graphController;
@@ -232,10 +240,18 @@ public class JavaFXFiltersController {
         } catch (Exception e) {
             reset();
             dialogBuilder.error("Failed saving filter.");
-            e.printStackTrace();
         }
     }
 
+    public void changeAttributeSaveFilters(){
+        if (!tableFilters.getItems().isEmpty()) {
+            chartController.deselectAllSeries();
+            if (simpleGraphController.getStaticGraph() == null)
+                nodes.forEach(node -> chartController.selectOneSeries(node.getId()));
+            else
+                selectStaticSeries();
+        }
+    }
     /**
      * Opens a dialog to insert a name of filters and save them on file.
      */

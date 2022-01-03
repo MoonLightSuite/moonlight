@@ -271,25 +271,21 @@ public class JavaFXChartController {
      */
     private void changeChartSeries(MenuItem menuItem) {
         attribute.setText(menuItem.getText());
-        if (javaFXGraphController.getGraphList().size() == 0) {
-            if (constantChart.isVisible()) {
-                createDataFromConstantGraph();
-                addListener(constantChart);
+            if (javaFXGraphController.getGraphList().size() == 0) {
+                if (constantChart.isVisible()) {
+                    createDataFromConstantGraph();
+                    addListener(constantChart);
+                } else {
+                    createDataFromStaticGraph();
+                    initStatic();
+                }
             } else {
-                createDataFromStaticGraph();
-                initStatic();
+                if (constantChart.isVisible())
+                    createDataFromConstantGraph();
+                else
+                    createDataFromDynamicGraph();
             }
-        } else {
-            if (constantChart.isVisible())
-                createDataFromConstantGraph();
-            else {
-                resetChartsWithoutMarker();
-                lineChart.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
-                lineChartLog.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
-                indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1;
-                init();
-            }
-        }
+            javaFXGraphController.getFiltersComponentController().changeAttributeSaveFilters();
     }
 
     /**
@@ -352,7 +348,7 @@ public class JavaFXChartController {
     }
 
     /**
-     * Reloads chart from file .csv
+     * Reloads chart of a static graph from file .csv
      */
     private void createDataFromStaticGraph() {
         try {
@@ -372,6 +368,17 @@ public class JavaFXChartController {
             DialogBuilder dialogBuilder = new DialogBuilder(mainController.getTheme());
             dialogBuilder.error("Failed to load chart data");
         }
+    }
+
+    /**
+     * Reloads chart of a dynamic graph from file .csv
+     */
+    private void createDataFromDynamicGraph() {
+        resetChartsWithoutMarker();
+        lineChart.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
+        lineChartLog.getData().addAll(cb.getSeriesFromNodes(javaFXGraphController.getGraphList(), javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1));
+        indexOfAttributes = javaFXGraphController.getColumnsAttributes().indexOf(attribute.getText()) - 1;
+        init();
     }
 
     /**
