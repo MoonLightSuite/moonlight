@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
@@ -58,6 +59,8 @@ public class JavaFXGraphController {
     BorderPane borderPane;
     @FXML
     Label infoNode;
+    @FXML
+    AnchorPane labelPane;
     @FXML
     JavaFXNodesTableController nodeTableComponentController;
     @FXML
@@ -260,16 +263,16 @@ public class JavaFXGraphController {
      * Opens the chosen .csv file from recent
      */
     public void openRecentCSV(File file) {
-            if (file != null) {
-                chartController.setIndexOfAttributes(0);
-                loadCSV(file);
-                chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
-                csv = file;
-                linkButton.setDisable(false);
-            } else {
-                DialogBuilder d = new DialogBuilder(mainController.getTheme());
-                d.info("No file chosen.");
-            }
+        if (file != null) {
+            chartController.setIndexOfAttributes(0);
+            loadCSV(file);
+            chartController.setGraphVisualization(ChartVisualization.PIECEWISE);
+            csv = file;
+            linkButton.setDisable(false);
+        } else {
+            DialogBuilder d = new DialogBuilder(mainController.getTheme());
+            d.info("No file chosen.");
+        }
     }
 
     /**
@@ -407,6 +410,7 @@ public class JavaFXGraphController {
         chartController.reset();
         resetSlider();
         infoNode.setText(" ");
+        labelPane.setPrefHeight(0);
         linkButton.setDisable(true);
     }
 
@@ -452,7 +456,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createNodesVector(String line, boolean present) {
-            graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), present);
+        graphController.createNodesVector(line, linkController.getColumnX(), linkController.getColumnY(), present);
     }
 
     /**
@@ -479,7 +483,7 @@ public class JavaFXGraphController {
                 openAssociateAttributesWindow(line);
             linkPositions(br, line);
             chartController.loadAttributesList(columnsAttributes);
-            chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes()+1));
+            chartController.getAttribute().setText(columnsAttributes.get(chartController.getIndexOfAttributes() + 1));
         }
     }
 
@@ -529,7 +533,7 @@ public class JavaFXGraphController {
 
     private void initializeWindow(Parent newRoot, Stage stage, int totalAttributes, AttributesLinker controller) {
         stage.setTitle("Associate attributes");
-        stage.initStyle(StageStyle.DECORATED);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOnCloseRequest(Event::consume);
         stage.setScene(new Scene(newRoot));
         Image icon = new Image(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("images/ML.png")).toString());
@@ -558,7 +562,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void addLineDataToSeries(String line) {
-        chartController.addLineDataToSeries(line, chartController.getIndexOfAttributes()+1);
+        chartController.addLineDataToSeries(line, chartController.getIndexOfAttributes() + 1);
     }
 
     /**
@@ -567,7 +571,7 @@ public class JavaFXGraphController {
      * @param line a string of a time instant with all info about nodes
      */
     private void createSeriesFromStaticGraph(String line) {
-        chartController.createSeriesFromStaticGraph(line, chartController.getIndexOfAttributes()+1);
+        chartController.createSeriesFromStaticGraph(line, chartController.getIndexOfAttributes() + 1);
     }
 
     /**
@@ -654,8 +658,10 @@ public class JavaFXGraphController {
         setSceneProperties((FxViewPanel) v.getDefaultView());
         SimpleMouseManager sm = new SimpleMouseManager(staticGraph, chartController);
         sm.addPropertyChangeListener(evt -> {
-            if (evt.getPropertyName().equals("LabelProperty"))
+            if (evt.getPropertyName().equals("LabelProperty")) {
                 infoNode.setText(evt.getNewValue().toString());
+                labelPane.setPrefHeight(0);
+            }
         });
         v.getDefaultView().setMouseManager(sm);
     }
@@ -822,8 +828,12 @@ public class JavaFXGraphController {
             setSceneProperties((FxViewPanel) v.getView(String.valueOf(time)));
             SimpleMouseManager sm = new SimpleMouseManager(graph, time, chartController, this);
             sm.addPropertyChangeListener(evt -> {
-                if (evt.getPropertyName().equals("LabelProperty"))
+                if (evt.getPropertyName().equals("LabelProperty")) {
                     infoNode.setText(evt.getNewValue().toString());
+                    if (evt.getNewValue().toString().equals(" "))
+                        labelPane.setPrefHeight(0);
+                    else labelPane.setPrefHeight(35);
+                }
             });
             v.getView(String.valueOf(time)).setMouseManager(sm);
         }

@@ -252,7 +252,7 @@ public class SimpleMouseManager implements MouseManager {
                 Node n = graph.getNode(n1.get().getId());
                 Object attribute = n.getAttribute("time" + this.time);
                 setAttributesOnLabel(n, attribute);
-            }
+            } else setLabel(" ");
             element.removeAttribute("ui.clicked");
         }
     }
@@ -272,7 +272,7 @@ public class SimpleMouseManager implements MouseManager {
                 toShow.append(graphController.getColumnsAttributes().get(i));
                 toShow.append(": ").append(list[i - 1]).append(", ");
             }
-            toShow.deleteCharAt(toShow.length() - 1);
+            toShow.deleteCharAt(toShow.length() - 2);
             setLabel(toShow.toString());
         }
     }

@@ -17,6 +17,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -71,6 +73,10 @@ public class JavaFXChartController {
     RadioButton logarithmic = new RadioButton();
     @FXML
     Label attributes;
+    @FXML
+    RowConstraints labelPane;
+    @FXML
+    ScrollPane scrollPane;
 
     private JavaFXMainController mainController;
     private JavaFXGraphController javaFXGraphController;
@@ -226,7 +232,9 @@ public class JavaFXChartController {
                                 toShow.append(columnsAttributes.get(i));
                                 toShow.append(": ").append(a.get(i + (size * id))).append(", ");
                             }
+                            toShow.deleteCharAt(toShow.length() - 2);
                             attributes.setText(String.valueOf(toShow));
+                            labelPane.setPrefHeight(35);
                         }
                 });
             }
@@ -235,8 +243,10 @@ public class JavaFXChartController {
 
     @FXML
     public void clearLabel(MouseEvent event) {
-        if (!event.getTarget().getClass().equals(StackPane.class))
+        if (!event.getTarget().getClass().equals(StackPane.class)) {
             attributes.setText(" ");
+            labelPane.setPrefHeight(0);
+        }
     }
 
     public void clearMenuButton() {
