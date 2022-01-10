@@ -1,5 +1,5 @@
 plugins {
-    id("java-library")
+    id("eu.quanticol.java-library")
     id("maven-publish")
 }
 
@@ -7,9 +7,9 @@ publishing {
     publications {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
-            artifactId = rootProject.name
+            artifactId = "${rootProject.name}"
             //artifact("$buildDir/libs/moonlight.jar")
-            groupId = "eu.quanticol"
+            groupId = "$group"
             version = "1.0-SNAPSHOT"
             from(components["java"])
             versionMapping {
