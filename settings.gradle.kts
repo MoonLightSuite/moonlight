@@ -22,7 +22,7 @@ includeBuild("core")
 //includeBuild("utility")  // -> removed: moved into api
 
 // == MoonlightScript ==
-includeBuild("moonlightscript")
+includeBuild("script")
 
 // == Legacy Moonlight APIs for Matlab == // TODO: refactor
 includeBuild("api")
