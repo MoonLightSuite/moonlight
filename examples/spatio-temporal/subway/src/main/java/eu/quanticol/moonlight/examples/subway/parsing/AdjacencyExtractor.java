@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.examples.subway.parsing;
 
-import eu.quanticol.moonlight.signal.GraphModel;
 import eu.quanticol.moonlight.signal.ImmutableGraphModel;
 
 /**

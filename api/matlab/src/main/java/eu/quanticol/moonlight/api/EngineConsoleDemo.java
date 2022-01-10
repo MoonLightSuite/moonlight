@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.api;
 
 /**
  * The program provides a sample for Java Engine functions. It creates a matrix and squares the values greater than 5.

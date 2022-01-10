@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.api;
 
 import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;

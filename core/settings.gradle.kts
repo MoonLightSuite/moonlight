@@ -14,6 +14,4 @@ dependencyResolutionManagement {
 }
 
 // == Define the inner structure of this component ==
-rootProject.name = "engine" // the component name
-include("core")
-include("utility")
+rootProject.name = "core" // the component name

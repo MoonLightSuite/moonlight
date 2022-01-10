@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.api;
 
 
 import eu.quanticol.moonlight.formula.Formula;

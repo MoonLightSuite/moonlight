@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab.configurator;
+package eu.quanticol.moonlight.api.configurator;
 
 import java.lang.reflect.Array;
 

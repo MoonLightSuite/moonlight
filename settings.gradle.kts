@@ -18,15 +18,17 @@ dependencyResolutionManagement {
 includeBuild("build-logic")
 
 // == Moonlight Core ==
-includeBuild("engine")
-//includeBuild("utility")  // -> removed: moved into core
+includeBuild("core")
+//includeBuild("utility")  // -> removed: moved into api
 
 // == MoonlightScript ==
 includeBuild("moonlightscript")
 
-// == Moonlight APIs ==
+// == Legacy Moonlight APIs for Matlab == // TODO: refactor
 includeBuild("api")
-////includeBuild("console")  // -> removed: moved into api
+
+// == CLI project ==
+includeBuild("console")
 
 // == Examples ==
 includeBuild("examples")

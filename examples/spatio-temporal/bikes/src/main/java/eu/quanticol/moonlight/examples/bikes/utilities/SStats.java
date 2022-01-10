@@ -1,7 +1,5 @@
 package eu.quanticol.moonlight.examples.bikes.utilities;
 
-import eu.quanticol.jsstl.core.monitor.SpatialBooleanSignal;
-import eu.quanticol.jsstl.core.signal.BooleanSignal;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 

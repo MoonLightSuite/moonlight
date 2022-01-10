@@ -3,7 +3,6 @@
 // for convenience the tasks of the "sub"-projects
 plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
-    id("eu.quanticol.publish")              // for publishing the JAR online
 }
 
 // TODO: unclear whether still needed
@@ -17,26 +16,27 @@ plugins {
 //          2. engine
 //          3. script
 tasks.register<Copy>("release") {
-    dependsOn(gradle.includedBuild("api").task(":console:release"))
+    dependsOn(gradle.includedBuild("console").task(":release"))
 }
 
 // == Umbrella task to clean all ==
 // TODO: still wip, for now cleans important stuff
 tasks.named("clean") {
-    dependsOn(gradle.includedBuild("api").task(":console:clean"))
+    dependsOn(gradle.includedBuild("console").task(":clean"))
 }
 
 // == Umbrella task to publish all ==
 // TODO: still wip, for now cleans important stuff
-tasks.named("publish") {
-    dependsOn(":release")
+tasks.register("publish") {
+    dependsOn(gradle.includedBuild("core").task(":publish"))
 }
 
 
 dependencies {
     // Transitively collect coverage data from all features and their dependencies
-    aggregate("eu.quanticol.moonlight.engine:core")
-    aggregate("eu.quanticol.moonlight.engine:utility")
+    aggregate("eu.quanticol.moonlight:core")
     aggregate("eu.quanticol.moonlight:script")
+    aggregate("eu.quanticol.moonlight:console")
+    aggregate("eu.quanticol.moonlight.api:matlab")
     // TODO: add examples, etc.
 }

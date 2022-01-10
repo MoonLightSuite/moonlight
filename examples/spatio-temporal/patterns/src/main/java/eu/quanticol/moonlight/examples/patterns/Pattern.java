@@ -7,7 +7,7 @@ import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
+import eu.quanticol.moonlight.api.MatlabExecutor;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -18,8 +18,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Pattern {
-
-
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException {
         String path = Paths.get(Pattern.class.getResource("TuringDataGenerator.m").toURI()).getParent().toAbsolutePath().toString();

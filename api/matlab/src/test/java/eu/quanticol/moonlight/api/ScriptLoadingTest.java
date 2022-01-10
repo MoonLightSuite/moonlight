@@ -5,7 +5,6 @@ import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 

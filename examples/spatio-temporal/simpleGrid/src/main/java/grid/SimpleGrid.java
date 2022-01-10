@@ -8,12 +8,9 @@ import eu.quanticol.moonlight.util.TestUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.Random;
 
 public class SimpleGrid {

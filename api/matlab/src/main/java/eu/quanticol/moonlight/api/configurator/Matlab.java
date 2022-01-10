@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.utility.matlab.configurator;
+package eu.quanticol.moonlight.api.configurator;
 
 import org.n52.matlab.control.MatlabProxy;
 import org.n52.matlab.control.MatlabProxyFactory;

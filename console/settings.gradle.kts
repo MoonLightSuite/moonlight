@@ -1,4 +1,3 @@
-// TODO: Legacy project containing some mixed matlab stuff
 // == Define locations for build logic ==
 pluginManagement {
     repositories {
@@ -16,5 +15,4 @@ dependencyResolutionManagement {
 }
 
 // == Define the inner structure of this component ==
-rootProject.name = "api" // the component name
-include("matlab")
+rootProject.name = "console" // the component name

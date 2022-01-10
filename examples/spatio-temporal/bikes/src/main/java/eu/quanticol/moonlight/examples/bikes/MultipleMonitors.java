@@ -12,7 +12,6 @@ import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.TestUtils;
-import simhya.matlab.SimHyAModel;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
