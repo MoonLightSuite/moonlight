@@ -23,9 +23,9 @@ class MoonlightScript:
         '''gets the monitor associated to a target the fomula'''
         loader = autoclass('eu.quanticol.moonlight.MoonlightScriptFactory')()
         if(self.isTemporal()):
-            return TemporalScriptComponent(loader.getTemporalScript(self.script).selectTemporalComponent(formulaName));
+            return TemporalScriptComponent(loader.getTemporalScript(self.script).selectTemporalComponent(formulaName))
         else:
-            return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(self.script).selectSpatialTemporalComponent(formulaName));
+            return SpatialTemporalScriptComponent(loader.getSpatialTemporalScript(self.script).selectSpatialTemporalComponent(formulaName))
 
     def setBooleanDomain(self):
         '''sets the Boolean domain to this script'''
@@ -47,7 +47,7 @@ class ScriptLoader:
 
     
     @staticmethod
-    def loadFromFile(path):
+    def loadFromFile(script):
         '''load the script from a file'''
         # moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
         # with open(path) as file:
@@ -82,6 +82,6 @@ class SpatialTemporalScriptComponent():
      def monitor(self, locationTimeArray, graph, signalTimeArray, signalValues, parameters=None):
             monitor = self.scriptComponent
             if(not parameters):
-                return monitor.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,signalTimeArray,signalValues)
+                return monitor.monitorToObjectArrayAdjacencyListWithPrint(locationTimeArray,graph,signalTimeArray,signalValues)
             else:
-                return monitor.monitorToObjectArrayAdjacencyList(locationTimeArray,graph,signalTimeArray,signalValues,parameters)
+                return monitor.monitorToObjectArrayAdjacencyListWithPrint(locationTimeArray,graph,signalTimeArray,signalValues,parameters)
