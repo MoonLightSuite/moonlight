@@ -128,7 +128,12 @@ public class SpatialTemporalSignal<T> {
 		}
 		return end;
 	}
-	
+
+	/**
+	 * Returns a 3d-array from a conversion-to-double function
+	 * @param f function to transform the type of the array T to Double
+	 * @return a 3d-double-array of [locations][time point][value]
+	 */
 	public double[][][] toArray(FunctionToDouble<T> f) {
 		double[] timePoints = getTimeArray();
 		double[][][] toReturn = new double[size][][];
