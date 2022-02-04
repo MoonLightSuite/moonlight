@@ -13,7 +13,7 @@ plugins {
 // == Umbrella task to publishing all publishable packages ==
 // TODO: ideally we should have three separate packages:
 //          1. api/console
-//          2. engine
+//          2. core
 //          3. script
 tasks.register<Copy>("release") {
     dependsOn(gradle.includedBuild("console").task(":release"))
