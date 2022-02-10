@@ -5,6 +5,8 @@ import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 
@@ -12,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * We are assuming the Subway network is part of an N x N grid,
@@ -182,6 +185,17 @@ public class Grid {
         int x = a % size;
         int y = a / size;
         return new Pair<>(x, y);
+    }
+
+    /**
+     * It calculates the proper distance, given a spatial model
+     *
+     * @param from double representing the starting position
+     * @param to double representing the ending position
+     * @return a DoubleDistance object, meaningful in the given Spatial Model
+     */
+    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
+        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
 }

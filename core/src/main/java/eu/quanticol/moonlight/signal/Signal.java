@@ -409,6 +409,12 @@ public class Signal<T> implements TimeSignal<Double, T> {
         return toReturn;
     }
 
+    /**
+     * Returns a 2d-array from a set of time points and a conversion-to-double function
+     * @param timePoints time points at which the array is sampled
+     * @param f function to transform the type of the array T to Double
+     * @return a 2d-double-array of [time point][value]
+     */
     public double[][] arrayOf(double[] timePoints, ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};

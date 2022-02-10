@@ -4,7 +4,6 @@
 package eu.quanticol.moonlight.signal;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;

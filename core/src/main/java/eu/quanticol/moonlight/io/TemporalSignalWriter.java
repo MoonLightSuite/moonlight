@@ -21,7 +21,6 @@ package eu.quanticol.moonlight.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.Signal;
