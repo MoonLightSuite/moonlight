@@ -26,6 +26,7 @@ include("spatio-temporal:simpleGrid")
 include("spatio-temporal:subway")
 // temporal examples:
 // TODO: add these
+include ("temporal:afc")
 include ("temporal:amt")
 include ("temporal:matlab")
 include ("temporal:simpleTemporal")

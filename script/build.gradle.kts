@@ -6,7 +6,7 @@ plugins {
 //version("unspecified")
 
 dependencies {
-    implementation("eu.quanticol.moonlight:core")
+    implementation("eu.quanticol.moonlight:engine")
     implementation("org.antlr:ST4:4.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")

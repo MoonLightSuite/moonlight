@@ -18,7 +18,7 @@ dependencyResolutionManagement {
 includeBuild("build-logic")
 
 // == Moonlight Core ==
-includeBuild("core")
+includeBuild("engine")
 //includeBuild("utility")  // -> removed: moved into api
 
 // == MoonlightScript ==

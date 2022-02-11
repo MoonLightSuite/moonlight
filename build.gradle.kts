@@ -28,13 +28,13 @@ tasks.named("clean") {
 // == Umbrella task to publish all ==
 // TODO: still wip, for now cleans important stuff
 tasks.register("publish") {
-    dependsOn(gradle.includedBuild("core").task(":publish"))
+    dependsOn(gradle.includedBuild("engine").task(":publish"))
 }
 
 
 dependencies {
     // Transitively collect coverage data from all features and their dependencies
-    aggregate("eu.quanticol.moonlight:core")
+    aggregate("eu.quanticol.moonlight:engine")
     aggregate("eu.quanticol.moonlight:script")
     aggregate("eu.quanticol.moonlight:console")
     aggregate("eu.quanticol.moonlight.api:matlab")
