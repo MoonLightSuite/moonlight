@@ -1,9 +1,9 @@
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,14 +1,15 @@
 package eu.quanticol.moonlight.examples.sensors;
 
+import eu.quanticol.moonlight.online.signal.*;
+import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
+import eu.quanticol.moonlight.online.monitoring.OnlineSpaceTimeMonitor;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.signal.online.*;
 import eu.quanticol.moonlight.space.DistanceStructure;
 import eu.quanticol.moonlight.space.LocationService;
 import eu.quanticol.moonlight.space.SpatialModel;
@@ -296,7 +297,7 @@ public class SensorsOnline {
                             List<Pair<Integer, Double>> locations =
                                     spaceDataFromTime(time);
                             SegmentInterface<Double,
-                                            List<Pair<Integer, Double>>>
+                                                                        List<Pair<Integer, Double>>>
                                     segment = new TimeSegment<>((double) time,
                                                                 locations);
                             chain.add(segment);

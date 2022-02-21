@@ -3,14 +3,15 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Plotter;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 

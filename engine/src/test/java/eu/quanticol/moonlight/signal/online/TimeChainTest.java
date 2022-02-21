@@ -1,5 +1,8 @@
 package eu.quanticol.moonlight.signal.online;
 
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

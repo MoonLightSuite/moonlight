@@ -2,10 +2,11 @@ package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.algorithms.SlidingWindow;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

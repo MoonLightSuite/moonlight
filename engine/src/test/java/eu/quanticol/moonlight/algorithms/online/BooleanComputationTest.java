@@ -1,13 +1,16 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 
-import static eu.quanticol.moonlight.algorithms.online.BooleanComputation.*;
+import static eu.quanticol.moonlight.online.algorithms.BooleanComputation.*;
 
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BinaryOperator;

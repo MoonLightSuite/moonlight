@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.signal.online.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeChain;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,10 +3,10 @@ package eu.quanticol.moonlight.formula;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
+import eu.quanticol.moonlight.online.signal.OnlineSignal;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

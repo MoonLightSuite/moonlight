@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.signal.online;
 
+import eu.quanticol.moonlight.online.signal.ChainIterator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

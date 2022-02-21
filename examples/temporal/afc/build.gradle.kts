@@ -7,5 +7,6 @@ val libDir = "../../lib"
 dependencies {
     implementation("com.github.sh0nk:matplotlib4j:0.5.0")
     implementation("eu.quanticol.moonlight:engine")
+    implementation("eu.quanticol.moonlight.api:matlab")
     implementation(fileTree(mapOf("dir" to libDir, "include" to "*.jar")))
 }

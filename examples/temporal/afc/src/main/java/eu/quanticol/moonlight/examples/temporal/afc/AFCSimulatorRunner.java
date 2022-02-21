@@ -25,7 +25,7 @@ import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.util.Stopwatch;
-import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
+import eu.quanticol.moonlight.api.MatlabRunner;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -25,8 +25,10 @@ import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
@@ -43,7 +45,7 @@ public class AFCMoonlightRunner {
     private static final int RND_SEED = 7;
 
     private static final List<List<SegmentInterface<
-            Double, AbstractInterval<Double>>>> results = new ArrayList<>();
+                Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
     private static final Plotter plt = new Plotter(10.0);
 

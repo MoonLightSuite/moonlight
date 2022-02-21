@@ -15,7 +15,6 @@
 
 package eu.quanticol.moonlight.space;
 
-import eu.quanticol.moonlight.domain.DistanceDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;

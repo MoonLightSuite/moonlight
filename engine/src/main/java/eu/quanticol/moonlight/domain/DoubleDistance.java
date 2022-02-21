@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.space.DistanceDomain;
+
 /**
  * @author loreti
  *

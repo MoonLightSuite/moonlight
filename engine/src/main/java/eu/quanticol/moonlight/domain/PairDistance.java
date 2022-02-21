@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.space.DistanceDomain;
 import eu.quanticol.moonlight.util.Pair;
 
 public class PairDistance<D1,D2> implements DistanceDomain<Pair<D1,D2>> {

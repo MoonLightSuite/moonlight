@@ -11,6 +11,7 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
  * @author loreti
  *
  */
+@Deprecated
 public class SpatialTemporalMonitoringInput<S,T> {
 	
 	private final SpatialTemporalSignal<S> signal;

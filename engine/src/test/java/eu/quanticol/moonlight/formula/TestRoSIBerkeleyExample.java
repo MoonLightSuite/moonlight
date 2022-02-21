@@ -1,9 +1,10 @@
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.*;
-import org.junit.jupiter.api.Disabled;
+import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
+import eu.quanticol.moonlight.online.signal.OnlineSignal;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

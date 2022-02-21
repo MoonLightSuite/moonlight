@@ -4,9 +4,10 @@ import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.space.*;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,9 @@
-package eu.quanticol.moonlight.utility.matlab;
+package eu.quanticol.moonlight.api;
 
 import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;
 
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 public class MatlabRunner implements AutoCloseable {
     private final MatlabEngine engine;
@@ -71,7 +70,7 @@ public class MatlabRunner implements AutoCloseable {
             engine.close();
         } catch (EngineException e) {
             e.printStackTrace();
-            throw new RuntimeException("Unable to terminate MATLAB's engine");
+            throw new UnknownError("Unable to terminate MATLAB's engine");
         }
     }
 }

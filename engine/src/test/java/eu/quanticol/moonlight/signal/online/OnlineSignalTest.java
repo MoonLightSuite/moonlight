@@ -2,8 +2,8 @@ package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.signal.online.OnlineSignal;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.signal.OnlineSignal;
+import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

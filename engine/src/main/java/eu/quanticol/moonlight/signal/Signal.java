@@ -20,9 +20,9 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSignal;
-import eu.quanticol.moonlight.signal.online.Update;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSignal;
+import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.HashSet;

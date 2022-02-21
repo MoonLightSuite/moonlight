@@ -21,10 +21,10 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
-import eu.quanticol.moonlight.signal.online.TimeSegment;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.util.Stopwatch;
-import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
+import eu.quanticol.moonlight.api.MatlabRunner;
 
 import java.io.IOException;
 import java.util.*;

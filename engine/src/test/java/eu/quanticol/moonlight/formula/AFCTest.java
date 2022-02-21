@@ -6,8 +6,10 @@ import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
-import eu.quanticol.moonlight.monitoring.online.OnlineTimeMonitor;
-import eu.quanticol.moonlight.signal.online.*;
+import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

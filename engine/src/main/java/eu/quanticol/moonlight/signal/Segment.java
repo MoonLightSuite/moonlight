@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.signal;
 
-import eu.quanticol.moonlight.signal.online.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.SegmentInterface;
 
 /**
  * @author loreti
