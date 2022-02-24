@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;

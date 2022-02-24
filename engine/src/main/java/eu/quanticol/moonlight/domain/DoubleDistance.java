@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.domain;
 
-import eu.quanticol.moonlight.space.DistanceDomain;
+import eu.quanticol.moonlight.core.space.DistanceDomain;
 
 /**
  * @author loreti

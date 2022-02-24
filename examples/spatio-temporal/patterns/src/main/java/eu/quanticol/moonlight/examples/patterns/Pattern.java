@@ -8,9 +8,9 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.api.MatlabExecutor;
@@ -80,9 +80,9 @@ public class Pattern {
         atomicFormulasB.put("LowValues", p -> (x -> x <= h_CONST_));
         atomicFormulasB.put("HighValues", p -> (x -> h_CONST_ >= x));
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> readD = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, gridModel);
-        DistanceStructure<Double, Double> escapeD = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, gridModel);
+        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, gridModel);
+        DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, gridModel);
 
         distanceFunctions.put("distReach", x -> readD);
         distanceFunctions.put("distEscape", x -> escapeD);

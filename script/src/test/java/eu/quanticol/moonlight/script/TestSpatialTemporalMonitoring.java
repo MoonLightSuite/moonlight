@@ -8,8 +8,8 @@ import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
@@ -122,21 +122,21 @@ public class TestSpatialTemporalMonitoring {
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> notXY =
             SpatialTemporalMonitor.notMonitor(lessThanZeroX, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> somewhereXYOne =
-            SpatialTemporalMonitor.somewhereMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.somewhereMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> somewhereXYTwo =
-            SpatialTemporalMonitor.somewhereMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.somewhereMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> everywhereXYOne =
-            SpatialTemporalMonitor.everywhereMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.everywhereMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> everywhereXYTwo =
-            SpatialTemporalMonitor.everywhereMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.everywhereMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> escapeXYOne =
-            SpatialTemporalMonitor.escapeMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.escapeMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> escapeXYTwo =
-            SpatialTemporalMonitor.escapeMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
+            SpatialTemporalMonitor.escapeMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m),booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> reachXYOne =
-            SpatialTemporalMonitor.reachMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m), lessThanZeroY,booleanDomain);
+            SpatialTemporalMonitor.reachMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> 1.0,new DoubleDistance(),0.0,10.0,m), lessThanZeroY,booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> reachXYTwo =
-            SpatialTemporalMonitor.reachMonitor(lessThanZeroX,m -> new DistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m), lessThanZeroY,booleanDomain);
+            SpatialTemporalMonitor.reachMonitor(lessThanZeroX,m -> new DefaultDistanceStructure<>(r -> r.getDoubleOf(0)+r.getDoubleOf(1),new DoubleDistance(),0.0,10.0,m), lessThanZeroY,booleanDomain);
 
     private final RecordHandler recordHandler = new RecordHandler(DataHandler.REAL, DataHandler.REAL);
     private final RecordHandler edgeHandler = new RecordHandler(DataHandler.REAL, DataHandler.REAL);

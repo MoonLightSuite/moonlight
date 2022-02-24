@@ -5,9 +5,9 @@ import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 
@@ -57,8 +57,8 @@ public class simpleCity {
 		return SpatialTemporalMonitor.somewhereMonitor(typeNode(), distance(from,to),booleanDomain);
 	}
 
-	private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
-		return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+	private static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>  distance(double from, double to) {
+		return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
 	}
 
     private static SpatialTemporalMonitor<Double, Integer, Boolean> typeNode() {

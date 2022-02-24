@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.space;
 
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.*;

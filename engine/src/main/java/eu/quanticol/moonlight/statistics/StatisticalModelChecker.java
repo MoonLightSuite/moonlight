@@ -23,7 +23,7 @@ package eu.quanticol.moonlight.statistics;
 import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.statistics.SignalStatistics.Statistics;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;

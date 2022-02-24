@@ -23,6 +23,8 @@ package eu.quanticol.moonlight.space;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
@@ -31,7 +33,7 @@ import eu.quanticol.moonlight.util.Pair;
  */
 public class LocationServiceList<V> implements LocationService<Double, V> {
 	
-	private final LinkedList<Pair<Double,SpatialModel<V>>> steps = new LinkedList<>();
+	private final LinkedList<Pair<Double, SpatialModel<V>>> steps = new LinkedList<>();
 	private Pair<Double,SpatialModel<V>> last;
 	
 	public LocationServiceList() {

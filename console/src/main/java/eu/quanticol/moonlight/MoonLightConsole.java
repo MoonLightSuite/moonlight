@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 

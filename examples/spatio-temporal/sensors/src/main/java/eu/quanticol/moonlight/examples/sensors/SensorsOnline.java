@@ -10,9 +10,9 @@ import eu.quanticol.moonlight.online.monitoring.OnlineSpaceTimeMonitor;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
@@ -54,7 +54,7 @@ public class SensorsOnline {
                                 Function<Pair<Integer,Double>, Boolean>>>
                                                                  atomicFormulas;
     private static HashMap<String, Function<SpatialModel<Double>,
-                               DistanceStructure<Double, ?>>> distanceFunctions;
+            DefaultDistanceStructure<Double, ?>>> distanceFunctions;
     private static LocationService<Double, Double> locSvc;
 
     // Device types
@@ -173,11 +173,11 @@ public class SensorsOnline {
     private static void setDistanceFunctions() {
         distanceFunctions = new HashMap<>();
         distanceFunctions.put(DISTANCE,
-                m -> new DistanceStructure<>(x -> x , new DoubleDistance(),
+                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(),
                         0.0, 10.0, m));
 
         distanceFunctions.put(DISTANCE2,
-                m -> new DistanceStructure<>(x -> x , new DoubleDistance(),
+                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(),
                         0.0, 2.0, m));
     }
 

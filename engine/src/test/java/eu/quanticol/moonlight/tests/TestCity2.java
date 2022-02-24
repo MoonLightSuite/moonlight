@@ -20,10 +20,10 @@ import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
@@ -43,7 +43,7 @@ class TestCity2 {
 
     @Test
     void testDistanceInCity() {
-        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
         assertNotNull(city);
         assertEquals(2.0, ds.getDistance(0, 1), 0.0, "d(0,1)");
@@ -79,12 +79,12 @@ class TestCity2 {
         atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 0.5));
 
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
-        DistanceStructure<Double, Double> predist3 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
-        DistanceStructure<Double, Double> predist6 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, city);
-        DistanceStructure<Double, Double> predist10 = new DistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 10.0, city);
-        DistanceStructure<Double, Double> predistX = new DistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, city);
+        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
+        DefaultDistanceStructure<Double, Double> predist3 = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
+        DefaultDistanceStructure<Double, Double> predist6 = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, city);
+        DefaultDistanceStructure<Double, Double> predist10 = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 10.0, city);
+        DefaultDistanceStructure<Double, Double> predistX = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, city);
 
         distanceFunctions.put("distX", x -> predist);
         distanceFunctions.put("dist3", x -> predist3);

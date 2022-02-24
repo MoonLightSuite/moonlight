@@ -1,13 +1,13 @@
 package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.SpatialTemporalMonitorProducer;
-import eu.quanticol.moonlight.space.DistanceDomain;
+import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 
 import java.util.List;
 import java.util.Map;
@@ -187,17 +187,17 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
     @Override
     public SpatialTemporalMonitorProducer visitEverywhereExpression(MoonLightScriptParser.EverywhereExpressionContext ctx) {
         SpatialTemporalMonitorProducer arg = ctx.argument.accept(this);
-        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
+        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
         return SpatialTemporalMonitorProducer.produceEverywhere(arg,distance);
     }
 
-    private Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> getDistance(MoonLightScriptParser.ExpressionContext distanceExpression, MoonLightScriptParser.IntervalContext interval) {
+    private Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord,?>>> getDistance(MoonLightScriptParser.ExpressionContext distanceExpression, MoonLightScriptParser.IntervalContext interval) {
         DistanceDomain<Double> distance = new DoubleDistance();
         BiFunction<MoonLightRecord,MoonLightRecord,Double> distanceFunction = getDistanceFunction(distanceExpression);
         ParametricExpressionEvaluator evaluator = new ParametricExpressionEvaluator(resolver,inputHandler);
         Function<MoonLightRecord,Double> from = interval.from.accept(evaluator);
         Function<MoonLightRecord,Double> to = interval.to.accept(evaluator);
-        return r -> (m -> DistanceStructure.buildDistanceStructure(m,e -> distanceFunction.apply(r,e),from.apply(r),to.apply(r)));
+        return r -> (m -> DefaultDistanceStructure.buildDistanceStructure(m, e -> distanceFunction.apply(r,e),from.apply(r),to.apply(r)));
     }
 
     private BiFunction<MoonLightRecord, MoonLightRecord, Double> getDistanceFunction(MoonLightScriptParser.ExpressionContext distanceExpression) {
@@ -212,21 +212,21 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
     public SpatialTemporalMonitorProducer visitReachExpression(MoonLightScriptParser.ReachExpressionContext ctx) {
         SpatialTemporalMonitorProducer left = ctx.left.accept(this);
         SpatialTemporalMonitorProducer right = ctx.right.accept(this);
-        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
+        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
         return SpatialTemporalMonitorProducer.produceReach(left,distance,right);
     }
 
     @Override
     public SpatialTemporalMonitorProducer visitEscapeExpression(MoonLightScriptParser.EscapeExpressionContext ctx) {
         SpatialTemporalMonitorProducer arg = ctx.argument.accept(this);
-        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
+        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
         return SpatialTemporalMonitorProducer.produceEscape(arg,distance);
     }
 
     @Override
     public SpatialTemporalMonitorProducer visitSomewhereExpression(MoonLightScriptParser.SomewhereExpressionContext ctx) {
         SpatialTemporalMonitorProducer arg = ctx.argument.accept(this);
-        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
+        Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord,?>>> distance = getDistance(ctx.distanceExpression,ctx.interval());
         return SpatialTemporalMonitorProducer.produceSomewhere(arg,distance);
     }
 

@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

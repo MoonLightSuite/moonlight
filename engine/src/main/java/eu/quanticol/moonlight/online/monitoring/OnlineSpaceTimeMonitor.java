@@ -29,9 +29,9 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.online.monitoring.strategy.spacetime.*;
 import eu.quanticol.moonlight.online.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.online.signal.Update;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +62,7 @@ FormulaVisitor<Parameters,
     private final Map<String, Function<V, AbstractInterval<R>>> atoms;
 
     private final Map<String, Function<SpatialModel<S>,
-                                       DistanceStructure<S, ?>>> dist;
+            DefaultDistanceStructure<S, ?>>> dist;
 
     private final LocationService<Double, S> locSvc;
 
@@ -77,7 +77,7 @@ FormulaVisitor<Parameters,
             LocationService<Double, S> locationService,
             Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
-                                 DistanceStructure<S, ?>>> distanceFunctions)
+                    DefaultDistanceStructure<S, ?>>> distanceFunctions)
     {
         this(formula, size, interpretation, locationService,
              atomicPropositions, distanceFunctions, false);
@@ -90,7 +90,7 @@ FormulaVisitor<Parameters,
             LocationService<Double, S> locationService,
             Map<String, Function<V, AbstractInterval<R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
-                    DistanceStructure<S, ?>>> distanceFunctions,
+                    DefaultDistanceStructure<S, ?>>> distanceFunctions,
             boolean parallel)
     {
         this.atoms = atomicPropositions;
@@ -254,14 +254,14 @@ FormulaVisitor<Parameters,
     unarySpace(UnaryFormula f,
                Parameters p,
                BiFunction<IntFunction<AbstractInterval<R>>,
-                       DistanceStructure<S, ?>, List<AbstractInterval<R>>> op)
+                       DefaultDistanceStructure<S, ?>, List<AbstractInterval<R>>> op)
     {
         OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
                 argMonitor = f.getArgument().accept(this, p);
 
         String distF = ((SpatialFormula) f).getDistanceFunctionId();
 
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> d = dist.get(distF);
+        Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> d = dist.get(distF);
 
         SpatialComputation<Double, S, AbstractInterval<R>> sc =
                 new SpatialComputation<>(locSvc, d, op);
@@ -274,7 +274,7 @@ FormulaVisitor<Parameters,
 
     private List<AbstractInterval<R>> everywhereOp(
             IntFunction<AbstractInterval<R>> spatialSignal,
-            DistanceStructure<S, ?> ds)
+            DefaultDistanceStructure<S, ?> ds)
     {
         if(parallel)
             return everywhereParallel(new AbsIntervalDomain<>(interpretation),
@@ -285,7 +285,7 @@ FormulaVisitor<Parameters,
 
     private List<AbstractInterval<R>> somewhereOp(
             IntFunction<AbstractInterval<R>> spatialSignal,
-            DistanceStructure<S, ?> ds)
+            DefaultDistanceStructure<S, ?> ds)
     {
         if(parallel)
             return somewhereParallel(new AbsIntervalDomain<>(interpretation),
@@ -298,7 +298,7 @@ FormulaVisitor<Parameters,
 
     private List<AbstractInterval<R>> escapeOp(
             IntFunction<AbstractInterval<R>> spatialSignal,
-            DistanceStructure<S, ?> f)
+            DefaultDistanceStructure<S, ?> f)
     {
         return f.escape(new AbsIntervalDomain<>(interpretation), spatialSignal);
     }

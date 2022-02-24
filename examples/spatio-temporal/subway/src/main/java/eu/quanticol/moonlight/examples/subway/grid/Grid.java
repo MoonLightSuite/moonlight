@@ -4,8 +4,8 @@ import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
-import eu.quanticol.moonlight.space.SpatialModel;
-import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
@@ -194,8 +194,8 @@ public class Grid {
      * @param to double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
-        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+    public static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>> distance(double from, double to) {
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
 }

@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,19 +18,25 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.space;
+package eu.quanticol.moonlight.core.space;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.io.json.IllegalFileFormat;
-import eu.quanticol.moonlight.signal.RecordHandler;
+/**
+ * @author loreti
+ *
+ */
+public interface DistanceDomain<R> {
 
-import java.io.File;
-import java.io.IOException;
+    R zero();
 
-public interface LocationServiceLoader {
+    R infinity();
 
-    LocationService<Double, MoonLightRecord> load(RecordHandler handler, File input ) throws IOException, IllegalFileFormat;
-    LocationService<Double, MoonLightRecord> load(RecordHandler handler, String input ) throws  IllegalFileFormat;
+    boolean lessOrEqual(R x, R y);
+
+    boolean less(R x, R y);
+
+    R sum(R x, R y);
+
+    boolean equalTo(R x, R y);
 
 
 }

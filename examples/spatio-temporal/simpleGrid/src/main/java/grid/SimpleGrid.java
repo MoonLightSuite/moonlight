@@ -6,9 +6,9 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Utils;
 
 import java.io.IOException;
@@ -33,8 +33,8 @@ public class SimpleGrid {
         SpatialTemporalSignal<Double> signal = createSpatioTemporalSignal(sizeGrid * sizeGrid, 0, 1, tLength, (t, l) -> rand.nextDouble());
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, tLength, grid);
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 5., grid);
+        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 5., grid);
         distanceFunctions.put("dist", x -> predist);
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x - 0.2)));

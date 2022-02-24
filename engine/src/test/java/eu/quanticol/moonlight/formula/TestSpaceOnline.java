@@ -7,9 +7,9 @@ import eu.quanticol.moonlight.online.monitoring.OnlineSpaceTimeMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class TestSpaceOnline {
 
         HashMap<String,
                 Function<SpatialModel<Double>,
-                         DistanceStructure<Double, ?>>> dist = new HashMap<>();
+                        DefaultDistanceStructure<Double, ?>>> dist = new HashMap<>();
         dist.put("standard",
                     g -> distance(0.0, 1.0).apply(g));
 
@@ -206,7 +206,7 @@ class TestSpaceOnline {
      * @param upperBound double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
-        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
+    public static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
     }
 }

@@ -22,9 +22,9 @@ package eu.quanticol.moonlight.algorithms;
 
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;
@@ -41,7 +41,7 @@ public class ReachOperator {
 
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
@@ -70,7 +70,7 @@ public class ReachOperator {
         c1.move(time);
         c2.move(time);
         SpatialModel<S> sm = current.getSecond();
-        DistanceStructure<S, ?> f = distance.apply(sm);
+        DefaultDistanceStructure<S, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();

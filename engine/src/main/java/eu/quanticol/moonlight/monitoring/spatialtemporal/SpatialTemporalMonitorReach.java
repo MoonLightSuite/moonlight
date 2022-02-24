@@ -24,9 +24,9 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.algorithms.ReachOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
@@ -42,13 +42,13 @@ public class SpatialTemporalMonitorReach<S, T, R>
         implements SpatialTemporalMonitor<S, T, R>
 {
 	private final SpatialTemporalMonitor<S, T, R> m1;
-	private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+	private final Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance;
 	private final SpatialTemporalMonitor<S, T, R> m2;
 	private final SignalDomain<R> domain;
 
 	public SpatialTemporalMonitorReach(SpatialTemporalMonitor<S, T, R> m1,
 									   Function<SpatialModel<S>,
-                                       DistanceStructure<S, ?>> distance,
+											   DefaultDistanceStructure<S, ?>> distance,
 									   SpatialTemporalMonitor<S, T, R> m2,
 									   SignalDomain<R> domain)
     {

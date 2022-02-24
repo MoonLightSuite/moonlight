@@ -6,10 +6,10 @@ import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.ObjectSerializer;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
@@ -45,8 +45,8 @@ class TestSpatialTemporalProperties {
         SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 6.0, 10., grid);
+        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 6.0, 10., grid);
         distanceFunctions.put("dist6", x -> predist);
 
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
@@ -81,8 +81,8 @@ class TestSpatialTemporalProperties {
         int size = 5;
         SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
-        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> predist = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.5, 3.0, model);
+        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.5, 3.0, model);
         distanceFunctions.put("dist6", x -> predist);
 
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
@@ -297,7 +297,7 @@ class TestSpatialTemporalProperties {
     	model.add(25, 1,  5);
     	model.add(25, 1,  18);
     	model.add(25, 1,  20);
-    	DistanceStructure<Integer,Double> ds = new DistanceStructure<Integer, Double>(x -> 1.0, new DoubleDistance(), 0.0, 5.0, model);
+    	DefaultDistanceStructure<Integer,Double> ds = new DefaultDistanceStructure<Integer, Double>(x -> 1.0, new DoubleDistance(), 0.0, 5.0, model);
     	ds.getDistance(1, 25);
     }
 }

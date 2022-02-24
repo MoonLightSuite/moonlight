@@ -1,6 +1,9 @@
 package eu.quanticol.moonlight.algorithms.online;
 
 import eu.quanticol.moonlight.algorithms.SpaceUtilities;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
@@ -209,10 +212,10 @@ class SpatialComputationTest {
     }
 
 
-    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>
+    public static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>
     distance(double lowerBound, double upperBound)
     {
-        return g -> new DistanceStructure<>(x -> x,
+        return g -> new DefaultDistanceStructure<>(x -> x,
                                             new DoubleDistance(),
                                             lowerBound,
                                             upperBound,
@@ -220,31 +223,31 @@ class SpatialComputationTest {
     }
 
     private static List<Double> somewhereOp(IntFunction<Double> s,
-                                            DistanceStructure<Double, ?> ds)
+                                            DefaultDistanceStructure<Double, ?> ds)
     {
         return SpaceUtilities.somewhere(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOp(IntFunction<Double> s,
-                                             DistanceStructure<Double, ?> ds)
+                                             DefaultDistanceStructure<Double, ?> ds)
     {
         return SpaceUtilities.everywhere(DOUBLES, s, ds);
     }
 
     private static List<Double> somewhereOpParallel(IntFunction<Double> s,
-                                            DistanceStructure<Double, ?> ds)
+                                            DefaultDistanceStructure<Double, ?> ds)
     {
         return SpaceUtilities.somewhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOpParallel(IntFunction<Double> s,
-                                             DistanceStructure<Double, ?> ds)
+                                             DefaultDistanceStructure<Double, ?> ds)
     {
         return SpaceUtilities.everywhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> escapeOp(IntFunction<Double> s,
-                                         DistanceStructure<Double, ?> ds)
+                                         DefaultDistanceStructure<Double, ?> ds)
     {
         return ds.escape(DOUBLES, s);
     }

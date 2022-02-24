@@ -23,9 +23,9 @@ package eu.quanticol.moonlight.online.algorithms;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class ReachOperator
         <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
 {
     private final LocationService<T, S> locSvc;
-    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
+    private final Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> dist;
     /*private final BiFunction<Function<Integer, R>,
             DistanceStructure<S, ?>,
             List<R>> op;*/
@@ -53,7 +53,7 @@ public class ReachOperator
 
     public ReachOperator(@NotNull LocationService<T, S> locationService,
                          Function<SpatialModel<S>,
-                                  DistanceStructure<S, ?>> distance,
+                                 DefaultDistanceStructure<S, ?>> distance,
                          SignalDomain<R> domain,
                          SpatialTemporalSignal<R> s1,
                          SpatialTemporalSignal<R> s2)
@@ -72,7 +72,7 @@ public class ReachOperator
 
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
@@ -101,7 +101,7 @@ public class ReachOperator
         c1.move(time);
         c2.move(time);
         SpatialModel<S> sm = current.getSecond();
-        DistanceStructure<S, ?> f = distance.apply(sm);
+        DefaultDistanceStructure<S, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();

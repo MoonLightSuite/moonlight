@@ -10,10 +10,10 @@ import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.statistics.SignalStatistics;
 import eu.quanticol.moonlight.util.Pair;
 
@@ -90,17 +90,17 @@ public class Bikes {
 
         // We define some spatial distance functions of interest
         HashMap<String,
-                Function<SpatialModel<Double>, DistanceStructure<Double, ?>>>
+                Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>>
                 distanceFunctions = new HashMap<>();
-        DistanceStructure<Double, Double> dist =
-                new DistanceStructure<>(x -> x,
+        DefaultDistanceStructure<Double, Double> dist =
+                new DefaultDistanceStructure<>(x -> x,
                         new DoubleDistance(),
                         0.0, d,
                         spatialModel);
         distanceFunctions.put("dist", x -> dist);
 
-        DistanceStructure<Double, Double> dist_spot =
-                new DistanceStructure<>(x -> x,
+        DefaultDistanceStructure<Double, Double> dist_spot =
+                new DefaultDistanceStructure<>(x -> x,
                         new DoubleDistance(),
                         0.0, 1.0,
                         spatialModel);

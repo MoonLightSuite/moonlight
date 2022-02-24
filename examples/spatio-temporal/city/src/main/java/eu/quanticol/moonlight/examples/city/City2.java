@@ -6,9 +6,9 @@ import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import eu.quanticol.moonlight.util.Triple;
@@ -81,8 +81,8 @@ public class City2 {
         return SpatialTemporalMonitor.reachMonitor(isThereATaxi(), distance(from,to), stopReachMainSquare(), booleanDomain);
     }
 
-    private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
-        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+    private static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>  distance(double from, double to) {
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> stopReachMainSquare() {

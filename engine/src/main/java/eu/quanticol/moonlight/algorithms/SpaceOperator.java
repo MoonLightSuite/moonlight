@@ -22,9 +22,9 @@ package eu.quanticol.moonlight.algorithms;
 
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Iterator;
@@ -42,9 +42,9 @@ public class SpaceOperator {
 
     public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(
             LocationService<Double, S> l,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
             BiFunction<IntFunction<R>,
-                       DistanceStructure<S, ?>,
+                    DefaultDistanceStructure<S, ?>,
                        List<R>> operator,
             SpatialTemporalSignal<R> s)
     {
@@ -74,7 +74,7 @@ public class SpaceOperator {
 
     public static <S,R> SpatialTemporalSignal<R> computeEscapeDynamic(
             LocationService<Double, S> l,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s)
     {
@@ -109,8 +109,8 @@ public class SpaceOperator {
             double time,
             Pair<Double, SpatialModel<S>> current,
             Pair<Double, SpatialModel<S>> next,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
+            BiFunction<IntFunction<R>, DefaultDistanceStructure<S, ?>, List<R>> operator,
             SpatialTemporalSignal<R> toReturn,
             Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
     {
@@ -119,7 +119,7 @@ public class SpaceOperator {
         while (!cursor.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<S> sm = current.getSecond();
-            DistanceStructure<S, ?> f = distance.apply(sm);
+            DefaultDistanceStructure<S, ?> f = distance.apply(sm);
             toReturn.add(time, operator.apply(spatialSignal, f));
             double nextTime = cursor.forward();
             while ((next != null) && (next.getFirst() < nextTime)) {
@@ -145,7 +145,7 @@ public class SpaceOperator {
             double time,
             Pair<Double, SpatialModel<S>> current,
             Pair<Double, SpatialModel<S>> next,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> toReturn,
             Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
@@ -153,7 +153,7 @@ public class SpaceOperator {
         // Loop invariant: (current.getFirst() <= time) &&
         //                 ((next==null)||(time<next.getFirst()))
         SpatialModel<S> sm = current.getSecond();
-        DistanceStructure<S, ?> f = distance.apply(sm);
+        DefaultDistanceStructure<S, ?> f = distance.apply(sm);
         while (!cursor.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             toReturn.add(time, f.escape(domain, spatialSignal));

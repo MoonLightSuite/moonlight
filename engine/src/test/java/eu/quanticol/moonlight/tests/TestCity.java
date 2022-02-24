@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.domain.DoubleDistance;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +27,7 @@ class TestCity {
 
     @Test
     void testDistanceInCity() {
-        DistanceStructure<Double, Double> ds = new DistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
         assertNotNull(city);
         assertEquals(2.0, ds.getDistance(0, 1), 0.0, "d(0,1)");

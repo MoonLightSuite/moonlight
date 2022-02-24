@@ -2,8 +2,8 @@ package eu.quanticol.moonlight.examples.subway.grid;
 
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.examples.subway.Subway;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
@@ -23,8 +23,8 @@ class GridTest {
         SpatialModel<Double> network = new Grid().getModel(NETWORK_SOURCE);
         //SpatialModel<Double> network = Grid.simulateModel();
 
-        DistanceStructure<Double, Double> ds =
-                new DistanceStructure<>(x -> x, new DoubleDistance(),
+        DefaultDistanceStructure<Double, Double> ds =
+                new DefaultDistanceStructure<>(x -> x, new DoubleDistance(),
                               0.0, (double) network.size(), network);
         Double d = ds.getDistance(21, 42);
         assertEquals(1, d);

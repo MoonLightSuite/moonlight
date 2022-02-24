@@ -22,8 +22,8 @@ package eu.quanticol.moonlight.monitoring;
 
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.SignalDomain;
 
 import java.util.Map;
@@ -50,7 +50,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
 
     private final Map<String, Function<Parameters, Function<T, R>>> atomicPropositions;
 
-    private final Map<String, Function<SpatialModel<S>, DistanceStructure<S, ?>>> distanceFunctions;
+    private final Map<String, Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>>> distanceFunctions;
 
     private final SignalDomain<R> module;
 
@@ -70,7 +70,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
     public SpatialTemporalMonitoring(
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
-            DistanceStructure<S, ?>>> distanceFunctions,
+                    DefaultDistanceStructure<S, ?>>> distanceFunctions,
             SignalDomain<R> module,
             boolean staticSpace)
     {
@@ -193,7 +193,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             SomewhereFormula somewhereFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
+        Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
         SpatialTemporalMonitor<S,T,R> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.somewhereMonitor(argumentMonitor, distanceFunction, module);
     }
@@ -204,7 +204,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             EverywhereFormula everywhereFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
+        Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
         SpatialTemporalMonitor<S,T,R> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.everywhereMonitor(argumentMonitor, distanceFunction, module);
     }
@@ -216,7 +216,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             ReachFormula reachFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
+        Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
         SpatialTemporalMonitor<S,T,R> m1 = reachFormula.getFirstArgument().accept(this, parameters);
         SpatialTemporalMonitor<S,T,R> m2 = reachFormula.getSecondArgument().accept(this, parameters);
         return SpatialTemporalMonitor.reachMonitor(m1, distanceFunction, m2, module);
@@ -229,7 +229,7 @@ public class SpatialTemporalMonitoring<S, T, R> implements
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             EscapeFormula escapeFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
+        Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
         SpatialTemporalMonitor<S,T,R> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
         return SpatialTemporalMonitor.escapeMonitor(argumentMonitor, distanceFunction, module);
     }

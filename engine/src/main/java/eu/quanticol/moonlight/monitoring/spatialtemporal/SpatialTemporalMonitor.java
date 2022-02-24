@@ -26,9 +26,9 @@ import eu.quanticol.moonlight.monitoring.temporal.*;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 
 /**
  * Primary SpatialTemporal Monitoring interface
@@ -191,7 +191,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> somewhereMonitor(
 			SpatialTemporalMonitor<S, T, R> m ,
 			Function<SpatialModel<S>,
-					DistanceStructure<S, ?>> distance,
+					DefaultDistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
 		return new SpatialTemporalMonitorSomewhere<>(m,distance,domain);
@@ -200,7 +200,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> everywhereMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
 			Function<SpatialModel<S>,
-			DistanceStructure<S, ?>> distance,
+					DefaultDistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
 		return new SpatialTemporalMonitorEverywhere<>(m, distance, domain);
@@ -209,7 +209,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> escapeMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
 			Function<SpatialModel<S>,
-			DistanceStructure<S, ?>> distance,
+					DefaultDistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
 		return new SpatialTemporalMonitorEscape<>(m, distance, domain);
@@ -218,7 +218,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> reachMonitor(
 			SpatialTemporalMonitor<S, T, R> m1,
 			Function<SpatialModel<S>,
-			DistanceStructure<S, ?>> distance,
+					DefaultDistanceStructure<S, ?>> distance,
 			SpatialTemporalMonitor<S, T, R> m2,
 			SignalDomain<R> domain )
 	{

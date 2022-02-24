@@ -24,9 +24,9 @@ import java.util.function.Function;
 
 import eu.quanticol.moonlight.algorithms.SpaceOperator;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
@@ -42,12 +42,12 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 		implements SpatialTemporalMonitor<S, T, R>
 {
 	private final SpatialTemporalMonitor<S, T, R> m;
-	private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+	private final Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance;
 	private final SignalDomain<R> domain;
 
 	public SpatialTemporalMonitorEscape(SpatialTemporalMonitor<S, T, R> m,
 										Function<SpatialModel<S>,
-										DistanceStructure<S, ?>> distance,
+												DefaultDistanceStructure<S, ?>> distance,
 										SignalDomain<R> domain)
 	{
 		this.m = m;

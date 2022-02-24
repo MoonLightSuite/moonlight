@@ -12,10 +12,10 @@ import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 
 import java.io.File;
 import java.net.URL;
@@ -131,14 +131,14 @@ public class EpidemicMain {
         return SpatialTemporalMonitor.atomicMonitor(p -> p.get(0,Integer.class).intValue()== S);
     }
 
-    private static Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>> distance(double from, double to) {
-        return g -> new DistanceStructure<>(x -> x.get(0,Double.class).doubleValue(), new DoubleDistance(), from, to, g);
+    private static Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>> distance(double from, double to) {
+        return g -> new DefaultDistanceStructure<>(x -> x.get(0,Double.class).doubleValue(), new DoubleDistance(), from, to, g);
     }
 
 
-    private static Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>> hopDistance(double from, double to) {
+    private static Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>> hopDistance(double from, double to) {
         int k = 1;
-        return g -> new DistanceStructure<>( x-> 1.0, new DoubleDistance(), from, to, g);
+        return g -> new DefaultDistanceStructure<>(x-> 1.0, new DoubleDistance(), from, to, g);
     }
 
 

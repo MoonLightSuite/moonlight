@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.io.parsing;
 
 import eu.quanticol.moonlight.space.ImmutableGraphModel;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 
 /**
  * Parsing strategy that generates a GraphModel based on

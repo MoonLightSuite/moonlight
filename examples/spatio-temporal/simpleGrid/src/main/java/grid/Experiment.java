@@ -1,9 +1,9 @@
 package grid;
 
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Utils;
 

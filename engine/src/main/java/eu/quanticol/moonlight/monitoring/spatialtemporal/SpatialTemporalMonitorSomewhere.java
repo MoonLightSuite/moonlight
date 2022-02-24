@@ -26,10 +26,10 @@ import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Pair;
 
@@ -45,11 +45,11 @@ import eu.quanticol.moonlight.util.Pair;
 public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporalMonitor<S, T, R> {
 
 	private SpatialTemporalMonitor<S, T, R> m;
-	private Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+	private Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance;
 	private SignalDomain<R> domain;
 
 	public SpatialTemporalMonitorSomewhere(SpatialTemporalMonitor<S, T, R> m,
-                                           Function<SpatialModel<S>, DistanceStructure<S, ?>> distance, SignalDomain<R> domain) {
+                                           Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance, SignalDomain<R> domain) {
 		this.m = m;
 		this.distance = distance;
 		this.domain = domain;
@@ -79,7 +79,7 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
         while (!cursor.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<S> sm = current.getSecond();
-            DistanceStructure<S, ?> f = distance.apply(sm);
+            DefaultDistanceStructure<S, ?> f = distance.apply(sm);
             toReturn.add(time, SpaceUtilities.somewhere(domain, spatialSignal, f));
             double nextTime = cursor.forward();
             while ((next != null)&&(next.getFirst()<nextTime)) {
