@@ -55,11 +55,11 @@ public class EscapeAlgorithm<E, M, R> {
     }
 
     private Set<Pair<Integer, Integer>> updateShortestPaths(
-            Set<Pair<Integer, Integer>> tList)
+            Set<Pair<Integer, Integer>> neighbourhood)
     {
         Map<Integer, Map<Integer, R>> neighboursDistanceMap = new HashMap<>();
         Set<Pair<Integer, Integer>> extendedNeighbourhood = new HashSet<>();
-        for (Pair<Integer, Integer> pair : tList) {
+        for (Pair<Integer, Integer> pair : neighbourhood) {
             int l1 = pair.getFirst();
             int l2 = pair.getSecond();
             updateDistance(l1, l2, extendedNeighbourhood, neighboursDistanceMap);

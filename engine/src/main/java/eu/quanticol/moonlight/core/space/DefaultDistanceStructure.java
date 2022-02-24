@@ -35,15 +35,12 @@ import java.util.stream.IntStream;
  * @author loreti
  */
 public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
+    private final Function<E, M> distanceFunction;
     private final DistanceDomain<M> distanceDomain;
-
+    private final Map<Integer,Map<Integer, M>> distanceMatrix;
     private final M lowerBound;
     private final M upperBound;
-
     private final SpatialModel<E> model;
-
-    private final Function<E, M> distanceFunction;
-    private final Map<Integer,Map<Integer, M>> distanceMatrix;
 
     public DefaultDistanceStructure(@NotNull Function<E, M> distanceFunction,
                                     @NotNull DistanceDomain<M> distanceDomain,
@@ -56,7 +53,6 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.model = model;
-
         this.distanceMatrix = computeDistanceMatrix();
     }
 
@@ -87,6 +83,31 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
     @Override
     public boolean canReach(int from, int to) {
         return isWithinBounds(getDistance(from, to));
+    }
+
+    public <R> List<R> escape(SignalDomain<R> signalDomain,
+                              IntFunction<R> spatialSignal)
+    {
+
+        return new EscapeAlgorithm<>(this, signalDomain, spatialSignal)
+                .compute();
+    }
+
+    public <R> List<R> reach(SignalDomain<R> signalDomain,
+                             IntFunction<R> leftSpatialSignal,
+                             IntFunction<R> rightSpatialSignal)
+    {
+        return new ReachAlgorithm<>(this,
+                                    signalDomain,
+                                    leftSpatialSignal,
+                                    rightSpatialSignal)
+                .compute();
+    }
+
+    @Override
+    public boolean isWithinBounds(M d) {
+        return distanceDomain.lessOrEqual(lowerBound, d) &&
+                distanceDomain.lessOrEqual(d, upperBound);
     }
 
     private Map<Integer,Map<Integer, M>> computeDistanceMatrix() {
@@ -120,36 +141,15 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
         return distM;
     }
 
-    public <R> List<R> escape(SignalDomain<R> signalDomain,
-                              IntFunction<R> spatialSignal)
-    {
-
-        return new EscapeAlgorithm<>(this, signalDomain, spatialSignal)
-                .compute();
-    }
-
-    public <R> List<R> reach(SignalDomain<R> signalDomain,
-                             IntFunction<R> leftSpatialSignal,
-                             IntFunction<R> rightSpatialSignal)
-    {
-        return new ReachAlgorithm<>(this,
-                                    signalDomain,
-                                    leftSpatialSignal,
-                                    rightSpatialSignal)
-                .compute();
-    }
-
-    @Override
-    public boolean isWithinBounds(M d) {
-        return distanceDomain.lessOrEqual(lowerBound, d) &&
-                distanceDomain.lessOrEqual(d, upperBound);
-    }
-
-    public static <T> DefaultDistanceStructure<T, Double> buildDistanceStructure(
-            SpatialModel<T> model,
-            Function<T, Double> distance,
-            double lowerBound,
-            double upperBound)
+    /**
+     * @deprecated replace with constructor
+     */
+    @Deprecated
+    public static <T> DefaultDistanceStructure<T, Double>
+    buildDistanceStructure(SpatialModel<T> model,
+                           Function<T, Double> distance,
+                           double lowerBound,
+                           double upperBound)
     {
         return new DefaultDistanceStructure<>(distance, new DoubleDistance(),
                 lowerBound, upperBound, model);
