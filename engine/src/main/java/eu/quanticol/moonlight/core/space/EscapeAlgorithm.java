@@ -128,7 +128,7 @@ public class EscapeAlgorithm<E, M, R> {
         for (Map.Entry<Integer, R> k: entries) {
             int location = k.getKey();
             R distance = k.getValue();
-            if (distStr.canReach(i, location)) {
+            if (distStr.areWithinBounds(i, location)) {
                 value = signalDomain.disjunction(value, distance);
             }
         }

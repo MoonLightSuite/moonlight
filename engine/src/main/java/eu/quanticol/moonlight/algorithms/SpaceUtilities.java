@@ -22,7 +22,7 @@ public class SpaceUtilities {
         for (int i = 0; i < ds.getModel().size(); i++) {
             R v = dModule.max();
             for (int j = 0; j < ds.getModel().size(); j++) {
-                if (ds.canReach(i, j)) {
+                if (ds.areWithinBounds(i, j)) {
                     v = dModule.conjunction(v, s.apply(j));
                 }
             }
@@ -39,7 +39,7 @@ public class SpaceUtilities {
         for (int i = 0; i < ds.getModel().size(); i++) {
             R v = dModule.min();
             for (int j = 0; j < ds.getModel().size(); j++) {
-                if (ds.canReach(i, j)) {
+                if (ds.areWithinBounds(i, j)) {
                     v = dModule.disjunction(v, s.apply(j));
                 }
             }
@@ -60,7 +60,7 @@ public class SpaceUtilities {
                 .map(i -> {
                     R v = dModule.min();
                     for (int j = 0; j < ds.getModel().size(); j++) {
-                        if (ds.canReach(i, j)) {
+                        if (ds.areWithinBounds(i, j)) {
                             v = dModule.disjunction(v, s.apply(j));
                         }
                     }
@@ -80,7 +80,7 @@ public class SpaceUtilities {
                 .map(i -> {
                     R v = dModule.max();
                     for (int j = 0; j < ds.getModel().size(); j++) {
-                        if (ds.canReach(i, j)) {
+                        if (ds.areWithinBounds(i, j)) {
                             v = dModule.conjunction(v, s.apply(j));
                         }
                     }

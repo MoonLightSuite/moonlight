@@ -21,6 +21,13 @@ public class ReachAlgorithm<E, M, R> {
     private final IntFunction<R> rightSpatialSignal;
     private final DistanceStructure<E, M> distStr;
     private final DistanceDomain<M> distanceDomain;
+    private final List<Triple<Integer, M, R>> reachabilityQueue;
+
+    /**
+     * This reachability list is quite special: the i-th element of the list
+     * denotes the set of optimal values for each distance from location i.
+     */
+    private final List<Map<M, R>> reachabilityFunction;
 
     public ReachAlgorithm(DistanceStructure<E, M> distStr,
                           SignalDomain<R> signalDomain,
@@ -32,67 +39,72 @@ public class ReachAlgorithm<E, M, R> {
         this.model = distStr.getModel();
         this.distanceDomain = distStr.getDistanceDomain();
         this.signalDomain = signalDomain;
+        this.reachabilityFunction = new ArrayList<>();
+        this.reachabilityQueue = new LinkedList<>();
     }
 
     /**
      * @return reach's algorithm computation
      */
     public List<R> compute() {
-        List<Map<M, R>> reachFunc = new ArrayList<>();
-        List<Triple<Integer, M, R>> queue = initReach(reachFunc);
-        reachCore(queue, reachFunc);
-        return collectReachValue(reachFunc);
+        initReachabilityMap();
+        reachCore();
+        return selectMaxReachabilityValues();
     }
 
-    private List<Triple<Integer, M, R>> initReach(List<Map<M, R>> reachFunc) {
-        List<Triple<Integer, M, R>> bestReachableValues = new LinkedList<>();
+    /**
+     * initializes the list of the best reachable values
+     */
+    private void initReachabilityMap() {
         for(int loc = 0; loc < model.size(); loc++) {
-            Map<M, R> reachabilityMap = initReachabilityMap(loc, bestReachableValues);
-            reachFunc.add(reachabilityMap);
+            Map<M, R> reachabilityMap = fetchInitialReachabilityMap(loc);
+            reachabilityFunction.add(reachabilityMap);
         }
-        return bestReachableValues;
     }
 
-    private Map<M, R> initReachabilityMap(
-            int location,
-            List<Triple<Integer, M, R>> bestReachableValues)
+    private Map<M, R> fetchInitialReachabilityMap(int location)
     {
         Map<M, R> reachabilityMap = new HashMap<>();
         R rightValue = rightSpatialSignal.apply(location);
         reachabilityMap.put(distanceDomain.zero(), rightValue);
-
-        bestReachableValues.add(new Triple<>(location,
-                                             distanceDomain.zero(),
-                                             rightValue));
-
+        reachabilityQueue.add(new Triple<>(location,
+                                           distanceDomain.zero(),
+                                           rightValue));
         return reachabilityMap;
     }
 
-    private void reachCore(List<Triple<Integer, M, R>> bestReachableValues,
-                               List<Map<M, R>> reachFunc)
-    {
-        while (!bestReachableValues.isEmpty()) {
-            Triple<Integer, M, R> t1 = bestReachableValues.remove(0);
+    private void reachCore() {
+        while (!reachabilityQueue.isEmpty()) {
+            Triple<Integer, M, R> t1 = reachabilityQueue.remove(0);
             int l1 = t1.getFirst();
             M d1 = t1.getSecond();
             R v1 = t1.getThird();
-            for (Pair<Integer, E> pre: model.previous(l1)) {
-                int l2 = pre.getFirst();
-                M d2 = distanceDomain.sum(
-                        distStr.getDistanceFunction().apply(pre.getSecond()),
-                                                            d1);
-                // Note: old condition was distanceDomain.lessOrEqual(d2, upperBound)
-                // but I think this one is more correct
-                if (distStr.isWithinBounds(d2)) {
-                    Triple<Integer, M, R> t2 = combine(l2, d2,
-                            signalDomain.conjunction(v1, leftSpatialSignal.apply(l2)),
-                                                     reachFunc.get(l2));
-                    if (t2 != null) {
-                        bestReachableValues.add(t2);
-                    }
+            updateReachability(l1, d1, v1);
+        }
+    }
+
+    private void updateReachability(int l1, M d1, R v1)
+    {
+        for (Pair<Integer, E> neighbour: model.previous(l1)) {
+            int l2 = neighbour.getFirst();
+            M d2 = newDistance(d1, neighbour.getSecond());
+            // Note: old condition was distanceDomain.lessOrEqual(d2, upperBound)
+            // but I think this one is more correct
+            if (distStr.isWithinBounds(d2)) {
+                Triple<Integer, M, R> t2 = combine(l2, d2,
+                        signalDomain.conjunction(v1, leftSpatialSignal.apply(l2)),
+                        reachabilityFunction.get(l2));
+                if (t2 != null) {
+                    reachabilityQueue.add(t2);
                 }
             }
         }
+    }
+
+    private M newDistance(M d1, E weight) {
+        return distanceDomain.sum(
+                distStr.getDistanceFunction().apply(weight),
+                d1);
     }
 
     private Triple<Integer, M, R> combine(int l, M d, R v, Map<M, R> fr) {
@@ -111,19 +123,19 @@ public class ReachAlgorithm<E, M, R> {
         return null;
     }
 
-    private List<R> collectReachValue(List<Map<M, R>> reachFunction)
+    private List<R> selectMaxReachabilityValues()
     {
-        return reachFunction.stream()
-                .map(rf -> computeReachValue(signalDomain, rf))
-                .collect(Collectors.toCollection(ArrayList::new));
+        return reachabilityFunction.stream()
+                        .map(this::maximizeLocationValue)
+                        .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private R computeReachValue(SignalDomain<R> mDomain, Map<M, R> rf)
+    private R maximizeLocationValue(Map<M, R> reachabilityMap)
     {
-        return rf.entrySet()
+        return reachabilityMap.entrySet()
                 .stream()
                 .filter(e -> distStr.isWithinBounds(e.getKey()))
                 .map(Map.Entry::getValue)
-                .reduce(mDomain.min(), mDomain::disjunction);
+                .reduce(signalDomain.min(), signalDomain::disjunction);
     }
 }

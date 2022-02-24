@@ -45,7 +45,7 @@ public interface DistanceStructure<E, M> {
      * @return <code>true</code> when <code>to</code> can be reached.
      *         <code>false</code> otherwise
      */
-    boolean canReach(int from, int to);
+    boolean areWithinBounds(int from, int to);
 
     /**
      * Method to assess whether one location is within the bounds of the

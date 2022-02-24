@@ -139,7 +139,7 @@ public class SpatialComputation
         tNext = seekSpace(t, tNext, spaceItr);
         SpatialModel<S> sm = currSpace.getSecond();
         DefaultDistanceStructure<S, ?> f = dist.apply(sm);
-        f.canReach(0, 0); //TODO: Done to force pre-computation
+        f.areWithinBounds(0, 0); //TODO: Done to force pre-computation
                                     // of distance matrix
 
         op.accept(t, tNext, f, spatialSignal, spaceItr);

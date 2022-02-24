@@ -81,7 +81,7 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
     }
 
     @Override
-    public boolean canReach(int from, int to) {
+    public boolean areWithinBounds(int from, int to) {
         return isWithinBounds(getDistance(from, to));
     }
 
