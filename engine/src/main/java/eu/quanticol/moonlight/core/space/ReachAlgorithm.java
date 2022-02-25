@@ -1,3 +1,23 @@
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.quanticol.moonlight.core.space;
 
 import eu.quanticol.moonlight.domain.SignalDomain;
@@ -88,8 +108,8 @@ public class ReachAlgorithm<E, M, R> {
             // but I think this one is more correct
             if (distStr.isWithinBounds(d2)) {
                 R value = signalDomain.conjunction(v1,
-                                            leftSpatialSignal.apply(l2));
-                combine(l2, d2, value);
+                                                   leftSpatialSignal.apply(l2));
+                evaluateReachabilityUpdate(l2, d2, value);
             }
         }
     }
@@ -100,7 +120,7 @@ public class ReachAlgorithm<E, M, R> {
                 d1);
     }
 
-    private void combine(int location, M distance, R value) {
+    private void evaluateReachabilityUpdate(int location, M distance, R value) {
         Map<M, R> reachableValues = reachabilityFunction.get(location);
         if(reachableValues.containsKey(distance)) {
             R oldValue = reachableValues.get(distance);
@@ -128,10 +148,8 @@ public class ReachAlgorithm<E, M, R> {
                         .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private R maximizeLocationValue(Map<M, R> reachabilityMap)
-    {
-        return reachabilityMap.entrySet()
-                .stream()
+    private R maximizeLocationValue(Map<M, R> reachabilityMap) {
+        return reachabilityMap.entrySet().stream()
                 .filter(e -> distStr.isWithinBounds(e.getKey()))
                 .map(Map.Entry::getValue)
                 .reduce(signalDomain.min(), signalDomain::disjunction);

@@ -37,7 +37,6 @@ import java.util.function.IntFunction;
  * Algorithm for Somewhere and Everywhere Computation
  */
 public class SpaceOperator {
-
     private SpaceOperator() {} // Hidden constructor
 
     public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(

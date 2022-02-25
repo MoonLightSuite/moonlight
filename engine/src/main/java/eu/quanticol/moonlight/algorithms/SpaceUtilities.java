@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SpaceUtilities {
-    private SpaceUtilities() {}
-
-
+    private SpaceUtilities() {} // Hidden constructor
 
     public static <T, A, R> List<R> everywhere(SignalDomain<R> dModule,
                                                IntFunction<R> s,

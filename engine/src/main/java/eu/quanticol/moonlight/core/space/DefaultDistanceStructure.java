@@ -32,7 +32,6 @@ import java.util.stream.IntStream;
  *
  * @param <E> Type of edge labels of the spatial model.
  * @param <M> Type of the distance metric
- * @author loreti
  */
 public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
     private final Function<E, M> distanceFunction;
@@ -111,38 +110,58 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
     }
 
     private Map<Integer,Map<Integer, M>> computeDistanceMatrix() {
-        Map<Integer, Map<Integer, M>> distM = new HashMap<>();
-        IntStream.range(0, model.size()).forEach(i -> {
-            Map<Integer, M> map = new HashMap<>();
-            map.put(i, distanceDomain.zero());
-            distM.put(i, map);
-        });
-        LinkedList<Pair<Integer, Pair<Integer, M>>> queue =
-                IntStream
-                        .range(0, model.size())
-                        .boxed()
-                        .map(i -> new Pair<>(i, new Pair<>(i, distanceDomain.zero())))
-                        .collect(Collectors.toCollection(LinkedList::new));
-        while (!queue.isEmpty()) {
+        Map<Integer, Map<Integer, M>> distanceMap = distanceMapInit();
+        Deque<Pair<Integer, Pair<Integer, M>>> queue = distanceQueueInit();
+        while(!queue.isEmpty()) {
             Pair<Integer, Pair<Integer, M>> p = queue.poll();
             int l1 = p.getFirst();
             int l2 = p.getSecond().getFirst();
             M d1 = p.getSecond().getSecond();
-            for (Pair<Integer, E> e : model.previous(l1)) {
-                M newD = distanceDomain.sum(distanceFunction.apply(e.getSecond()), d1);
-                Map<Integer, M> map = distM.get(e.getFirst());
-                M oldD = map.getOrDefault(l2, distanceDomain.infinity());
-                if (distanceDomain.less(newD, oldD)) {
-                    map.put(l2, newD);
-                    queue.add(new Pair<>(e.getFirst(), new Pair<>(l2, newD)));
-                }
+            computeDistances(distanceMap, queue, l1, l2, d1);
+        }
+        return distanceMap;
+    }
+
+    private void computeDistances(Map<Integer, Map<Integer, M>> distanceMap,
+                                  Deque<Pair<Integer, Pair<Integer, M>>> queue,
+                                  int l1, int l2, M d1)
+    {
+        for (Pair<Integer, E> edge: model.previous(l1)) {
+            M newD = increaseDistance(d1, edge);
+            Map<Integer, M> distances = distanceMap.get(edge.getFirst());
+            M oldD = distances.getOrDefault(l2, distanceDomain.infinity());
+            if (distanceDomain.less(newD, oldD)) {
+                distances.put(l2, newD);
+                queue.add(new Pair<>(edge.getFirst(), new Pair<>(l2, newD)));
             }
         }
-        return distM;
+    }
+
+    private M increaseDistance(M d, Pair<Integer, E> edge) {
+        return distanceDomain.sum(distanceFunction.apply(edge.getSecond()), d);
+    }
+
+    private LinkedList<Pair<Integer, Pair<Integer, M>>> distanceQueueInit() {
+        return IntStream.range(0, model.size()).boxed()
+                        .map(i -> new Pair<>(i,
+                            new Pair<>(i,
+                                distanceDomain.zero())))
+                        .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    private Map<Integer, Map<Integer, M>> distanceMapInit() {
+        Map<Integer, Map<Integer, M>> distanceMap = new HashMap<>();
+        IntStream.range(0, model.size()).forEach(location -> {
+            Map<Integer, M> locationDistances = new HashMap<>();
+            locationDistances.put(location, distanceDomain.zero());
+            distanceMap.put(location, locationDistances);
+        });
+        return distanceMap;
     }
 
     /**
-     * @deprecated replace with constructor
+     * @deprecated useless and opaque.
+     *             Replace with direct constructor call.
      */
     @Deprecated
     public static <T> DefaultDistanceStructure<T, Double>
