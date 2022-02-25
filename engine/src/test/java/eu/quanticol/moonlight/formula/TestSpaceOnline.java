@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
@@ -42,7 +43,7 @@ class TestSpaceOnline {
 
         HashMap<String,
                 Function<SpatialModel<Double>,
-                        DefaultDistanceStructure<Double, ?>>> dist = new HashMap<>();
+                         DistanceStructure<Double, ?>>> dist = new HashMap<>();
         dist.put("standard",
                     g -> distance(0.0, 1.0).apply(g));
 
@@ -206,7 +207,7 @@ class TestSpaceOnline {
      * @param upperBound double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-    public static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
+    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
         return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
     }
 }

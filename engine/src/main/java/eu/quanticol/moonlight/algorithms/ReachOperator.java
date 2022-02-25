@@ -20,9 +20,9 @@
 
 package eu.quanticol.moonlight.algorithms;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.signal.*;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
@@ -31,6 +31,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.escape;
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.reach;
 
 /**
  * Algorithm for Reach Operator Computation
@@ -41,7 +44,7 @@ public class ReachOperator {
 
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,
-            Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> distance,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
@@ -70,11 +73,11 @@ public class ReachOperator {
         c1.move(time);
         c2.move(time);
         SpatialModel<S> sm = current.getSecond();
-        DefaultDistanceStructure<S, ?> f = distance.apply(sm);
+        DistanceStructure<S, ?> f = distance.apply(sm);
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();
-            List<R> values =  f.reach(domain, spatialSignal1, spatialSignal2);
+            List<R> values =  reach(domain, spatialSignal1, spatialSignal2, f);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(nextTime);
@@ -84,8 +87,8 @@ public class ReachOperator {
                 time = current.getFirst();
                 next = getNext(locSvcIterator);
                 f = distance.apply(current.getSecond());
-                values =  f.reach(domain, spatialSignal1, spatialSignal2);
-                toReturn.add(time, f.escape(domain,(values::get)));
+                values =  reach(domain, spatialSignal1, spatialSignal2, f);
+                toReturn.add(time, escape(domain, (values::get), f));
             }
             time = nextTime;
             if ((next != null) && (next.getFirst() == time)) {

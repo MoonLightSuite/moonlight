@@ -1,6 +1,9 @@
 package eu.quanticol.moonlight.examples.sensors;
 
 import com.mathworks.engine.MatlabEngine;
+import eu.quanticol.moonlight.api.MatlabExecutor;
+import eu.quanticol.moonlight.api.configurator.MatlabDataConverter;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -12,8 +15,6 @@ import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
-import eu.quanticol.moonlight.utility.matlab.MatlabExecutor;
-import eu.quanticol.moonlight.utility.matlab.configurator.MatlabDataConverter;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -50,7 +51,7 @@ public class Sensors {
         atomicFormulas.put("type2", p -> (x -> x.getFirst() == 2));
         atomicFormulas.put("type3", p -> (x -> x.getFirst() == 3));
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
 
         Formula isType1 =new AtomicFormula("type1");

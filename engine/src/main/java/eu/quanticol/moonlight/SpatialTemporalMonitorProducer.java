@@ -1,9 +1,9 @@
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -197,7 +197,7 @@ public interface SpatialTemporalMonitorProducer {
         };
     }
 
-    static SpatialTemporalMonitorProducer produceReach(SpatialTemporalMonitorProducer left, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>>> distance, SpatialTemporalMonitorProducer right) {
+    static SpatialTemporalMonitorProducer produceReach(SpatialTemporalMonitorProducer left, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>>> distance, SpatialTemporalMonitorProducer right) {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
@@ -206,7 +206,7 @@ public interface SpatialTemporalMonitorProducer {
         };
     }
 
-    static SpatialTemporalMonitorProducer produceEscape(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>>> distance) {
+    static SpatialTemporalMonitorProducer produceEscape(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>>> distance) {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
@@ -215,7 +215,7 @@ public interface SpatialTemporalMonitorProducer {
         };
     }
 
-    static SpatialTemporalMonitorProducer produceSomewhere(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>>> distance) {
+    static SpatialTemporalMonitorProducer produceSomewhere(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>>> distance) {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
@@ -224,7 +224,7 @@ public interface SpatialTemporalMonitorProducer {
         };
     }
 
-    static SpatialTemporalMonitorProducer produceEverywhere(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DefaultDistanceStructure<MoonLightRecord, ?>>> distance) {
+    static SpatialTemporalMonitorProducer produceEverywhere(SpatialTemporalMonitorProducer arg, Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>>> distance) {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {

@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -45,7 +46,7 @@ class TestSpatialTemporalProperties {
         SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignal(size * size, 0, 1, trajectory.length - 1, (t, l) -> t * l);
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, trajectory.length - 1, grid);
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 6.0, 10., grid);
         distanceFunctions.put("dist6", x -> predist);
 
@@ -81,7 +82,7 @@ class TestSpatialTemporalProperties {
         int size = 5;
         SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.5, 3.0, model);
         distanceFunctions.put("dist6", x -> predist);
 

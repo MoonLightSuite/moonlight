@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.algorithms.SpaceUtilities;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.reach;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -211,7 +213,7 @@ class TestSpatialProperties {
         double range = 10.0;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
-        List<Boolean> result = ds.reach(
+        List<Boolean> result = reach(
                 new BooleanDomain(),
                 (i) -> {
                     Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
@@ -219,7 +221,8 @@ class TestSpatialProperties {
                 }, i -> {
                     Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
                     return (p.getFirst() == 4) && (p.getSecond() == 4);
-                }
+                },
+                ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -239,7 +242,7 @@ class TestSpatialProperties {
         double range = 10;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
-        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+        List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
         assertArrayEquals(objects, new Boolean[]{true, false});
@@ -256,7 +259,7 @@ class TestSpatialProperties {
         double range = 10;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
-        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+        List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
         assertArrayEquals(objects, new Boolean[]{true, false});
@@ -275,7 +278,7 @@ class TestSpatialProperties {
         double range = 1;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
-        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+        List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
         assertArrayEquals(new Boolean[]{range>=10, range>=5,true}, objects);
@@ -293,7 +296,7 @@ class TestSpatialProperties {
         double range = 1;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
 
-        List<Boolean> results = minutes.reach(new BooleanDomain(), s1::get, s2::get);
+        List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
         System.out.println(new Boolean[0]);
@@ -420,7 +423,7 @@ class TestSpatialProperties {
         atomicFormulas.put("type2", p -> (x -> x == 2));
         atomicFormulas.put("type3", p -> (x -> x == 3));
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
 
         Formula reach = new ReachFormula(new AtomicFormula("type3"),"dist", new AtomicFormula("type1"));

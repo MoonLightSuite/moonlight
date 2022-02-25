@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.examples.patterns;
 
 import com.mathworks.engine.MatlabEngine;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
@@ -80,7 +81,7 @@ public class Pattern {
         atomicFormulasB.put("LowValues", p -> (x -> x <= h_CONST_));
         atomicFormulasB.put("HighValues", p -> (x -> h_CONST_ >= x));
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, gridModel);
         DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, gridModel);
 

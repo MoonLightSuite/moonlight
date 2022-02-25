@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.formula.*;
@@ -73,7 +74,7 @@ public class MainSp {
 
         double range = 10;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ? extends Object>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ? extends Object>>> distanceFunctions = new HashMap<>();
         distanceFunctions.put("minutes", g -> minutes);
         Formula someT = new SomewhereFormula("minutes", isT);
 

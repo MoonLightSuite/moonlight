@@ -92,17 +92,6 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
                 .compute();
     }
 
-    public <R> List<R> reach(SignalDomain<R> signalDomain,
-                             IntFunction<R> leftSpatialSignal,
-                             IntFunction<R> rightSpatialSignal)
-    {
-        return new ReachAlgorithm<>(this,
-                                    signalDomain,
-                                    leftSpatialSignal,
-                                    rightSpatialSignal)
-                .compute();
-    }
-
     @Override
     public boolean isWithinBounds(M d) {
         return distanceDomain.lessOrEqual(lowerBound, d) &&

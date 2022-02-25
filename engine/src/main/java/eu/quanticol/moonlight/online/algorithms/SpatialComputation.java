@@ -20,10 +20,10 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
@@ -43,9 +43,9 @@ public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
 {
     private final LocationService<T, S> locSvc;
-    private final Function<SpatialModel<S>, DefaultDistanceStructure<S, ?>> dist;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
     private final BiFunction<IntFunction<R>,
-            DefaultDistanceStructure<S, ?>,
+                             DistanceStructure<S, ?>,
                              List<R>> op;
 
     Pair<T, SpatialModel<S>> currSpace;
@@ -53,9 +53,9 @@ public class SpatialComputation
 
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
-                                      DefaultDistanceStructure<S, ?>> distance,
+                                       DistanceStructure<S, ?>> distance,
                               BiFunction<IntFunction<R>,
-                                      DefaultDistanceStructure<S, ?>,
+                                       DistanceStructure<S, ?>,
                                                   List<R>> operator)
     {
         checkLocationServiceValidity(locationService);
@@ -86,7 +86,7 @@ public class SpatialComputation
 
     private List<Update<T, List<R>>> computeOp(
             T t, T tNext,
-            DefaultDistanceStructure<S, ?> f,
+            DistanceStructure<S, ?> f,
             IntFunction<R> spatialSignal,
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
@@ -130,7 +130,7 @@ public class SpatialComputation
     }
 
     private void doCompute(T t, T tNext, List<R> value,
-                    FiveParameterFunction<T, T, DefaultDistanceStructure<S, ?>,
+                    FiveParameterFunction<T, T, DistanceStructure<S, ?>,
                     IntFunction<R>,
                     Iterator<Pair<T, SpatialModel<S>>>> op)
     {
@@ -138,7 +138,7 @@ public class SpatialComputation
         IntFunction<R> spatialSignal = value::get;
         tNext = seekSpace(t, tNext, spaceItr);
         SpatialModel<S> sm = currSpace.getSecond();
-        DefaultDistanceStructure<S, ?> f = dist.apply(sm);
+        DistanceStructure<S, ?> f = dist.apply(sm);
         f.areWithinBounds(0, 0); //TODO: Done to force pre-computation
                                     // of distance matrix
 
@@ -152,7 +152,7 @@ public class SpatialComputation
 
     private TimeChain<T, List<R>> computeOpChain(
             T t, T tNext,
-            DefaultDistanceStructure<S, ?> f,
+            DistanceStructure<S, ?> f,
             IntFunction<R> spatialSignal,
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {

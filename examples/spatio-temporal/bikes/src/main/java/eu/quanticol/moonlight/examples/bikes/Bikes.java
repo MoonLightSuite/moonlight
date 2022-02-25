@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.bikes;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
@@ -90,7 +91,7 @@ public class Bikes {
 
         // We define some spatial distance functions of interest
         HashMap<String,
-                Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>>
+                Function<SpatialModel<Double>, DistanceStructure<Double, ?>>>
                 distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> dist =
                 new DefaultDistanceStructure<>(x -> x,

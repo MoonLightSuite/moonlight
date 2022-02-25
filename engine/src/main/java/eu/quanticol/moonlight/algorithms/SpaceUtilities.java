@@ -1,7 +1,9 @@
 package eu.quanticol.moonlight.algorithms;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.EscapeAlgorithm;
+import eu.quanticol.moonlight.core.space.ReachAlgorithm;
 import eu.quanticol.moonlight.domain.SignalDomain;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,27 @@ import java.util.stream.IntStream;
 public class SpaceUtilities {
     private SpaceUtilities() {} // Hidden constructor
 
-    public static <T, A, R> List<R> everywhere(SignalDomain<R> dModule,
+    public static <E, M, R> List<R> reach(SignalDomain<R> signalDomain,
+                                          IntFunction<R> leftSpatialSignal,
+                                          IntFunction<R> rightSpatialSignal,
+                                          DistanceStructure<E, M> distStr)
+    {
+        return new ReachAlgorithm<>(distStr, signalDomain,
+                                    leftSpatialSignal, rightSpatialSignal)
+                        .compute();
+    }
+
+    public static <E, M, R> List<R> escape(SignalDomain<R> signalDomain,
+                                           IntFunction<R> spatialSignal,
+                                           DistanceStructure<E, M> distStr)
+    {
+        return new EscapeAlgorithm<>(distStr, signalDomain, spatialSignal)
+                        .compute();
+    }
+
+    public static <E, M, R> List<R> everywhere(SignalDomain<R> dModule,
                                                IntFunction<R> s,
-                                               DefaultDistanceStructure<T, A> ds)
+                                               DistanceStructure<E, M> ds)
     {
         ArrayList<R> values = dModule.createArray(ds.getModel().size());
         for (int i = 0; i < ds.getModel().size(); i++) {
@@ -29,9 +49,9 @@ public class SpaceUtilities {
         return values;
     }
 
-    public static <T, A, R> List<R> somewhere(SignalDomain<R> dModule,
+    public static <E, M, R> List<R> somewhere(SignalDomain<R> dModule,
                                               IntFunction<R> s,
-                                              DefaultDistanceStructure<T, A> ds)
+                                              DistanceStructure<E, M> ds)
     {
         ArrayList<R> values = dModule.createArray(ds.getModel().size());
         for (int i = 0; i < ds.getModel().size(); i++) {
@@ -46,10 +66,10 @@ public class SpaceUtilities {
         return values;
     }
 
-    public static <T, A, R> List<R> somewhereParallel(
+    public static <E, M, R> List<R> somewhereParallel(
             SignalDomain<R> dModule,
             IntFunction<R> s,
-            DefaultDistanceStructure<T, A> ds)
+            DistanceStructure<E, M> ds)
     {
         return IntStream
                 .range(0, ds.getModel().size())
@@ -66,10 +86,10 @@ public class SpaceUtilities {
                 }).collect(Collectors.toList());
     }
 
-    public static <T, A, R> List<R> everywhereParallel(
+    public static <E, M, R> List<R> everywhereParallel(
             SignalDomain<R> dModule,
             IntFunction<R> s,
-            DefaultDistanceStructure<T, A> ds)
+            DistanceStructure<E, M> ds)
     {
         return IntStream
                 .range(0, ds.getModel().size())
@@ -85,6 +105,4 @@ public class SpaceUtilities {
                     return v;
                 }).collect(Collectors.toList());
     }
-
-
 }

@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import eu.quanticol.moonlight.signal.*;
@@ -167,7 +168,7 @@ class TestAfterSignalEnd {
      * @param to double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-    private static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>  distance(double from, double to) {
+    private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
         return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 

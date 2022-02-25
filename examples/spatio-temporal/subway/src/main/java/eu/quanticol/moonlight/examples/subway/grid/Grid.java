@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.grid;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.FileType;
@@ -194,7 +195,7 @@ public class Grid {
      * @param to double representing the ending position
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
-    public static Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>> distance(double from, double to) {
+    public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
         return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
     }
 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDistance;
@@ -79,7 +80,7 @@ class TestCity2 {
         atomicFormulasQuant.put("ManyPeople", p -> (x -> x.getThird() - 0.5));
 
 
-        HashMap<String, Function<SpatialModel<Double>, DefaultDistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
+        HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, city);
         DefaultDistanceStructure<Double, Double> predist3 = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 3.0, city);
         DefaultDistanceStructure<Double, Double> predist6 = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, city);
