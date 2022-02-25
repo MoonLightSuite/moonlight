@@ -24,8 +24,8 @@ public class ReachAlgorithm<E, M, R> {
     private final List<Triple<Integer, M, R>> reachabilityQueue;
 
     /**
-     * This reachability list is quite special: the i-th element of the list
-     * denotes the set of optimal values for each distance from location i.
+     * This list is quite special: the i-th element of the list denotes
+     * the set of optimal values for each distance from location i.
      */
     private final List<Map<M, R>> reachabilityFunction;
 
@@ -47,30 +47,27 @@ public class ReachAlgorithm<E, M, R> {
      * @return reach's algorithm computation
      */
     public List<R> compute() {
-        initReachabilityMap();
+        initReachableValues();
         reachCore();
         return selectMaxReachabilityValues();
     }
 
-    /**
-     * initializes the list of the best reachable values
-     */
-    private void initReachabilityMap() {
+    private void initReachableValues() {
         for(int loc = 0; loc < model.size(); loc++) {
-            Map<M, R> reachabilityMap = fetchInitialReachabilityMap(loc);
-            reachabilityFunction.add(reachabilityMap);
+            Map<M, R> reachableValues = fetchInitialReachableValues(loc);
+            reachabilityFunction.add(reachableValues);
         }
     }
 
-    private Map<M, R> fetchInitialReachabilityMap(int location)
+    private Map<M, R> fetchInitialReachableValues(int location)
     {
-        Map<M, R> reachabilityMap = new HashMap<>();
+        Map<M, R> reachableValues = new HashMap<>();
         R rightValue = rightSpatialSignal.apply(location);
-        reachabilityMap.put(distanceDomain.zero(), rightValue);
-        reachabilityQueue.add(new Triple<>(location,
-                                           distanceDomain.zero(),
-                                           rightValue));
-        return reachabilityMap;
+        updateReachableValue(location,
+                             distanceDomain.zero(),
+                             rightValue,
+                             reachableValues);
+        return reachableValues;
     }
 
     private void reachCore() {
@@ -83,20 +80,16 @@ public class ReachAlgorithm<E, M, R> {
         }
     }
 
-    private void updateReachability(int l1, M d1, R v1)
-    {
+    private void updateReachability(int l1, M d1, R v1) {
         for (Pair<Integer, E> neighbour: model.previous(l1)) {
             int l2 = neighbour.getFirst();
             M d2 = newDistance(d1, neighbour.getSecond());
             // Note: old condition was distanceDomain.lessOrEqual(d2, upperBound)
             // but I think this one is more correct
             if (distStr.isWithinBounds(d2)) {
-                Triple<Integer, M, R> t2 = combine(l2, d2,
-                        signalDomain.conjunction(v1, leftSpatialSignal.apply(l2)),
-                        reachabilityFunction.get(l2));
-                if (t2 != null) {
-                    reachabilityQueue.add(t2);
-                }
+                R value = signalDomain.conjunction(v1,
+                                            leftSpatialSignal.apply(l2));
+                combine(l2, d2, value);
             }
         }
     }
@@ -107,24 +100,29 @@ public class ReachAlgorithm<E, M, R> {
                 d1);
     }
 
-    private Triple<Integer, M, R> combine(int l, M d, R v, Map<M, R> fr) {
-        R v1 = fr.get(d);
-        if (v1 != null) {
-            R v2 = signalDomain.disjunction(v, v1);
-            if (!signalDomain.equalTo(v1,v2)) {
-                fr.put(d, v2);
-                return new Triple<>(l, d, v2);
+    private void combine(int location, M distance, R value) {
+        Map<M, R> reachableValues = reachabilityFunction.get(location);
+        if(reachableValues.containsKey(distance)) {
+            R oldValue = reachableValues.get(distance);
+            value = signalDomain.disjunction(value, oldValue);
+            if (!signalDomain.equalTo(oldValue, value)) {
+                updateReachableValue(location, distance, value, reachableValues);
             }
         } else {
-            Triple<Integer, M, R> t = new Triple<>(l, d, v);
-            fr.put(d, v);
-            return t;
+            updateReachableValue(location, distance, value, reachableValues);
         }
-        return null;
     }
 
-    private List<R> selectMaxReachabilityValues()
+    private void updateReachableValue(int location,
+                                      M distance,
+                                      R newValue,
+                                      Map<M, R> values)
     {
+        values.put(distance, newValue);
+        reachabilityQueue.add(new Triple<>(location, distance, newValue));
+    }
+
+    private List<R> selectMaxReachabilityValues() {
         return reachabilityFunction.stream()
                         .map(this::maximizeLocationValue)
                         .collect(Collectors.toCollection(ArrayList::new));

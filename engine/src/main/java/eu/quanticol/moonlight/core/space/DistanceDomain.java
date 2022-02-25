@@ -21,22 +21,58 @@
 package eu.quanticol.moonlight.core.space;
 
 /**
- * @author loreti
- *
+ * Interface that must be implemented by a distance metric
+ * to be used with the spatial operators and models of Moonlight.
+ * @param <M> The metric type of the distance
  */
-public interface DistanceDomain<R> {
+public interface DistanceDomain<M> {
 
-    R zero();
+    /**
+     * Minimal allowed distance
+     * @return the minimal possible distance
+     */
+    M zero();
 
-    R infinity();
+    /**
+     * Maximal allowed distance
+     * @return the maximal possible distance
+     */
+    M infinity();
 
-    boolean lessOrEqual(R x, R y);
+    /**
+     * Method to combine two distances
+     * @param x first distance to combine
+     * @param y second distance to combine
+     * @return the resulting distance
+     */
+    M sum(M x, M y);
 
-    boolean less(R x, R y);
+    /**
+     * Tells whether the first distance is smaller than the second
+     * @param x the first distance to be analyzed
+     * @param y the second distance to be analyzed
+     * @return <code>true</code> if <code>x</code> is smaller than
+     *         <code>y</code>. <code>False</code> otherwise.
+     */
+    boolean less(M x, M y);
 
-    R sum(R x, R y);
+    /**
+     * Tells whether the first distance is equivalent to the second
+     * @param x the first distance to be analyzed
+     * @param y the second distance to be analyzed
+     * @return <code>true</code> if <code>x</code> and <code>y</code>
+     *         are equals. <code>False</code> otherwise.
+     */
+    boolean equalTo(M x, M y);
 
-    boolean equalTo(R x, R y);
-
-
+    /**
+     * Tells whether the first distance is smaller or equal to
+     * the second.
+     * @param x the first distance to be analyzed
+     * @param y the second distance to be analyzed
+     * @return <code>true</code> if <code>x</code> is smaller
+     *         or equal than <code>y</code>.
+     *         <code>False</code> otherwise.
+     */
+    boolean lessOrEqual(M x, M y);
 }

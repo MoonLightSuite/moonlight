@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.core.space;
 import java.util.function.Function;
 
 /**
- *
+ * This interface abstracts the computation of the distance for spatial algorithms
  * @param <E> Type of edge labels of the spatial model.
  * @param <M> Type of the distance metric
  */
