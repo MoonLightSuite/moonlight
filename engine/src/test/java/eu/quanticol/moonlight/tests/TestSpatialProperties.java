@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import static eu.quanticol.moonlight.algorithms.SpaceUtilities.escape;
 import static eu.quanticol.moonlight.algorithms.SpaceUtilities.reach;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -190,14 +191,14 @@ class TestSpatialProperties {
         int wallR = 2;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), range, Double.POSITIVE_INFINITY, model);
-        List<Boolean> result = ds.escape(
+        List<Boolean> result = escape(
                 new BooleanDomain(),
                 (i) -> {
                     Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
                     return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
                             || ((p.getFirst() <= wallC) && (p.getSecond().equals(wallR))));
                 }
-        );
+        , ds);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 assertEquals((i > wallR) || (j > wallC), result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
@@ -314,7 +315,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, true));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), distance + 1, Double.MAX_VALUE, city);
 
-        List<Boolean> results = distanceStructure.escape(new BooleanDomain(), s::get);
+        List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
         assertFalse(results.get(0));
     }
@@ -330,7 +331,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., distance - 1, city);
 
-        List<Boolean> results = distanceStructure.escape(new BooleanDomain(), s::get);
+        List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
         assertTrue(results.get(0));
     }
@@ -347,7 +348,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., 2 * distance + 1, city);
 
-        List<Boolean> results = distanceStructure.escape(new BooleanDomain(), s::get);
+        List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
         assertTrue(results.get(0));
     }
@@ -362,7 +363,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., distance - 1, city);
 
-        List<Boolean> results = distanceStructure.escape(new BooleanDomain(), s::get);
+        List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
         assertTrue(results.get(0));
     }

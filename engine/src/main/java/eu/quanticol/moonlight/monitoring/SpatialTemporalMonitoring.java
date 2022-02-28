@@ -23,7 +23,6 @@ package eu.quanticol.moonlight.monitoring;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.SignalDomain;
 

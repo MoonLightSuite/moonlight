@@ -23,26 +23,12 @@ package eu.quanticol.moonlight.core.space;
 import java.util.function.Function;
 
 /**
- * This interface abstracts the computation of the distance for spatial algorithms
+ * This interface abstracts the computation of the distance
+ * for spatial algorithms.
  * @param <E> Type of edge labels of the spatial model.
  * @param <M> Type of the distance metric
  */
 public interface DistanceStructure<E, M> {
-
-    /**
-     * @return the spatial model on which the distance structure is defined.
-     */
-    SpatialModel<E> getModel();
-
-    /**
-     * @return the distance function used to compute the distance.
-     */
-    Function<E, M> getDistanceFunction();
-
-    /**
-     * @return the distance domain used to compute the distance.
-     */
-    DistanceDomain<M> getDistanceDomain();
 
     /**
      * Method to retrieve the distance between the two locations.
@@ -75,4 +61,19 @@ public interface DistanceStructure<E, M> {
      *         <code>false</code> otherwise
      */
     boolean isWithinBounds(M d);
+
+    /**
+     * @return the spatial model on which the distance structure is defined.
+     */
+    SpatialModel<E> getModel();
+
+    /**
+     * @return the distance function used to compute the distance.
+     */
+    Function<E, M> getDistanceFunction();
+
+    /**
+     * @return the distance domain used to compute the distance.
+     */
+    DistanceDomain<M> getDistanceDomain();
 }

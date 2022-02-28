@@ -16,13 +16,11 @@
 package eu.quanticol.moonlight.core.space;
 
 import eu.quanticol.moonlight.domain.DoubleDistance;
-import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -82,14 +80,6 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
     @Override
     public boolean areWithinBounds(int from, int to) {
         return isWithinBounds(getDistance(from, to));
-    }
-
-    public <R> List<R> escape(SignalDomain<R> signalDomain,
-                              IntFunction<R> spatialSignal)
-    {
-
-        return new EscapeAlgorithm<>(this, signalDomain, spatialSignal)
-                .compute();
     }
 
     @Override
