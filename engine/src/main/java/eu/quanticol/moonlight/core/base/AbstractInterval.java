@@ -43,8 +43,6 @@ import java.util.function.Function;
  * see {@link AbstractInterval#compareTo(AbstractInterval)}.
  *
  * @param <T> Type of the interval (currently only numbers make sense)
- *
- * @see Interval for the implementation on Doubles
  */
 public class AbstractInterval<T extends Comparable<T>>
         implements Comparable<AbstractInterval<T>>
