@@ -45,7 +45,7 @@ import java.util.function.IntFunction;
 
 import static eu.quanticol.moonlight.algorithms.SpaceUtilities.*;
 
-public class OnlineSpaceTimeMonitor<S, V, R extends Comparable<R>>  implements
+public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implements
 FormulaVisitor<Parameters,
                OnlineMonitor<Double, List<V>,
                List<AbstractInterval<R>>>>
@@ -67,7 +67,7 @@ FormulaVisitor<Parameters,
     private final int size;
 
 
-    public OnlineSpaceTimeMonitor(
+    public OnlineSpatialTemporalMonitor(
             Formula formula,
             int size,
             SignalDomain<R> interpretation,
@@ -80,7 +80,7 @@ FormulaVisitor<Parameters,
              atomicPropositions, distanceFunctions, false);
     }
 
-    public OnlineSpaceTimeMonitor(
+    public OnlineSpatialTemporalMonitor(
             Formula formula,
             int size,
             SignalDomain<R> interpretation,

@@ -7,7 +7,6 @@ import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 
@@ -196,7 +195,7 @@ public class Grid {
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
     public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
-        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), from, to, g);
     }
 
 }

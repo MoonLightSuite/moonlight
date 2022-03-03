@@ -235,7 +235,7 @@ public class Pollution {
     distance(double lowerBound, double upperBound)
     {
         return g -> new DistanceStructure<>(x -> x,
-                                            new DoubleDistance(),
+                                            new DoubleDomain(),
                                             lowerBound, upperBound,
                                             g);
     }

@@ -1,7 +1,6 @@
 package grid;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
@@ -35,7 +34,7 @@ public class SimpleGrid {
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, tLength, grid);
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 5., grid);
+        DefaultDistanceStructure<Double, Double> predist = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 5., grid);
         distanceFunctions.put("dist", x -> predist);
         HashMap<String, Function<Parameters, Function<Double, Double>>> atomic = new HashMap<>();
         atomic.put("simpleAtomic", p -> (x -> (x - 0.2)));

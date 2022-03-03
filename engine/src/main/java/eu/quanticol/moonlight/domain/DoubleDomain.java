@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.signal.DataHandler;
 
 /**
@@ -27,7 +28,9 @@ import eu.quanticol.moonlight.signal.DataHandler;
  *
  * @see SignalDomain
  */
-public class DoubleDomain implements SignalDomain<Double> {
+public class DoubleDomain implements
+		SignalDomain<Double>, DistanceDomain<Double>
+{
 	private static final double TOLERANCE = 1E-12;
 
 	@Override
@@ -63,6 +66,31 @@ public class DoubleDomain implements SignalDomain<Double> {
 	@Override
 	public Double max() {
 		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public Double zero() {
+		return 0.0;
+	}
+
+	@Override
+	public Double infinity() {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public boolean lessOrEqual(Double x, Double y) {
+		return x < y || equalTo(x, y);
+	}
+
+	@Override
+	public Double sum(Double x, Double y) {
+		return x + y;
+	}
+
+	@Override
+	public boolean less(Double x, Double y) {
+		return x < y;
 	}
 
 	@Override

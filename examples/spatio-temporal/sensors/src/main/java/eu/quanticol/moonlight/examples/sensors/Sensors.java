@@ -9,7 +9,6 @@ import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -52,7 +51,7 @@ public class Sensors {
         atomicFormulas.put("type3", p -> (x -> x.getFirst() == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
+        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 1.0, m));
 
         Formula isType1 =new AtomicFormula("type1");
         Formula somewhere = new SomewhereFormula("dist",isType1);

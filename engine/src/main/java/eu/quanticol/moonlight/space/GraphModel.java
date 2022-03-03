@@ -39,9 +39,9 @@ import eu.quanticol.moonlight.util.Pair;
  * @author loreti
  */
 public class GraphModel<E> implements SpatialModel<E> {
-	private final ArrayList<HashMap<Integer, E>> edges;
-	private final ArrayList<List<Pair<Integer, E>>> outEdges;
-	private final ArrayList<List<Pair<Integer, E>>> inEdges;
+	private final List<HashMap<Integer, E>> edges;
+	private final List<List<Pair<Integer, E>>> outEdges;
+	private final List<List<Pair<Integer, E>>> inEdges;
 
 	private final int size;
 	
@@ -93,8 +93,8 @@ public class GraphModel<E> implements SpatialModel<E> {
 	}
 
 	@Override
-	public E get(int src, int trg) {
-		return edges.get(src).get(trg);
+	public E get(int source, int target) {
+		return edges.get(source).get(target);
 	}
 
 	@Override
@@ -103,13 +103,13 @@ public class GraphModel<E> implements SpatialModel<E> {
 	}
 
 	@Override
-	public List<Pair<Integer, E>> next(int l) {
-		return outEdges.get(l);
+	public List<Pair<Integer, E>> next(int location) {
+		return outEdges.get(location);
 	}
 
 	@Override
-	public List<Pair<Integer, E>> previous(int l) {
-		return inEdges.get(l);
+	public List<Pair<Integer, E>> previous(int location) {
+		return inEdges.get(location);
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
@@ -56,7 +55,7 @@ public class mainSp2 {
 
         //// Somewere Taxi property
         double range = 10;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
         List<Boolean> somewhereTaxy = SpaceUtilities.somewhere(new BooleanDomain(), taxi::get, minutes);
 
         //// (R1) Hospital -> Somewere Taxi property

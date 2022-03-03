@@ -218,7 +218,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> reachMonitor(
 			SpatialTemporalMonitor<S, T, R> m1,
 			Function<SpatialModel<S>,
-					 DistanceStructure<S, ?>> distance,
+					DistanceStructure<S, ?>> distance,
 			SpatialTemporalMonitor<S, T, R> m2,
 			SignalDomain<R> domain )
 	{

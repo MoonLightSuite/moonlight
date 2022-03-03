@@ -2,12 +2,12 @@ package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.algorithms.SpaceUtilities;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -66,7 +66,7 @@ class TestSpatialProperties {
         map.put(new Pair<>(1, 3), 5.0);
 
         SpatialModel<Double> model = Utils.createSpatialModel(size, map);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 10.0, model);
 
         assertNotNull(model);
         assertEquals(1.0, ds.getDistance(0, 1), 1.0, "d(0,1)");
@@ -80,7 +80,7 @@ class TestSpatialProperties {
     void testDistanceStructure() {
         int size = 3;
         SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (y == (((x + 1) % size)) ? 1.0 : null));
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -94,7 +94,7 @@ class TestSpatialProperties {
     void testDistanceStructure2() {
         int size = 3;
         SpatialModel<Double> model = Utils.createSpatialModel(size, (x, y) -> (((y == ((x + 1) % size)) || (x == ((y + 1) % size))) ? 1.0 : null));
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 10.0, model);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -124,7 +124,7 @@ class TestSpatialProperties {
         int rows = 40;
         int columns = 40;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 20.0, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 20.0, model);
         for (int i1 = 0; i1 < rows; i1++) {
             for (int j1 = 0; j1 < columns; j1++) {
                 for (int i2 = 0; i2 < rows; i2++) {
@@ -148,7 +148,7 @@ class TestSpatialProperties {
         int relevantC = 5;
         int relevantR = 5;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> 1.0, new DoubleDistance(), 0.0, range, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> 1.0, new DoubleDomain(), 0.0, range, model);
         List<Boolean> result = SpaceUtilities.somewhere(
                 new BooleanDomain(),
                 (i) -> i == Utils.gridIndexOf(relevantR, relevantC, columns),
@@ -169,7 +169,7 @@ class TestSpatialProperties {
         int relevantC = 5;
         int relevantR = 5;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
         List<Boolean> result = SpaceUtilities.everywhere(
                 new BooleanDomain(),
                 (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns),
@@ -190,7 +190,7 @@ class TestSpatialProperties {
         int wallC = 2;
         int wallR = 2;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), range, Double.POSITIVE_INFINITY, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), range, Double.POSITIVE_INFINITY, model);
         List<Boolean> result = escape(
                 new BooleanDomain(),
                 (i) -> {
@@ -213,7 +213,7 @@ class TestSpatialProperties {
         int columns = 5;
         double range = 10.0;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
         List<Boolean> result = reach(
                 new BooleanDomain(),
                 (i) -> {
@@ -241,7 +241,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(false, false));
         ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(true, false));
         double range = 10;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
@@ -258,7 +258,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(false, false));
         ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(true, false));
         double range = 10;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
@@ -277,7 +277,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, false));
         ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, true));
         double range = 1;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
@@ -295,7 +295,7 @@ class TestSpatialProperties {
         ArrayList<Boolean> s1 = new ArrayList<>(Arrays.asList(true, true, true, false));
         ArrayList<Boolean> s2 = new ArrayList<>(Arrays.asList(false, false, false, true));
         double range = 1;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, range, city);
+        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
@@ -313,7 +313,7 @@ class TestSpatialProperties {
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, true));
-        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), distance + 1, Double.MAX_VALUE, city);
+        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), distance + 1, Double.MAX_VALUE, city);
 
         List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
@@ -329,7 +329,7 @@ class TestSpatialProperties {
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
-        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., distance - 1, city);
+        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., distance - 1, city);
 
         List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
@@ -346,7 +346,7 @@ class TestSpatialProperties {
         city.add(1, distance, 2);
 
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false, false));
-        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., 2 * distance + 1, city);
+        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., 2 * distance + 1, city);
 
         List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
@@ -361,7 +361,7 @@ class TestSpatialProperties {
         GraphModel<Double> city = new GraphModel<>(size);
         city.add(0, distance, 1);
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
-        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0., distance - 1, city);
+        DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., distance - 1, city);
 
         List<Boolean> results = escape(new BooleanDomain(), s::get, distanceStructure);
 
@@ -378,7 +378,7 @@ class TestSpatialProperties {
         map.put(new Pair<>(1, 3), 5.0);
 
         SpatialModel<Double> model = Utils.createSpatialModel(size, map);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), 0.0, 10.0, model);
+        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 10.0, model);
 
         assertNotNull(model);
         assertEquals(1.0, ds.getDistance(0, 1), 0.0, "d(0,1)");
@@ -425,7 +425,7 @@ class TestSpatialProperties {
         atomicFormulas.put("type3", p -> (x -> x == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 1.0, m));
+        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 1.0, m));
 
         Formula reach = new ReachFormula(new AtomicFormula("type3"),"dist", new AtomicFormula("type1"));
 

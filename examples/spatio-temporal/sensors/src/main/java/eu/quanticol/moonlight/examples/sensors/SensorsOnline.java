@@ -1,12 +1,13 @@
 package eu.quanticol.moonlight.examples.sensors;
 
+import eu.quanticol.moonlight.api.MatlabRunner;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.online.signal.*;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.online.monitoring.OnlineSpaceTimeMonitor;
+import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
@@ -16,7 +17,6 @@ import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
-import eu.quanticol.moonlight.utility.matlab.MatlabRunner;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,7 +54,7 @@ public class SensorsOnline {
                                 Function<Pair<Integer,Double>, Boolean>>>
                                                                  atomicFormulas;
     private static HashMap<String, Function<SpatialModel<Double>,
-            DefaultDistanceStructure<Double, ?>>> distanceFunctions;
+            DistanceStructure<Double, ?>>> distanceFunctions;
     private static LocationService<Double, Double> locSvc;
 
     // Device types
@@ -173,11 +173,11 @@ public class SensorsOnline {
     private static void setDistanceFunctions() {
         distanceFunctions = new HashMap<>();
         distanceFunctions.put(DISTANCE,
-                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(),
+                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(),
                         0.0, 10.0, m));
 
         distanceFunctions.put(DISTANCE2,
-                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDistance(),
+                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(),
                         0.0, 2.0, m));
     }
 
@@ -317,7 +317,7 @@ public class SensorsOnline {
     {
 
 
-        OnlineSpaceTimeMonitor<Double, Pair<Integer, Double>, Double> m =
+        OnlineSpatialTemporalMonitor<Double, Pair<Integer, Double>, Double> m =
                 onlineMonitorInit(f, parallel);
 
         List<Update<Double, List<Pair<Integer, Double>>>> updates =
@@ -339,14 +339,13 @@ public class SensorsOnline {
         //plt.plotAll(result.getSegments(), f.toString());
     }
 
-    private static
-    OnlineSpaceTimeMonitor<Double, Pair<Integer, Double>, Double>
+    private static OnlineSpatialTemporalMonitor<Double, Pair<Integer, Double>, Double>
     onlineMonitorInit(Formula f, boolean parallel)
     {
         Map<String, Function<Pair<Integer,Double>, AbstractInterval<Double>>>
             atoms = setOnlineAtoms();
 
-        return new OnlineSpaceTimeMonitor<>(f, NODES, new DoubleDomain(),
+        return new OnlineSpatialTemporalMonitor<>(f, NODES, new DoubleDomain(),
                                             locSvc, atoms, distanceFunctions,
                                             parallel);
     }

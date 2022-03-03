@@ -5,7 +5,6 @@ import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
@@ -133,13 +132,13 @@ public class EpidemicMain {
     }
 
     private static Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>> distance(double from, double to) {
-        return g -> new DefaultDistanceStructure<>(x -> x.get(0,Double.class).doubleValue(), new DoubleDistance(), from, to, g);
+        return g -> new DefaultDistanceStructure<>(x -> x.get(0,Double.class).doubleValue(), new DoubleDomain(), from, to, g);
     }
 
 
     private static Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord, ?>> hopDistance(double from, double to) {
         int k = 1;
-        return g -> new DefaultDistanceStructure<>(x-> 1.0, new DoubleDistance(), from, to, g);
+        return g -> new DefaultDistanceStructure<>(x-> 1.0, new DoubleDomain(), from, to, g);
     }
 
 

@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.script;
 import eu.quanticol.moonlight.SpatialTemporalMonitorProducer;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.io.MoonLightRecord;
@@ -193,7 +192,7 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
     }
 
     private Function<MoonLightRecord,Function<SpatialModel<MoonLightRecord>, DistanceStructure<MoonLightRecord,?>>> getDistance(MoonLightScriptParser.ExpressionContext distanceExpression, MoonLightScriptParser.IntervalContext interval) {
-        DistanceDomain<Double> distance = new DoubleDistance();
+        DistanceDomain<Double> distance = new DoubleDomain();
         BiFunction<MoonLightRecord,MoonLightRecord,Double> distanceFunction = getDistanceFunction(distanceExpression);
         ParametricExpressionEvaluator evaluator = new ParametricExpressionEvaluator(resolver,inputHandler);
         Function<MoonLightRecord,Double> from = interval.from.accept(evaluator);
@@ -207,7 +206,7 @@ public class SpatialTemporalMonitoringGenerator extends MoonLightScriptBaseVisit
                            double lowerBound,
                            double upperBound)
     {
-        return new DefaultDistanceStructure<>(distance, new DoubleDistance(),
+        return new DefaultDistanceStructure<>(distance, new DoubleDomain(),
                 lowerBound, upperBound, model);
     }
 

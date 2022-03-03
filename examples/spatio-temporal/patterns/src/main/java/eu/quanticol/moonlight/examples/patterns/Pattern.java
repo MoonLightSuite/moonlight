@@ -7,7 +7,6 @@ import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -82,8 +81,8 @@ public class Pattern {
         atomicFormulasB.put("HighValues", p -> (x -> h_CONST_ >= x));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 0.0, 6.0, gridModel);
-        DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x , new DoubleDistance(), 6.0, 32.0*32.0, gridModel);
+        DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 6.0, gridModel);
+        DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 6.0, 32.0*32.0, gridModel);
 
         distanceFunctions.put("distReach", x -> readD);
         distanceFunctions.put("distEscape", x -> escapeD);

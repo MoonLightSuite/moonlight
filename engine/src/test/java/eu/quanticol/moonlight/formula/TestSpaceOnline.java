@@ -2,9 +2,8 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.online.monitoring.OnlineSpaceTimeMonitor;
+import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -50,8 +49,8 @@ class TestSpaceOnline {
         Formula f = new SomewhereFormula("standard",
                                         new AtomicFormula("positiveX"));
 
-        OnlineSpaceTimeMonitor<Double, Double, Double> m =
-                new OnlineSpaceTimeMonitor<>(f, N * N, new DoubleDomain(),
+        OnlineSpatialTemporalMonitor<Double, Double, Double> m =
+                new OnlineSpatialTemporalMonitor<>(f, N * N, new DoubleDomain(),
                                              locSvc, atoms, dist, true);
 
         ForkJoinPool customThreadPool = new ForkJoinPool(12);
@@ -208,6 +207,6 @@ class TestSpaceOnline {
      * @return a DoubleDistance object, meaningful in the given Spatial Model
      */
     public static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double lowerBound, double upperBound) {
-        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDistance(), lowerBound, upperBound, g);
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), lowerBound, upperBound, g);
     }
 }

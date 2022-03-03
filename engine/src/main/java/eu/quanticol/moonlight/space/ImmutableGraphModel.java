@@ -97,8 +97,8 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 	}
 
 	@Override
-	public T get(int src, int trg) {
-		return this.edges.get(src).get(trg);
+	public T get(int source, int target) {
+		return this.edges.get(source).get(target);
 	}
 
 	@Override
@@ -107,13 +107,13 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 	}
 
 	@Override
-	public List<Pair<Integer, T>> next(int l) {
-		return this.outEdges.get(l);
+	public List<Pair<Integer, T>> next(int location) {
+		return this.outEdges.get(location);
 	}
 
 	@Override
-	public List<Pair<Integer, T>> previous(int l) {
-		return this.inEdges.get(l);
+	public List<Pair<Integer, T>> previous(int location) {
+		return this.inEdges.get(location);
 	}
 
 	@Override

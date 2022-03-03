@@ -43,12 +43,12 @@ public interface SpatialModel<E> {
      * <code>trg</code>. The value <code>null</code> is returned when
      * there is not any edge connecting the two nodes.
      *
-     * @param src source node.
-     * @param trg end node.
+     * @param source source node.
+     * @param target end node.
      * @return the value associated with the edge between src and trg,
      *         or null if it does not exist.
      */
-    E get(int src, int trg);
+    E get(int source, int target);
 
     /**
      * @return the number of locations in the model.
@@ -59,19 +59,19 @@ public interface SpatialModel<E> {
      * Returns the list of exiting edges from <code>l</code>.
      * This is represented as a list of {@link Pair}.
      *
-     * @param l a location.
+     * @param location a location.
      * @return the list of exiting edges from <code>l</code>.
      */
-    List<Pair<Integer, E>> next(int l);
+    List<Pair<Integer, E>> next(int location);
 
     /**
      * Returns the list of incoming edges in <code>l</code>.
      * This is represented as a list of {@link Pair}.
      *
-     * @param l a location.
+     * @param location a location.
      * @return the list of incoming edges in <code>l</code>.
      */
-    List<Pair<Integer, E>> previous(int l);
+    List<Pair<Integer, E>> previous(int location);
 
     /**
      * @return the set of locations in the model.
@@ -92,11 +92,10 @@ public interface SpatialModel<E> {
      */
     static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, String[][] data) {
         GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
-        for( int i=0 ; i<data.length ; i++ ) {
-            String[] row = data[i];
+        for (String[] row : data) {
             int src = Integer.parseInt(row[0]);
             int trg = Integer.parseInt(row[1]);
-            toReturn.add(src,edgeRecordHandler.fromStringArray(row,2,row.length),trg);
+            toReturn.add(src, edgeRecordHandler.fromStringArray(row, 2, row.length), trg);
         }
         return toReturn;
     }
@@ -115,11 +114,10 @@ public interface SpatialModel<E> {
      */
     static SpatialModel<MoonLightRecord> buildSpatialModelFromAdjacencyList(int locations, RecordHandler edgeRecordHandler, double[][] data) {
         GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
-        for( int i=0 ; i<data.length ; i++ ) {
-            double[] row = data[i];
+        for (double[] row : data) {
             int src = (int) row[0];
             int trg = (int) row[1];
-            toReturn.add(src,edgeRecordHandler.fromDoubleArray(row,2,row.length),trg);
+            toReturn.add(src, edgeRecordHandler.fromDoubleArray(row, 2, row.length), trg);
         }
         return toReturn;
     }
@@ -141,7 +139,7 @@ public interface SpatialModel<E> {
         GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
-                if (i != j && isFull(data[i][j])) {
+                if (i != j && Boolean.TRUE.equals(isFull(data[i][j]))) {
                     toReturn.add(i, edgeRecordHandler.fromStringArray(data[i][j]), j);
                 }
             }
@@ -165,7 +163,7 @@ public interface SpatialModel<E> {
         GraphModel<MoonLightRecord> toReturn = new GraphModel<>(locations);
         for (int i = 0; i < objects.length; i++) {
             for (int j = 0; j < objects[i].length; j++) {
-                if (i != j && isFull(objects[i][j])) {
+                if (i != j && Boolean.TRUE.equals(isFull(objects[i][j]))) {
                     toReturn.add(i, edgeRecordHandler.fromDoubleArray(objects[i][j]), j);
                 }
             }

@@ -5,7 +5,6 @@ import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.domain.SignalDomain;
 import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
@@ -217,7 +216,7 @@ class SpatialComputationTest {
     distance(double lowerBound, double upperBound)
     {
         return g -> new DefaultDistanceStructure<>(x -> x,
-                                            new DoubleDistance(),
+                                            new DoubleDomain(),
                                             lowerBound,
                                             upperBound,
                                             g);

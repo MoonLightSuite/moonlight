@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.examples.bikes;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
@@ -9,7 +10,6 @@ import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDistance;
 import eu.quanticol.moonlight.domain.Interval;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
@@ -95,14 +95,14 @@ public class Bikes {
                 distanceFunctions = new HashMap<>();
         DefaultDistanceStructure<Double, Double> dist =
                 new DefaultDistanceStructure<>(x -> x,
-                        new DoubleDistance(),
+                        new DoubleDomain(),
                         0.0, d,
                         spatialModel);
         distanceFunctions.put("dist", x -> dist);
 
         DefaultDistanceStructure<Double, Double> dist_spot =
                 new DefaultDistanceStructure<>(x -> x,
-                        new DoubleDistance(),
+                        new DoubleDomain(),
                         0.0, 1.0,
                         spatialModel);
         distanceFunctions.put("dist_spot", x -> dist_spot);

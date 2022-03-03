@@ -15,7 +15,7 @@
 
 package eu.quanticol.moonlight.core.space;
 
-import eu.quanticol.moonlight.domain.DoubleDistance;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,7 +149,7 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
                            double lowerBound,
                            double upperBound)
     {
-        return new DefaultDistanceStructure<>(distance, new DoubleDistance(),
+        return new DefaultDistanceStructure<>(distance, new DoubleDomain(),
                 lowerBound, upperBound, model);
     }
 }
