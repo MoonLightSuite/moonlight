@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.examples.temporal.afc;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;

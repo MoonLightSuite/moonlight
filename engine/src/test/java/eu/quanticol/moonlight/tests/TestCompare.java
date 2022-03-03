@@ -19,7 +19,12 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
@@ -31,7 +36,7 @@ import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.Pair;
 
 import org.junit.jupiter.api.Test;

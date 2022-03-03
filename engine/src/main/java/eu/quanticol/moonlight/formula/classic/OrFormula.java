@@ -17,14 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.classic;
 
-public class AndFormula implements BinaryFormula {
+import eu.quanticol.moonlight.core.formula.BinaryFormula;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+
+public class OrFormula implements BinaryFormula {
 
     private final Formula firstArgument;
     private final Formula secondArgument;
 
-    public AndFormula(Formula firstArgument, Formula secondArgument) {
+    public OrFormula(Formula firstArgument, Formula secondArgument) {
         this.firstArgument = firstArgument;
         this.secondArgument = secondArgument;
     }
@@ -41,6 +45,7 @@ public class AndFormula implements BinaryFormula {
     public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
         return visitor.visit(this, parameters);
     }
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -65,7 +70,7 @@ public class AndFormula implements BinaryFormula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AndFormula other = (AndFormula) obj;
+        OrFormula other = (OrFormula) obj;
         if (firstArgument == null) {
             if (other.firstArgument != null)
                 return false;
@@ -84,7 +89,7 @@ public class AndFormula implements BinaryFormula {
      */
     @Override
     public String toString() {
-        return "AndFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
+        return "OrFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
     }
 
 }

@@ -1,7 +1,10 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.spatial;
+
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
 
 /**
  * @author loreti

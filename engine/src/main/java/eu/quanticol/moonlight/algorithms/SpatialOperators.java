@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -38,8 +38,8 @@ import static eu.quanticol.moonlight.algorithms.SpaceUtilities.escape;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class SpaceOperator {
-    private SpaceOperator() {} // Hidden constructor
+public class SpatialOperators {
+    private SpatialOperators() {} // Hidden constructor
 
     public static <S, R> SpatialTemporalSignal<R> computeWhereDynamic(
             LocationService<Double, S> l,

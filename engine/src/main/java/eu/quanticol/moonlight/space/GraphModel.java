@@ -20,11 +20,7 @@
 
 package eu.quanticol.moonlight.space;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,7 +35,7 @@ import eu.quanticol.moonlight.util.Pair;
  * @author loreti
  */
 public class GraphModel<E> implements SpatialModel<E> {
-	private final List<HashMap<Integer, E>> edges;
+	private final List<Map<Integer, E>> edges;
 	private final List<List<Pair<Integer, E>>> outEdges;
 	private final List<List<Pair<Integer, E>>> inEdges;
 
@@ -111,10 +107,4 @@ public class GraphModel<E> implements SpatialModel<E> {
 	public List<Pair<Integer, E>> previous(int location) {
 		return inEdges.get(location);
 	}
-
-	@Override
-	public Set<Integer> getLocations() {
-		return IntStream.range(0, size).boxed().collect(Collectors.toSet());
-	}
-
 }

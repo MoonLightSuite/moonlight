@@ -4,7 +4,7 @@ import eu.quanticol.moonlight.MoonLightScript;
 import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;

@@ -2,7 +2,7 @@ package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 public interface MoonLightScript {
 

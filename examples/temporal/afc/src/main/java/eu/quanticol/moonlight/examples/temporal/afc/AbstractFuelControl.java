@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.examples.temporal.afc;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.util.Stopwatch;

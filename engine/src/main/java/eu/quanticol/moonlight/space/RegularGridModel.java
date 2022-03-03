@@ -6,21 +6,28 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class RegularGridModel<E> implements SpatialModel<E> {
-    private final int rows;
     private final int columns;
     private final int size;
     private final E weight;
 
     public RegularGridModel(int rows, int columns, E weight) {
-        this.rows = rows;
         this.columns = columns;
         this.size = rows * columns;
         this.weight = weight;
+    }
+
+    public E getWeight() {
+        return weight;
+    }
+
+    public Pair<Integer, Integer> toCoordinates(int location) {
+        checkLegalLocation(location);
+        int column = location % columns;
+        int row = location / columns;
+        return new Pair<>(column, row);
     }
 
     @Override
@@ -30,24 +37,25 @@ public class RegularGridModel<E> implements SpatialModel<E> {
 
     @Override
     public E get(int source, int target) {
+        checkLegalLocation(source);
+        checkLegalLocation(target);
         return !getNeighbours(source).contains(target) ? null : weight;
     }
 
     @Override
     public List<Pair<Integer, E>> next(int location) {
+        checkLegalLocation(location);
         return listToWeighted(getNeighbours(location));
     }
 
     @Override
     public List<Pair<Integer, E>> previous(int location) {
-        return listToWeighted(getNeighbours(location));
+        return next(location);
     }
 
-    @Override
-    public Set<Integer> getLocations() {
-        return IntStream.range(0, size)
-                .boxed()
-                .collect(Collectors.toSet());
+    private void checkLegalLocation(int location) {
+        if(location > size || location < 0)
+            throw new IllegalArgumentException("invalid location passed");
     }
 
     private List<Pair<Integer, E>> listToWeighted(List<Integer> list) {

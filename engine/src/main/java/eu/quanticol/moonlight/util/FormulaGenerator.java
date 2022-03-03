@@ -3,9 +3,14 @@
  */
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.io.FormulaType;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 
 import java.util.Random;
 

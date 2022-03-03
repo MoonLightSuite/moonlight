@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.signal.DataHandler;
 

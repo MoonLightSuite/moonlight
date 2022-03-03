@@ -19,7 +19,7 @@
  */
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;

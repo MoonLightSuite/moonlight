@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.api;
 
 
-import eu.quanticol.moonlight.formula.Formula;
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;

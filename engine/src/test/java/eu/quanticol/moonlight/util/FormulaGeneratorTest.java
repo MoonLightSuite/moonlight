@@ -1,6 +1,8 @@
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
@@ -12,7 +14,7 @@ import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

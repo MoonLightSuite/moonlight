@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.script;
 import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.RecordHandler;
 import org.antlr.v4.runtime.CharStream;

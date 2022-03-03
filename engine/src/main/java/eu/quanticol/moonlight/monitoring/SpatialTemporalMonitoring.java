@@ -20,11 +20,21 @@
 
 package eu.quanticol.moonlight.monitoring;
 
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
+import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
+import eu.quanticol.moonlight.formula.spatial.ReachFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.Map;
 import java.util.function.Function;

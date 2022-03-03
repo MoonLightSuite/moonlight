@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

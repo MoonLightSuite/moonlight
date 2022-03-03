@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.TemporalMonitorProducer;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.signal.RecordHandler;
 

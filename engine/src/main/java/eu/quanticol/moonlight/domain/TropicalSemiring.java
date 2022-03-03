@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.core.base.Semiring;
+
 /**
  * TODO: this class seems not to be used
  * @author loreti

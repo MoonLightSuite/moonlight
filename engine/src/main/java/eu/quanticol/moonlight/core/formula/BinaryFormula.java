@@ -18,18 +18,23 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.core.formula;
 
 /**
- * Interface implemented by any logic formula over a temporal logical operator.
+ * Interface implemented by any logic formula over a binary logical operator.
  * It is required to support the visit-based online monitoring.
  *
  * @see Formula for more on the interface hierarchy
  */
-public interface SpatialFormula extends Formula {
+public interface BinaryFormula extends Formula {
 
     /**
-     * @return the spatial distance function id
+     * @return the first argument of the binary logical operator
      */
-    String getDistanceFunctionId();
+    Formula getFirstArgument();
+
+    /**
+     * @return the second argument of the binary logical operator
+     */
+    Formula getSecondArgument();
 }

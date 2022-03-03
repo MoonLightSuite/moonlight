@@ -20,15 +20,28 @@
 
 package eu.quanticol.moonlight.online.monitoring;
 
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.SpatialFormula;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
+import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
+import eu.quanticol.moonlight.formula.spatial.ReachFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.domain.AbsIntervalDomain;
-import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.ListDomain;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.online.monitoring.strategy.spacetime.*;
-import eu.quanticol.moonlight.online.signal.SpaceTimeSignal;
+import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -46,9 +59,9 @@ import java.util.function.IntFunction;
 import static eu.quanticol.moonlight.algorithms.SpaceUtilities.*;
 
 public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implements
-FormulaVisitor<Parameters,
-               OnlineMonitor<Double, List<V>,
-               List<AbstractInterval<R>>>>
+        FormulaVisitor<Parameters,
+                       OnlineMonitor<Double, List<V>,
+                       List<AbstractInterval<R>>>>
 {
     private final Formula formula;
     private final SignalDomain<R> interpretation;

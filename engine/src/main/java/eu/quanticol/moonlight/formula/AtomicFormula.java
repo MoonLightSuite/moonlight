@@ -19,6 +19,9 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+
 /**
  *
  */

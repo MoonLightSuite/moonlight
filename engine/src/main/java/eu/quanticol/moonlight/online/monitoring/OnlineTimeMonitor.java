@@ -1,13 +1,20 @@
 package eu.quanticol.moonlight.online.monitoring;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.online.monitoring.strategy.time.*;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.online.signal.TimeSignal;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
 
 import java.util.HashMap;

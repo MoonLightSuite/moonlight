@@ -1,13 +1,18 @@
 /**
  * 
  */
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.spatial;
+
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.SpatialFormula;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
 
 /**
  * @author loreti
  *
  */
-public class SomewhereFormula implements UnaryFormula, SpatialFormula {
+public class EscapeFormula implements UnaryFormula, SpatialFormula {
 
 	private final String distanceFunctionId;
 	private final Formula argument;
@@ -17,7 +22,7 @@ public class SomewhereFormula implements UnaryFormula, SpatialFormula {
 	 * @param distanceFunctionId
 	 * @param argument
 	 */
-	public SomewhereFormula(String distanceFunctionId, Formula argument) {
+	public EscapeFormula(String distanceFunctionId, Formula argument) {
 		super();
 		this.distanceFunctionId = distanceFunctionId;
 		this.argument = argument;

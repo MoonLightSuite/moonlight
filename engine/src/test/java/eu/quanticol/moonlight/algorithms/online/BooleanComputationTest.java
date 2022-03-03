@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.algorithms.online;
 
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;

@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.online.signal;
+package eu.quanticol.moonlight.core.signal;
+
+import eu.quanticol.moonlight.online.signal.*;
 
 import java.io.Serializable;
 
@@ -31,8 +33,7 @@ import java.io.Serializable;
  * @see OnlineSignal for a concrete implementation
  * @see MultiOnlineSignal for a concrete implementation
  */
-public interface TimeSignal<T extends Comparable<T> & Serializable, V>
-{
+public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
     /**
      * Performs an update of the internal representation of the signal,
      * given the data available in the update.

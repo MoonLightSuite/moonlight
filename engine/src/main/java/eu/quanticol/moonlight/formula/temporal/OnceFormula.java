@@ -17,27 +17,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.temporal;
+
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.TemporalFormula;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
+import eu.quanticol.moonlight.core.formula.Interval;
 
 /**
  *
  */
-public class NegationFormula implements UnaryFormula {
+public class OnceFormula implements UnaryFormula, TemporalFormula {
 
     private final Formula argument;
+    private Interval interval;
 
-    public NegationFormula(Formula argument) {
+    public OnceFormula(Formula argument, Interval interval) {
         this.argument = argument;
+        this.interval = interval;
     }
 
-    @Override
-    public Formula getArgument() {
-        return this.argument;
+    public OnceFormula(Formula argument) {
+        this(argument, null);
     }
 
     @Override
     public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
         return visitor.visit(this, parameters);
+    }
+
+    /**
+     * @return the argument
+     */
+    @Override
+    public Formula getArgument() {
+        return argument;
+    }
+
+    /**
+     * @return the interval
+     */
+    @Override
+    public Interval getInterval() {
+        return interval;
+    }
+
+    @Override
+    public boolean isUnbounded() {
+        return interval == null;
     }
 
     /* (non-Javadoc)
@@ -48,6 +76,7 @@ public class NegationFormula implements UnaryFormula {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((argument == null) ? 0 : argument.hashCode());
+        result = prime * result + ((interval == null) ? 0 : interval.hashCode());
         return result;
     }
 
@@ -62,11 +91,16 @@ public class NegationFormula implements UnaryFormula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NegationFormula other = (NegationFormula) obj;
+        OnceFormula other = (OnceFormula) obj;
         if (argument == null) {
             if (other.argument != null)
                 return false;
         } else if (!argument.equals(other.argument))
+            return false;
+        if (interval == null) {
+            if (other.interval != null)
+                return false;
+        } else if (!interval.equals(other.interval))
             return false;
         return true;
     }
@@ -76,7 +110,8 @@ public class NegationFormula implements UnaryFormula {
      */
     @Override
     public String toString() {
-        return "NegationFormula [argument=" + argument + "]";
+        return "OnceFormula [argument=" + argument + ", interval=" + interval + "]";
     }
+
 
 }

@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.core.formula;
 
 /**
  * Interface implemented by any logic formula over a unary logical operator.

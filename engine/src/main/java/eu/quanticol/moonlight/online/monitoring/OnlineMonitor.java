@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.monitoring;
 
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.online.signal.TimeSignal;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
 
 import java.io.Serializable;

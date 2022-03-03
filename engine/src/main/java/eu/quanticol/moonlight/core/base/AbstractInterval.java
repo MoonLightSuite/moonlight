@@ -18,8 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.domain;
+package eu.quanticol.moonlight.core.base;
 
+import eu.quanticol.moonlight.core.formula.Interval;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

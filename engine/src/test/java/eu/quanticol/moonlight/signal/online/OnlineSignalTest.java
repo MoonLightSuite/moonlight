@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.online.signal.OnlineSignal;
 import eu.quanticol.moonlight.online.signal.Update;

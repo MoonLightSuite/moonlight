@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.algorithms;
 
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 

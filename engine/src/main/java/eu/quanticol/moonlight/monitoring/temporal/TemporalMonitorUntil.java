@@ -21,8 +21,8 @@
 package eu.quanticol.moonlight.monitoring.temporal;
 
 import eu.quanticol.moonlight.algorithms.UnboundedUntil;
-import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 
 import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOperator.computeSignal;

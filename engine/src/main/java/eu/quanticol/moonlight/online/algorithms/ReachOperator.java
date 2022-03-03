@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.core.space.LocationService;

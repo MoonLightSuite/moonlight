@@ -6,7 +6,7 @@ import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;

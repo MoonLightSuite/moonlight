@@ -1,4 +1,7 @@
-package eu.quanticol.moonlight.online.signal;
+package eu.quanticol.moonlight.core.signal;
+
+import eu.quanticol.moonlight.online.signal.MultiOnlineSpaceTimeSignal;
+import eu.quanticol.moonlight.online.signal.OnlineSpaceTimeSignal;
 
 import java.io.Serializable;
 import java.util.List;

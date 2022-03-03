@@ -1,16 +1,20 @@
 package eu.quanticol.moonlight.examples.city;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.space.*;
 import eu.quanticol.moonlight.util.Utils;
 

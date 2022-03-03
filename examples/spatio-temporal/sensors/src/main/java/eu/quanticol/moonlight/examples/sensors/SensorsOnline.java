@@ -1,7 +1,17 @@
 package eu.quanticol.moonlight.examples.sensors;
 
 import eu.quanticol.moonlight.api.MatlabRunner;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
+import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.online.signal.*;
 import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.domain.*;

@@ -1,6 +1,8 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
@@ -12,7 +14,7 @@ import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.utility.matlab.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;

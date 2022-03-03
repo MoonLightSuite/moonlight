@@ -1,11 +1,13 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.AbstractInterval;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.online.signal.TimeSignal;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;

@@ -1,7 +1,13 @@
 package eu.quanticol.moonlight.algorithms.online;
 
+import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.online.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;
 import eu.quanticol.moonlight.online.signal.TimeChain;

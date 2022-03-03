@@ -16,6 +16,9 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 
+/**
+ * TODO: is this class used?
+ */
 public class MoonlightCompiler {
 
     private File workingDirectory;

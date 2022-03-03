@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.monitoring.temporal;
 
 import java.util.function.BinaryOperator;
 
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.signal.Signal;
 

@@ -28,7 +28,6 @@ import eu.quanticol.moonlight.util.Pair;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * This interface is implemented by classes describing a spatial model. This is
@@ -72,11 +71,6 @@ public interface SpatialModel<E> {
      * @return the list of incoming edges in <code>l</code>.
      */
     List<Pair<Integer, E>> previous(int location);
-
-    /**
-     * @return the set of locations in the model.
-     */
-    Set<Integer> getLocations();
 
     /**
      * This is an utility method that builds a SpatialModel from an adjacency list represented as

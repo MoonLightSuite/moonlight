@@ -20,14 +20,13 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.core.base.Semiring;
 import eu.quanticol.moonlight.util.Pair;
 
 /**
- * @deprecated generalized by {@link ListDomain}
  * TODO: this class seems not to be used
  * @author loreti
  */
-@Deprecated
 public class PairSemiring<T,R> implements Semiring<Pair<T,R>> {
 	
 	private final Semiring<T> firstSemiring;

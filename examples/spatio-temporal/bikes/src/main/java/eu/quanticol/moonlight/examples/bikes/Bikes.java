@@ -1,16 +1,23 @@
 package eu.quanticol.moonlight.examples.bikes;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.ReachFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;

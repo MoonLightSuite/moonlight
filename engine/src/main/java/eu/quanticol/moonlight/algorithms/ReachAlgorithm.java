@@ -23,7 +23,7 @@ package eu.quanticol.moonlight.algorithms;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Triple;
 

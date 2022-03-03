@@ -1,12 +1,16 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
+import eu.quanticol.moonlight.formula.temporal.UntilFormula;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

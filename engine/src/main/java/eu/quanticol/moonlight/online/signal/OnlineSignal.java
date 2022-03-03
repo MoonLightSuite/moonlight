@@ -20,9 +20,10 @@
 
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
-import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 /**
  * Class to represent 1-dimensional online time signals.

@@ -18,7 +18,17 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.core.formula;
+
+import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
+import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
+import eu.quanticol.moonlight.formula.spatial.ReachFormula;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.*;
 
 /**
  * Visitor interface to interpret a formula and, recursively, its subformulae.

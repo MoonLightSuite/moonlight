@@ -18,9 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.formula;
-
-import eu.quanticol.moonlight.domain.Interval;
+package eu.quanticol.moonlight.core.formula;
 
 /**
  * Interface implemented by any logic formula over a temporal logical operator.

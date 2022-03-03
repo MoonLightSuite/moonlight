@@ -3,19 +3,19 @@
  */
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.formula.AndFormula;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.EventuallyFormula;
-import eu.quanticol.moonlight.formula.Formula;
-import eu.quanticol.moonlight.formula.FormulaVisitor;
-import eu.quanticol.moonlight.formula.GloballyFormula;
-import eu.quanticol.moonlight.formula.HistoricallyFormula;
-import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.formula.NegationFormula;
-import eu.quanticol.moonlight.formula.OnceFormula;
-import eu.quanticol.moonlight.formula.OrFormula;
-import eu.quanticol.moonlight.formula.SinceFormula;
-import eu.quanticol.moonlight.formula.UntilFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
+import eu.quanticol.moonlight.formula.temporal.HistoricallyFormula;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.temporal.OnceFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.temporal.SinceFormula;
+import eu.quanticol.moonlight.formula.temporal.UntilFormula;
 
 import java.util.Arrays;
 import java.util.Map;

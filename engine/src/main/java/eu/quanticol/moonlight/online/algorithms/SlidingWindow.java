@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;

@@ -17,25 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.temporal;
 
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.TemporalFormula;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
+import eu.quanticol.moonlight.core.formula.Interval;
 
-public class UntilFormula implements Formula {
+/**
+ *
+ */
+public class GloballyFormula implements UnaryFormula, TemporalFormula {
 
-    private final Formula firstArgument;
-
-    private final Formula secondArgument;
-
+    private final Formula argument;
     private final Interval interval;
 
-    public UntilFormula(Formula firstArgument, Formula secondArgument) {
-        this(firstArgument, secondArgument, null);
+    public GloballyFormula(Formula argument) {
+        this(argument, null);
     }
 
-    public UntilFormula(Formula firstArgument, Formula secondArgument, Interval interval) {
-        this.firstArgument = firstArgument;
-        this.secondArgument = secondArgument;
+    public GloballyFormula(Formula argument, Interval interval) {
+        this.argument = argument;
         this.interval = interval;
     }
 
@@ -44,31 +47,20 @@ public class UntilFormula implements Formula {
         return visitor.visit(this, parameters);
     }
 
-
     /**
-     * @return the left
+     * @return the argument
      */
-    public Formula getFirstArgument() {
-        return firstArgument;
-    }
-
-    /**
-     * @return the right
-     */
-    public Formula getSecondArgument() {
-        return secondArgument;
+    @Override
+    public Formula getArgument() {
+        return argument;
     }
 
     /**
      * @return the interval
      */
+    @Override
     public Interval getInterval() {
         return interval;
-    }
-
-
-    public boolean isUnbounded() {
-        return (interval == null);
     }
 
     /* (non-Javadoc)
@@ -78,9 +70,8 @@ public class UntilFormula implements Formula {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((firstArgument == null) ? 0 : firstArgument.hashCode());
+        result = prime * result + ((argument == null) ? 0 : argument.hashCode());
         result = prime * result + ((interval == null) ? 0 : interval.hashCode());
-        result = prime * result + ((secondArgument == null) ? 0 : secondArgument.hashCode());
         return result;
     }
 
@@ -95,21 +86,16 @@ public class UntilFormula implements Formula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        UntilFormula other = (UntilFormula) obj;
-        if (firstArgument == null) {
-            if (other.firstArgument != null)
+        GloballyFormula other = (GloballyFormula) obj;
+        if (argument == null) {
+            if (other.argument != null)
                 return false;
-        } else if (!firstArgument.equals(other.firstArgument))
+        } else if (!argument.equals(other.argument))
             return false;
         if (interval == null) {
             if (other.interval != null)
                 return false;
         } else if (!interval.equals(other.interval))
-            return false;
-        if (secondArgument == null) {
-            if (other.secondArgument != null)
-                return false;
-        } else if (!secondArgument.equals(other.secondArgument))
             return false;
         return true;
     }
@@ -119,8 +105,17 @@ public class UntilFormula implements Formula {
      */
     @Override
     public String toString() {
-        return "UntilFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + ", interval="
-                + interval + "]";
+        return "GloballyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
+
+    @Override
+    public boolean isUnbounded() {
+        return interval == null;
+    }
+
+
+//	public Interval getInterval( Parameters p ) {
+//		return this.interval.apply(p);
+//	}
 
 }

@@ -17,24 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.temporal;
 
-public class OrFormula implements BinaryFormula {
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.Interval;
+
+public class UntilFormula implements Formula {
 
     private final Formula firstArgument;
+
     private final Formula secondArgument;
 
-    public OrFormula(Formula firstArgument, Formula secondArgument) {
+    private final Interval interval;
+
+    public UntilFormula(Formula firstArgument, Formula secondArgument) {
+        this(firstArgument, secondArgument, null);
+    }
+
+    public UntilFormula(Formula firstArgument, Formula secondArgument, Interval interval) {
         this.firstArgument = firstArgument;
         this.secondArgument = secondArgument;
-    }
-
-    public Formula getFirstArgument() {
-        return firstArgument;
-    }
-
-    public Formula getSecondArgument() {
-        return secondArgument;
+        this.interval = interval;
     }
 
     @Override
@@ -42,6 +46,32 @@ public class OrFormula implements BinaryFormula {
         return visitor.visit(this, parameters);
     }
 
+
+    /**
+     * @return the left
+     */
+    public Formula getFirstArgument() {
+        return firstArgument;
+    }
+
+    /**
+     * @return the right
+     */
+    public Formula getSecondArgument() {
+        return secondArgument;
+    }
+
+    /**
+     * @return the interval
+     */
+    public Interval getInterval() {
+        return interval;
+    }
+
+
+    public boolean isUnbounded() {
+        return (interval == null);
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -51,6 +81,7 @@ public class OrFormula implements BinaryFormula {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((firstArgument == null) ? 0 : firstArgument.hashCode());
+        result = prime * result + ((interval == null) ? 0 : interval.hashCode());
         result = prime * result + ((secondArgument == null) ? 0 : secondArgument.hashCode());
         return result;
     }
@@ -66,11 +97,16 @@ public class OrFormula implements BinaryFormula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OrFormula other = (OrFormula) obj;
+        UntilFormula other = (UntilFormula) obj;
         if (firstArgument == null) {
             if (other.firstArgument != null)
                 return false;
         } else if (!firstArgument.equals(other.firstArgument))
+            return false;
+        if (interval == null) {
+            if (other.interval != null)
+                return false;
+        } else if (!interval.equals(other.interval))
             return false;
         if (secondArgument == null) {
             if (other.secondArgument != null)
@@ -85,7 +121,8 @@ public class OrFormula implements BinaryFormula {
      */
     @Override
     public String toString() {
-        return "OrFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + "]";
+        return "UntilFormula [firstArgument=" + firstArgument + ", secondArgument=" + secondArgument + ", interval="
+                + interval + "]";
     }
 
 }

@@ -17,46 +17,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.classic;
 
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
 
 /**
  *
  */
-public class EventuallyFormula implements UnaryFormula, TemporalFormula {
+public class NegationFormula implements UnaryFormula {
 
     private final Formula argument;
-    private final Interval interval;
 
-    public EventuallyFormula(Formula argument) {
-        this(argument, null);
+    public NegationFormula(Formula argument) {
+        this.argument = argument;
     }
 
-    public EventuallyFormula(Formula argument, Interval interval) {
-        this.argument = argument;
-        this.interval = interval;
+    @Override
+    public Formula getArgument() {
+        return this.argument;
     }
 
     @Override
     public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
         return visitor.visit(this, parameters);
-    }
-
-    /**
-     * @return the argument
-     */
-    @Override
-    public Formula getArgument() {
-        return argument;
-    }
-
-    /**
-     * @return the interval
-     */
-    @Override
-    public Interval getInterval() {
-        return interval;
     }
 
     /* (non-Javadoc)
@@ -67,7 +52,6 @@ public class EventuallyFormula implements UnaryFormula, TemporalFormula {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((argument == null) ? 0 : argument.hashCode());
-        result = prime * result + ((interval == null) ? 0 : interval.hashCode());
         return result;
     }
 
@@ -82,16 +66,11 @@ public class EventuallyFormula implements UnaryFormula, TemporalFormula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EventuallyFormula other = (EventuallyFormula) obj;
+        NegationFormula other = (NegationFormula) obj;
         if (argument == null) {
             if (other.argument != null)
                 return false;
         } else if (!argument.equals(other.argument))
-            return false;
-        if (interval == null) {
-            if (other.interval != null)
-                return false;
-        } else if (!interval.equals(other.interval))
             return false;
         return true;
     }
@@ -101,12 +80,7 @@ public class EventuallyFormula implements UnaryFormula, TemporalFormula {
      */
     @Override
     public String toString() {
-        return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
-    }
-
-    @Override
-    public boolean isUnbounded() {
-        return interval == null;
+        return "NegationFormula [argument=" + argument + "]";
     }
 
 }

@@ -17,25 +17,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package eu.quanticol.moonlight.formula;
+package eu.quanticol.moonlight.formula.temporal;
 
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.TemporalFormula;
+import eu.quanticol.moonlight.core.formula.UnaryFormula;
+import eu.quanticol.moonlight.core.formula.Interval;
 
 /**
  *
  */
-public class OnceFormula implements UnaryFormula, TemporalFormula {
+public class EventuallyFormula implements UnaryFormula, TemporalFormula {
 
     private final Formula argument;
-    private Interval interval;
+    private final Interval interval;
 
-    public OnceFormula(Formula argument, Interval interval) {
-        this.argument = argument;
-        this.interval = interval;
+    public EventuallyFormula(Formula argument) {
+        this(argument, null);
     }
 
-    public OnceFormula(Formula argument) {
-        this(argument, null);
+    public EventuallyFormula(Formula argument, Interval interval) {
+        this.argument = argument;
+        this.interval = interval;
     }
 
     @Override
@@ -57,11 +61,6 @@ public class OnceFormula implements UnaryFormula, TemporalFormula {
     @Override
     public Interval getInterval() {
         return interval;
-    }
-
-    @Override
-    public boolean isUnbounded() {
-        return interval == null;
     }
 
     /* (non-Javadoc)
@@ -87,7 +86,7 @@ public class OnceFormula implements UnaryFormula, TemporalFormula {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OnceFormula other = (OnceFormula) obj;
+        EventuallyFormula other = (EventuallyFormula) obj;
         if (argument == null) {
             if (other.argument != null)
                 return false;
@@ -106,8 +105,12 @@ public class OnceFormula implements UnaryFormula, TemporalFormula {
      */
     @Override
     public String toString() {
-        return "OnceFormula [argument=" + argument + ", interval=" + interval + "]";
+        return "EventuallyFormula [argument=" + argument + ", interval=" + interval + "]";
     }
 
+    @Override
+    public boolean isUnbounded() {
+        return interval == null;
+    }
 
 }

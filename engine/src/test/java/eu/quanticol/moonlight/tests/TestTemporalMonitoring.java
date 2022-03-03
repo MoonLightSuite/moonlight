@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.io.MoonLightRecord;
@@ -34,7 +36,7 @@ import eu.quanticol.moonlight.signal.SignalCreator;
 import eu.quanticol.moonlight.signal.DataHandler;
 import eu.quanticol.moonlight.signal.VariableArraySignal;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.*;
 
 import org.junit.jupiter.api.Test;

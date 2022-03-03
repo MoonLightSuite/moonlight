@@ -22,8 +22,8 @@ package eu.quanticol.moonlight.monitoring.temporal;
 
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.domain.Interval;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**

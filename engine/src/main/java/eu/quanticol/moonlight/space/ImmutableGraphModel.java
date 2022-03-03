@@ -116,11 +116,6 @@ public class ImmutableGraphModel<T> implements SpatialModel<T> {
 		return this.inEdges.get(location);
 	}
 
-	@Override
-	public Set<Integer> getLocations() {
-		return IntStream.range(0, locations).boxed().collect(Collectors.toSet());
-	}
-
 	private ImmutableGraphModel<T> generateFromRemoval(int src, int trg) {
 		Pair<Integer,T> out = outEdges.get(src).get(trg);
 		Pair<Integer,T> in = inEdges.get(src).get(trg);

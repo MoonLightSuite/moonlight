@@ -18,8 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.domain;
+package eu.quanticol.moonlight.core.signal;
 
+import eu.quanticol.moonlight.core.base.Semiring;
 import eu.quanticol.moonlight.signal.DataHandler;
 
 import java.util.function.BiFunction;

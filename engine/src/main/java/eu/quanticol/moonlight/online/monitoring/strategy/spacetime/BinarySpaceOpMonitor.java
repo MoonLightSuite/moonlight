@@ -21,12 +21,12 @@
 package eu.quanticol.moonlight.online.monitoring.strategy.spacetime;
 
 import eu.quanticol.moonlight.online.algorithms.ReachOperator;
-import eu.quanticol.moonlight.domain.AbstractInterval;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.online.signal.OnlineSpaceTimeSignal;
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.online.signal.TimeSignal;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
 
 import java.util.ArrayList;

@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.domain;
+package eu.quanticol.moonlight.core.base;
 
 import java.util.ArrayList;
 import java.util.function.BiFunction;

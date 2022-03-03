@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.domain;
+package eu.quanticol.moonlight.core.formula;
+
+import eu.quanticol.moonlight.core.base.AbstractInterval;
 
 /**
  * Immutable data type that represents an interval over

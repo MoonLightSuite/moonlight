@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.ArrayList;
 import java.util.List;

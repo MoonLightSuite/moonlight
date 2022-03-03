@@ -19,7 +19,12 @@
  */
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.classic.AndFormula;
+import eu.quanticol.moonlight.formula.classic.NegationFormula;
+import eu.quanticol.moonlight.formula.classic.OrFormula;
+import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.io.FormulaJSonIO;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
@@ -28,7 +33,7 @@ import eu.quanticol.moonlight.signal.RecordHandler;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.domain.Interval;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.Pair;

@@ -15,8 +15,8 @@
 
 package eu.quanticol.moonlight.core.space;
 
-import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.util.Pair;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -136,20 +136,5 @@ public class DefaultDistanceStructure<E, M> implements DistanceStructure<E, M> {
             distanceMap.put(location, locationDistances);
         });
         return distanceMap;
-    }
-
-    /**
-     * @deprecated useless and opaque.
-     *             Replace with direct constructor call.
-     */
-    @Deprecated
-    public static <T> DefaultDistanceStructure<T, Double>
-    buildDistanceStructure(SpatialModel<T> model,
-                           Function<T, Double> distance,
-                           double lowerBound,
-                           double upperBound)
-    {
-        return new DefaultDistanceStructure<>(distance, new DoubleDomain(),
-                lowerBound, upperBound, model);
     }
 }
