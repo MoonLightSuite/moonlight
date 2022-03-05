@@ -48,6 +48,20 @@ public interface DistanceDomain<M> {
     M sum(M x, M y);
 
     /**
+     * Method to combine a metric n times
+     * @param x metric
+     * @param factor times of the combination
+     * @return multiplication of the metric times the factor
+     */
+    default M multiply(M x, int factor) {
+        M accumul = zero();
+        for(int i = 0; i < factor; i++) {
+            accumul = sum(x, accumul);
+        }
+        return accumul;
+    }
+
+    /**
      * Tells whether the first distance is smaller than the second
      * @param x the first distance to be analyzed
      * @param y the second distance to be analyzed

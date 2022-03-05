@@ -21,6 +21,11 @@ public class IntegerDomain implements DistanceDomain<Integer> {
     }
 
     @Override
+    public Integer multiply(Integer x, int factor) {
+        return x * factor;
+    }
+
+    @Override
     public boolean less(Integer x, Integer y) {
         return x < y;
     }
