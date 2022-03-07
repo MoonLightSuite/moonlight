@@ -49,12 +49,8 @@ public class ManhattanDistanceStructure<E, M>
     }
 
     private M distanceToMetric(int distance) {
-        M accumulatedDistance = distanceDomain.zero();
-        for(int i = 0; i < distance; i++) {
-            M step = distanceFunction.apply(model.getWeight());
-            accumulatedDistance = distanceDomain.sum(accumulatedDistance, step);
-        }
-        return accumulatedDistance;
+        M weight = distanceFunction.apply(model.getWeight());
+        return distanceDomain.multiply(weight, distance);
     }
 
     @Override
