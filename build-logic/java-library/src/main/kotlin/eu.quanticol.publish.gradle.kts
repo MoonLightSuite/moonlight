@@ -1,6 +1,6 @@
 plugins {
     id("eu.quanticol.java-library")
-    id("maven-publish")
+    `maven-publish`
 }
 
 publishing {

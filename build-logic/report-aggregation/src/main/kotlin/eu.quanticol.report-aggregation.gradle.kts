@@ -2,9 +2,9 @@
 // https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_code_coverage.html
 
 plugins {
-    id("java")
-    id("jacoco")
-    id("jacoco-report-aggregation")
+    java
+    jacoco
+    `jacoco-report-aggregation`
 }
 
 /*

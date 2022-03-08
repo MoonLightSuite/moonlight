@@ -3,6 +3,7 @@
 // for convenience the tasks of the "sub"-projects
 plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
+    id("org.sonarqube") version "3.3"
 }
 
 // == Umbrella task to publishing all publishable packages ==
@@ -25,6 +26,16 @@ tasks.named("clean") {
 //tasks.register("publish") {
 //    dependsOn(gradle.includedBuild("core").task(":publish"))
 //}
+
+
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "MoonLightSuite_MoonLight")
+        property("sonar.organization", "moonlightsuite")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 
 
 dependencies {
