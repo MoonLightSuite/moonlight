@@ -3,6 +3,15 @@
 // for convenience the tasks of the "sub"-projects
 plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
+    id("org.sonarqube") version "3.3"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "ennioVisco_moonlight")
+        property("sonar.organization", "enniovisco")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 // TODO: unclear whether still needed
