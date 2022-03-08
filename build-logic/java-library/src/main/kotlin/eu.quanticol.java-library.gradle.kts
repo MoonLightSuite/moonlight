@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     id("eu.quanticol.jacoco")
+    id("org.sonarqube")
 }
 
 group = "eu.quanticol.moonlight"
@@ -24,4 +25,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+sonarqube {
+    properties {
+        property("sonar.sources", "src")
+    }
 }
