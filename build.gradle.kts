@@ -8,7 +8,7 @@ plugins {
 // == Umbrella task to publishing all publishable packages ==
 // TODO: ideally we should have three separate packages:
 //          1. api/console
-//          2. core
+//          2. engine/core
 //          3. script
 tasks.register<Copy>("release") {
     dependsOn(gradle.includedBuild("console").task(":release"))
@@ -21,17 +21,16 @@ tasks.named("clean") {
 }
 
 // == Umbrella task to publish all ==
-// TODO: still wip, for now cleans important stuff
-tasks.register("publish") {
-    dependsOn(gradle.includedBuild("core").task(":publish"))
-}
+// TODO: still wip, for now publishes important stuff
+//tasks.register("publish") {
+//    dependsOn(gradle.includedBuild("core").task(":publish"))
+//}
 
 
 dependencies {
-//    // Transitively collect coverage data from all features and their dependencies
-//    aggregate("eu.quanticol.moonlight:core")
-//    aggregate("eu.quanticol.moonlight:script")
-//    aggregate("eu.quanticol.moonlight:console")
-//    aggregate("eu.quanticol.moonlight.api:matlab")
-//    // TODO: add examples, etc.
+    // Transitively collect coverage data from all features and their dependencies
+    jacocoAggregation("eu.quanticol.moonlight:console")
+    jacocoAggregation("eu.quanticol.moonlight:core")
+    jacocoAggregation("eu.quanticol.moonlight:script")
+    // TODO: add examples, etc.
 }
