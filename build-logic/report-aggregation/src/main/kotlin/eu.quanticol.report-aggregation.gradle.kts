@@ -22,7 +22,7 @@ sonarqube {
 //        property("sonar.java.tests", "core/src/test/java")
 //        property("sonar.java.binaries", "core/build/classes/java/main")
         //property("sonar.inclusions", "core/src/main/java/*.java")
-        property("sonar.java.sources", "core/src/main/java/**")
+        property("sonar.java.sources", "core/src/main/java/**/.java")
     }
 }
 
