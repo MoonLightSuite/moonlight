@@ -135,9 +135,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.orMonitor(leftMonitoring, module, rightMonitoring);
     }
 
-    /**
-     * @see FormulaVisitor#visit(EventuallyFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             EventuallyFormula eventuallyFormula, Parameters parameters) {
@@ -145,9 +142,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.eventuallyMonitor(m,eventuallyFormula.getInterval(),module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(GloballyFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             GloballyFormula globallyFormula, Parameters parameters) {
@@ -155,9 +149,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.globallyMonitor(m, globallyFormula.getInterval(),module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(UntilFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             UntilFormula untilFormula, Parameters parameters) {
@@ -166,9 +157,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(SinceFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             SinceFormula sinceFormula, Parameters parameters) {
@@ -177,9 +165,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(HistoricallyFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             HistoricallyFormula historicallyFormula, Parameters parameters) {
@@ -187,9 +172,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.historicallyMonitor(argumentMonitoring, historicallyFormula.getInterval(),module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(OnceFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             OnceFormula onceFormula, Parameters parameters) {
@@ -197,9 +179,6 @@ public class SpatialTemporalMonitoring<S, T, R> implements
         return SpatialTemporalMonitor.onceMonitor(argumentMonitoring, onceFormula.getInterval(), module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(SomewhereFormula, Object)
-     */
     @Override
     public SpatialTemporalMonitor<S,T,R> visit(
             SomewhereFormula somewhereFormula, Parameters parameters) {
