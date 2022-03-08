@@ -6,13 +6,13 @@ plugins {
     id("org.sonarqube") version "3.3"
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "ennioVisco_moonlight")
-        property("sonar.organization", "enniovisco")
-        property("sonar.host.url", "https://sonarcloud.io")
-    }
-}
+//sonarqube {
+//    properties {
+//        property("sonar.projectKey", "ennioVisco_moonlight")
+//        property("sonar.organization", "enniovisco")
+//        property("sonar.host.url", "https://sonarcloud.io")
+//    }
+//}
 
 // TODO: unclear whether still needed
 //subprojects {
