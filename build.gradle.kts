@@ -3,6 +3,7 @@
 // for convenience the tasks of the "sub"-projects
 plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
+    id("org.sonarqube") version "3.3"
 }
 
 // == Umbrella task to publishing all publishable packages ==
@@ -24,6 +25,12 @@ tasks.named("clean") {
 // TODO: still wip, for now publishes important stuff
 tasks.register("publish") {
     dependsOn(gradle.includedBuild("core").task(":publish"))
+}
+
+tasks.named("sonarqube") {
+    dependsOn(gradle.includedBuild("core").task(":sonarqube"))
+    //dependsOn(gradle.includedBuild("console").task(":sonarqube"))
+    //dependsOn(gradle.includedBuild("script").task(":sonarqube"))
 }
 
 

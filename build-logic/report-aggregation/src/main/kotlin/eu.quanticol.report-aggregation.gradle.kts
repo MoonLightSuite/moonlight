@@ -5,26 +5,9 @@ plugins {
     java
     jacoco
     `jacoco-report-aggregation`
-    id("org.sonarqube")
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "MoonLightSuite_MoonLight")
-        property("sonar.organization", "moonlightsuite")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
 
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
-
-//        //TODO: these properties are workarounds to pass multi-project sources to sonarqube
-//        property("sonar.java.sources", "core/src/main/java")
-//        property("sonar.java.tests", "core/src/test/java")
-//        property("sonar.java.binaries", "core/build/classes/java/main")
-        //property("sonar.inclusions", "core/src/main/java/*.java")
-        property("sonar.java.sources", "core/src/main/java/**/.java")
-    }
-}
 
 /*
 // Configurations to declare dependencies
@@ -96,8 +79,4 @@ val codeCoverageReport by tasks.registering(JacocoReport::class) {
 // Make JaCoCo report generation part of the 'check' lifecycle phase
 tasks.check {
     dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
-}
-
-tasks.sonarqube {
-    dependsOn(tasks.check)
 }
