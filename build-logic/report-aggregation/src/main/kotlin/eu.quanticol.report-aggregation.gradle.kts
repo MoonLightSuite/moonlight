@@ -4,8 +4,10 @@
 plugins {
     id("java")
     id("jacoco")
+    id("jacoco-report-aggregation")
 }
 
+/*
 // Configurations to declare dependencies
 val aggregate: Configuration by configurations.creating {
     isVisible = false
@@ -70,9 +72,9 @@ val codeCoverageReport by tasks.registering(JacocoReport::class) {
         // without any external tools
         html.required.set(true)
     }
-}
+}*/
 
 // Make JaCoCo report generation part of the 'check' lifecycle phase
-tasks.named("check") {
-    dependsOn(codeCoverageReport)
+tasks.check {
+    dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
 }

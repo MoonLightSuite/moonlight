@@ -7,8 +7,7 @@ publishing {
     publications {
         // We define a Maven Package for publication
         create<MavenPublication>("mavenJava") {
-            artifactId = "${rootProject.name}"
-            //artifact("$buildDir/libs/moonlight.jar")
+            artifactId = rootProject.name
             groupId = "$group"
             version = "1.0-SNAPSHOT"
             from(components["java"])

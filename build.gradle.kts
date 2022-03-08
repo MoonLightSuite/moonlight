@@ -5,11 +5,6 @@ plugins {
     id("eu.quanticol.report-aggregation")   // for combining JaCoCo reports
 }
 
-// TODO: unclear whether still needed
-//subprojects {
-//    ext.xtextVersion = "2.18.0.M3"
-//}
-
 // == Umbrella task to publishing all publishable packages ==
 // TODO: ideally we should have three separate packages:
 //          1. api/console
@@ -33,10 +28,10 @@ tasks.register("publish") {
 
 
 dependencies {
-    // Transitively collect coverage data from all features and their dependencies
-    aggregate("eu.quanticol.moonlight:core")
-    aggregate("eu.quanticol.moonlight:script")
-    aggregate("eu.quanticol.moonlight:console")
-    aggregate("eu.quanticol.moonlight.api:matlab")
-    // TODO: add examples, etc.
+//    // Transitively collect coverage data from all features and their dependencies
+//    aggregate("eu.quanticol.moonlight:core")
+//    aggregate("eu.quanticol.moonlight:script")
+//    aggregate("eu.quanticol.moonlight:console")
+//    aggregate("eu.quanticol.moonlight.api:matlab")
+//    // TODO: add examples, etc.
 }
