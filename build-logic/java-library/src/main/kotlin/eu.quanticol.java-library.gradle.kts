@@ -34,7 +34,7 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
 
-        property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        //property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
 
 //        //TODO: these properties are workarounds to pass multi-project sources to sonarqube
 //        property("sonar.java.sources", "core/src/main/java")
