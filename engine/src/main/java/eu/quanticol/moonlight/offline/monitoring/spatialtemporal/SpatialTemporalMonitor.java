@@ -23,10 +23,8 @@ package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 import java.util.function.Function;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.monitoring.temporal.*;
-import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.offline.monitoring.temporal.*;
+import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;

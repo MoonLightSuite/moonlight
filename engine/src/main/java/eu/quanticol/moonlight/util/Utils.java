@@ -20,9 +20,7 @@
 
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;

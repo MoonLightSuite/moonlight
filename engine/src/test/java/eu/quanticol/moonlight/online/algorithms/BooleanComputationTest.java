@@ -1,8 +1,7 @@
-package eu.quanticol.moonlight.algorithms.online;
+package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
 import eu.quanticol.moonlight.online.signal.SegmentInterface;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;

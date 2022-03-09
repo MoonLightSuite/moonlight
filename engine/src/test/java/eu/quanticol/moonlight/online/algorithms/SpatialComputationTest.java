@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.algorithms.online;
+package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;

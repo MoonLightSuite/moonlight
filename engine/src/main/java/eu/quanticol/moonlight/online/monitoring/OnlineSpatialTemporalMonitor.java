@@ -40,7 +40,7 @@ import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.ListDomain;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.online.monitoring.monitoring.spatialtemporal.*;
+import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;

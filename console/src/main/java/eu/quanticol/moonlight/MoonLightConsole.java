@@ -1,13 +1,11 @@
 package eu.quanticol.moonlight;
+
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.offline.signal.RecordHandler;
-import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
-import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;

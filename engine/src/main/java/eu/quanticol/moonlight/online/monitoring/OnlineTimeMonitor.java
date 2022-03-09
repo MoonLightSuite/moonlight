@@ -10,13 +10,7 @@ import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
-import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.online.monitoring.monitoring.temporal.*;
-import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.online.monitoring.temporal.AtomicMonitor;
-import eu.quanticol.moonlight.online.monitoring.temporal.BinaryMonitor;
-import eu.quanticol.moonlight.online.monitoring.temporal.TemporalOpMonitor;
-import eu.quanticol.moonlight.online.monitoring.temporal.UnaryMonitor;
+import eu.quanticol.moonlight.online.monitoring.temporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -27,15 +21,12 @@ import java.util.function.Function;
 
 /**
  * Primary entry point to perform online monitoring.
- * Based on a visitor design pattern over the formula tree,
- * just like {@link TemporalMonitoring}.
+ * Based on a visitor design pattern over the formula tree.
  *
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see TemporalMonitoring
  * @see FormulaVisitor
- * @see TemporalMonitor
  */
 public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>

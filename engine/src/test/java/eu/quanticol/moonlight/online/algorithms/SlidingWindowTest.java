@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.algorithms.online;
+package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
