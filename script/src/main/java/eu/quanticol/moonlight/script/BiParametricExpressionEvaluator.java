@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class BiParametricExpressionEvaluator extends MoonLightScriptBaseVisitor<BiFunction<MoonLightRecord,MoonLightRecord,Double>> {
 
-    private final static Map<String,BiFunction<Double,Double,Double>> binaryFunctionMap = new HashMap<>();
+    private static final Map<String,BiFunction<Double,Double,Double>> binaryFunctionMap = new HashMap<>();
 
     static {
         binaryFunctionMap.put("atan2", Math::atan2);
@@ -20,7 +20,7 @@ public class BiParametricExpressionEvaluator extends MoonLightScriptBaseVisitor<
         binaryFunctionMap.put("pow", Math::pow);
     }
 
-    private final static Map<String,Function<Double,Double>> unaryFunctionMap = new HashMap<>();
+    private static final Map<String,Function<Double,Double>> unaryFunctionMap = new HashMap<>();
 
     static {
         unaryFunctionMap.put("abs", Math::abs);

@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.script;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class DefaultNameResolver implements NameResolver {

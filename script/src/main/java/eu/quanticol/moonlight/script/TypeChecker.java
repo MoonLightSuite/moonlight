@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.script;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
-import java.util.Map;
 
 public class TypeChecker extends MoonLightScriptBaseVisitor<MoonLightType> {
 
@@ -20,11 +19,11 @@ public class TypeChecker extends MoonLightScriptBaseVisitor<MoonLightType> {
         return tc.checkType(expected, value);
     }
 
-    public static enum EvaluationContext {
+    public enum EvaluationContext {
         NONE,
         INTERVAL,
         EDGE,
-        STATE;
+        STATE
     }
 
     private final List<MoonLightParseError> errors;
