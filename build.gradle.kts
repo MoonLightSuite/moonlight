@@ -27,7 +27,8 @@ tasks.register("publish") {
     dependsOn(gradle.includedBuild("engine").task(":publish"))
 }
 
-tasks.named("sonarqube") {
+tasks.register("analyze") {
+    dependsOn(tasks.named("check"))
     dependsOn(gradle.includedBuild("engine").task(":sonarqube"))
     //dependsOn(gradle.includedBuild("console").task(":sonarqube"))
     //dependsOn(gradle.includedBuild("script").task(":sonarqube"))
