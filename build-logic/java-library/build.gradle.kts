@@ -5,4 +5,10 @@
 // - publishing maven packages
 plugins {
     `kotlin-dsl`
+    id("org.sonarqube") version "3.3"
 }
+
+dependencies {
+    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3")
+}
+

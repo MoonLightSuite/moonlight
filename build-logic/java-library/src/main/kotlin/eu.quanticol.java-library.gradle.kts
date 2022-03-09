@@ -1,6 +1,7 @@
 plugins {
-    id("java-library")
+    `java-library`
     id("eu.quanticol.jacoco")
+    id("org.sonarqube")
 }
 
 group = "eu.quanticol.moonlight"
@@ -24,4 +25,22 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "MoonLightSuite_MoonLight")
+        property("sonar.organization", "moonlightsuite")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+
+        //property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+
+//        //TODO: these properties are workarounds to pass multi-project sources to sonarqube
+//        property("sonar.java.sources", "core/src/main/java")
+//        property("sonar.java.tests", "core/src/test/java")
+//        property("sonar.java.binaries", "core/build/classes/java/main")
+        //property("sonar.inclusions", "core/src/main/java/*.java")
+        //property("sonar.java.sources", "core/src/main/java/**/.java")
+    }
 }
