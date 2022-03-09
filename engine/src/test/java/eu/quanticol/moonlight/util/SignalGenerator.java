@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.Signal;
 
 import java.util.Random;
 import java.util.function.DoubleFunction;

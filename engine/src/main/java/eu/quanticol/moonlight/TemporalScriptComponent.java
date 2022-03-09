@@ -23,10 +23,10 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.io.IllegalFileFormatException;
 import eu.quanticol.moonlight.io.TemporalSignalReader;
 import eu.quanticol.moonlight.io.TemporalSignalWriter;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;

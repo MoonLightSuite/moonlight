@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.statistics;
 
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;

@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
 import java.util.List;

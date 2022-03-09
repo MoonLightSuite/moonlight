@@ -11,8 +11,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
 
 /**
  * @author loreti

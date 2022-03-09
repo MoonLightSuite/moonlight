@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.bikes.utilities;
 
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.statistics.SignalStatistics.Statistics;
 
 import java.security.InvalidParameterException;

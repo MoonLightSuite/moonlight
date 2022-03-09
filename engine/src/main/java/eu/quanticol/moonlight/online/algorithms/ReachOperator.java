@@ -22,8 +22,8 @@ package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.algorithms.SpatialComputation.escape;
-import static eu.quanticol.moonlight.algorithms.SpatialComputation.reach;
+import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.escape;
+import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.reach;
 
 /**
  * Algorithm for Reach Operator Computation

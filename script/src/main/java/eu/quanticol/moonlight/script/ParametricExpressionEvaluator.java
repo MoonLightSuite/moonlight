@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.HashMap;

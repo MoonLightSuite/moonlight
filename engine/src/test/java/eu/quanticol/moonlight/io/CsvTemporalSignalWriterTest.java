@@ -20,9 +20,9 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.util.SignalGenerator;
 import org.junit.jupiter.api.Test;
 

@@ -1,9 +1,9 @@
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 
 /**
  * Instances of this class are used to represent a definition for a temporal monitor. Each definition

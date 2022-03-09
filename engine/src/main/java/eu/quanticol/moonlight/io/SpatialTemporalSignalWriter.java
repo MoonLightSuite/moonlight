@@ -6,8 +6,8 @@ package eu.quanticol.moonlight.io;
 import java.io.File;
 import java.io.IOException;
 
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 /**
  * @author loreti

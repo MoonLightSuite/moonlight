@@ -10,8 +10,12 @@ import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -51,7 +55,7 @@ public class MainSp {
         ArrayList<Integer> people = new ArrayList<>(Arrays.asList(3, 145, 67, 243, 22, 103, 6));
 
         //// SpatioTemporalSignal
-        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray),DataHandler.BOOLEAN,DataHandler.INTEGER);
+        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray), DataHandler.BOOLEAN,DataHandler.INTEGER);
         ArrayList<MoonLightRecord> signalSP = new ArrayList<MoonLightRecord>();
         for (int i = 0; i < size; i++) {
             signalSP.add(factory.fromObjectArray(place.get(i), taxi.get(i), people.get(i)));

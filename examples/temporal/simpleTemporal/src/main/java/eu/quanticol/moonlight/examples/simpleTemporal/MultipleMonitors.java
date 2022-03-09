@@ -5,11 +5,11 @@ import eu.quanticol.moonlight.TemporalScriptComponent;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.util.Pair;
 import eu.quanticol.moonlight.util.Utils;
 

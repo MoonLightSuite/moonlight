@@ -1,6 +1,9 @@
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.IllegalValueException;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +13,7 @@ class DataHandlerTest {
     @Test
     public void testDoubleFromObjectDouble() throws IllegalValueException {
         Double d = 2.0;
-        assertEquals(2.0,DataHandler.REAL.fromObject(d));
+        assertEquals(2.0, DataHandler.REAL.fromObject(d));
     }
 
     @Test

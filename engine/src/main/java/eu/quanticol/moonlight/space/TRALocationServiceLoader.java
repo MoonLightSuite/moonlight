@@ -26,8 +26,8 @@ import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.io.AbstractFileByRowReader;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
-import eu.quanticol.moonlight.signal.IllegalValueException;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.IllegalValueException;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 
 import java.io.File;
 import java.io.IOException;

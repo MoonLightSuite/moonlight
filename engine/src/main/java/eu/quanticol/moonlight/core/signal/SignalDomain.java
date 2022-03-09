@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.core.signal;
 
 import eu.quanticol.moonlight.core.base.Semiring;
-import eu.quanticol.moonlight.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
 
 import java.util.function.BiFunction;
 

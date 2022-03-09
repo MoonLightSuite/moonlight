@@ -22,8 +22,8 @@ package eu.quanticol.moonlight.io;
 import java.io.File;
 import java.io.IOException;
 
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 /**
  * Classes implementing this interface are used to read a spatial-temporal signal either from a string or

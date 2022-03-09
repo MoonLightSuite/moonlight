@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.script;
 
-import eu.quanticol.moonlight.signal.EnumerationHandler;
+import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
 
 import java.util.HashMap;
 import java.util.Map;

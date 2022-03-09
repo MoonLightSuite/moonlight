@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 
 class JSONUtils {
 

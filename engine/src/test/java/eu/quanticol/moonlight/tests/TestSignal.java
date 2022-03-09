@@ -19,10 +19,10 @@
  */
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.algorithms.SlidingWindow;
-import eu.quanticol.moonlight.signal.DataHandler;
-import eu.quanticol.moonlight.signal.Signal;
-import eu.quanticol.moonlight.signal.SignalCursor;
+import eu.quanticol.moonlight.offline.algorithms.SlidingWindow;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SignalCursor;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 

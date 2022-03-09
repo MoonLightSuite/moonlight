@@ -1,7 +1,11 @@
 package eu.quanticol.moonlight.examples.city;
 
-import eu.quanticol.moonlight.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
@@ -74,7 +78,7 @@ public class mainSp2 {
 
         //// SpatioTemporalMonitoring
 
-        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray),DataHandler.BOOLEAN,DataHandler.INTEGER);
+        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray), DataHandler.BOOLEAN,DataHandler.INTEGER);
         HashMap<String, Integer> vTable = new HashMap<>();
         vTable.put("place", 1);
         vTable.put("taxi", 2);

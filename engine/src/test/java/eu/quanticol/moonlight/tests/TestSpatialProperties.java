@@ -1,14 +1,17 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
-import eu.quanticol.moonlight.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
@@ -24,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import static eu.quanticol.moonlight.algorithms.SpatialComputation.escape;
-import static eu.quanticol.moonlight.algorithms.SpatialComputation.reach;
+import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.escape;
+import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.reach;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

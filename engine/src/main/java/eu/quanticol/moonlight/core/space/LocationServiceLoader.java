@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.core.space;
 
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import eu.quanticol.moonlight.io.json.IllegalFileFormat;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 
 import java.io.File;
 import java.io.IOException;

@@ -19,7 +19,7 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
 
 import java.util.Arrays;
 import java.util.function.Function;

@@ -7,7 +7,7 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 
 import java.util.List;

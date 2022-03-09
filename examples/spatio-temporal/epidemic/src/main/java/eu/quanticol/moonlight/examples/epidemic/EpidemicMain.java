@@ -9,7 +9,11 @@ import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.io.CsvLocationServiceReader;
 import eu.quanticol.moonlight.io.CsvSpatialTemporalSignalReader;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
@@ -23,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-
-import static eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 
 public class EpidemicMain {
     private static final File dir = new File("examples/spatio-temporal/epidemic/src/main/resources");

@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.Signal;
 
 import java.io.File;
 import java.io.IOException;

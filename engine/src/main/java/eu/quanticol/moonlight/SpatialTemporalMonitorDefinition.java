@@ -1,9 +1,9 @@
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
 
 import java.util.Arrays;
 

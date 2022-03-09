@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.tests;
 
 
-import eu.quanticol.moonlight.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 

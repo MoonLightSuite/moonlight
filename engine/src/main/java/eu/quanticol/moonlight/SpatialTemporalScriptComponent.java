@@ -21,11 +21,11 @@ package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.io.SpatialTemporalSignalWriter;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.io.MoonLightRecord;
-import eu.quanticol.moonlight.signal.RecordHandler;
-import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.io.File;
 import java.io.IOException;

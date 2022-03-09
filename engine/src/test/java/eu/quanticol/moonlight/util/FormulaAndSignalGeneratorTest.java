@@ -3,9 +3,9 @@ package eu.quanticol.moonlight.util;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.monitoring.TemporalMonitoring;
-import eu.quanticol.moonlight.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.signal.*;
+import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
+import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
+import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.io.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class FormulaAndSignalGeneratorTest {
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
         RecordHandler factory = RecordHandler.createFactory(
-        		new Pair<>("a",DataHandler.REAL),
+        		new Pair<>("a", DataHandler.REAL),
         		new Pair<>("b",DataHandler.REAL),
         		new Pair<>("c",DataHandler.REAL)
         );
