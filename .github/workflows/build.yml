@@ -30,6 +30,7 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: "d76dfcb2-9baa-40e4-b07a-4b2647bcf3c4"
+        files: "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         flags: unittests # optional
         name: codecov-umbrella # optional
         fail_ci_if_error: false # optional (default = false)
