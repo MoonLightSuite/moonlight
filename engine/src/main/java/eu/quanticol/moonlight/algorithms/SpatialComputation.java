@@ -9,8 +9,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SpaceUtilities {
-    private SpaceUtilities() {} // Hidden constructor
+public class SpatialComputation {
+    private SpatialComputation() {} // Hidden constructor
 
     public static <E, M, R> List<R> reach(SignalDomain<R> signalDomain,
                                           IntFunction<R> leftSpatialSignal,

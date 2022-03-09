@@ -9,7 +9,9 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 /**
  * @author loreti
  *
+ * @deprecated never implemented
  */
+@Deprecated
 public class SpatialTemporalMonitorClosure<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
 	@Override

@@ -1,13 +1,12 @@
 package eu.quanticol.moonlight.algorithms.online;
 
-import eu.quanticol.moonlight.algorithms.SpaceUtilities;
+import eu.quanticol.moonlight.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -39,7 +38,7 @@ class SpatialComputationTest {
     void testSomewhereSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+        eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
                                                                   SEQUENTIAL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -53,7 +52,7 @@ class SpatialComputationTest {
     void testEverywhereSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+        eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
                                                                    SEQUENTIAL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -67,7 +66,7 @@ class SpatialComputationTest {
     void testSomewhereParallelSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+        eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
                                                                   PARALLEL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -81,7 +80,7 @@ class SpatialComputationTest {
     void testEverywhereParallelSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+        eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
                                                                    PARALLEL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -95,7 +94,7 @@ class SpatialComputationTest {
     void testEscapeSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = escape(locSvc);
+        eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op = escape(locSvc);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
         TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
@@ -114,7 +113,7 @@ class SpatialComputationTest {
         return updates;
     }
 
-    private static SpatialComputation<Double, Double, Double> somewhere(
+    private static eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> somewhere(
             LocationService<Double, Double> locSvc, boolean parallel)
     {
         // Distance bounds of the spatial operators
@@ -122,16 +121,16 @@ class SpatialComputationTest {
         double max = 5;
 
         if(!parallel)
-            return new SpatialComputation<>(locSvc,
+            return new eu.quanticol.moonlight.online.algorithms.SpatialComputation<>(locSvc,
                                             distance(min, max),
                                            SpatialComputationTest::somewhereOp);
         else
-            return new SpatialComputation<>(locSvc,
+            return new eu.quanticol.moonlight.online.algorithms.SpatialComputation<>(locSvc,
                                             distance(min, max),
                                 SpatialComputationTest::somewhereOpParallel);
     }
 
-    private static SpatialComputation<Double, Double, Double> everywhere(
+    private static eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> everywhere(
             LocationService<Double, Double> locSvc, boolean parallel)
     {
         // Distance bounds of the spatial operators
@@ -139,23 +138,23 @@ class SpatialComputationTest {
         double max = 5;
 
         if(!parallel)
-            return new SpatialComputation<>(locSvc,
+            return new eu.quanticol.moonlight.online.algorithms.SpatialComputation<>(locSvc,
                                             distance(min, max),
                                           SpatialComputationTest::everywhereOp);
         else
-            return new SpatialComputation<>(locSvc,
+            return new eu.quanticol.moonlight.online.algorithms.SpatialComputation<>(locSvc,
                                             distance(min, max),
                                   SpatialComputationTest::everywhereOpParallel);
     }
 
-    private static SpatialComputation<Double, Double, Double> escape(
+    private static eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> escape(
             LocationService<Double, Double> locSvc)
     {
         // Distance bounds of the spatial operators
         double min = 0;
         double max = 5;
 
-        return new SpatialComputation<>(locSvc,
+        return new eu.quanticol.moonlight.online.algorithms.SpatialComputation<>(locSvc,
                 distance(min, max),
                 SpatialComputationTest::escapeOp);
     }
@@ -201,7 +200,7 @@ class SpatialComputationTest {
 
     private TimeChain<Double, List<Double>> processUpdates(
             TimeChain<Double, List<Double>> updates,
-            SpatialComputation<Double, Double, Double> op)
+            eu.quanticol.moonlight.online.algorithms.SpatialComputation<Double, Double, Double> op)
     {
         List<Update<Double, List<Double>>> upsOO = updates.toUpdates();
         List<Update<Double, List<Double>>> result = new ArrayList<>();
@@ -225,31 +224,31 @@ class SpatialComputationTest {
     private static List<Double> somewhereOp(IntFunction<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
-        return SpaceUtilities.somewhere(DOUBLES, s, ds);
+        return SpatialComputation.somewhere(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOp(IntFunction<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
-        return SpaceUtilities.everywhere(DOUBLES, s, ds);
+        return SpatialComputation.everywhere(DOUBLES, s, ds);
     }
 
     private static List<Double> somewhereOpParallel(IntFunction<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
-        return SpaceUtilities.somewhereParallel(DOUBLES, s, ds);
+        return SpatialComputation.somewhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOpParallel(IntFunction<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
-        return SpaceUtilities.everywhereParallel(DOUBLES, s, ds);
+        return SpatialComputation.everywhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> escapeOp(IntFunction<Double> s,
                                          DistanceStructure<Double, ?> ds)
     {
-        return SpaceUtilities.escape(DOUBLES, s, ds);
+        return SpatialComputation.escape(DOUBLES, s, ds);
     }
 
 }

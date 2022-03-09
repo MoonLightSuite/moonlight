@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.algorithms.SpaceUtilities.escape;
-import static eu.quanticol.moonlight.algorithms.SpaceUtilities.reach;
+import static eu.quanticol.moonlight.algorithms.SpatialComputation.escape;
+import static eu.quanticol.moonlight.algorithms.SpatialComputation.reach;
 
 /**
  * Algorithm for Reach Operator Computation

@@ -8,8 +8,9 @@ import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
 /**
  * @author loreti
- *
+ * @deprecated never implemented
  */
+@Deprecated
 public class SpatialTemporalMonitorSurround<E,S,T> implements SpatialTemporalMonitor<E, S, T> {
 
 	@Override

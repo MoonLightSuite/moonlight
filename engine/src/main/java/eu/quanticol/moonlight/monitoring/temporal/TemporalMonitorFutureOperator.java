@@ -22,8 +22,8 @@ package eu.quanticol.moonlight.monitoring.temporal;
 
 import java.util.function.BinaryOperator;
 
+import static eu.quanticol.moonlight.algorithms.TemporalComputation.computeFutureSignal;
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.signal.Signal;
 
 /**
@@ -60,26 +60,7 @@ public class TemporalMonitorFutureOperator<T, R>
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return computeSignal(m.monitor(signal), interval, op, init);
+		return computeFutureSignal(m.monitor(signal), interval, op, init);
 	}
 
-	//TODO: this should be at most protected
-	public static <T> Signal<T> computeSignal(Signal<T> signal,
-											  Interval interval,
-											  BinaryOperator<T> op,
-											  T init)
-	{
-		if (interval == null) {
-			return signal.iterateBackward(op, init);
-		} else {
-			SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
-													  interval.getEnd(),
-													  op, true);
-			Signal<T> result = sw.apply(signal);
-			//System.out.println("FutureOperator Result Signal@maxT= " +
-			//				    signal.end() + ": " +
-			//					result.toString());
-			return result;
-		}
-	}
 }

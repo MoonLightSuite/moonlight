@@ -21,10 +21,12 @@
 package eu.quanticol.moonlight.monitoring.spatialtemporal;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import eu.quanticol.moonlight.algorithms.SpaceUtilities;
+import eu.quanticol.moonlight.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.algorithms.SpatialOperators;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -58,8 +60,18 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
 
 	@Override
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService, SpatialTemporalSignal<T> signal) {
-		return computeSomewhereDynamic(locationService,m.monitor(locationService, signal));
+		//return computeSomewhereDynamic(locationService,m.monitor(locationService, signal));
+        return SpatialOperators.computeWhereDynamic(locationService,
+                distance,
+                this::somewhereOp,
+                m.monitor(locationService, signal));
 	}
+
+    private List<R> somewhereOp(IntFunction<R> spatialSignal,
+                                 DistanceStructure<S, ?> ds)
+    {
+        return SpatialComputation.somewhere(domain, spatialSignal, ds);
+    }
 
     private SpatialTemporalSignal<R> computeSomewhereDynamic(
             LocationService<Double, S> l, SpatialTemporalSignal<R> s) {
@@ -81,14 +93,14 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
             IntFunction<R> spatialSignal = cursor.getValue();
             SpatialModel<S> sm = current.getSecond();
             DistanceStructure<S, ?> f = distance.apply(sm);
-            toReturn.add(time, SpaceUtilities.somewhere(domain, spatialSignal, f));
+            toReturn.add(time, SpatialComputation.somewhere(domain, spatialSignal, f));
             double nextTime = cursor.forward();
             while ((next != null)&&(next.getFirst()<nextTime)) {
                 current = next;
                 time = current.getFirst();
                 next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
                 f = distance.apply(current.getSecond());
-                toReturn.add(time, SpaceUtilities.somewhere(domain, spatialSignal, f));
+                toReturn.add(time, SpatialComputation.somewhere(domain, spatialSignal, f));
             }
             time = nextTime;
             current = (next!=null?next:current);
@@ -99,47 +111,5 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
         return toReturn;
 
     }
-
-//    private SpatialTemporalSignal<T> computeSomewhereDynamic(
-//            LocationService<E> l, SpatialTemporalSignal<T> s) {
-//        SpatialTemporalSignal<T> toReturn = new SpatialTemporalSignal<T>(s.getNumberOfLocations());
-//        if (l.isEmpty()) {
-//            return toReturn;
-//        }
-//        ParallelSignalCursor<T> cursor = s.getSignalCursor(true);
-//        Iterator<Pair<Double, SpatialModel<E>>> locationServiceIterator = l.times();
-//        Pair<Double, SpatialModel<E>> current = locationServiceIterator.next();
-//        Pair<Double, SpatialModel<E>> next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-//        double time = cursor.getTime();
-//        while ((next != null)&&(next.getFirst()<=time)) {
-//            current = next;
-//            next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-//        }
-//        //Loop invariant: (current.getFirst()<=time)&&((next==null)||(time<next.getFirst()))
-//        while (!cursor.completed() && !Double.isNaN(time)) {
-//            Function<Integer, T> spatialSignal = cursor.getValue();
-//            SpatialModel<E> sm = current.getSecond();
-//            DistanceStructure<E, ?> f = distance.apply(sm);
-//            toReturn.add(time, f.somewhere(domain, spatialSignal));
-//            double nextTime = cursor.forward();
-//            while ((next != null)&&(next.getFirst()<nextTime)) {
-//                current = next;
-//                time = current.getFirst();
-//                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-//                f = distance.apply(current.getSecond());
-//                toReturn.add(time, f.somewhere(domain, spatialSignal));
-//            }
-//            time = nextTime;
-//            if ((next!=null)&&(next.getFirst()==time)) {
-//                current = next;
-//                f = distance.apply(current.getSecond());
-//                next = (locationServiceIterator.hasNext()?locationServiceIterator.next():null);
-//            }
-//        }
-//
-//        //TODO: Manage end of signal!
-//        return toReturn;
-//
-//    }
 
 }

@@ -25,7 +25,7 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
-import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorUntil.computeUntil;
+import static eu.quanticol.moonlight.algorithms.UntilOperator.computeUntil;
 
 /**
  * Strategy to interpret the Until temporal logic operator.

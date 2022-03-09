@@ -309,7 +309,7 @@ public class SlidingWindow<R> {
 			R aggregatedValue = value;
 
 			// We loop over the segments of the window and start to aggregate:
-			// we start from the last segment, and at each at each iteration
+			// we start from the last segment, and at each iteration
 			// we go backward and aggregate, unless either we find a segment
 			// where the aggregator doesn't change the value, or the list of
 			// segments ends.

@@ -20,12 +20,10 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import eu.quanticol.moonlight.algorithms.UnboundedUntil;
+import eu.quanticol.moonlight.algorithms.UntilOperator;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
-
-import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOperator.computeSignal;
 
 /**
  * Strategy to interpret the Until operator
@@ -64,24 +62,7 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 	public Signal<R> monitor(Signal<T> signal) {
 		Signal<R> s1 = m1.monitor(signal);
 		Signal<R> s2 = m2.monitor(signal);
-		return computeUntil(domain, s1, interval, s2);
-	}
-
-	//TODO: this should be at most protected
-	public static <T> Signal<T> computeUntil(SignalDomain<T> domain,
-											 Signal<T> s1,
-											 Interval interval,
-											 Signal<T> s2) {
-		Signal<T> unboundedMonitoring = UnboundedUntil.compute(domain, s1, s2);
-		if (interval == null) {
-			return unboundedMonitoring;
-		}
-
-		Signal<T> eventuallyMonitoring = computeSignal(s2, interval,
-				domain::disjunction, domain.min());
-
-		return Signal.apply(unboundedMonitoring, domain::conjunction,
-				eventuallyMonitoring);
+		return UntilOperator.computeUntil(domain, s1, interval, s2);
 	}
 
 }

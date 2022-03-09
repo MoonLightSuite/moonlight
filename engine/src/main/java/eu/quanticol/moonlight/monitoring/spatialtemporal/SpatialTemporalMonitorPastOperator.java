@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
-import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorPastOperator.computeSignal;
+import static eu.quanticol.moonlight.algorithms.TemporalComputation.computePastSignal;
 
 /**
  * Strategy to interpret temporal logic operators on the past (except Since).
@@ -61,7 +61,7 @@ public class SpatialTemporalMonitorPastOperator<S, T, R>
 											SpatialTemporalSignal<T> signal)
 	{
 		return m.monitor(locationService, signal).applyToSignal(
-				s -> computeSignal(s, interval, op,init));
+				s -> computePastSignal(s, interval, op,init));
 	}
 
 }

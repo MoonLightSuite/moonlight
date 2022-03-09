@@ -20,20 +20,23 @@
 
 package eu.quanticol.moonlight.algorithms;
 
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
 import eu.quanticol.moonlight.signal.SignalCursor;
 
+import static eu.quanticol.moonlight.algorithms.TemporalComputation.computePastSignal;
+
 /**
  * Algorithm for Unbounded Since Computation
  */
-public class UnboundedSince {
+public class SinceOperator {
 
-    private UnboundedSince() {} // Hidden constructor
+    private SinceOperator() {} // Hidden constructor
 
-    public static <T> Signal<T> compute(SignalDomain<T> domain,
-                                        Signal<T> s1,
-                                        Signal<T> s2)
+    public static <T> Signal<T> computeUnboundSince(SignalDomain<T> domain,
+                                                    Signal<T> s1,
+                                                    Signal<T> s2)
     {
         Signal<T> result = new Signal<>();
         SignalCursor<T> c1 = s1.getIterator(true);
@@ -56,5 +59,20 @@ public class UnboundedSince {
                 "<" + s1.end() + "," + s2.end() + "> : " +
                 result.toString());
         return result;
+    }
+
+    public static <T> Signal<T> computeSince(SignalDomain<T> domain,
+                                             Signal<T> s1, Interval interval,
+                                             Signal<T> s2)
+    {
+        Signal<T> unboundedMonitoring = computeUnboundSince(domain, s1, s2);
+        if (interval == null) {
+            return unboundedMonitoring;
+        }
+        Signal<T> onceMonitoring = computePastSignal(s2, interval,
+                                            domain::disjunction, domain.max());
+
+        return Signal.apply(unboundedMonitoring, domain::conjunction,
+                                                                onceMonitoring);
     }
 }

@@ -56,7 +56,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.algorithms.SpaceUtilities.*;
+import static eu.quanticol.moonlight.algorithms.SpatialComputation.*;
 
 public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implements
         FormulaVisitor<Parameters,

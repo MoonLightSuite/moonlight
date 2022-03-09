@@ -20,12 +20,10 @@
 
 package eu.quanticol.moonlight.monitoring.temporal;
 
-import eu.quanticol.moonlight.algorithms.UnboundedSince;
+import eu.quanticol.moonlight.algorithms.SinceOperator;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.signal.Signal;
-
-import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorPastOperator.computeSignal;
 
 /**
  * Strategy to interpret the Since temporal logic operator.
@@ -62,24 +60,8 @@ public class TemporalMonitorSince<T, R> implements TemporalMonitor<T, R> {
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return computeSince(domain, m1.monitor(signal),
+		return SinceOperator.computeSince(domain, m1.monitor(signal),
 							interval, m2.monitor(signal));
-	}
-
-	//TODO: this should be at most protected
-	public static <T> Signal<T> computeSince(SignalDomain<T> domain,
-											 Signal<T> s1, Interval interval,
-											 Signal<T> s2)
-	{
-		Signal<T> unboundedMonitoring = UnboundedSince.compute(domain, s1, s2);
-		if (interval == null) {
-			return unboundedMonitoring;
-		}
-		Signal<T> onceMonitoring = computeSignal(s2, interval,
-											domain::disjunction, domain.max());
-
-		return Signal.apply(unboundedMonitoring, domain::conjunction,
-																onceMonitoring);
 	}
 
 

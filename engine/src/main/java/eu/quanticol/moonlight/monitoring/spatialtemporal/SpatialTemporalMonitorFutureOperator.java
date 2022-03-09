@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.signal.SpatialTemporalSignal;
 
-import static eu.quanticol.moonlight.monitoring.temporal.TemporalMonitorFutureOperator.computeSignal;
+import static eu.quanticol.moonlight.algorithms.TemporalComputation.computeFutureSignal;
 
 /**
  * Strategy to interpret temporal logic operators on the future (except Until).
@@ -60,7 +60,7 @@ public class SpatialTemporalMonitorFutureOperator<S, T, R>
 											SpatialTemporalSignal<T> signal)
 	{
 		return m.monitor(locationService, signal).applyToSignal(
-				s -> computeSignal(s, interval, op, init));
+				s -> computeFutureSignal(s, interval, op, init));
 	}
 
 }
