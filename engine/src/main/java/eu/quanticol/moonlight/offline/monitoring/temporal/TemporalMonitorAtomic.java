@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.offline.monitoring.temporal;
 
 import java.util.function.Function;
 
+import static eu.quanticol.moonlight.offline.algorithms.BooleanComputation.applyUnary;
 import eu.quanticol.moonlight.offline.signal.Signal;
 
 /**
@@ -42,7 +43,7 @@ public class TemporalMonitorAtomic<T, R> implements TemporalMonitor<T, R> {
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return signal.apply(atomic);
+		return applyUnary(signal, atomic);
 	}
 
 }

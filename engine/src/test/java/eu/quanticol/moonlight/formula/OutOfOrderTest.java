@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -78,7 +78,7 @@ class OutOfOrderTest {
                 monitorChain(formula, updates);
 
         assert r != null;
-        List<SegmentInterface<Double, AbstractInterval<Double>>>
+        List<Sample<Double, AbstractInterval<Double>>>
                 segments = r.toList();
         assertEquals(new TimeSegment<>(0.0, new AbstractInterval<>(-2.0, -2.0)),
                      segments.get(0));

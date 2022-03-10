@@ -20,13 +20,13 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 
 /**
  * @author loreti
  *
  */
-public class Segment<T> implements SegmentInterface<Double, T> {
+public class Segment<T> implements Sample<Double, T> {
 	
 	private double time;
 	private final T value;
@@ -143,7 +143,6 @@ public class Segment<T> implements SegmentInterface<Double, T> {
 		}
 	}
 
-	@Override
 	public Double getEnd() {
 		return getSegmentEnd();
 	}

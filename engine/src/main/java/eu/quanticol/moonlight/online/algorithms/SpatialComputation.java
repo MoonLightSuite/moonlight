@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -116,7 +116,7 @@ public class SpatialComputation
         final int LAST = ups.size() - 1;
 
         for(int i = 0; i < ups.size(); i++) {
-            SegmentInterface<T, List<R>> up = ups.get(i);
+            Sample<T, List<R>> up = ups.get(i);
             T t = up.getStart();
             T tNext = i != LAST ? ups.get(i + 1).getStart() : ups.getEnd();
 

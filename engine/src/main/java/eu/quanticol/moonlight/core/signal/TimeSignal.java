@@ -67,12 +67,12 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
     TimeChain<T, V> getSegments() throws UnsupportedOperationException;
 
     /**
-     * @param time the time instant of interest for looking at the signal value
+     * @param time the time instant of interest in looking at the signal value
      * @return the signal value at the time instant passed.
      */
     default V getValueAt(T time) {
-        ChainIterator<SegmentInterface<T, V>> itr = getSegments().chainIterator();
-        SegmentInterface<T, V> current = null;
+        ChainIterator<Sample<T, V>> itr = getSegments().chainIterator();
+        Sample<T, V> current = null;
 
         while (itr.hasNext()) {
             current = itr.next();

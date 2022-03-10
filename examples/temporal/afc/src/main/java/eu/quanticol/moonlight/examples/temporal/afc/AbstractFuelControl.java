@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.util.Stopwatch;
 import eu.quanticol.moonlight.api.MatlabRunner;
@@ -73,7 +73,7 @@ public class AbstractFuelControl {
             matlab.putVar("tot", LAST_TIME);
             matlab.eval("AFC_Online_FromFile");
 
-            List<SegmentInterface<Double, AbstractInterval<Double>>>
+            List<Sample<Double, AbstractInterval<Double>>>
                     breach = executeBreach(matlab, s);
 
             List<Double> bStart = IntStream.range(0, breach.size())
@@ -100,7 +100,7 @@ public class AbstractFuelControl {
         }
     }
 
-    private static List<SegmentInterface<Double, AbstractInterval<Double>>>
+    private static List<Sample<Double, AbstractInterval<Double>>>
     executeBreach(MatlabRunner matlab, List<Stopwatch> stopwatches)
     {
 
@@ -119,8 +119,8 @@ public class AbstractFuelControl {
         assert rhoLow != null;
         assert rhoUp != null;
         return IntStream.range(0, rhoLow.length).boxed()
-                        .map(i -> (SegmentInterface<Double,
-                                AbstractInterval<Double>>)
+                        .map(i -> (Sample<Double,
+                                                        AbstractInterval<Double>>)
                                 new TimeSegment<>((double) i,
                                         new AbstractInterval<>(rhoLow[i],
                                                 rhoUp[i])))

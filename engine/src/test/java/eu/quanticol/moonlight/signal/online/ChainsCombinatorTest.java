@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.online.signal.ChainsCombinator;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import org.junit.jupiter.api.Disabled;
@@ -29,7 +29,7 @@ class ChainsCombinatorTest {
     void testWithUpdateAddingElement() {
         ChainsCombinator<Integer, Integer> both =
                         new ChainsCombinator<>(primary(), secondary());
-        List<SegmentInterface<Integer, Integer>> updates = new ArrayList<>();
+        List<Sample<Integer, Integer>> updates = new ArrayList<>();
 
         both.forEach((x, y) -> mockedOperation(y, updates));
 
@@ -41,23 +41,23 @@ class ChainsCombinatorTest {
     void testWithUpdateRemovingElement() {
         ChainsCombinator<Integer, Integer> both =
               new ChainsCombinator<>(primaryWithExtra(), secondaryWithoutMid());
-        List<SegmentInterface<Integer, Integer>> updates = new ArrayList<>();
+        List<Sample<Integer, Integer>> updates = new ArrayList<>();
 
         both.forEach((x, y) -> mockedOperation(y, updates));
 
         assertEquals(secondaryWithoutMid().toList(), updates);
     }
 
-    private SegmentInterface<Integer, Integer> mockedOperation(
-            SegmentInterface<Integer, Integer> second,
-            List<SegmentInterface<Integer, Integer>> list)
+    private Sample<Integer, Integer> mockedOperation(
+            Sample<Integer, Integer> second,
+            List<Sample<Integer, Integer>> list)
     {
         list.add(second);
         return second;
     }
 
     private TimeChain<Integer, Integer> primaryWithExtra() {
-        List<SegmentInterface<Integer, Integer>> segments = new ArrayList<>();
+        List<Sample<Integer, Integer>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(1, 1));
         segments.add(new TimeSegment<>(2, 2));
         segments.add(new TimeSegment<>(3, 3));
@@ -66,13 +66,13 @@ class ChainsCombinatorTest {
     }
 
     private TimeChain<Integer, Integer> secondaryWithoutMid() {
-        List<SegmentInterface<Integer, Integer>> segments = new ArrayList<>();
+        List<Sample<Integer, Integer>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(2, -2));
         return new TimeChain<>(segments, 4);
     }
 
     private TimeChain<Integer, Integer> primary() {
-        List<SegmentInterface<Integer, Integer>> segments = new ArrayList<>();
+        List<Sample<Integer, Integer>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(1, 1));
         segments.add(new TimeSegment<>(2, 2));
         segments.add(new TimeSegment<>(4, 4));
@@ -80,7 +80,7 @@ class ChainsCombinatorTest {
     }
 
     private TimeChain<Integer, Integer> secondary() {
-        List<SegmentInterface<Integer, Integer>> segments = new ArrayList<>();
+        List<Sample<Integer, Integer>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(2, -2));
         segments.add(new TimeSegment<>(3, -3));
         return new TimeChain<>(segments, 4);

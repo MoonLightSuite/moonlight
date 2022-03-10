@@ -21,17 +21,14 @@
 package eu.quanticol.moonlight.online.signal;
 
 /**
- * The basic interface to represent time segments.
- * Note that for memory-efficiency reasons, the ending of the
- * segment is not present.
+ * The basic interface to represent timed samples.
  *
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V> The value domain of interest
  *
- * @see TimeChain for a data structure that exploits them
  */
-public interface SegmentInterface <T extends Comparable<T>, V>
-        extends Comparable<SegmentInterface<T, V>>
+public interface Sample<T extends Comparable<T>, V>
+        extends Comparable<Sample<T, V>>
 {
     /**
      * @return the value of the segment
@@ -43,15 +40,8 @@ public interface SegmentInterface <T extends Comparable<T>, V>
      */
     T getStart();
 
-    /**
-     * @return the time instant at which the segment ends
-     * @throws UnsupportedOperationException when the implementation does not
-     *         store the ending of the Segment.
-     */
-    T getEnd() throws UnsupportedOperationException;
 
-
-    default int compareTo(SegmentInterface<T, V> segment) {
+    default int compareTo(Sample<T, V> segment) {
         return getStart().compareTo(segment.getStart());
     }
 

@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight;
 
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -25,7 +25,7 @@ public class TestUtils {
         List<TimeChain<T, V>> result = new ArrayList<>();
 
         for(int i = 0; i < ups.size(); i++) {
-            SegmentInterface<T, V> s = new TimeSegment<>(ups.get(i).getStart(),
+            Sample<T, V> s = new TimeSegment<>(ups.get(i).getStart(),
                     ups.get(i).getValue());
             if(i > 0 && s.getStart().equals(ups.get(i - 1).getEnd())) {
                 int lastIndex = result.size() - 1;

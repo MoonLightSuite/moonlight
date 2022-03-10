@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -138,7 +138,7 @@ public class SlidingWindow<R> {
      *
      * @param curr current segment of the input signal
      */
-    private void add(SegmentInterface<Double, R> curr) {
+    private void add(Sample<Double, R> curr) {
         double newStart = curr.getStart() - h.getStart();
         double newEnd = curr.getStart() - h.getEnd();
 

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Immutable concrete implementation of {@link SegmentInterface}.
+ * Immutable concrete implementation of {@link Sample}.
  * Note that for space efficiency reasons the segment does not have an ending,
  * as this would be a replication of data with the contiguous segment.
  *
@@ -14,11 +14,11 @@ import java.util.Objects;
  * @param <T> The time-domain of the Segment
  * @param <V> The value-domain of the Segment
  *
- * @see SegmentInterface
+ * @see Sample
  * @see TimeChain
  */
 public class TimeSegment<T extends Comparable<T>, V>
-        implements SegmentInterface<T, V>
+        implements Sample<T, V>
 {
     private final T start;
     private final V value;
@@ -36,12 +36,6 @@ public class TimeSegment<T extends Comparable<T>, V>
     @Override
     public T getStart() {
         return start;
-    }
-
-    @Override
-    public T getEnd() {
-        throw new UnsupportedOperationException("This Segment implementation " +
-                                                "does not provide endings");
     }
 
     @Override

@@ -76,7 +76,7 @@ public class UntilOperator {
         Signal<T> eventuallyMonitoring = TemporalComputation.computeFutureSignal(s2, interval,
                 domain::disjunction, domain.min());
 
-        return Signal.apply(unboundedMonitoring, domain::conjunction,
+        return BooleanComputation.applyBinary(unboundedMonitoring, domain::conjunction,
                 eventuallyMonitoring);
     }
 }

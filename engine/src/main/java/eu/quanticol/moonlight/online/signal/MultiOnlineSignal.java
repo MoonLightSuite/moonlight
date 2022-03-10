@@ -110,9 +110,9 @@ public class MultiOnlineSignal
         int start = 0;
         int end = 1;
 
-        ChainIterator<SegmentInterface<Double, List<AbstractInterval<?>>>> itr =
+        ChainIterator<Sample<Double, List<AbstractInterval<?>>>> itr =
                 segments.chainIterator();
-        SegmentInterface<Double, List<AbstractInterval<?>>> current;
+        Sample<Double, List<AbstractInterval<?>>> current;
 
         while (itr.hasNext()) {
             current = itr.next();

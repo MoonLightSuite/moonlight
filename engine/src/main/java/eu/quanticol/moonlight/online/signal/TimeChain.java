@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * A segment chain is similar to a {@link LinkedList}, providing some
- * specific features for {@link SegmentInterface}s, like checking temporal
+ * specific features for {@link Sample}s, like checking temporal
  * integrity constraints, a custom iterator etc.
  *
  * <p> Let <code>old</code> and <code>new</code> denote the state of
@@ -54,17 +54,17 @@ import java.util.stream.Stream;
  *       satisfied at the beginning, i.e. with no segments
  *
  *
- * @see SegmentInterface
+ * @see Sample
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V>
  */
 public class TimeChain<T extends Comparable<T> & Serializable, V>
-        implements Iterable<SegmentInterface<T,V>>
+        implements Iterable<Sample<T,V>>
 {
     /**
      * Internal representation of the chain
      */
-    private final List<SegmentInterface<T, V>> segments;
+    private final List<Sample<T, V>> segments;
 
     /**
      * Last time instant of definition of the chain
@@ -84,7 +84,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * It defines a chain of time segments that ends at some time instant
      * @param end the time instant from which the segment chain is not defined.
      */
-    public TimeChain(@NotNull SegmentInterface<T, V> element, @NotNull T end) {
+    public TimeChain(@NotNull Sample<T, V> element, @NotNull T end) {
         if(end.compareTo(element.getStart()) < 0)
             throw new IllegalArgumentException(ENDING_COND);
         
@@ -102,7 +102,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * @param segments chain of segments, passed as list
      * @param end      last time value of the new chain
      */
-    public TimeChain(@NotNull List<SegmentInterface<T,V>> segments,
+    public TimeChain(@NotNull List<Sample<T,V>> segments,
                      @NotNull T end)
     {
         if(segments.isEmpty())
@@ -121,7 +121,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * @throws IllegalArgumentException when monotonicity
      *                                    or ending condition are violated.
      */
-    public boolean add(SegmentInterface<T, V> e) {
+    public boolean add(Sample<T, V> e) {
         if(end.compareTo(e.getStart()) > 0) {
             checkMonotonicity(e.getStart());
             return segments.add(e);
@@ -154,12 +154,13 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * modifications will be reflected to both.
      *
      * @param from starting segment's index of the new chain
+     *
      * @param to ending segment's index of the new chain
      * @param end ending time of the new chain
      * @return a new chain on current data, defined on the provided bounds
      */
     public TimeChain<T,V> subChain(int from, int to, T end) {
-        List<SegmentInterface<T,V>> newList = this.segments.subList(from, to);
+        List<Sample<T,V>> newList = this.segments.subList(from, to);
         return new TimeChain<>(newList, end);
     }
 
@@ -175,15 +176,15 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
      * Returns the last element of the chain
      * @return last element of the chain
      */
-    public SegmentInterface<T, V> getLast() {
+    public Sample<T, V> getLast() {
         return segments.get(segments.size() - 1);
     }
 
-    public ChainIterator<SegmentInterface<T, V>> chainIterator() {
+    public ChainIterator<Sample<T, V>> chainIterator() {
         return chainIterator(0);
     }
 
-    public ChainIterator<SegmentInterface<T, V>> chainIterator(int index) {
+    public ChainIterator<Sample<T, V>> chainIterator(int index) {
         if (index < 0 || index > segments.size())
             throw new IndexOutOfBoundsException("Index: " + index);
         return new ChainIterator<>(segments, index);
@@ -206,17 +207,17 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
 
     @NotNull
     @Override
-    public Iterator<SegmentInterface<T, V>> iterator() {
+    public Iterator<Sample<T, V>> iterator() {
         return segments.iterator();
     }
 
     @Override
-    public void forEach(Consumer<? super SegmentInterface<T, V>> action) {
+    public void forEach(Consumer<? super Sample<T, V>> action) {
         segments.forEach(action);
     }
 
     @Override
-    public Spliterator<SegmentInterface<T, V>> spliterator() {
+    public Spliterator<Sample<T, V>> spliterator() {
         return segments.spliterator();
     }
 
@@ -233,7 +234,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return Objects.hash(segments, end);
     }
 
-    public Stream<SegmentInterface<T, V>> stream() {
+    public Stream<Sample<T, V>> stream() {
         return segments.stream();
     }
 
@@ -241,7 +242,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return end;
     }
 
-    public List<SegmentInterface<T, V>> toList() {
+    public List<Sample<T, V>> toList() {
         return segments;
     }
 
@@ -249,7 +250,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return segments.size();
     }
 
-    public SegmentInterface<T, V> getFirst() {
+    public Sample<T, V> getFirst() {
         return segments.get(0);
     }
 
@@ -257,7 +258,7 @@ public class TimeChain<T extends Comparable<T> & Serializable, V>
         return this.getFirst().getStart();
     }
 
-    public SegmentInterface<T, V> get(int index) {
+    public Sample<T, V> get(int index) {
         return segments.get(index);
     }
 

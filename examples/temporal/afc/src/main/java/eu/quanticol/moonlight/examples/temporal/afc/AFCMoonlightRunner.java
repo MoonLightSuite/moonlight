@@ -26,7 +26,7 @@ import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Plotter;
@@ -44,8 +44,8 @@ public class AFCMoonlightRunner {
 
     private static final int RND_SEED = 7;
 
-    private static final List<List<SegmentInterface<
-                Double, AbstractInterval<Double>>>> results = new ArrayList<>();
+    private static final List<List<Sample<
+                    Double, AbstractInterval<Double>>>> results = new ArrayList<>();
 
     private static final Plotter plt = new Plotter(10.0);
 
@@ -82,9 +82,9 @@ public class AFCMoonlightRunner {
                           boolean asChain)
     {
         String id = intToString(lastT);
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, AbstractInterval<Double>>>>
                 moonlightColl = execMoonlight(shuffle, id, s, asChain);
-        List<SegmentInterface<Double, AbstractInterval<Double>>>
+        List<Sample<Double, AbstractInterval<Double>>>
                 moonlight = moonlightColl.get(moonlightColl.size() - 1);
 
         results.add(moonlight);
@@ -106,7 +106,7 @@ public class AFCMoonlightRunner {
         return genUpdates(input, shuffle,SCALE, RND_SEED);
     }
 
-    static List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    static List<List<Sample<Double, AbstractInterval<Double>>>>
     execMoonlight(boolean shuffle, String id,
                   List<Stopwatch> stopwatches,
                   boolean asChain)
@@ -121,12 +121,12 @@ public class AFCMoonlightRunner {
     }
 
     private static
-    List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    List<List<Sample<Double, AbstractInterval<Double>>>>
     evaluateUpdates(List<Update<Double, Double>> updates,
                     OnlineTimeMonitor<Double, Double> m,
                     List<Stopwatch> stopwatches)
     {
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
@@ -141,7 +141,7 @@ public class AFCMoonlightRunner {
 
 
     private static
-    List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+    List<List<Sample<Double, AbstractInterval<Double>>>>
     evaluateChain(List<Update<Double, Double>> updates,
                   OnlineTimeMonitor<Double, Double> m,
                   List<Stopwatch> stopwatches)
@@ -155,7 +155,7 @@ public class AFCMoonlightRunner {
         rec.stop();
         stopwatches.add(rec);
 
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
         result.add(r.toList());
         return result;

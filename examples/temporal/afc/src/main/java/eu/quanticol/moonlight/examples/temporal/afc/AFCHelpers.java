@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Stopwatch;
 
@@ -25,14 +25,14 @@ import static eu.quanticol.moonlight.examples.temporal.afc.AFCSettings.ITERATION
 public class AFCHelpers {
    private AFCHelpers() {}  // Hidden constructor
 
-    static List<List<Double>> handleData(List<List<SegmentInterface<Double,
-                                         AbstractInterval<Double>>>> data)
+    static List<List<Double>> handleData(List<List<Sample<Double,
+                                             AbstractInterval<Double>>>> data)
     {
         List<List<Double>> r = new ArrayList<>();
         r.add(new ArrayList<>());
         r.add(new ArrayList<>());
 
-        for (List<SegmentInterface<Double, AbstractInterval<Double>>> v : data)
+        for (List<Sample<Double, AbstractInterval<Double>>> v : data)
         {
             r.get(0).add(v.get(0).getValue().getStart());
             r.get(1).add(v.get(0).getValue().getEnd());
@@ -62,15 +62,15 @@ public class AFCHelpers {
         stopwatches.clear();
     }
 
-    static List<SegmentInterface<Double, AbstractInterval<Double>>>
-    condenseSignal(List<SegmentInterface<Double, AbstractInterval<Double>>> ss)
+    static List<Sample<Double, AbstractInterval<Double>>>
+    condenseSignal(List<Sample<Double, AbstractInterval<Double>>> ss)
     {
-        List<SegmentInterface<Double, AbstractInterval<Double>>> out =
+        List<Sample<Double, AbstractInterval<Double>>> out =
                 new ArrayList<>();
-        SegmentInterface<Double, AbstractInterval<Double>> bound = ss.get(0);
+        Sample<Double, AbstractInterval<Double>> bound = ss.get(0);
         out.add(ss.get(0));
 
-        for (SegmentInterface<Double, AbstractInterval<Double>> curr : ss) {
+        for (Sample<Double, AbstractInterval<Double>> curr : ss) {
             if (!curr.getValue().equals(bound.getValue())) {
                 bound = curr;
                 out.add(curr);

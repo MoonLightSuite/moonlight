@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
 import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
 import org.junit.jupiter.api.Disabled;
@@ -39,16 +39,16 @@ class AFCTest {
         List<Update<Double, Double>> input = loadInput();
 
         OnlineTimeMonitor<Double, Double> m = instrument();
-        ArrayList<SegmentInterface<Double, AbstractInterval<Double>>>
+        ArrayList<Sample<Double, AbstractInterval<Double>>>
                                                             rho = getRho();
 
-        List<List<SegmentInterface<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, AbstractInterval<Double>>>>
                 result = new ArrayList<>();
         for(Update<Double, Double> u: input) {
             result.add(new ArrayList<>(m.monitor(u).getSegments().toList()));
         }
 
-        ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> r =
+        ArrayList<Sample<Double, AbstractInterval<Double>>> r =
                 new ArrayList<>(result.get(result.size() - 1));
                 //        new ArrayList<>(Objects.requireNonNull(result).getSegments());
         r = condenseSignal(r);
@@ -93,16 +93,16 @@ class AFCTest {
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }
 
-    private ArrayList<SegmentInterface<Double, AbstractInterval<Double>>>
+    private ArrayList<Sample<Double, AbstractInterval<Double>>>
     condenseSignal(
-            ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> ss)
+            ArrayList<Sample<Double, AbstractInterval<Double>>> ss)
     {
-        ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> out =
+        ArrayList<Sample<Double, AbstractInterval<Double>>> out =
                                                             new ArrayList<>();
-        SegmentInterface<Double, AbstractInterval<Double>> bound = ss.get(0);
+        Sample<Double, AbstractInterval<Double>> bound = ss.get(0);
         out.add(ss.get(0));
 
-        for(SegmentInterface<Double, AbstractInterval<Double>> curr: ss) {
+        for(Sample<Double, AbstractInterval<Double>> curr: ss) {
             if(!fuzzyEquals(curr.getValue(), bound.getValue(), 0.05)) {
                 bound = curr;
                 out.add(curr);
@@ -135,7 +135,7 @@ class AFCTest {
         return updates;
     }
 
-    private ArrayList<SegmentInterface<Double, AbstractInterval<Double>>>
+    private ArrayList<Sample<Double, AbstractInterval<Double>>>
     getRho()
     {
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
@@ -147,7 +147,7 @@ class AFCTest {
 
         double[] data2 = new DataReader<>(rhoUp, FileType.CSV, ex).read()[0];
 
-        ArrayList<SegmentInterface<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
+        ArrayList<Sample<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
         for(int i = 0; i < data1.length; i++) {
             //if((double)i * 0.1 % 1 == 0)
                 rho.add(new TimeSegment<>((double)i* 0.1, new AbstractInterval<>(data1[i], data2[i])));

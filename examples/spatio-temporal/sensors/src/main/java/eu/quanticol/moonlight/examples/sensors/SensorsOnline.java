@@ -306,8 +306,8 @@ public class SensorsOnline {
                         {
                             List<Pair<Integer, Double>> locations =
                                     spaceDataFromTime(time);
-                            SegmentInterface<Double,
-                                                                        List<Pair<Integer, Double>>>
+                            Sample<Double,
+                                                                                                    List<Pair<Integer, Double>>>
                                     segment = new TimeSegment<>((double) time,
                                                                 locations);
                             chain.add(segment);

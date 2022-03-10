@@ -46,7 +46,7 @@ public class BooleanComputation {
     <T extends Comparable<T> & Serializable, V, R>
     TimeChain<T, R> atomSequence(TimeChain<T, V> us, Function<V, R> op)
     {
-        List<SegmentInterface<T, R>> ls =
+        List<Sample<T, R>> ls =
             us.stream()
               .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
               .collect(Collectors.toList());
@@ -95,7 +95,7 @@ public class BooleanComputation {
     <T extends Comparable<T> & Serializable, R>
     TimeChain<T, R> unarySequence(TimeChain<T, R> us, UnaryOperator<R> op)
     {
-        List<SegmentInterface<T, R>> ls =
+        List<Sample<T, R>> ls =
             us.stream()
               .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
               .collect(Collectors.toList());
@@ -119,7 +119,7 @@ public class BooleanComputation {
                                    TimeChain<T, R> us,
                                    BinaryOperator<R> op)
     {
-        List<SegmentInterface<T, R>> updates = new ArrayList<>(us.size());
+        List<Sample<T, R>> updates = new ArrayList<>(us.size());
         ChainsCombinator<T, R> itr = new ChainsCombinator<>(c1, us);
         itr.forEach((segment, update) -> binaryOp(segment, update, updates, op));
         return new TimeChain<>(updates, us.getEnd());
@@ -144,8 +144,8 @@ public class BooleanComputation {
                     BinaryOperator<R> op, Update<T, R> u)
     {
         List<Update<T, R>> updates = new ArrayList<>();
-        ChainIterator<SegmentInterface<T, R>> itr = s.chainIterator();
-        SegmentInterface<T, R> curr;
+        ChainIterator<Sample<T, R>> itr = s.chainIterator();
+        Sample<T, R> curr;
         T nextTime;
 
         while(itr.hasNext()) {
@@ -158,7 +158,7 @@ public class BooleanComputation {
     }
 
     private static <T extends Comparable<T> & Serializable, R>
-    void exec(SegmentInterface<T, R> curr, Update<T, R> u, T nextTime,
+    void exec(Sample<T, R> curr, Update<T, R> u, T nextTime,
               BinaryOperator<R> op, List<Update<T, R>> updates)
     {
         if(curr.getStart().compareTo(u.getEnd()) < 0
@@ -175,14 +175,14 @@ public class BooleanComputation {
     }
 
     private static <T extends Comparable<T> & Serializable, R>
-    void binaryOp(SegmentInterface<T, R> left,
-                  SegmentInterface<T, R> right,
-                  List<SegmentInterface<T, R>> output,
+    void binaryOp(Sample<T, R> left,
+                  Sample<T, R> right,
+                  List<Sample<T, R>> output,
                   BinaryOperator<R> op)
     {
         T start = max(left, right).getStart();
         R value = op.apply(right.getValue(), left.getValue());
-        SegmentInterface<T, R> r = new TimeSegment<>(start, value);
+        Sample<T, R> r = new TimeSegment<>(start, value);
         int last = output.size() - 1;
         if(output.isEmpty() || !output.get(last).getValue().equals(value))
             output.add(r);
@@ -206,7 +206,7 @@ public class BooleanComputation {
      * @return the next time value if present, otherwise the default one.
      */
     static <T extends Comparable<T>, V>
-    T tryPeekNextStart(ChainIterator<SegmentInterface<T, V>> itr, T defaultValue)
+    T tryPeekNextStart(ChainIterator<Sample<T, V>> itr, T defaultValue)
     {
         if(itr.hasNext())
             return itr.peekNext().getStart();

@@ -78,7 +78,7 @@ public class Plotter {
                 replaceInfinite(data.stream()
                         .map(x -> x.getValue().getEnd())
                         .collect(Collectors.toList()));
-//        List<Double> times = data.stream().map(SegmentInterface::getStart)
+//        List<Double> times = data.stream().map(Sample::getStart)
 //                                 .collect(Collectors.toList());
 
         if(isAsync)

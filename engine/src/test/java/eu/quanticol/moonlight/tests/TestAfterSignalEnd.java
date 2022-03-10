@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestAfterSignalEnd {

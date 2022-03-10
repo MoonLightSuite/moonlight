@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -219,7 +219,7 @@ class SignalsTest {
     }
 
     private static TimeChain<Double, Interval> generateUpdates() {
-        SegmentInterface<Double, Interval> base = new TimeSegment<>(1.0, new Interval(1, 2));
+        Sample<Double, Interval> base = new TimeSegment<>(1.0, new Interval(1, 2));
         Double end = 7.0;
         TimeChain<Double, Interval> data = new TimeChain<>(base, end);
 
@@ -230,7 +230,7 @@ class SignalsTest {
     }
 
     private static TimeChain<Double, Interval> chainStub() {
-        SegmentInterface<Double, Interval> s = new TimeSegment<>(0.0, Interval.any());
+        Sample<Double, Interval> s = new TimeSegment<>(0.0, Interval.any());
 
         return new TimeChain<>(s, Double.POSITIVE_INFINITY);
     }

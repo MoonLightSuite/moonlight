@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.offline.monitoring.temporal;
 
+import static eu.quanticol.moonlight.offline.algorithms.BooleanComputation.applyBinary;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import java.util.function.BinaryOperator;
 
@@ -49,7 +50,7 @@ public class TemporalMonitorBinaryOperator<T, R>
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return Signal.apply(m1.monitor(signal), op, m2.monitor(signal));
+		return applyBinary(m1.monitor(signal), op, m2.monitor(signal));
 	}
 
 }

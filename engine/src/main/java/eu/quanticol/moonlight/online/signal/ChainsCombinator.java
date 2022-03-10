@@ -56,15 +56,15 @@ import java.util.function.BiConsumer;
 public class ChainsCombinator
         <T extends Comparable<T> & Serializable, V>
 {
-    private final ChainIterator<SegmentInterface<T, V>> primary;
-    private final ChainIterator<SegmentInterface<T, V>> secondary;
-    private final SegmentInterface<T, V> primaryEnd;
-    private final SegmentInterface<T, V> secondaryEnd;
+    private final ChainIterator<Sample<T, V>> primary;
+    private final ChainIterator<Sample<T, V>> secondary;
+    private final Sample<T, V> primaryEnd;
+    private final Sample<T, V> secondaryEnd;
 
-    SegmentInterface<T, V> primaryCurr;
-    SegmentInterface<T, V> primaryNext;
-    SegmentInterface<T, V> secondaryCurr;
-    SegmentInterface<T, V> secondaryNext;
+    Sample<T, V> primaryCurr;
+    Sample<T, V> primaryNext;
+    Sample<T, V> secondaryCurr;
+    Sample<T, V> secondaryNext;
 
     public ChainsCombinator(@NotNull TimeChain<T, V> primaryChain,
                             @NotNull TimeChain<T, V> secondaryChain)
@@ -80,8 +80,8 @@ public class ChainsCombinator
         secondaryEnd = endingSegment(secondaryChain);
     }
 
-    public void forEach(BiConsumer<SegmentInterface<T, V>,
-                                   SegmentInterface<T, V>> operation)
+    public void forEach(BiConsumer<Sample<T, V>,
+            Sample<T, V>> operation)
     {
         movePrimary();
         moveSecondary();
@@ -116,8 +116,8 @@ public class ChainsCombinator
         return primaryNext.compareTo(secondaryCurr) <= 0;
     }
 
-    private void process(BiConsumer<SegmentInterface<T, V>,
-                                    SegmentInterface<T, V>> op)
+    private void process(BiConsumer<Sample<T, V>,
+            Sample<T, V>> op)
     {
         op.accept(primaryCurr, secondaryCurr);
         if(secondaryProcessingNotComplete())
@@ -134,7 +134,7 @@ public class ChainsCombinator
         return !secondaryEnd.equals(secondaryCurr);
     }
 
-    private SegmentInterface<T, V> endingSegment(TimeChain<T, V> chain) {
+    private Sample<T, V> endingSegment(TimeChain<T, V> chain) {
         // not sure this is a smart idea, we are saying there is a last
         // element that starts at the last allowed time and has the last value
         // therefore potentially resulting in infinite loops

@@ -4,6 +4,8 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
+import eu.quanticol.moonlight.offline.algorithms.BooleanComputation;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -90,14 +92,14 @@ public class SpatialTemporalSignal<T> {
 	}
 
 	public <R> SpatialTemporalSignal<R> apply(Function<T,R> f ) {
-		return new SpatialTemporalSignal<R>(this.size, (i -> signals.get(i).apply(f)));
+		return new SpatialTemporalSignal<R>(this.size, (i -> BooleanComputation.applyUnary(signals.get(i), f)));
 	}
 	
 	public static <T,R> SpatialTemporalSignal<R> apply(SpatialTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatialTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatialTemporalSignal<R>( s1.size , (i -> Signal.apply(s1.signals.get(i),f,s2.signals.get(i)) ));
+		return new SpatialTemporalSignal<R>( s1.size , (i -> BooleanComputation.applyBinary(s1.signals.get(i),f,s2.signals.get(i)) ));
 	}
 
 	public static <T,R> SpatialTemporalSignal<R> applyToSignal(SpatialTemporalSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatialTemporalSignal<T> s2 ) {

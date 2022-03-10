@@ -44,9 +44,9 @@ public class Signals {
                                           TimeChain<Double, V> updates,
                                           BiPredicate<V, V> refinable)
     {
-        ChainIterator<SegmentInterface<Double, V>> utr = updates.chainIterator();
-        ChainIterator<SegmentInterface<Double, V>> itr = s.chainIterator();
-        SegmentInterface<Double, V> current = itr.next();
+        ChainIterator<Sample<Double, V>> utr = updates.chainIterator();
+        ChainIterator<Sample<Double, V>> itr = s.chainIterator();
+        Sample<Double, V> current = itr.next();
         V prevV = current.getValue();   // Default when no previous value exists
 
         if(utr.hasNext()) {
@@ -77,8 +77,8 @@ public class Signals {
                                      Update<Double, V> u,
                                      BiPredicate<V, V> refinable)
     {
-        ChainIterator<SegmentInterface<Double, V>> itr = s.chainIterator();
-        SegmentInterface<Double, V> current = itr.next();
+        ChainIterator<Sample<Double, V>> itr = s.chainIterator();
+        Sample<Double, V> current = itr.next();
         V prevV = current.getValue();   // Default when no previous value exists
 
         while (stillRefining(itr, current, u, refinable, prevV, s.getEnd()))
@@ -92,9 +92,9 @@ public class Signals {
     }
 
     private static <V> Update<Double, V>
-    nextUpdate(ChainIterator<SegmentInterface<Double, V>> itr, double end)
+    nextUpdate(ChainIterator<Sample<Double, V>> itr, double end)
     {
-        SegmentInterface<Double, V> fst = itr.next();
+        Sample<Double, V> fst = itr.next();
         Double sEnd = itr.hasNext() ? itr.peekNext().getStart() : end;
 
         return new Update<>(fst.getStart(), sEnd, fst.getValue());
@@ -110,8 +110,8 @@ public class Signals {
      *         <code>false</code> otherwise.
      */
     private static <V> boolean stillRefining(
-            ChainIterator<SegmentInterface<Double, V>> itr,
-            SegmentInterface<Double, V> curr,
+            ChainIterator<Sample<Double, V>> itr,
+            Sample<Double, V> curr,
             Update<Double, V> u,
             BiPredicate<V, V> refinable,
             V prevV, double lastT)
@@ -134,7 +134,7 @@ public class Signals {
      * @return <code>true</code> when the update has been completely processed.
      */
     public static <V> boolean doRefine(
-            ChainIterator<SegmentInterface<Double, V>> itr,
+            ChainIterator<Sample<Double, V>> itr,
             double from, double to, V vNew, // update
             double t, double tNext, V v,    // current segment
              V prevV,                       // previous value
@@ -166,7 +166,7 @@ public class Signals {
     }
 
     private static <V> void processUpdate(
-            ChainIterator<SegmentInterface<Double, V>> itr,
+            ChainIterator<Sample<Double, V>> itr,
             double from, double to, V vNew, // update
             double t, double tNext, V v,    // current segment
             V prevV,                       // previous value
@@ -203,14 +203,14 @@ public class Signals {
      * @param prevV the value of the previous segment of the chain
      */
     private static <V>
-    void update(ChainIterator<SegmentInterface<Double, V>> itr,
+    void update(ChainIterator<Sample<Double, V>> itr,
                 double t, V v, V vNew, BiPredicate<V, V> refinable, V prevV)
     {
         boolean isRefinable = refinable.test(v, vNew);
         if(isRefinable && prevV.equals(vNew)) {
             remove(itr);
         } else if (isRefinable) {
-            SegmentInterface<Double, V> s = new TimeSegment<>(t, vNew);
+            Sample<Double, V> s = new TimeSegment<>(t, vNew);
             itr.set(s);
         } else {
             throw new UnsupportedOperationException("Refining interval: " +
@@ -226,13 +226,13 @@ public class Signals {
      * @param itr iterator to update
      */
     private static <V>
-    void remove(ChainIterator<SegmentInterface<Double, V>> itr)
+    void remove(ChainIterator<Sample<Double, V>> itr)
     {
         itr.previous();
         itr.remove();
     }
 
-    private static <V> void add(ChainIterator<SegmentInterface<Double, V>> itr,
+    private static <V> void add(ChainIterator<Sample<Double, V>> itr,
                                 Double start, V vNew)
     {
         if(itr.hasPrevious() && !itr.peekPrevious().getValue().equals(vNew)) {
@@ -266,10 +266,10 @@ public class Signals {
         int start = 0;
         int end = 1;
 
-        ChainIterator<SegmentInterface<T, V>> itr = segments.chainIterator();
+        ChainIterator<Sample<T, V>> itr = segments.chainIterator();
 
         do {
-            SegmentInterface<T, V> current = itr.next();
+            Sample<T, V> current = itr.next();
 
             // We went too far, the last returned is the last one useful
             if(current.getStart().compareTo(to) > 0) {

@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -183,14 +183,14 @@ class BooleanComputationTest {
     }
 
     private TimeChain<Integer, Integer> basicUpdateChain() {
-        List<SegmentInterface<Integer, Integer>> values = new ArrayList<>();
+        List<Sample<Integer, Integer>> values = new ArrayList<>();
         values.add(new TimeSegment<>(0, 3));
         values.add(new TimeSegment<>(1, 4));
         return new TimeChain<>(values, 5);
     }
 
     private TimeChain<Integer, Integer> basicSignalChain() {
-        List<SegmentInterface<Integer, Integer>> values = new ArrayList<>();
+        List<Sample<Integer, Integer>> values = new ArrayList<>();
         values.add(new TimeSegment<>(0, -1));
         values.add(new TimeSegment<>(4, 5));
         return new TimeChain<>(values, Integer.MAX_VALUE);

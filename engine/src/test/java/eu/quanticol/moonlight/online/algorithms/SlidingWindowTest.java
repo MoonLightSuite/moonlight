@@ -8,8 +8,7 @@ import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
-import eu.quanticol.moonlight.online.algorithms.SlidingWindow;
-import eu.quanticol.moonlight.online.signal.SegmentInterface;
+import eu.quanticol.moonlight.online.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -56,7 +55,7 @@ class SlidingWindowTest {
 
 
     private TimeChain<Double, Double> simpleUpdateChain() {
-        List<SegmentInterface<Double, Double>> segments = new ArrayList<>();
+        List<Sample<Double, Double>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(4.0, 5.0));
         segments.add(new TimeSegment<>(7.0, 10.0));
 
@@ -66,7 +65,7 @@ class SlidingWindowTest {
     }
 
     private TimeChain<Double, Double> basicTimeChain() {
-        List<SegmentInterface<Double, Double>> segments = new ArrayList<>();
+        List<Sample<Double, Double>> segments = new ArrayList<>();
         segments.add(new TimeSegment<>(0.0, 3.0));
         segments.add(new TimeSegment<>(4.0, 5.0));
         segments.add(new TimeSegment<>(7.0, 10.0));
