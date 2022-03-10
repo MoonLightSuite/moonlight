@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.script;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 
 import java.util.HashMap;
 import java.util.Map;

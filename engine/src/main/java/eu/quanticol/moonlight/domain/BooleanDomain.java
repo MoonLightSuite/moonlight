@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.core.base.DataHandler;
 
 /**
  * Signal domain to support booleans (i.e. classical satisfaction).

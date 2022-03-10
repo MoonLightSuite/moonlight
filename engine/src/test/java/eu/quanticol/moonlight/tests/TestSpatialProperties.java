@@ -8,7 +8,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+@Deprecated
 public class SignalCreatorDouble {
 
 //    private Map<String, Function<Double, Double>> functionalMap;

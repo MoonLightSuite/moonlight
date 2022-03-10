@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
-import eu.quanticol.moonlight.online.signal.Sample;
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.util.Stopwatch;
 import eu.quanticol.moonlight.api.MatlabRunner;

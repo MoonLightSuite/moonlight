@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.api.MatlabRunner;
 import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
@@ -307,7 +308,7 @@ public class SensorsOnline {
                             List<Pair<Integer, Double>> locations =
                                     spaceDataFromTime(time);
                             Sample<Double,
-                                                                                                    List<Pair<Integer, Double>>>
+                                                                                                                                List<Pair<Integer, Double>>>
                                     segment = new TimeSegment<>((double) time,
                                                                 locations);
                             chain.add(segment);

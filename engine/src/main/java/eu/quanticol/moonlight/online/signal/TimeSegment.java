@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.signal.Sample;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

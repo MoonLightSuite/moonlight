@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.io;
 import java.io.File;
 import java.io.IOException;
 
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 

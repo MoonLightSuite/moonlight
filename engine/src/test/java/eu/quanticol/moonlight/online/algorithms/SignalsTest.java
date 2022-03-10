@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.online.signal.Sample;
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;

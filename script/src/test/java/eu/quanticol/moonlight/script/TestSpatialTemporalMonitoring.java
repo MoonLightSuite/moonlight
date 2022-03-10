@@ -2,6 +2,7 @@ package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
+import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -10,7 +11,7 @@ import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporal
 import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

@@ -9,7 +9,7 @@ import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 
 import java.io.*;
 import java.nio.file.Files;

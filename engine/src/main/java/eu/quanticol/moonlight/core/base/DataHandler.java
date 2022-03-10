@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.offline.signal;
+package eu.quanticol.moonlight.core.base;
+
+import eu.quanticol.moonlight.offline.signal.IllegalValueException;
 
 /**
  * A <code>DataHandler</code> is used to manage input/output of a signal value
@@ -118,8 +120,8 @@ public interface DataHandler<S> {
         }
 
         /**
-         * If  <code>value</code> is a Number, the doubleValue is returned.
-         * If <code>value</code> is null, 0.0 is returned. Otherwise a
+         * If <code>value</code> is a Number, the doubleValue is returned.
+         * If <code>value</code> is null, 0.0 is returned. Otherwise, a
          * {@link IllegalValueException} is thrown.
          *
          * @param value data to convert

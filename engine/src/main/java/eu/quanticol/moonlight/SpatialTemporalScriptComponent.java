@@ -23,7 +23,7 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.io.SpatialTemporalSignalWriter;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 

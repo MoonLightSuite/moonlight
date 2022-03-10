@@ -20,7 +20,8 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.util.Pair;
 
 import java.util.Arrays;

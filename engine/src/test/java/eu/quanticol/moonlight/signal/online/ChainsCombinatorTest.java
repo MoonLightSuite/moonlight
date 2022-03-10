@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.signal.online;
 
 import eu.quanticol.moonlight.online.signal.ChainsCombinator;
-import eu.quanticol.moonlight.online.signal.Sample;
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import org.junit.jupiter.api.Disabled;

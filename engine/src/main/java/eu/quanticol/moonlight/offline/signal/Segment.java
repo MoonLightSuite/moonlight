@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
-import eu.quanticol.moonlight.online.signal.Sample;
+import eu.quanticol.moonlight.core.signal.Sample;
 
 /**
  * @author loreti

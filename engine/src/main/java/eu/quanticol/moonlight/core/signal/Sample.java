@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.online.signal;
+package eu.quanticol.moonlight.core.signal;
 
 /**
  * The basic interface to represent timed samples.
@@ -40,9 +40,7 @@ public interface Sample<T extends Comparable<T>, V>
      */
     T getStart();
 
-
     default int compareTo(Sample<T, V> segment) {
         return getStart().compareTo(segment.getStart());
     }
-
 }

@@ -4,7 +4,3 @@
 plugins {
     `kotlin-dsl`    // To compile the plugin code
 }
-
-dependencies {
-    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3")
-}

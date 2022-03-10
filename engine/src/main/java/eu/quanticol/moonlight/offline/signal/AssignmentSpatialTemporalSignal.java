@@ -3,7 +3,7 @@
  */
 package eu.quanticol.moonlight.offline.signal;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 
 import java.util.function.Function;
 

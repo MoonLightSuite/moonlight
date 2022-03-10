@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.*;
 
 import java.io.Serializable;

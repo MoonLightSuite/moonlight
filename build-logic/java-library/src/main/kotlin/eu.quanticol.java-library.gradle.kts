@@ -1,6 +1,7 @@
 plugins {
     `java-library`
-    id("eu.quanticol.jacoco")
+    java
+    jacoco
     id("org.sonarqube")
 }
 
@@ -8,6 +9,7 @@ group = "eu.quanticol.moonlight"
 version = "1.0-SNAPSHOT"
 description = "MoonLight: a light-weight framework for runtime monitoring"
 
+// == General Java settings ==
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -19,6 +21,7 @@ tasks {
     compileTestJava { options.encoding = "UTF-8" }
 }
 
+// == Testing settings ==
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
@@ -27,6 +30,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+// Do not generate reports for individual projects
+tasks.jacocoTestReport.configure {
+    enabled = false
+}
+
+// == Sonarqube settings ==
 sonarqube {
     properties {
         property("sonar.projectKey", "MoonLightSuite_MoonLight")

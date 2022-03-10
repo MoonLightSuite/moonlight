@@ -20,18 +20,18 @@
 
 package eu.quanticol.moonlight.core.signal;
 
-import eu.quanticol.moonlight.online.signal.*;
+import eu.quanticol.moonlight.online.signal.Update;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.ChainIterator;
 
 import java.io.Serializable;
 
 /**
- * General interface that represents a Signal used by the monitoring processes
+ * General interface that represents a <em>signal</em>,
+ * used by the monitoring processes.
  *
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V> The signal domain to be considered
- *
- * @see OnlineSignal for a concrete implementation
- * @see MultiOnlineSignal for a concrete implementation
  */
 public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
     /**
@@ -55,8 +55,6 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     boolean refine(TimeChain<T, V> updates) throws UnsupportedOperationException;
-
-
 
     /**
      * Returns the internal chain of segments.
@@ -101,5 +99,4 @@ public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     TimeChain<T, V> select(T from, T to);
-
 }

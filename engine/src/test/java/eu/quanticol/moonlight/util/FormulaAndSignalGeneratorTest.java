@@ -1,12 +1,13 @@
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.*;
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

@@ -19,6 +19,7 @@
  */
 package eu.quanticol.moonlight.io;
 
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 

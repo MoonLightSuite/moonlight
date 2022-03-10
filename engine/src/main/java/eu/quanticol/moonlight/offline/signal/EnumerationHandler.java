@@ -20,6 +20,8 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
+import eu.quanticol.moonlight.core.base.DataHandler;
+
 import java.util.HashMap;
 
 public class EnumerationHandler<T> implements DataHandler<T> {

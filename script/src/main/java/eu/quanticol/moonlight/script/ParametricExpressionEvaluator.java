@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.script;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import org.antlr.v4.runtime.ParserRuleContext;
 

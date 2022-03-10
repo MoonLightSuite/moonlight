@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.core.base.DataHandler;
 
 public class AbsIntervalDomain<R extends Comparable<R>>
         implements SignalDomain<AbstractInterval<R>>

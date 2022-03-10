@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
 import eu.quanticol.moonlight.core.base.AbstractInterval;

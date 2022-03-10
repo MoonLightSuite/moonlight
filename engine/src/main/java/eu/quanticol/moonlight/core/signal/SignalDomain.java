@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.core.signal;
 
 import eu.quanticol.moonlight.core.base.Semiring;
-import eu.quanticol.moonlight.offline.signal.DataHandler;
+import eu.quanticol.moonlight.core.base.DataHandler;
 
 import java.util.function.BiFunction;
 
@@ -30,8 +30,8 @@ import java.util.function.BiFunction;
  * signal interpretation.
  * More precisely, (S, (-)) is a Signal domain when:
  * <ul>
- * <li> S is an idempotent Semiring </li>
- * <li> (-) is a negation function</li>
+ * 	<li> S is an idempotent Semiring </li>
+ * 	<li> (-) is a negation function</li>
  * </ul>
  * Moreover, we include:
  * - Syntactic sugar for the implication connective

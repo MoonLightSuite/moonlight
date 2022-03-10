@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.core.space;
 
 import java.util.Iterator;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.util.Pair;

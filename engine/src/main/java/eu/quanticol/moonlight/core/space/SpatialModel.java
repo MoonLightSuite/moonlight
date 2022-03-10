@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.core.space;
 
-import eu.quanticol.moonlight.io.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.util.Pair;
