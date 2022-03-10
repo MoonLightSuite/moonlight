@@ -137,7 +137,7 @@ public class Bikes {
                                        trajectory.getSignals().get(0).size());
         SpatialTemporalSignal<Boolean> result = null;
         for(int i = 0; i < 100; i++) {
-            result = stats.record(
+            result = stats.track(
                 () -> {
                     // We setup the monitoring process
                     SpatialTemporalMonitoring<Double, Pair<Double, Double>,

@@ -94,7 +94,6 @@ public class OnlineSignal<D extends Comparable<D>>
         return Signals.refineChain(segments, updates, AbstractInterval::contains);
     }
 
-
     @Override
     public TimeChain<Double, AbstractInterval<D>> select(Double from, Double to)
     {

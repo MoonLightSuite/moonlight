@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.statistics;
 
-import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.io.Serializable;
@@ -36,7 +36,7 @@ import static java.util.Collections.synchronizedCollection;
  * {@code StatisticalModelChecker} to record stats about the monitoring
  * process and then return them in some readable way.
  *
- * The stats data is recorded by {@link #record(Supplier)} trace by trace,
+ * The stats data is recorded by {@link #track(Supplier)} trace by trace,
  * but actual stats are computed lazily
  * (i.e. only on call of the {@link #analyze()} method).
  *
@@ -79,7 +79,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
      * @return the result of the task, so that it can be
      *         passed through to the caller
      */
-    public T record(Supplier<T> f) {
+    public T track(Supplier<T> f) {
         try {
             long start = System.currentTimeMillis();
             T result = f.get(); //Supplier code execution (i.e. f.apply())
@@ -110,8 +110,8 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
     public Statistics[][] analyze() {
         Statistics[][] stats = new Statistics[locations][timePoints];
         for(int t = 0; t < timePoints; t++) {
-            float[] avg = generateAverages(t);
-            float[] var = generateVariances(avg, t);
+            float[] average = generateAverages(t);
+            float[] variance = generateVariances(average, t);
             float execTime = computeAvgExecTime();
             int cnt = results.size();
 
@@ -119,9 +119,9 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
             float totalTime = (float) ((endingTime - startingTime) / 1000.0);
 
             for(int l = 0; l < locations; l++) {
-                float stdDev = (float) Math.sqrt(var[l]);
-                stats[l][t] = new Statistics(avg[l], execTime, stdDev,
-                        var[l], cnt, totalTime);
+                float stdDev = (float) Math.sqrt(variance[l]);
+                stats[l][t] = new Statistics(average[l], execTime, stdDev,
+                        variance[l], cnt, totalTime);
             }
 
         }
@@ -137,7 +137,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         for(int l = 0; l < locations; l++) {
             float value = 0;
             for (SpatialTemporalSignal<?> r : results) {
-                Signal<?> s = r.getSignals().get(l);
+                TimeSignal<Double, ?> s = r.getSignals().get(l);
                 value = computeAverage(s, value, t);
             }
             outputs[l] = value / results.size();
@@ -146,13 +146,13 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         return outputs;
     }
 
-    private float computeAverage(Signal<?> s, float value,
+    private float computeAverage(TimeSignal<Double, ?> s, float value,
                                  double t)
     {
-        if (s.valueAt(t) instanceof Double) {
-            value += ((Double) s.valueAt(t)).floatValue();
-        } else if (s.valueAt(t) instanceof Boolean) {
-            value += (Boolean) s.valueAt(t) ? 1 : 0;
+        if (s.getValueAt(t) instanceof Double) {
+            value += ((Double) s.getValueAt(t)).floatValue();
+        } else if (s.getValueAt(t) instanceof Boolean) {
+            value += Boolean.TRUE.equals(s.getValueAt(t)) ? 1 : 0;
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
 
@@ -181,7 +181,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         for(int l = 0; l < locations; l++) {
             float value = 0;
             for (SpatialTemporalSignal<?> r : results) {
-                Signal<?> s = r.getSignals().get(l);
+                TimeSignal<Double, ?> s = r.getSignals().get(l);
                 value = computeVariance(s, avg[l], value, t);
             }
             outputs[l] = value / (results.size());
@@ -190,14 +190,15 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
         return outputs;
     }
 
-    private float computeVariance(Signal<?> s, float avg, float value,
+    private float computeVariance(TimeSignal<Double, ?> s,
+                                  float avg, float value,
                                   double t)
     {
-        if (s.valueAt(t) instanceof Double) {
-            float v = ((Double) s.valueAt(t)).floatValue();
+        if (s.getValueAt(t) instanceof Double) {
+            float v = ((Double) s.getValueAt(t)).floatValue();
             value += Math.pow((v - avg), 2);
-        } else if (s.valueAt(t) instanceof Boolean) {
-            float v = (Boolean) s.valueAt(t) ? 1 : 0;
+        } else if (s.getValueAt(t) instanceof Boolean) {
+            float v = Boolean.TRUE.equals(s.getValueAt(t)) ? 1 : 0;
             value += Math.pow((v - avg), 2);
         } else
             throw new InvalidParameterException("Unknown Signal Domain");
@@ -215,12 +216,12 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
     public static class Statistics implements Serializable {
 
         public Statistics(float avg, float exec, float std,
-                   float var, int cnt, float tot)
+                   float variance, int cnt, float tot)
         {
             average = avg;
             executionTime = exec;
             stdDeviation = std;
-            variance = var;
+            this.variance = variance;
             count = cnt;
             totalExecutionTime = tot;
         }

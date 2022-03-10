@@ -97,7 +97,7 @@ public class StatisticalModelChecker<S, T, R> {
         for (SpatialTemporalSignal<T> s : samples) {
 
             final int n = i;
-            Thread t = new Thread(() -> stats.record(
+            Thread t = new Thread(() -> stats.track(
                 () ->
                 {
                     SpatialTemporalSignal<R> r = monitor.monitor(locService, s);
