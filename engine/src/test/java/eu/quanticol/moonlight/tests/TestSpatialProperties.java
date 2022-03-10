@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.DoubleDomain;
@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.escape;
-import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.reach;
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -154,7 +154,7 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> 1.0, new DoubleDomain(), 0.0, range, model);
-        List<Boolean> result = SpatialComputation.somewhere(
+        List<Boolean> result = SpatialAlgorithms.somewhere(
                 new BooleanDomain(),
                 (i) -> i == Utils.gridIndexOf(relevantR, relevantC, columns),
                 ds
@@ -175,7 +175,7 @@ class TestSpatialProperties {
         int relevantR = 5;
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
-        List<Boolean> result = SpatialComputation.everywhere(
+        List<Boolean> result = SpatialAlgorithms.everywhere(
                 new BooleanDomain(),
                 (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns),
                 ds

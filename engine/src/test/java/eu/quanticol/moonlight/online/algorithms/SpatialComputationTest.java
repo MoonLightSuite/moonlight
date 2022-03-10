@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.online.algorithms;
 
-import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -224,31 +224,31 @@ class SpatialComputationTest {
     private static List<Double> somewhereOp(IntFunction<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
-        return SpatialComputation.somewhere(DOUBLES, s, ds);
+        return SpatialAlgorithms.somewhere(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOp(IntFunction<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
-        return SpatialComputation.everywhere(DOUBLES, s, ds);
+        return SpatialAlgorithms.everywhere(DOUBLES, s, ds);
     }
 
     private static List<Double> somewhereOpParallel(IntFunction<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
-        return SpatialComputation.somewhereParallel(DOUBLES, s, ds);
+        return SpatialAlgorithms.somewhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> everywhereOpParallel(IntFunction<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
-        return SpatialComputation.everywhereParallel(DOUBLES, s, ds);
+        return SpatialAlgorithms.everywhereParallel(DOUBLES, s, ds);
     }
 
     private static List<Double> escapeOp(IntFunction<Double> s,
                                          DistanceStructure<Double, ?> ds)
     {
-        return SpatialComputation.escape(DOUBLES, s, ds);
+        return SpatialAlgorithms.escape(DOUBLES, s, ds);
     }
 
 }

@@ -98,7 +98,7 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
         }
 
         for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
-            //updates.addAll(SpatialComputation.binary(s1, argU, opFunction));
+            //updates.addAll(SpatialAlgorithms.binary(s1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);

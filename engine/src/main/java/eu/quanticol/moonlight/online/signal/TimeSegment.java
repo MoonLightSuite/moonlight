@@ -18,9 +18,7 @@ import java.util.Objects;
  * @see Sample
  * @see TimeChain
  */
-public class TimeSegment<T extends Comparable<T>, V>
-        implements Sample<T, V>
-{
+public class TimeSegment<T extends Comparable<T>, V> implements Sample<T, V> {
     private final T start;
     private final V value;
 

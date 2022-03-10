@@ -20,23 +20,24 @@
 
 package eu.quanticol.moonlight.core.signal;
 
+import java.io.Serializable;
+
 /**
  * The basic interface to represent timed samples.
  *
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V> The value domain of interest
- *
  */
 public interface Sample<T extends Comparable<T>, V>
-        extends Comparable<Sample<T, V>>
+        extends Comparable<Sample<T, V>>, Serializable
 {
     /**
-     * @return the value of the segment
+     * @return the value of the sample
      */
     V getValue();
 
     /**
-     * @return the time instant at which the segment started
+     * @return the time instant at which the sample has been collected
      */
     T getStart();
 

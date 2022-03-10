@@ -22,6 +22,8 @@ package eu.quanticol.moonlight.online.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.Sample;
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -129,6 +131,7 @@ public class SpatialComputation
         return results;
     }
 
+
     private void doCompute(T t, T tNext, List<R> value,
                     FiveParameterFunction<T, T, DistanceStructure<S, ?>,
                     IntFunction<R>,
@@ -139,8 +142,6 @@ public class SpatialComputation
         tNext = seekSpace(t, tNext, spaceItr);
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
-        f.areWithinBounds(0, 0); //TODO: Done to force pre-computation
-                                    // of distance matrix
 
         op.accept(t, tNext, f, spatialSignal, spaceItr);
     }
@@ -164,14 +165,14 @@ public class SpatialComputation
     {
         currSpace = spaceItr.next();
         getNext(spaceItr);
-        while(nextSpaceBeforeNextStart(start)) {
+        while(isNextSpaceBeforeTime(start)) {
             currSpace = nextSpace;
             nextSpace = getNext(spaceItr);
         }
         return fromNextSpaceOrCurrent(end);
     }
 
-    private boolean nextSpaceBeforeNextStart(T start) {
+    private boolean isNextSpaceBeforeTime(T start) {
         return nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0;
     }
 

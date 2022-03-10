@@ -1,7 +1,9 @@
-package eu.quanticol.moonlight.offline.algorithms;
+package eu.quanticol.moonlight.core.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.offline.algorithms.EscapeAlgorithm;
+import eu.quanticol.moonlight.offline.algorithms.ReachAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +11,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SpatialComputation {
-    private SpatialComputation() {} // Hidden constructor
+public class SpatialAlgorithms {
+    private SpatialAlgorithms() {} // Hidden constructor
 
     public static <E, M, R> List<R> reach(SignalDomain<R> signalDomain,
                                           IntFunction<R> leftSpatialSignal,

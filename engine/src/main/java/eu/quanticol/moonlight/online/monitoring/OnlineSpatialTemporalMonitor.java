@@ -42,7 +42,6 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
-import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -57,7 +56,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.offline.algorithms.SpatialComputation.*;
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.*;
 
 public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implements
         FormulaVisitor<Parameters,

@@ -20,11 +20,11 @@
 
 package eu.quanticol.moonlight.offline.algorithms;
 
+import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Pair;
@@ -76,7 +76,7 @@ public class ReachOperator {
         while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();
-            List<R> values =  SpatialComputation.reach(domain, spatialSignal1, spatialSignal2, f);
+            List<R> values =  SpatialAlgorithms.reach(domain, spatialSignal1, spatialSignal2, f);
             toReturn.add(time, (values::get));
             double nextTime = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(nextTime);
@@ -86,8 +86,8 @@ public class ReachOperator {
                 time = current.getFirst();
                 next = getNext(locSvcIterator);
                 f = distance.apply(current.getSecond());
-                values =  SpatialComputation.reach(domain, spatialSignal1, spatialSignal2, f);
-                toReturn.add(time, SpatialComputation.escape(domain, (values::get), f));
+                values =  SpatialAlgorithms.reach(domain, spatialSignal1, spatialSignal2, f);
+                toReturn.add(time, SpatialAlgorithms.escape(domain, (values::get), f));
             }
             time = nextTime;
             if ((next != null) && (next.getFirst() == time)) {
