@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.examples.subway.grid;
 
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.examples.subway.Subway;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;

@@ -1,12 +1,13 @@
 package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.signal.*;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 
 
 public class mainSp2 {
@@ -59,7 +62,7 @@ public class mainSp2 {
 
         //// Somewere Taxi property
         double range = 10;
-        DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
+        DistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
         List<Boolean> somewhereTaxy = SpatialAlgorithms.somewhere(new BooleanDomain(), taxi::get, minutes);
 
         //// (R1) Hospital -> Somewere Taxi property
@@ -70,7 +73,7 @@ public class mainSp2 {
         System.out.println(r1);
 
         /// stop reach_{<=10} mainsquare
-        List<Boolean> reacmainsquare = minutes.reach(new BooleanDomain(), taxi::get, mainsquare::get);
+        List<Boolean> reacmainsquare = reach(new BooleanDomain(), taxi::get, mainsquare::get, minutes);
 
 
         System.out.println(reacmainsquare);

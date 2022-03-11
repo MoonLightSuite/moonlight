@@ -24,12 +24,12 @@ import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.algorithms.SpatialOperator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.util.Pair;
+
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +76,7 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
 
     private SpatialTemporalSignal<R> unaryOperator(
             ParallelSignalCursor<R> cursor,
-            double time,
+            double t,
             Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
     {
         //Loop invariant: (current.getFirst() <= time) &&
@@ -86,20 +86,21 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
 
         toReturn = outputInit(sm.size());
 
-        while (!cursor.completed() && !Double.isNaN(time)) {
+        while (!cursor.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal = cursor.getValue();
-            addResult(time, null, op.apply(spatialSignal, f));
+            addResult(t, null, op.apply(spatialSignal, f));
             double nextTime = cursor.forward();
 
             while ((nextSpace != null) && (nextSpace.getFirst() < nextTime)) {
                 currSpace = nextSpace;
-                time = currSpace.getFirst();
+                t = currSpace.getFirst();
                 nextSpace = getNext(locSvcIterator);
                 f = dist.apply(currSpace.getSecond());
-                addResult(time, null, op.apply(spatialSignal, f));
+                addResult(t, null, op.apply(spatialSignal, f));
             }
-            time = nextTime;
-            if ((nextSpace != null) && (nextSpace.getFirst() == time)) {
+
+            t = nextTime;
+            if ((nextSpace != null) && (nextSpace.getFirst() == t)) {
                 currSpace = nextSpace;
                 dist.apply(currSpace.getSecond());
                 nextSpace = getNext(locSvcIterator);

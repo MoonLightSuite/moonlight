@@ -98,9 +98,10 @@ public class SpatialComputation
             currSpace = nextSpace;
             T t = currSpace.getFirst();
             nextSpace = getNext(spaceItr);
+            DistanceStructure<S, ?>  f = dist.apply(currSpace.getSecond());
+
             if(nextSpace != null && !currSpace.equals(nextSpace)) {
                 tNext = nextSpace.getFirst();
-                DistanceStructure<S, ?>  f = dist.apply(currSpace.getSecond());
                 addResult(t, tNext, op.apply(spatialSignal, f));
             }
         }
