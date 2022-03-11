@@ -20,7 +20,10 @@
 
 package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -28,6 +31,8 @@ import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.offline.algorithms.SpatialOperators;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
 
 /**
  * Strategy to interpret the Escape spatial logic operator.
@@ -59,10 +64,11 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
-		return SpatialOperators.computeEscapeDynamic(
-				locationService,
-				distance,
-				domain,
-				m.monitor(locationService, signal));
+		BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator =
+				(ss, f) -> escape(domain, ss, f);
+
+		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService,
+				distance, operator);
+		return sp.computeUnarySpatialOperator(m.monitor(locationService, signal));
 	}
 }

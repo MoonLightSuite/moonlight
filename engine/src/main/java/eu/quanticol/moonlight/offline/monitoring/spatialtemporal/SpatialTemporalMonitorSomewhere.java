@@ -58,10 +58,10 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
 
 	@Override
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService, SpatialTemporalSignal<T> signal) {
-        return SpatialOperators.computeUnarySpatialOperator(locationService,
-                distance,
-                this::somewhereOp,
-                m.monitor(locationService, signal));
+		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService,
+				distance,
+				this::somewhereOp);
+        return sp.computeUnarySpatialOperator(m.monitor(locationService, signal));
 	}
 
     private List<R> somewhereOp(IntFunction<R> spatialSignal,

@@ -20,10 +20,9 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
+import eu.quanticol.moonlight.core.algorithms.SpatialOperator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.Sample;
-import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -43,30 +42,21 @@ import java.util.function.IntFunction;
 
 public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
+    extends SpatialOperator<T, S, R>
 {
-    private final LocationService<T, S> locSvc;
-    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<IntFunction<R>,
-                             DistanceStructure<S, ?>,
-                             List<R>> op;
-
-    Pair<T, SpatialModel<S>> currSpace;
-    Pair<T, SpatialModel<S>> nextSpace;
+    List<Update<T, List<R>>> results;
 
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
-                                       DistanceStructure<S, ?>> distance,
+                                      DistanceStructure<S, ?>> distance,
                               BiFunction<IntFunction<R>,
-                                       DistanceStructure<S, ?>,
-                                                  List<R>> operator)
-    {
+                                      DistanceStructure<S, ?>,
+                                      List<R>> operator) {
+        super(locationService, distance, operator);
         checkLocationServiceValidity(locationService);
-        locSvc = locationService;
-        dist = distance;
-        op = operator;
     }
 
-    private void checkLocationServiceValidity(LocationService<T, S> locSvc)
+    protected void checkLocationServiceValidity(LocationService<T, S> locSvc)
     {
         if (locSvc.isEmpty())
             throw new UnsupportedOperationException("The location Service " +
@@ -75,7 +65,7 @@ public class SpatialComputation
 
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u)
     {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
         T t = u.getStart();
         T tNext = u.getEnd();
         tNext = seekSpace(t, tNext, spaceItr);
@@ -92,29 +82,37 @@ public class SpatialComputation
             IntFunction<R> spatialSignal,
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
-        List<Update<T, List<R>>> results = new ArrayList<>();
-
-        results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
-
-        while (nextSpace != null &&
-                nextSpace.getFirst().compareTo(tNext) < 0)
-        {
-            currSpace = nextSpace;
-            t = currSpace.getFirst();
-            nextSpace = getNext(spaceItr);
-            if(nextSpace != null && !currSpace.equals(nextSpace)) {
-                tNext = nextSpace.getFirst();
-                f = dist.apply(currSpace.getSecond());
-                results.add(new Update<>(t, tNext, op.apply(spatialSignal, f)));
-            }
-        }
-
+        results = new ArrayList<>();
+        addResult(t, tNext, op.apply(spatialSignal, f));
+        moveAndCompute(tNext, spatialSignal, spaceItr);
         return results;
     }
 
-    public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups)
+    protected void moveAndCompute(T tNext,
+                                  IntFunction<R> spatialSignal,
+                                  Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
-        TimeChain<T, List<R>> results =  new TimeChain<>(ups.getEnd());
+        while (nextSpace != null &&
+               nextSpace.getFirst().compareTo(tNext) < 0)
+        {
+            currSpace = nextSpace;
+            T t = currSpace.getFirst();
+            nextSpace = getNext(spaceItr);
+            if(nextSpace != null && !currSpace.equals(nextSpace)) {
+                tNext = nextSpace.getFirst();
+                DistanceStructure<S, ?>  f = dist.apply(currSpace.getSecond());
+                addResult(t, tNext, op.apply(spatialSignal, f));
+            }
+        }
+    }
+
+    @Override
+    protected void addResult(T start, T end, List<R> value) {
+        results.add(new Update<>(start, end, value));
+    }
+
+    public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups) {
+        TimeChain<T, List<R>> rss =  new TimeChain<>(ups.getEnd());
         final int LAST = ups.size() - 1;
 
         for(int i = 0; i < ups.size(); i++) {
@@ -124,31 +122,10 @@ public class SpatialComputation
 
             doCompute(t, tNext, up.getValue(),
                         (a,b,c,d,e) ->
-                            computeOpChain(a, b, c, d, e).forEach(results::add)
+                            computeOpChain(a, b, c, d, e).forEach(rss::add)
                     );
         }
-
-        return results;
-    }
-
-
-    private void doCompute(T t, T tNext, List<R> value,
-                    FiveParameterFunction<T, T, DistanceStructure<S, ?>,
-                    IntFunction<R>,
-                    Iterator<Pair<T, SpatialModel<S>>>> op)
-    {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
-        IntFunction<R> spatialSignal = value::get;
-        tNext = seekSpace(t, tNext, spaceItr);
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
-
-        op.accept(t, tNext, f, spatialSignal, spaceItr);
-    }
-
-    @FunctionalInterface
-    public interface FiveParameterFunction<T, U, V, W, X> {
-        void accept(T t, U u, V v, W w, X x);
+        return rss;
     }
 
     private TimeChain<T, List<R>> computeOpChain(
@@ -158,40 +135,5 @@ public class SpatialComputation
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
         return asTimeChain(computeOp(t, tNext, f, spatialSignal, spaceItr));
-    }
-
-    private T seekSpace(T start, T end,
-                        Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
-        currSpace = spaceItr.next();
-        getNext(spaceItr);
-        while(isNextSpaceBeforeTime(start)) {
-            currSpace = nextSpace;
-            nextSpace = getNext(spaceItr);
-        }
-        return fromNextSpaceOrCurrent(end);
-    }
-
-    private boolean isNextSpaceBeforeTime(T start) {
-        return nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0;
-    }
-
-    private T fromNextSpaceOrCurrent(T fallback) {
-        if(nextSpace != null)
-            return nextSpace.getFirst();
-        return fallback;
-    }
-
-
-    /**
-     * Returns the next element if there is one, otherwise null
-     * @param itr Location Service Iterator
-     * @param <S> Spatial Domain
-     * @return Next element of the Location Service
-     */
-    private static <T, S> Pair<T, SpatialModel<S>> getNext(
-            Iterator<Pair<T, SpatialModel<S>>> itr)
-    {
-        return (itr.hasNext() ? itr.next() : null);
     }
 }

@@ -62,10 +62,10 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
-		return SpatialOperators.computeUnarySpatialOperator(locationService,
-                                            distance,
-                                            this::everywhereOp,
-                                            m.monitor(locationService, signal));
+		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService,
+				distance,
+				this::everywhereOp);
+		return sp.computeUnarySpatialOperator(m.monitor(locationService, signal));
 	}
 
     private List<R> everywhereOp(IntFunction<R> spatialSignal,

@@ -73,6 +73,7 @@ public class ReachOperator
                     "must not be empty!");
     }
 
+    //TODO: same as offline
     public static <S, R> SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
