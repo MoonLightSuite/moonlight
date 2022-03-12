@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.base.Semiring;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 
 /**
  * TODO: this class seems not to be used

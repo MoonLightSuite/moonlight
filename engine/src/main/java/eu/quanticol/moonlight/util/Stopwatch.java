@@ -1,5 +1,7 @@
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.core.base.Pair;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

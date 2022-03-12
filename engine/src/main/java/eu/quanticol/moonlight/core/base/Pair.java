@@ -18,33 +18,28 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.util;
+package eu.quanticol.moonlight.core.base;
 
 import java.util.Objects;
 
 /**
- * Immutable generic class to support triplets of objects
+ * Immutable generic class to support pairs of objects
  * @param <F> Type of the first object
  * @param <S> Type of the second object
- * @param <T> Type of the third object
  *
  * @author loreti
  */
-public class Triple<F, S, T> {
+public class Pair<F, S> {
 	private final F first;
 	private final S second;
-	private final T third;
 
 	/**
 	 * @param first object
 	 * @param second object
-	 * @param third object
 	 */
-	public Triple(F first, S second, T third) {
-		super();
+	public Pair(F first, S second) {
 		this.first = first;
 		this.second = second;
-		this.third = third;
 	}
 
 	/**
@@ -61,16 +56,9 @@ public class Triple<F, S, T> {
 		return second;
 	}
 
-	/**
-	 * @return the third
-	 */
-	public T getThird() {
-		return third;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(first, second, third);
+		return Objects.hash(first, second);
 	}
 
 	@Override
@@ -81,17 +69,16 @@ public class Triple<F, S, T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Triple other = (Triple) obj;
+		Pair<?,?> other = (Pair<?,?>) obj;
 		return Objects.equals(first, other.first)
-				&& Objects.equals(second, other.second)
-				&& Objects.equals(third, other.third);
+				&& Objects.equals(second, other.second);
 	}
 
 	@Override
 	public String toString() {
-		return "<" + first + ", " + second + ", " + third + ">";
+		return "<" + first + " , " + second + ">";
 	}
 	
 	
-	
+
 }

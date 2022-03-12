@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;

@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.core.algorithms;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

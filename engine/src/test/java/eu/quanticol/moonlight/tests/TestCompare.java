@@ -37,7 +37,7 @@ import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 
 import org.junit.jupiter.api.Test;
 

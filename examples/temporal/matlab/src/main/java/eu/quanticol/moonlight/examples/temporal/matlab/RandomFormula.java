@@ -15,7 +15,7 @@ import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.offline.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.api.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;
 import org.n52.matlab.control.MatlabProxy;

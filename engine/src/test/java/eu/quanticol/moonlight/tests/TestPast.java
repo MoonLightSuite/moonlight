@@ -17,7 +17,7 @@ import eu.quanticol.moonlight.offline.signal.SignalCursor;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 

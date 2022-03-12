@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.space;
 
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

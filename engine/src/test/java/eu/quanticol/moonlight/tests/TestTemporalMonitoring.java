@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;

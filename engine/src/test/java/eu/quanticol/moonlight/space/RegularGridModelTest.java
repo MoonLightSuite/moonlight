@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.space;
 
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;

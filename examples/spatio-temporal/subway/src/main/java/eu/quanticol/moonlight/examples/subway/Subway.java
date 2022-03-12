@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.Utils;
-import eu.quanticol.moonlight.util.Triple;
+import eu.quanticol.moonlight.core.base.Triple;
 
 import java.util.Arrays;
 import java.util.List;

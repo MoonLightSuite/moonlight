@@ -17,7 +17,7 @@ import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.util.ObjectSerializer;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 

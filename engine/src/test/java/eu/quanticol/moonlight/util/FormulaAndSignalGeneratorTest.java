@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.formula.Parameters;

@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
 
 import java.io.IOException;

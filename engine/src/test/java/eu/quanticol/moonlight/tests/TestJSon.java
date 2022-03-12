@@ -36,7 +36,7 @@ import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 
 import org.junit.jupiter.api.Test;
 

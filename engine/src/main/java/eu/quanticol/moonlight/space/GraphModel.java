@@ -21,11 +21,9 @@
 package eu.quanticol.moonlight.space;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.util.Pair;
+import eu.quanticol.moonlight.core.base.Pair;
 
 /**
  * Spatial model that implements a generic graph.
