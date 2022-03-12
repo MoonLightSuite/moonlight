@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
 import java.util.function.Function;
 
-import eu.quanticol.moonlight.offline.algorithms.SpatialOperators;
+import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -62,7 +62,7 @@ public class SpatialTemporalMonitorReach<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal)
     {
-		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService, distance, null);
+		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService, distance, null);
 		return sp.computeDynamic(locationService, distance, domain,
 							  m1.monitor(locationService, signal),
                               m2.monitor(locationService, signal));

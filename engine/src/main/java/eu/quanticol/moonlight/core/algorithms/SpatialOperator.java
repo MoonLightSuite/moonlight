@@ -46,10 +46,11 @@ public abstract class SpatialOperator
                                    IntFunction<R>,
                                    Iterator<Pair<T, SpatialModel<S>>>> op)
     {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
+        seekSpace(t, spaceItr);
+
         IntFunction<R> spatialSignal = value::get;
 
-        seekSpace(t, spaceItr);
         tNext = fromNextSpaceOrFallback(tNext);
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
@@ -69,6 +70,12 @@ public abstract class SpatialOperator
             currSpace = nextSpace;
             nextSpace = getNext(spaceItr);
         }
+    }
+
+    protected Iterator<Pair<T, SpatialModel<S>>> shiftSpaceModel(T t) {
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
+        seekSpace(t, spaceItr);
+        return spaceItr;
     }
 
     protected boolean isNextSpaceModelWithinHorizon(T tNext) {

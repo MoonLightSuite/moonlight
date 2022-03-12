@@ -44,33 +44,33 @@ import java.util.function.IntFunction;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
+public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     private SpatialTemporalSignal<R> toReturn;
 
-    public SpatialOperators(LocationService<Double, S> l,
-                            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-                            BiFunction<IntFunction<R>,
+    public SpatialComputation(LocationService<Double, S> l,
+                              Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+                              BiFunction<IntFunction<R>,
                                     DistanceStructure<S, ?>,
                                     List<R>> operator) {
         super(l, distance, operator);
     }
 
-    public SpatialTemporalSignal<R> computeUnarySpatialOperator(
-            SpatialTemporalSignal<R> s)
-    {
+    public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<R> s) {
+        // Output Init
         outputInit(s.getNumberOfLocations());
         if (locSvc.isEmpty()) {
             return toReturn;
         }
 
         ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
-        Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator = getSpaceIterator();
+        double t = cursor.getTime();
 
-        double start = cursor.getTime();
-        seekSpace(start, locSvcIterator);
+        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
 
-        return unaryOperator(cursor, start,
-                      locSvcIterator);
+        SpatialModel<S> sm = currSpace.getSecond();
+        DistanceStructure<S, ?> f = dist.apply(sm);
+
+        return unaryOperator(cursor, t, f, spaceItr);
     }
 
     private void outputInit(int locations) {
@@ -80,13 +80,9 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
     private SpatialTemporalSignal<R> unaryOperator(
             ParallelSignalCursor<R> cursor,
             double t,
+            DistanceStructure<S, ?> f,
             Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
     {
-        //Loop invariant: (current.getFirst() <= time) &&
-        //                ((next == null) || (time < next.getFirst()))
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
-
         while (!cursor.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             double tNext = cursor.forward();
@@ -146,8 +142,7 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
         ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
         double t = Math.max(s1.start(), s2.start());
 
-        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = getSpaceIterator();
-        seekSpace(t, spaceItr);
+        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = distance.apply(sm);
 

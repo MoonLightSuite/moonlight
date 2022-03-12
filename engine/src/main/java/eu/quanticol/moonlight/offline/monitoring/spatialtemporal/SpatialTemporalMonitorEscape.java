@@ -29,7 +29,7 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.offline.algorithms.SpatialOperators;
+import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
@@ -67,8 +67,8 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 		BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator =
 				(ss, f) -> escape(domain, ss, f);
 
-		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService,
+		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
 				distance, operator);
-		return sp.computeUnarySpatialOperator(m.monitor(locationService, signal));
+		return sp.computeUnary(m.monitor(locationService, signal));
 	}
 }

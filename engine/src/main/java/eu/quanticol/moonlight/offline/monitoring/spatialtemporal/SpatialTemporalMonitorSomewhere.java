@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
-import eu.quanticol.moonlight.offline.algorithms.SpatialOperators;
+import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -58,10 +58,10 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
 
 	@Override
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService, SpatialTemporalSignal<T> signal) {
-		SpatialOperators<S, R> sp = new SpatialOperators<>(locationService,
+		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
 				distance,
 				this::somewhereOp);
-        return sp.computeUnarySpatialOperator(m.monitor(locationService, signal));
+        return sp.computeUnary(m.monitor(locationService, signal));
 	}
 
     private List<R> somewhereOp(IntFunction<R> spatialSignal,

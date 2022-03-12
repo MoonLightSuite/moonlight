@@ -64,11 +64,9 @@ public class SpatialComputation
     }
 
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
         T t = u.getStart();
         T tNext = u.getEnd();
 
-        seekSpace(t, spaceItr);
         tNext = fromNextSpaceOrFallback(tNext);
         return prepareResults(t, tNext, u.getValue());
     }
@@ -76,6 +74,9 @@ public class SpatialComputation
     private List<Update<T, List<R>>> prepareResults(T t, T tNext, List<R> value)
     {
         final List<List<Update<T, List<R>>>> result = new ArrayList<>();
+
+        shiftSpaceModel(t);
+
         doCompute(t, tNext, value,
                 (a, b, c, d, e) -> result.add(computeOp(a, b, c, d, e)));
         return result.get(0);
