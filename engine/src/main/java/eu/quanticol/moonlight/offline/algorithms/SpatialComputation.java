@@ -45,7 +45,8 @@ import java.util.function.IntFunction;
  * Algorithm for Somewhere and Everywhere Computation
  */
 public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
-    private SpatialTemporalSignal<R> toReturn;
+    private SpatialTemporalSignal<R> result;
+    ParallelSignalCursor<R> cursor;
 
     public SpatialComputation(
             LocationService<Double, S> l,
@@ -60,24 +61,24 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
         // Output Init
         outputInit(s.getNumberOfLocations());
         if (locSvc.isEmpty()) {
-            return toReturn;
+            return result;
         }
 
-        ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
+         cursor = s.getSignalCursor(true);
         double t = cursor.getTime();
 
         Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
         DistanceStructure<S, ?> f = getDistanceStructure();
 
-        return unaryOperator(cursor, t, f, spaceItr);
+        doCompute(t, f, spaceItr);
+        return result;
     }
 
     private void outputInit(int locations) {
-        toReturn = new SpatialTemporalSignal<>(locations);
+        result = new SpatialTemporalSignal<>(locations);
     }
 
-    private SpatialTemporalSignal<R> unaryOperator(
-            ParallelSignalCursor<R> cursor,
+    private void doCompute(
             double t,
             DistanceStructure<S, ?> f,
             Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
@@ -85,44 +86,39 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
         while (!cursor.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             double tNext = cursor.forward();
-            computeOp(t, tNext, spatialSignal, f, spaceItr);
+            computeOp(t, tNext, f, spatialSignal, spaceItr);
             t = moveSpatialModel(tNext, spaceItr);
         }
-        //TODO: Manage end of signal!
-        return toReturn;
     }
 
-    private void computeOp(double t, double tNext,
-                           IntFunction<R> spatialSignal,
-                           DistanceStructure<S, ?> f,
-                           Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
+    @Override
+    protected void moveAndCompute(Double tNext,
+                                  IntFunction<R> spatialSignal,
+                                  Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
     {
-        addResult(t, null, op.apply(spatialSignal, f));
-
         while (isNextSpaceModelWithinHorizon(tNext)) {
             currSpace = nextSpace;
-            t = currSpace.getFirst();
+            Double t = currSpace.getFirst();
             nextSpace = getNext(spaceItr);
-            f = getDistanceStructure();
+            DistanceStructure<S, ?>  f = getDistanceStructure();
             addResult(t, null, op.apply(spatialSignal, f));
         }
     }
 
-    private Double moveSpatialModel(
-            @NotNull Double t,
-            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    private Double moveSpatialModel(@NotNull Double t,
+                            Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
     {
         if ((nextSpace != null) && t.equals(nextSpace.getFirst())) {
             currSpace = nextSpace;
             dist.apply(currSpace.getSecond());
-            nextSpace = getNext(locSvcIterator);
+            nextSpace = getNext(spaceItr);
         }
         return t;
     }
 
     @Override
     protected void addResult(Double start, Double end, List<R> value) {
-        toReturn.add(start, value);
+        result.add(start, value);
     }
 
     public SpatialTemporalSignal<R> computeDynamic(
@@ -132,7 +128,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     {
         outputInit(s1.getNumberOfLocations());
         if (locSvc.isEmpty()) {
-            return toReturn;
+            return result;
         }
 
         ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
@@ -150,7 +146,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();
             List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
-            toReturn.add(t, (values::get));
+            result.add(t, (values::get));
             double tNext = Math.min(c1.nextTime(), c2.nextTime());
             c1.move(tNext);
             c2.move(tNext);
@@ -161,7 +157,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
                 nextSpace = getNext(spaceItr);
                 f = getDistanceStructure();
                 values = reach(domain, spatialSignal1, spatialSignal2, f);
-                toReturn.add(t, escape(domain, (values::get), f));
+                result.add(t, escape(domain, (values::get), f));
             }
 
             t = tNext;
@@ -171,6 +167,6 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
                 f = getDistanceStructure();
             }
         }
-        return toReturn;
+        return result;
     }
 }

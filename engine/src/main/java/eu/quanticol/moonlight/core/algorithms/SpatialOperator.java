@@ -40,17 +40,35 @@ public abstract class SpatialOperator
     }
 
     protected abstract void addResult(T start, T end, List<R> value);
+//    protected abstract void moveAndCompute(T tNext,
+//                                           IntFunction<R> spatialSignal,
+//                                           Iterator<Pair<T, SpatialModel<S>>> spaceItr);
 
-    protected void doCompute(T t, T tNext, List<R> value,
-                           FiveParameterFunction<T, T, DistanceStructure<S, ?>,
-                                   IntFunction<R>,
-                                   Iterator<Pair<T, SpatialModel<S>>>> op)
+    protected void moveAndCompute(T tNext,
+                                  IntFunction<R> spatialSignal,
+                                  Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
-        IntFunction<R> spatialSignal = value::get;
-        tNext = fromNextSpaceOrFallback(tNext);
-        DistanceStructure<S, ?> f = getDistanceStructure();
-        op.accept(t, tNext, f, spatialSignal, spaceItr);
+        while (isNextSpaceModelWithinHorizon(tNext)) {
+            currSpace = nextSpace;
+            T t = currSpace.getFirst();
+            nextSpace = getNext(spaceItr);
+            DistanceStructure<S, ?>  f = getDistanceStructure();
+
+//            if(isNextSpaceModelMeaningful()) {
+//                tNext = nextSpace.getFirst();
+                addResult(t, tNext, op.apply(spatialSignal, f));
+//            }
+        }
+    }
+
+    protected void computeOp(
+            T t, T tNext,
+            DistanceStructure<S, ?> f,
+            IntFunction<R> spatialSignal,
+            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    {
+        addResult(t, tNext, op.apply(spatialSignal, f));
+        moveAndCompute(tNext, spatialSignal, spaceItr);
     }
 
     protected DistanceStructure<S, ?>  getDistanceStructure() {

@@ -68,37 +68,23 @@ public class SpatialComputation
         T t = u.getStart();
         T tNext = fromNextSpaceOrFallback(u.getEnd());
         shiftSpaceModel(t);
-        doCompute(t, tNext, u.getValue(), this::computeOp);
+        doCompute(t, tNext, u.getValue(), (a, b, c, d, e) -> {
+            this.results = new ArrayList<>();
+            computeOp(a, b, c, d, e);
+        });
         return results;
     }
 
-    private void computeOp(
-            T t, T tNext,
-            DistanceStructure<S, ?> f,
-            IntFunction<R> spatialSignal,
-            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    protected void doCompute(T t, T tNext, List<R> value,
+                             FiveParameterFunction<T, T, DistanceStructure<S, ?>,
+                                     IntFunction<R>,
+                                     Iterator<Pair<T, SpatialModel<S>>>> op)
     {
-        results = new ArrayList<>();
-        addResult(t, tNext, op.apply(spatialSignal, f));
-        moveAndCompute(tNext, spatialSignal, spaceItr);
-    }
-
-    protected void moveAndCompute(T tNext,
-                                  IntFunction<R> spatialSignal,
-                                  Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
-        while (isNextSpaceModelWithinHorizon(tNext))
-        {
-            currSpace = nextSpace;
-            T t = currSpace.getFirst();
-            nextSpace = getNext(spaceItr);
-            DistanceStructure<S, ?>  f = getDistanceStructure();
-
-            if(isNextSpaceModelMeaningful()) {
-                tNext = nextSpace.getFirst();
-                addResult(t, tNext, op.apply(spatialSignal, f));
-            }
-        }
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
+        IntFunction<R> spatialSignal = value::get;
+        tNext = fromNextSpaceOrFallback(tNext);
+        DistanceStructure<S, ?> f = getDistanceStructure();
+        op.accept(t, tNext, f, spatialSignal, spaceItr);
     }
 
     @Override
@@ -129,6 +115,7 @@ public class SpatialComputation
             IntFunction<R> spatialSignal,
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
+        results = new ArrayList<>();
         computeOp(t, tNext, f, spatialSignal, spaceItr);
         return asTimeChain(results);
     }
