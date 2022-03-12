@@ -56,23 +56,28 @@ public class SpatialComputation
         checkLocationServiceValidity(locationService);
     }
 
-    protected void checkLocationServiceValidity(LocationService<T, S> locSvc)
+    private void checkLocationServiceValidity(LocationService<T, S> locSvc)
     {
         if (locSvc.isEmpty())
             throw new UnsupportedOperationException("The location Service " +
                                                     "must not be empty!");
     }
 
-    public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u)
-    {
+    public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
         T t = u.getStart();
         T tNext = u.getEnd();
-        tNext = seekSpace(t, tNext, spaceItr);
 
+        seekSpace(t, spaceItr);
+        tNext = fromNextSpaceOrFallback(tNext);
+        return prepareResults(t, tNext, u.getValue());
+    }
+
+    private List<Update<T, List<R>>> prepareResults(T t, T tNext, List<R> value)
+    {
         final List<List<Update<T, List<R>>>> result = new ArrayList<>();
-        doCompute(t, tNext, u.getValue(),
-                    (a, b, c, d, e) -> result.add(computeOp(a, b, c, d, e)));
+        doCompute(t, tNext, value,
+                (a, b, c, d, e) -> result.add(computeOp(a, b, c, d, e)));
         return result.get(0);
     }
 
@@ -92,15 +97,15 @@ public class SpatialComputation
                                   IntFunction<R> spatialSignal,
                                   Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
-        while (nextSpace != null &&
-               nextSpace.getFirst().compareTo(tNext) < 0)
+        while (isNextSpaceModelWithinHorizon(tNext))
         {
             currSpace = nextSpace;
             T t = currSpace.getFirst();
             nextSpace = getNext(spaceItr);
-            DistanceStructure<S, ?>  f = dist.apply(currSpace.getSecond());
+            SpatialModel<S> sm = currSpace.getSecond();
+            DistanceStructure<S, ?>  f = dist.apply(sm);
 
-            if(nextSpace != null && !currSpace.equals(nextSpace)) {
+            if(isNextSpaceModelMeaningful()) {
                 tNext = nextSpace.getFirst();
                 addResult(t, tNext, op.apply(spatialSignal, f));
             }

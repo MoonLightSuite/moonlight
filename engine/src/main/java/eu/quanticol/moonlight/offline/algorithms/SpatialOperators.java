@@ -20,7 +20,9 @@
 
 package eu.quanticol.moonlight.offline.algorithms;
 
-import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
+import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
+
 import eu.quanticol.moonlight.core.algorithms.SpatialOperator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -30,6 +32,7 @@ import eu.quanticol.moonlight.util.Pair;
 
 import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +40,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
 
 /**
  * Algorithm for Somewhere and Everywhere Computation
@@ -56,22 +58,23 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
     public SpatialTemporalSignal<R> computeUnarySpatialOperator(
             SpatialTemporalSignal<R> s)
     {
+        outputInit(s.getNumberOfLocations());
         if (locSvc.isEmpty()) {
-            return outputInit(s.getNumberOfLocations());
+            return toReturn;
         }
 
         ParallelSignalCursor<R> cursor = s.getSignalCursor(true);
-        Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator = locSvc.times();
+        Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator = getSpaceIterator();
 
         double start = cursor.getTime();
-        seekSpace(start, null, locSvcIterator);
+        seekSpace(start, locSvcIterator);
 
         return unaryOperator(cursor, start,
                       locSvcIterator);
     }
 
-    private SpatialTemporalSignal<R> outputInit(int locations) {
-        return new SpatialTemporalSignal<>(locations);
+    private void outputInit(int locations) {
+        toReturn = new SpatialTemporalSignal<>(locations);
     }
 
     private SpatialTemporalSignal<R> unaryOperator(
@@ -84,37 +87,48 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
 
-        toReturn = outputInit(sm.size());
-
         while (!cursor.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal = cursor.getValue();
-            addResult(t, null, op.apply(spatialSignal, f));
-            double nextTime = cursor.forward();
-
-            while ((nextSpace != null) && (nextSpace.getFirst() < nextTime)) {
-                currSpace = nextSpace;
-                t = currSpace.getFirst();
-                nextSpace = getNext(locSvcIterator);
-                f = dist.apply(currSpace.getSecond());
-                addResult(t, null, op.apply(spatialSignal, f));
-            }
-
-            t = nextTime;
-            if ((nextSpace != null) && (nextSpace.getFirst() == t)) {
-                currSpace = nextSpace;
-                dist.apply(currSpace.getSecond());
-                nextSpace = getNext(locSvcIterator);
-            }
+            double tNext = cursor.forward();
+            computeOp(t, tNext, spatialSignal, f, locSvcIterator);
+            t = moveSpatialModel(tNext, locSvcIterator);
         }
         //TODO: Manage end of signal!
         return toReturn;
+    }
+
+    private void computeOp(double t, double tNext,
+                           IntFunction<R> spatialSignal,
+                           DistanceStructure<S, ?> f,
+                           Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    {
+        addResult(t, null, op.apply(spatialSignal, f));
+
+        while (isNextSpaceModelWithinHorizon(tNext)) {
+            currSpace = nextSpace;
+            t = currSpace.getFirst();
+            nextSpace = getNext(locSvcIterator);
+            f = dist.apply(currSpace.getSecond());
+            addResult(t, null, op.apply(spatialSignal, f));
+        }
+    }
+
+    private Double moveSpatialModel(
+            @NotNull Double t,
+            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+    {
+        if ((nextSpace != null) && t.equals(nextSpace.getFirst())) {
+            currSpace = nextSpace;
+            dist.apply(currSpace.getSecond());
+            nextSpace = getNext(locSvcIterator);
+        }
+        return t;
     }
 
     @Override
     protected void addResult(Double start, Double end, List<R> value) {
         toReturn.add(start, value);
     }
-
 
     public SpatialTemporalSignal<R> computeDynamic(
             LocationService<Double, S> locSvc,
@@ -123,52 +137,47 @@ public class SpatialOperators<S, R> extends SpatialOperator<Double, S, R> {
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
     {
-        SpatialTemporalSignal<R> toReturn =
-                new SpatialTemporalSignal<>(s1.getNumberOfLocations());
-
+        outputInit(s1.getNumberOfLocations());
         if (locSvc.isEmpty()) {
             return toReturn;
         }
 
         ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
         ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
-        Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator = locSvc.times();
-        Pair<Double, SpatialModel<S>> current = locSvcIterator.next();
-        Pair<Double, SpatialModel<S>> next = getNext(locSvcIterator);
+        double t = Math.max(s1.start(), s2.start());
 
-        double time = Math.max(s1.start(), s2.start());
-        while ((next != null) && (next.getFirst() <= time)) {
-            current = next;
-            next = getNext(locSvcIterator);
-        }
+        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = getSpaceIterator();
+        seekSpace(t, spaceItr);
+        SpatialModel<S> sm = currSpace.getSecond();
+        DistanceStructure<S, ?> f = distance.apply(sm);
 
         //Loop invariant: (current.getFirst() <= time) &&
         //                ((next == null) || (time < next.getFirst()))
-        c1.move(time);
-        c2.move(time);
-        SpatialModel<S> sm = current.getSecond();
-        DistanceStructure<S, ?> f = distance.apply(sm);
-        while (!c1.completed() && !c2.completed() && !Double.isNaN(time)) {
+        c1.move(t);
+        c2.move(t);
+        while (!c1.completed() && !c2.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal1 = c1.getValue();
             IntFunction<R> spatialSignal2 = c2.getValue();
-            List<R> values =  SpatialAlgorithms.reach(domain, spatialSignal1, spatialSignal2, f);
-            toReturn.add(time, (values::get));
-            double nextTime = Math.min(c1.nextTime(), c2.nextTime());
-            c1.move(nextTime);
-            c2.move(nextTime);
-            while ((next != null) && (next.getFirst() < nextTime)) {
-                current = next;
-                time = current.getFirst();
-                next = getNext(locSvcIterator);
-                f = distance.apply(current.getSecond());
-                values =  SpatialAlgorithms.reach(domain, spatialSignal1, spatialSignal2, f);
-                toReturn.add(time, escape(domain, (values::get), f));
+            List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
+            toReturn.add(t, (values::get));
+            double tNext = Math.min(c1.nextTime(), c2.nextTime());
+            c1.move(tNext);
+            c2.move(tNext);
+
+            while (isNextSpaceModelWithinHorizon(tNext)) {
+                currSpace = nextSpace;
+                t = currSpace.getFirst();
+                nextSpace = getNext(spaceItr);
+                f = distance.apply(currSpace.getSecond());
+                values = reach(domain, spatialSignal1, spatialSignal2, f);
+                toReturn.add(t, escape(domain, (values::get), f));
             }
-            time = nextTime;
-            if ((next != null) && (next.getFirst() == time)) {
-                current = next;
-                f = distance.apply(current.getSecond());
-                next = (locSvcIterator.hasNext() ? locSvcIterator.next() : null);
+
+            t = tNext;
+            if (isNextSpaceModelMeaningful()) {
+                currSpace = nextSpace;
+                nextSpace = getNext(spaceItr);
+                f = distance.apply(currSpace.getSecond());
             }
         }
         return toReturn;

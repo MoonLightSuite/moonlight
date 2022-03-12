@@ -39,6 +39,8 @@ public abstract class SpatialOperator
         op = operator;
     }
 
+    protected abstract void addResult(T start, T end, List<R> value);
+
     protected void doCompute(T t, T tNext, List<R> value,
                            FiveParameterFunction<T, T, DistanceStructure<S, ?>,
                                    IntFunction<R>,
@@ -46,7 +48,9 @@ public abstract class SpatialOperator
     {
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = locSvc.times();
         IntFunction<R> spatialSignal = value::get;
-        tNext = seekSpace(t, tNext, spaceItr);
+
+        seekSpace(t, spaceItr);
+        tNext = fromNextSpaceOrFallback(tNext);
         SpatialModel<S> sm = currSpace.getSecond();
         DistanceStructure<S, ?> f = dist.apply(sm);
 
@@ -58,43 +62,49 @@ public abstract class SpatialOperator
         void accept(T t, U u, V v, W w, X x);
     }
 
-    protected T seekSpace(T start, T end,
-                        Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
+    protected void seekSpace(T t, Iterator<Pair<T, SpatialModel<S>>> spaceItr) {
         currSpace = spaceItr.next();
-        getNext(spaceItr);
-        while(isNextSpaceBeforeTime(start)) {
+        nextSpace = getNext(spaceItr);
+        while(isNextSpaceBeforeTime(t)) {
             currSpace = nextSpace;
             nextSpace = getNext(spaceItr);
         }
-        return fromNextSpaceOrFallback(end);
     }
 
-    protected abstract void addResult(T start, T end, List<R> value);
-
-    private boolean isNextSpaceBeforeTime(T start) {
-        return nextSpace != null && nextSpace.getFirst().compareTo(start) <= 0;
+    protected boolean isNextSpaceModelWithinHorizon(T tNext) {
+        return nextSpace != null && isBeforeNext(tNext);
     }
 
-    private T fromNextSpaceOrFallback(T fallback) {
+    protected boolean isNextSpaceModelMeaningful() {
+        return nextSpace != null && isAtDifferentTime(getNextT());
+    }
+
+    private boolean isNextSpaceBeforeTime(T time) {
+        return nextSpace != null && isBeforeNext(time) && isAtDifferentTime(time);
+    }
+
+    protected boolean isBeforeNext(T time) {
+        return getNextT().compareTo(time) < 0;
+    }
+
+    protected boolean isAtDifferentTime(T tNext) {
+        return !currSpace.getFirst().equals(tNext);
+    }
+
+    protected T fromNextSpaceOrFallback(T fallback) {
         if(nextSpace != null)
-            return nextSpace.getFirst();
+            return getNextT();
         return fallback;
     }
 
+    private T getNextT() {
+        return nextSpace.getFirst();
+    }
 
     protected Iterator<Pair<T, SpatialModel<S>>> getSpaceIterator() {
         return locSvc.times();
     }
 
-
-
-    /**
-     * Returns the next element if there is one, otherwise null
-     * @param itr Location Service Iterator
-     * @param <S> Spatial Domain
-     * @return Next element of the Location Service
-     */
     protected static <T, S> Pair<T, SpatialModel<S>> getNext(
             Iterator<Pair<T, SpatialModel<S>>> itr)
     {
