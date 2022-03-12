@@ -47,11 +47,12 @@ import java.util.function.IntFunction;
 public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     private SpatialTemporalSignal<R> toReturn;
 
-    public SpatialComputation(LocationService<Double, S> l,
-                              Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-                              BiFunction<IntFunction<R>,
-                                    DistanceStructure<S, ?>,
-                                    List<R>> operator) {
+    public SpatialComputation(
+            LocationService<Double, S> l,
+            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
+            BiFunction<IntFunction<R>,
+            DistanceStructure<S, ?>,
+            List<R>> operator) {
         super(l, distance, operator);
     }
 
@@ -66,9 +67,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
         double t = cursor.getTime();
 
         Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
-
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
+        DistanceStructure<S, ?> f = getDistanceStructure();
 
         return unaryOperator(cursor, t, f, spaceItr);
     }
@@ -104,7 +103,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             currSpace = nextSpace;
             t = currSpace.getFirst();
             nextSpace = getNext(locSvcIterator);
-            f = dist.apply(currSpace.getSecond());
+            f = getDistanceStructure();
             addResult(t, null, op.apply(spatialSignal, f));
         }
     }
@@ -127,8 +126,6 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     }
 
     public SpatialTemporalSignal<R> computeDynamic(
-            LocationService<Double, S> locSvc,
-            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
@@ -143,8 +140,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
         double t = Math.max(s1.start(), s2.start());
 
         Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = distance.apply(sm);
+        DistanceStructure<S, ?> f = getDistanceStructure();
 
         //Loop invariant: (current.getFirst() <= time) &&
         //                ((next == null) || (time < next.getFirst()))
@@ -163,7 +159,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
                 currSpace = nextSpace;
                 t = currSpace.getFirst();
                 nextSpace = getNext(spaceItr);
-                f = distance.apply(currSpace.getSecond());
+                f = getDistanceStructure();
                 values = reach(domain, spatialSignal1, spatialSignal2, f);
                 toReturn.add(t, escape(domain, (values::get), f));
             }
@@ -172,7 +168,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             if (isNextSpaceModelMeaningful()) {
                 currSpace = nextSpace;
                 nextSpace = getNext(spaceItr);
-                f = distance.apply(currSpace.getSecond());
+                f = getDistanceStructure();
             }
         }
         return toReturn;

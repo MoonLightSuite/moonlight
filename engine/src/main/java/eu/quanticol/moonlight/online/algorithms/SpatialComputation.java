@@ -103,8 +103,7 @@ public class SpatialComputation
             currSpace = nextSpace;
             T t = currSpace.getFirst();
             nextSpace = getNext(spaceItr);
-            SpatialModel<S> sm = currSpace.getSecond();
-            DistanceStructure<S, ?>  f = dist.apply(sm);
+            DistanceStructure<S, ?>  f = getDistanceStructure();
 
             if(isNextSpaceModelMeaningful()) {
                 tNext = nextSpace.getFirst();

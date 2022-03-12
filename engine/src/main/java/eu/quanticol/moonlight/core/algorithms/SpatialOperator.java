@@ -48,14 +48,15 @@ public abstract class SpatialOperator
     {
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
         seekSpace(t, spaceItr);
-
         IntFunction<R> spatialSignal = value::get;
-
         tNext = fromNextSpaceOrFallback(tNext);
-        SpatialModel<S> sm = currSpace.getSecond();
-        DistanceStructure<S, ?> f = dist.apply(sm);
-
+        DistanceStructure<S, ?> f = getDistanceStructure();
         op.accept(t, tNext, f, spatialSignal, spaceItr);
+    }
+
+    protected DistanceStructure<S, ?>  getDistanceStructure() {
+        SpatialModel<S> sm = currSpace.getSecond();
+        return dist.apply(sm);
     }
 
     @FunctionalInterface

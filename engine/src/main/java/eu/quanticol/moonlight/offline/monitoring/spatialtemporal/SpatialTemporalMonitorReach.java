@@ -63,7 +63,7 @@ public class SpatialTemporalMonitorReach<S, T, R>
                                             SpatialTemporalSignal<T> signal)
     {
 		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService, distance, null);
-		return sp.computeDynamic(locationService, distance, domain,
+		return sp.computeDynamic(domain,
 							  m1.monitor(locationService, signal),
                               m2.monitor(locationService, signal));
 	}
