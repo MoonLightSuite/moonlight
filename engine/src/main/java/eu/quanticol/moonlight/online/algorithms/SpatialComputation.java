@@ -44,7 +44,8 @@ public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
     extends SpatialOperator<T, S, R>
 {
-    List<Update<T, List<R>>> results;
+
+    private List<Update<T, List<R>>> results;
 
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
@@ -65,24 +66,13 @@ public class SpatialComputation
 
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
         T t = u.getStart();
-        T tNext = u.getEnd();
-
-        tNext = fromNextSpaceOrFallback(tNext);
-        return prepareResults(t, tNext, u.getValue());
-    }
-
-    private List<Update<T, List<R>>> prepareResults(T t, T tNext, List<R> value)
-    {
-        final List<List<Update<T, List<R>>>> result = new ArrayList<>();
-
+        T tNext = fromNextSpaceOrFallback(u.getEnd());
         shiftSpaceModel(t);
-
-        doCompute(t, tNext, value,
-                (a, b, c, d, e) -> result.add(computeOp(a, b, c, d, e)));
-        return result.get(0);
+        doCompute(t, tNext, u.getValue(), this::computeOp);
+        return results;
     }
 
-    private List<Update<T, List<R>>> computeOp(
+    private void computeOp(
             T t, T tNext,
             DistanceStructure<S, ?> f,
             IntFunction<R> spatialSignal,
@@ -91,7 +81,6 @@ public class SpatialComputation
         results = new ArrayList<>();
         addResult(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal, spaceItr);
-        return results;
     }
 
     protected void moveAndCompute(T tNext,
@@ -140,6 +129,7 @@ public class SpatialComputation
             IntFunction<R> spatialSignal,
             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
-        return asTimeChain(computeOp(t, tNext, f, spatialSignal, spaceItr));
+        computeOp(t, tNext, f, spatialSignal, spaceItr);
+        return asTimeChain(results);
     }
 }

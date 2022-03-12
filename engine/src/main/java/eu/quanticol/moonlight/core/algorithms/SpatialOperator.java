@@ -46,8 +46,7 @@ public abstract class SpatialOperator
                                    IntFunction<R>,
                                    Iterator<Pair<T, SpatialModel<S>>>> op)
     {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
-        seekSpace(t, spaceItr);
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
         IntFunction<R> spatialSignal = value::get;
         tNext = fromNextSpaceOrFallback(tNext);
         DistanceStructure<S, ?> f = getDistanceStructure();

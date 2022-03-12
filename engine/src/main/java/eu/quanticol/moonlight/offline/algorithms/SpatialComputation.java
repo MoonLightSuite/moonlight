@@ -80,13 +80,13 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             ParallelSignalCursor<R> cursor,
             double t,
             DistanceStructure<S, ?> f,
-            Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+            Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
     {
         while (!cursor.completed() && !Double.isNaN(t)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             double tNext = cursor.forward();
-            computeOp(t, tNext, spatialSignal, f, locSvcIterator);
-            t = moveSpatialModel(tNext, locSvcIterator);
+            computeOp(t, tNext, spatialSignal, f, spaceItr);
+            t = moveSpatialModel(tNext, spaceItr);
         }
         //TODO: Manage end of signal!
         return toReturn;
@@ -95,14 +95,14 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     private void computeOp(double t, double tNext,
                            IntFunction<R> spatialSignal,
                            DistanceStructure<S, ?> f,
-                           Iterator<Pair<Double, SpatialModel<S>>> locSvcIterator)
+                           Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
     {
         addResult(t, null, op.apply(spatialSignal, f));
 
         while (isNextSpaceModelWithinHorizon(tNext)) {
             currSpace = nextSpace;
             t = currSpace.getFirst();
-            nextSpace = getNext(locSvcIterator);
+            nextSpace = getNext(spaceItr);
             f = getDistanceStructure();
             addResult(t, null, op.apply(spatialSignal, f));
         }
