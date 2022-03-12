@@ -34,12 +34,12 @@ import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-
 
 /**
  * Algorithm for Somewhere and Everywhere Computation
@@ -58,32 +58,24 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     }
 
     public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<R> s) {
-        // Output Init
-        outputInit(s.getNumberOfLocations());
-        if (locSvc.isEmpty()) {
-            return result;
+        outputInit(s);
+        if (!locSvc.isEmpty()) {
+            cursor = s.getSignalCursor(true);
+            doCompute();
         }
-
-         cursor = s.getSignalCursor(true);
-        double t = cursor.getTime();
-
-        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
-        DistanceStructure<S, ?> f = getDistanceStructure();
-
-        doCompute(t, f, spaceItr);
         return result;
     }
 
-    private void outputInit(int locations) {
-        result = new SpatialTemporalSignal<>(locations);
+    private void outputInit(SpatialTemporalSignal<R> s) {
+        result = new SpatialTemporalSignal<>(s.getNumberOfLocations());
     }
 
-    private void doCompute(
-            double t,
-            DistanceStructure<S, ?> f,
-            Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
-    {
-        while (!cursor.completed() && !Double.isNaN(t)) {
+    private void doCompute() {
+        double t = cursor.getTime();
+        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
+        DistanceStructure<S, ?> f = getDistanceStructure();
+
+        while (isCompleted(t, cursor)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             double tNext = cursor.forward();
             computeOp(t, tNext, f, spatialSignal, spaceItr);
@@ -91,27 +83,11 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
         }
     }
 
-    @Override
-    protected void moveAndCompute(Double tNext,
-                                  IntFunction<R> spatialSignal,
-                                  Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
-    {
-        while (isNextSpaceModelWithinHorizon(tNext)) {
-            currSpace = nextSpace;
-            Double t = currSpace.getFirst();
-            nextSpace = getNext(spaceItr);
-            DistanceStructure<S, ?>  f = getDistanceStructure();
-            addResult(t, null, op.apply(spatialSignal, f));
-        }
-    }
-
     private Double moveSpatialModel(@NotNull Double t,
                             Iterator<Pair<Double, SpatialModel<S>>> spaceItr)
     {
-        if ((nextSpace != null) && t.equals(nextSpace.getFirst())) {
-            currSpace = nextSpace;
-            dist.apply(currSpace.getSecond());
-            nextSpace = getNext(spaceItr);
+        if (isNextSpaceModelAtSameTime(t)) {
+            shiftSpatialModel(spaceItr);
         }
         return t;
     }
@@ -126,47 +102,53 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             SpatialTemporalSignal<R> s1,
             SpatialTemporalSignal<R> s2)
     {
-        outputInit(s1.getNumberOfLocations());
-        if (locSvc.isEmpty()) {
-            return result;
-        }
+        outputInit(s1);
+        if (!locSvc.isEmpty()) {
+            ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
+            ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
+            double t = Math.max(s1.start(), s2.start());
 
-        ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
-        ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
-        double t = Math.max(s1.start(), s2.start());
+            Iterator<Pair<Double, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
+            DistanceStructure<S, ?> f = getDistanceStructure();
 
-        Iterator<Pair<Double, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
-        DistanceStructure<S, ?> f = getDistanceStructure();
+            //Loop invariant: (current.getFirst() <= time) &&
+            //                ((next == null) || (time < next.getFirst()))
+            c1.move(t);
+            c2.move(t);
+            while (isCompleted(t, c1, c2)) {
+                IntFunction<R> spatialSignal1 = c1.getValue();
+                IntFunction<R> spatialSignal2 = c2.getValue();
+                List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
+                result.add(t, (values::get));
+                double tNext = Math.min(c1.nextTime(), c2.nextTime());
+                c1.move(tNext);
+                c2.move(tNext);
 
-        //Loop invariant: (current.getFirst() <= time) &&
-        //                ((next == null) || (time < next.getFirst()))
-        c1.move(t);
-        c2.move(t);
-        while (!c1.completed() && !c2.completed() && !Double.isNaN(t)) {
-            IntFunction<R> spatialSignal1 = c1.getValue();
-            IntFunction<R> spatialSignal2 = c2.getValue();
-            List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
-            result.add(t, (values::get));
-            double tNext = Math.min(c1.nextTime(), c2.nextTime());
-            c1.move(tNext);
-            c2.move(tNext);
+                while (isNextSpaceModelWithinHorizon(tNext)) {
+                    shiftSpatialModel(spaceItr);
+                    t = currSpace.getFirst();
+                    f = getDistanceStructure();
+                    values = reach(domain, spatialSignal1, spatialSignal2, f);
+                    result.add(t, escape(domain, (values::get), f));
+                }
 
-            while (isNextSpaceModelWithinHorizon(tNext)) {
-                currSpace = nextSpace;
-                t = currSpace.getFirst();
-                nextSpace = getNext(spaceItr);
-                f = getDistanceStructure();
-                values = reach(domain, spatialSignal1, spatialSignal2, f);
-                result.add(t, escape(domain, (values::get), f));
-            }
-
-            t = tNext;
-            if (isNextSpaceModelMeaningful()) {
-                currSpace = nextSpace;
-                nextSpace = getNext(spaceItr);
-                f = getDistanceStructure();
+                t = tNext;
+                if (isNextSpaceModelMeaningful()) {
+                    shiftSpatialModel(spaceItr);
+                    f = getDistanceStructure();
+                }
             }
         }
         return result;
+    }
+
+    @SafeVarargs
+    private static <C> boolean isCompleted(Double t,
+                                           ParallelSignalCursor<C>... cursors)
+    {
+        return !Double.isNaN(t) &&
+                Arrays.stream(cursors)
+                      .map(c -> !c.completed())
+                      .reduce( true, (c1, c2) -> c1 && c2);
     }
 }

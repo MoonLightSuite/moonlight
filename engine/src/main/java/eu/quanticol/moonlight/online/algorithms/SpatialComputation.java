@@ -44,8 +44,8 @@ public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
     extends SpatialOperator<T, S, R>
 {
-
     private List<Update<T, List<R>>> results;
+    TimeChain<T, List<R>> resultsChain;
 
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
@@ -67,24 +67,19 @@ public class SpatialComputation
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
         T t = u.getStart();
         T tNext = fromNextSpaceOrFallback(u.getEnd());
-        shiftSpaceModel(t);
-        doCompute(t, tNext, u.getValue(), (a, b, c, d, e) -> {
-            this.results = new ArrayList<>();
-            computeOp(a, b, c, d, e);
-        });
+        toFirstSpatialModel(t);
+        doCompute(t, tNext, u.getValue());
         return results;
     }
 
-    protected void doCompute(T t, T tNext, List<R> value,
-                             FiveParameterFunction<T, T, DistanceStructure<S, ?>,
-                                     IntFunction<R>,
-                                     Iterator<Pair<T, SpatialModel<S>>>> op)
-    {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = shiftSpaceModel(t);
+    protected void doCompute(T t, T tNext, List<R> value) {
+        Iterator<Pair<T, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
+        DistanceStructure<S, ?> f = getDistanceStructure();
+
         IntFunction<R> spatialSignal = value::get;
         tNext = fromNextSpaceOrFallback(tNext);
-        DistanceStructure<S, ?> f = getDistanceStructure();
-        op.accept(t, tNext, f, spatialSignal, spaceItr);
+        this.results = new ArrayList<>();
+        computeOp(t, tNext, f, spatialSignal, spaceItr);
     }
 
     @Override
@@ -93,7 +88,7 @@ public class SpatialComputation
     }
 
     public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups) {
-        TimeChain<T, List<R>> rss =  new TimeChain<>(ups.getEnd());
+        resultsChain =  new TimeChain<>(ups.getEnd());
         final int LAST = ups.size() - 1;
 
         for(int i = 0; i < ups.size(); i++) {
@@ -101,22 +96,9 @@ public class SpatialComputation
             T t = up.getStart();
             T tNext = i != LAST ? ups.get(i + 1).getStart() : ups.getEnd();
 
-            doCompute(t, tNext, up.getValue(),
-                        (a,b,c,d,e) ->
-                            computeOpChain(a, b, c, d, e).forEach(rss::add)
-                    );
+            doCompute(t, tNext, up.getValue());
+            asTimeChain(results).forEach(resultsChain::add);
         }
-        return rss;
-    }
-
-    private TimeChain<T, List<R>> computeOpChain(
-            T t, T tNext,
-            DistanceStructure<S, ?> f,
-            IntFunction<R> spatialSignal,
-            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
-        results = new ArrayList<>();
-        computeOp(t, tNext, f, spatialSignal, spaceItr);
-        return asTimeChain(results);
+        return resultsChain;
     }
 }

@@ -40,18 +40,14 @@ public abstract class SpatialOperator
     }
 
     protected abstract void addResult(T start, T end, List<R> value);
-//    protected abstract void moveAndCompute(T tNext,
-//                                           IntFunction<R> spatialSignal,
-//                                           Iterator<Pair<T, SpatialModel<S>>> spaceItr);
 
     protected void moveAndCompute(T tNext,
                                   IntFunction<R> spatialSignal,
                                   Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
         while (isNextSpaceModelWithinHorizon(tNext)) {
-            currSpace = nextSpace;
+            shiftSpatialModel(spaceItr);
             T t = currSpace.getFirst();
-            nextSpace = getNext(spaceItr);
             DistanceStructure<S, ?>  f = getDistanceStructure();
 
 //            if(isNextSpaceModelMeaningful()) {
@@ -61,11 +57,16 @@ public abstract class SpatialOperator
         }
     }
 
-    protected void computeOp(
-            T t, T tNext,
-            DistanceStructure<S, ?> f,
-            IntFunction<R> spatialSignal,
-            Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    protected void shiftSpatialModel(Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+    {
+        currSpace = nextSpace;
+        nextSpace = getNext(spaceItr);
+    }
+
+    protected void computeOp(T t, T tNext,
+                             DistanceStructure<S, ?> f,
+                             IntFunction<R> spatialSignal,
+                             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
     {
         addResult(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal, spaceItr);
@@ -85,35 +86,40 @@ public abstract class SpatialOperator
         currSpace = spaceItr.next();
         nextSpace = getNext(spaceItr);
         while(isNextSpaceBeforeTime(t)) {
-            currSpace = nextSpace;
-            nextSpace = getNext(spaceItr);
+            shiftSpatialModel(spaceItr);
         }
     }
 
-    protected Iterator<Pair<T, SpatialModel<S>>> shiftSpaceModel(T t) {
+    protected Iterator<Pair<T, SpatialModel<S>>> toFirstSpatialModel(T t) {
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
         seekSpace(t, spaceItr);
         return spaceItr;
     }
 
     protected boolean isNextSpaceModelWithinHorizon(T tNext) {
-        return nextSpace != null && isBeforeNext(tNext);
+        return nextSpace != null && isBeforeTime(tNext);
     }
 
     protected boolean isNextSpaceModelMeaningful() {
-        return nextSpace != null && isAtDifferentTime(getNextT());
+        return nextSpace != null && !isModelAtSameTime(currSpace, getNextT());
     }
 
     private boolean isNextSpaceBeforeTime(T time) {
-        return nextSpace != null && isBeforeNext(time) && isAtDifferentTime(time);
+        return nextSpace != null &&
+                (isBeforeTime(time) || !isModelAtSameTime(currSpace, time));
     }
 
-    protected boolean isBeforeNext(T time) {
+    protected boolean isNextSpaceModelAtSameTime(T time) {
+        return nextSpace != null && isModelAtSameTime(nextSpace, time);
+    }
+
+    protected boolean isBeforeTime(T time) {
         return getNextT().compareTo(time) < 0;
     }
 
-    protected boolean isAtDifferentTime(T tNext) {
-        return !currSpace.getFirst().equals(tNext);
+    protected boolean isModelAtSameTime(Pair<T, SpatialModel<S>> model, T time)
+    {
+        return model.getFirst().equals(time);
     }
 
     protected T fromNextSpaceOrFallback(T fallback) {

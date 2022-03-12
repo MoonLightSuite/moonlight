@@ -65,7 +65,7 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 											SpatialTemporalSignal<T> signal)
 	{
 		BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator =
-				(ss, f) -> escape(domain, ss, f);
+				(s, f) -> escape(domain, s, f);
 
 		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
 				distance, operator);
