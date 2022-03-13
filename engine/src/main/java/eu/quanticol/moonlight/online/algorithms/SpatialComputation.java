@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
-import eu.quanticol.moonlight.core.algorithms.SpatialOperator;
+import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
@@ -42,7 +42,7 @@ import java.util.function.IntFunction;
 
 public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
-    extends SpatialOperator<T, S, R>
+    extends SpaceIterator<T, S, R>
 {
     private List<Update<T, List<R>>> results;
     TimeChain<T, List<R>> resultsChain;
@@ -74,11 +74,11 @@ public class SpatialComputation
 
     protected void doCompute(T t, T tNext, List<R> value) {
         Iterator<Pair<T, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
-        DistanceStructure<S, ?> f = getDistanceStructure();
+        DistanceStructure<S, ?> f = generateDistanceStructure();
 
         IntFunction<R> spatialSignal = value::get;
         tNext = fromNextSpaceOrFallback(tNext);
-        this.results = new ArrayList<>();
+        results = new ArrayList<>();
         computeOp(t, tNext, f, spatialSignal, spaceItr);
     }
 

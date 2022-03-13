@@ -23,7 +23,7 @@ package eu.quanticol.moonlight.offline.algorithms;
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
 
-import eu.quanticol.moonlight.core.algorithms.SpatialOperator;
+import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -44,22 +44,22 @@ import java.util.function.IntFunction;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
+public class SpatialComputation<S, R> extends SpaceIterator<Double, S, R> {
     private SpatialTemporalSignal<R> result;
     ParallelSignalCursor<R> cursor;
 
     public SpatialComputation(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<IntFunction<R>,
-            DistanceStructure<S, ?>,
-            List<R>> operator) {
+            BiFunction<IntFunction<R>, DistanceStructure<S, ?>,
+                    List<R>> operator)
+    {
         super(l, distance, operator);
     }
 
     public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<R> s) {
         outputInit(s);
-        if (!locSvc.isEmpty()) {
+        if (!isLocationServiceEmpty()) {
             cursor = s.getSignalCursor(true);
             doCompute();
         }
@@ -73,7 +73,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
     private void doCompute() {
         double t = cursor.getTime();
         Iterator<Pair<Double, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
-        DistanceStructure<S, ?> f = getDistanceStructure();
+        DistanceStructure<S, ?> f = generateDistanceStructure();
 
         while (isCompleted(t, cursor)) {
             IntFunction<R> spatialSignal = cursor.getValue();
@@ -103,13 +103,13 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
             SpatialTemporalSignal<R> s2)
     {
         outputInit(s1);
-        if (!locSvc.isEmpty()) {
+        if (!isLocationServiceEmpty()) {
             ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
             ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
             double t = Math.max(s1.start(), s2.start());
 
             Iterator<Pair<Double, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
-            DistanceStructure<S, ?> f = getDistanceStructure();
+            DistanceStructure<S, ?> f = generateDistanceStructure();
 
             //Loop invariant: (current.getFirst() <= time) &&
             //                ((next == null) || (time < next.getFirst()))
@@ -126,8 +126,8 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
 
                 while (isNextSpaceModelWithinHorizon(tNext)) {
                     shiftSpatialModel(spaceItr);
-                    t = currSpace.getFirst();
-                    f = getDistanceStructure();
+                    t = getCurrentT();
+                    f = generateDistanceStructure();
                     values = reach(domain, spatialSignal1, spatialSignal2, f);
                     result.add(t, escape(domain, (values::get), f));
                 }
@@ -135,7 +135,7 @@ public class SpatialComputation<S, R> extends SpatialOperator<Double, S, R> {
                 t = tNext;
                 if (isNextSpaceModelMeaningful()) {
                     shiftSpatialModel(spaceItr);
-                    f = getDistanceStructure();
+                    f = generateDistanceStructure();
                 }
             }
         }
