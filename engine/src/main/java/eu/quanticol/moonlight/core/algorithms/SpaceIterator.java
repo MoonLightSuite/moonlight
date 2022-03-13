@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 
-public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
+public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
     private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> op;
@@ -22,7 +22,7 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
     private Pair<T, SpatialModel<S>> currSpace;
     private Pair<T, SpatialModel<S>> nextSpace;
     private Iterator<Pair<T, SpatialModel<S>>> spaceItr;
-    private BiFunction<T, T, R> resultAction;
+    private TriConsumer<T, T, List<R>> resultAction;
 
 
     public SpaceIterator(@NotNull LocationService<T, S> locationService,
@@ -37,8 +37,10 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
         op = operator;
     }
 
-    public void init(T startingTime, BiFunction<T, T, R> resultStoringAction) {
-        spaceItr = toFirstSpatialModel(startingTime);
+    public void init(T startingTime,
+                     TriConsumer<T, T, List<R>> resultStoringAction)
+    {
+        toFirstSpatialModel(startingTime);
         resultAction = resultStoringAction;
     }
 
@@ -46,37 +48,30 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
         return locSvc.isEmpty();
     }
 
-    protected abstract void addResult(T start, T end, List<R> value);
-
-    private void moveAndCompute(T tNext,
-                                  IntFunction<R> spatialSignal,
-                                  Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
+    private void moveAndCompute(T tNext, IntFunction<R> spatialSignal) {
         while (isNextSpaceModelWithinHorizon(tNext)) {
-            shiftSpatialModel(spaceItr);
+            shiftSpatialModel();
             T t = currSpace.getFirst();
             DistanceStructure<S, ?>  f = generateDistanceStructure();
 
 //            if(isNextSpaceModelMeaningful()) {
 //                tNext = nextSpace.getFirst();
-                addResult(t, tNext, op.apply(spatialSignal, f));
+            resultAction.accept(t, tNext, op.apply(spatialSignal, f));
 //            }
         }
     }
 
-    public void shiftSpatialModel(Iterator<Pair<T, SpatialModel<S>>> spaceItr)
-    {
+    public void shiftSpatialModel() {
         currSpace = nextSpace;
-        nextSpace = moveNext(spaceItr);
+        nextSpace = moveNext();
     }
 
     public void computeOp(T t, T tNext,
-                             DistanceStructure<S, ?> f,
-                             IntFunction<R> spatialSignal,
-                             Iterator<Pair<T, SpatialModel<S>>> spaceItr)
+                          DistanceStructure<S, ?> f,
+                          IntFunction<R> spatialSignal)
     {
-        addResult(t, tNext, op.apply(spatialSignal, f));
-        moveAndCompute(tNext, spatialSignal, spaceItr);
+        resultAction.accept(t, tNext, op.apply(spatialSignal, f));
+        moveAndCompute(tNext, spatialSignal);
     }
 
     public T getCurrentT() {
@@ -92,18 +87,17 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
         return dist.apply(sm);
     }
 
-    private void seekSpace(T t, Iterator<Pair<T, SpatialModel<S>>> spaceItr) {
+    private void seekSpace(T t) {
         currSpace = spaceItr.next();
-        nextSpace = moveNext(spaceItr);
+        nextSpace = moveNext();
         while(isNextSpaceBeforeTime(t)) {
-            shiftSpatialModel(spaceItr);
+            shiftSpatialModel();
         }
     }
 
-    protected Iterator<Pair<T, SpatialModel<S>>> toFirstSpatialModel(T t) {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = getSpaceIterator();
-        seekSpace(t, spaceItr);
-        return spaceItr;
+    private void toFirstSpatialModel(T t) {
+        spaceItr = getSpaceIterator();
+        seekSpace(t);
     }
 
     public boolean isNextSpaceModelWithinHorizon(T tNext) {
@@ -111,8 +105,7 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
     }
 
     public boolean isNextSpaceModelMeaningful() {
-        return nextSpace != null &&
-                !isModelAtSameTime(currSpace, getNextT());
+        return nextSpace != null && !isModelAtSameTime(currSpace, getNextT());
     }
 
     private boolean isNextSpaceBeforeTime(T time) {
@@ -128,8 +121,7 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
         return getNextT().compareTo(time) < 0;
     }
 
-    private boolean isModelAtSameTime(Pair<T, SpatialModel<S>> model, T time)
-    {
+    private boolean isModelAtSameTime(Pair<T, SpatialModel<S>> model, T time) {
         return model.getFirst().equals(time);
     }
 
@@ -139,13 +131,23 @@ public abstract class SpaceIterator <T extends Comparable<T> & Serializable, S, 
         return fallback;
     }
 
-    protected Iterator<Pair<T, SpatialModel<S>>> getSpaceIterator() {
+    private Iterator<Pair<T, SpatialModel<S>>> getSpaceIterator() {
         return locSvc.times();
     }
 
-    private static <T, S> Pair<T, SpatialModel<S>> moveNext(
-            Iterator<Pair<T, SpatialModel<S>>> itr)
+    private Pair<T, SpatialModel<S>> moveNext()
     {
-        return (itr.hasNext() ? itr.next() : null);
+        return (spaceItr.hasNext() ? spaceItr.next() : null);
+    }
+
+    @FunctionalInterface
+    public interface TriConsumer<T, U, V> {
+        /**
+         * Performs this operation on the given arguments.
+         *
+         * @param t the first input argument
+         * @param u the second input argument
+         */
+        void accept(T t, U u, V v);
     }
 }

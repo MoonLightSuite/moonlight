@@ -42,10 +42,10 @@ import java.util.function.IntFunction;
 
 public class SpatialComputation
 <T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
-    extends SpaceIterator<T, S, R>
 {
     private List<Update<T, List<R>>> results;
-    TimeChain<T, List<R>> resultsChain;
+    private TimeChain<T, List<R>> resultsChain;
+    private SpaceIterator<T, S, R> spaceIterator;
 
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
@@ -53,8 +53,8 @@ public class SpatialComputation
                               BiFunction<IntFunction<R>,
                                       DistanceStructure<S, ?>,
                                       List<R>> operator) {
-        super(locationService, distance, operator);
         checkLocationServiceValidity(locationService);
+        spaceIterator = new SpaceIterator<>(locationService, distance, operator);
     }
 
     private void checkLocationServiceValidity(LocationService<T, S> locSvc)
@@ -66,23 +66,21 @@ public class SpatialComputation
 
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
         T t = u.getStart();
-        T tNext = fromNextSpaceOrFallback(u.getEnd());
-        toFirstSpatialModel(t);
+        spaceIterator.init(t, this::addResult);
+        T tNext = spaceIterator.fromNextSpaceOrFallback(u.getEnd());
         doCompute(t, tNext, u.getValue());
         return results;
     }
 
     protected void doCompute(T t, T tNext, List<R> value) {
-        Iterator<Pair<T, SpatialModel<S>>> spaceItr = toFirstSpatialModel(t);
-        DistanceStructure<S, ?> f = generateDistanceStructure();
+        DistanceStructure<S, ?> f = spaceIterator.generateDistanceStructure();
 
         IntFunction<R> spatialSignal = value::get;
-        tNext = fromNextSpaceOrFallback(tNext);
+        tNext = spaceIterator.fromNextSpaceOrFallback(tNext);
         results = new ArrayList<>();
-        computeOp(t, tNext, f, spatialSignal, spaceItr);
+        spaceIterator.computeOp(t, tNext, f, spatialSignal);
     }
 
-    @Override
     protected void addResult(T start, T end, List<R> value) {
         results.add(new Update<>(start, end, value));
     }
@@ -90,6 +88,8 @@ public class SpatialComputation
     public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups) {
         resultsChain =  new TimeChain<>(ups.getEnd());
         final int LAST = ups.size() - 1;
+
+        spaceIterator.init(ups.getStart(), this::addResult);
 
         for(int i = 0; i < ups.size(); i++) {
             Sample<T, List<R>> up = ups.get(i);
