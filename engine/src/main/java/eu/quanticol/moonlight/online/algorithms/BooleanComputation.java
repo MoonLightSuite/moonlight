@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  *
  */
 public class BooleanComputation {
-
     private BooleanComputation() {}     // hidden constructor
 
     /**

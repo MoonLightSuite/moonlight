@@ -1,8 +1,10 @@
 package eu.quanticol.moonlight.offline.algorithms;
 
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCursor;
 
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -20,7 +22,7 @@ public class BooleanComputation {
             double time = Math.max(s1.start(), s2.start());
             c1.move(time);
             c2.move(time);
-            while (!c1.completed() && !c2.completed()) {
+            while (isNotCompleted(c1, c2)) {
                 newSignal.add(time, f.apply(c1.value(), c2.value()));
                 time = Math.min(c1.nextTime(), c2.nextTime());
                 c1.move(time);
@@ -39,11 +41,18 @@ public class BooleanComputation {
     public static <T, R> Signal<R> applyUnary(Signal<T> s, Function<T, R> f) {
         Signal<R> newSignal = new Signal<>();
         SignalCursor<T> cursor = s.getIterator(true);
-        while (!cursor.completed()) {
+        while (isNotCompleted(cursor)) {
             newSignal.add(cursor.time(), f.apply(cursor.value()));
             cursor.forward();
         }
         newSignal.endAt(s.end());
         return newSignal;
+    }
+
+    @SafeVarargs
+    private static <C> boolean isNotCompleted(SignalCursor<C>... cursors) {
+        return Arrays.stream(cursors)
+                        .map(c -> !c.completed())
+                        .reduce( true, (c1, c2) -> c1 && c2);
     }
 }

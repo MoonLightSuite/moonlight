@@ -4,6 +4,7 @@
 package eu.quanticol.moonlight.offline.signal;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -13,11 +14,10 @@ import java.util.stream.Collectors;
  *
  */
 public class ParallelSignalCursor<T> {
-
-	private ArrayList<SignalCursor<T>> cursors;
+	private final ArrayList<SignalCursor<T>> cursors;
 	
 	public ParallelSignalCursor( int size , Function<Integer,SignalCursor<T>>  f ) {
-		this.cursors = new ArrayList<SignalCursor<T>>(size);
+		this.cursors = new ArrayList<>(size);
 		for( int i=0 ; i<size ; i++ ) {
 			this.cursors.add(f.apply(i));
 		}
@@ -92,9 +92,10 @@ public class ParallelSignalCursor<T> {
 	}
 	
 	public IntFunction<T> getValue() {
-		ArrayList<T> values = new ArrayList<>(
-				cursors.stream().map(c -> c.value()).collect(Collectors.toList()));
-		return (i -> values.get(i));
+		List<T> values = cursors.stream()
+							    .map(SignalCursor::value)
+								.collect(Collectors.toCollection(ArrayList::new));
+		return (values::get);
 	}
 	
 	public double getTime() {

@@ -74,7 +74,7 @@ public class SpatialComputation<S, R> {
         spaceItr.init(t, this::addResult);
         DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
 
-        while (isCompleted(t, cursor)) {
+        while (isNotCompleted(t, cursor)) {
             IntFunction<R> spatialSignal = cursor.getValue();
             double tNext = cursor.forward();
             spaceItr.computeOp(t, tNext, f, spatialSignal);
@@ -112,7 +112,7 @@ public class SpatialComputation<S, R> {
             //                ((next == null) || (time < next.getFirst()))
             c1.move(t);
             c2.move(t);
-            while (isCompleted(t, c1, c2)) {
+            while (isNotCompleted(t, c1, c2)) {
                 IntFunction<R> spatialSignal1 = c1.getValue();
                 IntFunction<R> spatialSignal2 = c2.getValue();
                 List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
@@ -140,8 +140,8 @@ public class SpatialComputation<S, R> {
     }
 
     @SafeVarargs
-    private static <C> boolean isCompleted(Double t,
-                                           ParallelSignalCursor<C>... cursors)
+    private static <C> boolean isNotCompleted(Double t,
+                                              ParallelSignalCursor<C>... cursors)
     {
         return !Double.isNaN(t) &&
                 Arrays.stream(cursors)
