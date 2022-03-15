@@ -7,9 +7,11 @@ import eu.quanticol.moonlight.offline.algorithms.ReachAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SpatialAlgorithms {
     private SpatialAlgorithms() {} // Hidden constructor
@@ -64,6 +66,42 @@ public class SpatialAlgorithms {
             values.set(i, v);
         }
         return values;
+    }
+
+    public static <E, M, R> List<R> unaryOperation(
+            SignalDomain<R> dModule,
+            IntFunction<R> s,
+            DistanceStructure<E, M> ds)
+    {
+        return locationStream(ds.getModel().size(), false)
+                .map(i -> {
+                    R v = dModule.min();
+                    for (int j = 0; j < ds.getModel().size(); j++) {
+                        if (ds.areWithinBounds(i, j)) {
+                            v = dModule.disjunction(v, s.apply(j));
+                        }
+                    }
+                    return v;
+                }).collect(Collectors.toList());
+    }
+
+//    public static <R> R func(int i, R extreme, BinaryOperator<R> op) {
+//        R v = extreme;
+//        for (int j = 0; j < ds.getModel().size(); j++) {
+//            if (ds.areWithinBounds(i, j)) {
+//                v = op.apply(v, s.apply(j));
+//            }
+//        }
+//        return v;
+//    }
+
+
+    private static Stream<Integer> locationStream(int maxLocationId,
+                                                  boolean asParallel)
+    {
+        if(asParallel)
+            return IntStream.range(0, maxLocationId).boxed().parallel();
+        return IntStream.range(0, maxLocationId).boxed();
     }
 
     public static <E, M, R> List<R> somewhereParallel(

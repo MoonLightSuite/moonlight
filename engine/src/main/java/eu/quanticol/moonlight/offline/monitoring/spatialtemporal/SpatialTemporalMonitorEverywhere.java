@@ -63,8 +63,8 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
                                             SpatialTemporalSignal<T> signal)
     {
 		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
-				distance,
-				this::everywhereOp);
+																distance,
+																this::everywhereOp);
 		return sp.computeUnary(m.monitor(locationService, signal));
 	}
 

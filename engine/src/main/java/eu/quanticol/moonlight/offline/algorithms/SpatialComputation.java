@@ -82,8 +82,7 @@ public class SpatialComputation<S, R> {
         }
     }
 
-    private Double moveSpatialModel(@NotNull Double t)
-    {
+    private Double moveSpatialModel(@NotNull Double t) {
         if (spaceItr.isNextSpaceModelAtSameTime(t)) {
             spaceItr.shiftSpatialModel();
         }

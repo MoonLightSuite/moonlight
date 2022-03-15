@@ -25,6 +25,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -64,11 +65,15 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
-		BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> operator =
-				(s, f) -> escape(domain, s, f);
-
 		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
-				distance, operator);
+															   distance,
+															   this::escapeOp);
 		return sp.computeUnary(m.monitor(locationService, signal));
+	}
+
+	private List<R> escapeOp(IntFunction<R> spatialSignal,
+								 DistanceStructure<S, ?> ds)
+	{
+		return SpatialAlgorithms.escape(domain, spatialSignal, ds);
 	}
 }
