@@ -8,6 +8,7 @@ import eu.quanticol.moonlight.offline.algorithms.ReachAlgorithm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,16 +52,18 @@ public class SpatialAlgorithms {
         return values;
     }
 
-    public static <E, M, R> List<R> somewhere(SignalDomain<R> dModule,
+    public static <E, M, R> List<R> somewhere(SignalDomain<R> domain,
                                               IntFunction<R> s,
                                               DistanceStructure<E, M> ds)
     {
-        ArrayList<R> values = dModule.createArray(ds.getModel().size());
-        for (int i = 0; i < ds.getModel().size(); i++) {
-            R v = dModule.min();
-            for (int j = 0; j < ds.getModel().size(); j++) {
+        int size = ds.getModel().size();
+        List<R> values = domain.createArray(size);
+
+        for (int i = 0; i < size; i++) {
+            R v = domain.min();
+            for (int j = 0; j < size; j++) {
                 if (ds.areWithinBounds(i, j)) {
-                    v = dModule.disjunction(v, s.apply(j));
+                    v = domain.disjunction(v, s.apply(j));
                 }
             }
             values.set(i, v);
@@ -69,32 +72,21 @@ public class SpatialAlgorithms {
     }
 
     public static <E, M, R> List<R> unaryOperation(
-            SignalDomain<R> dModule,
+            SignalDomain<R> domain,
             IntFunction<R> s,
             DistanceStructure<E, M> ds)
     {
         return locationStream(ds.getModel().size(), false)
                 .map(i -> {
-                    R v = dModule.min();
+                    R v = domain.min();
                     for (int j = 0; j < ds.getModel().size(); j++) {
                         if (ds.areWithinBounds(i, j)) {
-                            v = dModule.disjunction(v, s.apply(j));
+                            v = domain.disjunction(v, s.apply(j));
                         }
                     }
                     return v;
                 }).collect(Collectors.toList());
     }
-
-//    public static <R> R func(int i, R extreme, BinaryOperator<R> op) {
-//        R v = extreme;
-//        for (int j = 0; j < ds.getModel().size(); j++) {
-//            if (ds.areWithinBounds(i, j)) {
-//                v = op.apply(v, s.apply(j));
-//            }
-//        }
-//        return v;
-//    }
-
 
     private static Stream<Integer> locationStream(int maxLocationId,
                                                   boolean asParallel)

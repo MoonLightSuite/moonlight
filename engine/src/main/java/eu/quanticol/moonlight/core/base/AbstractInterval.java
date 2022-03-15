@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.core.base;
 
-import eu.quanticol.moonlight.core.formula.Interval;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -180,13 +179,9 @@ public class AbstractInterval<T extends Comparable<T>>
         }
 
         throw new UnsupportedOperationException("Unable to compare interval " +
-                                                toString() +
-                                                " with " + o.toString());
+                                                " with " + o);
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -200,9 +195,6 @@ public class AbstractInterval<T extends Comparable<T>>
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
