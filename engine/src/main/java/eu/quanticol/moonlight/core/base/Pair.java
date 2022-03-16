@@ -78,7 +78,4 @@ public class Pair<F, S> {
 	public String toString() {
 		return "<" + first + " , " + second + ">";
 	}
-	
-	
-
 }

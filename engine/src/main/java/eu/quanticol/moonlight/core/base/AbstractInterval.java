@@ -156,9 +156,13 @@ public class AbstractInterval<T extends Comparable<T>>
      * failing at runtime when a comparison cannot be made.
      *
      * A summary of the logic is the following:
-     * - this.sup < o.inf => compare
-     * - this.inf > o.sup => compare
-     * - o is null || o is contained in this => error
+     * <code>
+     *     <ul>
+     *         <li>this.sup < o.inf => compare</li>
+     *         <li>this.inf > o.sup => compare</li>
+     *         <li>o is null || o is contained in this => error</li>
+     *     </ul>
+     * </code>
      *
      * @param o target interval of the comparison
      * @return a number corresponding to the result of the comparison

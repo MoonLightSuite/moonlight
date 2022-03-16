@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * MoonlightRecords are essentially Tuple types.
+ * MoonlightRecords are essentially tuple types.
  * They are implemented similarly to
  * <a href="https://docs.oracle.com/javaee/7/api/javax/persistence/Tuple.html">
  *     Java EE Tuples
