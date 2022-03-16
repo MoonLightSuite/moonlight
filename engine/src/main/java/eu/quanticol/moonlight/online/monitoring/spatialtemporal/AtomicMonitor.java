@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -43,10 +43,10 @@ import java.util.stream.Collectors;
  * @see TemporalMonitor
  */
 public class AtomicMonitor<V, R extends Comparable<R>>
-implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+implements OnlineMonitor<Double, List<V>, List<Box<R>>>
 {
 
-    private final Function<List<V>, List<AbstractInterval<R>>> atomicFunction;
+    private final Function<List<V>, List<Box<R>>> atomicFunction;
     private final OnlineSpaceTimeSignal<R> rho;
 
 
@@ -56,7 +56,7 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
+    public AtomicMonitor(Function<V, Box<R>> atomicFunction,
                          int locations,
                          SignalDomain<R> interpretation)
     {
@@ -66,12 +66,12 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        TimeChain<Double, List<AbstractInterval<R>>> u =
+        TimeChain<Double, List<Box<R>>> u =
                 BooleanComputation.atomSequence(signalUpdate, atomicFunction);
-        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<Box<R>>>> updates =
                 new ArrayList<>();
         updates.add(u);
         rho.refine(u);
@@ -80,13 +80,13 @@ implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             TimeChain<Double, List<V>> updates)
     {
-        TimeChain<Double, List<AbstractInterval<R>>> us =
+        TimeChain<Double, List<Box<R>>> us =
                 BooleanComputation.atomSequence(updates, atomicFunction);
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> output = new ArrayList<>();
+        List<TimeChain<Double, List<Box<R>>>> output = new ArrayList<>();
         output.add(us);
         rho.refine(us);
 

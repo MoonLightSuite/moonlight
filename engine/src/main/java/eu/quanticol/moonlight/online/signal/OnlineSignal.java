@@ -20,9 +20,9 @@
 
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 /**
@@ -30,22 +30,22 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
  * @param <D> Signal domain of interest
  */
 public class OnlineSignal<D extends Comparable<D>>
-        implements TimeSignal<Double, AbstractInterval<D>>
+        implements TimeSignal<Double, Box<D>>
 {
-    private final TimeChain<Double, AbstractInterval<D>> segments;
+    private final TimeChain<Double, Box<D>> segments;
 
     /**
      * @param domain The signal domain to consider
      */
     public OnlineSignal(SignalDomain<D> domain) {
-        AbstractInterval<D> i = new AbstractInterval<>(domain.min(), domain.max());
+        Box<D> i = new Box<>(domain.min(), domain.max());
         this.segments = new TimeChain<>(new TimeSegment<>(0.0, i), Double.POSITIVE_INFINITY);
     }
 
     /**
      * @param defaultValue The signal default value to consider
      */
-    public OnlineSignal(AbstractInterval<D> defaultValue)
+    public OnlineSignal(Box<D> defaultValue)
     {
         this.segments = new TimeChain<>(new TimeSegment<>(0.0, defaultValue), Double.POSITIVE_INFINITY);
     }
@@ -54,7 +54,7 @@ public class OnlineSignal<D extends Comparable<D>>
      * @return the internal list of segments;
      */
     @Override
-    public TimeChain<Double, AbstractInterval<D>> getSegments() {
+    public TimeChain<Double, Box<D>> getSegments() {
         return segments;
     }
 
@@ -85,17 +85,17 @@ public class OnlineSignal<D extends Comparable<D>>
      * @see Update
      */
     @Override
-    public boolean refine(Update<Double, AbstractInterval<D>> u) {
-        return Signals.refine(segments, u, AbstractInterval::contains);
+    public boolean refine(Update<Double, Box<D>> u) {
+        return Signals.refine(segments, u, Box::contains);
     }
 
     @Override
-    public boolean refine(TimeChain<Double, AbstractInterval<D>> updates) {
-        return Signals.refineChain(segments, updates, AbstractInterval::contains);
+    public boolean refine(TimeChain<Double, Box<D>> updates) {
+        return Signals.refineChain(segments, updates, Box::contains);
     }
 
     @Override
-    public TimeChain<Double, AbstractInterval<D>> select(Double from, Double to)
+    public TimeChain<Double, Box<D>> select(Double from, Double to)
     {
         return Signals.select(segments, from, to);
     }

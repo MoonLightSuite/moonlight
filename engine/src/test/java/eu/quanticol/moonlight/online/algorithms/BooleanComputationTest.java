@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.online.algorithms;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
@@ -23,16 +23,16 @@ class BooleanComputationTest {
 
     @Test
     void testSpecial() {
-        List<Update<Double, AbstractInterval<Double>>> ups1 = updatesFirst();
+        List<Update<Double, Box<Double>>> ups1 = updatesFirst();
 
-        List<Update<Double, AbstractInterval<Double>>> r = new ArrayList<>();
-        for(Update<Double, AbstractInterval<Double>> u: ups1) {
+        List<Update<Double, Box<Double>>> r = new ArrayList<>();
+        for(Update<Double, Box<Double>> u: ups1) {
             addIfNotDuplicated(r, binary(dataSecond(), u, intervalOr()));
             //r.addAll(binary(dataSecond(), u, intervalOr()));
         }
-        TimeChain<Double, AbstractInterval<Double>> r1 = Update.asTimeChain(r);
+        TimeChain<Double, Box<Double>> r1 = Update.asTimeChain(r);
 
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
            binarySequence(dataSecond(), Update.asTimeChain(ups1), intervalOr());
 
         assertEquals(r1, r2);
@@ -40,16 +40,16 @@ class BooleanComputationTest {
     }
 
     private void addIfNotDuplicated(
-            List<Update<Double, AbstractInterval<Double>>> r,
-            List<Update<Double, AbstractInterval<Double>>> data
+            List<Update<Double, Box<Double>>> r,
+            List<Update<Double, Box<Double>>> data
     )
     {
-        for(Update<Double, AbstractInterval<Double>> u : data) {
+        for(Update<Double, Box<Double>> u : data) {
            if(r.isEmpty() ||
                    !r.get(r.size() - 1).getValue().equals(u.getValue()))
                r.add(u);
            else {
-               Update<Double, AbstractInterval<Double>> last =
+               Update<Double, Box<Double>> last =
                        r.remove(r.size() - 1);
                r.add(combine(last, u));
            }
@@ -70,33 +70,33 @@ class BooleanComputationTest {
                                            " and \nsecond: " + second);
     }
 
-    private static List<Update<Double, AbstractInterval<Double>>> updatesFirst()
+    private static List<Update<Double, Box<Double>>> updatesFirst()
     {
-        List<Update<Double, AbstractInterval<Double>>> updates =
+        List<Update<Double, Box<Double>>> updates =
                 new ArrayList<>();
-        updates.add(new Update<>(0.0, 3.0, new AbstractInterval<>(-1.0, -1.0)));
-        updates.add(new Update<>(3.0, 5.0, new AbstractInterval<>(-2.0, -2.0)));
-        updates.add(new Update<>(5.0, 9.0, new AbstractInterval<>(-2.0,
+        updates.add(new Update<>(0.0, 3.0, new Box<>(-1.0, -1.0)));
+        updates.add(new Update<>(3.0, 5.0, new Box<>(-2.0, -2.0)));
+        updates.add(new Update<>(5.0, 9.0, new Box<>(-2.0,
                 Double.POSITIVE_INFINITY)));
 
         return updates;
     }
 
-    private static TimeChain<Double, AbstractInterval<Double>> dataSecond() {
-        TimeChain<Double, AbstractInterval<Double>> data = new TimeChain<>(
+    private static TimeChain<Double, Box<Double>> dataSecond() {
+        TimeChain<Double, Box<Double>> data = new TimeChain<>(
                 Double.POSITIVE_INFINITY);
-        data.add(new TimeSegment<>(0.0, new AbstractInterval<>(1.0, 1.0)));
-        data.add(new TimeSegment<>(4.0, new AbstractInterval<>(-2.0, -2.0)));
-        data.add(new TimeSegment<>(8.0, new AbstractInterval<>(1.0, 1.0)));
-        data.add(new TimeSegment<>(13.0, new AbstractInterval<>(-1.0, -1.0)));
+        data.add(new TimeSegment<>(0.0, new Box<>(1.0, 1.0)));
+        data.add(new TimeSegment<>(4.0, new Box<>(-2.0, -2.0)));
+        data.add(new TimeSegment<>(8.0, new Box<>(1.0, 1.0)));
+        data.add(new TimeSegment<>(13.0, new Box<>(-1.0, -1.0)));
         data.add(new TimeSegment<>(19.0,
-                new AbstractInterval<>(Double.NEGATIVE_INFINITY,
+                new Box<>(Double.NEGATIVE_INFINITY,
                         Double.POSITIVE_INFINITY)));
 
         return data;
     }
 
-    private static BinaryOperator<AbstractInterval<Double>> intervalOr() {
+    private static BinaryOperator<Box<Double>> intervalOr() {
         return (x, y) -> new AbsIntervalDomain<>(new DoubleDomain())
                 .disjunction(x, y);
     }

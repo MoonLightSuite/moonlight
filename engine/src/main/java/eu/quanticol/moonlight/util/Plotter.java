@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.util;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class Plotter {
             plotInterval(down, up, name);
     }
 
-    public void plot(TimeChain<Double, AbstractInterval<Double>> data,
+    public void plot(TimeChain<Double, Box<Double>> data,
                      String name)
     {
         List<Double> dataDown =
@@ -87,7 +87,7 @@ public class Plotter {
             plotInterval(dataDown, dataUp, name);
     }
 
-    public void plotAll(TimeChain<Double, List<AbstractInterval<Double>>> data,
+    public void plotAll(TimeChain<Double, List<Box<Double>>> data,
                         String name)
     {
         int locations = data.getFirst().getValue().size();
@@ -96,7 +96,7 @@ public class Plotter {
 
     }
 
-    public void plotOne(TimeChain<Double, List<AbstractInterval<Double>>> data,
+    public void plotOne(TimeChain<Double, List<Box<Double>>> data,
                         String name, int location)
     {
             List<Double> dataDown =

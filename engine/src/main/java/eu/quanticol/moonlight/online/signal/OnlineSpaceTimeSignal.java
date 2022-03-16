@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.List;
@@ -10,17 +10,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class OnlineSpaceTimeSignal<D extends Comparable<D>>
-        implements SpaceTimeSignal<Double, AbstractInterval<D>>
+        implements SpaceTimeSignal<Double, Box<D>>
 {
-    private final TimeChain<Double, List<AbstractInterval<D>>> segments;
+    private final TimeChain<Double, List<Box<D>>> segments;
     private final int size;
 
     public OnlineSpaceTimeSignal(int locations,
                                  SignalDomain<D> domain)
     {
-        List<AbstractInterval<D>> any =
+        List<Box<D>> any =
                 IntStream.range(0, locations).boxed()
-                        .map(i -> new AbstractInterval<>(domain.min(),
+                        .map(i -> new Box<>(domain.min(),
                                                          domain.max()))
                         .collect(Collectors.toList());
 
@@ -38,7 +38,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * <code>false</code> otherwise
      */
     @Override
-    public boolean refine(Update<Double, List<AbstractInterval<D>>> u) {
+    public boolean refine(Update<Double, List<Box<D>>> u) {
         return Signals.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, size)
                         .filter(i -> v.get(i).contains(vNew.get(i)))
@@ -48,7 +48,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
 
     @Override
     public boolean refine(
-            TimeChain<Double, List<AbstractInterval<D>>> updates)
+            TimeChain<Double, List<Box<D>>> updates)
     {
         return Signals.refineChain(segments, updates,
                 (v, vNew) -> IntStream.range(0, size)
@@ -64,7 +64,7 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public TimeChain<Double, List<AbstractInterval<D>>> getSegments() {
+    public TimeChain<Double, List<Box<D>>> getSegments() {
         return segments;
     }
 
@@ -78,8 +78,8 @@ public class OnlineSpaceTimeSignal<D extends Comparable<D>>
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public TimeChain<Double, List<AbstractInterval<D>>> select(Double from,
-                                                               Double to)
+    public TimeChain<Double, List<Box<D>>> select(Double from,
+                                                  Double to)
     {
         return Signals.select(segments, from, to);
     }

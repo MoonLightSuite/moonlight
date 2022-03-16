@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
@@ -35,12 +35,12 @@ class OutOfOrderTest {
         Formula formula = new AtomicFormula(POSITIVE_X);
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -54,12 +54,12 @@ class OutOfOrderTest {
                                               new Interval(0, 8));
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -74,15 +74,15 @@ class OutOfOrderTest {
                             ,  new Interval(0.0, 1.0));
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r =
+        TimeChain<Double, Box<Double>> r =
                 monitorChain(formula, updates);
 
         assert r != null;
-        List<Sample<Double, AbstractInterval<Double>>>
+        List<Sample<Double, Box<Double>>>
                 segments = r.toList();
-        assertEquals(new TimeSegment<>(0.0, new AbstractInterval<>(-2.0, -2.0)),
+        assertEquals(new TimeSegment<>(0.0, new Box<>(-2.0, -2.0)),
                      segments.get(0));
-        assertEquals(new TimeSegment<>(1.0, new AbstractInterval<>(-3.0, -3.0)),
+        assertEquals(new TimeSegment<>(1.0, new Box<>(-3.0, -3.0)),
                      segments.get(1));
     }
 
@@ -92,13 +92,13 @@ class OutOfOrderTest {
         Formula formula = formulaAFC();
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
 
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -111,13 +111,13 @@ class OutOfOrderTest {
         Formula formula = new AtomicFormula(POSITIVE_X);
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
 
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -131,12 +131,12 @@ class OutOfOrderTest {
                                               new Interval(0, 1));
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -150,12 +150,12 @@ class OutOfOrderTest {
                                               new Interval(0, 8));
 
         // Monitoring in-order updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitorChain(formula, updates);
 
         // Monitoring shuffled updates
         updates = shuffle(updates);
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -190,11 +190,11 @@ class OutOfOrderTest {
     }
 
     private static
-    Map<String, Function<Double, AbstractInterval<Double>>> atoms()
+    Map<String, Function<Double, Box<Double>>> atoms()
     {
-        Map<String, Function<Double, AbstractInterval<Double>>> atoms =
+        Map<String, Function<Double, Box<Double>>> atoms =
                 new HashMap<>();
-        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+        atoms.put(POSITIVE_X, x -> new Box<>(x, x));
         return atoms;
     }
 
@@ -207,8 +207,8 @@ class OutOfOrderTest {
     }
 
     private static void plotWhenEnabled(
-            @NotNull TimeChain<Double, AbstractInterval<Double>> inOrder,
-            @NotNull TimeChain<Double, AbstractInterval<Double>> outOfOrder)
+            @NotNull TimeChain<Double, Box<Double>> inOrder,
+            @NotNull TimeChain<Double, Box<Double>> outOfOrder)
     {
         if(PLOTTING) {
             plt.plot(inOrder, "In order");
@@ -217,19 +217,19 @@ class OutOfOrderTest {
         }
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitor(
+    private TimeChain<Double, Box<Double>> monitor(
             Formula formula,
             List<Update<Double, Double>> ups)
     {
         OnlineTimeMonitor<Double, Double> m = init(formula);
-        TimeChain<Double, AbstractInterval<Double>> res = null;
+        TimeChain<Double, Box<Double>> res = null;
         for (Update<Double, Double> u : ups) {
             res = m.monitor(u).getSegments().copy();
         }
         return res;
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitorChain(
+    private TimeChain<Double, Box<Double>> monitorChain(
             Formula formula,
             List<Update<Double, Double>> ups)
     {
@@ -240,7 +240,7 @@ class OutOfOrderTest {
 
     private static OnlineTimeMonitor<Double, Double> init(Formula formula)
     {
-        Map<String, Function<Double, AbstractInterval<Double>>> atoms = atoms();
+        Map<String, Function<Double, Box<Double>>> atoms = atoms();
         return new OnlineTimeMonitor<>(formula, new DoubleDomain(), atoms);
     }
 

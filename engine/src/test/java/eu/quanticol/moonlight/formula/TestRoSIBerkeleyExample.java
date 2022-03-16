@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.formula;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.domain.*;
@@ -47,8 +47,8 @@ class TestRoSIBerkeleyExample {
     private static final Double P_INF = Double.POSITIVE_INFINITY;
     private static final Double N_INF = Double.NEGATIVE_INFINITY;
 
-    private static final AbstractInterval<Double> ANY =
-            new AbstractInterval<>(N_INF, P_INF);
+    private static final Box<Double> ANY =
+            new Box<>(N_INF, P_INF);
 
     @Test
     void testEmptySignal() {
@@ -101,8 +101,8 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate2(rightFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
             assertValue(T2, ANY, ss[2]);
 
             // Exactly three segments
@@ -117,8 +117,8 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate2(orFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, P_INF), ss[1]);
+            assertValue(T0, new Box<>(1.0, P_INF), ss[0]);
+            assertValue(T1, new Box<>(-2.0, P_INF), ss[1]);
             assertValue(T2, ANY, ss[2]);
 
             // Exactly three updates
@@ -133,7 +133,7 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate2(wholeFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(-2.0, P_INF), ss[0]);
+            assertValue(T0, new Box<>(-2.0, P_INF), ss[0]);
             assertValue(2, ANY, ss[1]);
 
             // Exactly three updates
@@ -148,8 +148,8 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate3(leftFormula());
 
         if(ss != null) {
-            assertValue(0.0, new AbstractInterval<>(-1.0, P_INF), ss[0]);
-            assertValue(3.0, new AbstractInterval<>(N_INF, P_INF), ss[1]);
+            assertValue(0.0, new Box<>(-1.0, P_INF), ss[0]);
+            assertValue(3.0, new Box<>(N_INF, P_INF), ss[1]);
 
             // Exactly two segments
             assertEquals(2, ss.length);
@@ -163,7 +163,7 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate3(wholeFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(-2.0, P_INF), ss[0]);
+            assertValue(T0, new Box<>(-2.0, P_INF), ss[0]);
             assertValue(7, ANY, ss[1]);
 
             // Exactly three updates
@@ -178,9 +178,9 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate3(rightFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new Box<>(1.0, 1.0), ss[2]);
             assertValue(T3, ANY, ss[3]);
 
             // Exactly four segments
@@ -195,9 +195,9 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate3(orFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, P_INF), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, P_INF), ss[1]);
-            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[2]);
+            assertValue(T0, new Box<>(1.0, P_INF), ss[0]);
+            assertValue(T1, new Box<>(-2.0, P_INF), ss[1]);
+            assertValue(T2, new Box<>(1.0, P_INF), ss[2]);
             assertValue(T3, ANY, ss[3]);
 
             // Exactly three updates
@@ -212,10 +212,10 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate4(leftFormula());
 
         if(ss != null) {
-            assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
-            assertValue(3.0, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(5.0, new AbstractInterval<>(-2.0, P_INF), ss[2]);
-            assertValue(9.0, new AbstractInterval<>(N_INF, P_INF), ss[3]);
+            assertValue(0.0, new Box<>(-1.0, -1.0), ss[0]);
+            assertValue(3.0, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(5.0, new Box<>(-2.0, P_INF), ss[2]);
+            assertValue(9.0, new Box<>(N_INF, P_INF), ss[3]);
 
             // Exactly four segments
             assertEquals(4, ss.length);
@@ -229,10 +229,10 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate4(rightFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
-            assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new Box<>(1.0, 1.0), ss[2]);
+            assertValue(T3, new Box<>(-1.0, -1.0), ss[3]);
             assertValue(T4, ANY, ss[4]);
 
             // Exactly five segments
@@ -247,11 +247,11 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate4(orFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[2]);
-            assertValue(T2, new AbstractInterval<>(1.0, P_INF), ss[3]);
-            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[4]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(5, new Box<>(-2.0, P_INF), ss[2]);
+            assertValue(T2, new Box<>(1.0, P_INF), ss[3]);
+            assertValue(T3, new Box<>(-1.0, P_INF), ss[4]);
             assertValue(T4, ANY, ss[5]);
 
             // Exactly four updates
@@ -267,9 +267,9 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate4(wholeFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(-2.0, -2.0), ss[0]);
-            assertValue(5, new AbstractInterval<>(-2.0, P_INF), ss[1]);
-            assertValue(8, new AbstractInterval<>(-1.0, P_INF), ss[2]);
+            assertValue(T0, new Box<>(-2.0, -2.0), ss[0]);
+            assertValue(5, new Box<>(-2.0, P_INF), ss[1]);
+            assertValue(8, new Box<>(-1.0, P_INF), ss[2]);
             assertValue(T3, ANY, ss[3]);
 
             // Exactly three updates
@@ -284,11 +284,11 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate5(leftFormula());
 
         if(ss != null) {
-            assertValue(0.0, new AbstractInterval<>(-1.0, -1.0), ss[0]);
-            assertValue(3.0, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(5.0, new AbstractInterval<>(2.0, 2.0), ss[2]);
-            assertValue(8.0, new AbstractInterval<>(2.0, P_INF), ss[3]);
-            assertValue(12.0, new AbstractInterval<>(N_INF, P_INF), ss[4]);
+            assertValue(0.0, new Box<>(-1.0, -1.0), ss[0]);
+            assertValue(3.0, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(5.0, new Box<>(2.0, 2.0), ss[2]);
+            assertValue(8.0, new Box<>(2.0, P_INF), ss[3]);
+            assertValue(12.0, new Box<>(N_INF, P_INF), ss[4]);
 
             // Exactly three segments
             assertEquals(5, ss.length);
@@ -303,10 +303,10 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate5(rightFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(T2, new AbstractInterval<>(1.0, 1.0), ss[2]);
-            assertValue(T3, new AbstractInterval<>(-1.0, -1.0), ss[3]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(T2, new Box<>(1.0, 1.0), ss[2]);
+            assertValue(T3, new Box<>(-1.0, -1.0), ss[3]);
             assertValue(T5, ANY, ss[4]);
 
             // Exactly six segments
@@ -321,12 +321,12 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate5(orFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(1.0, 1.0), ss[0]);
-            assertValue(T1, new AbstractInterval<>(-2.0, -2.0), ss[1]);
-            assertValue(5, new AbstractInterval<>(2.0, 2.0), ss[2]);
-            assertValue(T2, new AbstractInterval<>(2.0, P_INF), ss[3]);
-            assertValue(12, new AbstractInterval<>(1.0, P_INF), ss[4]);
-            assertValue(T3, new AbstractInterval<>(-1.0, P_INF), ss[5]);
+            assertValue(T0, new Box<>(1.0, 1.0), ss[0]);
+            assertValue(T1, new Box<>(-2.0, -2.0), ss[1]);
+            assertValue(5, new Box<>(2.0, 2.0), ss[2]);
+            assertValue(T2, new Box<>(2.0, P_INF), ss[3]);
+            assertValue(12, new Box<>(1.0, P_INF), ss[4]);
+            assertValue(T3, new Box<>(-1.0, P_INF), ss[5]);
             assertValue(T5, ANY, ss[6]);
 
             // Exactly six updates
@@ -341,11 +341,11 @@ class TestRoSIBerkeleyExample {
         Object[] ss = testAtUpdate5(wholeFormula());
 
         if(ss != null) {
-            assertValue(T0, new AbstractInterval<>(-2.0, -2.0), ss[0]);
-            assertValue(5, new AbstractInterval<>(2.0, 2.0), ss[1]);
-            assertValue(6, new AbstractInterval<>(1.0, 2.0), ss[2]);
-            assertValue(7, new AbstractInterval<>(-1.0, 2.0), ss[3]);
-            assertValue(8, new AbstractInterval<>(-1.0, P_INF), ss[4]);
+            assertValue(T0, new Box<>(-2.0, -2.0), ss[0]);
+            assertValue(5, new Box<>(2.0, 2.0), ss[1]);
+            assertValue(6, new Box<>(1.0, 2.0), ss[2]);
+            assertValue(7, new Box<>(-1.0, 2.0), ss[3]);
+            assertValue(8, new Box<>(-1.0, P_INF), ss[4]);
             assertValue(16, ANY, ss[5]);
 
             // Exactly three updates
@@ -377,16 +377,16 @@ class TestRoSIBerkeleyExample {
      */
     private static OnlineTimeMonitor<List<Double>, Double> instrument(Formula f)
     {
-        HashMap<String, Function<List<Double>, AbstractInterval<Double>>>
+        HashMap<String, Function<List<Double>, Box<Double>>>
                                                         atoms = new HashMap<>();
 
         //positiveX is the atomic proposition: x >= 0
         atoms.put("positiveX",
-                    trc -> new AbstractInterval<>(trc.get(X_SIGNAL),
+                    trc -> new Box<>(trc.get(X_SIGNAL),
                                                   trc.get(X_SIGNAL)));
         //positiveY is the atomic proposition: y >= 0
         atoms.put("positiveY",
-                    trc -> new AbstractInterval<>(trc.get(Y_SIGNAL),
+                    trc -> new Box<>(trc.get(Y_SIGNAL),
                                                   trc.get(Y_SIGNAL)));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
@@ -595,7 +595,7 @@ class TestRoSIBerkeleyExample {
     }
 
     private static void assertValue(double start,
-                                    AbstractInterval<Double> value,
+                                    Box<Double> value,
                                     Object segment)
     {
         assertEquals(new TimeSegment<>(start, value), segment);

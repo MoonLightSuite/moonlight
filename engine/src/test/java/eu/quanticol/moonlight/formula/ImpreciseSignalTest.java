@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.domain.AbsIntervalDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
@@ -10,7 +11,6 @@ import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.MultiValuedTrace;
 import org.junit.jupiter.api.Disabled;
@@ -41,43 +41,43 @@ class ImpreciseSignalTest {
     @Disabled("This seems to be a corner case and requires investigation.")
     @Test
     void berkleyTestT4() {
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> xValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> xValues = new ArrayList<>();
         xValues.add(pair(interval(1), interval(0, 4)));
         xValues.add(pair(interval(2), interval(4, 8)));
         xValues.add(pair(interval(-1), interval(8, 13)));
         xValues.add(pair(interval(-2), interval(13, 19)));
 
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> yValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> yValues = new ArrayList<>();
         yValues.add(pair(interval(-1), interval(0, 4)));
         yValues.add(pair(interval(2), interval(4, 8)));
         yValues.add(pair(interval(-1), interval(8, 13)));
         yValues.add(pair(interval(1), interval(13, T4)));
 
-        assertEquals(new AbstractInterval<>(-2.0, -2.0), test(T4, xValues, yValues));
+        assertEquals(new Box<>(-2.0, -2.0), test(T4, xValues, yValues));
     }
 
     private static <F, S> Pair<F, S> pair(F first, S second) {
         return new Pair<>(first, second);
     }
 
-    private static AbstractInterval<Double> interval(double a, double b) {
-        return new AbstractInterval<>(a, b);
+    private static Box<Double> interval(double a, double b) {
+        return new Box<>(a, b);
     }
 
-    private static AbstractInterval<Double> interval(double a) {
-        return new AbstractInterval<>(a, a);
+    private static Box<Double> interval(double a) {
+        return new Box<>(a, a);
     }
 
     @Test
     void berkleyTestT5() {
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> xValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> xValues = new ArrayList<>();
         xValues.add(pair(interval(1), interval(0, 4)));
         xValues.add(pair(interval(2), interval(4, 8)));
         xValues.add(pair(interval(-1), interval(8, 13)));
         xValues.add(pair(interval(-2), interval(13, 19)));
         xValues.add(pair(interval(2), interval(19, T5)));
 
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> yValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> yValues = new ArrayList<>();
         yValues.add(pair(interval(-1), interval(0, 4)));
         yValues.add(pair(interval(2), interval(4, 8)));
         yValues.add(pair(interval(-1), interval(8, 13)));
@@ -88,7 +88,7 @@ class ImpreciseSignalTest {
 
     @Test
     void berkleyTestTMax() {
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> xValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> xValues = new ArrayList<>();
         xValues.add(pair(interval(1), interval(0, 4)));
         xValues.add(pair(interval(2), interval(4, 8)));
         xValues.add(pair(interval(-1), interval(8, 13)));
@@ -96,7 +96,7 @@ class ImpreciseSignalTest {
         xValues.add(pair(interval(2), interval(19, 22)));
         xValues.add(pair(interval(-1), interval(22, T_MAX)));
 
-        List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> yValues = new ArrayList<>();
+        List<Pair<Box<Double>, Box<Double>>> yValues = new ArrayList<>();
         yValues.add(pair(interval(-1), interval(0, 4)));
         yValues.add(pair(interval(2), interval(4, 8)));
         yValues.add(pair(interval(-1),interval(8, 13)));
@@ -111,11 +111,11 @@ class ImpreciseSignalTest {
      * @param traceLength length of the input trace
      * @param xValues     values for the first input signal
      * @param yValues     values for the second input signal
-     * @return an AbstractInterval<Double> corresponding to the final result of the monitoring
+     * @return an Box<Double> corresponding to the final result of the monitoring
      */
-    private static AbstractInterval<Double> test(double traceLength,
-                                            List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> xValues,
-                                            List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> yValues) {
+    private static Box<Double> test(double traceLength,
+                                    List<Pair<Box<Double>, Box<Double>>> xValues,
+                                    List<Pair<Box<Double>, Box<Double>>> yValues) {
         try {
             // Signals generator...
             Signal<List<Comparable<?>>> trace = traceGenerator((int) traceLength,
@@ -125,7 +125,7 @@ class ImpreciseSignalTest {
             Formula formula = testFormula();
 
             // Generate Monitors...
-            Signal<AbstractInterval<Double>> m = monitor(formula, trace);
+            Signal<Box<Double>> m = monitor(formula, trace);
 
             return m.getIterator(true).value();
         } catch (Exception ex) {
@@ -141,19 +141,19 @@ class ImpreciseSignalTest {
      * @param trace   input data over which the formula is monitored
      * @return a signal corresponding to the result of the monitoring.
      */
-    private static Signal<AbstractInterval<Double>> monitor(Formula formula,
-                                            Signal<List<Comparable<?>>> trace) {
+    private static Signal<Box<Double>> monitor(Formula formula,
+                                               Signal<List<Comparable<?>>> trace) {
         //a is the atomic proposition: a >= 0
         HashMap<String,
-                Function<Parameters, Function<List<Comparable<?>>, AbstractInterval<Double>>>>
+                Function<Parameters, Function<List<Comparable<?>>, Box<Double>>>>
                 atoms = new HashMap<>();
 
         atoms.put("positiveX", ps -> trc ->
-                (AbstractInterval<Double>) trc.get(X_SIGNAL));
+                (Box<Double>) trc.get(X_SIGNAL));
         atoms.put("positiveY", ps -> trc ->
-                (AbstractInterval<Double>) trc.get(Y_SIGNAL));
+                (Box<Double>) trc.get(Y_SIGNAL));
 
-        TemporalMonitoring<List<Comparable<?>>, AbstractInterval<Double>> monitoring =
+        TemporalMonitoring<List<Comparable<?>>, Box<Double>> monitoring =
                 new TemporalMonitoring<>(atoms, new AbsIntervalDomain<>(new DoubleDomain()));
 
         return monitoring.monitor(formula, null).monitor(trace);
@@ -181,15 +181,15 @@ class ImpreciseSignalTest {
      */
     private static Signal<List<Comparable<?>>> traceGenerator(
                                     int traceLength,
-                                    List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> xValues,
-                                    List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>> yValues)
+                                    List<Pair<Box<Double>, Box<Double>>> xValues,
+                                    List<Pair<Box<Double>, Box<Double>>> yValues)
     {
-        AbstractInterval<Double>[][] xSignal =
-                (AbstractInterval<Double>[][])new Object[1][traceLength]; // 1 location
+        Box<Double>[][] xSignal =
+                (Box<Double>[][])new Object[1][traceLength]; // 1 location
         xSignal[0] = valuesFromIntervals(xValues);
 
-        AbstractInterval<Double>[][] ySignal =
-                (AbstractInterval<Double>[][])new Object[1][traceLength]; // 1 location
+        Box<Double>[][] ySignal =
+                (Box<Double>[][])new Object[1][traceLength]; // 1 location
         ySignal[0] = valuesFromIntervals(yValues);
 
         MultiValuedTrace trace = new MultiValuedTrace(1, traceLength);
@@ -207,14 +207,14 @@ class ImpreciseSignalTest {
      * @param function function piecewise definitions
      * @return Array of function values
      */
-    private static AbstractInterval<Double>[] valuesFromIntervals(List<Pair<AbstractInterval<Double>, AbstractInterval<Double>>>
+    private static Box<Double>[] valuesFromIntervals(List<Pair<Box<Double>, Box<Double>>>
                                                          function) {
         int end = (int) Math.round(function.get(function.size() - 1).getSecond().getEnd());
 
-        AbstractInterval<Double>[] data = (AbstractInterval<Double>[]) new Object[end];
+        Box<Double>[] data = (Box<Double>[]) new Object[end];
 
         for (int i = 0; i < end; i++) {
-            for (Pair<AbstractInterval<Double>, AbstractInterval<Double>> piece : function) {
+            for (Pair<Box<Double>, Box<Double>> piece : function) {
                 if (piece.getSecond().contains((double) i)) {
                     data[i] = piece.getFirst();
                     break;

@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.examples.temporal.afc;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.parsing.FileType;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
@@ -45,7 +45,7 @@ public class AFCMoonlightRunner {
     private static final int RND_SEED = 7;
 
     private static final List<List<Sample<
-                    Double, AbstractInterval<Double>>>> results = new ArrayList<>();
+                    Double, Box<Double>>>> results = new ArrayList<>();
 
     private static final Plotter plt = new Plotter(10.0);
 
@@ -82,9 +82,9 @@ public class AFCMoonlightRunner {
                           boolean asChain)
     {
         String id = intToString(lastT);
-        List<List<Sample<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, Box<Double>>>>
                 moonlightColl = execMoonlight(shuffle, id, s, asChain);
-        List<Sample<Double, AbstractInterval<Double>>>
+        List<Sample<Double, Box<Double>>>
                 moonlight = moonlightColl.get(moonlightColl.size() - 1);
 
         results.add(moonlight);
@@ -106,7 +106,7 @@ public class AFCMoonlightRunner {
         return genUpdates(input, shuffle,SCALE, RND_SEED);
     }
 
-    static List<List<Sample<Double, AbstractInterval<Double>>>>
+    static List<List<Sample<Double, Box<Double>>>>
     execMoonlight(boolean shuffle, String id,
                   List<Stopwatch> stopwatches,
                   boolean asChain)
@@ -121,12 +121,12 @@ public class AFCMoonlightRunner {
     }
 
     private static
-    List<List<Sample<Double, AbstractInterval<Double>>>>
+    List<List<Sample<Double, Box<Double>>>>
     evaluateUpdates(List<Update<Double, Double>> updates,
                     OnlineTimeMonitor<Double, Double> m,
                     List<Stopwatch> stopwatches)
     {
-        List<List<Sample<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, Box<Double>>>>
                 result = new ArrayList<>();
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
@@ -141,7 +141,7 @@ public class AFCMoonlightRunner {
 
 
     private static
-    List<List<Sample<Double, AbstractInterval<Double>>>>
+    List<List<Sample<Double, Box<Double>>>>
     evaluateChain(List<Update<Double, Double>> updates,
                   OnlineTimeMonitor<Double, Double> m,
                   List<Stopwatch> stopwatches)
@@ -150,12 +150,12 @@ public class AFCMoonlightRunner {
 
         // Moonlight execution recording...
         Stopwatch rec = Stopwatch.start();
-        TimeChain<Double, AbstractInterval<Double>> r =
+        TimeChain<Double, Box<Double>> r =
                 m.monitor(chain).getSegments();
         rec.stop();
         stopwatches.add(rec);
 
-        List<List<Sample<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, Box<Double>>>>
                 result = new ArrayList<>();
         result.add(r.toList());
         return result;

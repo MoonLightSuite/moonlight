@@ -1,11 +1,11 @@
 package eu.quanticol.moonlight.domain;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.base.DataHandler;
 
 public class AbsIntervalDomain<R extends Comparable<R>>
-        implements SignalDomain<AbstractInterval<R>>
+        implements SignalDomain<Box<R>>
 {
     private final SignalDomain<R> domain;
 
@@ -22,8 +22,8 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      * @return the element of the set representing absence of knowledge
      */
     @Override
-    public AbstractInterval<R> any() {
-        return new AbstractInterval<>(domain.min(), domain.max());
+    public Box<R> any() {
+        return new Box<>(domain.min(), domain.max());
     }
 
     /**
@@ -34,8 +34,8 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      * @return the negation of the x element
      */
     @Override
-    public AbstractInterval<R> negation(AbstractInterval<R> x) {
-        return new AbstractInterval<>(domain.negation(x.getEnd()),
+    public Box<R> negation(Box<R> x) {
+        return new Box<>(domain.negation(x.getEnd()),
                                       domain.negation(x.getStart()));
     }
 
@@ -49,8 +49,8 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      * @return a result satisfying conjunction properties
      */
     @Override
-    public AbstractInterval<R> conjunction(AbstractInterval<R> x, AbstractInterval<R> y) {
-        return new AbstractInterval<>(
+    public Box<R> conjunction(Box<R> x, Box<R> y) {
+        return new Box<>(
                 domain.conjunction(x.getStart(), y.getStart()),
                 domain.conjunction(x.getEnd(), y.getEnd()));
     }
@@ -63,8 +63,8 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      * @return a result satisfying disjunction properties
      */
     @Override
-    public AbstractInterval<R> disjunction(AbstractInterval<R> x, AbstractInterval<R> y) {
-        return new AbstractInterval<>(
+    public Box<R> disjunction(Box<R> x, Box<R> y) {
+        return new Box<>(
                 domain.disjunction(x.getStart(), y.getStart()),
                 domain.disjunction(x.getEnd(), y.getEnd()));
     }
@@ -73,63 +73,63 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      * @return the infimum (aka meet) of the lattice defined over the semiring.
      */
     @Override
-    public AbstractInterval<R> min() {
-        return new AbstractInterval<>(domain.min(), domain.min());
+    public Box<R> min() {
+        return new Box<>(domain.min(), domain.min());
     }
 
     /**
      * @return the supremum (aka join) of the lattice defined over the semiring.
      */
     @Override
-    public AbstractInterval<R> max() {
-        return new AbstractInterval<>(domain.max(), domain.max());
+    public Box<R> max() {
+        return new Box<>(domain.max(), domain.max());
     }
 
     /**
      * @return an helper class to manage data parsing over the given type.
      */
     @Override
-    public DataHandler<AbstractInterval<R>> getDataHandler() {
+    public DataHandler<Box<R>> getDataHandler() {
         return null;
     }
 
     @Override
-    public boolean equalTo(AbstractInterval<R> x, AbstractInterval<R> y) {
+    public boolean equalTo(Box<R> x, Box<R> y) {
         return false;
     }
 
     @Override
-    public AbstractInterval<R> valueOf(boolean b) {
+    public Box<R> valueOf(boolean b) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> valueOf(double v) {
+    public Box<R> valueOf(double v) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> computeLessThan(double v1, double v2) {
+    public Box<R> computeLessThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> computeLessOrEqualThan(double v1, double v2) {
+    public Box<R> computeLessOrEqualThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> computeEqualTo(double v1, double v2) {
+    public Box<R> computeEqualTo(double v1, double v2) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> computeGreaterThan(double v1, double v2) {
+    public Box<R> computeGreaterThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public AbstractInterval<R> computeGreaterOrEqualThan(double v1, double v2) {
+    public Box<R> computeGreaterOrEqualThan(double v1, double v2) {
         return null;
     }
 }

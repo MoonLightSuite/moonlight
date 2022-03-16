@@ -20,15 +20,15 @@
 
 package eu.quanticol.moonlight.core.formula;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 
 /**
  * Immutable data type that represents an interval over
  * the set of real numbers (here limited to doubles).
  *
- * @see AbstractInterval
+ * @see Box
  */
-public class Interval extends AbstractInterval<Double> {
+public class Interval extends Box<Double> {
 
     /**
      * Constructs an empty Interval

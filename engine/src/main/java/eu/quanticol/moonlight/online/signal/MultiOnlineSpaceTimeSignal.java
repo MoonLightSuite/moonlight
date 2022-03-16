@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.List;
@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MultiOnlineSpaceTimeSignal
-        implements TimeSignal<Double, List<List<AbstractInterval<?>>>>
+        implements TimeSignal<Double, List<List<Box<?>>>>
 {
-    private final TimeChain<Double, List<List<AbstractInterval<?>>>> segments;
+    private final TimeChain<Double, List<List<Box<?>>>> segments;
     private final int size;
 
 
     public MultiOnlineSpaceTimeSignal(int locations,
-                              SignalDomain<List<AbstractInterval<?>>> domain)
+                              SignalDomain<List<Box<?>>> domain)
     {
-        List<List<AbstractInterval<?>>> any =
+        List<List<Box<?>>> any =
                 IntStream.range(0, locations).boxed()
                          .map(i -> domain.any())
                          .collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class MultiOnlineSpaceTimeSignal
      * <code>false</code> otherwise
      */
     @Override
-    public boolean refine(Update<Double, List<List<AbstractInterval<?>>>> u) {
+    public boolean refine(Update<Double, List<List<Box<?>>>> u) {
         return Signals.refine(segments, u,
                 (v, vNew) -> IntStream.range(0, size)
                                       .filter(i -> containment(v.get(i),
@@ -49,7 +49,7 @@ public class MultiOnlineSpaceTimeSignal
 
     @Override
     public boolean refine(
-            TimeChain<Double, List<List<AbstractInterval<?>>>> updates)
+            TimeChain<Double, List<List<Box<?>>>> updates)
     {
         return Signals.refineChain(segments, updates,
                 (v, vNew) -> IntStream.range(0, size)   //.parallel()
@@ -59,8 +59,8 @@ public class MultiOnlineSpaceTimeSignal
                 );
     }
 
-    private static boolean containment(List<AbstractInterval<?>> v,
-                                       List<AbstractInterval<?>> vNew)
+    private static boolean containment(List<Box<?>> v,
+                                       List<Box<?>> vNew)
     {
         return  IntStream.range(0, v.size())
                          .filter(i -> !v.get(i).contains(vNew.get(i)))
@@ -76,7 +76,7 @@ public class MultiOnlineSpaceTimeSignal
      * @return the chain of segments of the signal delimited by the input
      */
     @Override
-    public TimeChain<Double, List<List<AbstractInterval<?>>>> select(
+    public TimeChain<Double, List<List<Box<?>>>> select(
             Double start, Double end)
     {
         throw new UnsupportedOperationException("Not allowed for SpaceTime" +
@@ -90,7 +90,7 @@ public class MultiOnlineSpaceTimeSignal
      * @throws UnsupportedOperationException when not allowed by implementors
      */
     @Override
-    public TimeChain<Double, List<List<AbstractInterval<?>>>> getSegments() {
+    public TimeChain<Double, List<List<Box<?>>>> getSegments() {
         return segments;
     }
 }

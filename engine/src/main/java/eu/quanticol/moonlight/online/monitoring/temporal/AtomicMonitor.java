@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.temporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -43,11 +43,11 @@ import java.util.function.Function;
  * @see TemporalMonitor
  */
 public class AtomicMonitor<V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, V, AbstractInterval<R>>
+        implements OnlineMonitor<Double, V, Box<R>>
 {
 
-    private final Function<V, AbstractInterval<R>> atomicFunction;
-    private final TimeSignal<Double, AbstractInterval<R>> rho;
+    private final Function<V, Box<R>> atomicFunction;
+    private final TimeSignal<Double, Box<R>> rho;
 
 
     /**
@@ -56,19 +56,19 @@ public class AtomicMonitor<V, R extends Comparable<R>>
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public AtomicMonitor(Function<V, AbstractInterval<R>> atomicFunction,
+    public AtomicMonitor(Function<V, Box<R>> atomicFunction,
                          SignalDomain<R> interpretation)
     {
         this.atomicFunction = atomicFunction;
         this.rho = new OnlineSignal<>(interpretation);
     }
 
-    public List<Update<Double, AbstractInterval<R>>> monitorOld(
+    public List<Update<Double, Box<R>>> monitorOld(
             Update<Double, V> signalUpdate)
     {
-        Update<Double, AbstractInterval<R>> u =
+        Update<Double, Box<R>> u =
                 BooleanComputation.atom(signalUpdate, atomicFunction);
-        List<Update<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<Update<Double, Box<R>>> updates = new ArrayList<>();
         updates.add(u);
         rho.refine(u);
 
@@ -76,7 +76,7 @@ public class AtomicMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, Box<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
         List<Update<Double, V>> updates  = new ArrayList<>();
@@ -86,13 +86,13 @@ public class AtomicMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, Box<R>>> monitor(
             TimeChain<Double, V> updates)
     {
-        TimeChain<Double, AbstractInterval<R>> us =
+        TimeChain<Double, Box<R>> us =
                 BooleanComputation.atomSequence(updates, atomicFunction);
 
-        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+        List<TimeChain<Double, Box<R>>> output = new ArrayList<>();
         output.add(us);
         rho.refine(us);
 
@@ -100,7 +100,7 @@ public class AtomicMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public TimeSignal<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, Box<R>> getResult() {
         return rho;
     }
 }

@@ -20,10 +20,10 @@
 
 package eu.quanticol.moonlight.online.signal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.algorithms.Signals;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.List;
@@ -33,14 +33,14 @@ import java.util.stream.IntStream;
  * Class to represent n-dimensional online time signals.
  */
 public class MultiOnlineSignal
-        implements TimeSignal<Double, List<AbstractInterval<?>>>
+        implements TimeSignal<Double, List<Box<?>>>
 {
-    private final TimeChain<Double, List<AbstractInterval<?>>> segments;
+    private final TimeChain<Double, List<Box<?>>> segments;
 
     /**
      * @param domain The signal domain to consider
      */
-    public MultiOnlineSignal(SignalDomain<List<AbstractInterval<?>>> domain) {
+    public MultiOnlineSignal(SignalDomain<List<Box<?>>> domain) {
         this.segments = new TimeChain<>(new TimeSegment<>(0.0, domain.any()), Double.POSITIVE_INFINITY);
     }
 
@@ -48,7 +48,7 @@ public class MultiOnlineSignal
      * @return the internal list of segments;
      */
     @Override
-    public TimeChain<Double, List<AbstractInterval<?>>> getSegments() {
+    public TimeChain<Double, List<Box<?>>> getSegments() {
         return segments;
     }
 
@@ -80,7 +80,7 @@ public class MultiOnlineSignal
      */
     @Override
     public boolean
-        refine(Update<Double, List<AbstractInterval<?>>> u)
+        refine(Update<Double, List<Box<?>>> u)
     {
         //TODO: should handle the case where the update is
         //      a list of a different size
@@ -92,7 +92,7 @@ public class MultiOnlineSignal
     }
 
     @Override
-    public boolean refine(TimeChain<Double, List<AbstractInterval<?>>> updates)
+    public boolean refine(TimeChain<Double, List<Box<?>>> updates)
     {
         //TODO: should handle the case where the update is
         //      a list of a different size
@@ -105,15 +105,15 @@ public class MultiOnlineSignal
 
 
     @Override
-    public TimeChain<Double, List<AbstractInterval<?>>> select(Double from,
-                                                               Double to)
+    public TimeChain<Double, List<Box<?>>> select(Double from,
+                                                  Double to)
     {
         int start = 0;
         int end = 1;
 
-        ChainIterator<Sample<Double, List<AbstractInterval<?>>>> itr =
+        ChainIterator<Sample<Double, List<Box<?>>>> itr =
                 segments.chainIterator();
-        Sample<Double, List<AbstractInterval<?>>> current;
+        Sample<Double, List<Box<?>>> current;
 
         while (itr.hasNext()) {
             current = itr.next();

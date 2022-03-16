@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.ReachOperator;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.online.signal.OnlineSpaceTimeSignal;
@@ -42,17 +42,17 @@ import java.util.function.BinaryOperator;
  * @see OnlineMonitor
  */
 public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+        implements OnlineMonitor<Double, List<V>, List<Box<R>>>
 {
 
-    private final BinaryOperator<List<AbstractInterval<R>>> opFunction;
+    private final BinaryOperator<List<Box<R>>> opFunction;
     private final OnlineSpaceTimeSignal<R> rho;
-    private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+    private final OnlineMonitor<Double, List<V>, List<Box<R>>>
                                                                     firstArg;
-    private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+    private final OnlineMonitor<Double, List<V>, List<Box<R>>>
                                                                     secondArg;
 
-    private final ReachOperator<Double, S, AbstractInterval<R>> spatialOp;
+    private final ReachOperator<Double, S, Box<R>> spatialOp;
 
     /**
      * Prepares an atomic online (temporal) monitor.
@@ -61,9 +61,9 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
      * @param interpretation The interpretation domain of interest
      */
     public BinarySpaceOpMonitor(
-            OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> firstArg,
-            OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> secondArg,
-            BinaryOperator<List<AbstractInterval<R>>> binaryOp,
+            OnlineMonitor<Double, List<V>, List<Box<R>>> firstArg,
+            OnlineMonitor<Double, List<V>, List<Box<R>>> secondArg,
+            BinaryOperator<List<Box<R>>> binaryOp,
             SignalDomain<R> interpretation,
             int locations)
     {
@@ -77,27 +77,27 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<Box<R>>>> updates =
                                                             new ArrayList<>();
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> firstArgUps =
+        List<TimeChain<Double, List<Box<R>>>> firstArgUps =
                                                 firstArg.monitor(signalUpdate);
-        List<TimeChain<Double, List<AbstractInterval<R>>>> secondArgUps =
+        List<TimeChain<Double, List<Box<R>>>> secondArgUps =
                                                 secondArg.monitor(signalUpdate);
 
-        TimeSignal<Double, List<AbstractInterval<R>>> s1 =
+        TimeSignal<Double, List<Box<R>>> s1 =
                                                         firstArg.getResult();
-        TimeSignal<Double, List<AbstractInterval<R>>> s2 =
+        TimeSignal<Double, List<Box<R>>> s2 =
                                                         secondArg.getResult();
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU : firstArgUps) {
+        for(TimeChain<Double, List<Box<R>>> argU : firstArgUps) {
             //updates.addAll(spacialOp.binary(s2, argU, opFunction));
         }
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU: secondArgUps) {
+        for(TimeChain<Double, List<Box<R>>> argU: secondArgUps) {
             //updates.addAll(SpatialAlgorithms.binary(s1, argU, opFunction));
         }
 
@@ -107,12 +107,12 @@ public class BinarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(TimeChain<Double, List<V>> updates) {
+    public List<TimeChain<Double, List<Box<R>>>> monitor(TimeChain<Double, List<V>> updates) {
         return null;
     }
 
     @Override
-    public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
+    public TimeSignal<Double, List<Box<R>>> getResult() {
         return rho;
     }
 }

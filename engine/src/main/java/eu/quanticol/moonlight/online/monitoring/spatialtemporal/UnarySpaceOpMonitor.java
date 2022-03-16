@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.online.signal.OnlineSpaceTimeSignal;
@@ -42,16 +42,16 @@ import java.util.List;
  * @see OnlineMonitor
  */
 public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+        implements OnlineMonitor<Double, List<V>, List<Box<R>>>
 {
     private final OnlineMonitor<Double, List<V>,
-                                List<AbstractInterval<R>>> argument;
-    private final TimeSignal<Double, List<AbstractInterval<R>>> rho;
-    private final SpatialComputation<Double, S, AbstractInterval<R>> spatialOp;
+                                List<Box<R>>> argument;
+    private final TimeSignal<Double, List<Box<R>>> rho;
+    private final SpatialComputation<Double, S, Box<R>> spatialOp;
 
     public UnarySpaceOpMonitor(
-            OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
-            SpatialComputation<Double, S, AbstractInterval<R>> op,
+            OnlineMonitor<Double, List<V>, List<Box<R>>> argument,
+            SpatialComputation<Double, S, Box<R>> op,
             SignalDomain<R> domain,
             int size)
     {
@@ -61,16 +61,16 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<Box<R>>>> argUpdates =
                 argument.monitor(signalUpdate);
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<Box<R>>>> updates =
                                                               new ArrayList<>();
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+        for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
             updates.add(spatialOp.computeUnaryChain(argU));
         }
 
@@ -80,20 +80,20 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             TimeChain<Double, List<V>> updates)
     {
-        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<Box<R>>>> argUpdates =
                 argument.monitor(updates);
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> output =
+        List<TimeChain<Double, List<Box<R>>>> output =
                 new ArrayList<>();
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+        for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
             output.add(spatialOp.computeUnaryChain(argU));
         }
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> us : output) {
+        for(TimeChain<Double, List<Box<R>>> us : output) {
             rho.refine(us);
         }
 
@@ -101,7 +101,7 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
     }
 
     @Override
-    public TimeSignal<Double, List<AbstractInterval<R>>> getResult() {
+    public TimeSignal<Double, List<Box<R>>> getResult() {
         return rho;
     }
 }

@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -43,12 +43,12 @@ import java.util.function.UnaryOperator;
  * @see TemporalMonitor
  */
 public class UnaryMonitor<V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+        implements OnlineMonitor<Double, List<V>, List<Box<R>>>
 {
 
-    private final UnaryOperator<List<AbstractInterval<R>>> op;
-    private final SpaceTimeSignal<Double, AbstractInterval<R>> rho;
-    private final OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>>
+    private final UnaryOperator<List<Box<R>>> op;
+    private final SpaceTimeSignal<Double, Box<R>> rho;
+    private final OnlineMonitor<Double, List<V>, List<Box<R>>>
                                                                 argumentMonitor;
 
 
@@ -58,8 +58,8 @@ public class UnaryMonitor<V, R extends Comparable<R>>
      * //@param parentHorizon The temporal horizon of the parent formula
      * @param interpretation The interpretation domain of interest
      */
-    public UnaryMonitor(OnlineMonitor<Double, List<V>, List<AbstractInterval<R>>> argument,
-                        UnaryOperator<List<AbstractInterval<R>>> unaryOp,
+    public UnaryMonitor(OnlineMonitor<Double, List<V>, List<Box<R>>> argument,
+                        UnaryOperator<List<Box<R>>> unaryOp,
                         SignalDomain<R> interpretation,
                         int locations)
     {
@@ -69,16 +69,16 @@ public class UnaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             Update<Double, List<V>> signalUpdate)
     {
-        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<Box<R>>>> argUpdates =
                                         argumentMonitor.monitor(signalUpdate);
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> updates =
+        List<TimeChain<Double, List<Box<R>>>> updates =
                                                             new ArrayList<>();
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+        for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
             updates.add(BooleanComputation.unarySequence(argU, op));
         }
 
@@ -88,16 +88,16 @@ public class UnaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, List<AbstractInterval<R>>>> monitor(
+    public List<TimeChain<Double, List<Box<R>>>> monitor(
             TimeChain<Double, List<V>> updates)
     {
-        List<TimeChain<Double, List<AbstractInterval<R>>>> argUpdates =
+        List<TimeChain<Double, List<Box<R>>>> argUpdates =
                 argumentMonitor.monitor(updates);
 
-        List<TimeChain<Double, List<AbstractInterval<R>>>> output =
+        List<TimeChain<Double, List<Box<R>>>> output =
                 new ArrayList<>();
 
-        for(TimeChain<Double, List<AbstractInterval<R>>> argU : argUpdates) {
+        for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
             output.add(BooleanComputation.unarySequence(argU, op));
         }
 
@@ -107,7 +107,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public SpaceTimeSignal<Double, AbstractInterval<R>> getResult() {
+    public SpaceTimeSignal<Double, Box<R>> getResult() {
         return rho;
     }
 }

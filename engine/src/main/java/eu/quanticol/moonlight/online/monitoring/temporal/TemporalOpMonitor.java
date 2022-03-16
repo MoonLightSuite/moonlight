@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.temporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.TemporalComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
@@ -44,13 +44,13 @@ import java.util.function.BinaryOperator;
  * @see TemporalMonitor
  */
 public class TemporalOpMonitor<V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, V, AbstractInterval<R>>
+        implements OnlineMonitor<Double, V, Box<R>>
 {
 
-    private final BinaryOperator<AbstractInterval<R>> op;
+    private final BinaryOperator<Box<R>> op;
     private final Interval horizon;
     private final OnlineSignal<R> rho;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor;
+    private final OnlineMonitor<Double, V, Box<R>> argumentMonitor;
 
 
     /**
@@ -60,8 +60,8 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
      * @param interpretation The interpretation domain of interest
      */
     public TemporalOpMonitor(
-                        OnlineMonitor<Double, V, AbstractInterval<R>> argument,
-                        BinaryOperator<AbstractInterval<R>> binaryOp,
+                        OnlineMonitor<Double, V, Box<R>> argument,
+                        BinaryOperator<Box<R>> binaryOp,
                         Interval timeHorizon,
                         //Interval parentHorizon,
                         SignalDomain<R> interpretation)
@@ -73,18 +73,18 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, Box<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
-        List<TimeChain<Double, AbstractInterval<R>>> argUpdates =
+        List<TimeChain<Double, Box<R>>> argUpdates =
                 argumentMonitor.monitor(signalUpdate);
 
-        TimeChain<Double, AbstractInterval<R>> s =
+        TimeChain<Double, Box<R>> s =
                 argumentMonitor.getResult().getSegments();
 
-        List<TimeChain<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<TimeChain<Double, Box<R>>> updates = new ArrayList<>();
 
-        for(TimeChain<Double, AbstractInterval<R>> argU: argUpdates) {
+        for(TimeChain<Double, Box<R>> argU: argUpdates) {
             updates.addAll(TemporalComputation.slidingWindow(s, argU,
                                                              horizon, op));
         }
@@ -95,18 +95,18 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, Box<R>>> monitor(
             TimeChain<Double, V> updates)
     {
-        List<TimeChain<Double, AbstractInterval<R>>> argUpdates =
+        List<TimeChain<Double, Box<R>>> argUpdates =
                 argumentMonitor.monitor(updates);
 
-        TimeChain<Double, AbstractInterval<R>> s =
+        TimeChain<Double, Box<R>> s =
                 argumentMonitor.getResult().getSegments();
 
-        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+        List<TimeChain<Double, Box<R>>> output = new ArrayList<>();
 
-        for(TimeChain<Double, AbstractInterval<R>> argU: argUpdates) {
+        for(TimeChain<Double, Box<R>> argU: argUpdates) {
             output.addAll(TemporalComputation.slidingWindow(s, argU,
                     horizon, op));
         }
@@ -116,7 +116,7 @@ public class TemporalOpMonitor<V, R extends Comparable<R>>
         return output;
     }
     @Override
-    public TimeSignal<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, Box<R>> getResult() {
         return rho;
     }
 }

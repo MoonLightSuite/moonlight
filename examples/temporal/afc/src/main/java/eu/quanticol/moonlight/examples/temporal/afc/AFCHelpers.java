@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.formula.*;
@@ -26,13 +26,13 @@ public class AFCHelpers {
    private AFCHelpers() {}  // Hidden constructor
 
     static List<List<Double>> handleData(List<List<Sample<Double,
-                                             AbstractInterval<Double>>>> data)
+            Box<Double>>>> data)
     {
         List<List<Double>> r = new ArrayList<>();
         r.add(new ArrayList<>());
         r.add(new ArrayList<>());
 
-        for (List<Sample<Double, AbstractInterval<Double>>> v : data)
+        for (List<Sample<Double, Box<Double>>> v : data)
         {
             r.get(0).add(v.get(0).getValue().getStart());
             r.get(1).add(v.get(0).getValue().getEnd());
@@ -62,15 +62,15 @@ public class AFCHelpers {
         stopwatches.clear();
     }
 
-    static List<Sample<Double, AbstractInterval<Double>>>
-    condenseSignal(List<Sample<Double, AbstractInterval<Double>>> ss)
+    static List<Sample<Double, Box<Double>>>
+    condenseSignal(List<Sample<Double, Box<Double>>> ss)
     {
-        List<Sample<Double, AbstractInterval<Double>>> out =
+        List<Sample<Double, Box<Double>>> out =
                 new ArrayList<>();
-        Sample<Double, AbstractInterval<Double>> bound = ss.get(0);
+        Sample<Double, Box<Double>> bound = ss.get(0);
         out.add(ss.get(0));
 
-        for (Sample<Double, AbstractInterval<Double>> curr : ss) {
+        for (Sample<Double, Box<Double>> curr : ss) {
             if (!curr.getValue().equals(bound.getValue())) {
                 bound = curr;
                 out.add(curr);
@@ -116,9 +116,9 @@ public class AFCHelpers {
     static OnlineTimeMonitor<Double, Double> instrument() {
         Formula f = afcFormula();
 
-        HashMap<String, Function<Double, AbstractInterval<Double>>>
+        HashMap<String, Function<Double, Box<Double>>>
                 atoms = new HashMap<>();
-        atoms.put(AFC_ATOM, trc -> new AbstractInterval<>(trc - 0.05,
+        atoms.put(AFC_ATOM, trc -> new Box<>(trc - 0.05,
                                                           trc - 0.05));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);

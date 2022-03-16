@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
@@ -39,16 +39,16 @@ class AFCTest {
         List<Update<Double, Double>> input = loadInput();
 
         OnlineTimeMonitor<Double, Double> m = instrument();
-        ArrayList<Sample<Double, AbstractInterval<Double>>>
+        ArrayList<Sample<Double, Box<Double>>>
                                                             rho = getRho();
 
-        List<List<Sample<Double, AbstractInterval<Double>>>>
+        List<List<Sample<Double, Box<Double>>>>
                 result = new ArrayList<>();
         for(Update<Double, Double> u: input) {
             result.add(new ArrayList<>(m.monitor(u).getSegments().toList()));
         }
 
-        ArrayList<Sample<Double, AbstractInterval<Double>>> r =
+        ArrayList<Sample<Double, Box<Double>>> r =
                 new ArrayList<>(result.get(result.size() - 1));
                 //        new ArrayList<>(Objects.requireNonNull(result).getSegments());
         r = condenseSignal(r);
@@ -82,27 +82,27 @@ class AFCTest {
 
         // alw_[10, 30] ((abs(AF[t]-AFref[t]) > 0.05) => (ev_[0, 1] (abs(AF[t]-AFref[t]) < 0.05)))
 
-        HashMap<String, Function<Double, AbstractInterval<Double>>>
+        HashMap<String, Function<Double, Box<Double>>>
                 atoms = new HashMap<>();
 
         //positiveX is the atomic proposition: smallError abs(AF[t]-AFref[t])  <= 0.05
         atoms.put("smallError",
-                trc -> new AbstractInterval<>(trc - 0.05,
+                trc -> new Box<>(trc - 0.05,
                         trc - 0.05));
 
         return new OnlineTimeMonitor<>(f, new DoubleDomain(), atoms);
     }
 
-    private ArrayList<Sample<Double, AbstractInterval<Double>>>
+    private ArrayList<Sample<Double, Box<Double>>>
     condenseSignal(
-            ArrayList<Sample<Double, AbstractInterval<Double>>> ss)
+            ArrayList<Sample<Double, Box<Double>>> ss)
     {
-        ArrayList<Sample<Double, AbstractInterval<Double>>> out =
+        ArrayList<Sample<Double, Box<Double>>> out =
                                                             new ArrayList<>();
-        Sample<Double, AbstractInterval<Double>> bound = ss.get(0);
+        Sample<Double, Box<Double>> bound = ss.get(0);
         out.add(ss.get(0));
 
-        for(Sample<Double, AbstractInterval<Double>> curr: ss) {
+        for(Sample<Double, Box<Double>> curr: ss) {
             if(!fuzzyEquals(curr.getValue(), bound.getValue(), 0.05)) {
                 bound = curr;
                 out.add(curr);
@@ -112,8 +112,8 @@ class AFCTest {
         return out;
     }
 
-    private boolean fuzzyEquals(AbstractInterval<Double>a,
-                                AbstractInterval<Double>b, double tolerance)
+    private boolean fuzzyEquals(Box<Double> a,
+                                Box<Double> b, double tolerance)
     {
 //        return DoubleMath.fuzzyEquals(a.getStart(), b.getStart(), tolerance)
 //                &&
@@ -135,7 +135,7 @@ class AFCTest {
         return updates;
     }
 
-    private ArrayList<Sample<Double, AbstractInterval<Double>>>
+    private ArrayList<Sample<Double, Box<Double>>>
     getRho()
     {
         RawTrajectoryExtractor ex = new RawTrajectoryExtractor(1);
@@ -147,10 +147,10 @@ class AFCTest {
 
         double[] data2 = new DataReader<>(rhoUp, FileType.CSV, ex).read()[0];
 
-        ArrayList<Sample<Double, AbstractInterval<Double>>> rho = new ArrayList<>();
+        ArrayList<Sample<Double, Box<Double>>> rho = new ArrayList<>();
         for(int i = 0; i < data1.length; i++) {
             //if((double)i * 0.1 % 1 == 0)
-                rho.add(new TimeSegment<>((double)i* 0.1, new AbstractInterval<>(data1[i], data2[i])));
+                rho.add(new TimeSegment<>((double)i* 0.1, new Box<>(data1[i], data2[i])));
         }
 
         return rho;

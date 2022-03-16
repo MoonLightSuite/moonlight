@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.domain;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.base.Semiring;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.base.DataHandler;
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ListDomain<T extends Comparable<T>>
-        implements SignalDomain<List<AbstractInterval<T>>>
+        implements SignalDomain<List<Box<T>>>
 {
     private final
-    List<SignalDomain<AbstractInterval<T>>> domains;
+    List<SignalDomain<Box<T>>> domains;
 
     public ListDomain(List<SignalDomain<T>> domains) {
         this.domains = new ArrayList<>();
@@ -38,7 +38,7 @@ public class ListDomain<T extends Comparable<T>>
      * @return the negation of the x element
      */
     @Override
-    public List<AbstractInterval<T>> negation(List<AbstractInterval<T>> x) {
+    public List<Box<T>> negation(List<Box<T>> x) {
         return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i).negation(x.get(i)))
                         .collect(Collectors.toList());
@@ -52,8 +52,8 @@ public class ListDomain<T extends Comparable<T>>
      * @return a result satisfying conjunction properties
      */
     @Override
-    public List<AbstractInterval<T>> conjunction(List<AbstractInterval<T>> x,
-                                                 List<AbstractInterval<T>> y)
+    public List<Box<T>> conjunction(List<Box<T>> x,
+                                    List<Box<T>> y)
     {
         return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i)
@@ -69,8 +69,8 @@ public class ListDomain<T extends Comparable<T>>
      * @return a result satisfying disjunction properties
      */
     @Override
-    public List<AbstractInterval<T>> disjunction(List<AbstractInterval<T>> x,
-                                                 List<AbstractInterval<T>> y)
+    public List<Box<T>> disjunction(List<Box<T>> x,
+                                    List<Box<T>> y)
     {
         return IntStream.range(0, domains.size())
                         .mapToObj(i -> domains.get(i)
@@ -82,7 +82,7 @@ public class ListDomain<T extends Comparable<T>>
      * @return the infimum (aka meet) of the lattice defined over the semiring.
      */
     @Override
-    public List<AbstractInterval<T>> min() {
+    public List<Box<T>> min() {
         return domains.stream().map(Semiring::min).collect(Collectors.toList());
     }
 
@@ -90,7 +90,7 @@ public class ListDomain<T extends Comparable<T>>
      * @return the supremum (aka join) of the lattice defined over the semiring.
      */
     @Override
-    public List<AbstractInterval<T>> max() {
+    public List<Box<T>> max() {
         return domains.stream().map(Semiring::max).collect(Collectors.toList());
     }
 
@@ -105,7 +105,7 @@ public class ListDomain<T extends Comparable<T>>
      * @return the element of the set representing absence of knowledge
      */
     @Override
-    public List<AbstractInterval<T>> any() {
+    public List<Box<T>> any() {
         return domains.stream().map(SignalDomain::any)
                       .collect(Collectors.toList());
     }
@@ -114,47 +114,47 @@ public class ListDomain<T extends Comparable<T>>
      * @return an helper class to manage data parsing over the given type.
      */
     @Override
-    public DataHandler<List<AbstractInterval<T>>> getDataHandler() {
+    public DataHandler<List<Box<T>>> getDataHandler() {
         return null;
     }
 
     @Override
-    public boolean equalTo(List<AbstractInterval<T>> x, List<AbstractInterval<T>> y) {
+    public boolean equalTo(List<Box<T>> x, List<Box<T>> y) {
         return false;
     }
 
     @Override
-    public List<AbstractInterval<T>> valueOf(boolean b) {
+    public List<Box<T>> valueOf(boolean b) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> valueOf(double v) {
+    public List<Box<T>> valueOf(double v) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> computeLessThan(double v1, double v2) {
+    public List<Box<T>> computeLessThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> computeLessOrEqualThan(double v1, double v2) {
+    public List<Box<T>> computeLessOrEqualThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> computeEqualTo(double v1, double v2) {
+    public List<Box<T>> computeEqualTo(double v1, double v2) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> computeGreaterThan(double v1, double v2) {
+    public List<Box<T>> computeGreaterThan(double v1, double v2) {
         return null;
     }
 
     @Override
-    public List<AbstractInterval<T>> computeGreaterOrEqualThan(double v1, double v2) {
+    public List<Box<T>> computeGreaterOrEqualThan(double v1, double v2) {
         return null;
     }
 

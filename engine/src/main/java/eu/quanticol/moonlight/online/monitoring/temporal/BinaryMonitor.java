@@ -20,8 +20,8 @@
 
 package eu.quanticol.moonlight.online.monitoring.temporal;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -44,13 +44,13 @@ import java.util.stream.Collectors;
  * @see TemporalMonitor
  */
 public class BinaryMonitor<V, R extends Comparable<R>>
-        implements OnlineMonitor<Double, V, AbstractInterval<R>>
+        implements OnlineMonitor<Double, V, Box<R>>
 {
 
-    private final BinaryOperator<AbstractInterval<R>> opFunction;
-    private final TimeSignal<Double, AbstractInterval<R>> rho;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> firstArg;
-    private final OnlineMonitor<Double, V, AbstractInterval<R>> secondArg;
+    private final BinaryOperator<Box<R>> opFunction;
+    private final TimeSignal<Double, Box<R>> rho;
+    private final OnlineMonitor<Double, V, Box<R>> firstArg;
+    private final OnlineMonitor<Double, V, Box<R>> secondArg;
 
 
     /**
@@ -60,9 +60,9 @@ public class BinaryMonitor<V, R extends Comparable<R>>
      * @param interpretation The interpretation domain of interest
      */
     public BinaryMonitor(
-            OnlineMonitor<Double, V, AbstractInterval<R>> firstArgument,
-            OnlineMonitor<Double, V, AbstractInterval<R>> secondArgument,
-            BinaryOperator<AbstractInterval<R>> binaryOp,
+            OnlineMonitor<Double, V, Box<R>> firstArgument,
+            OnlineMonitor<Double, V, Box<R>> secondArgument,
+            BinaryOperator<Box<R>> binaryOp,
             SignalDomain<R> interpretation)
     {
         this.opFunction = binaryOp;
@@ -72,28 +72,28 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>> monitor(
+    public List<TimeChain<Double, Box<R>>> monitor(
             Update<Double, V> signalUpdate)
     {
-        List<TimeChain<Double, AbstractInterval<R>>> updates = new ArrayList<>();
+        List<TimeChain<Double, Box<R>>> updates = new ArrayList<>();
 
-        List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =
+        List<TimeChain<Double, Box<R>>> firstArgUps =
                 firstArg.monitor(signalUpdate).stream().filter(x -> !x.isEmpty()).collect(Collectors.toList());
-        List<TimeChain<Double, AbstractInterval<R>>> secondArgUps =
+        List<TimeChain<Double, Box<R>>> secondArgUps =
                 secondArg.monitor(signalUpdate).stream().filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
 
-        TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
-        TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
+        TimeSignal<Double, Box<R>> s1 = firstArg.getResult();
+        TimeSignal<Double, Box<R>> s2 = secondArg.getResult();
 
-        for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
-                TimeChain<Double, AbstractInterval<R>> c2 =
+        for(TimeChain<Double, Box<R>> argU : firstArgUps) {
+                TimeChain<Double, Box<R>> c2 =
                         s2.select(argU.getStart(), argU.getEnd());
                 updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
-        for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
-                TimeChain<Double, AbstractInterval<R>> c1 =
+        for(TimeChain<Double, Box<R>> argU: secondArgUps) {
+                TimeChain<Double, Box<R>> c1 =
                         s1.select(argU.getStart(), argU.getEnd());
                 updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
@@ -111,27 +111,27 @@ public class BinaryMonitor<V, R extends Comparable<R>>
      * @return a list of updates to the interpretation signal
      */
     @Override
-    public List<TimeChain<Double, AbstractInterval<R>>>
+    public List<TimeChain<Double, Box<R>>>
     monitor(TimeChain<Double, V> updates)
     {
-        List<TimeChain<Double, AbstractInterval<R>>> output = new ArrayList<>();
+        List<TimeChain<Double, Box<R>>> output = new ArrayList<>();
 
-        List<TimeChain<Double, AbstractInterval<R>>> firstArgUps =
+        List<TimeChain<Double, Box<R>>> firstArgUps =
                 firstArg.monitor(updates);
-        List<TimeChain<Double, AbstractInterval<R>>> secondArgUps =
+        List<TimeChain<Double, Box<R>>> secondArgUps =
                 secondArg.monitor(updates);
 
-        TimeSignal<Double, AbstractInterval<R>> s1 = firstArg.getResult();
-        TimeSignal<Double, AbstractInterval<R>> s2 = secondArg.getResult();
+        TimeSignal<Double, Box<R>> s1 = firstArg.getResult();
+        TimeSignal<Double, Box<R>> s2 = secondArg.getResult();
 
-        for(TimeChain<Double, AbstractInterval<R>> argU : firstArgUps) {
-            TimeChain<Double, AbstractInterval<R>> c2 =
+        for(TimeChain<Double, Box<R>> argU : firstArgUps) {
+            TimeChain<Double, Box<R>> c2 =
                     s2.select(argU.getStart(), argU.getEnd());
             output.add(BooleanComputation.binarySequence(c2, argU, opFunction));
         }
 
-        for(TimeChain<Double, AbstractInterval<R>> argU: secondArgUps) {
-            TimeChain<Double, AbstractInterval<R>> c1 =
+        for(TimeChain<Double, Box<R>> argU: secondArgUps) {
+            TimeChain<Double, Box<R>> c1 =
                     s1.select(argU.getStart(), argU.getEnd());
             output.add(BooleanComputation.binarySequence(c1, argU, opFunction));
         }
@@ -142,7 +142,7 @@ public class BinaryMonitor<V, R extends Comparable<R>>
     }
 
     @Override
-    public TimeSignal<Double, AbstractInterval<R>> getResult() {
+    public TimeSignal<Double, Box<R>> getResult() {
         return rho;
     }
 }

@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.online.monitoring;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.FormulaVisitor;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
@@ -29,19 +29,19 @@ import java.util.function.Function;
  * @see FormulaVisitor
  */
 public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
-    FormulaVisitor<Parameters, OnlineMonitor<Double, V, AbstractInterval<R>>>
+    FormulaVisitor<Parameters, OnlineMonitor<Double, V, Box<R>>>
 {
 
     private final Formula formula;
     private final SignalDomain<R> interpretation;
-    private final Map<String, OnlineMonitor<Double, V, AbstractInterval<R>>>
+    private final Map<String, OnlineMonitor<Double, V, Box<R>>>
                                                                        monitors;
-    private final Map<String, Function<V, AbstractInterval<R>>> atoms;
+    private final Map<String, Function<V, Box<R>>> atoms;
 
     public OnlineTimeMonitor(
         Formula formula,
         SignalDomain<R> interpretation,
-        Map<String, Function<V, AbstractInterval<R>>> atomicPropositions)
+        Map<String, Function<V, Box<R>>> atomicPropositions)
     {
         this.atoms = atomicPropositions;
         this.formula = formula;
@@ -49,12 +49,12 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
         this.monitors = new HashMap<>();
     }
 
-    public TimeSignal<Double, AbstractInterval<R>>
+    public TimeSignal<Double, Box<R>>
     monitor(Update<Double, V> update)
     {
         UpdateParameter<Double, V> param = new UpdateParameter<>(update);
 
-        OnlineMonitor<Double, V, AbstractInterval<R>> m =
+        OnlineMonitor<Double, V, Box<R>> m =
                                         formula.accept(this, param);
 
         if(update != null)
@@ -63,11 +63,11 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
         return m.getResult();
     }
 
-    public TimeSignal<Double, AbstractInterval<R>>
+    public TimeSignal<Double, Box<R>>
     monitor(TimeChain<Double, V> updates)
     {
 
-        OnlineMonitor<Double, V, AbstractInterval<R>> m =
+        OnlineMonitor<Double, V, Box<R>> m =
                 formula.accept(this, null);
 
         if(updates != null)
@@ -77,10 +77,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     }
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             AtomicFormula formula, Parameters parameters)
     {
-        Function<V, AbstractInterval<R>> f = fetchAtom(formula);
+        Function<V, Box<R>> f = fetchAtom(formula);
 
         return monitors.computeIfAbsent(formula.toString(),
                                 x -> new AtomicMonitor<>(f, interpretation));
@@ -88,10 +88,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     }
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             NegationFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
                 formula.getArgument().accept(this, parameters);
 
         return monitors.computeIfAbsent(formula.toString(),
@@ -101,13 +101,13 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
 
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             AndFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> firstArgMonitor =
+        OnlineMonitor<Double, V, Box<R>> firstArgMonitor =
                 formula.getFirstArgument().accept(this, parameters);
 
-        OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
+        OnlineMonitor<Double, V, Box<R>> secondArgMonitor =
                 formula.getSecondArgument().accept(this, parameters);
 
         return monitors.computeIfAbsent(formula.toString(),
@@ -117,13 +117,13 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     }
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             OrFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> firstArgMonitor =
+        OnlineMonitor<Double, V, Box<R>> firstArgMonitor =
                 formula.getFirstArgument().accept(this, parameters);
 
-        OnlineMonitor<Double, V, AbstractInterval<R>> secondArgMonitor =
+        OnlineMonitor<Double, V, Box<R>> secondArgMonitor =
                 formula.getSecondArgument().accept(this, parameters);
 
         return monitors.computeIfAbsent(formula.toString(),
@@ -134,10 +134,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
 
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             EventuallyFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
                 formula.getArgument().accept(this, parameters);
 
         return monitors.computeIfAbsent(formula.toString(),
@@ -148,10 +148,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
     }
 
     @Override
-    public OnlineMonitor<Double, V, AbstractInterval<R>> visit(
+    public OnlineMonitor<Double, V, Box<R>> visit(
             GloballyFormula formula, Parameters parameters)
     {
-        OnlineMonitor<Double, V, AbstractInterval<R>> argumentMonitor =
+        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
                 formula.getArgument().accept(this, parameters);
 
         return monitors.computeIfAbsent(formula.toString(),
@@ -161,34 +161,34 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
                                                         interpretation));
     }
 
-    private AbstractInterval<R> negation(AbstractInterval<R> value,
-                                         SignalDomain<R> domain)
+    private Box<R> negation(Box<R> value,
+                            SignalDomain<R> domain)
     {
-        return new AbstractInterval<>(domain.negation(value.getEnd()),
+        return new Box<>(domain.negation(value.getEnd()),
                                       domain.negation(value.getStart()));
     }
 
-    private AbstractInterval<R> conjunction(AbstractInterval<R> fstVal,
-                                            AbstractInterval<R> sndVal,
-                                            SignalDomain<R> domain)
+    private Box<R> conjunction(Box<R> fstVal,
+                               Box<R> sndVal,
+                               SignalDomain<R> domain)
     {
-        return new AbstractInterval<>(
+        return new Box<>(
                 domain.conjunction(fstVal.getStart(), sndVal.getStart()),
                 domain.conjunction(fstVal.getEnd(), sndVal.getEnd()));
     }
 
-    private AbstractInterval<R> disjunction(AbstractInterval<R> fstVal,
-                                            AbstractInterval<R> sndVal,
-                                            SignalDomain<R> domain)
+    private Box<R> disjunction(Box<R> fstVal,
+                               Box<R> sndVal,
+                               SignalDomain<R> domain)
     {
-        return new AbstractInterval<>(
+        return new Box<>(
                 domain.disjunction(fstVal.getStart(), sndVal.getStart()),
                 domain.disjunction(fstVal.getEnd(), sndVal.getEnd()));
     }
 
-    private Function<V, AbstractInterval<R>> fetchAtom(AtomicFormula f)
+    private Function<V, Box<R>> fetchAtom(AtomicFormula f)
     {
-        Function<V, AbstractInterval<R>> atom = atoms.get(f.getAtomicId());
+        Function<V, Box<R>> atom = atoms.get(f.getAtomicId());
 
         if(atom == null) {
             throw new IllegalArgumentException("Unknown atomic ID " +

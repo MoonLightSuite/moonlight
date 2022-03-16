@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.TestUtils;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
@@ -34,8 +34,8 @@ class ChainsVsUpdatesTest {
         List<Update<Double, Double>> updates = simpleShuffledUpdates();
         Formula formula = new AtomicFormula(POSITIVE_X);
 
-        TimeChain<Double, AbstractInterval<Double>> r1 = monitor(formula, updates);
-        TimeChain<Double, AbstractInterval<Double>> r2 = monitorChains(formula, updates);
+        TimeChain<Double, Box<Double>> r1 = monitor(formula, updates);
+        TimeChain<Double, Box<Double>> r2 = monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
@@ -49,11 +49,11 @@ class ChainsVsUpdatesTest {
                 new Interval(0, 8));
 
         // Monitoring updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitor(formula, updates);
 
         // Monitoring updates as chains
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -67,11 +67,11 @@ class ChainsVsUpdatesTest {
         Formula formula = formulaAFC();
 
         // Monitoring updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitor(formula, updates);
 
         // Monitoring updates as chains
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -85,11 +85,11 @@ class ChainsVsUpdatesTest {
         Formula formula = new AtomicFormula(POSITIVE_X);
 
         // Monitoring updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitor(formula, updates);
 
         // Monitoring updates as chains
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -104,11 +104,11 @@ class ChainsVsUpdatesTest {
                                               new Interval(0, 1));
 
         // Monitoring updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitor(formula, updates);
 
         // Monitoring updates as chains
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -123,11 +123,11 @@ class ChainsVsUpdatesTest {
                                               new Interval(0, 8));
 
         // Monitoring updates
-        TimeChain<Double, AbstractInterval<Double>> r1 =
+        TimeChain<Double, Box<Double>> r1 =
                 monitor(formula, updates);
 
         // Monitoring updates as chains
-        TimeChain<Double, AbstractInterval<Double>> r2 =
+        TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
         plotWhenEnabled(r1, r2);
@@ -161,11 +161,11 @@ class ChainsVsUpdatesTest {
         return shuffle(updates);
     }
 
-    private static Map<String, Function<Double, AbstractInterval<Double>>> atoms()
+    private static Map<String, Function<Double, Box<Double>>> atoms()
     {
-        Map<String, Function<Double, AbstractInterval<Double>>> atoms =
+        Map<String, Function<Double, Box<Double>>> atoms =
                 new HashMap<>();
-        atoms.put(POSITIVE_X, x -> new AbstractInterval<>(x, x));
+        atoms.put(POSITIVE_X, x -> new Box<>(x, x));
         return atoms;
     }
 
@@ -178,8 +178,8 @@ class ChainsVsUpdatesTest {
     }
 
     private static void plotWhenEnabled(
-            @NotNull TimeChain<Double, AbstractInterval<Double>> inOrder,
-            @NotNull TimeChain<Double, AbstractInterval<Double>> outOfOrder)
+            @NotNull TimeChain<Double, Box<Double>> inOrder,
+            @NotNull TimeChain<Double, Box<Double>> outOfOrder)
     {
         if(PLOTTING) {
             plt.plot(inOrder, "As Updates");
@@ -188,19 +188,19 @@ class ChainsVsUpdatesTest {
         }
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitor(
+    private TimeChain<Double, Box<Double>> monitor(
             Formula formula,
             List<Update<Double, Double>> ups)
     {
         OnlineTimeMonitor<Double, Double> m = init(formula);
-        TimeChain<Double, AbstractInterval<Double>> res = null;
+        TimeChain<Double, Box<Double>> res = null;
         for (Update<Double, Double> u : ups) {
             res = m.monitor(u).getSegments().copy();
         }
         return res;
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitorUpdate(
+    private TimeChain<Double, Box<Double>> monitorUpdate(
             Formula formula,
             Update<Double, Double> u)
     {
@@ -208,7 +208,7 @@ class ChainsVsUpdatesTest {
         return m.monitor(u).getSegments();
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitorChain(
+    private TimeChain<Double, Box<Double>> monitorChain(
             Formula formula,
             TimeChain<Double, Double> u)
     {
@@ -216,13 +216,13 @@ class ChainsVsUpdatesTest {
         return m.monitor(u).getSegments();
     }
 
-    private TimeChain<Double, AbstractInterval<Double>> monitorChains(
+    private TimeChain<Double, Box<Double>> monitorChains(
             Formula formula,
             List<Update<Double, Double>> ups)
     {
         OnlineTimeMonitor<Double, Double> m = init(formula);
         List<TimeChain<Double, Double>> chains = TestUtils.toChains(ups);
-        TimeSignal<Double, AbstractInterval<Double>> result = null;
+        TimeSignal<Double, Box<Double>> result = null;
         for(TimeChain<Double, Double> c: chains) {
             result = m.monitor(c);
         }
@@ -232,7 +232,7 @@ class ChainsVsUpdatesTest {
 
     private static OnlineTimeMonitor<Double, Double> init(Formula formula)
     {
-        Map<String, Function<Double, AbstractInterval<Double>>> atoms = atoms();
+        Map<String, Function<Double, Box<Double>>> atoms = atoms();
         return new OnlineTimeMonitor<>(formula, new DoubleDomain(), atoms);
     }
 

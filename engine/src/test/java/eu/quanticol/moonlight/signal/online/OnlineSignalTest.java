@@ -1,6 +1,6 @@
 package eu.quanticol.moonlight.signal.online;
 
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.online.signal.OnlineSignal;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -13,8 +13,8 @@ class OnlineSignalTest {
     @Test
     void refine1() {
         DoubleDomain domain = new DoubleDomain();
-        AbstractInterval<Double> data = new AbstractInterval<>(10.0,30.0);
-        AbstractInterval<Double> any = new AbstractInterval<>(
+        Box<Double> data = new Box<>(10.0,30.0);
+        Box<Double> any = new Box<>(
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain);
@@ -32,15 +32,15 @@ class OnlineSignalTest {
     @Test
     void refine2() {
         DoubleDomain domain = new DoubleDomain();
-        AbstractInterval<Double> data = new AbstractInterval<>(10.0,30.0);
-        AbstractInterval<Double> any = new AbstractInterval<>(
+        Box<Double> data = new Box<>(10.0,30.0);
+        Box<Double> any = new Box<>(
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain);
 
         signal.refine(new Update<>(0.0, 10.0, data));
 
-        AbstractInterval<Double> data1 = new AbstractInterval<>(10.0, 10.0);
+        Box<Double> data1 = new Box<>(10.0, 10.0);
         signal.refine(new Update<>(5.0, 10.0, data1));
 
         assertEquals(data, signal.getValueAt(0.0));
@@ -55,18 +55,18 @@ class OnlineSignalTest {
     @Test
     void refine3() {
         DoubleDomain domain = new DoubleDomain();
-        AbstractInterval<Double> data = new AbstractInterval<>(10.0,30.0);
-        AbstractInterval<Double> any = new AbstractInterval<>(
+        Box<Double> data = new Box<>(10.0,30.0);
+        Box<Double> any = new Box<>(
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);
         OnlineSignal<Double> signal  = new OnlineSignal<>(domain);
 
         signal.refine(new Update<>(0.0, 10.0, data));
 
-        AbstractInterval<Double> data1 = new AbstractInterval<>(10.0, 20.0);
+        Box<Double> data1 = new Box<>(10.0, 20.0);
         signal.refine(new Update<>(5.0, 10.0, data1));
 
-        AbstractInterval<Double> data2 = new AbstractInterval<>(10.0, 10.0);
+        Box<Double> data2 = new Box<>(10.0, 10.0);
         signal.refine(new Update<>(3.0, 8.0, data2));
 
         assertEquals(data, signal.getValueAt(0.0));

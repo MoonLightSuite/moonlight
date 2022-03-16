@@ -1,8 +1,8 @@
 package eu.quanticol.moonlight.formula;
 
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
@@ -37,10 +37,10 @@ class TestSpaceOnline {
                 Utils.createLocServiceStatic(0, 1, T, grid);
 
 
-        HashMap<String, Function<Double, AbstractInterval<Double>>>
+        HashMap<String, Function<Double, Box<Double>>>
                 atoms = new HashMap<>();
 
-        atoms.put("positiveX", v -> new AbstractInterval<>(v, v));
+        atoms.put("positiveX", v -> new Box<>(v, v));
 
         HashMap<String,
                 Function<SpatialModel<Double>,
@@ -57,10 +57,10 @@ class TestSpaceOnline {
 
         ForkJoinPool customThreadPool = new ForkJoinPool(12);
 
-        TimeSignal<Double, List<AbstractInterval<Double>>> r =
+        TimeSignal<Double, List<Box<Double>>> r =
                 m.monitor((TimeChain<Double, List<Double>>) null);
 
-        TimeChain<Double, List<AbstractInterval<Double>>> ss = r.getSegments();
+        TimeChain<Double, List<Box<Double>>> ss = r.getSegments();
 
         assertEquals(1, ss.size());
 
@@ -71,7 +71,7 @@ class TestSpaceOnline {
 
         assertEquals(2, ss.size());
 
-        List<AbstractInterval<Double>> fs = ss.get(0).getValue();
+        List<Box<Double>> fs = ss.get(0).getValue();
 
         assertEquals(4, fs.get(0).getStart());
         assertEquals(5, fs.get(1).getStart());

@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.examples.sensors;
 
 import eu.quanticol.moonlight.api.MatlabRunner;
-import eu.quanticol.moonlight.core.base.AbstractInterval;
+import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.Sample;
@@ -338,7 +338,7 @@ public class SensorsOnline {
             Collections.shuffle(updates, new Random(RND_SEED));
 
         Stopwatch rec = Stopwatch.start();
-        SpaceTimeSignal<Double, AbstractInterval<Double>> result = null;
+        SpaceTimeSignal<Double, Box<Double>> result = null;
         for(Update<Double, List<Pair<Integer, Double>>> u: updates) {
             result = m.monitor(u);
         }
@@ -353,7 +353,7 @@ public class SensorsOnline {
     private static OnlineSpatialTemporalMonitor<Double, Pair<Integer, Double>, Double>
     onlineMonitorInit(Formula f, boolean parallel)
     {
-        Map<String, Function<Pair<Integer,Double>, AbstractInterval<Double>>>
+        Map<String, Function<Pair<Integer,Double>, Box<Double>>>
             atoms = setOnlineAtoms();
 
         return new OnlineSpatialTemporalMonitor<>(f, NODES, new DoubleDomain(),
@@ -362,10 +362,10 @@ public class SensorsOnline {
     }
 
     private static
-    Map<String, Function<Pair<Integer, Double>, AbstractInterval<Boolean>>>
+    Map<String, Function<Pair<Integer, Double>, Box<Boolean>>>
     setOnlineAtomsBoolean()
     {
-        Map<String, Function<Pair<Integer, Double>, AbstractInterval<Boolean>>>
+        Map<String, Function<Pair<Integer, Double>, Box<Boolean>>>
                 atoms = new HashMap<>();
         atoms.put(COORDINATOR, x -> booleanInterval(x.getFirst() == 1));
         atoms.put(ROUTER, x -> booleanInterval(x.getFirst() == 2));
@@ -377,10 +377,10 @@ public class SensorsOnline {
     }
 
     private static
-    Map<String, Function<Pair<Integer, Double>, AbstractInterval<Double>>>
+    Map<String, Function<Pair<Integer, Double>, Box<Double>>>
     setOnlineAtoms()
     {
-        Map<String, Function<Pair<Integer, Double>, AbstractInterval<Double>>>
+        Map<String, Function<Pair<Integer, Double>, Box<Double>>>
                 atoms = new HashMap<>();
         atoms.put(COORDINATOR, x -> doubleInterval(x.getFirst() == 1 ? 1 : 0));
         atoms.put(ROUTER, x -> doubleInterval(x.getFirst() == 2 ? 1 : 0));
@@ -391,12 +391,12 @@ public class SensorsOnline {
         return atoms;
     }
 
-    private static AbstractInterval<Double> doubleInterval(double value) {
-        return new AbstractInterval<>(value, value);
+    private static Box<Double> doubleInterval(double value) {
+        return new Box<>(value, value);
     }
 
-    private static AbstractInterval<Boolean> booleanInterval(boolean cond) {
-        return cond ? new AbstractInterval<>(true, true) :
-                      new AbstractInterval<>(false, false);
+    private static Box<Boolean> booleanInterval(boolean cond) {
+        return cond ? new Box<>(true, true) :
+                      new Box<>(false, false);
     }
 }

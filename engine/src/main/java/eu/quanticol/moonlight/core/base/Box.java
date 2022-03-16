@@ -38,14 +38,12 @@ import java.util.function.Function;
  * by Moonlight, and being implemented by all numeric types, it provides a
  * fairly general support out of the box.
  *
- * For the reason why AbstractInterval implements Comparable itself,
- * see {@link AbstractInterval#compareTo(AbstractInterval)}.
+ * For the reason why Box implements Comparable itself,
+ * see {@link Box#compareTo(Box)}.
  *
  * @param <T> Type of the interval (currently only numbers make sense)
  */
-public class AbstractInterval<T extends Comparable<T>>
-        implements Comparable<AbstractInterval<T>>
-{
+public class Box<T extends Comparable<T>> implements Comparable<Box<T>> {
     private final T start;
     private final T end;
     private final boolean openOnRight;
@@ -58,7 +56,7 @@ public class AbstractInterval<T extends Comparable<T>>
      * @param openOnLeft marks whether the left bound is included or not
      * @param openOnRight marks whether the right bound is included or not
      */
-    public AbstractInterval(T start, T end, boolean openOnLeft, boolean openOnRight) {
+    public Box(T start, T end, boolean openOnLeft, boolean openOnRight) {
         if(start.compareTo(end) > 0)
             throw new IllegalArgumentException("An Interval must have the " +
                                                "left bound smaller than the " +
@@ -70,7 +68,7 @@ public class AbstractInterval<T extends Comparable<T>>
         this.openOnRight = openOnRight;
     }
 
-    public AbstractInterval(T start, T end) {
+    public Box(T start, T end) {
         this(start, end,false,false);
     }
 
@@ -108,9 +106,9 @@ public class AbstractInterval<T extends Comparable<T>>
      * @return true if the argument interval is contained, false otherwise
      * @throws ClassCastException when the target is of a different type
      */
-    public boolean contains(AbstractInterval<?> target) {
+    public boolean contains(Box<?> target) {
         if (target != null) {
-            AbstractInterval<T> interval = (AbstractInterval<T>) target;
+            Box<T> interval = (Box<T>) target;
             return  // same object
                     this.equals(interval)                                ||
                     // strictly contained
@@ -171,7 +169,7 @@ public class AbstractInterval<T extends Comparable<T>>
      * @throws UnsupportedOperationException if the interval cannot be compared
      */
     @Override
-    public int compareTo(@NotNull AbstractInterval<T> o) {
+    public int compareTo(@NotNull Box<T> o) {
         if(this.equals(o))
             return 0;
 
@@ -208,7 +206,7 @@ public class AbstractInterval<T extends Comparable<T>>
         if (getClass() != obj.getClass())
             return false;
         @SuppressWarnings("unchecked")
-        AbstractInterval<T> other = (AbstractInterval<T>) obj;
+        Box<T> other = (Box<T>) obj;
         if (!end.equals(other.end))
             return false;
         if (openOnLeft != other.openOnLeft || openOnRight != other.openOnRight)
@@ -238,11 +236,7 @@ public class AbstractInterval<T extends Comparable<T>>
         return output;
     }
 
-    public <R extends Comparable<R>> AbstractInterval<R> apply(Function<T, R> f)
-    {
-        return new AbstractInterval<>(f.apply(this.start),
-                                      f.apply(this.end),
-                                      this.openOnLeft,
-                                      this.openOnRight);
+    public <R extends Comparable<R>> Box<R> apply(Function<T, R> f) {
+        return new Box<>(f.apply(start), f.apply(end), openOnLeft, openOnRight);
     }
 }
