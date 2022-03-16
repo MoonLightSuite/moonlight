@@ -24,8 +24,8 @@ include("spatio-temporal:patterns")
 include("spatio-temporal:sensors")
 include("spatio-temporal:simpleGrid")
 include("spatio-temporal:subway")
+include("spatio-temporal:pollution")
 // temporal examples:
-// TODO: add these
 include ("temporal:afc")
 include ("temporal:amt")
 include ("temporal:matlab")

@@ -35,104 +35,45 @@ public class SpatialAlgorithms {
                         .compute();
     }
 
-    public static <E, M, R> List<R> everywhere(SignalDomain<R> dModule,
+    public static <E, M, R> List<R> everywhere(SignalDomain<R> domain,
                                                IntFunction<R> s,
                                                DistanceStructure<E, M> ds)
     {
-        ArrayList<R> values = dModule.createArray(ds.getModel().size());
-        for (int i = 0; i < ds.getModel().size(); i++) {
-            R v = dModule.max();
-            for (int j = 0; j < ds.getModel().size(); j++) {
-                if (ds.areWithinBounds(i, j)) {
-                    v = dModule.conjunction(v, s.apply(j));
-                }
-            }
-            values.set(i, v);
-        }
-        return values;
+        return new SpatialOperator<>(ds, domain, false).everywhere(s);
     }
 
     public static <E, M, R> List<R> somewhere(SignalDomain<R> domain,
                                               IntFunction<R> s,
                                               DistanceStructure<E, M> ds)
     {
-        int size = ds.getModel().size();
-        List<R> values = domain.createArray(size);
-
-        for (int i = 0; i < size; i++) {
-            R v = domain.min();
-            for (int j = 0; j < size; j++) {
-                if (ds.areWithinBounds(i, j)) {
-                    v = domain.disjunction(v, s.apply(j));
-                }
-            }
-            values.set(i, v);
-        }
-        return values;
+//        int size = ds.getModel().size();
+//        List<R> values = domain.createArray(size);
+//
+//        for (int i = 0; i < size; i++) {
+//            R v = domain.min();
+//            for (int j = 0; j < size; j++) {
+//                if (ds.areWithinBounds(i, j)) {
+//                    v = domain.disjunction(v, s.apply(j));
+//                }
+//            }
+//            values.set(i, v);
+//        }
+//        return values;
+        return new SpatialOperator<>(ds, domain, false).somewhere(s);
     }
 
-    public static <E, M, R> List<R> unaryOperation(
+    public static <E, M, R> List<R> somewhereParallel(SignalDomain<R> domain,
+                                                      IntFunction<R> s,
+                                                      DistanceStructure<E, M> ds)
+    {
+        return new SpatialOperator<>(ds, domain, true).somewhere(s);
+    }
+
+    public static <E, M, R> List<R> everywhereParallel(
             SignalDomain<R> domain,
             IntFunction<R> s,
             DistanceStructure<E, M> ds)
     {
-        return locationStream(ds.getModel().size(), false)
-                .map(i -> {
-                    R v = domain.min();
-                    for (int j = 0; j < ds.getModel().size(); j++) {
-                        if (ds.areWithinBounds(i, j)) {
-                            v = domain.disjunction(v, s.apply(j));
-                        }
-                    }
-                    return v;
-                }).collect(Collectors.toList());
-    }
-
-    private static Stream<Integer> locationStream(int maxLocationId,
-                                                  boolean asParallel)
-    {
-        if(asParallel)
-            return IntStream.range(0, maxLocationId).boxed().parallel();
-        return IntStream.range(0, maxLocationId).boxed();
-    }
-
-    public static <E, M, R> List<R> somewhereParallel(
-            SignalDomain<R> dModule,
-            IntFunction<R> s,
-            DistanceStructure<E, M> ds)
-    {
-        return IntStream
-                .range(0, ds.getModel().size())
-                .boxed()
-                .parallel()
-                .map(i -> {
-                    R v = dModule.min();
-                    for (int j = 0; j < ds.getModel().size(); j++) {
-                        if (ds.areWithinBounds(i, j)) {
-                            v = dModule.disjunction(v, s.apply(j));
-                        }
-                    }
-                    return v;
-                }).collect(Collectors.toList());
-    }
-
-    public static <E, M, R> List<R> everywhereParallel(
-            SignalDomain<R> dModule,
-            IntFunction<R> s,
-            DistanceStructure<E, M> ds)
-    {
-        return IntStream
-                .range(0, ds.getModel().size())
-                .boxed()
-                .parallel()
-                .map(i -> {
-                    R v = dModule.max();
-                    for (int j = 0; j < ds.getModel().size(); j++) {
-                        if (ds.areWithinBounds(i, j)) {
-                            v = dModule.conjunction(v, s.apply(j));
-                        }
-                    }
-                    return v;
-                }).collect(Collectors.toList());
+        return new SpatialOperator<>(ds, domain, true).somewhere(s);
     }
 }

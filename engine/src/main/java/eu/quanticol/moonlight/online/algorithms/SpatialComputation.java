@@ -27,14 +27,12 @@ import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import static eu.quanticol.moonlight.online.signal.Update.asTimeChain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -52,13 +50,13 @@ public class SpatialComputation
                                       DistanceStructure<S, ?>> distance,
                               BiFunction<IntFunction<R>,
                                       DistanceStructure<S, ?>,
-                                      List<R>> operator) {
+                                      List<R>> operator)
+    {
         checkLocationServiceValidity(locationService);
         spaceIterator = new SpaceIterator<>(locationService, distance, operator);
     }
 
-    private void checkLocationServiceValidity(LocationService<T, S> locSvc)
-    {
+    private void checkLocationServiceValidity(LocationService<T, S> locSvc) {
         if (locSvc.isEmpty())
             throw new UnsupportedOperationException("The location Service " +
                                                     "must not be empty!");
