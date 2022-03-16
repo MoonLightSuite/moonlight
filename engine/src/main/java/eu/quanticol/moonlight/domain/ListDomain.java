@@ -31,7 +31,7 @@ public class ListDomain<T extends Comparable<T>>
     }
 
     /**
-     * Negation function that s.t. De Morgan laws, double negation
+     * Negation function s.t. De Morgan laws, double negation
      * and inversion of the idempotent elements hold.
      *
      * @param x element to negate
