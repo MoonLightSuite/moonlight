@@ -33,7 +33,7 @@ jobs:
         files: "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         flags: unittests # optional
         name: codecov-umbrella # optional
-        fail_ci_if_error: false # optional (default = false)
+        fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
 
   analysis:
