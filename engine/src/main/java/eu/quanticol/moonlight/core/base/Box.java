@@ -154,13 +154,12 @@ public class Box<T extends Comparable<T>> implements Comparable<Box<T>> {
      * failing at runtime when a comparison cannot be made.
      *
      * A summary of the logic is the following:
-     * <code>
-     *     <ul>
-     *         <li>this.sup < o.inf => compare</li>
-     *         <li>this.inf > o.sup => compare</li>
-     *         <li>o is null || o is contained in this => error</li>
-     *     </ul>
-     * </code>
+     *
+     * <ul>
+     *     <li><code>this.sup &lt; o.inf =&gt; compare</code></li>
+     *     <li><code>this.inf &gt; o.sup =&gt; compare</code></li>
+     *     <li><code>o is null || o is contained in this =&gt; error</code></li>
+     * </ul>
      *
      * @param o target interval of the comparison
      * @return a number corresponding to the result of the comparison

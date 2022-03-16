@@ -40,13 +40,14 @@ import java.util.stream.Stream;
  *        <li>
  *            <em>Monotonicity</em> invariant:
  *            <code>forall element:
- *                      current.getStart() < next.getStart() &&
- *                      current.getStart() > prev.getStart()
+ *                      current.getStart() &lt; next.getStart() &amp;&amp;
+ *                      current.getStart() &gt; prev.getStart()
  *            </code>
  *        </li>
  *        <li>
  *            <em>Ending condition</em> invariant:
- *            <code>end > getLast().getStart() && old.end <= new.end</code>
+ *            <code>end &gt; getLast().getStart() &amp;&amp;
+ *                  old.end &lt;= new.end</code>
  *        </li>
  *    </ul>
  *

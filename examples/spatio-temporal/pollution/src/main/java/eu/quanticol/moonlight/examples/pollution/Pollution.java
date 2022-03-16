@@ -1,7 +1,18 @@
 package eu.quanticol.moonlight.examples.pollution;
 
+import eu.quanticol.moonlight.core.base.Box;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.core.signal.TimeSignal;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.*;
 import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
+import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.io.DataReader;
 import eu.quanticol.moonlight.io.DataWriter;
 import eu.quanticol.moonlight.io.parsing.FileType;
@@ -9,13 +20,9 @@ import eu.quanticol.moonlight.io.parsing.AdjacencyExtractor;
 import eu.quanticol.moonlight.io.parsing.ParsingStrategy;
 import eu.quanticol.moonlight.io.parsing.PrintingStrategy;
 import eu.quanticol.moonlight.io.parsing.RawTrajectoryExtractor;
-import eu.quanticol.moonlight.monitoring.online.OnlineSpaceTimeMonitor;
-import eu.quanticol.moonlight.signal.online.TimeChain;
-import eu.quanticol.moonlight.signal.online.TimeSignal;
-import eu.quanticol.moonlight.signal.online.Update;
-import eu.quanticol.moonlight.space.DistanceStructure;
-import eu.quanticol.moonlight.space.LocationService;
-import eu.quanticol.moonlight.space.SpatialModel;
+import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.space.StaticLocationService;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
@@ -82,11 +89,11 @@ public class Pollution {
                                 boolean parallel)
     {
         SignalDomain<Double> d = new DoubleDomain();
-        OnlineSpaceTimeMonitor<Double, Double, Double> m =
-                new OnlineSpaceTimeMonitor<>(f, size, d,
+        OnlineSpatialTemporalMonitor<Double, Double, Double> m =
+                new OnlineSpatialTemporalMonitor<>(f, size, d,
                         ls, atoms(), dist(), parallel);
 
-        TimeSignal<Double, List<AbstractInterval<Double>>> s = null;
+        TimeSignal<Double, List<Box<Double>>> s = null;
 
         Stopwatch rec = Stopwatch.start();
 
@@ -108,11 +115,11 @@ public class Pollution {
     }
 
     private static void storeResults(
-            TimeChain<Double, List<AbstractInterval<Double>>> data,
+            TimeChain<Double, List<Box<Double>>> data,
             String name)
     {
         PrintingStrategy<double[][]> st = new RawTrajectoryExtractor(size);
-        List<Update<Double, List<AbstractInterval<Double>>>> trace = data.toUpdates();
+        List<Update<Double, List<Box<Double>>>> trace = data.toUpdates();
         int times = trace.size();
         int locations = trace.get(0).getValue().size();
         double[][] resultUp = new double[times][locations];
@@ -120,7 +127,7 @@ public class Pollution {
 
         for(int t = 0; t < times; t++) {
             for( int l = 0; l < locations; l++) {
-                AbstractInterval<Double> value = trace.get(t).getValue().get(l);
+                Box<Double> value = trace.get(t).getValue().get(l);
                 double valueUp = flattenInfinity(value.getEnd());
                 double valueDown = flattenInfinity(value.getStart());
                 resultUp[t][l] = valueUp;
@@ -172,7 +179,7 @@ public class Pollution {
     {
         Map<String,
             Function<SpatialModel<Double>,
-            DistanceStructure<Double, ?>>> ds = new HashMap<>();
+                    DistanceStructure<Double, ?>>> ds = new HashMap<>();
         ds.put(DISTANCE,  g -> distance(0.0, km(10)).apply(g));
         return ds;
     }
@@ -190,36 +197,36 @@ public class Pollution {
     }
 
     private static
-    HashMap<String, Function<Double, AbstractInterval<Double>>> atoms()
+    HashMap<String, Function<Double, Box<Double>>> atoms()
     {
-        HashMap<String, Function<Double, AbstractInterval<Double>>>
+        HashMap<String, Function<Double, Box<Double>>>
                 atoms = new HashMap<>();
 
         // criticalNO2 is the atomic proposition: NO2 > k
         atoms.put(CRITICAL_NO2, trc -> {
-            AbstractInterval<Double> v = doubleToInterval(trc);
-            return new AbstractInterval<>(v.getStart() - K, v.getEnd() - K);
+            Box<Double> v = doubleToInterval(trc);
+            return new Box<>(v.getStart() - K, v.getEnd() - K);
         });
 
         // notCriticalNO2 is the atomic proposition: NO2 < k
         atoms.put(NOT_CRITICAL_NO2, trc -> {
-            AbstractInterval<Double> v = doubleToInterval(trc);
-            return new AbstractInterval<>(K - v.getEnd(), K - v.getStart());
+            Box<Double> v = doubleToInterval(trc);
+            return new Box<>(K - v.getEnd(), K - v.getStart());
         });
 
         return atoms;
     }
 
-    private static AbstractInterval<Double> doubleToInterval(Double value) {
+    private static Box<Double> doubleToInterval(Double value) {
         // We add the artificial offset of +20 and then we can safely
         // add the [-15, +15] offset, so that we don't have degenerate
         // traces having values < 0 (which would be unfeasible observations)
         double fixedValue = value + 20;
         if(value.equals(Double.NEGATIVE_INFINITY))
-            return new AbstractInterval<>(Double.NEGATIVE_INFINITY,
+            return new Box<>(Double.NEGATIVE_INFINITY,
                                           Double.POSITIVE_INFINITY);
 
-        return new AbstractInterval<>(fixedValue - 15, fixedValue + 15);
+        return new Box<>(fixedValue - 15, fixedValue + 15);
     }
 
     public static double[][] transposeMatrix(double [][] m){
@@ -234,7 +241,7 @@ public class Pollution {
     static Function<SpatialModel<Double>, DistanceStructure<Double, Double>>
     distance(double lowerBound, double upperBound)
     {
-        return g -> new DistanceStructure<>(x -> x,
+        return g -> new DefaultDistanceStructure<>(x -> x,
                                             new DoubleDomain(),
                                             lowerBound, upperBound,
                                             g);

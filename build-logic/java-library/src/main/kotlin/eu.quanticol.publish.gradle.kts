@@ -32,5 +32,12 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
+
+//        maven {
+//            // change URLs to point to your repos, e.g. http://my.org/repo
+//            val releasesRepoUrl = uri(layout.buildDirectory.dir("repos/releases"))
+//            val snapshotsRepoUrl = uri(layout.buildDirectory.dir("repos/snapshots"))
+//            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+//        }
     }
 }

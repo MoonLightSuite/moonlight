@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * Spatial-temporal signal that represents a generic trace of the kind
- * (s,t) -> (x1, ..., xn).
+ * (s,t) -&gt; (x1, ..., xn).
  * Note that x1, ..., xn must at least implement Comparable
  *
  * The goal of this class is to minimize the raw usage of the Comparable class,

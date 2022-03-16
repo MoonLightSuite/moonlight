@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Data class to store updates of the kind <code>[start, end) -> value</code>
+ * Data class to store updates of the kind <code>[start, end) -&gt; value</code>
  *
  * @param <T> Time domain of the update
  * @param <V> Value of the update

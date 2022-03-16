@@ -10,7 +10,7 @@ import java.util.List;
  * Parsing strategy that generates a collection of spatial-temporal
  * signals based on a set of String-based time series.
  * The output is represented as a Collection of MultiValuedTrace,
- * s.t. (Integer space, Integer time) -> Double value
+ * s.t. (Integer space, Integer time) -&gt; Double value
  *
  * @see RawTrajectoryExtractor for importing a single trajectory from a file.
  */

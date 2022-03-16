@@ -80,7 +80,7 @@ public class EscapeAlgorithm<E, M, R> {
     {
         Map<Integer, Map<Integer, R>> neighboursDistanceMap = new HashMap<>();
         Set<Pair<Integer, Integer>> extendedNeighbourhood = new HashSet<>();
-        for (Pair<Integer, Integer> pair : neighbourhood) {
+        for (Pair<Integer, Integer> pair: neighbourhood) {
             int l1 = pair.getFirst();
             int l2 = pair.getSecond();
             updateDistance(l1, l2, extendedNeighbourhood, neighboursDistanceMap);
