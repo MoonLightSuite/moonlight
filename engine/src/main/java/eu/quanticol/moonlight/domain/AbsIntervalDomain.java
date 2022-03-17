@@ -90,46 +90,50 @@ public class AbsIntervalDomain<R extends Comparable<R>>
      */
     @Override
     public DataHandler<Box<R>> getDataHandler() {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public boolean equalTo(Box<R> x, Box<R> y) {
-        return false;
+        return x.equals(y);
     }
 
     @Override
     public Box<R> valueOf(boolean b) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> valueOf(double v) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> computeLessThan(double v1, double v2) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> computeLessOrEqualThan(double v1, double v2) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> computeEqualTo(double v1, double v2) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> computeGreaterThan(double v1, double v2) {
-        return null;
+        return notImplemented();
     }
 
     @Override
     public Box<R> computeGreaterOrEqualThan(double v1, double v2) {
-        return null;
+        return notImplemented();
+    }
+
+    private <T> T notImplemented() {
+        throw new UnsupportedOperationException("Operation not implemented.");
     }
 }
