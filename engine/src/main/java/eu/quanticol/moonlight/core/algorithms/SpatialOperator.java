@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SpatialOperator<E, M, R> {
     private final DistanceStructure<E, M> ds;
@@ -24,25 +25,26 @@ public class SpatialOperator<E, M, R> {
     }
 
     public List<R> somewhere(IntFunction<R> s) {
-        Box<Integer> range = new Box<>(0, ds.getModel().size());
-        return unaryOperation(range, this::neighbourhood,
+        return unaryOperation(allLocations(), this::neighbourhood,
                               domain::disjunction, domain.min(), s);
     }
 
+
     public List<R> everywhere(IntFunction<R> s) {
-        Box<Integer> range = new Box<>(0, ds.getModel().size());
-        return unaryOperation(range, this::neighbourhood,
+        return unaryOperation(allLocations(), this::neighbourhood,
                               domain::conjunction, domain.max(), s);
     }
 
     public List<R> unaryOperation(Box<Integer> range,
                                   IntFunction<IntPredicate> filter,
-                                  BinaryOperator<R> op,
-                                  R id,
-                                  IntFunction<R> s)
+                                  BinaryOperator<R> domainOp,
+                                  R identity,
+                                  IntFunction<R> spatialSignal)
     {
+        Function<Integer, R> algorithm = filterReduce(filter, domainOp,
+                                                      identity, spatialSignal);
         return locationStream(range).boxed()
-                                    .map(filterReduce(range, filter, op, id, s))
+                                    .map(algorithm)
                                     .collect(Collectors.toList());
     }
 
@@ -52,15 +54,22 @@ public class SpatialOperator<E, M, R> {
         return IntStream.range(range.getStart(), range.getEnd());
     }
 
-    private Function<Integer, R> filterReduce(Box<Integer> range,
-                                              IntFunction<IntPredicate> filter,
+    private Function<Integer, R> filterReduce(IntFunction<IntPredicate> filter,
                                               BinaryOperator<R> op,
                                               R id,
                                               IntFunction<R> s)
     {
-        return i -> locationStream(range).filter(filter.apply(i))
+        return i -> locationStream(allLocations()).filter(filter.apply(i))
                                          .boxed()
                                          .reduce(id, accumulator(s, op) , op);
+    }
+
+    private R accumulate(Stream<Integer> stream, R id, BinaryOperator<R> op, IntFunction<R> s) {
+        return stream.reduce(id, accumulator(s, op), op);
+    }
+
+    private Box<Integer> allLocations() {
+        return new Box<>(0, ds.getModel().size());
     }
 
     private BiFunction<R, Integer, R> accumulator(IntFunction<R> s,
