@@ -25,6 +25,8 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCursor;
 
+import java.util.function.BiFunction;
+
 /**
  * Algorithm for Unbounded Since Computation
  */
@@ -33,30 +35,10 @@ public class SinceOperator {
     private SinceOperator() {} // Hidden constructor
 
     public static <T> Signal<T> computeUnboundSince(SignalDomain<T> domain,
-                                                    Signal<T> s1,
-                                                    Signal<T> s2)
-    {
-        Signal<T> result = new Signal<>();
-        SignalCursor<T> c1 = s1.getIterator(true);
-        SignalCursor<T> c2 = s2.getIterator(true);
-        double start = Math.max( c1.time() , c2.time() );
-        double end = Math.min(s1.end(), s2.end());
-        double time = start;
-        T current = domain.min();
-        c1.move(time);
-        c2.move(time);
-        while (!c1.completed() && !c2.completed()) {
-            result.add(time, domain.disjunction(c2.value(),
-                    domain.conjunction(c1.value(), current)));
-            time = Math.min(c1.nextTime(), c2.nextTime());
-            c1.move(time);
-            c2.move(time);
-        }
-        result.endAt(end);
-        System.out.println("PastOperator Result Signal@maxT= " +
-                "<" + s1.end() + "," + s2.end() + "> : " +
-                result.toString());
-        return result;
+                                                       Signal<T> s1,
+                                                       Signal<T> s2) {
+        UntilOperator<T> operator = new UntilOperator<>(domain);
+        return operator.computeUnboundSince(s1, s2);
     }
 
     public static <T> Signal<T> computeSince(SignalDomain<T> domain,

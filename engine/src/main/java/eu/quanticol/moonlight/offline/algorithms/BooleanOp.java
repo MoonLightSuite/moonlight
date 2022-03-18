@@ -6,6 +6,7 @@ import eu.quanticol.moonlight.offline.signal.SignalCursor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -14,6 +15,15 @@ import java.util.stream.Stream;
 public class BooleanOp<T, R> {
     private Signal<R> output;
     private double time;
+    private final boolean forward;
+
+    public BooleanOp() {
+        forward = true;
+    }
+
+    public BooleanOp(boolean isForward) {
+        forward = isForward;
+    }
 
     public Signal<R> applyUnary(Signal<T> s, Function<T, R> op) {
         return applyOp(cursors -> op.apply(cursors.get(0).value()), s);
@@ -32,8 +42,14 @@ public class BooleanOp<T, R> {
     private final void setStartingTime(Signal<T>... signals) {
         time = Arrays.stream(signals)
                      .map(Signal::start)
-                     .reduce(Math::max)
+                     .reduce(rightStartingTime())
                      .orElseGet(BooleanOp::error);
+    }
+
+    private BinaryOperator<Double> rightStartingTime() {
+        if(forward)
+            return Math::max;
+        return Math::min;
     }
 
     @SafeVarargs
@@ -69,14 +85,18 @@ public class BooleanOp<T, R> {
     @SafeVarargs
     private final List<SignalCursor<T>> prepareCursors(Signal<T>... signals) {
         return Arrays.stream(signals).map(s -> {
-            SignalCursor<T> c = s.getIterator(true);
+            SignalCursor<T> c = s.getIterator(forward);
             c.move(time);
             return c;
         }).collect(Collectors.toList());
     }
 
     private void addResult(R value) {
-        output.add(time, value);
+        if(forward) {
+            output.add(time, value);
+        } else {
+            output.addBefore(time, value);
+        }
     }
 
     private boolean isNotCompleted(Stream<SignalCursor<T>> cursors) {
@@ -86,14 +106,20 @@ public class BooleanOp<T, R> {
 
     private void moveCursorsForward(List<SignalCursor<T>> cursors) {
         time = cursors.stream()
-                .map(SignalCursor::nextTime)
-                .reduce(Math::min)
-                .orElseGet(BooleanOp::error);
+                      .map(this::moveTime)
+                      .reduce(Math::min)
+                      .orElseGet(BooleanOp::error);
         cursors.forEach(c -> c.move(time));
+    }
+
+    private double moveTime(SignalCursor<T> cursor) {
+        if(forward)
+            return cursor.nextTime();
+        return cursor.previousTime();
     }
 
     private static <T> T error() {
         throw new UnsupportedOperationException("signal data structure " +
-                "failed irreparably");
+                                                "failed irreparably");
     }
 }

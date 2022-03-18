@@ -4,7 +4,6 @@
 
 package eu.quanticol.moonlight.offline.signal;
 
-import eu.quanticol.moonlight.offline.algorithms.BooleanComputation;
 import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 
 import java.util.ArrayList;

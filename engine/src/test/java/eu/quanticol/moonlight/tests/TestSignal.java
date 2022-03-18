@@ -19,7 +19,6 @@
  */
 package eu.quanticol.moonlight.tests;
 
-import eu.quanticol.moonlight.offline.algorithms.BooleanComputation;
 import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 import eu.quanticol.moonlight.offline.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.core.base.DataHandler;

@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.offline.monitoring.temporal;
 
-import eu.quanticol.moonlight.offline.algorithms.UntilOperator;
+import eu.quanticol.moonlight.offline.algorithms.UnboundedUntilOperator;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.offline.signal.Signal;
@@ -62,7 +62,7 @@ public class TemporalMonitorUntil<T, R> implements TemporalMonitor<T, R> {
 	public Signal<R> monitor(Signal<T> signal) {
 		Signal<R> s1 = m1.monitor(signal);
 		Signal<R> s2 = m2.monitor(signal);
-		return UntilOperator.computeUntil(domain, s1, interval, s2);
+		return UnboundedUntilOperator.computeUntil(domain, s1, interval, s2);
 	}
 
 }

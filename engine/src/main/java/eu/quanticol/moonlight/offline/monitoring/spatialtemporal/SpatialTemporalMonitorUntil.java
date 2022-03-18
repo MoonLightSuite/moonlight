@@ -23,7 +23,7 @@ package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.offline.algorithms.UntilOperator;
+import eu.quanticol.moonlight.offline.algorithms.UnboundedUntilOperator;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 /**
@@ -60,7 +60,7 @@ public class SpatialTemporalMonitorUntil<S, T, R>
 	{
 		return SpatialTemporalSignal.applyToSignal(
 				m1.monitor(locationService, signal),
-				(s1, s2) -> UntilOperator.computeUntil(domain, s1, interval, s2),
+				(s1, s2) -> UnboundedUntilOperator.computeUntil(domain, s1, interval, s2),
 							m2.monitor(locationService, signal));
 	}
 }
