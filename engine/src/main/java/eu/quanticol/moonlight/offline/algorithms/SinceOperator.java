@@ -70,7 +70,9 @@ public class SinceOperator {
         Signal<T> onceMonitoring = TemporalComputation.computePastSignal(s2, interval,
                                             domain::disjunction, domain.max());
 
-        return BooleanComputation.applyBinary(unboundedMonitoring, domain::conjunction,
+        BooleanOp<T, T> booleanOp = new BooleanOp<>();
+
+        return booleanOp.applyBinary(unboundedMonitoring, domain::conjunction,
                                                                 onceMonitoring);
     }
 }

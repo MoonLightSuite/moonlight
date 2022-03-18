@@ -41,7 +41,7 @@ public interface Sample<T extends Comparable<T>, V>
      */
     T getStart();
 
-    default int compareTo(Sample<T, V> segment) {
-        return getStart().compareTo(segment.getStart());
+    default int compareTo(Sample<T, V> other) {
+        return getStart().compareTo(other.getStart());
     }
 }

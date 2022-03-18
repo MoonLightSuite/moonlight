@@ -5,6 +5,7 @@
 package eu.quanticol.moonlight.offline.signal;
 
 import eu.quanticol.moonlight.offline.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -91,15 +92,17 @@ public class SpatialTemporalSignal<T> {
 		return spSignal;
 	}
 
-	public <R> SpatialTemporalSignal<R> apply(Function<T,R> f ) {
-		return new SpatialTemporalSignal<R>(this.size, (i -> BooleanComputation.applyUnary(signals.get(i), f)));
+	public <R> SpatialTemporalSignal<R> apply(Function<T, R> f ) {
+		BooleanOp<T, R> booleanOp = new BooleanOp<>();
+		return new SpatialTemporalSignal<R>(this.size, (i -> booleanOp.applyUnary(signals.get(i), f)));
 	}
 	
 	public static <T,R> SpatialTemporalSignal<R> apply(SpatialTemporalSignal<T> s1, BiFunction<T,T,R> f , SpatialTemporalSignal<T> s2 ) {
 		if (s1.size != s2.size) {
 			throw new IllegalArgumentException();//TODO: Add message here!
 		}
-		return new SpatialTemporalSignal<R>( s1.size , (i -> BooleanComputation.applyBinary(s1.signals.get(i),f,s2.signals.get(i)) ));
+		BooleanOp<T, R> booleanOp = new BooleanOp<>();
+		return new SpatialTemporalSignal<R>( s1.size , (i -> booleanOp.applyBinary(s1.signals.get(i),f,s2.signals.get(i)) ));
 	}
 
 	public static <T,R> SpatialTemporalSignal<R> applyToSignal(SpatialTemporalSignal<T> s1, BiFunction<Signal<T>,Signal<T>,Signal<R>> f , SpatialTemporalSignal<T> s2 ) {

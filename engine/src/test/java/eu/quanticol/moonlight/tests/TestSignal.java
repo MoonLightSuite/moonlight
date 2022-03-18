@@ -20,6 +20,7 @@
 package eu.quanticol.moonlight.tests;
 
 import eu.quanticol.moonlight.offline.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 import eu.quanticol.moonlight.offline.algorithms.SlidingWindow;
 import eu.quanticol.moonlight.core.base.DataHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class TestSignal {
+    
+    private final BooleanOp<Boolean, Boolean> booleanOp = new BooleanOp<>();
 
 
     <T> void checkSignal(Signal<T> s, double start, double end, int size, BiFunction<Double, T, Boolean> p, BiFunction<Double, Double, Boolean> step) {
@@ -90,7 +93,7 @@ class TestSignal {
     @Test
     void testUnaryApply() {
         Signal<Boolean> input = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
-        Signal<Boolean> s = BooleanComputation.applyUnary(input, x -> !x);
+        Signal<Boolean> s = booleanOp.applyUnary(input, x -> !x);
         assertEquals(0.0, s.start(), 0.0, "start:");
         assertEquals(100.0, s.end(), 0.0, "end:");
         assertEquals(101, s.size());
@@ -100,7 +103,7 @@ class TestSignal {
     @Test
     void testUnaryApply2() {
         Signal<Boolean> input = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
-        Signal<Boolean> s = BooleanComputation.applyUnary(input, x -> !x);
+        Signal<Boolean> s = booleanOp.applyUnary(input, x -> !x);
         checkSignal(s, 0.0, 100, 101, (x, y) -> (x <= 100 ? y == (!(x.intValue() % 2 == 0)) : y), (x, y) -> (y - x) == 1.0);
     }
 
@@ -108,9 +111,9 @@ class TestSignal {
     void testBinaryApply() {
         Signal<Boolean> input1 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
         Signal<Boolean> input2 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0);
-        Signal<Boolean> s1 = BooleanComputation.applyUnary(input1, x -> !x);
-        Signal<Boolean> s2 = BooleanComputation.applyUnary(input2, x -> !x);
-        Signal<Boolean> s3 = BooleanComputation.applyBinary(s1, (x, y) -> x || y, s2);
+        Signal<Boolean> s1 = booleanOp.applyUnary(input1, x -> !x);
+        Signal<Boolean> s2 = booleanOp.applyUnary(input2, x -> !x);
+        Signal<Boolean> s3 = booleanOp.applyBinary(s1, (x, y) -> x || y, s2);
         checkSignal(s3, 0.0, 100, 1, (x, y) -> true, (x, y) -> (x == 0.0) && (y == 100.0));
     }
 
@@ -128,9 +131,9 @@ class TestSignal {
     void testBinaryApply2() {
         Signal<Boolean> input1 = Utils.createSignal(50.0, 150, 1.0, x -> x.intValue() % 2 == 0);
         Signal<Boolean> input2 = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 != 0);
-        Signal<Boolean> s1 = BooleanComputation.applyUnary(input1, x -> !x);
-        Signal<Boolean> s2 = BooleanComputation.applyUnary(input2, x -> !x);
-        Signal<Boolean> s3 = BooleanComputation.applyBinary(s1, (x, y) -> x || y, s2);
+        Signal<Boolean> s1 = booleanOp.applyUnary(input1, x -> !x);
+        Signal<Boolean> s2 = booleanOp.applyUnary(input2, x -> !x);
+        Signal<Boolean> s3 = booleanOp.applyBinary(s1, (x, y) -> x || y, s2);
         checkSignal(s3, 50.0, 100, 1, (x, y) -> true, (x, y) -> (x == 50.0) && (y == 100.0));
     }
 

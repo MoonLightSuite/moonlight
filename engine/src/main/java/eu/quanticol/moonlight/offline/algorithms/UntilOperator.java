@@ -43,9 +43,10 @@ public class UntilOperator {
         double t2 = c2.time();
         double end = Math.min(t1 , t2);
         double time = end;
-        T current = domain.min();
         c1.move(time);
         c2.move(time);
+
+        T current = domain.min();
         while (!c1.completed() && !c2.completed()) {
             //TODO: instead of c2.value(),
             // 		should be c2.value() AND domain.conjunction(c1.value())
@@ -76,7 +77,9 @@ public class UntilOperator {
         Signal<T> eventuallyMonitoring = TemporalComputation.computeFutureSignal(s2, interval,
                 domain::disjunction, domain.min());
 
-        return BooleanComputation.applyBinary(unboundedMonitoring, domain::conjunction,
+        BooleanOp<T, T> booleanOp = new BooleanOp<>();
+
+        return booleanOp.applyBinary(unboundedMonitoring, domain::conjunction,
                 eventuallyMonitoring);
     }
 }

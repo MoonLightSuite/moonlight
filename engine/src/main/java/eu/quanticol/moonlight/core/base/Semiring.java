@@ -86,23 +86,11 @@ public interface Semiring<R> {
 		return createArray(size, i -> min());
 	}
 
-	default ArrayList<ArrayList<R>> createMatrix(int rows , int columns) {
-		return createMatrix( rows, columns, (x,y) -> min() );
-	}
-
 	default ArrayList<R> createArray(int size , IntFunction<R> init) {
 		return IntStream
 				.range(0, size)
 				.mapToObj(init)
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
-
-	default ArrayList<ArrayList<R>> createMatrix(int rows , int columns,
-												 BiFunction<Integer, Integer, R> init) {
-		return IntStream
-				.range(0, rows)
-				.mapToObj(x -> createArray(columns,y -> init.apply(x, y)))
-				.collect(Collectors.toCollection(ArrayList::new));
-	}	
 
 }
