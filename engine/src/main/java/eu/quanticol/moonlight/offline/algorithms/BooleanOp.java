@@ -107,9 +107,15 @@ public class BooleanOp<T, R> {
     private void moveCursorsForward(List<SignalCursor<T>> cursors) {
         time = cursors.stream()
                       .map(this::moveTime)
-                      .reduce(Math::min)
+                      .reduce(rightEndingTime())
                       .orElseGet(BooleanOp::error);
         cursors.forEach(c -> c.move(time));
+    }
+
+    private BinaryOperator<Double> rightEndingTime() {
+        if(forward)
+            return Math::min;
+        return Math::max;
     }
 
     private double moveTime(SignalCursor<T> cursor) {

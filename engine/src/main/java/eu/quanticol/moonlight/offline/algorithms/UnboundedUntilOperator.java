@@ -36,9 +36,9 @@ public class UnboundedUntilOperator {
                                                          Signal<T> s1,
                                                          Signal<T> s2)
     {
-//        UntilOperator<T> operator = new UntilOperator<>(domain);
-//        return operator.computeUnboundedUntil(s1, s2);
-        return computeUnboundedUntilOld(domain, s1, s2);
+        UntilOperator<T> operator = new UntilOperator<>(domain);
+        return operator.computeUnboundedUntil(s1, s2);
+//        return computeUnboundedUntilOld(domain, s1, s2);
     }
 
     public static <T> Signal<T> computeUnboundedUntilOld(SignalDomain<T> domain,
