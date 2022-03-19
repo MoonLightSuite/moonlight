@@ -64,7 +64,7 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
         return sp.computeUnary(m.monitor(locationService, signal));
 	}
 
-    private List<R> somewhereOp(IntFunction<R> spatialSignal,
+    private List<R> somewhereOp(List<R> spatialSignal,
                                  DistanceStructure<S, ?> ds)
     {
         return SpatialAlgorithms.somewhere(domain, spatialSignal, ds);

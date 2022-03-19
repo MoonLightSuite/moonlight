@@ -10,8 +10,8 @@ public class SpatialAlgorithms {
     private SpatialAlgorithms() {} // Hidden constructor
 
     public static <E, M, R> List<R> reach(SignalDomain<R> signalDomain,
-                                          IntFunction<R> leftSpatialSignal,
-                                          IntFunction<R> rightSpatialSignal,
+                                          List<R> leftSpatialSignal,
+                                          List<R> rightSpatialSignal,
                                           DistanceStructure<E, M> distStr)
     {
         return new ReachAlgorithm<>(distStr, signalDomain,
@@ -20,7 +20,7 @@ public class SpatialAlgorithms {
     }
 
     public static <E, M, R> List<R> escape(SignalDomain<R> signalDomain,
-                                           IntFunction<R> spatialSignal,
+                                           List<R> spatialSignal,
                                            DistanceStructure<E, M> distStr)
     {
         return new EscapeAlgorithm<>(distStr, signalDomain, spatialSignal)
@@ -28,28 +28,28 @@ public class SpatialAlgorithms {
     }
 
     public static <E, M, R> List<R> everywhere(SignalDomain<R> domain,
-                                               IntFunction<R> s,
+                                               List<R> s,
                                                DistanceStructure<E, M> ds)
     {
         return new SpatialOperator<>(ds, domain, false).everywhere(s);
     }
 
     public static <E, M, R> List<R> somewhere(SignalDomain<R> domain,
-                                              IntFunction<R> s,
+                                              List<R> s,
                                               DistanceStructure<E, M> ds)
     {
         return new SpatialOperator<>(ds, domain, false).somewhere(s);
     }
 
     public static <E, M, R> List<R> somewhereParallel(SignalDomain<R> domain,
-                                                      IntFunction<R> s,
+                                                      List<R> s,
                                                       DistanceStructure<E, M> ds)
     {
         return new SpatialOperator<>(ds, domain, true).somewhere(s);
     }
 
     public static <E, M, R> List<R> everywhereParallel(SignalDomain<R> domain,
-                                                       IntFunction<R> s,
+                                                       List<R> s,
                                                        DistanceStructure<E, M> ds)
     {
         return new SpatialOperator<>(ds, domain, true).somewhere(s);

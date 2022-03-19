@@ -136,10 +136,10 @@ public class RandomFormula {
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);
-                outputSignal.getIterator(true).value();
+                outputSignal.getIterator(true).getCurrentValue();
             }
             after = System.currentTimeMillis();
-            Double value = m.monitor(signal).getIterator(true).value();
+            Double value = m.monitor(signal).getIterator(true).getCurrentValue();
             System.out.println("MoonLight Robustness: " + value);
             System.out.println("MoonLight Avg. Time (msec) (" + nReps + " repetitions): " + (after - before) / 1000.);
 

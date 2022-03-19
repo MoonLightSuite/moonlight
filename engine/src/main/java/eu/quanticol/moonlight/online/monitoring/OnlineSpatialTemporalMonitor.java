@@ -263,7 +263,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     private OnlineMonitor<Double, List<V>, List<Box<R>>>
     unarySpace(UnaryFormula f,
                Parameters p,
-               BiFunction<IntFunction<Box<R>>,
+               BiFunction<List<Box<R>>,
                        DistanceStructure<S, ?>, List<Box<R>>> op)
     {
         OnlineMonitor<Double, List<V>, List<Box<R>>>
@@ -283,7 +283,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     }
 
     private List<Box<R>> everywhereOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -294,7 +294,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     }
 
     private List<Box<R>> somewhereOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -307,7 +307,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     }
 
     private List<Box<R>> escapeOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> f)
     {
         return escape(new AbsIntervalDomain<>(interpretation),

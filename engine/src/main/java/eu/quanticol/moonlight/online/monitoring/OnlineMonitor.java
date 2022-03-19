@@ -24,7 +24,6 @@ import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ import java.util.List;
  * @param <V> The domain of the signal being monitored
  * @param <R> Semantic Interpretation Semiring Type
  */
-public interface OnlineMonitor<T extends Comparable<T> & Serializable, V, R>
+public interface OnlineMonitor<T extends Comparable<T>, V, R>
 {
     /**
      * Execution starter of the monitoring process. It returns a list of updates

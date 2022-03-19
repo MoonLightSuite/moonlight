@@ -43,7 +43,9 @@ import java.util.function.Function;
  *
  * @param <T> Type of the interval (currently only numbers make sense)
  */
-public class Box<T extends Comparable<T>> implements Comparable<Box<T>> {
+public class Box<T extends Comparable<T>>
+        implements Comparable<Box<T>>
+{
     private final T start;
     private final T end;
     private final boolean openOnRight;
@@ -235,7 +237,8 @@ public class Box<T extends Comparable<T>> implements Comparable<Box<T>> {
         return output;
     }
 
-    public <R extends Comparable<R>> Box<R> apply(Function<T, R> f) {
+    public <R extends Comparable<R>>
+    Box<R> apply(Function<T, R> f) {
         return new Box<>(f.apply(start), f.apply(end), openOnLeft, openOnRight);
     }
 }

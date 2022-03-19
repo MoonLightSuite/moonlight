@@ -6,18 +6,16 @@ import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 
-public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
+public class SpaceIterator<T extends Comparable<T>, S, R> {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> op;
+    private final BiFunction<List<R>, DistanceStructure<S, ?>, List<R>> op;
 
     private Pair<T, SpatialModel<S>> currSpace;
     private Pair<T, SpatialModel<S>> nextSpace;
@@ -28,7 +26,7 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
     public SpaceIterator(@NotNull LocationService<T, S> locationService,
                             Function<SpatialModel<S>,
                                       DistanceStructure<S, ?>> distance,
-                            BiFunction<IntFunction<R>,
+                            BiFunction<List<R>,
                                       DistanceStructure<S, ?>,
                                       List<R>> operator)
     {
@@ -48,7 +46,7 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
         return locSvc.isEmpty();
     }
 
-    private void moveAndCompute(T tNext, IntFunction<R> spatialSignal) {
+    private void moveAndCompute(T tNext, List<R> spatialSignal) {
         while (isNextSpaceModelWithinHorizon(tNext)) {
             shiftSpatialModel();
             T t = currSpace.getFirst();
@@ -68,7 +66,7 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
 
     public void computeOp(T t, T tNext,
                           DistanceStructure<S, ?> f,
-                          IntFunction<R> spatialSignal)
+                          List<R> spatialSignal)
     {
         resultAction.accept(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal);

@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.online.signal;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ import java.util.Objects;
  * @param <T> Time domain of the update
  * @param <V> Value of the update
  */
-public class Update<T extends Comparable<T>, V>  {
+public class Update<T extends Comparable<T>, V> {
 
     private final T start;
     private final T end;
@@ -79,7 +78,7 @@ public class Update<T extends Comparable<T>, V>  {
         return Objects.hash(start, end, value);
     }
 
-    public static <T extends Comparable<T> & Serializable, V>
+    public static <T extends Comparable<T>, V>
     TimeChain<T, V> asTimeChain(List<Update<T, V>> ups)
     {
         T end = ups.get(ups.size() - 1).getEnd();

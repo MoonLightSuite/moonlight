@@ -50,7 +50,7 @@ public class SpatialComputation<S, R> {
     public SpatialComputation(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<IntFunction<R>, DistanceStructure<S, ?>,
+            BiFunction<List<R>, DistanceStructure<S, ?>,
                     List<R>> operator)
     {
         spaceItr = new SpaceIterator<>(l, distance, operator);
@@ -70,13 +70,13 @@ public class SpatialComputation<S, R> {
     }
 
     private void doCompute() {
-        double t = cursor.getTime();
+        double t = cursor.getCurrentTime();
         spaceItr.init(t, this::addResult);
         DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
 
         while (isNotCompleted(t, cursor)) {
-            IntFunction<R> spatialSignal = cursor.getValue();
-            double tNext = cursor.forward();
+            List<R> spatialSignal = cursor.getCurrentValue();
+            double tNext = cursor.forwardTime();
             spaceItr.computeOp(t, tNext, f, spatialSignal);
             t = moveSpatialModel(tNext);
         }
@@ -112,8 +112,8 @@ public class SpatialComputation<S, R> {
             c1.move(t);
             c2.move(t);
             while (isNotCompleted(t, c1, c2)) {
-                IntFunction<R> spatialSignal1 = c1.getValue();
-                IntFunction<R> spatialSignal2 = c2.getValue();
+                List<R> spatialSignal1 = c1.getCurrentValue();
+                List<R> spatialSignal2 = c2.getCurrentValue();
                 List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
                 result.add(t, (values::get));
                 double tNext = Math.min(c1.nextTime(), c2.nextTime());
@@ -125,7 +125,7 @@ public class SpatialComputation<S, R> {
                     t = spaceItr.getCurrentT();
                     f = spaceItr.generateDistanceStructure();
                     values = reach(domain, spatialSignal1, spatialSignal2, f);
-                    result.add(t, escape(domain, (values::get), f));
+                    result.add(t, escape(domain, values, f));
                 }
 
                 t = tNext;
@@ -144,7 +144,7 @@ public class SpatialComputation<S, R> {
     {
         return !Double.isNaN(t) &&
                 Arrays.stream(cursors)
-                      .map(c -> !c.completed())
+                      .map(c -> !c.isCompleted())
                       .reduce( true, (c1, c2) -> c1 && c2);
     }
 }

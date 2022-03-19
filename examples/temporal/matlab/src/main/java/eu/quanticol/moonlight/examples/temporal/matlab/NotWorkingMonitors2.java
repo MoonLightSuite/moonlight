@@ -69,6 +69,6 @@ public class NotWorkingMonitors2 {
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);
-        outputSignal.getIterator(true).value();
+        outputSignal.getIterator(true).getCurrentValue();
     }
 }

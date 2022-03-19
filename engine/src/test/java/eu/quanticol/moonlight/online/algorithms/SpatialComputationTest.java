@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 import static eu.quanticol.moonlight.TestUtils.listOf;
 import static org.junit.jupiter.api.Assertions.*;
@@ -221,31 +220,31 @@ class SpatialComputationTest {
                                             g);
     }
 
-    private static List<Double> somewhereOp(IntFunction<Double> s,
+    private static List<Double> somewhereOp(List<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
         return SpatialAlgorithms.somewhere(DOUBLES, s, ds);
     }
 
-    private static List<Double> everywhereOp(IntFunction<Double> s,
+    private static List<Double> everywhereOp(List<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
         return SpatialAlgorithms.everywhere(DOUBLES, s, ds);
     }
 
-    private static List<Double> somewhereOpParallel(IntFunction<Double> s,
+    private static List<Double> somewhereOpParallel(List<Double> s,
                                             DistanceStructure<Double, ?> ds)
     {
         return SpatialAlgorithms.somewhereParallel(DOUBLES, s, ds);
     }
 
-    private static List<Double> everywhereOpParallel(IntFunction<Double> s,
+    private static List<Double> everywhereOpParallel(List<Double> s,
                                              DistanceStructure<Double, ?> ds)
     {
         return SpatialAlgorithms.everywhereParallel(DOUBLES, s, ds);
     }
 
-    private static List<Double> escapeOp(IntFunction<Double> s,
+    private static List<Double> escapeOp(List<Double> s,
                                          DistanceStructure<Double, ?> ds)
     {
         return SpatialAlgorithms.escape(DOUBLES, s, ds);

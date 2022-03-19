@@ -23,7 +23,6 @@ package eu.quanticol.moonlight.online.algorithms;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.*;
 
-import java.io.Serializable;
 import java.util.function.BiPredicate;
 
 /**
@@ -258,7 +257,7 @@ public class Signals {
      * @param <V> value domain of the chain
      * @return a sub-chain of the input signal
      */
-    public static <T extends Comparable<T> & Serializable, V>
+    public static <T extends Comparable<T>, V>
     TimeChain<T, V> select(TimeChain<T, V> segments, T from, T to)
     {
         if(from.compareTo(to) > 0)

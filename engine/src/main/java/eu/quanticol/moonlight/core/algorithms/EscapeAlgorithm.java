@@ -26,7 +26,6 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.base.Pair;
 
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -38,13 +37,13 @@ import java.util.stream.Collectors;
 public class EscapeAlgorithm<E, M, R> {
     private final SpatialModel<E> model;
     private final SignalDomain<R> signalDomain;
-    private final IntFunction<R> spatialSignal;
+    private final List<R> spatialSignal;
     private final DistanceStructure<E, M> distStr;
     private final Map<Integer, Map<Integer, R>> minimalDistanceMap;
 
     public EscapeAlgorithm(DistanceStructure<E, M> distStr,
                            SignalDomain<R> signalDomain,
-                           IntFunction<R> spatialSignal)
+                           List<R> spatialSignal)
     {
         this.spatialSignal = spatialSignal;
         this.distStr = distStr;
@@ -68,7 +67,7 @@ public class EscapeAlgorithm<E, M, R> {
         Set<Pair<Integer,Integer>> neighbourhood = new HashSet<>();
         for(int i = 0; i < model.size(); i++) {
             Map<Integer, R> initialDistance = new HashMap<>();
-            initialDistance.put(i, spatialSignal.apply(i));
+            initialDistance.put(i, spatialSignal.get(i));
             minimalDistanceMap.put(i, initialDistance);
             neighbourhood.add(new Pair<>(i, i));
         }
@@ -96,7 +95,7 @@ public class EscapeAlgorithm<E, M, R> {
         for (int neighbour: getIncomingEdgesLocations(source)) {
             R oldV = getCurrentMinimalDistance(neighbour, target);
             R selfV = getCurrentMinimalDistance(source, source);
-            R newV = combine(oldV, spatialSignal.apply(neighbour), selfV);
+            R newV = combine(oldV, spatialSignal.get(neighbour), selfV);
             if (!signalDomain.equalTo(newV, oldV)) {
                 extendedNeighbourhood.add(new Pair<>(neighbour, target));
                 addDistancePair(neighboursDistanceMap, neighbour, target, newV);

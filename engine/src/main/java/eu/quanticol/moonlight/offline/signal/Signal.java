@@ -35,7 +35,8 @@ import java.util.function.ToDoubleFunction;
 /**
  *
  */
-public class Signal<T> implements TimeSignal<Double, T> {
+public class Signal<T> implements TimeSignal<Double, T>
+{
 
     private Segment<T> first;
     private Segment<T> last;
@@ -128,11 +129,11 @@ public class Signal<T> implements TimeSignal<Double, T> {
 
     private <R> Signal<R> map(BiFunction<T, R, R> f, R init, boolean forward) {
         Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> cursor = getIterator(forward);
+        SignalCursor<Double, T> cursor = getIterator(forward);
         R value = init;
-        while (!cursor.completed()) {
-            T sValue = cursor.value();
-            double t = cursor.time();
+        while (!cursor.isCompleted()) {
+            T sValue = cursor.getCurrentValue();
+            double t = cursor.getCurrentTime();
             value = f.apply(sValue, value);
             if (forward) {
                 newSignal.add(t, value);
@@ -147,18 +148,18 @@ public class Signal<T> implements TimeSignal<Double, T> {
     }
 
     public void forEach(BiConsumer<Double,T> consumer) {
-        SignalCursor<T> cursor = getIterator(true);
-        while (!cursor.completed()) {
-            consumer.accept(cursor.time(),cursor.value());
+        SignalCursor<Double, T> cursor = getIterator(true);
+        while (!cursor.isCompleted()) {
+            consumer.accept(cursor.getCurrentTime(),cursor.getCurrentValue());
             cursor.forward();
         }
     }
 
     public <R> R reduce(BiFunction<Pair<Double,T>, R, R> reducer, R init) {
         R toReturn = init;
-        SignalCursor<T> cursor = getIterator(true);
-        while (!cursor.completed()) {
-            toReturn = reducer.apply(new Pair<>(cursor.time(), cursor.value()), toReturn);
+        SignalCursor<Double, T> cursor = getIterator(true);
+        while (!cursor.isCompleted()) {
+            toReturn = reducer.apply(new Pair<>(cursor.getCurrentTime(), cursor.getCurrentValue()), toReturn);
             cursor.forward();
         }
         return toReturn;
@@ -180,20 +181,20 @@ public class Signal<T> implements TimeSignal<Double, T> {
      *
      * @see SignalCursor
      */
-    public SignalCursor<T> getIterator(boolean forward) {
-        return new SignalCursor<T>() {
+    public SignalCursor<Double, T> getIterator(boolean forward) {
+        return new SignalCursor<Double, T>() {
 
             private Segment<T> current = (forward ? first : last);
             private double time = (current != null ? (forward ? current.getStart() : current.getSegmentEnd()) : Double.NaN);
             private Segment<T> previous = null;
 
             @Override
-            public double time() {
+            public Double getCurrentTime() {
                 return time;
             }
 
             @Override
-            public T value() {
+            public T getCurrentValue() {
                 return (current != null ? current.getValue() : null);
             }
 
@@ -234,7 +235,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
             }
 
             @Override
-            public void move(double t) {
+            public void move(Double t) {
                 if (current != null) {
                     current = current.jump(t);
                     time = t;
@@ -242,7 +243,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
             }
 
             @Override
-            public double nextTime() {
+            public Double nextTime() {
                 if (current != null) {
                     return current.nextTimeAfter(time);
                 }
@@ -250,7 +251,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
             }
 
             @Override
-            public double previousTime() {
+            public Double previousTime() {
                 if (current != null) {
                     if (current.getStart() < time) {
                         return current.getStart();
@@ -272,7 +273,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
             }
 
             @Override
-            public boolean completed() {
+            public boolean isCompleted() {
                 return (current == null);//||(current.isTheEnd(time)));
                 //return ((current == null));//||(current.isTheEnd(time)));
             }

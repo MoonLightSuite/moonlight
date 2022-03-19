@@ -41,10 +41,10 @@ class TestFormulae {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end() - 5.0, result.end(), 0.0);
         assertEquals(signal.start(), result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() + 5.0, c.value(), 0.0000001);
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() + 5.0, c.getCurrentValue(), 0.0000001);
             c.forward();
             time += 0.1;
         }
@@ -61,10 +61,10 @@ class TestFormulae {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end() - 5.0, result.end(), 0.0);
         assertEquals(signal.start(), result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time(), c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime(), c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -84,9 +84,9 @@ class TestFormulae {
         Signal<Double> result = m.apply(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
-        while (!c.completed()) {
-            assertEquals(c.time() - 9, c.value(), 0.0, "Time: " + c.time());
+        SignalCursor<Double, Double> c = result.getIterator(true);
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 9, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
         }
     }
@@ -102,10 +102,10 @@ class TestFormulae {
         Signal<Double> result = m.monitor(signal);
         assertEquals(5.0, result.end(), 0.0);
         assertEquals(0.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 4, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 4, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -122,10 +122,10 @@ class TestFormulae {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end() - 5.0, result.end(), 0.0);
         assertEquals(signal.start(), result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() + 5.0, c.value(), 0.0000001);
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() + 5.0, c.getCurrentValue(), 0.0000001);
             c.forward();
             time += 0.1;
         }

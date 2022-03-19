@@ -56,13 +56,13 @@ class TestPast {
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(historicallyFormula, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
+            SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+            SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
             System.out.println(actual);
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double valueActual = actual.value();
-                MoonLightRecord valueExpected = expected.value();
+            while (!actual.isCompleted()) {
+                assertFalse(expected.isCompleted());
+                Double valueActual = actual.getCurrentValue();
+                MoonLightRecord valueExpected = expected.getCurrentValue();
                 assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -97,15 +97,15 @@ class TestPast {
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notOnceNotA, null);
         Signal<Double> outputSignal = m.monitor(signal);
-        SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-        SignalCursor<Double> actual = outputSignal.getIterator(true);
+        SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+        SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
         assertEquals(signal.start() + onceEnd, outputSignal.start(), 0.0);
         assertEquals(signal.end(), outputSignal.end(), 0.0);
-        while (!actual.completed()) {
-            assertFalse(expected.completed());
-            Double nextActual = actual.value();
-            MoonLightRecord nextExpected = expected.value();
-            double time = expected.time();
+        while (!actual.isCompleted()) {
+            assertFalse(expected.isCompleted());
+            Double nextActual = actual.getCurrentValue();
+            MoonLightRecord nextExpected = expected.getCurrentValue();
+            double time = expected.getCurrentTime();
 //                if (time > 500) {
 //                    break;
 //                }
@@ -125,10 +125,10 @@ class TestPast {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time(), c.value(), 0.0000001);
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime(), c.getCurrentValue(), 0.0000001);
             c.forward();
             time += 0.1;
         }
@@ -145,10 +145,10 @@ class TestPast {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 5.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 5.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -166,10 +166,10 @@ class TestPast {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 9.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 9.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -187,10 +187,10 @@ class TestPast {
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(0.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 0.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 9.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 9.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }

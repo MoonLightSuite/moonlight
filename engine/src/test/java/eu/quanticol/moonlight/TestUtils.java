@@ -5,7 +5,6 @@ import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,7 @@ public class TestUtils {
         return new ArrayList<>(Arrays.asList(elements));
     }
 
-    public static <T extends Comparable<T> & Serializable, V>
+    public static <T extends Comparable<T>, V>
     List<TimeChain<T, V>> toChains(List<Update<T, V>> ups)
     {
         List<TimeChain<T, V>> result = new ArrayList<>();

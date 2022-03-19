@@ -92,7 +92,7 @@ public class SlidingWindow<R> {
 		}
 
 		// We prepare the Sliding Window
-		SignalCursor<R> cursor = iteratorInit(s);
+		SignalCursor<Double, R> cursor = iteratorInit(s);
 		Window window = new Window();
 
 		// We actually slide the window
@@ -117,13 +117,13 @@ public class SlidingWindow<R> {
 	 * @param window an empty window
 	 * @return the final result of the sliding
 	 */
-	protected Signal<R> doSlide(SignalCursor<R> iterator, Window window) {
+	protected Signal<R> doSlide(SignalCursor<Double, R> iterator, Window window) {
 		Signal<R> result = new Signal<>();
 
 		// We loop over all the Segments of the Signal
-		while (!iterator.completed()) {
-			double time = iterator.time();
-			R value = iterator.value();
+		while (!iterator.isCompleted()) {
+			double time = iterator.getCurrentTime();
+			R value = iterator.getCurrentValue();
 
 			// We try to add the segment's starting instant to the window,
 			// if we fail, we are exceeding window's limit, so we must shift it.
@@ -142,14 +142,16 @@ public class SlidingWindow<R> {
 		return result;
 	}
 
-	protected void registerLastValidTime(SignalCursor<R> iter, Window wnd) {
-		if(iter.completed() && iter.hasPrevious()) {
+	protected void registerLastValidTime(SignalCursor<Double, R> iter,
+										 Window wnd)
+	{
+		if(iter.isCompleted() && iter.hasPrevious()) {
 			double lastTime;
 			// We need to get back to the last segment, so that future iteration
 			// can continue from here
 			iter.revert();
 			lastTime = iter.nextTime();
-			R lastValue = iter.value();
+			R lastValue = iter.getCurrentValue();
 			wnd.tryAdd(lastTime, lastValue);
 		}
 	}
@@ -184,8 +186,8 @@ public class SlidingWindow<R> {
 	 * @param signal the Signal from which the cursor will be extracted
 	 * @return a SignalCursor starting at the beginning of the horizon
 	 */
-	protected SignalCursor<R> iteratorInit(Signal<R> signal) {
-		SignalCursor<R> iterator = signal.getIterator(true);
+	protected SignalCursor<Double, R> iteratorInit(Signal<R> signal) {
+		SignalCursor<Double, R> iterator = signal.getIterator(true);
 		iterator.move(signal.start() + a);
 		return iterator;
 	}

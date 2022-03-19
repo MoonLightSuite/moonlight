@@ -68,7 +68,7 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
 		return sp.computeUnary(m.monitor(locationService, signal));
 	}
 
-    private List<R> everywhereOp(IntFunction<R> spatialSignal,
+    private List<R> everywhereOp(List<R> spatialSignal,
 								 DistanceStructure<S, ?> ds)
     {
 	    return SpatialAlgorithms.everywhere(domain, spatialSignal, ds);

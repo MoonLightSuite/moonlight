@@ -23,7 +23,6 @@ package eu.quanticol.moonlight.online.signal;
 import eu.quanticol.moonlight.core.signal.Sample;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -60,7 +59,7 @@ import java.util.stream.Stream;
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V>
  */
-public class TimeChain<T extends Comparable<T> & Serializable, V>
+public class TimeChain<T extends Comparable<T>, V>
         implements Iterable<Sample<T,V>>
 {
     /**

@@ -127,7 +127,7 @@ class ImpreciseSignalTest {
             // Generate Monitors...
             Signal<Box<Double>> m = monitor(formula, trace);
 
-            return m.getIterator(true).value();
+            return m.getIterator(true).getCurrentValue();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;

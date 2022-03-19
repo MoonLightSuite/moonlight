@@ -41,11 +41,11 @@ class TestSignal {
         assertEquals(size, s.size());
         assertEquals(start, s.start(), 0.0, "START");
         assertEquals(end, s.end(), 0.0, "END");
-        SignalCursor<T> si = s.getIterator(true);
+        SignalCursor<Double, T> si = s.getIterator(true);
         double previous = start;
-        while (!si.completed()) {
-            double t = si.time();
-            T v = si.value();
+        while (!si.isCompleted()) {
+            double t = si.getCurrentTime();
+            T v = si.getCurrentValue();
             assertTrue(p.apply(t, v), "Time: " + t + " Value: " + v);
             if (t != start) {
                 assertTrue(step.apply(previous, t), "Step: " + previous + "->" + t);
@@ -79,11 +79,11 @@ class TestSignal {
     @Test
     void testIterator() {
         Signal<Boolean> s = Utils.createSignal(0.0, 100, 1.0, x -> x.intValue() % 2 == 0);
-        SignalCursor<Boolean> si = s.getIterator(true);
+        SignalCursor<Double, Boolean> si = s.getIterator(true);
         double time = 0.0;
         while (time < 100) {
-            assertEquals(time, si.time(), 0.0, "Time");
-            assertEquals(((int) time) % 2 == 0, si.value(), "Value (" + time + ")");
+            assertEquals(time, si.getCurrentTime(), 0.0, "Time");
+            assertEquals(((int) time) % 2 == 0, si.getCurrentValue(), "Value (" + time + ")");
             time += 1.0;
             si.forward();
         }

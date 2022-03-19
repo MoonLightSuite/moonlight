@@ -20,8 +20,6 @@
 
 package eu.quanticol.moonlight.core.signal;
 
-import java.io.Serializable;
-
 /**
  * The basic interface to represent timed samples.
  *
@@ -29,7 +27,7 @@ import java.io.Serializable;
  * @param <V> The value domain of interest
  */
 public interface Sample<T extends Comparable<T>, V>
-        extends Comparable<Sample<T, V>>, Serializable
+        extends Comparable<Sample<T, V>>
 {
     /**
      * @return the value of the sample
