@@ -59,7 +59,7 @@ class TestSensorScript {
         SpatialTemporalSignal<MoonLightRecord> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
                 (t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
         SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
-        assertEquals(true, res.getSignals().get(0).valueAt(0.0));        
+        assertEquals(true, res.getSignals().get(0).getValueAt(0.0));        
         double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
         assertEquals(1.0, oArray[0][0][1]);
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)

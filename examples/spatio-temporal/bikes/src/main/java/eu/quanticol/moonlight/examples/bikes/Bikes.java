@@ -160,7 +160,7 @@ public class Bikes {
         // We show the output
         List<Signal<Boolean>> signals = Objects.requireNonNull(result).getSignals();
         System.out.print("\nThe monitoring result of the phi1 property is: ");
-        System.out.println(signals.get(0).valueAt(0));
+        System.out.println(signals.get(0).getValueAt(0));
         System.out.println("Execution stats:" + Arrays.toString(stats.analyze()));
     }
 

@@ -63,10 +63,10 @@ public class SStats<T> {
             try{
                 SpatialTemporalSignal<?> r = (SpatialTemporalSignal<?>) result;
                 Signal<?> s = r.getSignals().get(0);
-                if (s.valueAt(0) instanceof Float) {
-                    value += (Float) s.valueAt(0);
-                } else if (s.valueAt(0) instanceof Boolean) {
-                    value += (Boolean) s.valueAt(0) ? 1 : 0;
+                if (s.getValueAt(0) instanceof Float) {
+                    value += (Float) s.getValueAt(0);
+                } else if (s.getValueAt(0) instanceof Boolean) {
+                    value += (Boolean) s.getValueAt(0) ? 1 : 0;
                 }
                 else
                     throw new InvalidParameterException("Unknown Signal Output");
@@ -95,11 +95,11 @@ public class SStats<T> {
             try {
                 SpatialTemporalSignal<?> r = (SpatialTemporalSignal<?>) result;
                 Signal<?> s = r.getSignals().get(0);
-                if (s.valueAt(0) instanceof Float) {
-                    float v = (Float) s.valueAt(0);
+                if (s.getValueAt(0) instanceof Float) {
+                    float v = (Float) s.getValueAt(0);
                     value += Math.pow((v - avg), 2);
-                } else if (s.valueAt(0) instanceof Boolean) {
-                    float v = (Boolean) s.valueAt(0) ? 1 : 0;
+                } else if (s.getValueAt(0) instanceof Boolean) {
+                    float v = (Boolean) s.getValueAt(0) ? 1 : 0;
                     value += Math.pow((v - avg), 2);
                 } else
                     throw new InvalidParameterException("Unknown Signal Output");

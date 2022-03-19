@@ -118,42 +118,29 @@ public class Signal<T> implements TimeSignal<Double, T> {
         }
     }
 
-    /**
-     * @param f
-     * @param init
-     * @return
-     */
-    //TODO: Add comments!
     public <R> Signal<R> iterateForward(BiFunction<T, R, R> f, R init) {
-        Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> cursor = getIterator(true);
-        R value = init;
-        while (!cursor.completed()) {
-            value = f.apply(cursor.value(), value);
-            newSignal.add(cursor.time(), value);
-            cursor.forward();
-        }
-        newSignal.end = end;
-        return newSignal;
+        return map(f, init, true);
     }
 
-
-    /**
-     * @param f
-     * @param init
-     * @return
-     */
-    //TODO: Add comments!
     public <R> Signal<R> iterateBackward(BiFunction<T, R, R> f, R init) {
+        return map(f, init, false);
+    }
+
+    private <R> Signal<R> map(BiFunction<T, R, R> f, R init, boolean forward) {
         Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> cursor = getIterator(false);
+        SignalCursor<T> cursor = getIterator(forward);
         R value = init;
         while (!cursor.completed()) {
             T sValue = cursor.value();
             double t = cursor.time();
             value = f.apply(sValue, value);
-            newSignal.addBefore(t, value);
-            cursor.backward();
+            if (forward) {
+                newSignal.add(t, value);
+                cursor.forward();
+            } else {
+                newSignal.addBefore(t, value);
+                cursor.backward();
+            }
         }
         newSignal.end = end;
         return newSignal;
@@ -320,17 +307,6 @@ public class Signal<T> implements TimeSignal<Double, T> {
         }
         this.end = end;
         this.last.endAt(end);
-    }
-
-    /**
-     * @deprecated Prefer <code>getValueAt()</code> which is standardized.
-     *
-     * @param t time point of interest
-     * @return value corresponding to the provided time point
-     */
-    @Deprecated
-    public T valueAt(double t) {
-        return (first == null ? null : first.getValueAt(t));
     }
 
     @Override

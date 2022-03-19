@@ -56,7 +56,7 @@ class MultiRawTrajectoryExtractorTest {
         assertEquals(3, data.getSignals().get(0).end());
 
         // We expect the element (0,0) to have value 1
-        assertEquals((float) 1, data.getSignals().get(0).valueAt(0).get(0));
+        assertEquals((float) 1, data.getSignals().get(0).getValueAt(0.0).get(0));
     }
 
     @Test

@@ -86,7 +86,7 @@ public class Subway {
         List<Signal<Boolean>> signals = output.getSignals();
 
         System.out.print("The monitoring result is: ");
-        System.out.println(signals.get(0).valueAt(0));
+        System.out.println(signals.get(0).getValueAt(0));
     }
 
     // --------- FORMULAE --------- //

@@ -81,7 +81,7 @@ class CsvTemporalSignalReaderTest {
         RecordHandler rh = new RecordHandler(DataHandler.REAL,DataHandler.INTEGER,DataHandler.BOOLEAN);
         CsvTemporalSignalReader reader = new CsvTemporalSignalReader();
         Signal<MoonLightRecord>  signal = reader.load(rh,csv);
-        MoonLightRecord r = signal.valueAt(0.0);
+        MoonLightRecord r = signal.getValueAt(0.0);
         System.out.println(r);
         assertEquals(4.440193097192868,r.get(0,Double.class));
         assertEquals(4,r.get(1,Integer.class));
@@ -113,7 +113,7 @@ class CsvTemporalSignalReaderTest {
         Signal<MoonLightRecord>  signal = reader.load(rh,csv);
         for( int i=0 ; i<size ; i++ ) {
             MoonLightRecord expected = data[i];
-            MoonLightRecord actual = signal.valueAt(timePoints[i]);
+            MoonLightRecord actual = signal.getValueAt(timePoints[i]);
             System.out.println(expected);
             System.out.println(actual);
             assertEquals(expected.get(0),actual.get(0));

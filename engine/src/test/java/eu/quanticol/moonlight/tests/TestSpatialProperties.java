@@ -251,7 +251,7 @@ class TestSpatialProperties {
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
-        assertArrayEquals(objects, new Boolean[]{true, false});
+        assertArrayEquals(new Boolean[]{true, false}, objects);
     }
 
     @Test
@@ -268,7 +268,7 @@ class TestSpatialProperties {
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
-        assertArrayEquals(objects, new Boolean[]{true, false});
+        assertArrayEquals(new Boolean[]{true, false}, objects);
     }
 
     @Test
@@ -305,7 +305,7 @@ class TestSpatialProperties {
         List<Boolean> results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
         Boolean[] objects = results.toArray(new Boolean[0]);
-        System.out.println(new Boolean[0]);
+        System.out.println(Arrays.toString(new Boolean[0]));
         assertArrayEquals(new Boolean[]{range>2,range>1, range>0,true}, objects);
     }
 
@@ -344,7 +344,6 @@ class TestSpatialProperties {
     @Test
     void testEscapeAndViolationOfUpperBound2() {
         //T -10 -> F  Distance:(0,10)
-        Integer size = 2;
         double distance = 10;
         GraphModel<Double> city = new GraphModel<>(3);
         city.add(0, distance, 1);
@@ -417,7 +416,7 @@ class TestSpatialProperties {
         List<Integer> typeOfNode = Arrays.asList(1, 3, 3, 3, 3);
 
         SpatialTemporalSignal<Integer> signal = Utils.createSpatioTemporalSignal(size, 0, 1, 1.0,
-                (t, l) -> new Integer(typeOfNode.get(l)));
+                (t, l) -> typeOfNode.get(l));
         //// Loc Service Static ///
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 1,model);
 
@@ -446,14 +445,14 @@ class TestSpatialProperties {
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
-            System.out.println(signals.get(i).valueAt(1));
+            System.out.println(signals.get(i).getValueAt(1.0));
         }
-        assertEquals(false, signals.get(2).valueAt(1));
+        assertEquals(false, signals.get(2).getValueAt(1.0));
 
     }
 
     @Test
-    void testLoadGraphFromAdiacenceList() {
+    void testLoadGraphFromAdjacenceList() {
         double[][] graph = new double[][] {
                 new double[] {0, 1, 1, 297.683377582777},
                 new double[] {0, 2, 1, 696.654592727676},

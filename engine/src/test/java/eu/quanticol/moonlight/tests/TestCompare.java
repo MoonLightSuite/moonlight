@@ -80,7 +80,7 @@ class TestCompare {
             TemporalMonitoring<MoonLightRecord, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
             TemporalMonitor<MoonLightRecord,Boolean> m = monitoring.monitor(aeb, null);
             Signal<Boolean> outputSignal = m.monitor(signal);
-            assertFalse(outputSignal.valueAt(0.0));
+            assertFalse(outputSignal.getValueAt(0.0));
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -113,7 +113,7 @@ class TestCompare {
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             TemporalMonitor<MoonLightRecord,Double> m = monitoring.monitor(aeb, null);
             Signal<Double> outputSignal = m.monitor(signal);
-            assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.getValueAt(0.0), 1E-15);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -150,7 +150,7 @@ class TestCompare {
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually, null);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            assertEquals(expectedRobustnessInZero, outputSignal.valueAt(0), 1E-15);
+            assertEquals(expectedRobustnessInZero, outputSignal.getValueAt(0.0), 1E-15);
             System.out.println("TIME MoonLight: " + (timeEnd - timeInit) / 1000.);
         } catch (IOException e) {
             fail(e.getMessage());

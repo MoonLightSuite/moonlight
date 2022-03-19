@@ -44,7 +44,7 @@ class TestCity2 {
 
 
     @BeforeAll
-    static void setUp() { //questo metodo viene eseguito una volta quando viene caricata la classe, visto che la città è la stessa per tutti i test è il posto giusto dove definirla
+    static void setUp() {
         city = buildingCity();
     }
 
@@ -135,7 +135,7 @@ class TestCity2 {
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals.get(i).valueAt(1));
+            assertEquals(taxiAvailability.get(i), signals.get(i).getValueAt(1.0));
         }
 
 
@@ -146,7 +146,7 @@ class TestCity2 {
         List<Signal<Boolean>> signals2 = sout2.getSignals();
         ArrayList<Boolean> soluz = new ArrayList<>(Arrays.asList(true, false, true, false, true, false, true));
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(soluz.get(i), signals2.get(i).valueAt(1));
+            assertEquals(soluz.get(i), signals2.get(i).getValueAt(1.0));
         }
 
 
@@ -156,7 +156,7 @@ class TestCity2 {
         SpatialTemporalSignal<Boolean> sout3 = m3.monitor(locService, signal);
         List<Signal<Boolean>> signals3 = sout3.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals3.get(i).valueAt(1));
+            assertEquals(taxiAvailability.get(i), signals3.get(i).getValueAt(1.0));
         }
 
 
@@ -166,8 +166,8 @@ class TestCity2 {
         SpatialTemporalSignal<Boolean> sout4 = m4.monitor(locService, signal);
         List<Signal<Boolean>> signals4 = sout4.getSignals();
 
-        assertEquals(true, signals4.get(3).valueAt(1));
-        assertEquals(false, signals4.get(6).valueAt(1));
+        assertEquals(true, signals4.get(3).getValueAt(1.0));
+        assertEquals(false, signals4.get(6).getValueAt(1.0));
 
 
         ////  5 ////
@@ -176,8 +176,8 @@ class TestCity2 {
         SpatialTemporalSignal<Boolean> sout5 = m5.monitor(locService, signal);
         List<Signal<Boolean>> signals5 = sout5.getSignals();
 
-        assertEquals(true, signals5.get(3).valueAt(1));
-        assertEquals(false, signals5.get(6).valueAt(1));
+        assertEquals(true, signals5.get(3).getValueAt(1.0));
+        assertEquals(false, signals5.get(6).getValueAt(1.0));
 
 
         ////  6 ////
@@ -187,13 +187,13 @@ class TestCity2 {
         List<Signal<Boolean>> signals6 = sout6.getSignals();
 
 
-        assertEquals(true, signals6.get(0).valueAt(1));
-        assertEquals(true, signals6.get(1).valueAt(1));
-        assertEquals(true, signals6.get(2).valueAt(1));
-        assertEquals(true, signals6.get(3).valueAt(1));
-        assertEquals(true, signals6.get(4).valueAt(1));
-        assertEquals(false, signals6.get(5).valueAt(1));
-        assertEquals(true, signals6.get(6).valueAt(1));
+        assertEquals(true, signals6.get(0).getValueAt(1.0));
+        assertEquals(true, signals6.get(1).getValueAt(1.0));
+        assertEquals(true, signals6.get(2).getValueAt(1.0));
+        assertEquals(true, signals6.get(3).getValueAt(1.0));
+        assertEquals(true, signals6.get(4).getValueAt(1.0));
+        assertEquals(false, signals6.get(5).getValueAt(1.0));
+        assertEquals(true, signals6.get(6).getValueAt(1.0));
 
 
 
@@ -203,7 +203,7 @@ class TestCity2 {
         SpatialTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
         for (int i = 0; i < SIZE; i++) {
-            assertEquals(taxiAvailability.get(i), signals7.get(i).valueAt(0));
+            assertEquals(taxiAvailability.get(i), signals7.get(i).getValueAt(0.0));
         }
 
         ////  8 Quant ////
@@ -211,7 +211,7 @@ class TestCity2 {
                 monitorQuant.monitor(reachQuant, null);
         SpatialTemporalSignal<Double> sout8 = m8.monitor(locService, signal);
         List<Signal<Double>> signals8 = sout8.getSignals();
-        assertEquals(-102.5, signals8.get(0).valueAt(1));
+        assertEquals(-102.5, signals8.get(0).getValueAt(1.0));
 
 
 

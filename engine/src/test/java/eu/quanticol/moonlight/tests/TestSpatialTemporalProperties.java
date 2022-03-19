@@ -75,7 +75,7 @@ class TestSpatialTemporalProperties {
                 escape, null);
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
-        assertEquals(0.5, signals.get(0).valueAt(0.0), 0.0001);
+        assertEquals(0.5, signals.get(0).getValueAt(0.0), 0.0001);
 
 
         assertNotNull(grid);
@@ -113,14 +113,14 @@ class TestSpatialTemporalProperties {
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
-            assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
+            assertEquals(i * 5.0 - 2, signals.get(i).getValueAt(5.0), 0.0001);
         }
 
         SpatialTemporalMonitor<Double,Double,Double> m2 = monitor.monitor(
                 somewhere, null);
         SpatialTemporalSignal<Double> sout2 = m2.monitor(locService, signal);
         List<Signal<Double>> signals2 = sout2.getSignals();
-        assertEquals(-4.5, signals2.get(0).valueAt(5.0), 0.0001);
+        assertEquals(-4.5, signals2.get(0).getValueAt(5.0), 0.0001);
 
         assertNotNull(model);
 
@@ -146,7 +146,7 @@ class TestSpatialTemporalProperties {
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {
-            assertEquals(i * 5.0 - 2, signals.get(i).valueAt(5.0), 0.0001);
+            assertEquals(i * 5.0 - 2, signals.get(i).getValueAt(5.0), 0.0001);
         }
         assertNotNull(model);
     }

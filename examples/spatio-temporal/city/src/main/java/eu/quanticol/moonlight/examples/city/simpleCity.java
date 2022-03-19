@@ -45,7 +45,7 @@ public class simpleCity {
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0).valueAt(0));
+        System.out.println(signals.get(0).getValueAt(0));
 
 
 

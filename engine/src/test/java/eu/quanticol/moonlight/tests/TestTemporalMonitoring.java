@@ -137,7 +137,7 @@ class TestTemporalMonitoring {
                 new DoubleDomain(),new Interval(0.0,0.6));
         Signal<Double> output = monitor.monitor(signal);
         assertEquals(1,output.size());
-        assertEquals( 0.0, output.valueAt(0.0));
+        assertEquals( 0.0, output.getValueAt(0.0));
     }
 
     @Test void testEventuallySameTime() {
@@ -147,7 +147,7 @@ class TestTemporalMonitoring {
                 new DoubleDomain(),new Interval(0.0,0.6));
         Signal<Double> output = monitor.monitor(signal);
         assertEquals(1,output.size());
-        assertEquals( 0.6, output.valueAt(0.0));
+        assertEquals( 0.6, output.getValueAt(0.0));
     }
 
     @Test void testUntilExceed() {
@@ -171,7 +171,7 @@ class TestTemporalMonitoring {
         Signal<Double> output = monitor.monitor(signal);
         assertFalse(output.isEmpty());
         assertEquals(1,output.size());
-        assertEquals(0.0,output.valueAt(0.0));
+        assertEquals(0.0,output.getValueAt(0.0));
     }
 
     @Test

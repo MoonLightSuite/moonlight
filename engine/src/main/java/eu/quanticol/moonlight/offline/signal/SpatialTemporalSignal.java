@@ -86,7 +86,7 @@ public class SpatialTemporalSignal<T> {
 	public List<T> valuesatT(double t){
 		List<T> spSignal = new ArrayList<T>(size);
 		for( int i=0 ; i<size ; i++ ) {
-			spSignal.add(signals.get(i).valueAt(t));
+			spSignal.add(signals.get(i).getValueAt(t));
 		}
 		return spSignal;
 	}

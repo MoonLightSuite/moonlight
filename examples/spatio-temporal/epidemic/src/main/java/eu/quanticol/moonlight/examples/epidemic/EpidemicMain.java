@@ -121,7 +121,7 @@ public class EpidemicMain {
 //            SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, Boolean> m = somewhereInfected();
 //            SpatialTemporalSignal<Boolean> sout = m.monitor(ls, s);
 //            List<Signal<Boolean>> signals = sout.getSignals();
-//            System.out.println(signals.get(0).valueAt(0));
+//            System.out.println(signals.get(0).getValueAt(0));
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -78,7 +78,7 @@ public class CsvSpatialTemporalSignalReaderAndWriterTest {
         for(int i=0 ; i<3; i++) {
             Signal<MoonLightRecord> ls = signals.get(i);
             for (double t=0.0; t<4.0;t=t+1.0) {
-                assertEquals(Math.pow(i+2.0,t),ls.valueAt(t).get(0,Double.class));
+                assertEquals(Math.pow(i+2.0,t),ls.getValueAt(t).get(0,Double.class));
             }
         }
     }

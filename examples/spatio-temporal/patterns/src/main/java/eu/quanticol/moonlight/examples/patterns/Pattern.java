@@ -135,7 +135,7 @@ public class Pattern {
         List<Signal<Double>> signals = sout.getSignals();
 
         System.out.println(elapsedTime);
-        System.out.println(signals.get(0).valueAt(0));
+        System.out.println(signals.get(0).getValueAt(0));
     }
 
 
