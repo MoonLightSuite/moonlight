@@ -303,15 +303,14 @@ public class Signal<T> implements TimeSignal<Double, T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         if (isEmpty()) {
             return "Signal [ ]";
         } else {
-            return "Signal [start=" + start() + ", end=" + end() + ", size=" + size() + "]";
+            return "Signal [start=" + start() +
+                           ", end=" + end() +
+                           ", size=" + size() + "]";
         }
     }
 
@@ -408,14 +407,6 @@ public class Signal<T> implements TimeSignal<Double, T> {
         return end;
     }
 
-    /**
-     * Performs an update of the internal representation of the signal,
-     * given the data available in the update.
-     *
-     * @param u the new data available from new knowledge
-     * @return <code>true</code> if the refinement actually updates the signal.
-     * <code>false</code> otherwise
-     */
     @Override
     public boolean refine(Update<Double, T> u) {
         throw new UnsupportedOperationException("Refinements are not implemented yet for offline signals");
@@ -426,26 +417,12 @@ public class Signal<T> implements TimeSignal<Double, T> {
         throw new UnsupportedOperationException("Refinements are not implemented yet for offline signals");
     }
 
-    /**
-     * Returns the internal chain of segments.
-     *
-     * @return the total chain of segments of the signal
-     * @throws UnsupportedOperationException when not allowed by implementors
-     */
+
     @Override
     public TimeChain<Double, T> getSegments() {
         throw new UnsupportedOperationException("Segment extraction is not implemented yet for offline signals");
     }
 
-    /**
-     * Temporal projection operation that selects a sub-part of the signal
-     * delimited by the time instants provided by the input parameters.
-     *
-     * @param from beginning of the time frame of interest
-     * @param to   ending of the time frame of interest
-     * @return the chain of segments of the signal delimited by the input
-     * @throws UnsupportedOperationException when not allowed by implementors
-     */
     @Override
     public TimeChain<Double, T> select(Double from, Double to) {
         throw new UnsupportedOperationException("Selection is not implemented yet for offline signals");

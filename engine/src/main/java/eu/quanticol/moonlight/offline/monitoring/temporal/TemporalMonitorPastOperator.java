@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.offline.monitoring.temporal;
 
 import java.util.function.BinaryOperator;
 
-import static eu.quanticol.moonlight.offline.algorithms.TemporalComputation.computePastSignal;
+import static eu.quanticol.moonlight.offline.algorithms.TemporalOp.computePastSignal;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.offline.signal.Signal;
 

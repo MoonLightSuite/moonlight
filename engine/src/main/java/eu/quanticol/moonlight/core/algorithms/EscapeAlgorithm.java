@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.offline.algorithms;
+package eu.quanticol.moonlight.core.algorithms;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;

@@ -24,7 +24,7 @@ import java.util.function.BinaryOperator;
 
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.offline.algorithms.TemporalComputation;
+import eu.quanticol.moonlight.offline.algorithms.TemporalOp;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 /**
@@ -59,7 +59,7 @@ public class SpatialTemporalMonitorFutureOperator<S, T, R>
 											SpatialTemporalSignal<T> signal)
 	{
 		return m.monitor(locationService, signal).applyToSignal(
-				s -> TemporalComputation.computeFutureSignal(s, interval, op, init));
+				s -> TemporalOp.computeFutureSignal(s, interval, op, init));
 	}
 
 }

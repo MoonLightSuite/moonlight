@@ -40,25 +40,28 @@ public class BooleanOp<T, R> {
 
     @SafeVarargs
     private final void setStartingTime(Signal<T>... signals) {
-        time = Arrays.stream(signals)
-                     .map(Signal::start)
-                     .reduce(rightStartingTime())
+        if(forward)
+            time = maxStart(Arrays.stream(signals));
+        else
+            time = minEnd(Arrays.stream(signals));
+    }
+
+    private double maxStart(Stream<Signal<T>> stream) {
+        return stream.map(Signal::start)
+                     .reduce(Math::max)
                      .orElseGet(BooleanOp::error);
     }
 
-    private BinaryOperator<Double> rightStartingTime() {
-        if(forward)
-            return Math::max;
-        return Math::min;
+    private double minEnd(Stream<Signal<T>> stream) {
+        return stream.map(Signal::end)
+                .reduce(Math::min)
+                .orElseGet(BooleanOp::error);
     }
 
     @SafeVarargs
     private final void setEndingTime(Signal<T>... signals) {
         if (!output.isEmpty()) {
-            double end = Arrays.stream(signals)
-                               .map(Signal::end)
-                               .reduce(Math::min)
-                               .orElseGet(BooleanOp::error);
+            double end = minEnd(Arrays.stream(signals));
             output.endAt(end);
         }
     }

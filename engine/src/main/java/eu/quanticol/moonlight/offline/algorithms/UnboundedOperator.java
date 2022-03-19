@@ -5,28 +5,19 @@ import eu.quanticol.moonlight.offline.signal.Signal;
 
 import java.util.function.BinaryOperator;
 
-public class UntilOperator<T> {
+public class UnboundedOperator<T> {
     private final SignalDomain<T> domain;
     private T current;
 
-    UntilOperator(SignalDomain<T> domain) {
+    UnboundedOperator(SignalDomain<T> domain) {
         this.domain = domain;
     }
 
-    public Signal<T> computeUnboundedUntil(Signal<T> s1, Signal<T> s2) {
+    public Signal<T> computeUnbounded(Signal<T> s1, Signal<T> s2,
+                                      boolean isForward)
+    {
         setCurrent(domain.min());
-        BooleanOp<T, T> booleanOp =  new BooleanOp<>(false);
-        BinaryOperator<T> op = (left, right) -> {
-            T value = untilOp(left, right, getCurrent());
-            setCurrent(value);
-            return value;
-        };
-        return booleanOp.applyBinary(s1, op, s2);
-    }
-
-    public Signal<T> computeUnboundSince(Signal<T> s1, Signal<T> s2) {
-        setCurrent(domain.min());
-        BooleanOp<T, T> booleanOp =  new BooleanOp<>();
+        BooleanOp<T, T> booleanOp =  new BooleanOp<>(isForward);
         BinaryOperator<T> op = (left, right) -> {
             T value = untilOp(left, right, getCurrent());
             setCurrent(value);

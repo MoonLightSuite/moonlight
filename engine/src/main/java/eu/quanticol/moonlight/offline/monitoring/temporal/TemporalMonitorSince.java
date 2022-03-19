@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.offline.monitoring.temporal;
 
-import eu.quanticol.moonlight.offline.algorithms.SinceOperator;
+import eu.quanticol.moonlight.offline.algorithms.TemporalOp;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.offline.signal.Signal;
@@ -60,7 +60,7 @@ public class TemporalMonitorSince<T, R> implements TemporalMonitor<T, R> {
 
 	@Override
 	public Signal<R> monitor(Signal<T> signal) {
-		return SinceOperator.computeSince(domain, m1.monitor(signal),
+		return TemporalOp.computeSince(domain, m1.monitor(signal),
 							interval, m2.monitor(signal));
 	}
 
