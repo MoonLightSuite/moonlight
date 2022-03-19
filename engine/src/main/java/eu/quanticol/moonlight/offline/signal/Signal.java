@@ -154,11 +154,11 @@ public class Signal<T> implements TimeSignal<Double, T> {
         }
     }
 
-    public <R> R reduce(BiFunction<Pair<Double,T>,R,R> reducer, R init) {
+    public <R> R reduce(BiFunction<Pair<Double,T>, R, R> reducer, R init) {
         R toReturn = init;
         SignalCursor<T> cursor = getIterator(true);
         while (!cursor.completed()) {
-            toReturn = reducer.apply(new Pair<>(cursor.time(),cursor.value()),toReturn);
+            toReturn = reducer.apply(new Pair<>(cursor.time(), cursor.value()), toReturn);
             cursor.forward();
         }
         return toReturn;

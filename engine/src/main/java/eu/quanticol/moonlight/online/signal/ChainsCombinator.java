@@ -81,9 +81,7 @@ public class ChainsCombinator
         secondaryEnd = endingSegment(secondaryChain);
     }
 
-    public void forEach(BiConsumer<Sample<T, V>,
-            Sample<T, V>> operation)
-    {
+    public void forEach(BiConsumer<Sample<T, V>, Sample<T, V>> operation) {
         movePrimary();
         moveSecondary();
         do {
@@ -117,9 +115,7 @@ public class ChainsCombinator
         return primaryNext.compareTo(secondaryCurr) <= 0;
     }
 
-    private void process(BiConsumer<Sample<T, V>,
-            Sample<T, V>> op)
-    {
+    private void process(BiConsumer<Sample<T, V>, Sample<T, V>> op) {
         op.accept(primaryCurr, secondaryCurr);
         if(secondaryProcessingNotComplete())
             movePrimary();
