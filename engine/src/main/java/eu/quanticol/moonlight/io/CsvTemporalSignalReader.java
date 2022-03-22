@@ -48,7 +48,7 @@ public class CsvTemporalSignalReader extends AbstractFileByRowReader implements 
         for (Row row: data) {
             row.addValueToSignal(handler,s);
         }
-        s.end();
+        s.getEnd();
         return s;
     }
 

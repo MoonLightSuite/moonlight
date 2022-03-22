@@ -61,15 +61,15 @@ public class BooleanOp<T, R> {
     }
 
     private double maxStart(Stream<Signal<T>> stream) {
-        return stream.map(Signal::start)
+        return stream.map(Signal::getStart)
                      .reduce(Math::max)
                      .orElseGet(BooleanOp::error);
     }
 
     private double minEnd(Stream<Signal<T>> stream) {
-        return stream.map(Signal::end)
-                     .reduce(Math::min)
-                     .orElseGet(BooleanOp::error);
+        return stream.map(Signal::getEnd)
+                .reduce(Math::min)
+                .orElseGet(BooleanOp::error);
     }
 
     @SafeVarargs

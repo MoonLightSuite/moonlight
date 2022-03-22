@@ -53,7 +53,7 @@ class MultiRawTrajectoryExtractorTest {
         assertEquals(2, data.size());
 
         // We expect a time span of 3
-        assertEquals(3, data.getSignals().get(0).end());
+        assertEquals(3, data.getSignals().get(0).getEnd());
 
         // We expect the element (0,0) to have value 1
         assertEquals((float) 1, data.getSignals().get(0).getValueAt(0.0).get(0));

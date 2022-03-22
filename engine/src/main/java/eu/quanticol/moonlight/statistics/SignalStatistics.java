@@ -87,7 +87,7 @@ public class SignalStatistics<T extends SpatialTemporalSignal<?>> {
 
             float duration = (float)((end - start) / 1000.0);
 
-            int tps = (int) result.getSignals().get(0).end();
+            int tps = (int) result.getSignals().get(0).getEnd();
             timePoints = Math.min(tps, timePoints);
             durations.add(duration);
             results.add(result);

@@ -230,7 +230,7 @@ class TestCompare {
             Signal<Double> outputSignal = m.monitor(signal);
             SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
-            assertEquals(500.0, outputSignal.end());
+            assertEquals(500.0, outputSignal.getEnd());
             while (!actual.isCompleted()) {
                 assertFalse(expected.isCompleted());
                 Double nextActual = actual.getCurrentValue();
