@@ -34,7 +34,7 @@ class FormulaAndSignalGeneratorTest {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.end(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(3);
         System.out.println(generatedFormula.toString());
         long timeInit = System.currentTimeMillis();

@@ -87,7 +87,7 @@ public class SlidingWindow<R> {
 		// If the signal is empty or shorter than the time horizon,
 		// we return an empty signal
 		// NOTE: this assumes offline usage (i.e. the signal is complete)
-		if (s.isEmpty() || (s.end() - s.start() < size)) {
+		if (s.isEmpty() || (s.getEnd() - s.getStart() < size)) {
 			return new Signal<>();
 		}
 
@@ -188,7 +188,7 @@ public class SlidingWindow<R> {
 	 */
 	protected SignalCursor<Double, R> iteratorInit(Signal<R> signal) {
 		SignalCursor<Double, R> iterator = signal.getIterator(true);
-		iterator.move(signal.start() + a);
+		iterator.move(signal.getStart() + a);
 		return iterator;
 	}
 

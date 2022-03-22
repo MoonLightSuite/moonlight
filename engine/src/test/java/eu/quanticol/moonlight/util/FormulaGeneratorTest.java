@@ -142,7 +142,7 @@ class FormulaGeneratorTest {
             SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
             //assertTrue(outputSignal.end()==500.0);
-            System.out.println(outputSignal.end());
+            //System.out.println(outputSignal.end());
             while (!actual.isCompleted()) {
                 assertFalse(expected.isCompleted());
                 Double nextActual = actual.getCurrentValue();

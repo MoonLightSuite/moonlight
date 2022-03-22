@@ -39,8 +39,8 @@ class TestFormulae {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end() - 5.0, result.end(), 0.0);
-        assertEquals(signal.start(), result.start(), 0.0);
+        assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
+        assertEquals(signal.getStart(), result.getStart(), 0.0);
         SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
         while (!c.isCompleted()) {
@@ -59,8 +59,8 @@ class TestFormulae {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(globally, null);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end() - 5.0, result.end(), 0.0);
-        assertEquals(signal.start(), result.start(), 0.0);
+        assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
+        assertEquals(signal.getStart(), result.getStart(), 0.0);
         SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
         while (!c.isCompleted()) {
@@ -82,8 +82,8 @@ class TestFormulae {
 //        Function<Signal<Double>, Signal<Double>> m = monitoring.monitor(until, null);
         Function<Signal<Double>, Signal<Double>> m = null;
         Signal<Double> result = m.apply(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
-        assertEquals(5.0, result.start(), 0.0);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
+        assertEquals(5.0, result.getStart(), 0.0);
         SignalCursor<Double, Double> c = result.getIterator(true);
         while (!c.isCompleted()) {
             assertEquals(c.getCurrentTime() - 9, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
@@ -100,8 +100,8 @@ class TestFormulae {
         monitoring.addProperty("test2", p -> (x -> x - 9));
         TemporalMonitor<Double, Double> m = monitoring.monitor(until, null);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(5.0, result.end(), 0.0);
-        assertEquals(0.0, result.start(), 0.0);
+        assertEquals(5.0, result.getEnd(), 0.0);
+        assertEquals(0.0, result.getStart(), 0.0);
         SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
         while (!c.isCompleted()) {
@@ -120,8 +120,8 @@ class TestFormulae {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end() - 5.0, result.end(), 0.0);
-        assertEquals(signal.start(), result.start(), 0.0);
+        assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
+        assertEquals(signal.getStart(), result.getStart(), 0.0);
         SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
         while (!c.isCompleted()) {

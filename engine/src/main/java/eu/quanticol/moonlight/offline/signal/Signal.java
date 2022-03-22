@@ -40,29 +40,26 @@ public class Signal<T> implements TimeSignal<Double, T>
 
     private Segment<T> first;
     private Segment<T> last;
-    private int size = 0;
-    private double end = 0.0; //TODO: we should just take this from last segment
-                              // (unnecessary logic duplication)
+    private int size;
 
     public Signal() {
         this.first = null;
         this.last = null;
         this.size = 0;
-        this.end = Double.NaN;
     }
 
     /**
      * @return the start time of the signal
      */
-    public double start() {
+    public double getStart() {
         return Segment.getTime(first);
     }
 
     /**
      * @return the end time of the signal
      */
-    public double end() {
-        return end;
+    public double getEnd() {
+        return last.getEnd();
     }
 
     /**
@@ -73,39 +70,44 @@ public class Signal<T> implements TimeSignal<Double, T>
     }
 
     /**
-     * Add (t,value) to the sample set
+     * Add (t, value) to the sample set
      *
-     * @param t
-     * @param value
+     * @param t the time to add
+     * @param value the value to add
      */
     public void add(double t, T value) {
         Segment<T> oldLast = last;
         if (first == null) {
             startWith(t, value);
         } else {
-            if (this.end > t) {
-                throw new IllegalArgumentException("Time: " + t + " Expected: >" + this.end); //TODO: Add Message!
+            if (getEnd() > t) {
+                badEnding(t);
             }
             last = last.addAfter(t, value);
-            end = t;
         }
         if (oldLast != last) {
             size++;
         }
     }
 
+    private void badEnding(double t) {
+        throw new IllegalArgumentException("Trying to define an illegal " +
+                                           "ending time" + t + "which is " +
+                                           "before the current " +
+                                           "end of the signal: " + getEnd());
+    }
+
     private void startWith(double t, T value) {
         first = new Segment<>(t, value);
         last = first;
-        end = t;
     }
 
 
     /**
      * Add (t,value) to the sample set
      *
-     * @param t
-     * @param value
+     * @param t time point to add
+     * @param value value to add
      */
     public void addBefore(double t, T value) {
         Segment<T> oldFirst = first;
@@ -143,7 +145,6 @@ public class Signal<T> implements TimeSignal<Double, T>
                 cursor.backward();
             }
         }
-        newSignal.end = end;
         return newSignal;
     }
 
@@ -195,17 +196,16 @@ public class Signal<T> implements TimeSignal<Double, T>
         if (isEmpty()) {
             return "Signal [ ]";
         } else {
-            return "Signal [start=" + start() +
-                           ", end=" + end() +
+            return "Signal [start=" + getStart() +
+                           ", end=" + getEnd() +
                            ", size=" + size() + "]";
         }
     }
 
     public void endAt(double end) {
-        if ((this.end > end) || (last == null)) {
-            throw new IllegalArgumentException(); //TODO: Add message!
+        if ((getEnd() > end) || (last == null)) {
+            badEnding(end);
         }
-        this.end = end;
         this.last.endAt(end);
     }
 
@@ -217,7 +217,6 @@ public class Signal<T> implements TimeSignal<Double, T>
     public double[][] arrayOf(ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
-            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         int arraySize = size;
         if (!last.isAPoint()) {
@@ -233,7 +232,7 @@ public class Signal<T> implements TimeSignal<Double, T>
             counter++;
         }
         if (!last.isAPoint()) {
-            toReturn[size][0] = end;
+            toReturn[size][0] = getEnd();
             toReturn[size][1] = f.applyAsDouble( last.getValue() );
         }
         return toReturn;
@@ -248,7 +247,6 @@ public class Signal<T> implements TimeSignal<Double, T>
     public double[][] arrayOf(double[] timePoints, ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
-            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         double[][] toReturn = new double[timePoints.length][2];
         Segment<T> current = first;
@@ -275,12 +273,8 @@ public class Signal<T> implements TimeSignal<Double, T>
             timeSet.add(current.getStart());
             current = current.getNext();
         }
-        timeSet.add(end);
+        timeSet.add(getEnd());
         return timeSet;
-    }
-
-    public Double getEnd() {
-        return end;
     }
 
     @Override
