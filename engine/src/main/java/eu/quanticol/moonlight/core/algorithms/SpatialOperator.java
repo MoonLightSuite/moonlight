@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SpatialOperator<E, M, R> {
     private final DistanceStructure<E, M> ds;

@@ -185,8 +185,18 @@ public class Signal<T> implements TimeSignal<Double, T>
         return new SignalCursor<Double, T>() {
 
             private Segment<T> current = (forward ? first : last);
-            private double time = (current != null ? (forward ? current.getStart() : current.getSegmentEnd()) : Double.NaN);
+            private double time = checkTime();
             private Segment<T> previous = null;
+
+            private double checkTime() {
+                if(current != null) {
+                    if(forward) {
+                        return current.getStart();
+                    } else
+                        return current.getSegmentEnd();
+                }
+                return Double.NaN;
+            }
 
             @Override
             public Double getCurrentTime() {
@@ -274,13 +284,13 @@ public class Signal<T> implements TimeSignal<Double, T>
 
             @Override
             public boolean isCompleted() {
-                return (current == null);//||(current.isTheEnd(time)));
-                //return ((current == null));//||(current.isTheEnd(time)));
+                return (current == null);   // ||(current.isTheEnd(time)));
             }
 
             @Override
             public String toString() {
-                return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getStart() + ")"));
+                return Signal.this +
+                    (current == null ? "!" : ("@(" + current.getStart() + ")"));
             }
 
         };

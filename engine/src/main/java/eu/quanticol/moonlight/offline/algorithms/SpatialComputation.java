@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 /**
  * Algorithm for Somewhere and Everywhere Computation
@@ -65,6 +64,15 @@ public class SpatialComputation<S, R> {
         return result;
     }
 
+    public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
+        outputInit(s);
+        if (!spaceItr.isLocationServiceEmpty()) {
+            cursor = s.getSignalCursor(true);
+            doCompute();
+        }
+        return result;
+    }
+
     private void outputInit(SpatialTemporalSignal<R> s) {
         result = new SpatialTemporalSignal<>(s.getNumberOfLocations());
     }
@@ -72,12 +80,12 @@ public class SpatialComputation<S, R> {
     private void doCompute() {
         double t = cursor.getCurrentTime();
         spaceItr.init(t, this::addResult);
-        DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
+        DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
 
         while (isNotCompleted(t, cursor)) {
             List<R> spatialSignal = cursor.getCurrentValue();
             double tNext = cursor.forwardTime();
-            spaceItr.computeOp(t, tNext, f, spatialSignal);
+            spaceItr.computeOp(t, tNext, ds, spatialSignal);
             t = moveSpatialModel(tNext);
         }
     }
@@ -114,8 +122,9 @@ public class SpatialComputation<S, R> {
             while (isNotCompleted(t, c1, c2)) {
                 List<R> spatialSignal1 = c1.getCurrentValue();
                 List<R> spatialSignal2 = c2.getCurrentValue();
+
                 List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
-                result.add(t, (values::get));
+                result.add(t, values);
                 double tNext = Math.min(c1.nextTime(), c2.nextTime());
                 c1.move(tNext);
                 c2.move(tNext);

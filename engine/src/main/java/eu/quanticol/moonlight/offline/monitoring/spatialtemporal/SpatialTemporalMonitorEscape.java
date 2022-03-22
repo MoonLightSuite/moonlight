@@ -61,14 +61,13 @@ public class SpatialTemporalMonitorEscape<S, T, R>
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
 											SpatialTemporalSignal<T> signal)
 	{
-		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
+		SpatialComputation<S, R> sc = new SpatialComputation<>(locationService,
 															   distance,
 															   this::escapeOp);
-		return sp.computeUnary(m.monitor(locationService, signal));
+		return sc.computeUnary(m.monitor(locationService, signal));
 	}
 
-	private List<R> escapeOp(List<R> spatialSignal,
-								 DistanceStructure<S, ?> ds)
+	private List<R> escapeOp(List<R> spatialSignal, DistanceStructure<S, ?> ds)
 	{
 		return SpatialAlgorithms.escape(domain, spatialSignal, ds);
 	}
