@@ -3,9 +3,9 @@ package eu.quanticol.moonlight.offline.signal;
 public class OfflineSignalCursor<T> implements SignalCursor<Double, T> {
 
     private final boolean forward;
-    private Segment<T> first;
-    private Segment<T> last;
-    private Segment<T> current ;
+    private final Segment<T> first;
+    private final Segment<T> last;
+    private Segment<T> current;
     private double time;
     private Segment<T> previous = null;
 
@@ -119,13 +119,11 @@ public class OfflineSignalCursor<T> implements SignalCursor<Double, T> {
 
     @Override
     public boolean isCompleted() {
-        return (current == null);//||(current.isTheEnd(time)));
-        //return ((current == null));//||(current.isTheEnd(time)));
+        return (current == null);   // ||(current.isTheEnd(time)));
     }
 
 //    @Override
 //    public String toString() {
 //        return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getStart() + ")"));
 //    }
-
 }
