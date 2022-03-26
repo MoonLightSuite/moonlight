@@ -62,6 +62,15 @@ public class SpatialComputation<S, R> {
         return result;
     }
 
+    public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
+        outputInit(s);
+        if (!spaceItr.isLocationServiceEmpty()) {
+            cursor = s.getSignalCursor(true);
+            doCompute();
+        }
+        return result;
+    }
+
     private void outputInit(SpatialTemporalSignal<R> s) {
         result = new SpatialTemporalSignal<>(s.getNumberOfLocations());
     }
@@ -70,12 +79,12 @@ public class SpatialComputation<S, R> {
         cursor = s.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         spaceItr.init(t, this::addResult);
-        DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
+        DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
 
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
             List<R> spatialSignal = cursor.getCurrentValue();
             double tNext = cursor.forwardTime();
-            spaceItr.computeOp(t, tNext, f, spatialSignal);
+            spaceItr.computeOp(t, tNext, ds, spatialSignal);
             t = moveSpatialModel(tNext);
         }
     }
@@ -112,6 +121,7 @@ public class SpatialComputation<S, R> {
             while (!Double.isNaN(t) && isNotCompleted(c1, c2)) {
                 List<R> spatialSignal1 = c1.getCurrentValue();
                 List<R> spatialSignal2 = c2.getCurrentValue();
+
                 List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
                 result.add(t, values);
                 double tNext = Math.min(c1.nextTime(), c2.nextTime());

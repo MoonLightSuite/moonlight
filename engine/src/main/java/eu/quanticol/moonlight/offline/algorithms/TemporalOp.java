@@ -100,8 +100,7 @@ public class TemporalOp {
             SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
                                                       interval.getEnd(),
                                                       op, true);
-            Signal<T> result = sw.apply(signal);
-            return result;
+            return sw.apply(signal);
         }
     }
 }
