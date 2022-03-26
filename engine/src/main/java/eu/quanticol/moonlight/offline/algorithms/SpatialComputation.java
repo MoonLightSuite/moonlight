@@ -65,8 +65,7 @@ public class SpatialComputation<S, R> {
     public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
         outputInit(s);
         if (!spaceItr.isLocationServiceEmpty()) {
-            cursor = s.getSignalCursor(true);
-            doCompute();
+            doCompute(s);
         }
         return result;
     }
