@@ -76,7 +76,9 @@ public class TemporalOp {
                                                   BinaryOperator<T> op, T init)
     {
         if (interval == null) {
-            return signal.iterateForward(op , init);
+            BooleanOp<T, T> booleanOp = new BooleanOp<>();
+            return booleanOp.applyUnary(signal, x -> op.apply(x, init));
+            //return signal.iterateForward(op , init);
         } else {
             SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
                                                       interval.getEnd(),
@@ -91,7 +93,9 @@ public class TemporalOp {
                                                     T init)
     {
         if (interval == null) {
-            return signal.iterateBackward(op, init);
+            BooleanOp<T, T> booleanOp = new BooleanOp<>(false);
+            return booleanOp.applyUnary(signal, x -> op.apply(x, init));
+            //return signal.iterateBackward(op, init);
         } else {
             SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
                                                       interval.getEnd(),

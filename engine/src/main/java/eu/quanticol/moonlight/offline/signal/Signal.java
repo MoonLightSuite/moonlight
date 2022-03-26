@@ -21,8 +21,9 @@
 package eu.quanticol.moonlight.offline.signal;
 
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
+
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.core.base.Pair;
 
 import java.util.HashSet;
@@ -35,9 +36,7 @@ import java.util.function.ToDoubleFunction;
 /**
  *
  */
-public class Signal<T> implements TimeSignal<Double, T>
-{
-
+public class Signal<T> implements TimeSignal<Double, T> {
     private Segment<T> first;
     private Segment<T> last;
     private int size;
@@ -119,33 +118,6 @@ public class Signal<T> implements TimeSignal<Double, T>
         if (first != oldFirst) {
             size++;
         }
-    }
-
-    public <R> Signal<R> iterateForward(BiFunction<T, R, R> f, R init) {
-        return map(f, init, true);
-    }
-
-    public <R> Signal<R> iterateBackward(BiFunction<T, R, R> f, R init) {
-        return map(f, init, false);
-    }
-
-    private <R> Signal<R> map(BiFunction<T, R, R> f, R init, boolean forward) {
-        Signal<R> newSignal = new Signal<>();
-        SignalCursor<Double, T> cursor = getIterator(forward);
-        R value = init;
-        while (!cursor.isCompleted()) {
-            T sValue = cursor.getCurrentValue();
-            double t = cursor.getCurrentTime();
-            value = f.apply(sValue, value);
-            if (forward) {
-                newSignal.add(t, value);
-                cursor.forward();
-            } else {
-                newSignal.addBefore(t, value);
-                cursor.backward();
-            }
-        }
-        return newSignal;
     }
 
     public void forEach(BiConsumer<Double,T> consumer) {

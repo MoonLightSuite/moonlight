@@ -28,6 +28,7 @@ import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -221,11 +222,16 @@ class TestSignal {
         assertEquals(1,s.size());
         assertEquals(0.0,s.getStart());
         assertEquals(10.0,s.getEnd());
-        Signal<Double> s2 = s.iterateBackward((x,y) -> Math.min(x,y),Double.POSITIVE_INFINITY);
+        Signal<Double> s2 = iterateBackward(s, Math::min,Double.POSITIVE_INFINITY);
         assertEquals(s.getStart(),s2.getStart());
         assertEquals(s.getEnd(),s2.getEnd());
         double[][] da = s2.arrayOf(Double::valueOf);
         assertEquals(2,da.length);
+    }
+
+    private <T> Signal<T> iterateBackward(Signal<T> s, BinaryOperator<T> f, T init) {
+        BooleanOp<T, T> booleanOp = new BooleanOp<>(false);
+        return booleanOp.applyUnary(s, x -> f.apply(x, init));
     }
 
 }

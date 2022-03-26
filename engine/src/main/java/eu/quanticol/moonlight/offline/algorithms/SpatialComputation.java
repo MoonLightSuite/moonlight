@@ -21,7 +21,6 @@
 package eu.quanticol.moonlight.offline.algorithms;
 
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
-import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
 
 import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 /**
  * Algorithm for Somewhere and Everywhere Computation
@@ -59,8 +57,7 @@ public class SpatialComputation<S, R> {
     public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<R> s) {
         outputInit(s);
         if (!spaceItr.isLocationServiceEmpty()) {
-            cursor = s.getSignalCursor(true);
-            doCompute();
+            doCompute(s);
         }
         return result;
     }
@@ -69,12 +66,13 @@ public class SpatialComputation<S, R> {
         result = new SpatialTemporalSignal<>(s.getNumberOfLocations());
     }
 
-    private void doCompute() {
+    private void doCompute(SpatialTemporalSignal<R> s) {
+        cursor = s.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         spaceItr.init(t, this::addResult);
         DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
 
-        while (isNotCompleted(t, cursor)) {
+        while (!Double.isNaN(t) && isNotCompleted(cursor)) {
             List<R> spatialSignal = cursor.getCurrentValue();
             double tNext = cursor.forwardTime();
             spaceItr.computeOp(t, tNext, f, spatialSignal);
@@ -111,11 +109,11 @@ public class SpatialComputation<S, R> {
             //                ((next == null) || (time < next.getFirst()))
             c1.move(t);
             c2.move(t);
-            while (isNotCompleted(t, c1, c2)) {
+            while (!Double.isNaN(t) && isNotCompleted(c1, c2)) {
                 List<R> spatialSignal1 = c1.getCurrentValue();
                 List<R> spatialSignal2 = c2.getCurrentValue();
                 List<R> values = reach(domain, spatialSignal1, spatialSignal2, f);
-                result.add(t, (values::get));
+                result.add(t, values);
                 double tNext = Math.min(c1.nextTime(), c2.nextTime());
                 c1.move(tNext);
                 c2.move(tNext);
@@ -125,7 +123,8 @@ public class SpatialComputation<S, R> {
                     t = spaceItr.getCurrentT();
                     f = spaceItr.generateDistanceStructure();
                     values = reach(domain, spatialSignal1, spatialSignal2, f);
-                    result.add(t, escape(domain, values, f));
+                    //result.add(t, escape(domain, values, f));
+                    result.add(t, values);
                 }
 
                 t = tNext;
@@ -139,10 +138,9 @@ public class SpatialComputation<S, R> {
     }
 
     @SafeVarargs
-    private static <C> boolean isNotCompleted(Double t,
-                                              ParallelSignalCursor<C>... cursors)
+    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors)
     {
-        return !Double.isNaN(t) &&
+        return
                 Arrays.stream(cursors)
                       .map(c -> !c.isCompleted())
                       .reduce( true, (c1, c2) -> c1 && c2);

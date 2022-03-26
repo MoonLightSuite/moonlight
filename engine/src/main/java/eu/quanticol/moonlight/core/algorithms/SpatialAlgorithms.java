@@ -4,7 +4,6 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.List;
-import java.util.function.IntFunction;
 
 public class SpatialAlgorithms {
     private SpatialAlgorithms() {} // Hidden constructor
