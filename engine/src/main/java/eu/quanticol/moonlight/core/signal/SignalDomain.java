@@ -82,6 +82,7 @@ public interface SignalDomain<R> extends Semiring<R> {
 	     			  what is this for? Doesn't it break the generalization?
 	     - compute*() these seem to be used by the scripting language.
 	     			  perhaps a refactoring is needed to move these somewhere else
+	     - compare(x, y) ? come Comparable
 	 */
 
 	boolean equalTo(R x, R y);

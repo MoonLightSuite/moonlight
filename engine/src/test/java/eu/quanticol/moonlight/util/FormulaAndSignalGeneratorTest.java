@@ -45,7 +45,7 @@ class FormulaAndSignalGeneratorTest {
         mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(index_of_x, Double.class));
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
         Signal<Double> outputSignal = m.monitor(signal);
         long timeEnd = System.currentTimeMillis();
         SignalCursor<MoonLightRecord> expected = signal.getIterator(true);

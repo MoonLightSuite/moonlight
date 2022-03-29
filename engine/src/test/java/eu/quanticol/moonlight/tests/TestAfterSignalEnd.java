@@ -84,7 +84,7 @@ class TestAfterSignalEnd {
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peakManagement() {
         return SpatialTemporalMonitor.eventuallyMonitor(   // Eventually...
                 until()
-                , new Interval(0,T), SATISFACTION);
+                , SATISFACTION, new Interval(0,T));
     }
 
     /**
@@ -103,7 +103,7 @@ class TestAfterSignalEnd {
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
         return eventuallyMonitor(   // Eventually...
                 notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
-                , new Interval(0, M + O), SATISFACTION);
+                , SATISFACTION, new Interval(0, M + O));
     }
 
     /**
@@ -112,7 +112,7 @@ class TestAfterSignalEnd {
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave2() {
         return globallyMonitor(   // Eventually...
                 notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
-                , new Interval(0, M + O), SATISFACTION);
+                , SATISFACTION, new Interval(0, M + O));
     }
 
     // --------- ATOMIC PREDICATES --------- //

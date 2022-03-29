@@ -1,5 +1,8 @@
 package eu.quanticol.moonlight;
 
+/**
+ * Used by foreign languages interfaces
+ */
 public class MoonlightScriptFactory {
 
     public MoonLightTemporalScript getTemporalScript(MoonLightScript moonLightScript) {

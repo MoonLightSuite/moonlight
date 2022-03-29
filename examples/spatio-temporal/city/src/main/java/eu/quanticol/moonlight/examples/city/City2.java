@@ -96,7 +96,7 @@ public class City2 {
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> eventuallyATaxi(double a,
                                                                                                              double b) {
 //      Formula evTaxi = new EventuallyFormula( new AtomicFormula("isThereATaxi"), new Interval(0,20));
-        return SpatialTemporalMonitor.eventuallyMonitor(isThereATaxi(), new Interval(a,b),booleanDomain);
+        return SpatialTemporalMonitor.eventuallyMonitor(isThereATaxi(), booleanDomain, new Interval(a,b));
     }
 
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> isThereATaxi() {

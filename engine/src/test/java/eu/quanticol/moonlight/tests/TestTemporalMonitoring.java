@@ -107,7 +107,7 @@ class TestTemporalMonitoring {
         mappa.put("b", y -> assignment -> assignment.get(signal.getVariableIndex("b"), Double.class));
         mappa.put("c", y -> assignment -> assignment.get(signal.getVariableIndex("c"), Double.class));
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
         Signal<Double> outputSignal = m.monitor(signal);
         outputSignal.getIterator(true).value();
     }
@@ -187,7 +187,7 @@ class TestTemporalMonitoring {
         Formula phi = new EventuallyFormula(new AtomicFormula("test"), new Interval(formulaLowerBound, formulaUpperBound));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(phi, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(phi);
         Signal<Double> result = m.monitor(signal);
         assertEquals(expectedOutputUpperBound, result.end(), 0.0000001);
     }

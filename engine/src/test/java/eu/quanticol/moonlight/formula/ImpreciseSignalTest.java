@@ -156,7 +156,7 @@ class ImpreciseSignalTest {
         TemporalMonitoring<List<Comparable<?>>, Box<Double>> monitoring =
                 new TemporalMonitoring<>(atoms, new AbsIntervalDomain<>(new DoubleDomain()));
 
-        return monitoring.monitor(formula, null).monitor(trace);
+        return monitoring.monitor(formula).monitor(trace);
     }
 
     private static Formula testFormula() {

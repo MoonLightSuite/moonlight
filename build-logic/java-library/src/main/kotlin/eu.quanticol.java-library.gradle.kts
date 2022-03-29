@@ -17,6 +17,11 @@ java {
     withSourcesJar()
 }
 
+tasks.withType<JavaCompile> {
+    // Needed by pattern matching on switches:
+    options.compilerArgs.add("--enable-preview")
+}
+
 tasks {
     // to allow UTF-8 characters in comments
     compileJava { options.encoding = "UTF-8" }
@@ -30,6 +35,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // Needed by pattern matching on switches:
+    jvmArgs("--enable-preview")
 }
 
 // Do not generate reports for individual projects

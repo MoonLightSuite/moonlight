@@ -289,7 +289,7 @@ public interface DataHandler<S> {
          */
         @Override
         public Boolean fromObject(Object value) throws IllegalValueException {
-            if (value == null) {
+            if (value == null) {    //TODO: NotNull -> should throw
                 return false;
             }
             if (value instanceof Boolean) {

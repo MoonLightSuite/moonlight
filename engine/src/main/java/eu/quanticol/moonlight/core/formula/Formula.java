@@ -39,5 +39,5 @@ public interface Formula {
      * @param <R> Semantic Interpretation Semiring Type
      * @return a value corresponding to the value of the formula on R.
      */
-    <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters);
+    default <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) { return null; }
  }

@@ -118,20 +118,18 @@ class TestCity2 {
                 new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new BooleanDomain(),
-                        true);
+                        new BooleanDomain());
 
         //// MONITOR QUANT/////
         SpatialTemporalMonitoring<Double, Triple<String, Boolean, Integer>, Double> monitorQuant =
                 new SpatialTemporalMonitoring<>(
                         atomicFormulasQuant,
                         distanceFunctions,
-                        new DoubleDomain(),
-                        true);
+                        new DoubleDomain());
 
         ////  1 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m =
-                monitor.monitor(new AtomicFormula("isThereATaxi"), null);
+                monitor.monitor(new AtomicFormula("isThereATaxi"));
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < SIZE; i++) {
@@ -141,7 +139,7 @@ class TestCity2 {
 
         ////  2 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m2 =
-                monitor.monitor(new AtomicFormula("isThereAStop"), null);
+                monitor.monitor(new AtomicFormula("isThereAStop"));
         SpatialTemporalSignal<Boolean> sout2 = m2.monitor(locService, signal);
         List<Signal<Boolean>> signals2 = sout2.getSignals();
         ArrayList<Boolean> soluz = new ArrayList<>(Arrays.asList(true, false, true, false, true, false, true));
@@ -152,7 +150,7 @@ class TestCity2 {
 
         ////  3 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m3 =
-                monitor.monitor(somewhereTaxi, null);
+                monitor.monitor(somewhereTaxi);
         SpatialTemporalSignal<Boolean> sout3 = m3.monitor(locService, signal);
         List<Signal<Boolean>> signals3 = sout3.getSignals();
         for (int i = 0; i < SIZE; i++) {
@@ -162,7 +160,7 @@ class TestCity2 {
 
         ////  4 ///
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m4 =
-                monitor.monitor(stopReacMainsquare, null);
+                monitor.monitor(stopReacMainsquare);
         SpatialTemporalSignal<Boolean> sout4 = m4.monitor(locService, signal);
         List<Signal<Boolean>> signals4 = sout4.getSignals();
 
@@ -172,7 +170,7 @@ class TestCity2 {
 
         ////  5 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m5 =
-                monitor.monitor(taxiReachStop, null);
+                monitor.monitor(taxiReachStop);
         SpatialTemporalSignal<Boolean> sout5 = m5.monitor(locService, signal);
         List<Signal<Boolean>> signals5 = sout5.getSignals();
 
@@ -182,7 +180,7 @@ class TestCity2 {
 
         ////  6 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m6 =
-                monitor.monitor(iftaxiReachStop, null);
+                monitor.monitor(iftaxiReachStop);
         SpatialTemporalSignal<Boolean> sout6 = m6.monitor(locService, signal);
         List<Signal<Boolean>> signals6 = sout6.getSignals();
 
@@ -199,7 +197,7 @@ class TestCity2 {
 
        ////  7 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m7 =
-            monitor.monitor(evTaxi, null);
+            monitor.monitor(evTaxi);
         SpatialTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
         for (int i = 0; i < SIZE; i++) {
@@ -208,7 +206,7 @@ class TestCity2 {
 
         ////  8 Quant ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Double> m8 =
-                monitorQuant.monitor(reachQuant, null);
+                monitorQuant.monitor(reachQuant);
         SpatialTemporalSignal<Double> sout8 = m8.monitor(locService, signal);
         List<Signal<Double>> signals8 = sout8.getSignals();
         assertEquals(-102.5, signals8.get(0).getValueAt(1.0));

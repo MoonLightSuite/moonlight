@@ -96,8 +96,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> eventuallyMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
-			Interval interval,
-			SignalDomain<R> domain)
+			SignalDomain<R> domain, Interval interval)
 	{
 		return new SpatialTemporalMonitorFutureOperator<>(m, interval, domain::disjunction, domain.min());
 	}
@@ -106,13 +105,12 @@ public interface SpatialTemporalMonitor<S, T, R> {
 			SpatialTemporalMonitor<S, T, R> m,
 			SignalDomain<R> domain)
 	{
-		return eventuallyMonitor(m, null, domain);
+		return eventuallyMonitor(m, domain, null);
 	}
 
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> globallyMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
-			Interval interval,
-			SignalDomain<R> domain)
+			SignalDomain<R> domain, Interval interval)
 	{
 		return new SpatialTemporalMonitorFutureOperator<>(m, interval, domain::conjunction, domain.max());
 	}
@@ -121,7 +119,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 			SpatialTemporalMonitor<S, T, R> m,
 			SignalDomain<R> domain)
 	{
-		return globallyMonitor(m, null, domain);
+		return globallyMonitor(m, domain, null);
 	}
 	
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> untilMonitor(
@@ -160,8 +158,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 	
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> onceMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
-			Interval interval,
-			SignalDomain<R> domain)
+			SignalDomain<R> domain, Interval interval)
 	{
 		return new SpatialTemporalMonitorPastOperator<>(m, interval, domain::disjunction, domain.min());
 	}
@@ -170,13 +167,12 @@ public interface SpatialTemporalMonitor<S, T, R> {
 			SpatialTemporalMonitor<S, T, R> m,
 			SignalDomain<R> domain)
 	{
-		return onceMonitor(m,null,domain);
+		return onceMonitor(m, domain, null);
 	}
 
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> historicallyMonitor(
 			SpatialTemporalMonitor<S, T, R> m,
-			Interval interval,
-			SignalDomain<R> domain)
+			SignalDomain<R> domain, Interval interval)
 	{
 		return new SpatialTemporalMonitorPastOperator<>(m, interval, domain::conjunction, domain.max());
 	}
@@ -185,7 +181,7 @@ public interface SpatialTemporalMonitor<S, T, R> {
 			SpatialTemporalMonitor<S, T, R> m,
 			SignalDomain<R> domain)
 	{
-		return historicallyMonitor(m, null, domain);
+		return historicallyMonitor(m, domain, null);
 	}
 	
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> somewhereMonitor(

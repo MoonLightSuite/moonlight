@@ -129,7 +129,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.onceMonitor(arg.apply(domain,args),interval.apply(args), domain);
+                return SpatialTemporalMonitor.onceMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -138,7 +138,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.historicallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.historicallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -147,7 +147,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.eventuallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.eventuallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -156,7 +156,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.globallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.globallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }

@@ -438,10 +438,9 @@ class TestSpatialProperties {
                 new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new BooleanDomain(),
-                        true);
+                        new BooleanDomain());
 
-        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach, null);
+        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach);
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {

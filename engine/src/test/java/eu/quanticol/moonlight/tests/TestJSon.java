@@ -38,6 +38,7 @@ import eu.quanticol.moonlight.util.BothFormulaGenerator;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.core.base.Pair;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,7 +106,7 @@ class TestJSon {
         }
     }
 
-
+    @Disabled("json formulae are not supported anymore")
     @Test
     void testFormulaSimple() {
         AtomicFormula a1 = new AtomicFormula("a");
@@ -145,6 +146,7 @@ class TestJSon {
         assertEquals(f1, f2);
     }
 
+    @Disabled("json formulae are not supported anymore")
     @Test
     void testFormulaJson() {
         for (int i = 0; i < 1000; i++) {

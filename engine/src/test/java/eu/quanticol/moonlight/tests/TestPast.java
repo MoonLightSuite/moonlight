@@ -53,7 +53,7 @@ class TestPast {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(historicallyFormula, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(historicallyFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
@@ -95,7 +95,7 @@ class TestPast {
         //a is the atomic proposition: a>=0
         mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notOnceNotA, null);
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notOnceNotA);
         Signal<Double> outputSignal = m.monitor(signal);
         SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
         SignalCursor<Double> actual = outputSignal.getIterator(true);
@@ -121,7 +121,7 @@ class TestPast {
         Formula once = new OnceFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(once, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(once);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
@@ -141,7 +141,7 @@ class TestPast {
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
@@ -162,7 +162,7 @@ class TestPast {
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
         monitoring.addProperty("test2", p -> (x -> x - 9));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(since, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(since);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(5.0, result.start(), 0.0);
@@ -183,7 +183,7 @@ class TestPast {
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> x));
         monitoring.addProperty("test2", p -> (x -> x - 9));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(since, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(since);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
         assertEquals(0.0, result.start(), 0.0);
@@ -205,7 +205,7 @@ class TestPast {
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
         // <3.1000000000000014>
         assertEquals(signal.end(), result.end(), 0.0);
@@ -303,7 +303,7 @@ class TestPast {
         Formula historically = new HistoricallyFormula(new AtomicFormula("test"), new Interval(0.1, 0.3));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(historically, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.end(), result.end(), 0.0);
     }

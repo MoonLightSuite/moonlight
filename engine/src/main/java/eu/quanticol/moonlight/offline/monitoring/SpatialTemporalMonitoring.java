@@ -22,6 +22,7 @@ package eu.quanticol.moonlight.offline.monitoring;
 
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
@@ -38,6 +39,8 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 import java.util.Map;
 import java.util.function.Function;
+
+import static eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor.*;
 
 /**
  * Alternative interface to perform (spatial) monitoring.
@@ -57,173 +60,187 @@ import java.util.function.Function;
 public class SpatialTemporalMonitoring<S, T, R> implements
         FormulaVisitor<Parameters, SpatialTemporalMonitor<S, T, R>>
 {
-
-    private final Map<String, Function<Parameters, Function<T, R>>> atomicPropositions;
-
+    private final Map<String, Function<Parameters, Function<T, R>>> atoms;
     private final Map<String, Function<SpatialModel<S>, DistanceStructure<S, ?>>> distanceFunctions;
-
     private final SignalDomain<R> module;
 
-    private final boolean staticSpace;
 
-
-    public SpatialTemporalMonitor<S, T, R> monitor(Formula f,
-                                                   Parameters parameters)
-    {
-        return f.accept(this, parameters);
-    }
-
-    /**
-     * @param atomicPropositions
-     * @param module
-     */
     public SpatialTemporalMonitoring(
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                     DistanceStructure<S, ?>>> distanceFunctions,
-            SignalDomain<R> module,
-            boolean staticSpace)
+            SignalDomain<R> module)
     {
         super();
-        this.atomicPropositions = atomicPropositions;
+        this.atoms = atomicPropositions;
         this.module = module;
         this.distanceFunctions = distanceFunctions;
-        this.staticSpace = staticSpace;
     }
 
     /**
-     * @see FormulaVisitor#visit(AtomicFormula, Object)
+     * Entry point of the monitoring program:
+     * it launches the monitoring process over the formula f.
+     *
+     * @param f the formula to monitor
+     * @return the result of the monitoring process.
      */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            AtomicFormula atomicFormula, Parameters parameters) {
-        Function<Parameters, Function<T, R>> f = atomicPropositions.get(atomicFormula.getAtomicId());
-        if (f == null) {
-            throw new IllegalArgumentException("Unkown atomic ID " + atomicFormula.getAtomicId());
+    public SpatialTemporalMonitor<S, T, R> monitor(Formula f) {
+        return switch(f) {
+            // Classic operators
+            case AtomicFormula atomic -> generateAtomicMonitor(atomic);
+            case NegationFormula negation -> generateNegationMonitor(negation);
+            case AndFormula and -> generateAndMonitor(and);
+            case OrFormula or -> generateOrMonitor(or);
+            // Temporal Future Operators
+            case EventuallyFormula ev -> generateEventuallyMonitor(ev);
+            case GloballyFormula globally -> generateGloballyMonitor(globally);
+            case UntilFormula until -> generateUntilMonitor(until);
+            // Temporal Past Operators
+            case OnceFormula once -> generateOnceMonitor(once);
+            case HistoricallyFormula hs -> generateHistoricallyMonitor(hs);
+            case SinceFormula since -> generateSinceMonitor(since);
+            // Spatial Operators
+            case SomewhereFormula some -> generateSomewhereMonitor(some);
+            case EverywhereFormula every -> generateEverywhereMonitor(every);
+            case EscapeFormula escape -> generateEscapeMonitor(escape);
+            case ReachFormula reach -> generateReachMonitor(reach);
+            default -> illegalFormula(f);
+        };
+    }
+
+    private SpatialTemporalMonitor<S, T, R> illegalFormula(Formula f) {
+        throw new IllegalArgumentException("Unsupported formula: " + f);
+    }
+
+    private SpatialTemporalMonitor<S, T, R> generateAtomicMonitor(AtomicFormula f) {
+        var atomicFunc = atoms.get(f.getAtomicId());
+
+        if (atomicFunc == null) {
+            throw new IllegalArgumentException("Unknown atomic ID " +
+                    f.getAtomicId());
         }
-        Function<T, R> atomic = f.apply(parameters);
-        return SpatialTemporalMonitor.atomicMonitor(atomic);
+        Function<T, R> atomic = atomicFunc.apply(null);
+
+        return atomicMonitor(atomic);
     }
 
-    /**
-     * @see FormulaVisitor#visit(AndFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(AndFormula andFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> leftMonitoring = andFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S,T,R> rightMonitoring = andFormula.getSecondArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.andMonitor(leftMonitoring, module, rightMonitoring);
+    private SpatialTemporalMonitor<S, T, R> generateAndMonitor(AndFormula f) {
+        var leftMonitor = monitor(f.getFirstArgument());
+        var rightMonitor = monitor(f.getSecondArgument());
+
+        return andMonitor(leftMonitor, module , rightMonitor);
     }
 
-    /**
-     * @see FormulaVisitor#visit(NegationFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            NegationFormula negationFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> m = negationFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.notMonitor(m, module);
+    private SpatialTemporalMonitor<S, T, R> generateOrMonitor(OrFormula f) {
+        var leftMonitor = monitor(f.getFirstArgument());
+        var rightMonitor = monitor(f.getSecondArgument());
+
+        return orMonitor(leftMonitor, module, rightMonitor);
     }
 
-    /**
-     * @see FormulaVisitor#visit(OrFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(OrFormula orFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> leftMonitoring = orFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S,T,R> rightMonitoring = orFormula.getSecondArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.orMonitor(leftMonitoring, module, rightMonitoring);
+    private SpatialTemporalMonitor<S, T, R> generateNegationMonitor(NegationFormula f) {
+        var argumentMonitoring = monitor(f.getArgument());
+        return notMonitor(argumentMonitoring, module);
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            EventuallyFormula eventuallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> m = eventuallyFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.eventuallyMonitor(m,eventuallyFormula.getInterval(),module);
+    private SpatialTemporalMonitor<S, T, R> generateEventuallyMonitor(EventuallyFormula f)
+    {
+        var argMonitor = monitor(f.getArgument());
+
+        if (f.isUnbounded()) {
+            return eventuallyMonitor(argMonitor, module);
+        } else {
+            Interval interval = f.getInterval();
+            return eventuallyMonitor(argMonitor, module, interval);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            GloballyFormula globallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> m = globallyFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.globallyMonitor(m, globallyFormula.getInterval(),module);
+    private SpatialTemporalMonitor<S, T, R> generateGloballyMonitor(GloballyFormula f) {
+        var argMonitor = monitor(f.getArgument());
+
+        if (f.isUnbounded()) {
+            return globallyMonitor(argMonitor, module);
+        } else {
+            Interval interval = f.getInterval();
+            return globallyMonitor(argMonitor, module, interval);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            UntilFormula untilFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> firstMonitoring = untilFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S,T,R> secondMonitoring = untilFormula.getSecondArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.untilMonitor(firstMonitoring, untilFormula.getInterval(), secondMonitoring, module);
+    private SpatialTemporalMonitor<S, T, R> generateOnceMonitor(OnceFormula f) {
+        var argMonitor = monitor(f.getArgument());
+
+        if (f.isUnbounded()) {
+            return onceMonitor(argMonitor, module);
+        } else {
+            Interval interval = f.getInterval();
+            return onceMonitor(argMonitor, module, interval);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            SinceFormula sinceFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> firstMonitoring = sinceFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S,T,R> secondMonitoring = sinceFormula.getSecondArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.sinceMonitor(firstMonitoring, sinceFormula.getInterval(), secondMonitoring, module);
+    private SpatialTemporalMonitor<S, T, R> generateHistoricallyMonitor(
+            HistoricallyFormula f)
+    {
+        var argMonitor = monitor(f.getArgument());
+
+        if (f.isUnbounded()) {
+            return historicallyMonitor(argMonitor, module);
+        } else {
+            Interval interval = f.getInterval();
+            return historicallyMonitor(argMonitor, module, interval);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            HistoricallyFormula historicallyFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> argumentMonitoring = historicallyFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.historicallyMonitor(argumentMonitoring, historicallyFormula.getInterval(),module);
+    private SpatialTemporalMonitor<S, T, R> generateUntilMonitor(UntilFormula f) {
+        var leftMonitor = monitor(f.getFirstArgument());
+        var rightMonitor = monitor(f.getSecondArgument());
+
+        if (f.isUnbounded()) {
+            return untilMonitor(leftMonitor, rightMonitor, module);
+        } else {
+            return untilMonitor(leftMonitor, f.getInterval(),
+                    rightMonitor, module);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            OnceFormula onceFormula, Parameters parameters) {
-        SpatialTemporalMonitor<S,T,R> argumentMonitoring = onceFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.onceMonitor(argumentMonitoring, onceFormula.getInterval(), module);
+    private SpatialTemporalMonitor<S, T, R> generateSinceMonitor(SinceFormula f) {
+        var leftMonitor = monitor(f.getFirstArgument());
+        var rightMonitor = monitor(f.getSecondArgument());
+
+        if (f.isUnbounded()) {
+            return sinceMonitor(leftMonitor, rightMonitor, module);
+        } else {
+            return sinceMonitor(leftMonitor, f.getInterval(),
+                    rightMonitor, module);
+        }
     }
 
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            SomewhereFormula somewhereFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(somewhereFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S,T,R> argumentMonitor = somewhereFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.somewhereMonitor(argumentMonitor, distanceFunction, module);
+    private SpatialTemporalMonitor<S, T, R> generateReachMonitor(ReachFormula f) {
+        var leftMonitor = monitor(f.getFirstArgument());
+        var rightMonitor = monitor(f.getSecondArgument());
+
+        var distanceFunction= distanceFunctions.get(f.getDistanceFunctionId());
+        return reachMonitor(leftMonitor, distanceFunction,
+                            rightMonitor, module);
     }
 
-    /**
-     * @see FormulaVisitor#visit(EverywhereFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            EverywhereFormula everywhereFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(everywhereFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S,T,R> argumentMonitor = everywhereFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.everywhereMonitor(argumentMonitor, distanceFunction, module);
+    private SpatialTemporalMonitor<S, T, R> generateSomewhereMonitor(SomewhereFormula f) {
+        var argMonitor = monitor(f.getArgument());
+
+        var distanceFunction= distanceFunctions.get(f.getDistanceFunctionId());
+        return somewhereMonitor(argMonitor, distanceFunction, module);
     }
 
+    private SpatialTemporalMonitor<S, T, R> generateEverywhereMonitor(EverywhereFormula f) {
+        var argMonitor = monitor(f.getArgument());
 
-    /**
-     * @see FormulaVisitor#visit(ReachFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            ReachFormula reachFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(reachFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S,T,R> m1 = reachFormula.getFirstArgument().accept(this, parameters);
-        SpatialTemporalMonitor<S,T,R> m2 = reachFormula.getSecondArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.reachMonitor(m1, distanceFunction, m2, module);
+        var distanceFunction= distanceFunctions.get(f.getDistanceFunctionId());
+        return everywhereMonitor(argMonitor, distanceFunction, module);
     }
 
+    private SpatialTemporalMonitor<S, T, R> generateEscapeMonitor(EscapeFormula f) {
+        var argMonitor = monitor(f.getArgument());
 
-    /**
-     * @see FormulaVisitor#visit(EscapeFormula, Object)
-     */
-    @Override
-    public SpatialTemporalMonitor<S,T,R> visit(
-            EscapeFormula escapeFormula, Parameters parameters) {
-        Function<SpatialModel<S>, DistanceStructure<S, ?>> distanceFunction = distanceFunctions.get(escapeFormula.getDistanceFunctionId());
-        SpatialTemporalMonitor<S,T,R> argumentMonitor = escapeFormula.getArgument().accept(this, parameters);
-        return SpatialTemporalMonitor.escapeMonitor(argumentMonitor, distanceFunction, module);
+        var distanceFunction= distanceFunctions.get(f.getDistanceFunctionId());
+        return escapeMonitor(argMonitor, distanceFunction, module);
     }
-
-
-
-
 }

@@ -155,7 +155,7 @@ public class EpidemicMain {
     }
 
     private static SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, Boolean> alwaysSomeInf() {
-        return globallyMonitor(isInfected(),new Interval(0,100),booleanDomain);
+        return globallyMonitor(isInfected(), booleanDomain, new Interval(0,100));
     }
 
 

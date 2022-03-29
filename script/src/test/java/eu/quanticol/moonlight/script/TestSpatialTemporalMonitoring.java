@@ -79,33 +79,33 @@ public class TestSpatialTemporalMonitoring {
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> eventuallyLessThanZeroY =
             SpatialTemporalMonitor.eventuallyMonitor(lessThanZeroY, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> eventuallyBLessThanZeroX =
-            SpatialTemporalMonitor.eventuallyMonitor(lessThanZeroX, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.eventuallyMonitor(lessThanZeroX, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> eventuallyBLessThanZeroY =
-            SpatialTemporalMonitor.eventuallyMonitor(lessThanZeroY, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.eventuallyMonitor(lessThanZeroY, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> globallyLessThanZeroX =
             SpatialTemporalMonitor.globallyMonitor(lessThanZeroX, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> globallyLessThanZeroY =
             SpatialTemporalMonitor.globallyMonitor(lessThanZeroY, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> globallyBLessThanZeroX =
-            SpatialTemporalMonitor.globallyMonitor(lessThanZeroX, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.globallyMonitor(lessThanZeroX, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> globallyBLessThanZeroY =
-            SpatialTemporalMonitor.globallyMonitor(lessThanZeroY, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.globallyMonitor(lessThanZeroY, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> onceLessThanZeroX =
             SpatialTemporalMonitor.onceMonitor(lessThanZeroX, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> onceLessThanZeroY =
             SpatialTemporalMonitor.onceMonitor(lessThanZeroY, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> onceBLessThanZeroX =
-            SpatialTemporalMonitor.onceMonitor(lessThanZeroX, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.onceMonitor(lessThanZeroX, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> onceBLessThanZeroY =
-            SpatialTemporalMonitor.onceMonitor(lessThanZeroY, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.onceMonitor(lessThanZeroY, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> historicallyLessThanZeroX =
             SpatialTemporalMonitor.historicallyMonitor(lessThanZeroX, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> historicallyLessThanZeroY =
             SpatialTemporalMonitor.historicallyMonitor(lessThanZeroY, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> historicallyBLessThanZeroX =
-            SpatialTemporalMonitor.historicallyMonitor(lessThanZeroX, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.historicallyMonitor(lessThanZeroX, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> historicallyBLessThanZeroY =
-            SpatialTemporalMonitor.historicallyMonitor(lessThanZeroY, new Interval(0,10), booleanDomain);
+            SpatialTemporalMonitor.historicallyMonitor(lessThanZeroY, booleanDomain, new Interval(0,10));
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> untilXY =
             SpatialTemporalMonitor.untilMonitor(lessThanZeroX, lessThanZeroY, booleanDomain);
     private final SpatialTemporalMonitor<MoonLightRecord,MoonLightRecord,Boolean> untilBXY =

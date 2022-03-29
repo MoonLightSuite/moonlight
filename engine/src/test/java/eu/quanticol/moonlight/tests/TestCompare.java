@@ -78,7 +78,7 @@ class TestCompare {
             mappa.put("b", y -> assignment -> assignment.get(index_of_x, Double.class) < 5);
             //TemporalMonitoring<Assignment, Double> monitoring = new TemporalMonitoring<Assignment, Double>(mappa, new DoubleDomain());
             TemporalMonitoring<MoonLightRecord, Boolean> monitoring = new TemporalMonitoring<>(mappa, new BooleanDomain());
-            TemporalMonitor<MoonLightRecord,Boolean> m = monitoring.monitor(aeb, null);
+            TemporalMonitor<MoonLightRecord,Boolean> m = monitoring.monitor(aeb);
             Signal<Boolean> outputSignal = m.monitor(signal);
             assertFalse(outputSignal.getValueAt(0.0));
         } catch (IOException e) {
@@ -111,7 +111,7 @@ class TestCompare {
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord,Double> m = monitoring.monitor(aeb, null);
+            TemporalMonitor<MoonLightRecord,Double> m = monitoring.monitor(aeb);
             Signal<Double> outputSignal = m.monitor(signal);
             assertEquals(expectedRobustnessInZero, outputSignal.getValueAt(0.0), 1E-15);
         } catch (IOException e) {
@@ -147,7 +147,7 @@ class TestCompare {
             //b is the atomic proposition: y<=30
             mappa.put("b", y -> assignment -> -assignment.get(index_of_x, Double.class) + 30);
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             assertEquals(expectedRobustnessInZero, outputSignal.getValueAt(0.0), 1E-15);
@@ -183,7 +183,7 @@ class TestCompare {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(globallyFormula, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(globallyFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
@@ -226,7 +226,7 @@ class TestCompare {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notEventuallyNotA, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notEventuallyNotA);
             Signal<Double> outputSignal = m.monitor(signal);
             SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double> actual = outputSignal.getIterator(true);
