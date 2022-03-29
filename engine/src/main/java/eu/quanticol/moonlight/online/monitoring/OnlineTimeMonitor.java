@@ -9,7 +9,6 @@ import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.temporal.*;
-import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.online.monitoring.temporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
@@ -18,9 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Primary entry point to perform online monitoring.
@@ -29,7 +26,6 @@ import java.util.function.Supplier;
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see FormulaVisitor
  */
 public class OnlineTimeMonitor<V, R extends Comparable<R>> {
 

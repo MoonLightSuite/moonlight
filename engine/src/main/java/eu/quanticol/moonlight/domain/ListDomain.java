@@ -19,14 +19,14 @@ public class ListDomain<T extends Comparable<T>>
     public ListDomain(List<SignalDomain<T>> domains) {
         this.domains = new ArrayList<>();
         for(SignalDomain<T> d: domains) {
-            this.domains.add(new AbsIntervalDomain<>(d));
+            this.domains.add(new BoxDomain<>(d));
         }
     }
 
     public ListDomain(int size, SignalDomain<T> domain) {
         this.domains = new ArrayList<>();
         for(int i = 0; i < size; i++) {
-            this.domains.add(new AbsIntervalDomain<>(domain));
+            this.domains.add(new BoxDomain<>(domain));
         }
     }
 

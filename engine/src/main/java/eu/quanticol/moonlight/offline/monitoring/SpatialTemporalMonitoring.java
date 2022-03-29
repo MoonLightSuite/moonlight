@@ -54,12 +54,9 @@ import static eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialT
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see FormulaVisitor
  * @see SpatialTemporalMonitor
  */
-public class SpatialTemporalMonitoring<S, T, R> implements
-        FormulaVisitor<Parameters, SpatialTemporalMonitor<S, T, R>>
-{
+public class SpatialTemporalMonitoring<S, T, R> {
     private final Map<String, Function<Parameters, Function<T, R>>> atoms;
     private final Map<String, Function<SpatialModel<S>, DistanceStructure<S, ?>>> distanceFunctions;
     private final SignalDomain<R> module;

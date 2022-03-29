@@ -40,7 +40,7 @@ import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.formula.*;
 
-import eu.quanticol.moonlight.domain.AbsIntervalDomain;
+import eu.quanticol.moonlight.domain.BoxDomain;
 import eu.quanticol.moonlight.domain.ListDomain;
 
 import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
@@ -266,9 +266,9 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
-            return everywhereParallel(new AbsIntervalDomain<>(interpretation),
+            return everywhereParallel(new BoxDomain<>(interpretation),
                                       spatialSignal, ds);
-        return everywhere(new AbsIntervalDomain<>(interpretation),
+        return everywhere(new BoxDomain<>(interpretation),
                           spatialSignal, ds);
     }
 
@@ -277,10 +277,10 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
-            return somewhereParallel(new AbsIntervalDomain<>(interpretation),
+            return somewhereParallel(new BoxDomain<>(interpretation),
                                      spatialSignal, ds);
 
-        return somewhere(new AbsIntervalDomain<>(interpretation),
+        return somewhere(new BoxDomain<>(interpretation),
                          spatialSignal, ds);
 
     }
@@ -289,7 +289,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
             IntFunction<Box<R>> spatialSignal,
             DistanceStructure<S, ?> f)
     {
-        return escape(new AbsIntervalDomain<>(interpretation),
+        return escape(new BoxDomain<>(interpretation),
                       spatialSignal, f);
     }
 

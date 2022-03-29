@@ -97,7 +97,7 @@ class BooleanComputationTest {
     }
 
     private static BinaryOperator<Box<Double>> intervalOr() {
-        return (x, y) -> new AbsIntervalDomain<>(new DoubleDomain())
+        return (x, y) -> new BoxDomain<>(new DoubleDomain())
                 .disjunction(x, y);
     }
 

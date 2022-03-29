@@ -28,6 +28,7 @@ import eu.quanticol.moonlight.core.base.Pair;
 import java.util.*;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Algorithmic class for computing the escape operator
@@ -134,7 +135,7 @@ public class EscapeAlgorithm<E, M, R> {
     }
 
     private List<R> extractResult() {
-        List<R> toReturn = signalDomain.createArray(model.size());
+        List<R> toReturn = createArray();
         for (int i = 0; i < model.size(); i++) {
             Map<Integer, R> minimalDistance = minimalDistanceMap.get(i);
             Set<Map.Entry<Integer, R>> entries = minimalDistance.entrySet();
@@ -142,6 +143,12 @@ public class EscapeAlgorithm<E, M, R> {
             toReturn.set(i, value);
         }
         return toReturn;
+    }
+
+    private List<R> createArray() {
+        return IntStream.range(0, model.size())
+                        .mapToObj(i -> signalDomain.min())
+                        .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private R updateValue(Set<Map.Entry<Integer, R>> entries, int i) {
