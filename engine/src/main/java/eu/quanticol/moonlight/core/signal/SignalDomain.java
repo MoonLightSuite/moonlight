@@ -21,7 +21,9 @@
 package eu.quanticol.moonlight.core.signal;
 
 import eu.quanticol.moonlight.core.base.Semiring;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.core.io.SerializableOperations;
+import eu.quanticol.moonlight.core.io.SerializableValues;
 
 import java.util.function.BiFunction;
 
@@ -42,13 +44,15 @@ import java.util.function.BiFunction;
  * @see Semiring
  * @see DataHandler
  */
-public interface SignalDomain<R> extends Semiring<R> {
+public interface SignalDomain<R> extends Semiring<R>,
+		SerializableOperations<R>, SerializableValues<R> {
 
 	/**
 	 * Unknown element: this is an element of the set that represents
 	 * undefined areas of the signal.
 	 * Examples of this could be 0 for real numbers,
 	 * a third value for booleans, or the total interval for intervals.
+	 *
 	 * @return the element of the set representing absence of knowledge
 	 */
 	R any();
@@ -56,6 +60,7 @@ public interface SignalDomain<R> extends Semiring<R> {
 	/**
 	 * Negation function that s.t. De Morgan laws, double negation
 	 * and inversion of the idempotent elements hold.
+	 *
 	 * @param x element to negate
 	 * @return the negation of the x element
 	 */
@@ -63,11 +68,12 @@ public interface SignalDomain<R> extends Semiring<R> {
 
 	/**
 	 * Shorthand for returning an operational implication
+	 *
 	 * @param x the premise of the implication
 	 * @param y the conclusion of the implication
 	 * @return the element that results from the implication
 	 */
-	default R  implies(R x, R y) {
+	default R implies(R x, R y) {
 		return disjunction(negation(x), y);
 	}
 
@@ -86,41 +92,8 @@ public interface SignalDomain<R> extends Semiring<R> {
 	 */
 
 	boolean equalTo(R x, R y);
-	
-	R valueOf(boolean b);
-	
-	R valueOf(double v);
-	
-	default R valueOf(int v) {
-		return valueOf((double) v);
-	}
-	
-	R computeLessThan(double v1, double v2);
 
-	R computeLessOrEqualThan(double v1, double v2);
 
-	R computeEqualTo(double v1, double v2);
-	
-	R computeGreaterThan(double v1, double v2);
-	
-	R computeGreaterOrEqualThan(double v1, double v2);
-
-	static <S> BiFunction<Double, Double,S> getOperator(SignalDomain<S> domain, String op) {
-		if ("<".equals(op)) {
-			return domain::computeLessThan;
-		}
-		if ("<=".equals(op)) {
-			return domain::computeLessOrEqualThan;
-		}
-		if ("==".equals(op)) {
-			return domain::computeEqualTo;
-		}
-		if (">=".equals(op)) {
-			return domain::computeGreaterOrEqualThan;
-		}
-		if (">".equals(op)) {
-			return domain::computeGreaterThan;
-		}
-		return (x,y) -> domain.min();
-	}
 }
+	
+

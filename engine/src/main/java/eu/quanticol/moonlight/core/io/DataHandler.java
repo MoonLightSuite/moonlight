@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.core.base;
+package eu.quanticol.moonlight.core.io;
 
 import eu.quanticol.moonlight.offline.signal.IllegalValueException;
 

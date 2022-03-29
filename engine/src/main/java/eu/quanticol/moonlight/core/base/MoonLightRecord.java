@@ -20,42 +20,38 @@
 
 package eu.quanticol.moonlight.core.base;
 
+import eu.quanticol.moonlight.core.io.DataHandler;
+
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * MoonlightRecords are essentially tuple types.
+ * <p>
  * They are implemented similarly to
  * <a href="https://docs.oracle.com/javaee/7/api/javax/persistence/Tuple.html">
- *     Java EE Tuples
+ * Java EE Tuples
  * </a>.
- * @author loreti
  */
-public class MoonLightRecord {
-	private final Object[] values;
-	private final Function<Integer, DataHandler<?>> handlers;
-
-	public MoonLightRecord(Function<Integer,DataHandler<?>> handlers,
-						   Object[] values)
-	{
-		this.values = values;
-		this.handlers = handlers;
-	}
-
+public record MoonLightRecord(Function<Integer, DataHandler<?>> handlers,
+							  Object[] values)
+{
 	/**
 	 * Returns the (typed) i-th element of the tuple.
+	 *
 	 * @param i index in the tuple of the element of interest
 	 * @param varType class of the element of interest
 	 * @param <T> the return type resulting by casting the element to the class
 	 * @return the (typed) i-th element of the tuple.
 	 */
-	public <T> T get(int i , Class<T> varType) {
+	public <T> T get(int i, Class<T> varType) {
 		return varType.cast(values[i]);
 	}
 
 	/**
 	 * Returns the i-th element of a tuple as an Object.
+	 *
 	 * @param i index in the tuple of the element of interest
 	 * @return the Object for the i-th element of the tuple
 	 */
@@ -65,6 +61,7 @@ public class MoonLightRecord {
 
 	/**
 	 * Returns the class of the i-th element of a tuple.
+	 *
 	 * @param i index in the tuple of the element of interest
 	 * @return the class of the i-th element of a tuple
 	 */
@@ -74,13 +71,14 @@ public class MoonLightRecord {
 
 	/**
 	 * Checks whether the i-th element of the tuple has the passed type.
-	 * @param i index in the tuple of the element of interest
+	 *
+	 * @param i       index in the tuple of the element of interest
 	 * @param varType class to check
-	 * @param <T> the type of the class
+	 * @param <T>     the type of the class
 	 * @return <code>true</code> if it can be cast. <code>false</code> otherwise
 	 */
-	public <T> boolean hasType(int i , Class<T> varType) {
-		return varType.isAssignableFrom(getTypeOf(i));				
+	public <T> boolean hasType(int i, Class<T> varType) {
+		return varType.isAssignableFrom(getTypeOf(i));
 	}
 
 	/**
@@ -92,6 +90,7 @@ public class MoonLightRecord {
 
 	/**
 	 * Converts the i-th element to a <code>Double</code>.
+	 *
 	 * @param i index in the tuple of the element of interest
 	 * @return the <code>Double</code> value of the i-th element
 	 */
@@ -102,8 +101,7 @@ public class MoonLightRecord {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof MoonLightRecord)) return false;
-		MoonLightRecord r = (MoonLightRecord) o;
+		if (!(o instanceof MoonLightRecord r)) return false;
 		return Arrays.equals(values, r.values);
 	}
 
@@ -115,7 +113,7 @@ public class MoonLightRecord {
 	@Override
 	public String toString() {
 		return Arrays.stream(values)
-					 .map(Object::toString)
-					 .collect(Collectors.joining(";"));
+				.map(Object::toString)
+				.collect(Collectors.joining(";"));
 	}
 }

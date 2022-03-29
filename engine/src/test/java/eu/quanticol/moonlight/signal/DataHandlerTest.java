@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.signal;
 
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.IllegalValueException;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import org.junit.jupiter.api.Test;

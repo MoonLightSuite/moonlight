@@ -12,7 +12,7 @@ import eu.quanticol.moonlight.script.ScriptLoader;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.space.LocationServiceList;

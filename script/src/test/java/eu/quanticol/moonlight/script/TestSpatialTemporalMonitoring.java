@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.script;
 
 import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
 import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;

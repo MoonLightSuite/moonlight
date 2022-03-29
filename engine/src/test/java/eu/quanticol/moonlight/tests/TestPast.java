@@ -10,7 +10,7 @@ import eu.quanticol.moonlight.io.json.IllegalFileFormat;
 import eu.quanticol.moonlight.io.json.JSonTemporalSignalDeserializer;
 import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCursor;

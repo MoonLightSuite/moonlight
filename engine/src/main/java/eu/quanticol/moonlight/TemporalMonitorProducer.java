@@ -1,6 +1,7 @@
 package eu.quanticol.moonlight;
 
 import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.io.SerializableOperations;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
@@ -37,7 +38,7 @@ public interface TemporalMonitorProducer {
         return new TemporalMonitorProducer() {
             @Override
             public <S> TemporalMonitor<MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return TemporalMonitor.atomicMonitor(s -> SignalDomain.getOperator(domain,op).apply(left.apply(args,s), right.apply(args,s)));
+                return TemporalMonitor.atomicMonitor(s -> SerializableOperations.getOperator(domain,op).apply(left.apply(args,s), right.apply(args,s)));
             }
         };
     }

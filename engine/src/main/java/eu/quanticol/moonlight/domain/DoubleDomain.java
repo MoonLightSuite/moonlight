@@ -22,7 +22,7 @@ package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 
 /**
  * Signal domain to support doubles (i.e. classical robustness).

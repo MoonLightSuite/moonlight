@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.domain;
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.base.Semiring;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 
 import java.util.ArrayList;
 import java.util.List;
