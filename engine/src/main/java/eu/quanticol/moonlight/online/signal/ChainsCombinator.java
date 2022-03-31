@@ -23,7 +23,6 @@ package eu.quanticol.moonlight.online.signal;
 import eu.quanticol.moonlight.core.signal.Sample;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.function.BiConsumer;
 
 /**
@@ -55,7 +54,7 @@ import java.util.function.BiConsumer;
  * @author Ennio Visconti
  */
 public class ChainsCombinator
-        <T extends Comparable<T> & Serializable, V>
+        <T extends Comparable<T>, V>
 {
     private final ChainIterator<Sample<T, V>> primary;
     private final ChainIterator<Sample<T, V>> secondary;
@@ -81,9 +80,7 @@ public class ChainsCombinator
         secondaryEnd = endingSegment(secondaryChain);
     }
 
-    public void forEach(BiConsumer<Sample<T, V>,
-            Sample<T, V>> operation)
-    {
+    public void forEach(BiConsumer<Sample<T, V>, Sample<T, V>> operation) {
         movePrimary();
         moveSecondary();
         do {
@@ -117,9 +114,7 @@ public class ChainsCombinator
         return primaryNext.compareTo(secondaryCurr) <= 0;
     }
 
-    private void process(BiConsumer<Sample<T, V>,
-            Sample<T, V>> op)
-    {
+    private void process(BiConsumer<Sample<T, V>, Sample<T, V>> op) {
         op.accept(primaryCurr, secondaryCurr);
         if(secondaryProcessingNotComplete())
             movePrimary();

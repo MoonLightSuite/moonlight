@@ -1,6 +1,5 @@
 package eu.quanticol.moonlight.core.signal;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +8,7 @@ import java.util.List;
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V> The signal domain to be considered
  */
-public interface SpaceTimeSignal<T extends Comparable<T> & Serializable, V>
+public interface SpaceTimeSignal<T extends Comparable<T>, V>
         extends TimeSignal<T, List<V>>
 {
     /**

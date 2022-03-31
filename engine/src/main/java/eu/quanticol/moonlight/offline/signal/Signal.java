@@ -21,8 +21,9 @@
 package eu.quanticol.moonlight.offline.signal;
 
 import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
+
+import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.core.base.Pair;
 
 import java.util.HashSet;
@@ -36,32 +37,28 @@ import java.util.function.ToDoubleFunction;
  *
  */
 public class Signal<T> implements TimeSignal<Double, T> {
-
     private Segment<T> first;
     private Segment<T> last;
-    private int size = 0;
-    private double end = 0.0; //TODO: we should just take this from last segment
-                              // (unnecessary logic duplication)
+    private int size;
 
     public Signal() {
         this.first = null;
         this.last = null;
         this.size = 0;
-        this.end = Double.NaN;
     }
 
     /**
      * @return the start time of the signal
      */
-    public double start() {
+    public double getStart() {
         return Segment.getTime(first);
     }
 
     /**
      * @return the end time of the signal
      */
-    public double end() {
-        return end;
+    public double getEnd() {
+        return last.getEnd();
     }
 
     /**
@@ -72,39 +69,44 @@ public class Signal<T> implements TimeSignal<Double, T> {
     }
 
     /**
-     * Add (t,value) to the sample set
+     * Add (t, value) to the sample set
      *
-     * @param t
-     * @param value
+     * @param t the time to add
+     * @param value the value to add
      */
     public void add(double t, T value) {
         Segment<T> oldLast = last;
         if (first == null) {
             startWith(t, value);
         } else {
-            if (this.end > t) {
-                throw new IllegalArgumentException("Time: " + t + " Expected: >" + this.end); //TODO: Add Message!
+            if (getEnd() > t) {
+                badEnding(t);
             }
             last = last.addAfter(t, value);
-            end = t;
         }
         if (oldLast != last) {
             size++;
         }
     }
 
+    private void badEnding(double t) {
+        throw new IllegalArgumentException("Trying to define an illegal " +
+                                           "ending time" + t + "which is " +
+                                           "before the current " +
+                                           "end of the signal: " + getEnd());
+    }
+
     private void startWith(double t, T value) {
         first = new Segment<>(t, value);
         last = first;
-        end = t;
     }
 
 
     /**
      * Add (t,value) to the sample set
      *
-     * @param t
-     * @param value
+     * @param t time point to add
+     * @param value value to add
      */
     public void addBefore(double t, T value) {
         Segment<T> oldFirst = first;
@@ -118,47 +120,19 @@ public class Signal<T> implements TimeSignal<Double, T> {
         }
     }
 
-    public <R> Signal<R> iterateForward(BiFunction<T, R, R> f, R init) {
-        return map(f, init, true);
-    }
-
-    public <R> Signal<R> iterateBackward(BiFunction<T, R, R> f, R init) {
-        return map(f, init, false);
-    }
-
-    private <R> Signal<R> map(BiFunction<T, R, R> f, R init, boolean forward) {
-        Signal<R> newSignal = new Signal<>();
-        SignalCursor<T> cursor = getIterator(forward);
-        R value = init;
-        while (!cursor.completed()) {
-            T sValue = cursor.value();
-            double t = cursor.time();
-            value = f.apply(sValue, value);
-            if (forward) {
-                newSignal.add(t, value);
-                cursor.forward();
-            } else {
-                newSignal.addBefore(t, value);
-                cursor.backward();
-            }
-        }
-        newSignal.end = end;
-        return newSignal;
-    }
-
     public void forEach(BiConsumer<Double,T> consumer) {
-        SignalCursor<T> cursor = getIterator(true);
-        while (!cursor.completed()) {
-            consumer.accept(cursor.time(),cursor.value());
+        SignalCursor<Double, T> cursor = getIterator(true);
+        while (!cursor.isCompleted()) {
+            consumer.accept(cursor.getCurrentTime(),cursor.getCurrentValue());
             cursor.forward();
         }
     }
 
-    public <R> R reduce(BiFunction<Pair<Double,T>,R,R> reducer, R init) {
+    public <R> R reduce(BiFunction<Pair<Double,T>, R, R> reducer, R init) {
         R toReturn = init;
-        SignalCursor<T> cursor = getIterator(true);
-        while (!cursor.completed()) {
-            toReturn = reducer.apply(new Pair<>(cursor.time(),cursor.value()),toReturn);
+        SignalCursor<Double, T> cursor = getIterator(true);
+        while (!cursor.isCompleted()) {
+            toReturn = reducer.apply(new Pair<>(cursor.getCurrentTime(), cursor.getCurrentValue()), toReturn);
             cursor.forward();
         }
         return toReturn;
@@ -180,109 +154,8 @@ public class Signal<T> implements TimeSignal<Double, T> {
      *
      * @see SignalCursor
      */
-    public SignalCursor<T> getIterator(boolean forward) {
-        return new SignalCursor<T>() {
-
-            private Segment<T> current = (forward ? first : last);
-            private double time = (current != null ? (forward ? current.getStart() : current.getSegmentEnd()) : Double.NaN);
-            private Segment<T> previous = null;
-
-            @Override
-            public double time() {
-                return time;
-            }
-
-            @Override
-            public T value() {
-                return (current != null ? current.getValue() : null);
-            }
-
-            @Override
-            public void forward() {
-                if (current != null) {
-                    previous = current;
-                    if ((!current.isRightClosed()) || (current.doEndAt(time))) {
-                        current = current.getNext();
-                        time = (current != null ? current.getStart() : Double.NaN);
-                    } else {
-                        time = current.getSegmentEnd();
-                    }
-                }
-            }
-
-            @Override
-            public void backward() {
-                if (current != null) {
-                    previous = current;
-                    if (time>current.getStart()) {
-                        time = current.getStart();
-                    } else {
-                        current = current.getPrevious();
-                        time = (current != null ? current.getStart() : Double.NaN);
-                    }
-                }
-            }
-
-            //TODO: this method is really a workaround, it's not needed to
-            //      always store the previous segment
-            @Override
-            public void revert() {
-                if(previous != null) {
-                    current = previous;
-                } else
-                    throw new UnsupportedOperationException("Nothing to revert");
-            }
-
-            @Override
-            public void move(double t) {
-                if (current != null) {
-                    current = current.jump(t);
-                    time = t;
-                }
-            }
-
-            @Override
-            public double nextTime() {
-                if (current != null) {
-                    return current.nextTimeAfter(time);
-                }
-                return Double.NaN;
-            }
-
-            @Override
-            public double previousTime() {
-                if (current != null) {
-                    if (current.getStart() < time) {
-                        return current.getStart();
-                    } else {
-                        return current.getPreviousTime();
-                    }
-                }
-                return Double.NaN;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return (current != null) && (current.getNext() != null);
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return (current != null) && (current.getPrevious() != null);
-            }
-
-            @Override
-            public boolean completed() {
-                return (current == null);//||(current.isTheEnd(time)));
-                //return ((current == null));//||(current.isTheEnd(time)));
-            }
-
-            @Override
-            public String toString() {
-                return Signal.this.toString() + (current == null ? "!" : ("@(" + current.getStart() + ")"));
-            }
-
-        };
+    public SignalCursor<Double, T> getIterator(boolean forward) {
+        return new OfflineSignalCursor<>(forward, first, last);
     }
 
     public int size() {
@@ -295,17 +168,16 @@ public class Signal<T> implements TimeSignal<Double, T> {
         if (isEmpty()) {
             return "Signal [ ]";
         } else {
-            return "Signal [start=" + start() +
-                           ", end=" + end() +
+            return "Signal [start=" + getStart() +
+                           ", end=" + getEnd() +
                            ", size=" + size() + "]";
         }
     }
 
     public void endAt(double end) {
-        if ((this.end > end) || (last == null)) {
-            throw new IllegalArgumentException(); //TODO: Add message!
+        if ((getEnd() > end) || (last == null)) {
+            badEnding(end);
         }
-        this.end = end;
         this.last.endAt(end);
     }
 
@@ -317,7 +189,6 @@ public class Signal<T> implements TimeSignal<Double, T> {
     public double[][] arrayOf(ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
-            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         int arraySize = size;
         if (!last.isAPoint()) {
@@ -333,7 +204,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
             counter++;
         }
         if (!last.isAPoint()) {
-            toReturn[size][0] = end;
+            toReturn[size][0] = getEnd();
             toReturn[size][1] = f.applyAsDouble( last.getValue() );
         }
         return toReturn;
@@ -348,7 +219,6 @@ public class Signal<T> implements TimeSignal<Double, T> {
     public double[][] arrayOf(double[] timePoints, ToDoubleFunction<T> f) {
         if (size == 0) {
             return new double[][] {};
-            //throw new IllegalStateException("No array can be generated from an empty signal is empty!");
         }
         double[][] toReturn = new double[timePoints.length][2];
         Segment<T> current = first;
@@ -375,12 +245,8 @@ public class Signal<T> implements TimeSignal<Double, T> {
             timeSet.add(current.getStart());
             current = current.getNext();
         }
-        timeSet.add(end);
+        timeSet.add(getEnd());
         return timeSet;
-    }
-
-    public Double getEnd() {
-        return end;
     }
 
     @Override

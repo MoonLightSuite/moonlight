@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static eu.quanticol.moonlight.online.signal.Update.asTimeChain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -39,7 +38,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 public class SpatialComputation
-<T extends Comparable<T> & Serializable, S, R extends Comparable<R>>
+<T extends Comparable<T>, S, R extends Comparable<R>>
 {
     private List<Update<T, List<R>>> results;
     private TimeChain<T, List<R>> resultsChain;
@@ -48,7 +47,7 @@ public class SpatialComputation
     public SpatialComputation(@NotNull LocationService<T, S> locationService,
                               Function<SpatialModel<S>,
                                       DistanceStructure<S, ?>> distance,
-                              BiFunction<IntFunction<R>,
+                              BiFunction<List<R>,
                                       DistanceStructure<S, ?>,
                                       List<R>> operator)
     {
@@ -73,10 +72,9 @@ public class SpatialComputation
     protected void doCompute(T t, T tNext, List<R> value) {
         DistanceStructure<S, ?> f = spaceIterator.generateDistanceStructure();
 
-        IntFunction<R> spatialSignal = value::get;
         tNext = spaceIterator.fromNextSpaceOrFallback(tNext);
         results = new ArrayList<>();
-        spaceIterator.computeOp(t, tNext, f, spatialSignal);
+        spaceIterator.computeOp(t, tNext, f, value);
     }
 
     protected void addResult(T start, T end, List<R> value) {

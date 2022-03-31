@@ -24,8 +24,6 @@ import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.ChainIterator;
 
-import java.io.Serializable;
-
 /**
  * General interface that represents a <em>signal</em>,
  * used by the monitoring processes.
@@ -33,7 +31,9 @@ import java.io.Serializable;
  * @param <T> The time domain of interest, typically a {@link Number}
  * @param <V> The signal domain to be considered
  */
-public interface TimeSignal<T extends Comparable<T> & Serializable, V> {
+public interface TimeSignal<T extends Comparable<T>,
+        V>
+{
     /**
      * Performs an update of the internal representation of the signal,
      * given the data available in the update.

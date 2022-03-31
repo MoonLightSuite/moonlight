@@ -83,7 +83,7 @@ public class RandomFormula {
             double[] time = signalCreator.generateTime(0, endTime, timeStep);
             double[][] values = generateValues(time,functions);
             VariableArraySignal signal = signalCreator.generate(0, endTime, timeStep);
-            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
+            FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
             Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
             //System.out.println(generatedFormula.toString());
             //System.out.println(toTaliro.toTaliro(generatedFormula));
@@ -136,10 +136,10 @@ public class RandomFormula {
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);
-                outputSignal.getIterator(true).value();
+                outputSignal.getIterator(true).getCurrentValue();
             }
             after = System.currentTimeMillis();
-            Double value = m.monitor(signal).getIterator(true).value();
+            Double value = m.monitor(signal).getIterator(true).getCurrentValue();
             System.out.println("MoonLight Robustness: " + value);
             System.out.println("MoonLight Avg. Time (msec) (" + nReps + " repetitions): " + (after - before) / 1000.);
 

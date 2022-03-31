@@ -86,11 +86,11 @@ class TestJSon {
         assertEquals(0, factory.getVariableIndex("x"));
         assertEquals(1, factory.getVariableIndex("y"));
         assertEquals(2, factory.getVariableIndex("z"));
-        SignalCursor<MoonLightRecord> iterator = signal.getIterator(true);
+        SignalCursor<Double, MoonLightRecord> iterator = signal.getIterator(true);
         for (int i = 0; i < times.length; i++) {
-            assertFalse(iterator.completed());
-            MoonLightRecord next = iterator.value();
-            assertEquals(times[i], iterator.time(), 0.0);
+            assertFalse(iterator.isCompleted());
+            MoonLightRecord next = iterator.getCurrentValue();
+            assertEquals(times[i], iterator.getCurrentTime(), 0.0);
             for (int j = 0; j < 3; j++) {
                 assertEquals(values[i][j], next.get(j, types[j]));
             }

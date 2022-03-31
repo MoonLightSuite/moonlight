@@ -19,6 +19,7 @@ import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -57,7 +58,6 @@ class TestCity2 {
         assertEquals(11.0, ds.getDistance(0, 2), 0.0, "d(0,2)");
 
     }
-
 
     @Test
     void testPropCity() {

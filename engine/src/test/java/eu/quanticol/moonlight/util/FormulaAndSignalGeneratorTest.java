@@ -34,7 +34,7 @@ class FormulaAndSignalGeneratorTest {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.end(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(3);
         System.out.println(generatedFormula.toString());
         long timeInit = System.currentTimeMillis();
@@ -48,12 +48,12 @@ class FormulaAndSignalGeneratorTest {
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
         Signal<Double> outputSignal = m.monitor(signal);
         long timeEnd = System.currentTimeMillis();
-        SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-        SignalCursor<Double> actual = outputSignal.getIterator(true);
-        while (!actual.completed()) {
-            assertFalse(expected.completed());
-            Double valueActual = actual.value();
-            MoonLightRecord valueExpected = expected.value();
+        SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+        SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
+        while (!actual.isCompleted()) {
+            assertFalse(expected.isCompleted());
+            Double valueActual = actual.getCurrentValue();
+            MoonLightRecord valueExpected = expected.getCurrentValue();
             // assertEquals(valueExpected.get(0, Double.class), valueActual);
             expected.forward();
             actual.forward();

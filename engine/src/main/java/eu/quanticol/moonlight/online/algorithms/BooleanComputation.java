@@ -3,7 +3,6 @@ package eu.quanticol.moonlight.online.algorithms;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.*;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -43,7 +42,9 @@ public class BooleanComputation {
      * @return an update of the robustness signal in input
      */
     public static
-    <T extends Comparable<T> & Serializable, V, R>
+    <T extends Comparable<T>,
+            V,
+            R>
     TimeChain<T, R> atomSequence(TimeChain<T, V> us, Function<V, R> op)
     {
         List<Sample<T, R>> ls =
@@ -55,7 +56,7 @@ public class BooleanComputation {
     }
 
     public static
-    <T extends Comparable<T> & Serializable, V, R>
+    <T extends Comparable<T>, V, R>
     TimeChain<T, R> atomSequence(Update<T, V> u, Function<V, R> op)
     {
         List<Update<T, R>> ups = new ArrayList<>();
@@ -92,7 +93,7 @@ public class BooleanComputation {
      * @return an update of the robustness signal in input
      */
     public static
-    <T extends Comparable<T> & Serializable, R>
+    <T extends Comparable<T>, R>
     TimeChain<T, R> unarySequence(TimeChain<T, R> us, UnaryOperator<R> op)
     {
         List<Sample<T, R>> ls =
@@ -114,7 +115,7 @@ public class BooleanComputation {
      * @return a chain of sequential updates
      */
     public static
-    <T extends Comparable<T> & Serializable, R>
+    <T extends Comparable<T>, R>
     TimeChain<T, R> binarySequence(TimeChain<T, R> c1,
                                    TimeChain<T, R> us,
                                    BinaryOperator<R> op)
@@ -127,7 +128,7 @@ public class BooleanComputation {
 
 
     public static
-    <T extends Comparable<T> & Serializable, R>
+    <T extends Comparable<T>, R>
     List<Update<T, R>> binary(TimeChain<T, R> c1,
                               Update<T, R> u,
                               BinaryOperator<R> op)
@@ -139,7 +140,7 @@ public class BooleanComputation {
     }
 
     private static
-    <T extends Comparable<T> & Serializable, R>
+    <T extends Comparable<T>, R>
     List<Update<T, R>> rightApply(TimeChain<T, R> s,
                     BinaryOperator<R> op, Update<T, R> u)
     {
@@ -157,7 +158,7 @@ public class BooleanComputation {
         return updates;
     }
 
-    private static <T extends Comparable<T> & Serializable, R>
+    private static <T extends Comparable<T>, R>
     void exec(Sample<T, R> curr, Update<T, R> u, T nextTime,
               BinaryOperator<R> op, List<Update<T, R>> updates)
     {
@@ -174,7 +175,7 @@ public class BooleanComputation {
         }
     }
 
-    private static <T extends Comparable<T> & Serializable, R>
+    private static <T extends Comparable<T>, R>
     void binaryOp(Sample<T, R> left,
                   Sample<T, R> right,
                   List<Sample<T, R>> output,

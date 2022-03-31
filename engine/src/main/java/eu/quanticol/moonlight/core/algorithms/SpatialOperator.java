@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SpatialOperator<E, M, R> {
     private final DistanceStructure<E, M> ds;
@@ -24,13 +23,13 @@ public class SpatialOperator<E, M, R> {
         parallel = isParallel;
     }
 
-    public List<R> somewhere(IntFunction<R> s) {
+    public List<R> somewhere(List<R> s) {
         return unaryOperation(allLocations(), this::neighbourhood,
                               domain::disjunction, domain.min(), s);
     }
 
 
-    public List<R> everywhere(IntFunction<R> s) {
+    public List<R> everywhere(List<R> s) {
         return unaryOperation(allLocations(), this::neighbourhood,
                               domain::conjunction, domain.max(), s);
     }
@@ -39,7 +38,7 @@ public class SpatialOperator<E, M, R> {
                                   IntFunction<IntPredicate> filter,
                                   BinaryOperator<R> domainOp,
                                   R identity,
-                                  IntFunction<R> spatialSignal)
+                                  List<R> spatialSignal)
     {
         Function<Integer, R> algorithm = filterReduce(filter, domainOp,
                                                       identity, spatialSignal);
@@ -57,25 +56,21 @@ public class SpatialOperator<E, M, R> {
     private Function<Integer, R> filterReduce(IntFunction<IntPredicate> filter,
                                               BinaryOperator<R> op,
                                               R id,
-                                              IntFunction<R> s)
+                                              List<R> s)
     {
         return i -> locationStream(allLocations()).filter(filter.apply(i))
                                          .boxed()
                                          .reduce(id, accumulator(s, op) , op);
     }
 
-    private R accumulate(Stream<Integer> stream, R id, BinaryOperator<R> op, IntFunction<R> s) {
-        return stream.reduce(id, accumulator(s, op), op);
-    }
-
     private Box<Integer> allLocations() {
         return new Box<>(0, ds.getModel().size());
     }
 
-    private BiFunction<R, Integer, R> accumulator(IntFunction<R> s,
+    private BiFunction<R, Integer, R> accumulator(List<R> s,
                                                   BinaryOperator<R> op)
     {
-        return (acc, j) -> op.apply(acc, s.apply(j));
+        return (acc, j) -> op.apply(acc, s.get(j));
     }
 
     private IntPredicate neighbourhood(int i) {

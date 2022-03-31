@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.*;
 
@@ -115,7 +114,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
     {
         var m = monitor(formula);
 
-        if(update.getValue().size() != size)
+        if(update.value().size() != size)
             throw new IllegalArgumentException("The update doesn't match the " +
                                                "expected size of the signal");
 
@@ -243,7 +242,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
 
     private OnlineMonitor<Double, List<V>, List<Box<R>>>
     unarySpace(UnaryFormula f,
-               BiFunction<IntFunction<Box<R>>,
+               BiFunction<List<Box<R>>,
                        DistanceStructure<S, ?>, List<Box<R>>> op)
     {
         var argMonitor = monitor(f.getArgument());
@@ -262,7 +261,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
     }
 
     private List<Box<R>> everywhereOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -273,7 +272,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
     }
 
     private List<Box<R>> somewhereOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
@@ -286,7 +285,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
     }
 
     private List<Box<R>> escapeOp(
-            IntFunction<Box<R>> spatialSignal,
+            List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> f)
     {
         return escape(new BoxDomain<>(interpretation),

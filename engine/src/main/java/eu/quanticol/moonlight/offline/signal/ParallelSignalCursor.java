@@ -5,7 +5,6 @@ package eu.quanticol.moonlight.offline.signal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
@@ -13,116 +12,38 @@ import java.util.stream.Collectors;
  * @author loreti
  *
  */
-public class ParallelSignalCursor<T> {
-	private final ArrayList<SignalCursor<T>> cursors;
+public class ParallelSignalCursor<V> implements SignalCursor<Double, List<V>> {
+	private final ArrayList<SignalCursor<Double, V>> cursors;
 	
-	public ParallelSignalCursor( int size , Function<Integer,SignalCursor<T>>  f ) {
+	public ParallelSignalCursor(int size,
+								IntFunction<SignalCursor<Double, V>>  f)
+	{
 		this.cursors = new ArrayList<>(size);
-		for( int i=0 ; i<size ; i++ ) {
+		for(int i = 0; i < size; i++) {
 			this.cursors.add(f.apply(i));
 		}
 	}
 
-	public double nextTime() {
-		double time = Double.POSITIVE_INFINITY;
-		for (SignalCursor<T> c : cursors) {
-			double cursorTime = c.nextTime();
-			if (Double.isNaN(cursorTime)) {
-				return Double.NaN;
-			}
-			if (cursorTime<time) {
-				time = cursorTime;
-			}
-		}
-		return time;
+	public boolean areSynchronized() {
+		return !Double.isNaN(getCurrentTime());
 	}
 
-	public double previousTime() {
-		double time = Double.NEGATIVE_INFINITY;
-		for (SignalCursor<T> c : cursors) {
-			double cursorTime = c.nextTime();
-			if (Double.isNaN(cursorTime)) {
-				return Double.NaN;
-			}
-			if (time<cursorTime) {
-				time = cursorTime;
-			}
-		}
-		return time;
-	}
-	
-	public double forward() {
+	public double forwardTime() {
 		double time = nextTime();
 		if (!Double.isNaN(time)) {
-			move( time );
+			move(time);
 		}
 		return time;
-	}
-	
-	public double backward() {
-		double time = previousTime();
-		if (!Double.isNaN(time)) {
-			move( time );
-		}
-		return time;
-	}
-	
-	public void move(double time) {
-		for (SignalCursor<T> c : cursors) {
-			c.move(time);
-		}		
-	}
-
-	public boolean hasNext( ) {
-		for (SignalCursor<T> c : cursors) {
-			if (!c.hasNext()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	public boolean hasPrevious() {
-		for (SignalCursor<T> c : cursors) {
-			if (!c.hasPrevious()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	public IntFunction<T> getValue() {
-		List<T> values = cursors.stream()
-							    .map(SignalCursor::value)
-								.collect(Collectors.toCollection(ArrayList::new));
-		return (values::get);
-	}
-	
-	public double getTime() {
-		if( cursors.isEmpty() ) {
-			return Double.NaN;
-		}
-		double time = cursors.get(0).time();
-		for (SignalCursor<T> c : cursors) {
-			if (c.time() != time) {
-				return Double.NaN;
-			}
-		}
-		return time;
-	}
-
-	public boolean areSynchronized() {
-		return !Double.isNaN(getTime());
 	}
 
 	public double syncCursors() {
-		double time = cursors.get(0).time();
+		double time = cursors.get(0).getCurrentTime();
 		boolean flag = false;
-		for (SignalCursor<T> c : cursors) {
-			if (time != c.time()) {
+		for (SignalCursor<Double, V> c: cursors) {
+			if (time != c.getCurrentTime()) {
 				flag = true;
 			}
-			time = Math.max(time, c.time());
+			time = Math.max(time, c.getCurrentTime());
 		}
 		if (flag) {
 			move(time);
@@ -130,9 +51,109 @@ public class ParallelSignalCursor<T> {
 		return time;
 	}
 
-	public boolean completed() {
-		for (SignalCursor<T> signalCursor : cursors) {
-			if (signalCursor.completed()) {
+	@Override
+	public Double nextTime() {
+		double time = Double.POSITIVE_INFINITY;
+		return subsequentTime(time, true);
+	}
+
+	private double subsequentTime(double time, boolean forward) {
+		for (SignalCursor<Double, V> c: cursors) {
+			double cursorTime = c.nextTime();
+			if (Double.isNaN(cursorTime)) {
+				return Double.NaN;
+			}
+			if (isFirstAfterSecond(time, cursorTime, forward)) {
+				time = cursorTime;
+			}
+		}
+		return time;
+	}
+
+	private boolean isFirstAfterSecond(double first, double second,
+									   boolean forward)
+	{
+		if(forward)
+			return first > second;
+		return first < second;
+	}
+
+	@Override
+	public Double previousTime() {
+		double time = Double.NEGATIVE_INFINITY;
+		return subsequentTime(time, false);
+	}
+
+	@Override
+	public void forward() {
+		forwardTime();
+	}
+
+	@Override
+	public void backward() {
+		double time = previousTime();
+		if (!Double.isNaN(time)) {
+			move(time);
+		}
+	}
+
+	@Override
+	public void revert() {
+		throw new UnsupportedOperationException("Not implemented.");
+	}
+
+	@Override
+	public void move(Double time) {
+		for (SignalCursor<Double, V> c: cursors) {
+			c.move(time);
+		}		
+	}
+
+	@Override
+	public boolean hasNext( ) {
+		for (SignalCursor<Double, V> c: cursors) {
+			if (!c.hasNext()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean hasPrevious() {
+		for (SignalCursor<Double, V> c: cursors) {
+			if (!c.hasPrevious()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public Double getCurrentTime() {
+		if(cursors.isEmpty()) {
+			return Double.NaN;
+		}
+		double time = cursors.get(0).getCurrentTime();
+		for (SignalCursor<Double, V> c: cursors) {
+			if (c.getCurrentTime() != time) {
+				return Double.NaN;
+			}
+		}
+		return time;
+	}
+
+	@Override
+	public List<V> getCurrentValue() {
+		return cursors.stream()
+				.map(SignalCursor::getCurrentValue)
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	@Override
+	public boolean isCompleted() {
+		for (SignalCursor<Double, V> signalCursor: cursors) {
+			if (signalCursor.isCompleted()) {
 				return true;
 			}
 		}

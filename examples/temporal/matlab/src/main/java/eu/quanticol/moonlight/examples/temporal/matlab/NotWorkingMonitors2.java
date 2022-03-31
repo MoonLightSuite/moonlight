@@ -58,7 +58,7 @@ public class NotWorkingMonitors2 {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
         System.out.println(toTaliro.toTaliro(generatedFormula));
         HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
@@ -69,6 +69,6 @@ public class NotWorkingMonitors2 {
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
         Signal<Double> outputSignal = m.monitor(signal);
-        outputSignal.getIterator(true).value();
+        outputSignal.getIterator(true).getCurrentValue();
     }
 }

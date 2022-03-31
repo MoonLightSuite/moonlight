@@ -20,8 +20,10 @@
 
 package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
+import java.util.List;
 import java.util.function.Function;
 
+import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -66,5 +68,11 @@ public class SpatialTemporalMonitorReach<S, T, R>
 		return sp.computeDynamic(domain,
 							  m1.monitor(locationService, signal),
                               m2.monitor(locationService, signal));
+	}
+
+	private List<R> reachOp(List<R> leftSignal, List<R> rightSignal,
+							DistanceStructure<S, ?> ds)
+	{
+		return SpatialAlgorithms.reach(domain, leftSignal, rightSignal, ds);
 	}
 }

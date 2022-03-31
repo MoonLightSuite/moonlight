@@ -26,16 +26,30 @@ public class BooleanOp<T, R> {
     }
 
     public Signal<R> applyUnary(Signal<T> s, Function<T, R> op) {
-        return applyOp(cursors -> op.apply(cursors.get(0).value()), s);
+        return applyOp(cursors ->
+                            op.apply(cursors.get(0).getCurrentValue()), s);
     }
 
     public Signal<R> applyBinary(Signal<T> s1,
                                  BiFunction<T, T, R> op,
                                  Signal<T> s2)
     {
-        return applyOp(cursors -> op.apply(cursors.get(0).value(),
-                                           cursors.get(1).value()),
+        return applyOp(cursors -> op.apply(cursors.get(0).getCurrentValue(),
+                                           cursors.get(1).getCurrentValue()),
                        s1, s2);
+    }
+
+    @SafeVarargs
+    private final Signal<R> applyOp(
+            Function<List<SignalCursor<Double, T>>, R> op,
+            Signal<T>... signals)
+    {
+        output = new Signal<>();
+        setStartingTime(signals);
+        List<SignalCursor<Double, T>> cs = prepareCursors(signals);
+        apply(cs, () -> op.apply(cs));
+        setEndingTime(signals);
+        return output;
     }
 
     @SafeVarargs
@@ -47,13 +61,13 @@ public class BooleanOp<T, R> {
     }
 
     private double maxStart(Stream<Signal<T>> stream) {
-        return stream.map(Signal::start)
+        return stream.map(Signal::getStart)
                      .reduce(Math::max)
                      .orElseGet(BooleanOp::error);
     }
 
     private double minEnd(Stream<Signal<T>> stream) {
-        return stream.map(Signal::end)
+        return stream.map(Signal::getEnd)
                 .reduce(Math::min)
                 .orElseGet(BooleanOp::error);
     }
@@ -66,19 +80,9 @@ public class BooleanOp<T, R> {
         }
     }
 
-    @SafeVarargs
-    private final Signal<R> applyOp(Function<List<SignalCursor<T>>, R> op,
-                                    Signal<T>... signals)
+    private void apply(List<SignalCursor<Double, T>> cursors,
+                       Supplier<R> value)
     {
-        output = new Signal<>();
-        setStartingTime(signals);
-        List<SignalCursor<T>> cs = prepareCursors(signals);
-        apply(cs, () -> op.apply(cs));
-        setEndingTime(signals);
-        return output;
-    }
-
-    private void apply(List<SignalCursor<T>> cursors, Supplier<R> value) {
         while (isNotCompleted(cursors.stream())) {
             addResult(value.get());
             moveCursorsForward(cursors);
@@ -86,9 +90,11 @@ public class BooleanOp<T, R> {
     }
 
     @SafeVarargs
-    private final List<SignalCursor<T>> prepareCursors(Signal<T>... signals) {
+    private final List<SignalCursor<Double, T>> prepareCursors(
+            Signal<T>... signals)
+    {
         return Arrays.stream(signals).map(s -> {
-            SignalCursor<T> c = s.getIterator(forward);
+            SignalCursor<Double, T> c = s.getIterator(forward);
             c.move(time);
             return c;
         }).collect(Collectors.toList());
@@ -102,12 +108,12 @@ public class BooleanOp<T, R> {
         }
     }
 
-    private boolean isNotCompleted(Stream<SignalCursor<T>> cursors) {
-        return cursors.map(c -> !c.completed())
+    private boolean isNotCompleted(Stream<SignalCursor<Double, T>> cursors) {
+        return cursors.map(c -> !c.isCompleted())
                       .reduce( true, (c1, c2) -> c1 && c2);
     }
 
-    private void moveCursorsForward(List<SignalCursor<T>> cursors) {
+    private void moveCursorsForward(List<SignalCursor<Double, T>> cursors) {
         time = cursors.stream()
                       .map(this::moveTime)
                       .reduce(rightEndingTime())
@@ -121,14 +127,16 @@ public class BooleanOp<T, R> {
         return Math::max;
     }
 
-    private double moveTime(SignalCursor<T> cursor) {
+    private double moveTime(SignalCursor<Double, T> cursor) {
         if(forward)
             return cursor.nextTime();
         return cursor.previousTime();
     }
 
     private static <T> T error() {
-        throw new UnsupportedOperationException("signal data structure " +
-                                                "failed irreparably");
+        throw new UnsupportedOperationException(ERROR);
     }
+
+    private static final String
+            ERROR = "signal data structure failed irreparably";
 }

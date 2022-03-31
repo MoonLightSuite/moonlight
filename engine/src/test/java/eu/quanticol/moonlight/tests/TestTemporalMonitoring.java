@@ -99,7 +99,7 @@ class TestTemporalMonitoring {
         );
         SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 1, 0.1);
-        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.end(), signalCreator.getVariableNames());
+        FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
         HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
         //a is the atomic proposition: a>=0
@@ -109,7 +109,7 @@ class TestTemporalMonitoring {
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
         Signal<Double> outputSignal = m.monitor(signal);
-        outputSignal.getIterator(true).value();
+        outputSignal.getIterator(true).getCurrentValue();
     }
 
     @Test void testGloballyOutOfTime() {
@@ -189,7 +189,7 @@ class TestTemporalMonitoring {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(phi);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(expectedOutputUpperBound, result.end(), 0.0000001);
+        assertEquals(expectedOutputUpperBound, result.getEnd(), 0.0000001);
     }
 
 }

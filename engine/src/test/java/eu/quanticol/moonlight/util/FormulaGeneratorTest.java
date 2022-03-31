@@ -57,12 +57,12 @@ class FormulaGeneratorTest {
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double valueActual = actual.value();
-                MoonLightRecord valueExpected = expected.value();
+            SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+            SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
+            while (!actual.isCompleted()) {
+                assertFalse(expected.isCompleted());
+                Double valueActual = actual.getCurrentValue();
+                MoonLightRecord valueExpected = expected.getCurrentValue();
                 // assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -97,12 +97,12 @@ class FormulaGeneratorTest {
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double valueActual = actual.value();
-                MoonLightRecord valueExpected = expected.value();
+            SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+            SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
+            while (!actual.isCompleted()) {
+                assertFalse(expected.isCompleted());
+                Double valueActual = actual.getCurrentValue();
+                MoonLightRecord valueExpected = expected.getCurrentValue();
                 // assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -139,15 +139,15 @@ class FormulaGeneratorTest {
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually);
             Signal<Double> outputSignal = m.monitor(signal);
-            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
+            SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+            SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
             //assertTrue(outputSignal.end()==500.0);
-            System.out.println(outputSignal.end());
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double nextActual = actual.value();
-                MoonLightRecord nextExpected = expected.value();
-                double time = expected.time();
+            //System.out.println(outputSignal.end());
+            while (!actual.isCompleted()) {
+                assertFalse(expected.isCompleted());
+                Double nextActual = actual.getCurrentValue();
+                MoonLightRecord nextExpected = expected.getCurrentValue();
+                double time = expected.getCurrentTime();
 //                if (time > 500) {
 //                    break;
 //                }

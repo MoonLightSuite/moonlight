@@ -40,8 +40,8 @@ import java.util.stream.Collectors;
 public class ReachAlgorithm<E, M, R> {
     private final SpatialModel<E> model;
     private final SignalDomain<R> signalDomain;
-    private final IntFunction<R> leftSpatialSignal;
-    private final IntFunction<R> rightSpatialSignal;
+    private final List<R> leftSpatialSignal;
+    private final List<R> rightSpatialSignal;
     private final DistanceStructure<E, M> distStr;
     private final DistanceDomain<M> distanceDomain;
     private final List<Triple<Integer, M, R>> reachabilityQueue;
@@ -54,8 +54,8 @@ public class ReachAlgorithm<E, M, R> {
 
     public ReachAlgorithm(DistanceStructure<E, M> distStr,
                           SignalDomain<R> signalDomain,
-                          IntFunction<R> leftSpatialSignal,
-                          IntFunction<R> rightSpatialSignal) {
+                          List<R> leftSpatialSignal,
+                          List<R> rightSpatialSignal) {
         this.leftSpatialSignal = leftSpatialSignal;
         this.rightSpatialSignal = rightSpatialSignal;
         this.distStr = distStr;
@@ -85,7 +85,7 @@ public class ReachAlgorithm<E, M, R> {
     private Map<M, R> fetchInitialReachableValues(int location)
     {
         Map<M, R> reachableValues = new HashMap<>();
-        R rightValue = rightSpatialSignal.apply(location);
+        R rightValue = rightSpatialSignal.get(location);
         updateReachableValue(location,
                              distanceDomain.zero(),
                              rightValue,
@@ -111,7 +111,7 @@ public class ReachAlgorithm<E, M, R> {
             // but I think this one is more correct
             if (distStr.isWithinBounds(d2)) {
                 R value = signalDomain.conjunction(v1,
-                                                   leftSpatialSignal.apply(l2));
+                                                   leftSpatialSignal.get(l2));
                 evaluateReachabilityUpdate(l2, d2, value);
             }
         }

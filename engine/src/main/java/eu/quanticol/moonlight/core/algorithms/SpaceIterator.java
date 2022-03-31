@@ -6,18 +6,16 @@ import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 
-public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
+public class SpaceIterator<T extends Comparable<T>, S, R> {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>, List<R>> op;
+    private final BiFunction<List<R>, DistanceStructure<S, ?>, List<R>> op;
 
     private Pair<T, SpatialModel<S>> currSpace;
     private Pair<T, SpatialModel<S>> nextSpace;
@@ -28,7 +26,7 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
     public SpaceIterator(@NotNull LocationService<T, S> locationService,
                             Function<SpatialModel<S>,
                                       DistanceStructure<S, ?>> distance,
-                            BiFunction<IntFunction<R>,
+                            BiFunction<List<R>,
                                       DistanceStructure<S, ?>,
                                       List<R>> operator)
     {
@@ -44,20 +42,16 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
         resultAction = resultStoringAction;
     }
 
-    public boolean isLocationServiceEmpty() {
-        return locSvc.isEmpty();
+    private void toFirstSpatialModel(T t) {
+        spaceItr = getSpaceIterator();
+        seekSpace(t);
     }
 
-    private void moveAndCompute(T tNext, IntFunction<R> spatialSignal) {
-        while (isNextSpaceModelWithinHorizon(tNext)) {
+    private void seekSpace(T t) {
+        currSpace = spaceItr.next();
+        nextSpace = moveNext();
+        while(isNextSpaceBeforeTime(t)) {
             shiftSpatialModel();
-            T t = currSpace.getFirst();
-            DistanceStructure<S, ?>  f = generateDistanceStructure();
-
-//            if(isNextSpaceModelMeaningful()) {
-//                tNext = nextSpace.getFirst();
-            resultAction.accept(t, tNext, op.apply(spatialSignal, f));
-//            }
         }
     }
 
@@ -66,12 +60,29 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
         nextSpace = moveNext();
     }
 
+    public boolean isLocationServiceEmpty() {
+        return locSvc.isEmpty();
+    }
+
     public void computeOp(T t, T tNext,
                           DistanceStructure<S, ?> f,
-                          IntFunction<R> spatialSignal)
+                          List<R> spatialSignal)
     {
         resultAction.accept(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal);
+    }
+
+    private void moveAndCompute(T tNext, List<R> spatialSignal) {
+        while (isNextSpaceModelWithinHorizon(tNext)) {
+            shiftSpatialModel();
+            T t = getCurrentT();
+            DistanceStructure<S, ?>  f = generateDistanceStructure();
+
+            if(isNextSpaceModelMeaningful()) {
+                tNext = nextSpace.getFirst();
+            resultAction.accept(t, tNext, op.apply(spatialSignal, f));
+            }
+        }
     }
 
     public T getCurrentT() {
@@ -87,18 +98,6 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
         return dist.apply(sm);
     }
 
-    private void seekSpace(T t) {
-        currSpace = spaceItr.next();
-        nextSpace = moveNext();
-        while(isNextSpaceBeforeTime(t)) {
-            shiftSpatialModel();
-        }
-    }
-
-    private void toFirstSpatialModel(T t) {
-        spaceItr = getSpaceIterator();
-        seekSpace(t);
-    }
 
     public boolean isNextSpaceModelWithinHorizon(T tNext) {
         return nextSpace != null && isBeforeTime(tNext);
@@ -135,9 +134,8 @@ public class SpaceIterator <T extends Comparable<T> & Serializable, S, R> {
         return locSvc.times();
     }
 
-    private Pair<T, SpatialModel<S>> moveNext()
-    {
-        return (spaceItr.hasNext() ? spaceItr.next() : null);
+    private Pair<T, SpatialModel<S>> moveNext() {
+        return spaceItr.hasNext() ? spaceItr.next() : null;
     }
 
     @FunctionalInterface

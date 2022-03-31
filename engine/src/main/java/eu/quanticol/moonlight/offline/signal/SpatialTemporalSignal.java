@@ -122,7 +122,7 @@ public class SpatialTemporalSignal<T> {
 	public double start() {
 		double start = Double.NEGATIVE_INFINITY;
 		for (Signal<T> signal : signals) {
-			start = Math.max( start , signal.start());
+			start = Math.max( start , signal.getStart());
 		}
 		return start;
 	}
@@ -130,7 +130,7 @@ public class SpatialTemporalSignal<T> {
 	public double end() {
 		double end = Double.POSITIVE_INFINITY;
 		for (Signal<T> signal : signals) {
-			end = Math.min( end , signal.end());
+			end = Math.min( end , signal.getEnd());
 		}
 		return end;
 	}

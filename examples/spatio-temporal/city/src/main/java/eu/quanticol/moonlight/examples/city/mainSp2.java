@@ -63,7 +63,7 @@ public class mainSp2 {
         //// Somewere Taxi property
         double range = 10;
         DistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
-        List<Boolean> somewhereTaxy = SpatialAlgorithms.somewhere(new BooleanDomain(), taxi::get, minutes);
+        List<Boolean> somewhereTaxy = SpatialAlgorithms.somewhere(new BooleanDomain(), taxi, minutes);
 
         //// (R1) Hospital -> Somewere Taxi property
         List<Boolean> r1 = new ArrayList<>(size);
@@ -73,7 +73,7 @@ public class mainSp2 {
         System.out.println(r1);
 
         /// stop reach_{<=10} mainsquare
-        List<Boolean> reacmainsquare = reach(new BooleanDomain(), taxi::get, mainsquare::get, minutes);
+        List<Boolean> reacmainsquare = reach(new BooleanDomain(), taxi, mainsquare, minutes);
 
 
         System.out.println(reacmainsquare);

@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.online.signal;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -34,9 +33,7 @@ public record Update<T extends Comparable<T>, V>(T start, T end, V value)  {
     public Update {
         if(start.compareTo(end) > 0 || start.equals(end))
             throw new IllegalArgumentException("Invalid update time span: [" +
-                                               start + ", " + end + ")");
-
-
+                                                start + ", " + end + ")");
     }
 
     public T getStart() {
@@ -51,7 +48,7 @@ public record Update<T extends Comparable<T>, V>(T start, T end, V value)  {
         return value;
     }
 
-    public static <T extends Comparable<T> & Serializable, V>
+    public static <T extends Comparable<T>, V>
     TimeChain<T, V> asTimeChain(List<Update<T, V>> ups)
     {
         T end = ups.get(ups.size() - 1).end();

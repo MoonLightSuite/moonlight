@@ -56,13 +56,13 @@ class TestPast {
             TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(historicallyFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
-            SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-            SignalCursor<Double> actual = outputSignal.getIterator(true);
+            SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+            SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
             System.out.println(actual);
-            while (!actual.completed()) {
-                assertFalse(expected.completed());
-                Double valueActual = actual.value();
-                MoonLightRecord valueExpected = expected.value();
+            while (!actual.isCompleted()) {
+                assertFalse(expected.isCompleted());
+                Double valueActual = actual.getCurrentValue();
+                MoonLightRecord valueExpected = expected.getCurrentValue();
                 assertEquals(valueExpected.get(0, Double.class), valueActual);
                 expected.forward();
                 actual.forward();
@@ -97,15 +97,15 @@ class TestPast {
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
         TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(notOnceNotA);
         Signal<Double> outputSignal = m.monitor(signal);
-        SignalCursor<MoonLightRecord> expected = signal.getIterator(true);
-        SignalCursor<Double> actual = outputSignal.getIterator(true);
-        assertEquals(signal.start() + onceEnd, outputSignal.start(), 0.0);
-        assertEquals(signal.end(), outputSignal.end(), 0.0);
-        while (!actual.completed()) {
-            assertFalse(expected.completed());
-            Double nextActual = actual.value();
-            MoonLightRecord nextExpected = expected.value();
-            double time = expected.time();
+        SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
+        SignalCursor<Double, Double> actual = outputSignal.getIterator(true);
+        assertEquals(signal.getStart() + onceEnd, outputSignal.getStart(), 0.0);
+        assertEquals(signal.getEnd(), outputSignal.getEnd(), 0.0);
+        while (!actual.isCompleted()) {
+            assertFalse(expected.isCompleted());
+            Double nextActual = actual.getCurrentValue();
+            MoonLightRecord nextExpected = expected.getCurrentValue();
+            double time = expected.getCurrentTime();
 //                if (time > 500) {
 //                    break;
 //                }
@@ -123,12 +123,12 @@ class TestPast {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(once);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
-        assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
+        assertEquals(5.0, result.getStart(), 0.0);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time(), c.value(), 0.0000001);
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime(), c.getCurrentValue(), 0.0000001);
             c.forward();
             time += 0.1;
         }
@@ -143,12 +143,12 @@ class TestPast {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
-        assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
+        assertEquals(5.0, result.getStart(), 0.0);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 5.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 5.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -164,12 +164,12 @@ class TestPast {
         monitoring.addProperty("test2", p -> (x -> x - 9));
         TemporalMonitor<Double, Double> m = monitoring.monitor(since);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
-        assertEquals(5.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
+        assertEquals(5.0, result.getStart(), 0.0);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 5.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 9.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 9.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -185,12 +185,12 @@ class TestPast {
         monitoring.addProperty("test2", p -> (x -> x - 9));
         TemporalMonitor<Double, Double> m = monitoring.monitor(since);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
-        assertEquals(0.0, result.start(), 0.0);
-        SignalCursor<Double> c = result.getIterator(true);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
+        assertEquals(0.0, result.getStart(), 0.0);
+        SignalCursor<Double, Double> c = result.getIterator(true);
         double time = 0.0;
-        while (!c.completed()) {
-            assertEquals(c.time() - 9.0, c.value(), 0.0, "Time: " + c.time());
+        while (!c.isCompleted()) {
+            assertEquals(c.getCurrentTime() - 9.0, c.getCurrentValue(), 0.0, "Time: " + c.getCurrentTime());
             c.forward();
             time += 0.25;
         }
@@ -208,9 +208,9 @@ class TestPast {
         TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
         // <3.1000000000000014>
-        assertEquals(signal.end(), result.end(), 0.0);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
         // dovrebbe partire da 0.1
-        assertEquals(0.3, result.start(), 0.0);
+        assertEquals(0.3, result.getStart(), 0.0);
     }
 
     @Test
@@ -249,8 +249,8 @@ class TestPast {
                 new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
         Signal<Double> output = monitor.monitor(signal);
         assertAll(
-                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
-                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+                () -> assertEquals(expectedOutputLowerBound, output.getStart(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.getEnd(), 0.0, String.format("HISTORICALLY - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
 
         );
     }
@@ -264,8 +264,8 @@ class TestPast {
                 new DoubleDomain(), new Interval(formulaLowerBound, formulaUpperBound));
         Signal<Double> output = monitor.monitor(signal);
         assertAll(
-                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("ONCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
-                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("ONCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+                () -> assertEquals(expectedOutputLowerBound, output.getStart(), 0.0, String.format("ONCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.getEnd(), 0.0, String.format("ONCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
 
         );
     }
@@ -278,8 +278,8 @@ class TestPast {
         TemporalMonitor<Double, Double> monitor = TemporalMonitor.sinceMonitor(TemporalMonitor.atomicMonitor(atomicFormula), new Interval(formulaLowerBound, formulaUpperBound), TemporalMonitor.atomicMonitor(atomicFormula), new DoubleDomain());
         Signal<Double> output = monitor.monitor(signal);
         assertAll(
-                () -> assertEquals(expectedOutputLowerBound, output.start(), 0.0, String.format("SINCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
-                () -> assertEquals(expectedOutputUpperBound, output.end(), 0.0, String.format("SINCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
+                () -> assertEquals(expectedOutputLowerBound, output.getStart(), 0.0, String.format("SINCE - [%s,%s] - Wrong LowerBound", expectedOutputLowerBound, expectedOutputUpperBound)),
+                () -> assertEquals(expectedOutputUpperBound, output.getEnd(), 0.0, String.format("SINCE - [%s,%s] - Wrong UpperBound", expectedOutputLowerBound, expectedOutputUpperBound))
 
         );
     }
@@ -294,7 +294,7 @@ class TestPast {
                 TemporalMonitor.notMonitor(TemporalMonitor.atomicMonitor(x -> x - 2.8E9), new DoubleDomain()), new DoubleDomain(), new Interval(60, 116));
         Signal<Double> soutQ2 = mQ2.monitor(signal);
         double expectedOutputUpperBound = 693;
-        assertEquals(expectedOutputUpperBound, soutQ2.end(), 0.0);
+        assertEquals(expectedOutputUpperBound, soutQ2.getEnd(), 0.0);
     }
 
     @Test
@@ -305,7 +305,7 @@ class TestPast {
         monitoring.addProperty("test", p -> (x -> x));
         TemporalMonitor<Double, Double> m = monitoring.monitor(historically);
         Signal<Double> result = m.monitor(signal);
-        assertEquals(signal.end(), result.end(), 0.0);
+        assertEquals(signal.getEnd(), result.getEnd(), 0.0);
     }
 
 
@@ -334,7 +334,7 @@ class TestPast {
                 TemporalMonitor.atomicMonitor(x -> x.getFirst() - 72.0), new DoubleDomain(), new Interval(60, 84));
         // monitoraggio e risultati
         Signal<Double> soutQ2 = mQ1.monitor(signal);
-        assertEquals(end,soutQ2.end(),0.0000001);
+        assertEquals(end,soutQ2.getEnd(),0.0000001);
     }
 
     @Test
@@ -363,6 +363,6 @@ class TestPast {
         // monitoraggio ed Exception
         Signal<Double> soutQ = mQ2.monitor(signal);
         double[][] monitorValuesQ2 = soutQ.arrayOf((Double x) -> (double) x);
-        assertEquals(end,soutQ.end());
+        assertEquals(end,soutQ.getEnd());
     }
 }

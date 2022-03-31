@@ -22,11 +22,11 @@ package eu.quanticol.moonlight.offline.signal;
 /**
  * A <code>SignalCursor</code> is used to scan values in a signal. 
  */
-public interface SignalCursor<T> {
-		
-	double time();
+public interface SignalCursor<T, V> {
+
+	T getCurrentTime();
 	
-	T value();
+	V getCurrentValue();
 	
 	void forward();
 
@@ -34,16 +34,16 @@ public interface SignalCursor<T> {
 
 	void revert();
 
-	void move(double t);
-	
-	double nextTime();
+	void move(T t);
 
-	double previousTime();
+	T nextTime();
+
+	T previousTime();
 
 	boolean hasNext();
 	
 	boolean hasPrevious();
 
-	boolean completed();
+	boolean isCompleted();
 	
 }
