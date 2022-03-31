@@ -22,10 +22,7 @@ package eu.quanticol.moonlight.core.signal;
 
 import eu.quanticol.moonlight.core.base.Semiring;
 import eu.quanticol.moonlight.core.io.DataHandler;
-import eu.quanticol.moonlight.core.io.SerializableOperations;
-import eu.quanticol.moonlight.core.io.SerializableValues;
-
-import java.util.function.BiFunction;
+import eu.quanticol.moonlight.core.io.SerializableData;
 
 /**
  * This extension of Semiring introduces some elements that are key for
@@ -44,9 +41,7 @@ import java.util.function.BiFunction;
  * @see Semiring
  * @see DataHandler
  */
-public interface SignalDomain<R> extends Semiring<R>,
-		SerializableOperations<R>, SerializableValues<R> {
-
+public interface SignalDomain<R> extends Semiring<R>, SerializableData<R> {
 	/**
 	 * Unknown element: this is an element of the set that represents
 	 * undefined areas of the signal.
@@ -77,17 +72,8 @@ public interface SignalDomain<R> extends Semiring<R>,
 		return disjunction(negation(x), y);
 	}
 
-	/**
-	 * @return an helper class to manage data parsing over the given type.
-	 */
-	DataHandler<R> getDataHandler();
-
-	/* TODO: Some doubts about the following methods. Precisely:
+	/* TODO: Some doubts about the following methods:
 	     - equalTo(x, y) seems useless (couldn't just use x.equals(y)?)
-	     - valueOf(.) seems to convert a boolean/numeric value to R, but
-	     			  what is this for? Doesn't it break the generalization?
-	     - compute*() these seem to be used by the scripting language.
-	     			  perhaps a refactoring is needed to move these somewhere else
 	     - compare(x, y) ? come Comparable
 	 */
 
