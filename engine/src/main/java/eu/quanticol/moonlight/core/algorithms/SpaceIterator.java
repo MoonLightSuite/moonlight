@@ -78,10 +78,10 @@ public class SpaceIterator<T extends Comparable<T>, S, R> {
             T t = getCurrentT();
             DistanceStructure<S, ?>  f = generateDistanceStructure();
 
-            if(isNextSpaceModelMeaningful()) {
-                tNext = nextSpace.getFirst();
-            resultAction.accept(t, tNext, op.apply(spatialSignal, f));
-            }
+//            if(isNextSpaceModelMeaningful()) {
+//                tNext = nextSpace.getFirst();
+                resultAction.accept(t, tNext, op.apply(spatialSignal, f));
+//            }
         }
     }
 
