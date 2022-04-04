@@ -51,6 +51,6 @@ public class SpatialAlgorithms {
                                                        List<R> s,
                                                        DistanceStructure<E, M> ds)
     {
-        return new SpatialOperator<>(ds, domain, true).somewhere(s);
+        return new SpatialOperator<>(ds, domain, true).everywhere(s);
     }
 }
