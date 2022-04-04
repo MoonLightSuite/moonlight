@@ -101,7 +101,6 @@ public class BooleanOp {
               .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
               .collect(Collectors.toList());
 
-
         return new TimeChain<>(ls, us.getEnd());
     }
 
