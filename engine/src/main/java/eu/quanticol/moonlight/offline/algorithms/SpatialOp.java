@@ -40,12 +40,12 @@ import java.util.function.Function;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class SpatialComputation<S, R> {
+public class SpatialOp<S, R> {
     private final SpaceIterator<Double, S, R> spaceItr;
     private SpatialTemporalSignal<R> result;
     ParallelSignalCursor<R> cursor;
 
-    public SpatialComputation(
+    public SpatialOp(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             BiFunction<List<R>, DistanceStructure<S, ?>,

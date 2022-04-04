@@ -43,7 +43,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.domain.BoxDomain;
 import eu.quanticol.moonlight.domain.ListDomain;
 
-import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.online.algorithms.SpatialOp;
 import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -251,8 +251,8 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
 
         Function<SpatialModel<S>, DistanceStructure<S, ?>> d = dist.get(distF);
 
-        SpatialComputation<Double, S, Box<R>> sc =
-                new SpatialComputation<>(locSvc, d, op);
+        SpatialOp<Double, S, Box<R>> sc =
+                new SpatialOp<>(locSvc, d, op);
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new UnarySpaceOpMonitor<>(argMonitor,

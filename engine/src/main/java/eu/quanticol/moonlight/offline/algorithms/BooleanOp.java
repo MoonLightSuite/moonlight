@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BooleanOp<T, R> {
@@ -40,7 +39,7 @@ public class BooleanOp<T, R> {
     }
 
     @SafeVarargs
-    private final Signal<R> applyOp(
+    private Signal<R> applyOp(
             Function<List<SignalCursor<Double, T>>, R> op,
             Signal<T>... signals)
     {
@@ -53,7 +52,7 @@ public class BooleanOp<T, R> {
     }
 
     @SafeVarargs
-    private final void setStartingTime(Signal<T>... signals) {
+    private void setStartingTime(Signal<T>... signals) {
         if(forward)
             time = maxStart(Arrays.stream(signals));
         else
@@ -73,7 +72,7 @@ public class BooleanOp<T, R> {
     }
 
     @SafeVarargs
-    private final void setEndingTime(Signal<T>... signals) {
+    private void setEndingTime(Signal<T>... signals) {
         if (!output.isEmpty()) {
             double end = minEnd(Arrays.stream(signals));
             output.endAt(end);
@@ -90,14 +89,14 @@ public class BooleanOp<T, R> {
     }
 
     @SafeVarargs
-    private final List<SignalCursor<Double, T>> prepareCursors(
+    private List<SignalCursor<Double, T>> prepareCursors(
             Signal<T>... signals)
     {
         return Arrays.stream(signals).map(s -> {
             SignalCursor<Double, T> c = s.getIterator(forward);
             c.move(time);
             return c;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     private void addResult(R value) {

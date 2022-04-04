@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
 import eu.quanticol.moonlight.core.base.Box;
-import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.online.algorithms.BooleanOp;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -70,7 +70,7 @@ implements OnlineMonitor<Double, List<V>, List<Box<R>>>
             Update<Double, List<V>> signalUpdate)
     {
         TimeChain<Double, List<Box<R>>> u =
-                BooleanComputation.atomSequence(signalUpdate, atomicFunction);
+                BooleanOp.atomSequence(signalUpdate, atomicFunction);
         List<TimeChain<Double, List<Box<R>>>> updates =
                 new ArrayList<>();
         updates.add(u);
@@ -84,7 +84,7 @@ implements OnlineMonitor<Double, List<V>, List<Box<R>>>
             TimeChain<Double, List<V>> updates)
     {
         TimeChain<Double, List<Box<R>>> us =
-                BooleanComputation.atomSequence(updates, atomicFunction);
+                BooleanOp.atomSequence(updates, atomicFunction);
 
         List<TimeChain<Double, List<Box<R>>>> output = new ArrayList<>();
         output.add(us);

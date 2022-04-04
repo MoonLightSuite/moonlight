@@ -35,19 +35,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
-public class SpatialComputation
+public class SpatialOp
 <T extends Comparable<T>, S, R extends Comparable<R>>
 {
     private List<Update<T, List<R>>> results;
-    private TimeChain<T, List<R>> resultsChain;
-    private SpaceIterator<T, S, R> spaceIterator;
+    private final SpaceIterator<T, S, R> spaceIterator;
 
-    public SpatialComputation(@NotNull LocationService<T, S> locationService,
-                              Function<SpatialModel<S>,
+    public SpatialOp(@NotNull LocationService<T, S> locationService,
+                     Function<SpatialModel<S>,
                                       DistanceStructure<S, ?>> distance,
-                              BiFunction<List<R>,
+                     BiFunction<List<R>,
                                       DistanceStructure<S, ?>,
                                       List<R>> operator)
     {
@@ -82,7 +80,7 @@ public class SpatialComputation
     }
 
     public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups) {
-        resultsChain =  new TimeChain<>(ups.getEnd());
+        TimeChain<T, List<R>> resultsChain = new TimeChain<>(ups.getEnd());
         final int LAST = ups.size() - 1;
 
         spaceIterator.init(ups.getStart(), this::addResult);

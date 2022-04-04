@@ -7,7 +7,7 @@ import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
 
-import static eu.quanticol.moonlight.online.algorithms.BooleanComputation.*;
+import static eu.quanticol.moonlight.online.algorithms.BooleanOp.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import java.util.function.BinaryOperator;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class BooleanComputationTest {
+class BooleanOpTest {
 
 
     @Test
@@ -105,7 +105,7 @@ class BooleanComputationTest {
     @Test
     void atomTest() {
         Update<Integer, Integer> u = basicUpdate();
-        Update<Integer, Integer> r = atom(u, BooleanComputationTest::positive);
+        Update<Integer, Integer> r = atom(u, BooleanOpTest::positive);
         assertEquals(u, r);
     }
 
@@ -114,7 +114,7 @@ class BooleanComputationTest {
         TimeChain<Integer, Integer> ups = basicUpdateChain();
 
         TimeChain<Integer, Integer> r = atomSequence(ups,
-                                            BooleanComputationTest::positive);
+                                            BooleanOpTest::positive);
 
         assertEquals(ups, r);
     }
@@ -123,7 +123,7 @@ class BooleanComputationTest {
     void unaryTest() {
         Update<Integer, Integer> u = basicUpdate();
 
-        Update<Integer, Integer> r = unary(u, BooleanComputationTest::not)
+        Update<Integer, Integer> r = unary(u, BooleanOpTest::not)
                                                                         .get(0);
 
         assertEquals(u.getStart(), r.getStart());
@@ -135,8 +135,8 @@ class BooleanComputationTest {
     void unarySequenceTest() {
         TimeChain<Integer, Integer> ups = basicUpdateChain();
 
-        TimeChain<Integer, Integer> r = BooleanComputation
-                .unarySequence(ups, BooleanComputationTest::not);
+        TimeChain<Integer, Integer> r = BooleanOp
+                .unarySequence(ups, BooleanOpTest::not);
 
         // First update
         assertEquals(ups.get(0).getStart(), r.get(0).getStart());
@@ -153,7 +153,7 @@ class BooleanComputationTest {
         TimeChain<Integer, Integer> chain = basicUpdateChain(); //TODO: should be used basicSignalChain instead
 
         List<Update<Integer, Integer>> r = binary(chain, u,
-                                                  BooleanComputationTest::and);
+                                                  BooleanOpTest::and);
 
         assertEquals(u.getStart(), r.get(0).getStart());
         assertEquals(u.getEnd(), r.get(0).getEnd());
@@ -167,7 +167,7 @@ class BooleanComputationTest {
         TimeChain<Integer, Integer> chain = basicSignalChain();
 
         TimeChain<Integer, Integer> r = binarySequence(chain, ups,
-                                                BooleanComputationTest::and);
+                                                BooleanOpTest::and);
 
         assertEquals(ups.get(0).getStart(), r.get(0).getStart());
         assertEquals(chain.get(1).getStart(), r.get(1).getStart());

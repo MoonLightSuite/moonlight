@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
 import eu.quanticol.moonlight.core.base.Box;
-import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.online.algorithms.BooleanOp;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -79,7 +79,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
                                                             new ArrayList<>();
 
         for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
-            updates.add(BooleanComputation.unarySequence(argU, op));
+            updates.add(BooleanOp.unarySequence(argU, op));
         }
 
         updates.forEach(rho::refine);
@@ -98,7 +98,7 @@ public class UnaryMonitor<V, R extends Comparable<R>>
                 new ArrayList<>();
 
         for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
-            output.add(BooleanComputation.unarySequence(argU, op));
+            output.add(BooleanOp.unarySequence(argU, op));
         }
 
         output.forEach(rho::refine);
