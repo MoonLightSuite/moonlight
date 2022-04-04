@@ -91,7 +91,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
 
     private void badEnding(double t) {
         throw new IllegalArgumentException("Trying to define an illegal " +
-                                           "ending time" + t + "which is " +
+                                           "ending time:" + t + "; which is " +
                                            "before the current " +
                                            "end of the signal: " + getEnd());
     }
