@@ -225,8 +225,7 @@ public class TimeChain<T extends Comparable<T>, V>
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TimeChain)) return false;
-        TimeChain<?, ?> timeChain = (TimeChain<?, ?>) o;
+        if (!(o instanceof TimeChain<?, ?> timeChain)) return false;
         return segments.equals(timeChain.segments) && end.equals(timeChain.end);
     }
 

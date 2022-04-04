@@ -34,7 +34,7 @@ import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
 /**
- *
+ *  Offline signal class.
  */
 public class Signal<T> implements TimeSignal<Double, T> {
     private Segment<T> first;
@@ -65,7 +65,7 @@ public class Signal<T> implements TimeSignal<Double, T> {
      * @return true if the signal is empty
      */
     public boolean isEmpty() {
-        return (size == 0);
+        return size == 0;
     }
 
     /**
