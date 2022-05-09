@@ -44,25 +44,24 @@ public class EpidemicMain {
     private static final double d = 3;
     private static final double t = 0;
 
-    private static String code = "signal { int nodeType; }\n" +
-            "             	space {\n" +
-            "             	edges { real length;}\n" +
-            "             	}\n" +
-            "             	domain boolean;\n" +
-            "               formula suscettible = ( nodeType== 1 );\n" +
-            "               formula infected = ( nodeType==3 );\n" +
-            "               formula ev_inf = eventually [2 4] infected;\n" +
-            "               formula ev_inf2 = eventually [0 7] infected;\n" +
-            "               formula once_inf = once [3 7] infected;\n" +
-            "               formula reach_inf = suscettible reach(length)[0 2]  infected;\n" +
-            "               formula once_reach_inf = once [3 5] {suscettible reach(length)[0 5]  infected};\n" +
-            "               formula test_reach = suscettible reach(length)[0 5] infected;\n" +
+    private static String code = "signal { int nodeType; }\n"+
+            "space { edges { real length;}}\n"+
+            "domain boolean;\n" +
+            "formula suscettible = ( nodeType== 1 );\n"
+        //    "formula infected = ( nodeType==3 );\n" +
+        //    "formula ev_inf = eventually [2 4] infected;\n" +
+        //    "formula ev_inf2 = eventually [0 7] infected;\n" +
+//            "               formula once_inf = once [3 7] infected;\n" +
+//            "               formula reach_inf = suscettible reach(length)[0 2]  infected;\n" +
+//            "               formula once_reach_inf = once [3 5] {suscettible reach(length)[0 5]  infected};\n" +
+//            "               formula test_reach = suscettible reach(length)[0 5] infected;\n" +
 //            "               formula evw_inf (real d) = everywhere(length)[0 d] {!infected};\n" +
 //            "               formula g_notinf = globally [0 3]{!infected};\n" +
 //            "               formula safe_radius (real d, real t) = globally { {!{everywhere(length)[0 d] {!infected}}} | {globally [0 t]{!infected}} } ;\n" +
-            "             	formula reach_reach_inf = suscettible reach[0 1] once_reach_inf;\n" +
-            "             	formula glob_reach_inf =  globally {!{suscettible reach(length)[0 2]  ev_inf}} | ev_inf;\n" +
-            "               formula dang_days =  globally {{! {suscettible reach(length)[0 2] ev_inf}} | ev_inf2};";
+//            "             	formula reach_reach_inf = suscettible reach[0 1] once_reach_inf;\n" +
+//            "             	formula glob_reach_inf =  globally {!{suscettible reach(length)[0 2]  ev_inf}} | ev_inf;\n" +
+        //    "formula dang_days =  globally {{! {suscettible reach(length)[0 2] ev_inf}} | ev_inf2};"
+            ;
 
     public static void main(String[] argv) {
         try {
@@ -71,6 +70,7 @@ public class EpidemicMain {
 //            Process pr = run.exec(cmd);
             for(int i = 0; i <nRuns; i++) {
                 // space model
+                System.out.println(code);
                 URL TRAJECTORY_SOURCE = classLoader.getResource("epidemic_simulation_network_" + i + ".txt");
                 File fileL = new File(TRAJECTORY_SOURCE.toURI());
                 CsvLocationServiceReader readerL = new CsvLocationServiceReader();
@@ -86,7 +86,7 @@ public class EpidemicMain {
                 MoonLightScript script = ScriptLoader.loaderFromCode(code).getScript();
                 MoonLightSpatialTemporalScript spatialTemporalScript = script.spatialTemporal();
                 spatialTemporalScript.setBooleanDomain();
-                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("dang_days");
+                SpatialTemporalScriptComponent<?> monitScript =  spatialTemporalScript.selectSpatialTemporalComponent("suscettible");
                 double[] radius = new double[]{1,1.5,2,2.5,3,3.5,4,4.5,5.5,6,6.5,7};
                 int[] result_radius = new int[radius.length];
 //                for (int j = 0; j <radius.length; j++) {
