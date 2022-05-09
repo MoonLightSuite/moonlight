@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.monitoring.temporal;
 
 import eu.quanticol.moonlight.core.base.Box;
-import eu.quanticol.moonlight.online.algorithms.BooleanComputation;
+import eu.quanticol.moonlight.online.algorithms.BooleanOp;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
@@ -89,13 +89,13 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         for(TimeChain<Double, Box<R>> argU : firstArgUps) {
                 TimeChain<Double, Box<R>> c2 =
                         s2.select(argU.getStart(), argU.getEnd());
-                updates.add(BooleanComputation.binarySequence(c2, argU, opFunction));
+                updates.add(BooleanOp.binarySequence(c2, argU, opFunction));
         }
 
         for(TimeChain<Double, Box<R>> argU: secondArgUps) {
                 TimeChain<Double, Box<R>> c1 =
                         s1.select(argU.getStart(), argU.getEnd());
-                updates.add(BooleanComputation.binarySequence(c1, argU, opFunction));
+                updates.add(BooleanOp.binarySequence(c1, argU, opFunction));
         }
 
         updates.forEach(rho::refine);
@@ -127,13 +127,13 @@ public class BinaryMonitor<V, R extends Comparable<R>>
         for(TimeChain<Double, Box<R>> argU : firstArgUps) {
             TimeChain<Double, Box<R>> c2 =
                     s2.select(argU.getStart(), argU.getEnd());
-            output.add(BooleanComputation.binarySequence(c2, argU, opFunction));
+            output.add(BooleanOp.binarySequence(c2, argU, opFunction));
         }
 
         for(TimeChain<Double, Box<R>> argU: secondArgUps) {
             TimeChain<Double, Box<R>> c1 =
                     s1.select(argU.getStart(), argU.getEnd());
-            output.add(BooleanComputation.binarySequence(c1, argU, opFunction));
+            output.add(BooleanOp.binarySequence(c1, argU, opFunction));
         }
 
         output.forEach(rho::refine);

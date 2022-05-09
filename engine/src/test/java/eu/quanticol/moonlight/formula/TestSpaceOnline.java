@@ -55,19 +55,19 @@ class TestSpaceOnline {
                 new OnlineSpatialTemporalMonitor<>(f, N * N, new DoubleDomain(),
                                              locSvc, atoms, dist, true);
 
-        ForkJoinPool customThreadPool = new ForkJoinPool(12);
-
-        TimeSignal<Double, List<Box<Double>>> r =
-                m.monitor((TimeChain<Double, List<Double>>) null);
-
-        TimeChain<Double, List<Box<Double>>> ss = r.getSegments();
-
-        assertEquals(1, ss.size());
+//        ForkJoinPool customThreadPool = new ForkJoinPool(12);
+//
+//        TimeSignal<Double, List<Box<Double>>> r =
+//                m.monitor((TimeChain<Double, List<Double>>) null);
+//
+//        TimeChain<Double, List<Box<Double>>> ss = r.getSegments();
+//
+//        assertEquals(1, ss.size());
 
         Update<Double, List<Double>> u = basicUpdate(N * N);
-        r = m.monitor(u);
+        var r = m.monitor(u);
 
-        ss = r.getSegments();
+        var ss = r.getSegments();
 
         assertEquals(2, ss.size());
 

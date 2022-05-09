@@ -12,6 +12,7 @@ import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
 import eu.quanticol.moonlight.online.signal.OnlineSignal;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -47,9 +48,9 @@ class TestRoSIBerkeleyExample {
     private static final Double P_INF = Double.POSITIVE_INFINITY;
     private static final Double N_INF = Double.NEGATIVE_INFINITY;
 
-    private static final Box<Double> ANY =
-            new Box<>(N_INF, P_INF);
+    private static final Box<Double> ANY = new Box<>(N_INF, P_INF);
 
+    @Disabled("We don't want empty updates ever")
     @Test
     void testEmptySignal() {
         // Monitor Instrumentation...

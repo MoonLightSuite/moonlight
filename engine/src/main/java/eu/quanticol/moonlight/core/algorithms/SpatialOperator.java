@@ -6,7 +6,6 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 
 import java.util.List;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SpatialOperator<E, M, R> {
@@ -44,7 +43,7 @@ public class SpatialOperator<E, M, R> {
                                                       identity, spatialSignal);
         return locationStream(range).boxed()
                                     .map(algorithm)
-                                    .collect(Collectors.toList());
+                                    .toList();
     }
 
     private IntStream locationStream(Box<Integer> range) {

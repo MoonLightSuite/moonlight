@@ -21,7 +21,6 @@
 package eu.quanticol.moonlight.online.signal;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Data class to store updates of the kind <code>[start, end) -&gt; value</code>
@@ -29,20 +28,12 @@ import java.util.Objects;
  * @param <T> Time domain of the update
  * @param <V> Value of the update
  */
-public class Update<T extends Comparable<T>, V> {
+public record Update<T extends Comparable<T>, V>(T start, T end, V value)  {
 
-    private final T start;
-    private final T end;
-    private final V value;
-
-    public Update(T start, T end, V value) {
+    public Update {
         if(start.compareTo(end) > 0 || start.equals(end))
             throw new IllegalArgumentException("Invalid update time span: [" +
-                                               start + ", " + end + ")");
-
-        this.start = start;
-        this.end = end;
-        this.value = value;
+                                                start + ", " + end + ")");
     }
 
     public T getStart() {
@@ -57,31 +48,10 @@ public class Update<T extends Comparable<T>, V> {
         return value;
     }
 
-    @Override
-    public String toString() {
-        return "Update{" + "start=" + start + ", end=" + end +
-                ", value=" + value + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Update)) return false;
-        Update<?, ?> update = (Update<?, ?>) o;
-        return start.equals(update.start) &&
-                end.equals(update.end) &&
-                value.equals(update.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(start, end, value);
-    }
-
     public static <T extends Comparable<T>, V>
     TimeChain<T, V> asTimeChain(List<Update<T, V>> ups)
     {
-        T end = ups.get(ups.size() - 1).getEnd();
+        T end = ups.get(ups.size() - 1).end();
         TimeChain<T, V> chain = new TimeChain<>(end);
         for(int i = 0; i < ups.size(); i++) {
             if(i != ups.size() - 1) {

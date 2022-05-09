@@ -22,10 +22,14 @@ package eu.quanticol.moonlight.online.monitoring;
 
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.formula.FormulaVisitor;
 import eu.quanticol.moonlight.core.formula.SpatialFormula;
 import eu.quanticol.moonlight.core.formula.UnaryFormula;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+
 import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
@@ -33,36 +37,28 @@ import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
 import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
-import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
-import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
-import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
-import eu.quanticol.moonlight.domain.AbsIntervalDomain;
-import eu.quanticol.moonlight.domain.ListDomain;
-import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.formula.*;
-import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
-import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
-import eu.quanticol.moonlight.online.signal.TimeChain;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.online.signal.Update;
-import org.jetbrains.annotations.NotNull;
 
+import eu.quanticol.moonlight.domain.BoxDomain;
+import eu.quanticol.moonlight.domain.ListDomain;
+
+import eu.quanticol.moonlight.online.algorithms.SpatialOp;
+import eu.quanticol.moonlight.online.monitoring.spatialtemporal.*;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.Update;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.*;
 
-public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implements
-        FormulaVisitor<Parameters,
-                       OnlineMonitor<Double, List<V>,
-                       List<Box<R>>>>
-{
+public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>> {
     private final Formula formula;
     private final SignalDomain<R> interpretation;
     private final ListDomain<R> listInterpretation;
@@ -116,10 +112,9 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     public SpaceTimeSignal<Double, Box<R>>
     monitor(@NotNull Update<Double, List<V>> update)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> m =
-                                    formula.accept(this, null);
+        var m = monitor(formula);
 
-        if(update.getValue().size() != size)
+        if(update.value().size() != size)
             throw new IllegalArgumentException("The update doesn't match the " +
                                                "expected size of the signal");
 
@@ -129,20 +124,43 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
     }
 
     public SpaceTimeSignal<Double, Box<R>>
-    monitor(TimeChain<Double, List<V>> updates)
+    monitor(@NotNull TimeChain<Double, List<V>> updates)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> m =
-                formula.accept(this, null);
-
-        if(updates != null)
-            m.monitor(updates);
-
+        var m = monitor(formula);
+        m.monitor(updates);
         return (SpaceTimeSignal<Double, Box<R>>) m.getResult();
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            AtomicFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, List<V>, List<Box<R>>> monitor(Formula f) {
+        return switch(f) {
+            // Classic operators
+            case AtomicFormula atomic -> generateAtomicMonitor(atomic);
+            case NegationFormula negation -> generateNegationMonitor(negation);
+            case AndFormula and -> generateAndMonitor(and);
+            case OrFormula or -> generateOrMonitor(or);
+            // Temporal Future Operators
+            case EventuallyFormula ev -> generateEventuallyMonitor(ev);
+            case GloballyFormula globally -> generateGloballyMonitor(globally);
+//            case UntilFormula until -> generateUntilMonitor(until);
+            // Temporal Past Operators
+//            case OnceFormula once -> generateOnceMonitor(once);
+//            case HistoricallyFormula hs -> generateHistoricallyMonitor(hs);
+//            case SinceFormula since -> generateSinceMonitor(since);
+            // Spatial Operators
+            case SomewhereFormula some -> unarySpace(some, this::somewhereOp);
+            case EverywhereFormula every -> unarySpace(every, this::everywhereOp);
+            case EscapeFormula escape -> unarySpace(escape, this::escapeOp);
+//            case ReachFormula reach -> generateReachMonitor(reach);
+            default -> illegalFormula(f);
+        };
+    }
+
+    private  OnlineMonitor<Double, List<V>, List<Box<R>>> illegalFormula(Formula f) {
+        throw new IllegalArgumentException("Unsupported formula: " + f);
+    }
+
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateAtomicMonitor(
+            AtomicFormula formula)
     {
         Function<V, Box<R>> f = fetchAtom(formula);
 
@@ -150,27 +168,22 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
                              x -> new AtomicMonitor<>(f, size, interpretation));
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            NegationFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateNegationMonitor(
+            NegationFormula formula)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> argMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new UnaryMonitor<>(argMonitor,
                         listInterpretation::negation, interpretation, size));
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            AndFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateAndMonitor(
+            AndFormula formula)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> firstArg =
-                formula.getFirstArgument().accept(this, parameters);
+        var firstArg = monitor(formula.getFirstArgument());
 
-        OnlineMonitor<Double, List<V>, List<Box<R>>> secondArg =
-                formula.getSecondArgument().accept(this, parameters);
+        var secondArg = monitor(formula.getSecondArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new BinaryMonitor<>(firstArg, secondArg,
@@ -178,15 +191,12 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
                         interpretation, size));
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            OrFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateOrMonitor(
+            OrFormula formula)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> firstArg =
-                formula.getFirstArgument().accept(this, parameters);
+        var firstArg = monitor(formula.getFirstArgument());
 
-        OnlineMonitor<Double, List<V>, List<Box<R>>> secondArg =
-                formula.getSecondArgument().accept(this, parameters);
+        var secondArg = monitor(formula.getSecondArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new BinaryMonitor<>(firstArg, secondArg,
@@ -194,12 +204,10 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
                         interpretation, size));
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            EventuallyFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateEventuallyMonitor(
+            EventuallyFormula formula)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> argMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x ->  new UnaryTimeOpMonitor<>(argMonitor,
@@ -208,13 +216,10 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
                         interpretation, size));
     }
 
-
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            GloballyFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateGloballyMonitor(
+            GloballyFormula formula)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> argMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x ->  new UnaryTimeOpMonitor<>(argMonitor,
@@ -223,36 +228,11 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
                         interpretation, size));
     }
 
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            SomewhereFormula formula, Parameters parameters)
+    public OnlineMonitor<Double, List<V>, List<Box<R>>> generateReachMonitor(
+            ReachFormula formula)
     {
-        return unarySpace(formula, parameters, this::somewhereOp);
-    }
-
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            EverywhereFormula formula, Parameters parameters)
-    {
-        return unarySpace(formula, parameters, this::everywhereOp);
-    }
-
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            EscapeFormula formula, Parameters parameters)
-    {
-        return unarySpace(formula, parameters, this::escapeOp);
-    }
-
-    @Override
-    public OnlineMonitor<Double, List<V>, List<Box<R>>> visit(
-            ReachFormula formula, Parameters parameters)
-    {
-        OnlineMonitor<Double, List<V>, List<Box<R>>> firstArg =
-                formula.getFirstArgument().accept(this, parameters);
-
-        OnlineMonitor<Double, List<V>, List<Box<R>>> secondArg =
-                formula.getSecondArgument().accept(this, parameters);
+        var firstArg = monitor(formula.getFirstArgument());
+        var secondArg = monitor(formula.getSecondArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new BinarySpaceOpMonitor<>(firstArg, secondArg,
@@ -262,19 +242,17 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
 
     private OnlineMonitor<Double, List<V>, List<Box<R>>>
     unarySpace(UnaryFormula f,
-               Parameters p,
                BiFunction<List<Box<R>>,
                        DistanceStructure<S, ?>, List<Box<R>>> op)
     {
-        OnlineMonitor<Double, List<V>, List<Box<R>>>
-                argMonitor = f.getArgument().accept(this, p);
+        var argMonitor = monitor(f.getArgument());
 
         String distF = ((SpatialFormula) f).getDistanceFunctionId();
 
         Function<SpatialModel<S>, DistanceStructure<S, ?>> d = dist.get(distF);
 
-        SpatialComputation<Double, S, Box<R>> sc =
-                new SpatialComputation<>(locSvc, d, op);
+        SpatialOp<Double, S, Box<R>> sc =
+                new SpatialOp<>(locSvc, d, op);
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new UnarySpaceOpMonitor<>(argMonitor,
@@ -287,9 +265,9 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
-            return everywhereParallel(new AbsIntervalDomain<>(interpretation),
+            return everywhereParallel(new BoxDomain<>(interpretation),
                                       spatialSignal, ds);
-        return everywhere(new AbsIntervalDomain<>(interpretation),
+        return everywhere(new BoxDomain<>(interpretation),
                           spatialSignal, ds);
     }
 
@@ -298,10 +276,10 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
             DistanceStructure<S, ?> ds)
     {
         if(parallel)
-            return somewhereParallel(new AbsIntervalDomain<>(interpretation),
+            return somewhereParallel(new BoxDomain<>(interpretation),
                                      spatialSignal, ds);
 
-        return somewhere(new AbsIntervalDomain<>(interpretation),
+        return somewhere(new BoxDomain<>(interpretation),
                          spatialSignal, ds);
 
     }
@@ -310,7 +288,7 @@ public class OnlineSpatialTemporalMonitor<S, V, R extends Comparable<R>>  implem
             List<Box<R>> spatialSignal,
             DistanceStructure<S, ?> f)
     {
-        return escape(new AbsIntervalDomain<>(interpretation),
+        return escape(new BoxDomain<>(interpretation),
                       spatialSignal, f);
     }
 

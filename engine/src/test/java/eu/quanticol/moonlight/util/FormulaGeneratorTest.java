@@ -13,7 +13,7 @@ import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCursor;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import org.junit.jupiter.api.Test;
@@ -47,14 +47,14 @@ class FormulaGeneratorTest {
             FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(1), signal.getEnd(), "a");
             Formula generatedFormula = formulaGenerator.getFormula(2);
             System.out.println(generatedFormula.toString());
-            System.out.println(toTaliro.toTaliro(generatedFormula));
+            //System.out.println(toTaliro.toTaliro(generatedFormula));
             long timeInit = System.currentTimeMillis();
             HashMap<String, Function<Parameters, Function<MoonLightRecord, Double>>> mappa = new HashMap<>();
             int index_of_x = 0;
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
@@ -94,7 +94,7 @@ class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
             Signal<Double> outputSignal = m.monitor(signal);
             long timeEnd = System.currentTimeMillis();
             SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
@@ -137,7 +137,7 @@ class FormulaGeneratorTest {
             //a is the atomic proposition: a>=0
             mappa.put("a", y -> assignment -> assignment.get(index_of_x, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(eventually);
             Signal<Double> outputSignal = m.monitor(signal);
             SignalCursor<Double, MoonLightRecord> expected = signal.getIterator(true);
             SignalCursor<Double, Double> actual = outputSignal.getIterator(true);

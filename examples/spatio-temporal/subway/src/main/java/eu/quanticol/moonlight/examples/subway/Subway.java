@@ -104,7 +104,7 @@ public class Subway {
                 SpatialTemporalMonitor.untilMonitor(
                         crowdedStation(), new Interval(0,M), properService(), // a Until b...
                         SATISFACTION)
-                , new Interval(0,TH), SATISFACTION);
+                , SATISFACTION, new Interval(0,TH));
     }
 
     /**
@@ -159,7 +159,7 @@ public class Subway {
      */
     private static SpatialTemporalMonitor<Double, Triple<Integer, Boolean, Integer>, Boolean> peopleLeave() {
         return SpatialTemporalMonitor.eventuallyMonitor(SpatialTemporalMonitor.notMonitor(tooManyPeople(), SATISFACTION) // not tooManyPeople...
-                , new Interval(0, M + O), SATISFACTION);
+                , SATISFACTION, new Interval(0, M + O));
     }
 
     // --------- ATOMIC PREDICATES --------- //

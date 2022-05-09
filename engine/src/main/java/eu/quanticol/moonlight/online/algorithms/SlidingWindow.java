@@ -263,57 +263,47 @@ public class SlidingWindow<R> {
         private double endingTime;
         private final double offset;
 
-        public Window(Double startingTime, Double startingOffset) {
+        Window(Double startingTime, Double startingOffset) {
             endingTime = startingTime;
             offset = startingOffset;
             deque = new ArrayDeque<>();
         }
 
-        public Double getStart() {
+        Double getStart() {
             return deque.isEmpty() ? endingTime : deque.getFirst().getStart();
         }
 
-        public TimeSegment<Double, V> removeFirst() {
+        TimeSegment<Double, V> removeFirst() {
             return deque.removeFirst();
         }
 
-        public boolean isEmpty() {
+        boolean isEmpty() {
             return deque.isEmpty();
         }
 
-        public int size() { return deque.size(); }
-
-        public TimeSegment<Double, V> getFirst() {
-            return deque.getFirst();
-        }
-
-        public TimeSegment<Double, V> getLast() {
-            return deque.getLast();
-        }
-
-        public void addAll(Collection<TimeSegment<Double, V>> c) {
+        void addAll(Collection<TimeSegment<Double, V>> c) {
             deque.addAll(c);
         }
 
-        public void addLast(double start, V value) {
+        void addLast(double start, V value) {
             TimeSegment<Double, V> e = new TimeSegment<>(start, value);
             deque.addLast(e);
             endingTime = start + offset;
         }
 
-        public void addFirst(double start, V value) {
+        void addFirst(double start, V value) {
             deque.addFirst(new TimeSegment<>(start, value));
         }
 
-        public TimeSegment<Double, V> removeLast() {
+        TimeSegment<Double, V> removeLast() {
             return deque.removeLast();
         }
 
-        public void clear() {
+        void clear() {
             deque.clear();
         }
 
-        public Double getEnd() {
+        Double getEnd() {
             return endingTime;
         }
     }

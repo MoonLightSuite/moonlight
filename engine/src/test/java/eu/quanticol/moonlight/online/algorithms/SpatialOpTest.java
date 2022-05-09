@@ -20,7 +20,7 @@ import java.util.function.Function;
 import static eu.quanticol.moonlight.TestUtils.listOf;
 import static org.junit.jupiter.api.Assertions.*;
 
-class SpatialComputationTest {
+class SpatialOpTest {
     private static final SignalDomain<Double> DOUBLES = new DoubleDomain();
     private static final boolean PARALLEL = true;
     private static final boolean SEQUENTIAL = false;
@@ -37,7 +37,7 @@ class SpatialComputationTest {
     void testSomewhereSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+        SpatialOp<Double, Double, Double> op = somewhere(locSvc,
                                                                   SEQUENTIAL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -51,7 +51,7 @@ class SpatialComputationTest {
     void testEverywhereSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+        SpatialOp<Double, Double, Double> op = everywhere(locSvc,
                                                                    SEQUENTIAL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -65,7 +65,7 @@ class SpatialComputationTest {
     void testSomewhereParallelSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = somewhere(locSvc,
+        SpatialOp<Double, Double, Double> op = somewhere(locSvc,
                                                                   PARALLEL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -79,7 +79,7 @@ class SpatialComputationTest {
     void testEverywhereParallelSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = everywhere(locSvc,
+        SpatialOp<Double, Double, Double> op = everywhere(locSvc,
                                                                    PARALLEL);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
@@ -93,7 +93,7 @@ class SpatialComputationTest {
     void testEscapeSingleToChainEquality() {
         SpatialModel<Double> m = basicGraph();
         LocationService<Double, Double> locSvc = new StaticLocationService<>(m);
-        SpatialComputation<Double, Double, Double> op = escape(locSvc);
+        SpatialOp<Double, Double, Double> op = escape(locSvc);
         TimeChain<Double, List<Double>> ups = basicUpdates();
 
         TimeChain<Double, List<Double>> resultIO = op.computeUnaryChain(ups);
@@ -112,7 +112,7 @@ class SpatialComputationTest {
         return updates;
     }
 
-    private static SpatialComputation<Double, Double, Double> somewhere(
+    private static SpatialOp<Double, Double, Double> somewhere(
             LocationService<Double, Double> locSvc, boolean parallel)
     {
         // Distance bounds of the spatial operators
@@ -120,16 +120,16 @@ class SpatialComputationTest {
         double max = 5;
 
         if(!parallel)
-            return new SpatialComputation<>(locSvc,
+            return new SpatialOp<>(locSvc,
                                             distance(min, max),
-                                           SpatialComputationTest::somewhereOp);
+                                           SpatialOpTest::somewhereOp);
         else
-            return new SpatialComputation<>(locSvc,
+            return new SpatialOp<>(locSvc,
                                             distance(min, max),
-                                SpatialComputationTest::somewhereOpParallel);
+                                SpatialOpTest::somewhereOpParallel);
     }
 
-    private static SpatialComputation<Double, Double, Double> everywhere(
+    private static SpatialOp<Double, Double, Double> everywhere(
             LocationService<Double, Double> locSvc, boolean parallel)
     {
         // Distance bounds of the spatial operators
@@ -137,25 +137,25 @@ class SpatialComputationTest {
         double max = 5;
 
         if(!parallel)
-            return new SpatialComputation<>(locSvc,
+            return new SpatialOp<>(locSvc,
                                             distance(min, max),
-                                          SpatialComputationTest::everywhereOp);
+                                          SpatialOpTest::everywhereOp);
         else
-            return new SpatialComputation<>(locSvc,
+            return new SpatialOp<>(locSvc,
                                             distance(min, max),
-                                  SpatialComputationTest::everywhereOpParallel);
+                                  SpatialOpTest::everywhereOpParallel);
     }
 
-    private static SpatialComputation<Double, Double, Double> escape(
+    private static SpatialOp<Double, Double, Double> escape(
             LocationService<Double, Double> locSvc)
     {
         // Distance bounds of the spatial operators
         double min = 0;
         double max = 5;
 
-        return new SpatialComputation<>(locSvc,
+        return new SpatialOp<>(locSvc,
                 distance(min, max),
-                SpatialComputationTest::escapeOp);
+                SpatialOpTest::escapeOp);
     }
 
     /**
@@ -199,7 +199,7 @@ class SpatialComputationTest {
 
     private TimeChain<Double, List<Double>> processUpdates(
             TimeChain<Double, List<Double>> updates,
-            SpatialComputation<Double, Double, Double> op)
+            SpatialOp<Double, Double, Double> op)
     {
         List<Update<Double, List<Double>>> upsOO = updates.toUpdates();
         List<Update<Double, List<Double>>> result = new ArrayList<>();

@@ -37,7 +37,7 @@ class TestFormulae {
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
         assertEquals(signal.getStart(), result.getStart(), 0.0);
@@ -57,7 +57,7 @@ class TestFormulae {
         Formula globally = new GloballyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(globally, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(globally);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
         assertEquals(signal.getStart(), result.getStart(), 0.0);
@@ -98,7 +98,7 @@ class TestFormulae {
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test1", p -> (x -> 1.0));
         monitoring.addProperty("test2", p -> (x -> x - 9));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(until, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(until);
         Signal<Double> result = m.monitor(signal);
         assertEquals(5.0, result.getEnd(), 0.0);
         assertEquals(0.0, result.getStart(), 0.0);
@@ -118,7 +118,7 @@ class TestFormulae {
         Formula eventually = new EventuallyFormula(new AtomicFormula("test"), new Interval(0, 5.0));
         TemporalMonitoring<Double, Double> monitoring = new TemporalMonitoring<>(new DoubleDomain());
         monitoring.addProperty("test", p -> (x -> x));
-        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually, null);
+        TemporalMonitor<Double, Double> m = monitoring.monitor(eventually);
         Signal<Double> result = m.monitor(signal);
         assertEquals(signal.getEnd() - 5.0, result.getEnd(), 0.0);
         assertEquals(signal.getStart(), result.getStart(), 0.0);

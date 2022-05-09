@@ -27,7 +27,6 @@ package eu.quanticol.moonlight.core.formula;
  * @see Formula for more on the interface hierarchy
  */
 public interface BinaryFormula extends Formula {
-
     /**
      * @return the first argument of the binary logical operator
      */

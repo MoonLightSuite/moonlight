@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package eu.quanticol.moonlight.core.base;
+package eu.quanticol.moonlight.core.io;
 
 import eu.quanticol.moonlight.offline.signal.IllegalValueException;
 
@@ -289,7 +289,7 @@ public interface DataHandler<S> {
          */
         @Override
         public Boolean fromObject(Object value) throws IllegalValueException {
-            if (value == null) {
+            if (value == null) {    //TODO: NotNull -> should throw
                 return false;
             }
             if (value instanceof Boolean) {

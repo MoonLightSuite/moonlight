@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 
 import eu.quanticol.moonlight.core.base.Box;
-import eu.quanticol.moonlight.online.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.online.algorithms.SpatialOp;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
 import eu.quanticol.moonlight.online.signal.OnlineSpaceTimeSignal;
@@ -47,11 +47,11 @@ public class UnarySpaceOpMonitor<S, V, R extends Comparable<R>>
     private final OnlineMonitor<Double, List<V>,
                                 List<Box<R>>> argument;
     private final TimeSignal<Double, List<Box<R>>> rho;
-    private final SpatialComputation<Double, S, Box<R>> spatialOp;
+    private final SpatialOp<Double, S, Box<R>> spatialOp;
 
     public UnarySpaceOpMonitor(
             OnlineMonitor<Double, List<V>, List<Box<R>>> argument,
-            SpatialComputation<Double, S, Box<R>> op,
+            SpatialOp<Double, S, Box<R>> op,
             SignalDomain<R> domain,
             int size)
     {

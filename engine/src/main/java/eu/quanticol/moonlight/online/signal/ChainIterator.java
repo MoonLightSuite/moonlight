@@ -111,26 +111,6 @@ public class ChainIterator<E> implements ListIterator<E> {
             return other;
     }
 
-    // ---------------------------- MUTATORS ---------------------------- //
-    @Override
-    public void remove() {
-        itr.remove();
-        changed = true;
-    }
-
-    @Override
-    public void set(E e) {
-        itr.set(e);
-        changed = true;
-    }
-
-    @Override
-    public void add(E e) {
-        itr.add(e);
-        changed = true;
-    }
-    // ------------------------- END OF MUTATORS ------------------------ //
-
     @Override
     public boolean hasNext() {
         return itr.hasNext();
@@ -160,6 +140,26 @@ public class ChainIterator<E> implements ListIterator<E> {
     public E previous() {
         return itr.previous();
     }
+
+    // ---------------------------- MUTATORS ---------------------------- //
+    @Override
+    public void remove() {
+        itr.remove();
+        changed = true;
+    }
+
+    @Override
+    public void set(E e) {
+        itr.set(e);
+        changed = true;
+    }
+
+    @Override
+    public void add(E e) {
+        itr.add(e);
+        changed = true;
+    }
+    // ------------------------- END OF MUTATORS ------------------------ //
 
     private static final String NO_NEXT = "There is no next element!";
     private static final String NO_PREV = "There is no previous element!";

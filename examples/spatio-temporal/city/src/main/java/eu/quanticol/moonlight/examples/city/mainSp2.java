@@ -3,7 +3,7 @@ package eu.quanticol.moonlight.examples.city;
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;

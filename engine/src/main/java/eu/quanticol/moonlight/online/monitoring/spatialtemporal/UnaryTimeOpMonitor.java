@@ -23,7 +23,7 @@ package eu.quanticol.moonlight.online.monitoring.spatialtemporal;
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
-import eu.quanticol.moonlight.online.algorithms.TemporalComputation;
+import eu.quanticol.moonlight.online.algorithms.TemporalOp;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.online.monitoring.OnlineMonitor;
@@ -85,7 +85,7 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
         List<TimeChain<Double, List<Box<R>>>> updates = new ArrayList<>();
 
         for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
-            updates.addAll(TemporalComputation.slidingWindow(s,
+            updates.addAll(TemporalOp.slidingWindow(s,
                                                              argU,
                                                              horizon,
                                                              op));
@@ -109,7 +109,7 @@ public class UnaryTimeOpMonitor<V, R extends Comparable<R>>
         List<TimeChain<Double, List<Box<R>>>> result = new ArrayList<>();
 
         for(TimeChain<Double, List<Box<R>>> argU : argUpdates) {
-            result.addAll(TemporalComputation.slidingWindow(s,
+            result.addAll(TemporalOp.slidingWindow(s,
                                                             argU,
                                                             horizon,
                                                             op));

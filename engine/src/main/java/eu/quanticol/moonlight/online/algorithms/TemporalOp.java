@@ -18,9 +18,9 @@ import java.util.function.BinaryOperator;
  *
  * @see <a href="https://docs.oracle.com/javase/tutorial/java/generics/restrictions.html">Java Generics Restrictions</a>
  */
-public class TemporalComputation {
+public class TemporalOp {
 
-    private TemporalComputation() {}    // hidden constructor
+    private TemporalOp() {}    // hidden constructor
 
     public static <R>
     List<Update<Double, R>> slidingWindow(TimeChain<Double, R> s,

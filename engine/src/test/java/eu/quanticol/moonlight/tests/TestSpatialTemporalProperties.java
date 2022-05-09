@@ -8,7 +8,7 @@ import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.domain.DoubleDomain;
@@ -68,11 +68,10 @@ class TestSpatialTemporalProperties {
         SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
-                new DoubleDomain(),
-                true);
+                new DoubleDomain());
 
         SpatialTemporalMonitor<Double,Double,Double> m = monitor.monitor(
-                escape, null);
+                escape);
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         assertEquals(0.5, signals.get(0).getValueAt(0.0), 0.0001);
@@ -105,11 +104,10 @@ class TestSpatialTemporalProperties {
         SpatialTemporalMonitoring<Double, Double, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 distanceFunctions,
-                new DoubleDomain(),
-                true);
+                new DoubleDomain());
 
         SpatialTemporalMonitor<Double,Double,Double> m = monitor.monitor(
-                new AtomicFormula("simpleAtomic"), null);
+                new AtomicFormula("simpleAtomic"));
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
@@ -117,7 +115,7 @@ class TestSpatialTemporalProperties {
         }
 
         SpatialTemporalMonitor<Double,Double,Double> m2 = monitor.monitor(
-                somewhere, null);
+                somewhere);
         SpatialTemporalSignal<Double> sout2 = m2.monitor(locService, signal);
         List<Signal<Double>> signals2 = sout2.getSignals();
         assertEquals(-4.5, signals2.get(0).getValueAt(5.0), 0.0001);
@@ -139,10 +137,9 @@ class TestSpatialTemporalProperties {
         SpatialTemporalMonitoring<Double, Pair<Double, Double>, Double> monitor = new SpatialTemporalMonitoring<>(
                 atomic,
                 new HashMap<>(),
-                new DoubleDomain(),
-                true);
+                new DoubleDomain());
 
-        SpatialTemporalMonitor<Double,Pair<Double,Double>,Double> m = monitor.monitor(new AtomicFormula("simpleAtomic"), null);
+        SpatialTemporalMonitor<Double,Pair<Double,Double>,Double> m = monitor.monitor(new AtomicFormula("simpleAtomic"));
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
         List<Signal<Double>> signals = sout.getSignals();
         for (int i = 0; i < 10; i++) {

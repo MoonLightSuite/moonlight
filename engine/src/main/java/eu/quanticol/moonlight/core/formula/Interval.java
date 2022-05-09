@@ -21,6 +21,7 @@
 package eu.quanticol.moonlight.core.formula;
 
 import eu.quanticol.moonlight.core.base.Box;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Immutable data type that represents an interval over
@@ -92,9 +93,8 @@ public class Interval extends Box<Double> {
      * @param i1 first interval (a1, b1)
      * @param i2 second interval (a2, b2)
      * @return a new interval of the kind (a1 + a2, b1 + b2)
-     * @throws NullPointerException when any of the two is null
      */
-    public static Interval combine(Interval i1, Interval i2) {
+    public static Interval combine(@NotNull Interval i1, @NotNull Interval i2) {
         if(i1.isEmpty())
             return i2;
 

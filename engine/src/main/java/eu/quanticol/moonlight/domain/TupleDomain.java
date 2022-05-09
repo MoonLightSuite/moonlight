@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.Incubating;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.core.base.Tuple;
 import eu.quanticol.moonlight.core.base.TupleType;
 import eu.quanticol.moonlight.core.signal.SignalDomain;

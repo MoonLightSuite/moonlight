@@ -1,5 +1,6 @@
 package eu.quanticol.moonlight;
 
+import eu.quanticol.moonlight.core.io.SerializableData;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
@@ -39,7 +40,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.atomicMonitor(s -> SignalDomain.getOperator(domain,op).apply(left.apply(args,s), right.apply(args,s)));
+                return SpatialTemporalMonitor.atomicMonitor(s -> SerializableData.getOperator(domain,op).apply(left.apply(args,s), right.apply(args,s)));
             }
         };
     }
@@ -129,7 +130,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.onceMonitor(arg.apply(domain,args),interval.apply(args), domain);
+                return SpatialTemporalMonitor.onceMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -138,7 +139,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.historicallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.historicallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -147,7 +148,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.eventuallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.eventuallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }
@@ -156,7 +157,7 @@ public interface SpatialTemporalMonitorProducer {
         return new SpatialTemporalMonitorProducer() {
             @Override
             public <S> SpatialTemporalMonitor<MoonLightRecord, MoonLightRecord, S> apply(SignalDomain<S> domain, MoonLightRecord args) {
-                return SpatialTemporalMonitor.globallyMonitor(arg.apply(domain,args),interval.apply(args),domain);
+                return SpatialTemporalMonitor.globallyMonitor(arg.apply(domain,args), domain, interval.apply(args));
             }
         };
     }

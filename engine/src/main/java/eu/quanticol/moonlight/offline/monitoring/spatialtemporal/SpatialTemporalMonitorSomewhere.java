@@ -22,10 +22,9 @@ package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
-import eu.quanticol.moonlight.offline.algorithms.SpatialComputation;
+import eu.quanticol.moonlight.offline.algorithms.SpatialOp;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -58,7 +57,7 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
 
 	@Override
 	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService, SpatialTemporalSignal<T> signal) {
-		SpatialComputation<S, R> sp = new SpatialComputation<>(locationService,
+		SpatialOp<S, R> sp = new SpatialOp<>(locationService,
 				distance,
 				this::somewhereOp);
         return sp.computeUnary(m.monitor(locationService, signal));

@@ -20,7 +20,7 @@
 
 package eu.quanticol.moonlight.io;
 
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 
 import java.io.File;

@@ -20,12 +20,6 @@
 
 package eu.quanticol.moonlight.core.base;
 
-import java.util.ArrayList;
-import java.util.function.BiFunction;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 /**
  * The {@code Semiring} class describes the behavior of algebraic semirings,
  * as used by our framework.
@@ -53,7 +47,6 @@ import java.util.stream.IntStream;
  * @author loreti
  */
 public interface Semiring<R> {
-
 	/**
 	 * Associative, commutative, idempotent operator that chooses a value.
 	 * @param x first available value
@@ -79,18 +72,4 @@ public interface Semiring<R> {
 	 * @return the supremum (aka join) of the lattice defined over the semiring.
 	 */
 	R max();
-
-	/* TODO: the following methods have no clear meaning (create what for?).
-	    	 Do we even need a default implementation?? */
-	default ArrayList<R> createArray(int size ) {
-		return createArray(size, i -> min());
-	}
-
-	default ArrayList<R> createArray(int size , IntFunction<R> init) {
-		return IntStream
-				.range(0, size)
-				.mapToObj(init)
-				.collect(Collectors.toCollection(ArrayList::new));
-	}
-
 }

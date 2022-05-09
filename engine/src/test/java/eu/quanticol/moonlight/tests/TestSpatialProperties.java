@@ -8,7 +8,7 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
@@ -452,10 +452,9 @@ class TestSpatialProperties {
                 new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new BooleanDomain(),
-                        true);
+                        new BooleanDomain());
 
-        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach, null);
+        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach);
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {

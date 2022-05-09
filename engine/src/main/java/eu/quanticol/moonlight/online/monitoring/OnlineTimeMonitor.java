@@ -8,12 +8,12 @@ import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
-import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
-import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
+import eu.quanticol.moonlight.formula.temporal.*;
 import eu.quanticol.moonlight.online.monitoring.temporal.*;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +26,8 @@ import java.util.function.Function;
  * @param <V> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
  *
- * @see FormulaVisitor
  */
-public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
-    FormulaVisitor<Parameters, OnlineMonitor<Double, V, Box<R>>>
-{
+public class OnlineTimeMonitor<V, R extends Comparable<R>> {
 
     private final Formula formula;
     private final SignalDomain<R> interpretation;
@@ -49,66 +46,77 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
         this.monitors = new HashMap<>();
     }
 
-    public TimeSignal<Double, Box<R>>
-    monitor(Update<Double, V> update)
+    /**
+     * Entry point of the monitoring program:
+     * it launches the monitoring process over the formula f.
+     *
+     * @param f the formula to monitor
+     * @return the result of the monitoring process.
+     */
+    private OnlineMonitor<Double, V, Box<R>> monitor(Formula f) {
+        return switch(f) {
+            // Classic operators
+            case AtomicFormula atomic -> generateAtomicMonitor(atomic);
+            case NegationFormula negation -> generateNegationMonitor(negation);
+            case AndFormula and -> generateAndMonitor(and);
+            case OrFormula or -> generateOrMonitor(or);
+            // Temporal Future Operators
+            case EventuallyFormula ev -> generateEventuallyMonitor(ev);
+            case GloballyFormula globally -> generateGloballyMonitor(globally);
+//            case UntilFormula until -> generateUntilMonitor(until);
+            // Temporal Past Operators
+//            case OnceFormula once -> generateOnceMonitor(once);
+//            case HistoricallyFormula hs -> generateHistoricallyMonitor(hs);
+//            case SinceFormula since -> generateSinceMonitor(since);
+            default -> illegalFormula(f);
+        };
+    }
+
+    private  OnlineMonitor<Double, V, Box<R>> illegalFormula(Formula f) {
+        throw new IllegalArgumentException("Unsupported formula: " + f);
+    }
+
+    public TimeSignal<Double, Box<R>> monitor(@NotNull Update<Double, V> update)
     {
-        UpdateParameter<Double, V> param = new UpdateParameter<>(update);
-
-        OnlineMonitor<Double, V, Box<R>> m =
-                                        formula.accept(this, param);
-
-        if(update != null)
-            m.monitor(update);
-
+        var m = monitor(formula);
+        m.monitor(update);
         return m.getResult();
     }
 
-    public TimeSignal<Double, Box<R>>
-    monitor(TimeChain<Double, V> updates)
+    public TimeSignal<Double, Box<R>> monitor(@NotNull
+                                              TimeChain<Double, V> updates)
     {
-
-        OnlineMonitor<Double, V, Box<R>> m =
-                formula.accept(this, null);
-
-        if(updates != null)
-            m.monitor(updates);
-
+        var m = monitor(formula);
+        m.monitor(updates);
         return m.getResult();
     }
 
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            AtomicFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateAtomicMonitor(
+            AtomicFormula f)
     {
-        Function<V, Box<R>> f = fetchAtom(formula);
+        var func = fetchAtom(f);
 
-        return monitors.computeIfAbsent(formula.toString(),
-                                x -> new AtomicMonitor<>(f, interpretation));
+        return monitors.computeIfAbsent(f.toString(),
+                                x -> new AtomicMonitor<>(func, interpretation));
 
     }
 
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            NegationFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateNegationMonitor(
+            NegationFormula formula)
     {
-        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argumentMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new UnaryMonitor<>(argumentMonitor,
                         v -> negation(v, interpretation), interpretation));
     }
 
-
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            AndFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateAndMonitor(
+            AndFormula formula)
     {
-        OnlineMonitor<Double, V, Box<R>> firstArgMonitor =
-                formula.getFirstArgument().accept(this, parameters);
+        var firstArgMonitor = monitor(formula.getFirstArgument());
 
-        OnlineMonitor<Double, V, Box<R>> secondArgMonitor =
-                formula.getSecondArgument().accept(this, parameters);
+        var secondArgMonitor = monitor(formula.getSecondArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x -> new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
@@ -116,15 +124,12 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
                                                         interpretation));
     }
 
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            OrFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateOrMonitor(
+            OrFormula formula)
     {
-        OnlineMonitor<Double, V, Box<R>> firstArgMonitor =
-                formula.getFirstArgument().accept(this, parameters);
+        var firstArgMonitor = monitor(formula.getFirstArgument());
 
-        OnlineMonitor<Double, V, Box<R>> secondArgMonitor =
-                formula.getSecondArgument().accept(this, parameters);
+        var secondArgMonitor = monitor(formula.getSecondArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x ->  new BinaryMonitor<>(firstArgMonitor, secondArgMonitor,
@@ -132,13 +137,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
                         interpretation));
     }
 
-
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            EventuallyFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateEventuallyMonitor(
+            EventuallyFormula formula)
     {
-        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argumentMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x ->  new TemporalOpMonitor<>(argumentMonitor,
@@ -147,12 +149,10 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
                                                         interpretation));
     }
 
-    @Override
-    public OnlineMonitor<Double, V, Box<R>> visit(
-            GloballyFormula formula, Parameters parameters)
+    private OnlineMonitor<Double, V, Box<R>> generateGloballyMonitor(
+            GloballyFormula formula)
     {
-        OnlineMonitor<Double, V, Box<R>> argumentMonitor =
-                formula.getArgument().accept(this, parameters);
+        var argumentMonitor = monitor(formula.getArgument());
 
         return monitors.computeIfAbsent(formula.toString(),
                 x ->  new TemporalOpMonitor<>(argumentMonitor,
@@ -196,5 +196,4 @@ public class OnlineTimeMonitor<V, R extends Comparable<R>> implements
         }
         return atom;
     }
-
 }

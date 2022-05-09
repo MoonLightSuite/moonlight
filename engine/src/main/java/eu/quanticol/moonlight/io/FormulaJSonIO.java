@@ -14,11 +14,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import eu.quanticol.moonlight.core.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.formula.FormulaVisitor;
 import eu.quanticol.moonlight.formula.temporal.GloballyFormula;
 import eu.quanticol.moonlight.formula.temporal.HistoricallyFormula;
 import eu.quanticol.moonlight.core.formula.Interval;
@@ -30,8 +30,9 @@ import eu.quanticol.moonlight.formula.temporal.UntilFormula;
 
 /**
  * @author loreti
- *
+ * @deprecated
  */
+@Deprecated(forRemoval = true)
 public class FormulaJSonIO {
 	
 	private static final String TYPE_KEY = "formula";

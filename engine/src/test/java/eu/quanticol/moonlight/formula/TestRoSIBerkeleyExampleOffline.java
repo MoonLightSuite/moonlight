@@ -48,14 +48,13 @@ class TestRoSIBerkeleyExampleOffline {
     private static final Double P_INF = Double.POSITIVE_INFINITY;
     private static final Double N_INF = Double.NEGATIVE_INFINITY;
 
-    private static final Box<Double> ANY =
-            new Box<>(N_INF, P_INF);
+    private static final Box<Double> ANY = new Box<>(N_INF, P_INF);
 
+    @Disabled("We don't want empty updates ever")
     @Test
     void testEmptySignal() {
         // Monitor Instrumentation...
-        OnlineTimeMonitor<List<Double>, Double> m =
-                instrument(leftFormula());
+        var m = instrument(leftFormula());
 
         Object[] ss = exec(null, m);
 

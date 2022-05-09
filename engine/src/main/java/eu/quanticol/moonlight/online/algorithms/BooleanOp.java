@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 /**
  *
  */
-public class BooleanComputation {
-    private BooleanComputation() {}     // hidden constructor
+public class BooleanOp {
+    private BooleanOp() {}     // hidden constructor
 
     /**
      *
@@ -100,7 +100,6 @@ public class BooleanComputation {
             us.stream()
               .map(s -> new TimeSegment<>(s.getStart(), op.apply(s.getValue())))
               .collect(Collectors.toList());
-
 
         return new TimeChain<>(ls, us.getEnd());
     }

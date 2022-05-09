@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SlidingWindowTest {
     private static final Double INF = Double.POSITIVE_INFINITY;
-    private static final AbsIntervalDomain<Double>
-            domain = new AbsIntervalDomain<>(new DoubleDomain());
+    private static final BoxDomain<Double>
+            domain = new BoxDomain<>(new DoubleDomain());
 
     private static final SignalDomain<Double> doubles = new DoubleDomain();
 

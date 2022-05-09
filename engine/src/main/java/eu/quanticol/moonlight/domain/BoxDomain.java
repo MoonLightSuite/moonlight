@@ -2,14 +2,14 @@ package eu.quanticol.moonlight.domain;
 
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.core.base.DataHandler;
+import eu.quanticol.moonlight.core.io.DataHandler;
 
-public class AbsIntervalDomain<R extends Comparable<R>>
+public class BoxDomain<R extends Comparable<R>>
         implements SignalDomain<Box<R>>
 {
     private final SignalDomain<R> domain;
 
-    public AbsIntervalDomain(SignalDomain<R> domain) {
+    public BoxDomain(SignalDomain<R> domain) {
         this.domain = domain;
     }
 

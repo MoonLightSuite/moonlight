@@ -2,7 +2,7 @@ package eu.quanticol.moonlight.formula;
 
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.domain.AbsIntervalDomain;
+import eu.quanticol.moonlight.domain.BoxDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
@@ -154,9 +154,9 @@ class ImpreciseSignalTest {
                 (Box<Double>) trc.get(Y_SIGNAL));
 
         TemporalMonitoring<List<Comparable<?>>, Box<Double>> monitoring =
-                new TemporalMonitoring<>(atoms, new AbsIntervalDomain<>(new DoubleDomain()));
+                new TemporalMonitoring<>(atoms, new BoxDomain<>(new DoubleDomain()));
 
-        return monitoring.monitor(formula, null).monitor(trace);
+        return monitoring.monitor(formula).monitor(trace);
     }
 
     private static Formula testFormula() {

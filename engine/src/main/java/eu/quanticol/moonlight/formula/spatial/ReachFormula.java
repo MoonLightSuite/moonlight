@@ -1,62 +1,50 @@
-/**
- * 
+/*
+ * MoonLight: a light-weight framework for runtime monitoring
+ * Copyright (C) 2018-2021
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package eu.quanticol.moonlight.formula.spatial;
 
-import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.formula.FormulaVisitor;
+import eu.quanticol.moonlight.core.formula.*;
 
 /**
- * @author loreti
- *
+ * Everywhere operator
+ * @param distanceFunctionId identifier of the distance function to consider
+ * @param firstArgument first sub-formula on which the operator is applied
+ * @param secondArgument second sub-formula on which the operator is applied
  */
-public class ReachFormula implements Formula {
-	
-	private final String distanceFunctionId;
-	private final Formula firstArgument;
-	private final Formula secondArgument;
-	
-	
-	/**
-	 * @param distanceFunctionId
-	 * @param firstArgument
-	 * @param secondArgument
-	 */
-	public ReachFormula(Formula firstArgument, String distanceFunctionId, Formula secondArgument) {
-		super();
-		this.distanceFunctionId = distanceFunctionId;
-		this.firstArgument = firstArgument;
-		this.secondArgument = secondArgument;
-	}
-
-
+public record ReachFormula(Formula firstArgument,
+						   String distanceFunctionId,
+						   Formula secondArgument)
+		implements BinaryFormula, SpatialFormula
+{
 	@Override
-	public <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
-		return visitor.visit(this, parameters);
-	}
-
-
-	/**
-	 * @return the distanceFunctionId
-	 */
 	public String getDistanceFunctionId() {
 		return distanceFunctionId;
 	}
 
-
-	/**
-	 * @return the firstArgument
-	 */
+	@Override
 	public Formula getFirstArgument() {
 		return firstArgument;
 	}
 
-
-	/**
-	 * @return the secondArgument
-	 */
+	@Override
 	public Formula getSecondArgument() {
 		return secondArgument;
 	}
-
 }

@@ -38,8 +38,10 @@ import eu.quanticol.moonlight.formula.temporal.*;
  *
  * @see Formula implementations to see how the visitor is accepted
  *
+ * @deprecated
  * @author loreti
  */
+@Deprecated(since = "adoption of java17 pattern matching makes this useless")
 public interface FormulaVisitor<P, M> {
 	
 	static IllegalArgumentException generateException( Class<?> c ) {
@@ -63,8 +65,6 @@ public interface FormulaVisitor<P, M> {
 	default M visit(OrFormula orFormula, P parameters) {
 		throw generateException(orFormula.getClass());
 	}
-
-	//TODO: shouldn't it also have a visit(ImpliesFormula f)??
 
 	/* TEMPORAL LOGIC OPERATORS */
 
