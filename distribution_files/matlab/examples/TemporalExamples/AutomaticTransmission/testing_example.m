@@ -19,7 +19,7 @@ output_labels = {'engine speed in rpm', 'vehicle speed in mph', 'gear'};
                    
                    
 %% specifing property
-moonlightScript = ScriptLoader.loadFromFile("multiple_spec");
+moonlightScript = ScriptLoader.loadFromFile("multiple_spec.mls");
 moonlightScript.setMinMaxDomain();
 % formula Spec2(real omega, real v) = globally {( e_speed < omega ) & ( v_speed < v )} 
 qMonitor = moonlightScript.getMonitor("Spec2");
