@@ -1,22 +1,22 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
-import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.api.configurator.Matlab;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.io.FormulaToBreach;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCreator;
-import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
-import eu.quanticol.moonlight.core.base.Pair;
-import eu.quanticol.moonlight.api.configurator.Matlab;
 import org.n52.matlab.control.MatlabInvocationException;
 import org.n52.matlab.control.MatlabProxy;
 import org.n52.matlab.control.extensions.MatlabNumericArray;
@@ -29,10 +29,9 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class RandomFormula {
-    private static FormulaToTaliro toTaliro = new FormulaToTaliro();
-    private static FormulaToBreach toBreach = new FormulaToBreach();
     private static final MatlabProxy eng = Matlab.startMatlab();
-
+    private static final FormulaToTaliro toTaliro = new FormulaToTaliro();
+    private static final FormulaToBreach toBreach = new FormulaToBreach();
 
     public static void main(String[] args) throws Exception {
         //main3(args);
@@ -50,17 +49,17 @@ public class RandomFormula {
 //        }
 //    }
 
-	public static double[][] generateValues(double[] time, ArrayList<Function<Double,Double>> functions) {
-		  double[][] values = new double[functions.size()][time.length];
-		  for (int i = 0; i < time.length; i++) {
-		      for (int j = 0; j < functions.size(); j++) {
-		          Function<Double, Double> f = functions.get(j);
-		          values[j][i] = f.apply(time[i]);
-		      }
-		  }
-		  return values;
-		}    
-	    
+    public static double[][] generateValues(double[] time, ArrayList<Function<Double, Double>> functions) {
+        double[][] values = new double[functions.size()][time.length];
+        for (int i = 0; i < time.length; i++) {
+            for (int j = 0; j < functions.size(); j++) {
+                Function<Double, Double> f = functions.get(j);
+                values[j][i] = f.apply(time[i]);
+            }
+        }
+        return values;
+    }
+
 
     private static double test(int seed, int formulaLength) throws MatlabInvocationException {
         try {
@@ -68,20 +67,20 @@ public class RandomFormula {
             functionalMap.put("a", t -> Math.pow(t, 2.));
             functionalMap.put("b", Math::cos);
             functionalMap.put("c", Math::sin);
-            ArrayList<Function<Double,Double>> functions = new ArrayList<>();
+            ArrayList<Function<Double, Double>> functions = new ArrayList<>();
             functions.add(t -> Math.pow(t, 2.));
             functions.add(Math::cos);
             functions.add(Math::sin);
             double timeStep = 0.001;
             RecordHandler factory = RecordHandler.createFactory(
-            		new Pair<>("a",DataHandler.REAL),
-            		new Pair<>("b",DataHandler.REAL),
-            		new Pair<>("c",DataHandler.REAL)
+                    new Pair<>("a", DataHandler.REAL),
+                    new Pair<>("b", DataHandler.REAL),
+                    new Pair<>("c", DataHandler.REAL)
             );
-            SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
+            SignalCreator signalCreator = new SignalCreator(factory, functionalMap);
             double endTime = 100;
             double[] time = signalCreator.generateTime(0, endTime, timeStep);
-            double[][] values = generateValues(time,functions);
+            double[][] values = generateValues(time, functions);
             VariableArraySignal signal = signalCreator.generate(0, endTime, timeStep);
             FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
             Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
@@ -132,7 +131,7 @@ public class RandomFormula {
             mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
             mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
             TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+            TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
             before = System.currentTimeMillis();
             for (int i = 0; i < nReps; i++) {
                 Signal<Double> outputSignal = m.monitor(signal);

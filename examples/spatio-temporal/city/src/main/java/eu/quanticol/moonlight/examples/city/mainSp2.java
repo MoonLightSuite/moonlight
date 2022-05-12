@@ -1,16 +1,16 @@
 package eu.quanticol.moonlight.examples.city;
 
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
+import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.offline.signal.EnumerationHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.core.base.MoonLightRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class mainSp2 {
         city.add(6, 15.0, 3);
         city.add(3, 15.0, 6);
 
-        String[] placeArray = new String[] { "BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop" };
+        String[] placeArray = new String[]{"BusStop", "Hospital", "MetroStop", "MainSquare", "BusStop", "Museum", "MetroStop"};
         ArrayList<String> place = new ArrayList<>(Arrays.asList(placeArray));
         ArrayList<Boolean> taxi = new ArrayList<>(Arrays.asList(false, false, true, false, false, true, false));
         ArrayList<Integer> people = new ArrayList<>(Arrays.asList(3, 145, 67, 243, 22, 103, 6));
@@ -63,17 +63,20 @@ public class mainSp2 {
         //// Somewere Taxi property
         double range = 10;
         DistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
-        List<Boolean> somewhereTaxy = SpatialAlgorithms.somewhere(new BooleanDomain(), taxi, minutes);
+
+        var somewhereTaxy =
+                new SpatialAlgorithms<>(minutes, new BooleanDomain(), false).everywhere(taxi::get);
 
         //// (R1) Hospital -> Somewere Taxi property
         List<Boolean> r1 = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            r1.add(notHospital.get(i) || somewhereTaxy.get(i));
+            r1.add(notHospital.get(i) || somewhereTaxy.apply(i));
         }
         System.out.println(r1);
 
         /// stop reach_{<=10} mainsquare
-        List<Boolean> reacmainsquare = reach(new BooleanDomain(), taxi, mainsquare, minutes);
+        var reacmainsquare = reach(new BooleanDomain(), taxi::get,
+                mainsquare::get, minutes);
 
 
         System.out.println(reacmainsquare);
@@ -81,7 +84,7 @@ public class mainSp2 {
 
         //// SpatioTemporalMonitoring
 
-        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray), DataHandler.BOOLEAN,DataHandler.INTEGER);
+        RecordHandler factory = new RecordHandler(new EnumerationHandler<>(String.class, placeArray), DataHandler.BOOLEAN, DataHandler.INTEGER);
         HashMap<String, Integer> vTable = new HashMap<>();
         vTable.put("place", 1);
         vTable.put("taxi", 2);

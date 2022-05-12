@@ -1,9 +1,17 @@
 package eu.quanticol.moonlight.examples.patterns;
 
 import com.mathworks.engine.MatlabEngine;
+import eu.quanticol.moonlight.api.MatlabExecutor;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
@@ -13,14 +21,7 @@ import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
-import eu.quanticol.moonlight.api.MatlabExecutor;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -43,7 +44,7 @@ public class Pattern {
 
         // %%%%%%%%%%%%% Connection with Matlab %%%%%%%%%%%%/////////
         MatlabEngine eng = MatlabExecutor.startMatlab();
-        eng.eval("addpath(\""+ path+"\")");
+        eng.eval("addpath(\"" + path + "\")");
 
         /// Generation of the trace
         eng.eval("TuringDataGenerator");
@@ -51,10 +52,9 @@ public class Pattern {
         //double[][][] Btraj = eng.getVariable("Btraj");
 
 
-
-        BiFunction<Double,Pair<Integer,Integer>, Double> gridFunction =  (t, pair) -> Atraj[(int)Math.round(t)][pair.getFirst()][pair.getSecond()];
-        SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length-1.0, gridFunction);
-        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, Atraj.length-1.0,gridModel);
+        BiFunction<Double, Pair<Integer, Integer>, Double> gridFunction = (t, pair) -> Atraj[(int) Math.round(t)][pair.getFirst()][pair.getSecond()];
+        SpatialTemporalSignal<Double> signal = Utils.createSpatioTemporalSignalFromGrid(Atraj[0].length, Atraj[0][0].length, 0, 1, Atraj.length - 1.0, gridFunction);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, Atraj.length - 1.0, gridModel);
 
     /*    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/Users/lauretta/Desktop/aTraj.storage")))) {
             oos.writeObject(Atraj);
@@ -64,8 +64,6 @@ public class Pattern {
             e.printStackTrace();
         }
 */
-
-
 
 
         // %%%%%%%%% PROPERTY %%%%%%% //
@@ -88,8 +86,8 @@ public class Pattern {
         atomicFormulasB.put("HighValues", p -> (x -> h_CONST_ >= x));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 6.0, gridModel);
-        DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 6.0, 32.0*32.0, gridModel);
+        DefaultDistanceStructure<Double, Double> readD = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 6.0, gridModel);
+        DefaultDistanceStructure<Double, Double> escapeD = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 6.0, 32.0 * 32.0, gridModel);
 
         distanceFunctions.put("distReach", x -> readD);
         distanceFunctions.put("distEscape", x -> escapeD);
@@ -97,7 +95,7 @@ public class Pattern {
         Formula lValue = new AtomicFormula("LowValues");
         Formula hValue = new AtomicFormula("HighValues");
 
-        Formula or12 = new OrFormula(lValue,hValue);
+        Formula or12 = new OrFormula(lValue, hValue);
         Formula notOr12 = new NegationFormula(or12);
 
         Formula reachF = new ReachFormula(
@@ -116,28 +114,25 @@ public class Pattern {
                 new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new DoubleDomain(),
-                        true);
+                        new DoubleDomain());
 
         SpatialTemporalMonitoring<Double, Double, Boolean> monitorB =
                 new SpatialTemporalMonitoring<>(
                         atomicFormulasB,
                         distanceFunctions,
-                        new BooleanDomain(),
-                        true);
+                        new BooleanDomain());
 
 
         SpatialTemporalMonitor<Double, Double, Double> m =
-                monitor.monitor(surr, null);
+                monitor.monitor(surr);
         long start = System.currentTimeMillis();
         SpatialTemporalSignal<Double> sout = m.monitor(locService, signal);
-        float elapsedTime = (System.nanoTime() - start)/1000F;
+        float elapsedTime = (System.nanoTime() - start) / 1000F;
         List<Signal<Double>> signals = sout.getSignals();
 
         System.out.println(elapsedTime);
         System.out.println(signals.get(0).getValueAt(0.0));
     }
-
 
 
 }

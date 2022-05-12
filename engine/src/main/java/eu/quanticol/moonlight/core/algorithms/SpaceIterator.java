@@ -1,43 +1,42 @@
 package eu.quanticol.moonlight.core.algorithms;
 
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 
 public class SpaceIterator<T extends Comparable<T>, S, R> {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<List<R>, DistanceStructure<S, ?>, List<R>> op;
+    private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>,
+            IntFunction<R>> op;
 
     private Pair<T, SpatialModel<S>> currSpace;
     private Pair<T, SpatialModel<S>> nextSpace;
     private Iterator<Pair<T, SpatialModel<S>>> spaceItr;
-    private TriConsumer<T, T, List<R>> resultAction;
+    private TriConsumer<T, T, IntFunction<R>> resultAction;
 
 
     public SpaceIterator(@NotNull LocationService<T, S> locationService,
-                            Function<SpatialModel<S>,
-                                      DistanceStructure<S, ?>> distance,
-                            BiFunction<List<R>,
-                                      DistanceStructure<S, ?>,
-                                      List<R>> operator)
-    {
+                         Function<SpatialModel<S>,
+                                 DistanceStructure<S, ?>> distance,
+                         BiFunction<IntFunction<R>,
+                                 DistanceStructure<S, ?>,
+                                 IntFunction<R>> operator) {
         locSvc = locationService;
         dist = distance;
         op = operator;
     }
 
     public void init(T startingTime,
-                     TriConsumer<T, T, List<R>> resultStoringAction)
-    {
+                     TriConsumer<T, T, IntFunction<R>> resultStoringAction) {
         toFirstSpatialModel(startingTime);
         resultAction = resultStoringAction;
     }
@@ -50,7 +49,7 @@ public class SpaceIterator<T extends Comparable<T>, S, R> {
     private void seekSpace(T t) {
         currSpace = spaceItr.next();
         nextSpace = moveNext();
-        while(isNextSpaceBeforeTime(t)) {
+        while (isNextSpaceBeforeTime(t)) {
             shiftSpatialModel();
         }
     }
@@ -66,21 +65,20 @@ public class SpaceIterator<T extends Comparable<T>, S, R> {
 
     public void computeOp(T t, T tNext,
                           DistanceStructure<S, ?> f,
-                          List<R> spatialSignal)
-    {
+                          IntFunction<R> spatialSignal) {
         resultAction.accept(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal);
     }
 
-    private void moveAndCompute(T tNext, List<R> spatialSignal) {
+    private void moveAndCompute(T tNext, IntFunction<R> spatialSignal) {
         while (isNextSpaceModelWithinHorizon(tNext)) {
             shiftSpatialModel();
             T t = getCurrentT();
-            DistanceStructure<S, ?>  f = generateDistanceStructure();
+            DistanceStructure<S, ?> f = generateDistanceStructure();
 
 //            if(isNextSpaceModelMeaningful()) {
 //                tNext = nextSpace.getFirst();
-                resultAction.accept(t, tNext, op.apply(spatialSignal, f));
+            resultAction.accept(t, tNext, op.apply(spatialSignal, f));
 //            }
         }
     }
@@ -125,7 +123,7 @@ public class SpaceIterator<T extends Comparable<T>, S, R> {
     }
 
     public T fromNextSpaceOrFallback(T fallback) {
-        if(nextSpace != null)
+        if (nextSpace != null)
             return getNextT();
         return fallback;
     }

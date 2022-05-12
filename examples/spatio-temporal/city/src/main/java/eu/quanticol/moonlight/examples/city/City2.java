@@ -1,18 +1,18 @@
 package eu.quanticol.moonlight.examples.city;
 
+import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.core.base.Triple;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
-import eu.quanticol.moonlight.core.base.Triple;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,11 +23,11 @@ import java.util.function.Function;
 
 public class City2 {
 
-    private static SpatialModel<Double> city = buildingCity();
     private static final double range = 40;
     private static final int SIZE = 7;
     private static final DoubleDomain doubleDomain = new DoubleDomain();
     private static final BooleanDomain booleanDomain = new BooleanDomain();
+    private static final SpatialModel<Double> city = buildingCity();
 
     public static void main(String[] argv) {
 
@@ -40,29 +40,29 @@ public class City2 {
 
 
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0,city);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 20.0, city);
 
 
         ////  P1 = "isThereATaxi" ////
-        SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m = isThereATaxi();
+        SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> m = isThereATaxi();
 
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0).getValueAt(0));
+        System.out.println(signals.get(0).getValueAt(0.0));
 
 
         ////  P2 = evTaxi ////
-        SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m7 = eventuallyATaxi(0,20);
+        SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> m7 = eventuallyATaxi(0, 20);
         SpatialTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
-        System.out.println(signals7.get(0).getValueAt(0));
+        System.out.println(signals7.get(0).getValueAt(0.0));
 //
 //        ////  6 ////
-        SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m6 = ifTaxiReachStop(0,10);
+        SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> m6 = ifTaxiReachStop(0, 10);
         SpatialTemporalSignal<Boolean> sout6 = m6.monitor(locService, signal);
         List<Signal<Boolean>> signals6 = sout6.getSignals();
-        System.out.println(signals6.get(0).getValueAt(0));
+        System.out.println(signals6.get(0).getValueAt(0.0));
 
 
     }
@@ -72,17 +72,17 @@ public class City2 {
 //      Formula iftaxiReachStop = new OrFormula(new NegationFormula(new AtomicFormula("isThereATaxi")), taxiReachStop);
         return SpatialTemporalMonitor.orMonitor(
                 SpatialTemporalMonitor.notMonitor(isThereATaxi(), booleanDomain), booleanDomain,
-                taxiReachStop(from,to)
+                taxiReachStop(from, to)
         );
     }
 
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> taxiReachStop(double from, double to) {
 //      Formula taxiReachStop = new ReachFormula(
 //              new AtomicFormula("isThereATaxi"),"no", "dist3", stopReacMainsquare );
-        return SpatialTemporalMonitor.reachMonitor(isThereATaxi(), distance(from,to), stopReachMainSquare(), booleanDomain);
+        return SpatialTemporalMonitor.reachMonitor(isThereATaxi(), distance(from, to), stopReachMainSquare(), booleanDomain);
     }
 
-    private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>>  distance(double from, double to) {
+    private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
         return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), from, to, g);
     }
 
@@ -90,13 +90,13 @@ public class City2 {
 //      Formula somewhereTaxi = new SomewhereFormula("distX", new AtomicFormula("isThereATaxi"));
 //      Formula stopReacMainsquare = new ReachFormula(
 //              new AtomicFormula("isThereAStop"),"no", "dist10", new AtomicFormula("isMainSquare") );
-        return SpatialTemporalMonitor.reachMonitor(isThereAStop(),distance(0, 10),isMainSquare(),booleanDomain);
+        return SpatialTemporalMonitor.reachMonitor(isThereAStop(), distance(0, 10), isMainSquare(), booleanDomain);
     }
 
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> eventuallyATaxi(double a,
                                                                                                              double b) {
 //      Formula evTaxi = new EventuallyFormula( new AtomicFormula("isThereATaxi"), new Interval(0,20));
-        return SpatialTemporalMonitor.eventuallyMonitor(isThereATaxi(), booleanDomain, new Interval(a,b));
+        return SpatialTemporalMonitor.eventuallyMonitor(isThereATaxi(), booleanDomain, new Interval(a, b));
     }
 
     private static SpatialTemporalMonitor<Double, Triple<String, Boolean, Integer>, Boolean> isThereATaxi() {
@@ -135,7 +135,7 @@ public class City2 {
     private static <T> SpatialTemporalSignal<T> createSpatioTemporalSignal(int size, double start, double dt, double end, BiFunction<Double, Integer, T> f) {
         SpatialTemporalSignal<T> s = new SpatialTemporalSignal(size);
 
-        for(double time = start; time < end; time += dt) {
+        for (double time = start; time < end; time += dt) {
             double finalTime = time;
             s.add(time, (i) -> {
                 return f.apply(finalTime, i);

@@ -1,23 +1,25 @@
 package eu.quanticol.moonlight.tests;
 
+import eu.quanticol.moonlight.core.algorithms.EscapeAlgorithm;
 import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.escape;
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -158,21 +158,15 @@ class TestSpatialProperties {
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> 1.0, new DoubleDomain(), 0.0, range, model);
         IntFunction<Boolean> f = (i) -> i == Utils.gridIndexOf(relevantR, relevantC, columns);
-        List<Boolean> result = SpatialAlgorithms.somewhere(
-                new BooleanDomain(), getSpatialSignal(ds, f)
-                ,
-                ds
-        );
+        var result =
+                new SpatialAlgorithms<>(ds, new BooleanDomain(), false).somewhere(f);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) <= range, result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) <= range,
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
             }
         }
-    }
-
-    private <T> List<T> getSpatialSignal(DistanceStructure<?, ?> ds,
-                                         IntFunction<T> f) {
-        return IntStream.range(0, ds.getModel().size()).boxed().map(f::apply).collect(Collectors.toList());
     }
 
     @Test
@@ -185,14 +179,14 @@ class TestSpatialProperties {
         SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
         IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
-        List<Boolean> result = SpatialAlgorithms.everywhere(
-                new BooleanDomain(), getSpatialSignal(ds, f)
-                ,
-                ds
-        );
+        var result = new SpatialAlgorithms<>(ds,
+                new BooleanDomain(),
+                false).everywhere(f);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range, result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
             }
         }
     }
@@ -211,13 +205,13 @@ class TestSpatialProperties {
             return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
                     || ((p.getFirst() <= wallC) && (p.getSecond().equals(wallR))));
         };
-        List<Boolean> result = escape(
-                new BooleanDomain(), getSpatialSignal(ds, f)
-
-        , ds);
+        var result = new EscapeAlgorithm<>(ds, new BooleanDomain(),
+                f).compute();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals((i > wallR) || (j > wallC), result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals((i > wallR) || (j > wallC),
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
             }
         }
     }
@@ -238,15 +232,17 @@ class TestSpatialProperties {
             Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
             return (p.getFirst() == 4) && (p.getSecond() == 4);
         };
-        List<Boolean> result = reach(
+        var result = reach(
                 new BooleanDomain(),
-                getSpatialSignal(ds, f1),
-                getSpatialSignal(ds, f2),
+                f1,
+                f2,
                 ds
         );
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                assertEquals((i % 2 == 0) || (j % 2 == 0), result.get(Utils.gridIndexOf(i, j, columns)), "<" + i + "," + j + ">:");
+                assertEquals((i % 2 == 0) || (j % 2 == 0),
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
             }
         }
     }
@@ -262,9 +258,10 @@ class TestSpatialProperties {
         double range = 10;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
-        List<Boolean> results = reach(new BooleanDomain(), s1, s2, minutes);
+        var results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
-        Boolean[] objects = results.toArray(new Boolean[0]);
+        Boolean[] objects = IntStream.range(0,
+                size).boxed().map(results::apply).toArray(Boolean[]::new);
         assertArrayEquals(new Boolean[]{true, false}, objects);
     }
 
@@ -279,9 +276,10 @@ class TestSpatialProperties {
         double range = 10;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
-        List<Boolean> results = reach(new BooleanDomain(), s1, s2, minutes);
+        var results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
-        Boolean[] objects = results.toArray(new Boolean[0]);
+        Boolean[] objects = IntStream.range(0,
+                size).boxed().map(results::apply).toArray(Boolean[]::new);
         assertArrayEquals(new Boolean[]{true, false}, objects);
     }
 
@@ -298,10 +296,11 @@ class TestSpatialProperties {
         double range = 1;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
-        List<Boolean> results = reach(new BooleanDomain(), s1, s2, minutes);
+        var results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
-        Boolean[] objects = results.toArray(new Boolean[0]);
-        assertArrayEquals(new Boolean[]{range>=10, range>=5,true}, objects);
+        Boolean[] objects = IntStream.range(0,
+                size).boxed().map(results::apply).toArray(Boolean[]::new);
+        assertArrayEquals(new Boolean[]{range >= 10, range >= 5, true}, objects);
     }
 
     @Test
@@ -316,11 +315,12 @@ class TestSpatialProperties {
         double range = 1;
         DefaultDistanceStructure<Double, Double> minutes = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, city);
 
-        List<Boolean> results = reach(new BooleanDomain(), s1, s2, minutes);
+        var results = reach(new BooleanDomain(), s1::get, s2::get, minutes);
 
-        Boolean[] objects = results.toArray(new Boolean[0]);
+        Boolean[] objects = IntStream.range(0,
+                size).boxed().map(results::apply).toArray(Boolean[]::new);
         System.out.println(Arrays.toString(new Boolean[0]));
-        assertArrayEquals(new Boolean[]{range>2,range>1, range>0,true}, objects);
+        assertArrayEquals(new Boolean[]{range > 2, range > 1, range > 0, true}, objects);
     }
 
 
@@ -334,9 +334,10 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, true));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), distance + 1, Double.MAX_VALUE, city);
 
-        List<Boolean> results = escape(new BooleanDomain(), s, distanceStructure);
+        var results = new EscapeAlgorithm<>(distanceStructure,
+                new BooleanDomain(), s::get).compute();
 
-        assertFalse(results.get(0));
+        assertFalse(results.apply(0));
     }
 
 
@@ -350,9 +351,10 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., distance - 1, city);
 
-        List<Boolean> results = escape(new BooleanDomain(), s, distanceStructure);
+        var results = new EscapeAlgorithm<>(distanceStructure,
+                new BooleanDomain(), s::get).compute();
 
-        assertTrue(results.get(0));
+        assertTrue(results.apply(0));
     }
 
     @Test
@@ -366,9 +368,10 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., 2 * distance + 1, city);
 
-        List<Boolean> results = escape(new BooleanDomain(), s, distanceStructure);
+        var results = new EscapeAlgorithm<>(distanceStructure,
+                new BooleanDomain(), s::get).compute();
 
-        assertTrue(results.get(0));
+        assertTrue(results.apply(0));
     }
 
     @Test
@@ -381,9 +384,10 @@ class TestSpatialProperties {
         ArrayList<Boolean> s = new ArrayList<>(Arrays.asList(true, false));
         DefaultDistanceStructure<Double, Double> distanceStructure = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0., distance - 1, city);
 
-        List<Boolean> results = escape(new BooleanDomain(), s, distanceStructure);
+        var results = new EscapeAlgorithm<>(distanceStructure,
+                new BooleanDomain(), s::get).compute();
 
-        assertTrue(results.get(0));
+        assertTrue(results.apply(0));
     }
 
     @Test
@@ -432,7 +436,7 @@ class TestSpatialProperties {
         SpatialTemporalSignal<Integer> signal = Utils.createSpatioTemporalSignal(size, 0, 1, 1.0,
                 (t, l) -> typeOfNode.get(l));
         //// Loc Service Static ///
-        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 1,model);
+        LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 1, model);
 
         System.out.println(signal.valuesatT(0));
 
@@ -443,9 +447,9 @@ class TestSpatialProperties {
         atomicFormulas.put("type3", p -> (x -> x == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 1.0, m));
+        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 1.0, m));
 
-        Formula reach = new ReachFormula(new AtomicFormula("type3"),"dist", new AtomicFormula("type1"));
+        Formula reach = new ReachFormula(new AtomicFormula("type3"), "dist", new AtomicFormula("type1"));
 
         //// MONITOR /////
         SpatialTemporalMonitoring<Double, Integer, Boolean> monitor =
@@ -454,7 +458,7 @@ class TestSpatialProperties {
                         distanceFunctions,
                         new BooleanDomain());
 
-        SpatialTemporalMonitor<Double,Integer,Boolean> m = monitor.monitor(reach);
+        SpatialTemporalMonitor<Double, Integer, Boolean> m = monitor.monitor(reach);
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
         for (int i = 0; i < size; i++) {
@@ -466,24 +470,24 @@ class TestSpatialProperties {
 
     @Test
     void testLoadGraphFromAdjacenceList() {
-        double[][] graph = new double[][] {
-                new double[] {0, 1, 1, 297.683377582777},
-                new double[] {0, 2, 1, 696.654592727676},
-                new double[] {0, 3, 1, 362.022924952817},
-                new double[] {0, 4, 1, 443.026473778508},
-                new double[] {1, 0, 1, 297.683377582777},
-                new double[] {1, 2, 1, 667.669013033577},
-                new double[] {2, 0, 1, 696.654592727676},
-                new double[] {2, 1, 1, 667.669013033577},
-                new double[] {2, 4, 1, 759.655443722058},
-                new double[] {3, 0, 1, 362.022924952817},
-                new double[] {3, 4, 1, 135.113318099020},
-                new double[] {4, 0, 1, 443.026473778508},
-                new double[] {4, 2, 1, 759.655443722058},
-                new double[] {4, 3, 1, 135.113318099020}
+        double[][] graph = new double[][]{
+                new double[]{0, 1, 1, 297.683377582777},
+                new double[]{0, 2, 1, 696.654592727676},
+                new double[]{0, 3, 1, 362.022924952817},
+                new double[]{0, 4, 1, 443.026473778508},
+                new double[]{1, 0, 1, 297.683377582777},
+                new double[]{1, 2, 1, 667.669013033577},
+                new double[]{2, 0, 1, 696.654592727676},
+                new double[]{2, 1, 1, 667.669013033577},
+                new double[]{2, 4, 1, 759.655443722058},
+                new double[]{3, 0, 1, 362.022924952817},
+                new double[]{3, 4, 1, 135.113318099020},
+                new double[]{4, 0, 1, 443.026473778508},
+                new double[]{4, 2, 1, 759.655443722058},
+                new double[]{4, 3, 1, 135.113318099020}
         };
-        RecordHandler rh = new RecordHandler(DataHandler.INTEGER,DataHandler.REAL);
-        SpatialModel.buildSpatialModelFromAdjacencyList(6,rh,graph);
+        RecordHandler rh = new RecordHandler(DataHandler.INTEGER, DataHandler.REAL);
+        SpatialModel.buildSpatialModelFromAdjacencyList(6, rh, graph);
         assertTrue(true);
 
     }

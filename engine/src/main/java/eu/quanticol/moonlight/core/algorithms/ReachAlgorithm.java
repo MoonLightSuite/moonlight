@@ -20,12 +20,12 @@
 
 package eu.quanticol.moonlight.core.algorithms;
 
+import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.core.base.Triple;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.core.base.Pair;
-import eu.quanticol.moonlight.core.base.Triple;
 
 import java.util.*;
 import java.util.function.IntFunction;
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 /**
  * Algorithmic class for computing the reach operator
+ *
  * @param <E> weight type of the edges of the spatial model
  * @param <M> metric type considered by the distance structure
  * @param <R> signal interpretation type
@@ -40,8 +41,8 @@ import java.util.stream.Collectors;
 public class ReachAlgorithm<E, M, R> {
     private final SpatialModel<E> model;
     private final SignalDomain<R> signalDomain;
-    private final List<R> leftSpatialSignal;
-    private final List<R> rightSpatialSignal;
+    private final IntFunction<R> leftSpatialSignal;
+    private final IntFunction<R> rightSpatialSignal;
     private final DistanceStructure<E, M> distStr;
     private final DistanceDomain<M> distanceDomain;
     private final List<Triple<Integer, M, R>> reachabilityQueue;
@@ -54,8 +55,8 @@ public class ReachAlgorithm<E, M, R> {
 
     public ReachAlgorithm(DistanceStructure<E, M> distStr,
                           SignalDomain<R> signalDomain,
-                          List<R> leftSpatialSignal,
-                          List<R> rightSpatialSignal) {
+                          IntFunction<R> leftSpatialSignal,
+                          IntFunction<R> rightSpatialSignal) {
         this.leftSpatialSignal = leftSpatialSignal;
         this.rightSpatialSignal = rightSpatialSignal;
         this.distStr = distStr;
@@ -69,27 +70,26 @@ public class ReachAlgorithm<E, M, R> {
     /**
      * @return reach's algorithm computation
      */
-    public List<R> compute() {
+    public IntFunction<R> compute() {
         initReachableValues();
         reachCore();
-        return selectMaxReachabilityValues();
+        return i -> selectMaxReachabilityValues().get(i);
     }
 
     private void initReachableValues() {
-        for(int loc = 0; loc < model.size(); loc++) {
+        for (int loc = 0; loc < model.size(); loc++) {
             Map<M, R> reachableValues = fetchInitialReachableValues(loc);
             reachabilityFunction.add(reachableValues);
         }
     }
 
-    private Map<M, R> fetchInitialReachableValues(int location)
-    {
+    private Map<M, R> fetchInitialReachableValues(int location) {
         Map<M, R> reachableValues = new HashMap<>();
-        R rightValue = rightSpatialSignal.get(location);
+        R rightValue = rightSpatialSignal.apply(location);
         updateReachableValue(location,
-                             distanceDomain.zero(),
-                             rightValue,
-                             reachableValues);
+                distanceDomain.zero(),
+                rightValue,
+                reachableValues);
         return reachableValues;
     }
 
@@ -104,14 +104,14 @@ public class ReachAlgorithm<E, M, R> {
     }
 
     private void updateReachability(int l1, M d1, R v1) {
-        for (Pair<Integer, E> neighbour: model.previous(l1)) {
+        for (Pair<Integer, E> neighbour : model.previous(l1)) {
             int l2 = neighbour.getFirst();
             M d2 = newDistance(d1, neighbour.getSecond());
             // Note: old condition was distanceDomain.lessOrEqual(d2, upperBound)
             // but I think this one is more correct
             if (distStr.isWithinBounds(d2)) {
                 R value = signalDomain.conjunction(v1,
-                                                   leftSpatialSignal.get(l2));
+                        leftSpatialSignal.apply(l2));
                 evaluateReachabilityUpdate(l2, d2, value);
             }
         }
@@ -125,7 +125,7 @@ public class ReachAlgorithm<E, M, R> {
 
     private void evaluateReachabilityUpdate(int location, M distance, R value) {
         Map<M, R> reachableValues = reachabilityFunction.get(location);
-        if(reachableValues.containsKey(distance)) {
+        if (reachableValues.containsKey(distance)) {
             R oldValue = reachableValues.get(distance);
             value = signalDomain.disjunction(value, oldValue);
             if (!signalDomain.equalTo(oldValue, value)) {
@@ -139,16 +139,15 @@ public class ReachAlgorithm<E, M, R> {
     private void updateReachableValue(int location,
                                       M distance,
                                       R newValue,
-                                      Map<M, R> values)
-    {
+                                      Map<M, R> values) {
         values.put(distance, newValue);
         reachabilityQueue.add(new Triple<>(location, distance, newValue));
     }
 
     private List<R> selectMaxReachabilityValues() {
         return reachabilityFunction.stream()
-                        .map(this::maximizeLocationValue)
-                        .collect(Collectors.toCollection(ArrayList::new));
+                .map(this::maximizeLocationValue)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private R maximizeLocationValue(Map<M, R> reachabilityMap) {

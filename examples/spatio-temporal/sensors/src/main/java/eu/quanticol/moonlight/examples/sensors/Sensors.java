@@ -3,20 +3,21 @@ package eu.quanticol.moonlight.examples.sensors;
 import com.mathworks.engine.MatlabEngine;
 import eu.quanticol.moonlight.api.MatlabExecutor;
 import eu.quanticol.moonlight.api.configurator.MatlabDataConverter;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.util.Utils;
 
 import java.net.URISyntaxException;
@@ -47,29 +48,28 @@ public class Sensors {
         MatlabExecutor.close();
         LocationService<Double, Double> tConsumer = Utils.createLocServiceFromSetMatrix(cgraph1);
         SpatialTemporalSignal<Pair<Integer, Integer>> spatialTemporalSignal = new SpatialTemporalSignal<>(nodesType.length);
-        IntStream.range(0, (int) nodes - 1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(),i))));
+        IntStream.range(0, (int) nodes - 1).forEach(i -> spatialTemporalSignal.add(i, (location -> new Pair<>(nodesType[location].intValue(), i))));
 
-        HashMap<String, Function<Parameters, Function<Pair<Integer,Integer>, Boolean>>> atomicFormulas = new HashMap<>();
+        HashMap<String, Function<Parameters, Function<Pair<Integer, Integer>, Boolean>>> atomicFormulas = new HashMap<>();
         atomicFormulas.put("type1", p -> (x -> x.getFirst() == 1));
         atomicFormulas.put("type2", p -> (x -> x.getFirst() == 2));
         atomicFormulas.put("type3", p -> (x -> x.getFirst() == 3));
 
         HashMap<String, Function<SpatialModel<Double>, DistanceStructure<Double, ?>>> distanceFunctions = new HashMap<>();
-        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(), 0.0, 1.0, m));
+        distanceFunctions.put("dist", m -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 1.0, m));
 
-        Formula isType1 =new AtomicFormula("type1");
-        Formula somewhere = new SomewhereFormula("dist",isType1);
+        Formula isType1 = new AtomicFormula("type1");
+        Formula somewhere = new SomewhereFormula("dist", isType1);
 
         SpatialTemporalMonitoring<Double, Pair<Integer, Integer>, Boolean> monitor =
                 new SpatialTemporalMonitoring<>(
                         atomicFormulas,
                         distanceFunctions,
-                        new BooleanDomain(),
-                        false);
+                        new BooleanDomain());
 
 
         SpatialTemporalMonitor<Double, Pair<Integer, Integer>, Boolean> m =
-                monitor.monitor(somewhere, null);
+                monitor.monitor(somewhere);
         SpatialTemporalSignal<Boolean> sout = m.monitor(tConsumer, spatialTemporalSignal);
         List<Signal<Boolean>> signals = sout.getSignals();
         System.out.println(signals.get(0));

@@ -2,30 +2,34 @@ package eu.quanticol.moonlight.examples.sensors;
 
 import eu.quanticol.moonlight.api.MatlabRunner;
 import eu.quanticol.moonlight.core.base.Box;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.core.signal.SpaceTimeSignal;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
 import eu.quanticol.moonlight.formula.spatial.EscapeFormula;
 import eu.quanticol.moonlight.formula.spatial.EverywhereFormula;
 import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
 import eu.quanticol.moonlight.formula.temporal.EventuallyFormula;
-import eu.quanticol.moonlight.online.signal.*;
-import eu.quanticol.moonlight.util.Logger;
-import eu.quanticol.moonlight.domain.*;
-import eu.quanticol.moonlight.formula.*;
 import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
+import eu.quanticol.moonlight.online.signal.TimeChain;
+import eu.quanticol.moonlight.online.signal.TimeSegment;
+import eu.quanticol.moonlight.online.signal.Update;
+import eu.quanticol.moonlight.util.Logger;
 import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
@@ -37,7 +41,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static eu.quanticol.moonlight.util.Utils.*;
+import static eu.quanticol.moonlight.util.Utils.createGraphFromMatlabData;
+import static eu.quanticol.moonlight.util.Utils.createLocationServiceFromTimesAndModels;
 
 /**
  * Note: requires Matlab R2020a+ & Machine Learning toolbox plugin
@@ -59,33 +64,27 @@ public class SensorsOnline {
     // Experiment settings
     private static final double TIME_STEPS = 30.0;
     private static final int NODES = 5;
-
-    private static Map<String,
-                       Function<Parameters,
-                                Function<Pair<Integer,Double>, Boolean>>>
-                                                                 atomicFormulas;
-    private static HashMap<String, Function<SpatialModel<Double>,
-            DistanceStructure<Double, ?>>> distanceFunctions;
-    private static LocationService<Double, Double> locSvc;
-
     // Device types
     private static final String COORDINATOR = "type1";
     private static final String ROUTER = "type2";
     private static final String END_DEVICE = "type3";
-
     // Humidity predicates
     private static final String HIGH_HUMIDITY = "highH";
     private static final String NORMAL_HUMIDITY = "normalH";
-
     // threshold constants
     private static final int HIGH_H = 60;
     private static final int OK_H = 30;
     private static final int T = 3;
-
     // Distance functions
     private static final String DISTANCE = "dist";
     private static final String DISTANCE2 = "dist2";
-
+    private static Map<String,
+            Function<Parameters,
+                    Function<Pair<Integer, Double>, Boolean>>>
+            atomicFormulas;
+    private static HashMap<String, Function<SpatialModel<Double>,
+            DistanceStructure<Double, ?>>> distanceFunctions;
+    private static LocationService<Double, Double> locSvc;
     private static double[] times;
     private static int[][] nodesType;
     private static double[][] temperature;
@@ -106,9 +105,9 @@ public class SensorsOnline {
         Formula f2 = formula2();
         repeatedRunner("F2 offline", () -> checkOffline(f2));
         repeatedRunner("F2 online IO",
-                        () -> checkOnline(f2, false, false));
+                () -> checkOnline(f2, false, false));
         repeatedRunner("F2 online IO Parallel",
-                        () -> checkOnline(f2, false, true));
+                () -> checkOnline(f2, false, true));
 
 //        Formula f3 = formula3();
 //        repeatedRunner("F3 offline", () -> checkOffline(f3));
@@ -121,8 +120,7 @@ public class SensorsOnline {
         output.forEach(LOG::info);
     }
 
-    static void repeatedRunner(String title, Runnable task)
-    {
+    static void repeatedRunner(String title, Runnable task) {
         Optional<Long> total =
                 IntStream.range(0, ITERATIONS)
                         .boxed()
@@ -136,7 +134,7 @@ public class SensorsOnline {
         tot = (tot / ITERATIONS) / 1000.; // Converted to seconds
 
         output.add(title + " Execution time (avg over " + ITERATIONS + "):" +
-                   tot);
+                tot);
 
         stopwatches.clear();
     }
@@ -160,8 +158,8 @@ public class SensorsOnline {
         Formula highHumidity = new AtomicFormula(HIGH_HUMIDITY);
         Formula normalHumidity = new AtomicFormula(NORMAL_HUMIDITY);
         return new OrFormula(new NegationFormula(highHumidity),
-                             new EventuallyFormula(normalHumidity,
-                                                   new Interval(0, T)));
+                new EventuallyFormula(normalHumidity,
+                        new Interval(0, T)));
     }
 
     private static Formula formula2() {
@@ -174,7 +172,7 @@ public class SensorsOnline {
         Formula highHumidity = new AtomicFormula(HIGH_HUMIDITY);
         Formula normalHumidity = new AtomicFormula(NORMAL_HUMIDITY);
         Formula escapeHumidity = new EscapeFormula(DISTANCE2, normalHumidity);
-        
+
 //        return new OrFormula(new NegationFormula(highHumidity),
 //                new EventuallyFormula(escapeHumidity,
 //                        new Interval(0, T)));
@@ -184,11 +182,11 @@ public class SensorsOnline {
     private static void setDistanceFunctions() {
         distanceFunctions = new HashMap<>();
         distanceFunctions.put(DISTANCE,
-                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(),
+                m -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(),
                         0.0, 10.0, m));
 
         distanceFunctions.put(DISTANCE2,
-                m -> new DefaultDistanceStructure<>(x -> x , new DoubleDomain(),
+                m -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(),
                         0.0, 2.0, m));
     }
 
@@ -202,8 +200,7 @@ public class SensorsOnline {
         atomicFormulas.put(NORMAL_HUMIDITY, p -> (x -> x.getSecond() < OK_H));
     }
 
-    private static void runSimulator(MatlabRunner matlab)
-    {
+    private static void runSimulator(MatlabRunner matlab) {
         matlab.putVar("num_nodes", NODES);
         matlab.putVar("numSteps", TIME_STEPS);
 
@@ -219,33 +216,32 @@ public class SensorsOnline {
     }
 
     private static void loadSignalData(MatlabRunner matlab) {
-        for(int i = 0; i < times.length; i++) {
+        for (int i = 0; i < times.length; i++) {
             int idx = i + 1;    // Matlab index offset
             matlab.eval("types = int32(cell2mat(spatialModelc{" + idx +
-                        ", 1}.Nodes.nodeType))");
+                    ", 1}.Nodes.nodeType))");
             matlab.eval("temperature = spatialModelc{" + idx +
-                        ", 1}.Nodes.temperature");
+                    ", 1}.Nodes.temperature");
             nodesType[i] = matlab.getVar("types");
             temperature[i] = matlab.getVar("temperature");
         }
     }
 
 
-
     private static void loadLocationServiceData(MatlabRunner matlab) {
         List<SpatialModel<Double>> models = new ArrayList<>();
-        for(int i = 1; i <= times.length; i++) {
+        for (int i = 1; i <= times.length; i++) {
             matlab.eval("edges = int32(spatialModelc{" + i +
-                        ", 1}.Edges.EndNodes);");
+                    ", 1}.Edges.EndNodes);");
             matlab.eval("weights = spatialModelc{" + i +
-                        ", 1}.Edges.Weights(:,1);");
+                    ", 1}.Edges.Weights(:,1);");
             int[][] edges = matlab.getVar("edges");
             double[] weightsData = matlab.getVar("weights");
             Double[] weights = Arrays.stream(weightsData)
                     .boxed().toArray(Double[]::new);
             SpatialModel<Double> graph = createGraphFromMatlabData(NODES,
-                                                                    edges,
-                                                                    weights);
+                    edges,
+                    weights);
             models.add(graph);
         }
         SpatialModel<Double>[] graphs = models.toArray(new SpatialModel[0]);
@@ -253,17 +249,15 @@ public class SensorsOnline {
 
     }
 
-    private static void checkOffline(Formula f)
-    {
+    private static void checkOffline(Formula f) {
         SpatialTemporalSignal<Pair<Integer, Double>> stSignal =
                 generateSTSignal();
 
         SpatialTemporalMonitor<Double, Pair<Integer, Double>, Boolean>
                 m = new SpatialTemporalMonitoring<>(atomicFormulas,
-                                                    distanceFunctions,
-                                                    new BooleanDomain(),
-                                                    false)
-                                .monitor(f, null);
+                distanceFunctions,
+                new BooleanDomain())
+                .monitor(f);
 
         // Actual monitoring...
         Stopwatch rec = Stopwatch.start();
@@ -277,8 +271,7 @@ public class SensorsOnline {
     }
 
     private static SpatialTemporalSignal<Pair<Integer, Double>>
-    generateSTSignal()
-    {
+    generateSTSignal() {
         SpatialTemporalSignal<Pair<Integer, Double>> stSignal =
                 new SpatialTemporalSignal<>(NODES);
 
@@ -286,17 +279,16 @@ public class SensorsOnline {
                 .forEach(time -> stSignal
                         .add(time, (location ->
                                         new Pair<>(nodesType[time][location],
-                                                   temperature[time][location])
-                                   )
-                            )
+                                                temperature[time][location])
+                                )
+                        )
                 );
         return stSignal;
     }
 
     private static List<TimeChain<Double, List<Pair<Integer, Double>>>>
-    generateSTUpdates()
-    {
-        List<TimeChain<Double, List<Pair<Integer, Double>>>> result  =
+    generateSTUpdates() {
+        List<TimeChain<Double, List<Pair<Integer, Double>>>> result =
                 new ArrayList<>();
         TimeChain<Double, List<Pair<Integer, Double>>> chain =
                 new TimeChain<>(times[times.length - 1]);
@@ -308,11 +300,11 @@ public class SensorsOnline {
                             List<Pair<Integer, Double>> locations =
                                     spaceDataFromTime(time);
                             Sample<Double,
-                                                                                                                                List<Pair<Integer, Double>>>
+                                    List<Pair<Integer, Double>>>
                                     segment = new TimeSegment<>((double) time,
-                                                                locations);
+                                    locations);
                             chain.add(segment);
-                    }
+                        }
                 );
 
         return result;
@@ -324,8 +316,7 @@ public class SensorsOnline {
         ).collect(Collectors.toList());
     }
 
-    private static void checkOnline(Formula f, boolean shuffle, boolean parallel)
-    {
+    private static void checkOnline(Formula f, boolean shuffle, boolean parallel) {
 
 
         OnlineSpatialTemporalMonitor<Double, Pair<Integer, Double>, Double> m =
@@ -334,12 +325,12 @@ public class SensorsOnline {
         List<Update<Double, List<Pair<Integer, Double>>>> updates =
                 generateSTUpdates().get(0).toUpdates();
 
-        if(shuffle)
+        if (shuffle)
             Collections.shuffle(updates, new Random(RND_SEED));
 
         Stopwatch rec = Stopwatch.start();
         SpaceTimeSignal<Double, Box<Double>> result = null;
-        for(Update<Double, List<Pair<Integer, Double>>> u: updates) {
+        for (Update<Double, List<Pair<Integer, Double>>> u : updates) {
             result = m.monitor(u);
         }
         rec.stop();
@@ -351,20 +342,17 @@ public class SensorsOnline {
     }
 
     private static OnlineSpatialTemporalMonitor<Double, Pair<Integer, Double>, Double>
-    onlineMonitorInit(Formula f, boolean parallel)
-    {
-        Map<String, Function<Pair<Integer,Double>, Box<Double>>>
-            atoms = setOnlineAtoms();
+    onlineMonitorInit(Formula f, boolean parallel) {
+        Map<String, Function<Pair<Integer, Double>, Box<Double>>>
+                atoms = setOnlineAtoms();
 
         return new OnlineSpatialTemporalMonitor<>(f, NODES, new DoubleDomain(),
-                                            locSvc, atoms, distanceFunctions,
-                                            parallel);
+                locSvc, atoms, distanceFunctions,
+                parallel);
     }
 
-    private static
-    Map<String, Function<Pair<Integer, Double>, Box<Boolean>>>
-    setOnlineAtomsBoolean()
-    {
+    private static Map<String, Function<Pair<Integer, Double>, Box<Boolean>>>
+    setOnlineAtomsBoolean() {
         Map<String, Function<Pair<Integer, Double>, Box<Boolean>>>
                 atoms = new HashMap<>();
         atoms.put(COORDINATOR, x -> booleanInterval(x.getFirst() == 1));
@@ -376,10 +364,8 @@ public class SensorsOnline {
         return atoms;
     }
 
-    private static
-    Map<String, Function<Pair<Integer, Double>, Box<Double>>>
-    setOnlineAtoms()
-    {
+    private static Map<String, Function<Pair<Integer, Double>, Box<Double>>>
+    setOnlineAtoms() {
         Map<String, Function<Pair<Integer, Double>, Box<Double>>>
                 atoms = new HashMap<>();
         atoms.put(COORDINATOR, x -> doubleInterval(x.getFirst() == 1 ? 1 : 0));
@@ -397,6 +383,6 @@ public class SensorsOnline {
 
     private static Box<Boolean> booleanInterval(boolean cond) {
         return cond ? new Box<>(true, true) :
-                      new Box<>(false, false);
+                new Box<>(false, false);
     }
 }

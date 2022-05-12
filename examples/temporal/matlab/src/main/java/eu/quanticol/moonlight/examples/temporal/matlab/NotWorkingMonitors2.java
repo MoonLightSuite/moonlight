@@ -1,20 +1,20 @@
 package eu.quanticol.moonlight.examples.temporal.matlab;
 
-import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.core.base.MoonLightRecord;
+import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.domain.DoubleDomain;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.io.FormulaToTaliro;
 import eu.quanticol.moonlight.offline.monitoring.TemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.temporal.TemporalMonitor;
-import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCreator;
-import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.offline.signal.VariableArraySignal;
 import eu.quanticol.moonlight.util.FormulaGenerator;
 import eu.quanticol.moonlight.util.FutureFormulaGenerator;
-import eu.quanticol.moonlight.core.base.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +23,12 @@ import java.util.function.Function;
 
 
 public class NotWorkingMonitors2 {
-    private static FormulaToTaliro toTaliro = new FormulaToTaliro();
+    private static final FormulaToTaliro toTaliro = new FormulaToTaliro();
 
     public static void main(String[] args) {
         //IllegalArgument
         //psi ='( []_[73.11469360198954,97.35039017579481] ( c \/ a ) )';
-        test(2,3);
+        test(2, 3);
 
         //loop
         //psi ='( <>_[73.05198636144607,75.43037618911796] ( []_[23.217671731444288,24.334803932613358] ( b U_[0.16383672750155606,0.1835545260439489] a ) ) )';
@@ -52,11 +52,11 @@ public class NotWorkingMonitors2 {
         functionalMap.put("b", Math::cos);
         functionalMap.put("c", Math::sin);
         RecordHandler factory = RecordHandler.createFactory(
-        		new Pair<>("a",DataHandler.REAL),
-        		new Pair<>("b",DataHandler.REAL),
-        		new Pair<>("c",DataHandler.REAL)
+                new Pair<>("a", DataHandler.REAL),
+                new Pair<>("b", DataHandler.REAL),
+                new Pair<>("c", DataHandler.REAL)
         );
-        SignalCreator signalCreator = new SignalCreator(factory,functionalMap);
+        SignalCreator signalCreator = new SignalCreator(factory, functionalMap);
         VariableArraySignal signal = signalCreator.generate(0, 100, 0.1);
         FormulaGenerator formulaGenerator = new FutureFormulaGenerator(new Random(seed), signal.getEnd(), signalCreator.getVariableNames());
         Formula generatedFormula = formulaGenerator.getFormula(formulaLength);
@@ -67,7 +67,7 @@ public class NotWorkingMonitors2 {
         mappa.put("b", y -> assignment -> assignment.get(1, Double.class));
         mappa.put("c", y -> assignment -> assignment.get(2, Double.class));
         TemporalMonitoring<MoonLightRecord, Double> monitoring = new TemporalMonitoring<>(mappa, new DoubleDomain());
-        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula, null);
+        TemporalMonitor<MoonLightRecord, Double> m = monitoring.monitor(generatedFormula);
         Signal<Double> outputSignal = m.monitor(signal);
         outputSignal.getIterator(true).getCurrentValue();
     }

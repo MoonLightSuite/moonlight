@@ -20,16 +20,16 @@
 
 package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
-import java.util.List;
-import java.util.function.Function;
-
-import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
-import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.algorithms.EscapeAlgorithm;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.offline.algorithms.SpatialOp;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Strategy to interpret the Escape spatial logic operator.
@@ -37,38 +37,34 @@ import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
  * @param <S> Spatial Graph Edge Type
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
- *
  * @see SpatialTemporalMonitor
  */
 public class SpatialTemporalMonitorEscape<S, T, R>
-		implements SpatialTemporalMonitor<S, T, R>
-{
-	private final SpatialTemporalMonitor<S, T, R> m;
-	private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
-	private final SignalDomain<R> domain;
+        implements SpatialTemporalMonitor<S, T, R> {
+    private final SpatialTemporalMonitor<S, T, R> m;
+    private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
+    private final SignalDomain<R> domain;
 
-	public SpatialTemporalMonitorEscape(SpatialTemporalMonitor<S, T, R> m,
-										Function<SpatialModel<S>,
-												DistanceStructure<S, ?>> distance,
-										SignalDomain<R> domain)
-	{
-		this.m = m;
-		this.distance = distance;
-		this.domain = domain;
-	}
+    public SpatialTemporalMonitorEscape(SpatialTemporalMonitor<S, T, R> m,
+                                        Function<SpatialModel<S>,
+                                                DistanceStructure<S, ?>> distance,
+                                        SignalDomain<R> domain) {
+        this.m = m;
+        this.distance = distance;
+        this.domain = domain;
+    }
 
-	@Override
-	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
-											SpatialTemporalSignal<T> signal)
-	{
-		SpatialOp<S, R> sc = new SpatialOp<>(locationService,
-															   distance,
-															   this::escapeOp);
-		return sc.computeUnary(m.monitor(locationService, signal));
-	}
+    @Override
+    public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
+                                            SpatialTemporalSignal<T> signal) {
+        SpatialOp<S, R> sc = new SpatialOp<>(locationService,
+                distance,
+                this::escapeOp);
+        return sc.computeUnary(m.monitor(locationService, signal));
+    }
 
-	private List<R> escapeOp(List<R> spatialSignal, DistanceStructure<S, ?> ds)
-	{
-		return SpatialAlgorithms.escape(domain, spatialSignal, ds);
-	}
+    private IntFunction<R> escapeOp(IntFunction<R> spatialSignal,
+                                    DistanceStructure<S, ?> ds) {
+        return new EscapeAlgorithm<>(ds, domain, spatialSignal).compute();
+    }
 }

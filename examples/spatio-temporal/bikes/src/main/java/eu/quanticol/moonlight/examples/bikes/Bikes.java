@@ -1,12 +1,19 @@
 package eu.quanticol.moonlight.examples.bikes;
 
-import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
 import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
 import eu.quanticol.jsstl.core.io.TraGraphModelReader;
-import eu.quanticol.moonlight.formula.*;
+import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.core.formula.Formula;
+import eu.quanticol.moonlight.core.formula.Interval;
+import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
+import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.domain.BooleanDomain;
+import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.examples.bikes.utilities.SimHyAWrapper;
+import eu.quanticol.moonlight.formula.AtomicFormula;
+import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.classic.AndFormula;
 import eu.quanticol.moonlight.formula.classic.NegationFormula;
 import eu.quanticol.moonlight.formula.classic.OrFormula;
@@ -17,17 +24,8 @@ import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.core.formula.Interval;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.statistics.SignalStatistics;
-import eu.quanticol.moonlight.core.base.Pair;
-
-import static eu.quanticol.moonlight.util.Utils.*;
-import static java.util.Arrays.copyOfRange;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,6 +35,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static eu.quanticol.moonlight.util.Utils.createLocServiceStaticFromTimeTraj;
+import static java.util.Arrays.copyOfRange;
 
 /**
  * This class contains an example based on a Bike Sharing System (BSS).
@@ -52,10 +53,10 @@ public class Bikes {
     private static final String SIMHYA_MODEL_FILE = "733bike.txt";
     private static final String GRAPH_FILE = "733stationsGraph.tra";
     /* An alternative smaller model is available, uncomment the following.
-    *  Note that it also requires proper adjustment of the simulator, or,
-    *  alternatively, a prototypical trace is available at file:
-    *  "trajectory.tra"
-    */
+     *  Note that it also requires proper adjustment of the simulator, or,
+     *  alternatively, a prototypical trace is available at file:
+     *  "trajectory.tra"
+     */
     //private static final String GRAPH_FILE = "bssSpatialModel.tra";
 
     /**
@@ -128,33 +129,31 @@ public class Bikes {
         //Formula phi1 = getSpotProperty(atomicFormulas);
 
 
-
         // *************************** MONITORING *************************** //
 
         SignalStatistics<SpatialTemporalSignal<Boolean>> stats =
                 new SignalStatistics<>(trajectory.getNumberOfLocations(),
-                                       trajectory.getSignals().get(0).size());
+                        trajectory.getSignals().get(0).size());
         SpatialTemporalSignal<Boolean> result = null;
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             result = stats.track(
-                () -> {
-                    // We setup the monitoring process
-                    SpatialTemporalMonitoring<Double, Pair<Double, Double>,
-                                              Boolean>
-                            monitor = new SpatialTemporalMonitoring<>(
-                                                            atomicFormulas,
-                                                            distanceFunctions,
-                                                            new BooleanDomain(),
-                                                            true);
+                    () -> {
+                        // We setup the monitoring process
+                        SpatialTemporalMonitoring<Double, Pair<Double, Double>,
+                                Boolean>
+                                monitor = new SpatialTemporalMonitoring<>(
+                                atomicFormulas,
+                                distanceFunctions,
+                                new BooleanDomain());
 
-                    // We instantiate the monitor on the formula of our interest
-                    SpatialTemporalMonitor<Double, Pair<Double, Double>,
-                                           Boolean> m =
-                            monitor.monitor(phi1, null);
+                        // We instantiate the monitor on the formula of our interest
+                        SpatialTemporalMonitor<Double, Pair<Double, Double>,
+                                Boolean> m =
+                                monitor.monitor(phi1);
 
-                    // We perform the monitoring, and save the output result
-                    return m.monitor(locService, trajectory);
-                });
+                        // We perform the monitoring, and save the output result
+                        return m.monitor(locService, trajectory);
+                    });
         }
 
         // We show the output
@@ -166,6 +165,7 @@ public class Bikes {
 
     /**
      * Instantiates and runs the SimHyA simulator.
+     *
      * @return the result of the simulation.
      */
     public static double[][] simulatorSetup() {
@@ -179,6 +179,7 @@ public class Bikes {
 
     /**
      * Loads the spatial graph from a file
+     *
      * @return a graph model
      */
     private static GraphModel<Double> loadSpatialGraph() {
@@ -204,12 +205,12 @@ public class Bikes {
     /**
      * Parses the output of a SimHyA simulation as a SpatialTemporalSignal.
      * It expects to receive a sequence of data where the first
+     *
      * @param input the results of a SimHya simulation
      * @return a trajectory containing the given data
      */
     private static SpatialTemporalSignal<Pair<Double, Double>> parseTrajectory(
-            double[][] input)
-    {
+            double[][] input) {
         double[][][] data = new double[SPACE_LOCATIONS][SIMULATION_STEPS][2];
         double[] times = new double[SIMULATION_STEPS];
         // We update the new arrays with the provided data.
@@ -227,15 +228,15 @@ public class Bikes {
 
     /**
      * Generates a two-valued traces given the provide data and time sequences
+     *
      * @param times sequence of time instants
-     * @param data sequence of couples of data
+     * @param data  sequence of couples of data
      * @return a SpatioTemporalSignal on a Pair type.
      * @see Pair
      */
     private static SpatialTemporalSignal<Pair<Double, Double>> signalGenerator(
             double[] times,
-            double[][][] data)
-    {
+            double[][][] data) {
         SpatialTemporalSignal<Pair<Double, Double>> signal =
                 new SpatialTemporalSignal<>(SPACE_LOCATIONS);
 
@@ -247,7 +248,7 @@ public class Bikes {
                     IntStream.range(0, SPACE_LOCATIONS)
                             .mapToObj(s ->
                                     new Pair<>(data[s][index][0],
-                                               data[s][index][1]))
+                                            data[s][index][1]))
                             .collect(Collectors.toList());
 
             signal.add(t, values);
@@ -258,8 +259,7 @@ public class Bikes {
     private static Formula getPhi1Property(
             HashMap<String,
                     Function<Parameters, Function<Pair<Double, Double>,
-                             Boolean>>> atoms)
-    {
+                            Boolean>>> atoms) {
         // First atomic property:  B > 0
         atoms.put("B > 0", p -> (x -> x.getFirst() > 0));
         // Second atomic property: S > 0
@@ -277,8 +277,7 @@ public class Bikes {
     private static Formula getSpotProperty(
             HashMap<String,
                     Function<Parameters, Function<Pair<Double, Double>,
-                             Boolean>>> atoms)
-    {
+                            Boolean>>> atoms) {
         // First atomic property:  B < 1
         atoms.put("B < 1", p -> (x -> x.getFirst() < 1));
         // Second atomic property: S > 0
@@ -291,7 +290,7 @@ public class Bikes {
                 new OrFormula(lowValues, highValues));
 
         Formula reachP = new ReachFormula(lowValues,
-                                      "dist_spot", mediumValues);
+                "dist_spot", mediumValues);
 
         return new AndFormula(lowValues, new NegationFormula(reachP));
     }

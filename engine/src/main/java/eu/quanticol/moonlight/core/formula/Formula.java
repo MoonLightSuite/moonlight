@@ -20,26 +20,29 @@
 
 package eu.quanticol.moonlight.core.formula;
 
+import eu.quanticol.moonlight.formula.mfr.SetFormula;
+
 /**
  * Interface implemented by any logic formula.
  * It is required to support the visit-based monitoring.
- *
+ * <p>
  * The following specialized versions have been defined to generalize access
  * to some operators when monitoring:
  *
  * @see FormulaVisitor implementations to understand how the formula is visited
  */
-public interface Formula {
+public interface Formula extends SetFormula {
 
     /**
      * Primary entry point for the monitoring of a formula.
-     * @param visitor the visiting monitoring program
+     *
+     * @param visitor    the visiting monitoring program
      * @param parameters optional parameters of the monitoring process.
-     * @param <T> Signal Trace Type
-     * @param <R> Semantic Interpretation Semiring Type
+     * @param <T>        Signal Trace Type
+     * @param <R>        Semantic Interpretation Semiring Type
      * @return a value corresponding to the value of the formula on R.
      */
     default <T, R> R accept(FormulaVisitor<T, R> visitor, T parameters) {
         throw new UnsupportedOperationException("Not supported anymore");
     }
- }
+}

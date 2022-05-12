@@ -20,17 +20,19 @@
 
 package eu.quanticol.moonlight.core.algorithms;
 
+import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.core.base.Pair;
 
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
  * Algorithmic class for computing the escape operator
+ *
  * @param <E> weight type of the edges of the spatial model
  * @param <M> metric type considered by the distance structure
  * @param <R> signal interpretation type
@@ -38,14 +40,13 @@ import java.util.stream.IntStream;
 public class EscapeAlgorithm<E, M, R> {
     private final SpatialModel<E> model;
     private final SignalDomain<R> signalDomain;
-    private final List<R> spatialSignal;
+    private final IntFunction<R> spatialSignal;
     private final DistanceStructure<E, M> distStr;
     private final Map<Integer, Map<Integer, R>> minimalDistanceMap;
 
     public EscapeAlgorithm(DistanceStructure<E, M> distStr,
                            SignalDomain<R> signalDomain,
-                           List<R> spatialSignal)
-    {
+                           IntFunction<R> spatialSignal) {
         this.spatialSignal = spatialSignal;
         this.distStr = distStr;
         this.model = distStr.getModel();
@@ -56,19 +57,20 @@ public class EscapeAlgorithm<E, M, R> {
     /**
      * @return escape's algorithm computation
      */
-    public List<R> compute() {
+    public IntFunction<R> compute() {
         Set<Pair<Integer, Integer>> neighbourhood = getNeighbourhood();
         while (!neighbourhood.isEmpty()) {
             neighbourhood = updateShortestPaths(neighbourhood);
         }
-        return extractResult();
+        var result = extractResult();
+        return result::get;
     }
 
-    private Set<Pair<Integer,Integer>> getNeighbourhood() {
-        Set<Pair<Integer,Integer>> neighbourhood = new HashSet<>();
-        for(int i = 0; i < model.size(); i++) {
+    private Set<Pair<Integer, Integer>> getNeighbourhood() {
+        Set<Pair<Integer, Integer>> neighbourhood = new HashSet<>();
+        for (int i = 0; i < model.size(); i++) {
             Map<Integer, R> initialDistance = new HashMap<>();
-            initialDistance.put(i, spatialSignal.get(i));
+            initialDistance.put(i, spatialSignal.apply(i));
             minimalDistanceMap.put(i, initialDistance);
             neighbourhood.add(new Pair<>(i, i));
         }
@@ -76,11 +78,10 @@ public class EscapeAlgorithm<E, M, R> {
     }
 
     private Set<Pair<Integer, Integer>> updateShortestPaths(
-            Set<Pair<Integer, Integer>> neighbourhood)
-    {
+            Set<Pair<Integer, Integer>> neighbourhood) {
         Map<Integer, Map<Integer, R>> neighboursDistanceMap = new HashMap<>();
         Set<Pair<Integer, Integer>> extendedNeighbourhood = new HashSet<>();
-        for (Pair<Integer, Integer> pair: neighbourhood) {
+        for (Pair<Integer, Integer> pair : neighbourhood) {
             int l1 = pair.getFirst();
             int l2 = pair.getSecond();
             updateDistance(l1, l2, extendedNeighbourhood, neighboursDistanceMap);
@@ -90,13 +91,12 @@ public class EscapeAlgorithm<E, M, R> {
     }
 
     private void updateDistance(int source, int target,
-                            Set<Pair<Integer, Integer>> extendedNeighbourhood,
-                            Map<Integer, Map<Integer, R>> neighboursDistanceMap)
-    {
-        for (int neighbour: getIncomingEdgesLocations(source)) {
+                                Set<Pair<Integer, Integer>> extendedNeighbourhood,
+                                Map<Integer, Map<Integer, R>> neighboursDistanceMap) {
+        for (int neighbour : getIncomingEdgesLocations(source)) {
             R oldV = getCurrentMinimalDistance(neighbour, target);
             R selfV = getCurrentMinimalDistance(source, source);
-            R newV = combine(oldV, spatialSignal.get(neighbour), selfV);
+            R newV = combine(oldV, spatialSignal.apply(neighbour), selfV);
             if (!signalDomain.equalTo(newV, oldV)) {
                 extendedNeighbourhood.add(new Pair<>(neighbour, target));
                 addDistancePair(neighboursDistanceMap, neighbour, target, newV);
@@ -106,8 +106,8 @@ public class EscapeAlgorithm<E, M, R> {
 
     private List<Integer> getIncomingEdgesLocations(int location) {
         return model.previous(location).stream()
-                    .map(Pair::getFirst)
-                    .collect(Collectors.toList());
+                .map(Pair::getFirst)
+                .collect(Collectors.toList());
     }
 
     private R combine(R oldV, R signalV, R selfV) {
@@ -115,8 +115,7 @@ public class EscapeAlgorithm<E, M, R> {
                 signalDomain.conjunction(signalV, selfV));
     }
 
-    private void addAll(Map<Integer, Map<Integer, R>> eMapNext)
-    {
+    private void addAll(Map<Integer, Map<Integer, R>> eMapNext) {
         eMapNext.forEach((l1, distanceMap) ->
                 distanceMap.forEach((l2, distance) ->
                         addDistancePair(minimalDistanceMap, l1, l2, distance)));
@@ -127,9 +126,8 @@ public class EscapeAlgorithm<E, M, R> {
     }
 
     private void addDistancePair(Map<Integer, Map<Integer, R>> map,
-                                 int l1, int l2, R v)
-    {
-        Map<Integer,R> m = map.computeIfAbsent(l1, x -> new HashMap<>());
+                                 int l1, int l2, R v) {
+        Map<Integer, R> m = map.computeIfAbsent(l1, x -> new HashMap<>());
         m.put(l2, v);
     }
 
@@ -146,13 +144,13 @@ public class EscapeAlgorithm<E, M, R> {
 
     private List<R> createArray() {
         return IntStream.range(0, model.size())
-                        .mapToObj(i -> signalDomain.min())
-                        .collect(Collectors.toCollection(ArrayList::new));
+                .mapToObj(i -> signalDomain.min())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private R updateValue(Set<Map.Entry<Integer, R>> entries, int i) {
         R value = signalDomain.min();
-        for (Map.Entry<Integer, R> k: entries) {
+        for (Map.Entry<Integer, R> k : entries) {
             int location = k.getKey();
             R distance = k.getValue();
             if (distStr.areWithinBounds(i, location)) {

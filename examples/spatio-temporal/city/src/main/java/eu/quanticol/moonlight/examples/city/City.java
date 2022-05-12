@@ -49,20 +49,20 @@ public class City {
         SpatialTemporalSignal<Boolean> sout = m.monitor(locService, signal);
         List<Signal<Boolean>> signals = sout.getSignals();
 
-        System.out.println(signals.get(0).getValueAt(0));
+        System.out.println(signals.get(0).getValueAt(0.0));
 
 
         ////  P2 = evTaxi ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m7 = eventuallyATaxi(0,20);
         SpatialTemporalSignal<Boolean> sout7 = m7.monitor(locService, signal);
         List<Signal<Boolean>> signals7 = sout7.getSignals();
-        System.out.println(signals7.get(0).getValueAt(0));
+        System.out.println(signals7.get(0).getValueAt(0.0));
 //
 //        ////  6 ////
         SpatialTemporalMonitor<Double,Triple<String, Boolean, Integer>,Boolean> m6 = ifTaxiReachStop(0,10);
         SpatialTemporalSignal<Boolean> sout6 = m6.monitor(locService, signal);
         List<Signal<Boolean>> signals6 = sout6.getSignals();
-        System.out.println(signals6.get(0).getValueAt(0));
+        System.out.println(signals6.get(0).getValueAt(0.0));
 
 
     }

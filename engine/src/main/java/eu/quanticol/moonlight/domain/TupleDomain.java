@@ -1,15 +1,13 @@
 package eu.quanticol.moonlight.domain;
 
-import eu.quanticol.moonlight.core.Incubating;
-import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.core.base.Tuple;
 import eu.quanticol.moonlight.core.base.TupleType;
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 
 /**
  * Class to handle a tuple domain
  */
-@Incubating("Still not usable")
 public class TupleDomain implements SignalDomain<Tuple> {
 
     private final TupleType type;
@@ -21,8 +19,8 @@ public class TupleDomain implements SignalDomain<Tuple> {
 
     @Override
     public Tuple conjunction(Tuple x, Tuple y) {
-        if(x.getType().equals(type) && y.getType().equals(type)) {
-            for(int i = 0; i < type.size(); i++) {
+        if (x.getType().equals(type) && y.getType().equals(type)) {
+            for (int i = 0; i < type.size(); i++) {
                 //type.getIthType(i).cast();
             }
         }
