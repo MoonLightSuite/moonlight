@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.offline.algorithms.mfr;
 
-import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
@@ -36,17 +35,17 @@ import java.util.function.IntFunction;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class MfrOp<S, T, R> {
-    private final SpaceIterator<Double, S, R> spaceItr;
-    ParallelSignalCursor<T> cursor;
+public class MfrOp<S, R, V> {
+    private final MfrSpaceIterator<Double, S, R, V> spaceItr;
+    ParallelSignalCursor<V> cursor;
     private SpatialTemporalSignal<R> result;
 
     public MfrOp(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-            BiFunction<IntFunction<R>, DistanceStructure<S, ?>,
+            BiFunction<IntFunction<V>, DistanceStructure<S, ?>,
                     IntFunction<R>> operator) {
-        spaceItr = new SpaceIterator<>(l, distance, operator);
+        spaceItr = new MfrSpaceIterator<>(l, distance, operator);
     }
 
     @SafeVarargs
@@ -57,7 +56,7 @@ public class MfrOp<S, T, R> {
                         .reduce(true, (c1, c2) -> c1 && c2);
     }
 
-    public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<T> s) {
+    public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<V> s) {
         outputInit(s.getNumberOfLocations());
         if (!spaceItr.isLocationServiceEmpty()) {
             doCompute(s);
@@ -69,16 +68,16 @@ public class MfrOp<S, T, R> {
         result = new SpatialTemporalSignal<>(locations);
     }
 
-    private void doCompute(SpatialTemporalSignal<T> s) {
+    private void doCompute(SpatialTemporalSignal<V> s) {
         cursor = s.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         spaceItr.init(t, this::addResult);
         DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
 
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
-            IntFunction<T> spatialSignal = cursor.getCurrentValue();
+            IntFunction<V> spatialSignal = cursor.getCurrentValue();
             double tNext = cursor.forwardTime();
-            spaceItr.computeOp(t, tNext, ds, null);
+            spaceItr.computeOp(t, tNext, ds, spatialSignal);
             t = moveSpatialModel(tNext);
         }
     }

@@ -4,9 +4,11 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.offline.algorithms.mfr.MfrAlgorithm;
+import eu.quanticol.moonlight.offline.algorithms.mfr.MfrOp;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
@@ -29,16 +31,18 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
     public SpatialTemporalSignal<R> monitor(
             LocationService<Double, S> locationService,
             SpatialTemporalSignal<T> signal) {
-        var ds = distanceFunction.apply(locationService.get(0.0));
-        var arg = argMonitor.monitor(locationService, signal);
-        var result = reduce(arg, signal.size()).apply(ds);
-        //return signal.apply(l -> result.get(l));
-        return null;
+        SpatialTemporalSignal<V> arg = argMonitor.monitor(locationService,
+                signal);
+        MfrOp<S, R, V> sc = new MfrOp<>(locationService,
+                distanceFunction,
+                (a, b) -> reduce(signal.size()).apply(a, b));
+        return sc.computeUnary(arg);
     }
 
-    private Function<DistanceStructure<S, ?>, List<R>> reduce(IntFunction<V> arg, int size) {
-        MfrAlgorithm<V, R> sp = new MfrAlgorithm<>(false);
-        return ds ->
+    private BiFunction<IntFunction<V>, DistanceStructure<S, ?>, IntFunction<R>>
+    reduce(int size) {
+        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
+        return (arg, ds) ->
                 sp.reduceAlgorithm(aggregator, arg, size, ds);
     }
 

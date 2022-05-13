@@ -1,32 +1,32 @@
 package eu.quanticol.moonlight.offline.algorithms.mfr;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
  * @param <V> as
  */
-public class MfrAlgorithm<V, R> {
+public class MfrAlgorithm<V> {
     private final boolean parallel;
 
     public MfrAlgorithm(boolean isParallel) {
         parallel = isParallel;
     }
 
-    public IntFunction<V> mapAlgorithm(UnaryOperator<V> mapper,
-                                       IntFunction<V> data) {
-        return i -> mapper.apply(data.apply(i));
+    public SpatialTemporalSignal<V> mapAlgorithm(UnaryOperator<V> mapper,
+                                                 SpatialTemporalSignal<V> data) {
+        return data.apply(mapper);
     }
 
-    public IntFunction<V> filterAlgorithm(Predicate<V> predicate,
-                                          IntFunction<V> data) {
-        return i -> predicate.test(data.apply(i)) ? data.apply(i) : null;
+    public SpatialTemporalSignal<V> filterAlgorithm(Predicate<V> predicate,
+                                                    SpatialTemporalSignal<V> data) {
+        return data.filter(predicate);
     }
 
     public <T> Stream<V> formulaAlgorithm() {
@@ -43,28 +43,17 @@ public class MfrAlgorithm<V, R> {
      *
      * @param aggregator
      */
-    public List<R> reduceAlgorithm(Function<List<V>, R> aggregator,
-                                   IntFunction<V> argSignal,
-                                   int size,
-                                   DistanceStructure<?, ?> distance) {
+    public <R> IntFunction<R> reduceAlgorithm(Function<List<V>, R> aggregator,
+                                              IntFunction<V> argSignal,
+                                              int size,
+                                              DistanceStructure<?, ?> distance) {
 
-        return streamAllWithinDistance(size, distance)
-                .mapMulti(evaluate(argSignal, aggregator))
-                //.map(x -> argSignal.apply(x))
-                .collect(Collectors.toList());
-
-
-//        return test;
-//        int[] data = valueStream(spatialSignal);
-//        try {
-//            V[] values = (V[]) data.toArray();
-//            return aggregator.apply(values);
-//        } catch (ClassCastException e) {
-//            throw illegalState(data);
-//        }
+        var results = streamAllWithinDistance(size, distance)
+                .mapMulti(evaluate(argSignal, aggregator)).toList();
+        return results::get;
     }
 
-    private BiConsumer<int[], Consumer<R>> evaluate(
+    private <R> BiConsumer<int[], Consumer<R>> evaluate(
             IntFunction<V> argSignal,
             Function<List<V>, R> aggregator) {
         return (ls, arg) -> {
