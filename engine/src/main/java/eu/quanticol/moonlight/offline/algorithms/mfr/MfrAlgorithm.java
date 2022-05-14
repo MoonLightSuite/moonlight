@@ -37,6 +37,7 @@ public class MfrAlgorithm<V> {
     }
 
     /**
+     * This is what happens for a fixed location l, and fixed time t.
      * <pre>{@code
      *         <U> U reduce(U identity,
      *                  BiFunction<U, ? super T, U> accumulator,
@@ -45,18 +46,17 @@ public class MfrAlgorithm<V> {
      *
      * @param aggregator aggregator
      */
-    public <R> Function<int[], IntFunction<R>> reduceAlgorithm(
-            Function<List<V>, R> aggregator,
-            Function<int[], IntFunction<V>> argSignal,
-            int size,
-            DistanceStructure<?, ?> distance) {
-        Function<int[], List<R>> results = locs -> streamAllWithinDistance(locs,
-                size,
-                distance)
-                .mapMulti(evaluate(argSignal.apply(locs), aggregator)).toList();
-        return locs -> results.apply(locs)::get;
-    }
-
+//    public <R> IntFunction<R> reduceAlgorithm(
+//            Function<List<V>, R> aggregator,
+//            Function<int[], IntFunction<V>> argSignal,
+//            int size,
+//            DistanceStructure<?, ?> distance) {
+//        Function<int[], List<R>> results = locs -> streamAllWithinDistance(locs,
+//                size,
+//                distance)
+//                .mapMulti(evaluate(argSignal.apply(locs), aggregator)).toList();
+//        return loc -> results.apply(loc)::get;
+//    }
     private <R> BiConsumer<int[], Consumer<R>> evaluate(
             IntFunction<V> argSignal,
             Function<List<V>, R> aggregator) {

@@ -73,14 +73,12 @@ public class MfrSignal<T> extends SpatialTemporalSignal<T> {
                 locations);
     }
 
-    public ParallelSignalCursor<T> getSignalCursor(boolean forward,
-                                                   int[] locations) {
-        return new ParallelSignalCursor<>(getSignals().size(), i -> {
-            if (contains(i, locations)) {
-                return getSignals().get(i).getIterator(forward);
-            }
-            return null;
-        });
+
+    @Override
+    public ParallelSignalCursor<T> getSignalCursor(boolean forward) {
+        return new ParallelSignalCursor<>(locations.length,
+                i -> getSignals().get(locations[i]).getIterator(forward)
+        );
     }
 
 }

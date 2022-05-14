@@ -3,12 +3,11 @@ package eu.quanticol.moonlight.offline.monitoring.mfr;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.offline.algorithms.mfr.MfrAlgorithm;
+import eu.quanticol.moonlight.offline.algorithms.ReduceOp;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -35,65 +34,34 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
 
     @Override
     public SpatialTemporalSignal<R> monitor(SpatialTemporalSignal<T> signal) {
-        var distance = staticGetDistance();
-        IntFunction<int[]> locations = i -> getAllWithinDistance(i,
-                signal.size(),
-                distance);
-        var arg = argMonitor.monitor(signal, locations);
-        return null;
+        return doMonitor(signal, allLocations(signal.size()));
+    }
+
+    private int[] allLocations(int size) {
+        return IntStream.range(0, size).toArray();
     }
 
     private DistanceStructure<S, ?> staticGetDistance() {
         return distanceFunction.apply(locationService.get(0.0));
     }
 
-    private SpatialTemporalSignal<R> doReduce(int size,
-                                              IntFunction<MfrSignal<V>> argument) {
-        // per ogni locazione
-        // mi scorro i segnali in parallelo
-        // aggrego secondo l'aggregator e salvo in output
-        // quindi devo avere: SxT->V -> TxR per ogni locazione
-        int[] locations = IntStream.range(0, size).toArray();
-        IntStream.range(0, size).mapToObj(i -> argument);
-        //new SpatialTemporalSignal<>();
-        return null;
-    }
-
-
     @Override
-    public IntFunction<MfrSignal<R>> monitor(
-            SpatialTemporalSignal<T> signal,
-            IntFunction<int[]> locations) {
-        //var alg = new MfrAlgorithm<>(false);
-        //alg.getCloseLocations(signal.size(), distanceFunction);
-
-        //spatial signal: locationSet per ogni locazione
-//        Function<int[], SpatialTemporalSignal<V>> arg =
-//                locs -> argMonitor.monitor(locationService, signal, locs);
-//        MfrOp<S, R, V> sc = new MfrOp<>(locationService,
-//                distanceFunction,
-//                (a, b) -> reduce(locations, signal.size()).apply(a, b));
-//        return sc.computeUnary(locations.length, arg);
-//        var alg = new MfrAlgorithm<>(false);
-//        int[] locs = alg.getCloseLocations(signal.size(), distanceFunction);
-//
-//        IntFunction<MfrSignal<V>> arg =
-//                l -> argMonitor.monitor(locationService, signal, locs);
-
-        return null;
+    public IntFunction<MfrSignal<R>> monitor(SpatialTemporalSignal<T> signal,
+                                             IntFunction<int[]> locations) {
+        return i -> doMonitor(signal, locations.apply(i));
     }
 
-    private BiFunction<IntFunction<V>, DistanceStructure<S, ?>, IntFunction<R>>
-    reduce(int[] locationsSet, int size) {
-        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
-//        return (arg, ds) ->
-//                sp.reduceAlgorithm(aggregator, arg, size, ds).apply(locationsSet);
-        return null;
+    private MfrSignal<R> doMonitor(SpatialTemporalSignal<T> signal,
+                                   int[] locations) {
+        var distance = staticGetDistance();
+        IntFunction<int[]> locs = i -> getAllWithinDistance(i,
+                signal.size(),
+                distance);
+        IntFunction<MfrSignal<V>> arg = argMonitor.monitor(signal, locs);
+        ReduceOp<S, R, V> reduce = new ReduceOp<>(signal.size(),
+                locationService,
+                distanceFunction, aggregator);
+        return reduce.computeUnary(locations, arg);
     }
-
-//        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
-//        List<int[]> locationSets = sp.streamAllWithinDistance(locations,
-//                signal.size(),
-//                distanceFunction.apply(locationService.get(0.0))).collect(Collectors.toList());
 
 }

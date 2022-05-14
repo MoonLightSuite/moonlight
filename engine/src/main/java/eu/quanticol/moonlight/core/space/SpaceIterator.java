@@ -72,7 +72,6 @@ public class SpaceIterator<T extends Comparable<T>, S> {
         return dist.apply(sm);
     }
 
-
     public boolean isNextSpaceModelWithinHorizon(T tNext) {
         return nextSpace != null && isBeforeTime(tNext);
     }
