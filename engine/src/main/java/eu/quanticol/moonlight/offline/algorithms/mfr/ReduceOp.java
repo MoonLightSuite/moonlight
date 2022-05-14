@@ -35,12 +35,12 @@ import java.util.function.IntFunction;
 /**
  * Algorithm for Somewhere and Everywhere Computation
  */
-public class MfrOp<S, R, V> {
+public class ReduceOp<S, R, V> {
     private final MfrSpaceIterator<Double, S, R, V> spaceItr;
     ParallelSignalCursor<V> cursor;
     private SpatialTemporalSignal<R> result;
 
-    public MfrOp(
+    public ReduceOp(
             LocationService<Double, S> l,
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             BiFunction<IntFunction<V>, DistanceStructure<S, ?>,
@@ -56,8 +56,10 @@ public class MfrOp<S, R, V> {
                         .reduce(true, (c1, c2) -> c1 && c2);
     }
 
-    public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<V> s) {
-        outputInit(s.getNumberOfLocations());
+    public SpatialTemporalSignal<R> computeUnary(
+            int size,
+            SpatialTemporalSignal<V> s) {
+        outputInit(size);
         if (!spaceItr.isLocationServiceEmpty()) {
             doCompute(s);
         }

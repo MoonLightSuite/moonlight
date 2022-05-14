@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.offline.algorithms.mfr;
 
 import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,19 +19,21 @@ public class MfrAlgorithm<V> {
         parallel = isParallel;
     }
 
-    public SpatialTemporalSignal<V> mapAlgorithm(UnaryOperator<V> mapper,
-                                                 SpatialTemporalSignal<V> data) {
+    public static int[] getAllWithinDistance(int i, int size,
+                                             DistanceStructure<?, ?> distance) {
+        return IntStream.range(0, size)
+                .filter(j -> distance.areWithinBounds(i, j))
+                .toArray();
+    }
+
+    public MfrSignal<V> mapAlgorithm(UnaryOperator<V> mapper,
+                                     MfrSignal<V> data) {
         return data.apply(mapper);
     }
 
-    public SpatialTemporalSignal<V> filterAlgorithm(Predicate<V> predicate,
-                                                    SpatialTemporalSignal<V> data) {
+    public MfrSignal<V> filterAlgorithm(Predicate<V> predicate,
+                                        MfrSignal<V> data) {
         return data.filter(predicate);
-    }
-
-    public <T> Stream<V> formulaAlgorithm() {
-        // TODO
-        return null;
     }
 
     /**
@@ -41,16 +43,18 @@ public class MfrAlgorithm<V> {
      *                  BinaryOperator<U> combiner);
      * }</pre>
      *
-     * @param aggregator
+     * @param aggregator aggregator
      */
-    public <R> IntFunction<R> reduceAlgorithm(Function<List<V>, R> aggregator,
-                                              IntFunction<V> argSignal,
-                                              int size,
-                                              DistanceStructure<?, ?> distance) {
-
-        var results = streamAllWithinDistance(size, distance)
-                .mapMulti(evaluate(argSignal, aggregator)).toList();
-        return results::get;
+    public <R> Function<int[], IntFunction<R>> reduceAlgorithm(
+            Function<List<V>, R> aggregator,
+            Function<int[], IntFunction<V>> argSignal,
+            int size,
+            DistanceStructure<?, ?> distance) {
+        Function<int[], List<R>> results = locs -> streamAllWithinDistance(locs,
+                size,
+                distance)
+                .mapMulti(evaluate(argSignal.apply(locs), aggregator)).toList();
+        return locs -> results.apply(locs)::get;
     }
 
     private <R> BiConsumer<int[], Consumer<R>> evaluate(
@@ -62,21 +66,16 @@ public class MfrAlgorithm<V> {
         };
     }
 
-    private Stream<int[]> streamAllWithinDistance(int size,
-                                                  DistanceStructure<?, ?> distance) {
-        return locationsStream(size)
+    public Stream<int[]> streamAllWithinDistance(
+            int[] locationsSet,
+            int size,
+            DistanceStructure<?, ?> distance) {
+        return locationsStream(locationsSet)
                 .mapToObj(l -> getAllWithinDistance(l, size, distance));
     }
 
-    private int[] getAllWithinDistance(int i, int size,
-                                       DistanceStructure<?, ?> distance) {
-        return IntStream.range(0, size)
-                .filter(j -> distance.areWithinBounds(i, j))
-                .toArray();
-    }
-
-    private IntStream locationsStream(int size) {
-        var stream = IntStream.range(0, size);
+    private IntStream locationsStream(int[] locationsSet) {
+        var stream = IntStream.of(locationsSet);
         return parallel ? stream.parallel() : stream;
     }
 

@@ -21,6 +21,7 @@
 package eu.quanticol.moonlight.offline.signal;
 
 import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
+import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,7 +65,7 @@ public class SpatialTemporalSignal<T> {
         }
     }
 
-    private static void checkSize(int inputSize, int baseSize) {
+    protected static void checkSize(int inputSize, int baseSize) {
         if (inputSize != baseSize) {
             throw new IllegalArgumentException("Input mismatch with signal " +
                     "size");
@@ -98,6 +99,19 @@ public class SpatialTemporalSignal<T> {
         }
     }
 
+    public <R> SpatialTemporalSignal<R> apply(Function<T, R> f) {
+        BooleanOp<T, R> booleanOp = new BooleanOp<>();
+        return new SpatialTemporalSignal<>(size(),
+                (i -> booleanOp.applyUnary(getSignals().get(i), f)));
+    }
+
+    public <R> MfrSignal<R> selectApply(Function<T, R> f, int[] filter) {
+        BooleanOp<T, R> booleanOp = new BooleanOp<>();
+        IntFunction<Signal<R>> timeSignal =
+                i -> booleanOp.applyUnary(getSignals().get(i), f);
+        return new MfrSignal<>(size, timeSignal, filter);
+    }
+
     public int getNumberOfLocations() {
         return size;
     }
@@ -128,26 +142,6 @@ public class SpatialTemporalSignal<T> {
             spSignal.add(signals.get(i).getValueAt(t));
         }
         return spSignal;
-    }
-
-    public <R> SpatialTemporalSignal<R> apply(Function<T, R> f) {
-        BooleanOp<T, R> booleanOp = new BooleanOp<>();
-        return new SpatialTemporalSignal<>(this.size,
-                (i -> booleanOp.applyUnary(signals.get(i), f)));
-    }
-
-    /**
-     * WARNING: use only for MFR. It breaks the totality assumption
-     *
-     * @param f
-     * @param <R>
-     * @return
-     */
-    public SpatialTemporalSignal<T> filter(Predicate<T> p) {
-        var booleanOp = new BooleanOp<>();
-        return new SpatialTemporalSignal<>(this.size,
-                i -> booleanOp.filterUnary(signals.get(i), p)
-        );
     }
 
     public <R> SpatialTemporalSignal<R> applyToSignal(Function<Signal<T>,

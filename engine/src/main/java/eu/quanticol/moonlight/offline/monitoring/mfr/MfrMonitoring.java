@@ -23,13 +23,11 @@ package eu.quanticol.moonlight.offline.monitoring.mfr;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.formula.mfr.FilterFormula;
-import eu.quanticol.moonlight.formula.mfr.MapFormula;
-import eu.quanticol.moonlight.formula.mfr.ReduceFormula;
-import eu.quanticol.moonlight.formula.mfr.SetFormula;
+import eu.quanticol.moonlight.formula.mfr.*;
 import eu.quanticol.moonlight.formula.temporal.SinceFormula;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 
@@ -54,17 +52,20 @@ public class MfrMonitoring<S, T, R> {
     private final Map<String, Function<SpatialModel<S>,
             DistanceStructure<S, ?>>> distanceFunctions;
     private final SignalDomain<R> domain;
+    private final LocationService<Double, S> locationService;
 
 
+    //TODO: add locationService
     public MfrMonitoring(
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                     DistanceStructure<S, ?>>> distanceFunctions,
-            SignalDomain<R> domain) {
+            SignalDomain<R> domain, LocationService<Double, S> locationService) {
         super();
         this.atoms = atomicPropositions;
         this.domain = domain;
         this.distanceFunctions = distanceFunctions;
+        this.locationService = locationService;
     }
 
     /**
@@ -78,6 +79,7 @@ public class MfrMonitoring<S, T, R> {
         return switch (f) {
             // Classic operators
             case AtomicFormula atomic -> generateAtomicMonitor(atomic);
+            case BinaryFormula binary -> generateBinaryMonitor(binary);
 //            case NegationFormula negation -> generateNegationMonitor(negation);
 //            case AndFormula and -> generateAndMonitor(and);
 //            case OrFormula or -> generateOrMonitor(or);
@@ -122,10 +124,18 @@ public class MfrMonitoring<S, T, R> {
             throw new IllegalArgumentException("Unknown atomic ID " +
                     f.getAtomicId());
         }
+        //TODO: weird 'Parameters' object, to be removed
         Function<T, R> atomic = atomicFunc.apply(null);
 
-        //return new MfrMonitorAtomic<>(atomic);
-        return null; //TODO
+        return new MfrMonitorAtomic<>(atomic);
+    }
+
+    private MfrMonitor<S, T, R> generateBinaryMonitor(BinaryFormula<R> f) {
+        var operator = f.getOperator();
+        var leftArg = monitor(f.getLeftArgument());
+        var rightArg = monitor(f.getRightArgument());
+
+        return new MfrMonitorBinary<>(operator, leftArg, rightArg);
     }
 
 //    private MfrMonitor<S, T, R> generateOnceMonitor(OnceFormula f) {
@@ -153,24 +163,18 @@ public class MfrMonitoring<S, T, R> {
 //    }
 
     private MfrMonitor<S, T, R> generateSinceMonitor(SinceFormula f) {
-        var leftMonitor = monitor(f.getFirstArgument());
-        var rightMonitor = monitor(f.getSecondArgument());
-        var interval = f.getInterval();
-
-        if (f.isUnbounded()) {
-            return new MfrMonitorSince<>(leftMonitor, null,
-                    rightMonitor, domain);
-        } else {
-            return new MfrMonitorSince<>(leftMonitor, interval,
-                    rightMonitor, domain);
-        }
+        var leftArg = monitor(f.getFirstArgument());
+        var rightArg = monitor(f.getSecondArgument());
+        var interval = f.isUnbounded() ? null : f.getInterval();
+        return new MfrMonitorSince<>(leftArg, interval, rightArg, domain);
     }
 
     private <V> MfrMonitor<S, T, R> generateReduceMonitor(ReduceFormula<V, R> f) {
         var aggregator = f.getAggregator();
         MfrSetMonitor<S, T, V> argMonitor = monitorSet(f.getArgument());
         var distanceFunction = distanceFunctions.get(f.getDistanceFunctionId());
-        return new MfrMonitorReduce<>(argMonitor, aggregator, distanceFunction);
+        return new MfrMonitorReduce<>(argMonitor, aggregator,
+                distanceFunction, locationService);
     }
 
     private <V> MfrSetMonitor<S, T, V> generateMapMonitor(MapFormula<V> f) {

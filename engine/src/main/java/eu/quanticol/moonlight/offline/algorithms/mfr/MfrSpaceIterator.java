@@ -15,13 +15,14 @@ import java.util.function.IntFunction;
 public class MfrSpaceIterator<T extends Comparable<T>, S, R, V> {
     private final LocationService<T, S> locSvc;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> dist;
-    private final BiFunction<IntFunction<V>, DistanceStructure<S, ?>,
-            IntFunction<R>> op;
+//    private final BiFunction<IntFunction<V>,
+//            DistanceStructure<S, ?>,
+//            IntFunction<R>> op;
 
     private Pair<T, SpatialModel<S>> currSpace;
     private Pair<T, SpatialModel<S>> nextSpace;
     private Iterator<Pair<T, SpatialModel<S>>> spaceItr;
-    private TriConsumer<T, T, IntFunction<R>> resultAction;
+//    private TriConsumer<T, T, IntFunction<R>> resultAction;
 
 
     public MfrSpaceIterator(@NotNull LocationService<T, S> locationService,
@@ -66,7 +67,7 @@ public class MfrSpaceIterator<T extends Comparable<T>, S, R, V> {
     public void computeOp(T t, T tNext,
                           DistanceStructure<S, ?> f,
                           IntFunction<V> spatialSignal) {
-        resultAction.accept(t, tNext, op.apply(spatialSignal, f));
+//        resultAction.accept(t, tNext, op.apply(spatialSignal, f));
         moveAndCompute(tNext, spatialSignal);
     }
 
