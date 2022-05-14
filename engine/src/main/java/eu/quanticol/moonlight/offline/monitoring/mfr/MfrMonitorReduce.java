@@ -40,7 +40,7 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
                 signal.size(),
                 distance);
         var arg = argMonitor.monitor(signal, locations);
-
+        return null;
     }
 
     private DistanceStructure<S, ?> staticGetDistance() {
@@ -55,38 +55,40 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
         // quindi devo avere: SxT->V -> TxR per ogni locazione
         int[] locations = IntStream.range(0, size).toArray();
         IntStream.range(0, size).mapToObj(i -> argument);
-        new SpatialTemporalSignal<>();
+        //new SpatialTemporalSignal<>();
+        return null;
     }
 
 
     @Override
     public IntFunction<MfrSignal<R>> monitor(
-            LocationService<Double, S> locationService,
             SpatialTemporalSignal<T> signal,
-            int[] locations) {
+            IntFunction<int[]> locations) {
         //var alg = new MfrAlgorithm<>(false);
         //alg.getCloseLocations(signal.size(), distanceFunction);
 
         //spatial signal: locationSet per ogni locazione
-        Function<int[], SpatialTemporalSignal<V>> arg =
-                locs -> argMonitor.monitor(locationService, signal, locs);
-        MfrOp<S, R, V> sc = new MfrOp<>(locationService,
-                distanceFunction,
-                (a, b) -> reduce(locations, signal.size()).apply(a, b));
-        return sc.computeUnary(locations.length, arg);
-        var alg = new MfrAlgorithm<>(false);
-        int[] locs = alg.getCloseLocations(signal.size(), distanceFunction);
+//        Function<int[], SpatialTemporalSignal<V>> arg =
+//                locs -> argMonitor.monitor(locationService, signal, locs);
+//        MfrOp<S, R, V> sc = new MfrOp<>(locationService,
+//                distanceFunction,
+//                (a, b) -> reduce(locations, signal.size()).apply(a, b));
+//        return sc.computeUnary(locations.length, arg);
+//        var alg = new MfrAlgorithm<>(false);
+//        int[] locs = alg.getCloseLocations(signal.size(), distanceFunction);
+//
+//        IntFunction<MfrSignal<V>> arg =
+//                l -> argMonitor.monitor(locationService, signal, locs);
 
-        IntFunction<MfrSignal<V>> arg =
-                l -> argMonitor.monitor(locationService, signal, locs);
-
+        return null;
     }
 
     private BiFunction<IntFunction<V>, DistanceStructure<S, ?>, IntFunction<R>>
     reduce(int[] locationsSet, int size) {
         MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
-        return (arg, ds) ->
-                sp.reduceAlgorithm(aggregator, arg, size, ds).apply(locationsSet);
+//        return (arg, ds) ->
+//                sp.reduceAlgorithm(aggregator, arg, size, ds).apply(locationsSet);
+        return null;
     }
 
 //        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);

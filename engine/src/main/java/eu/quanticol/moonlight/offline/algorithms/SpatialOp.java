@@ -20,21 +20,19 @@
 
 package eu.quanticol.moonlight.offline.algorithms;
 
-import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpaceIterator;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.stream.IntStream;
 
 import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 
@@ -42,7 +40,8 @@ import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
  * Algorithm for Somewhere and Everywhere Computation
  */
 public class SpatialOp<S, R> {
-    private final SpaceIterator<Double, S, R> spaceItr;
+    private final SpaceIterator<Double, S> spaceItr;
+    private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>, IntFunction<R>> op;
     ParallelSignalCursor<R> cursor;
     private SpatialTemporalSignal<R> result;
 
@@ -51,7 +50,8 @@ public class SpatialOp<S, R> {
             Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
             BiFunction<IntFunction<R>, DistanceStructure<S, ?>,
                     IntFunction<R>> operator) {
-        spaceItr = new SpaceIterator<>(l, distance, operator);
+        this.op = operator;
+        spaceItr = new SpaceIterator<>(l, distance);
     }
 
     @SafeVarargs
@@ -70,14 +70,6 @@ public class SpatialOp<S, R> {
         return result;
     }
 
-    public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
-        outputInit(s.getNumberOfLocations());
-        if (!spaceItr.isLocationServiceEmpty()) {
-            doCompute(s);
-        }
-        return result;
-    }
-
     private void outputInit(int locations) {
         result = new SpatialTemporalSignal<>(locations);
     }
@@ -85,22 +77,19 @@ public class SpatialOp<S, R> {
     private void doCompute(SpatialTemporalSignal<R> s) {
         cursor = s.getSignalCursor(true);
         double t = cursor.getCurrentTime();
-        spaceItr.init(t, this::addResult);
-        DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
+        spaceItr.init(t);
+        // addResult(space.getFirst(), space.getSecond());
 
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
+            DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
             IntFunction<R> spatialSignal = cursor.getCurrentValue();
             double tNext = cursor.forwardTime();
-            spaceItr.computeOp(t, tNext, ds, spatialSignal);
+            addResult(t, tNext, op.apply(spatialSignal, ds));
+            spaceItr.forEach(tNext, (itT, itDs) ->
+                    addResult(itT, tNext, op.apply(spatialSignal, itDs))
+            );
             t = moveSpatialModel(tNext);
         }
-    }
-
-    private List<R> computeSS(IntFunction<R> spatialSignal, int size) {
-        return IntStream.range(0, size)
-                .boxed()
-                .map(spatialSignal::apply)
-                .toList();
     }
 
     private Double moveSpatialModel(@NotNull Double t) {
@@ -114,6 +103,16 @@ public class SpatialOp<S, R> {
         result.add(start, value);
     }
 
+
+    public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
+        outputInit(s.getNumberOfLocations());
+        if (!spaceItr.isLocationServiceEmpty()) {
+            doCompute(s);
+        }
+        return result;
+    }
+
+
     public SpatialTemporalSignal<R> computeDynamic(
             SignalDomain<R> domain,
             SpatialTemporalSignal<R> s1,
@@ -124,7 +123,7 @@ public class SpatialOp<S, R> {
             ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
             double t = Math.max(s1.start(), s2.start());
 
-            spaceItr.init(t, this::addResult);
+            spaceItr.init(t);
             DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
 
             //Loop invariant: (current.getFirst() <= time) &&

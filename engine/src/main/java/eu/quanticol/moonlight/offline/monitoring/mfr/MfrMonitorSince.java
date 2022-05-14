@@ -22,10 +22,12 @@ package eu.quanticol.moonlight.offline.monitoring.mfr;
 
 import eu.quanticol.moonlight.core.formula.Interval;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
-import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.offline.algorithms.TemporalOp;
 import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
+
+import java.util.function.IntFunction;
 
 /**
  * Strategy to interpret the Since temporal logic operator.
@@ -52,13 +54,21 @@ public class MfrMonitorSince<S, T, R> implements MfrMonitor<S, T, R> {
     }
 
     @Override
-    public SpatialTemporalSignal<R> monitor(
-            LocationService<Double, S> locationService,
-            SpatialTemporalSignal<T> signal) {
-        return SpatialTemporalSignal.applyToSignal(
-                m1.monitor(locationService, signal),
-                (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
-                m2.monitor(locationService, signal));
+    public IntFunction<MfrSignal<R>> monitor(
+            SpatialTemporalSignal<T> signal,
+            IntFunction<int[]> locations) {
+//        return SpatialTemporalSignal.applyToSignal(
+//                m1.monitor(signal),
+//                (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
+//                m2.monitor(signal));
+        return null;
     }
 
+    @Override
+    public SpatialTemporalSignal<R> monitor(SpatialTemporalSignal<T> signal) {
+        return SpatialTemporalSignal.applyToSignal(
+                m1.monitor(signal),
+                (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
+                m2.monitor(signal));
+    }
 }

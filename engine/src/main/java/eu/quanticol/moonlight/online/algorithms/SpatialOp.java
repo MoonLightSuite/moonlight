@@ -20,10 +20,10 @@
 
 package eu.quanticol.moonlight.online.algorithms;
 
-import eu.quanticol.moonlight.core.algorithms.SpaceIterator;
 import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.core.space.SpaceIterator;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
@@ -40,7 +40,8 @@ import static eu.quanticol.moonlight.online.signal.Update.asTimeChain;
 
 public class SpatialOp
         <T extends Comparable<T>, S, R extends Comparable<R>> {
-    private final SpaceIterator<T, S, R> spaceIterator;
+    private final SpaceIterator<T, S> spaceIterator;
+    private final BiFunction<IntFunction<R>, DistanceStructure<S, ?>, IntFunction<R>> op;
     private List<Update<T, List<R>>> results;
     private int locations;
 
@@ -50,8 +51,9 @@ public class SpatialOp
                      BiFunction<IntFunction<R>,
                              DistanceStructure<S, ?>,
                              IntFunction<R>> operator) {
+        this.op = operator;
         checkLocationServiceValidity(locationService);
-        spaceIterator = new SpaceIterator<>(locationService, distance, operator);
+        spaceIterator = new SpaceIterator<>(locationService, distance);
     }
 
     private void checkLocationServiceValidity(LocationService<T, S> locSvc) {
@@ -63,7 +65,7 @@ public class SpatialOp
     public List<Update<T, List<R>>> computeUnary(Update<T, List<R>> u) {
         locations = u.getValue().size();
         T t = u.getStart();
-        spaceIterator.init(t, this::addResult);
+        spaceIterator.init(t);
         T tNext = spaceIterator.fromNextSpaceOrFallback(u.getEnd());
         doCompute(t, tNext, u.getValue());
         return results;
@@ -74,7 +76,12 @@ public class SpatialOp
 
         tNext = spaceIterator.fromNextSpaceOrFallback(tNext);
         results = new ArrayList<>();
-        spaceIterator.computeOp(t, tNext, f, value::get);
+        addResult(t, tNext, op.apply(value::get, f));
+        T finalTNext = tNext;
+        spaceIterator.forEach(tNext, (itT, itDs) -> {
+            addResult(itT, finalTNext, op.apply(value::get, itDs));
+        });
+        //spaceIterator.computeOp(t, tNext, f, value::get);
     }
 
     private List<R> computeSS(IntFunction<R> spatialSignal, int size) {
@@ -93,7 +100,7 @@ public class SpatialOp
         final int LAST = ups.size() - 1;
         locations = ups.getFirst().getValue().size();
 
-        spaceIterator.init(ups.getStart(), this::addResult);
+        spaceIterator.init(ups.getStart());
 
         for (int i = 0; i < ups.size(); i++) {
             Sample<T, List<R>> up = ups.get(i);
