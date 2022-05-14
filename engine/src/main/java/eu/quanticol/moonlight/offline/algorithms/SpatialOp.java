@@ -78,7 +78,6 @@ public class SpatialOp<S, R> {
         cursor = s.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         spaceItr.init(t);
-        // addResult(space.getFirst(), space.getSecond());
 
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
             DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
@@ -124,36 +123,31 @@ public class SpatialOp<S, R> {
             double t = Math.max(s1.start(), s2.start());
 
             spaceItr.init(t);
-            DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
 
             //Loop invariant: (current.getFirst() <= time) &&
             //                ((next == null) || (time < next.getFirst()))
             c1.move(t);
             c2.move(t);
             while (!Double.isNaN(t) && isNotCompleted(c1, c2)) {
+                DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
                 IntFunction<R> spatialSignal1 = c1.getCurrentValue();
                 IntFunction<R> spatialSignal2 = c2.getCurrentValue();
 
-                IntFunction<R> values = reach(domain, spatialSignal1, spatialSignal2,
-                        f);
-                result.add(t, values);
+                result.add(t,
+                        reach(domain, spatialSignal1, spatialSignal2, f));
                 double tNext = Math.min(c1.nextTime(), c2.nextTime());
                 c1.move(tNext);
                 c2.move(tNext);
 
-                while (spaceItr.isNextSpaceModelWithinHorizon(tNext)) {
-                    spaceItr.shiftSpatialModel();
-                    t = spaceItr.getCurrentT();
-                    f = spaceItr.generateDistanceStructure();
-                    values = reach(domain, spatialSignal1, spatialSignal2, f);
+                spaceItr.forEach(tNext, (itT, itDs) -> {
                     //result.add(t, escape(domain, values, f));
-                    result.add(t, values);
-                }
+                    result.add(itT,
+                            reach(domain, spatialSignal1, spatialSignal2, f));
+                });
 
                 t = tNext;
                 if (spaceItr.isNextSpaceModelMeaningful()) {
                     spaceItr.shiftSpatialModel();
-                    f = spaceItr.generateDistanceStructure();
                 }
             }
         }
