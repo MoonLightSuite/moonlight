@@ -4,11 +4,11 @@ import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.STSignal;
 import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.function.*;
+import java.util.stream.IntStream;
 
-public class MfrSignal<T> extends SpatialTemporalSignal<T> {
+public class MfrSignal<T> extends STSignal<T> {
     private final int[] locations;
 
     public MfrSignal(int size, IntFunction<Signal<T>> generator,
@@ -36,9 +36,15 @@ public class MfrSignal<T> extends SpatialTemporalSignal<T> {
         return false;
     }
 
+    public MfrSignal(int size, IntFunction<Signal<T>> generator) {
+        super(size, generator);
+        this.locations = IntStream.range(1, size).toArray();
+    }
+
     @Override
     public <R> MfrSignal<R> apply(Function<T, R> f) {
-        return new MfrSignal<>(getNumberOfLocations(), i -> mappedSignal(i, f), locations);
+        return new MfrSignal<>(getNumberOfLocations(),
+                i -> mappedSignal(i, f), locations);
     }
 
     private <R> Signal<R> mappedSignal(int l, Function<T, R> f) {
@@ -52,7 +58,8 @@ public class MfrSignal<T> extends SpatialTemporalSignal<T> {
     }
 
     public MfrSignal<T> filter(Predicate<T> p) {
-        return new MfrSignal<>(getNumberOfLocations(), i -> filteredSignal(i, p), locations);
+        return new MfrSignal<>(getNumberOfLocations(),
+                i -> filteredSignal(i, p), locations);
     }
 
     private Signal<T> filteredSignal(int l, Predicate<T> p) {

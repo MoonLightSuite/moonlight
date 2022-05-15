@@ -38,7 +38,7 @@ import java.util.stream.IntStream;
  *
  * @author loreti
  */
-public class SpatialTemporalSignal<T> extends STSignal<T> {
+public class SpatialTemporalSignal<T> extends MfrSignal<T> {
 
     /**
      * Builds an `empty` spatio-temporal signal

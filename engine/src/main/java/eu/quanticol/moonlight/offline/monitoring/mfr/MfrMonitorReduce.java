@@ -41,8 +41,8 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
         return IntStream.range(0, size).toArray();
     }
 
-    private MfrSignal<R> doMonitor(SpatialTemporalSignal<T> signal,
-                                   int[] locations) {
+    private SpatialTemporalSignal<R> doMonitor(SpatialTemporalSignal<T> signal,
+                                               int[] locations) {
         var distance = staticGetDistance();
         IntFunction<int[]> locs = i -> getAllWithinDistance(i,
                 signal.getNumberOfLocations(),
@@ -51,7 +51,12 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
         ReduceOp<S, R, V> reduce = new ReduceOp<>(signal.getNumberOfLocations(),
                 locationService,
                 distanceFunction, aggregator);
-        return reduce.computeUnary(locations, arg);
+        var result = reduce.computeUnary(locations, arg);
+        if (result.getNumberOfLocations() == signal.getNumberOfLocations()) {
+            return new SpatialTemporalSignal<>(signal.getNumberOfLocations(),
+                    result::getSignalAtLocation);
+        }
+        throw new IllegalStateException("Reduce algorithm failed");
     }
 
     private DistanceStructure<S, ?> staticGetDistance() {
