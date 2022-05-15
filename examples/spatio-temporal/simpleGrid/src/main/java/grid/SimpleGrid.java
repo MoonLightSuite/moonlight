@@ -56,8 +56,8 @@ public class SimpleGrid {
         long endingTime = System.currentTimeMillis();
         float duration = (float) ((endingTime - startingTime) / 1000.0);
 
-        System.out.print("signal_at0 : " + signal.valuesatT(0) + "\n");
-        System.out.print("result_at0 : " + sout.valuesatT(0) + "\n");
+        System.out.print("signal_at0 : " + signal.valuesAtT(0) + "\n");
+        System.out.print("result_at0 : " + sout.valuesAtT(0) + "\n");
 
 
         return duration;

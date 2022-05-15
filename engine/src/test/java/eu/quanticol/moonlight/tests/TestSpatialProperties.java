@@ -438,7 +438,7 @@ class TestSpatialProperties {
         //// Loc Service Static ///
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, 1, model);
 
-        System.out.println(signal.valuesatT(0));
+        System.out.println(signal.valuesAtT(0));
 
 
         HashMap<String, Function<Parameters, Function<Integer, Boolean>>> atomicFormulas = new HashMap<>();

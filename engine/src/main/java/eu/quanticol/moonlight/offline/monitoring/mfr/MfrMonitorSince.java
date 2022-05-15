@@ -57,10 +57,6 @@ public class MfrMonitorSince<S, T, R> implements MfrMonitor<S, T, R> {
     public IntFunction<MfrSignal<R>> monitor(
             SpatialTemporalSignal<T> signal,
             IntFunction<int[]> locations) {
-//        return SpatialTemporalSignal.applyToSignal(
-//                m1.monitor(signal),
-//                (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
-//                m2.monitor(signal));
         return null;
     }
 

@@ -94,7 +94,7 @@ public class SpatialTemporalSignal<T> {
     }
 
     private void init(IntFunction<Signal<T>> initFunction) {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size(); i++) {
             signals.add(i, initFunction.apply(i));
         }
     }
@@ -109,7 +109,7 @@ public class SpatialTemporalSignal<T> {
         BooleanOp<T, R> booleanOp = new BooleanOp<>();
         IntFunction<Signal<R>> timeSignal =
                 i -> booleanOp.applyUnary(getSignals().get(i), f);
-        return new MfrSignal<>(size, timeSignal, filter);
+        return new MfrSignal<>(size(), timeSignal, filter);
     }
 
     public int getNumberOfLocations() {
@@ -117,12 +117,12 @@ public class SpatialTemporalSignal<T> {
     }
 
     public void add(double t, T[] values) {
-        checkSize(values.length, size);
+        checkSize(values.length, size());
         add(t, (i -> values[i]));
     }
 
     public void add(double time, List<T> values) {
-        checkSize(values.size(), size);
+        checkSize(values.size(), size());
         add(time, values::get);
     }
 
@@ -136,9 +136,9 @@ public class SpatialTemporalSignal<T> {
         return signals;
     }
 
-    public List<T> valuesatT(double t) {
-        List<T> spSignal = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
+    public List<T> valuesAtT(double t) {
+        List<T> spSignal = new ArrayList<>(size());
+        for (int i = 0; i < size(); i++) {
             spSignal.add(signals.get(i).getValueAt(t));
         }
         return spSignal;
@@ -146,7 +146,7 @@ public class SpatialTemporalSignal<T> {
 
     public <R> SpatialTemporalSignal<R> applyToSignal(Function<Signal<T>,
             Signal<R>> f) {
-        return new SpatialTemporalSignal<>(this.size,
+        return new SpatialTemporalSignal<>(size(),
                 (i -> f.apply(signals.get(i))));
     }
 
@@ -169,12 +169,6 @@ public class SpatialTemporalSignal<T> {
             end = Math.min(end, signal.getEnd());
         }
         return end;
-    }
-
-    public void endAt(double end) {
-        for (Signal<T> signal : signals) {
-            signal.endAt(end);
-        }
     }
 
 

@@ -20,6 +20,7 @@
 
 package eu.quanticol.moonlight.util;
 
+import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.ArrayList;
@@ -29,10 +30,10 @@ import java.util.List;
  * Spatial-temporal signal that represents a generic trace of the kind
  * (s,t) -&gt; (x1, ..., xn).
  * Note that x1, ..., xn must at least implement Comparable
- *
+ * <p>
  * The goal of this class is to minimize the raw usage of the Comparable class,
  * so that user usage can be as type-safe as possible.
- *
+ * <p>
  * Moreover, it performs some input checks to make sure the generated signal
  * is correct in terms of the spatial-temporal domain.
  *
@@ -41,13 +42,13 @@ import java.util.List;
  */
 public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>> {
     private final int length;
-    private int dimensions = 0;
     private final List<Comparable<?>[][]> data;
+    private int dimensions = 0;
 
     /**
      * Fixes the dimensions of the signal.
      *
-     * @param size the number of locations of the Spatial model.
+     * @param size   the number of locations of the Spatial model.
      * @param length the time span of the temporal data.
      */
     public MultiValuedTrace(int size, int length) {
@@ -70,7 +71,7 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
             throw new IllegalArgumentException("Empty signal passed");
 
         //System.out.println("Starting Signal Initialization");
-        for(int t = 0; t < length; t ++) {
+        for (int t = 0; t < length; t++) {
             int time = t;
             add(t, i -> setSignal(i, time));
         }
@@ -80,24 +81,29 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
         data.clear();
     }
 
+    private void endAt(double end) {
+        for (Signal<?> signal : getSignals()) {
+            signal.endAt(end);
+        }
+    }
+
     /**
      * Given some Comparable data, it performs some checks and prepares it
      * to be later added as the index dimension of the n-dimensional signal.
      *
-     * @see Comparable to learn more about the minimum data requirements
-     *
      * @param dimData data to be set as the provided dimension
-     * @param index ith dimension of the n-dimensional signal.
+     * @param index   ith dimension of the n-dimensional signal.
      * @return the MultiValuedSignal itself, so that the method can be chained.
+     * @see Comparable to learn more about the minimum data requirements
      */
     public MultiValuedTrace setDimension(
             Comparable<?>[][] dimData,
             int index) {
 
-        if(!data.isEmpty() && dimData.length != size())
+        if (!data.isEmpty() && dimData.length != size())
             throw new IllegalArgumentException("Mismatching space size ");
 
-        if(!data.isEmpty() && dimData[0].length != length)
+        if (!data.isEmpty() && dimData[0].length != length)
             throw new IllegalArgumentException("Mismatching time length");
 
         // Perhaps we should check if all required values exist

@@ -51,8 +51,8 @@ public class MfrMonitoring<S, T, R> {
     private final Map<String, Function<Parameters, Function<T, R>>> atoms;
     private final Map<String, Function<SpatialModel<S>,
             DistanceStructure<S, ?>>> distanceFunctions;
-    private final SignalDomain<R> domain;
     private final LocationService<Double, S> locationService;
+    private final SignalDomain<R> domain;
 
 
     //TODO: add locationService
@@ -60,11 +60,12 @@ public class MfrMonitoring<S, T, R> {
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                     DistanceStructure<S, ?>>> distanceFunctions,
-            SignalDomain<R> domain, LocationService<Double, S> locationService) {
+            SignalDomain<R> domain,
+            LocationService<Double, S> locationService) {
         super();
         this.atoms = atomicPropositions;
-        this.domain = domain;
         this.distanceFunctions = distanceFunctions;
+        this.domain = domain;
         this.locationService = locationService;
     }
 
@@ -75,7 +76,7 @@ public class MfrMonitoring<S, T, R> {
      * @param f the formula to monitor
      * @return the result of the monitoring process.
      */
-    public MfrMonitor<S, T, R> monitor(Formula f) {
+    public <K> MfrMonitor<S, T, R> monitor(Formula f) {
         return switch (f) {
             // Classic operators
             case AtomicFormula atomic -> generateAtomicMonitor(atomic);
@@ -97,7 +98,7 @@ public class MfrMonitoring<S, T, R> {
         };
     }
 
-    private <V> MfrSetMonitor<S, T, V> monitorSet(SetFormula f) {
+    private <V> MfrSetMonitor<S, T, R> monitorSet(SetFormula f) {
         return switch (f) {
             case MapFormula map -> generateMapMonitor(map);
             case FilterFormula filter -> generateFilterFormula(filter);
@@ -107,18 +108,19 @@ public class MfrMonitoring<S, T, R> {
         };
     }
 
-    private <V> MfrSetMonitor<S, T, V> mapToLocationSet(
+    private <V> MfrSetMonitor<S, T, R> mapToLocationSet(
             Formula f,
             Function<Formula, MfrMonitor<S, T, R>> m) {
-        return null;
+        return monitor(f);
     }
 
-    private MfrMonitor<S, T, R> illegalFormula(Formula f) {
+    private <K> MfrMonitor<S, T, K> illegalFormula(Formula f) {
         throw new IllegalArgumentException("Unsupported formula: " + f);
     }
 
-    private MfrMonitor<S, T, R> generateAtomicMonitor(AtomicFormula f) {
-        var atomicFunc = atoms.get(f.getAtomicId());
+    private <K> MfrMonitor<S, T, R> generateAtomicMonitor(AtomicFormula f) {
+        Function<Parameters, Function<T, R>> atomicFunc =
+                atoms.get(f.getAtomicId());
 
         if (atomicFunc == null) {
             throw new IllegalArgumentException("Unknown atomic ID " +
@@ -130,10 +132,10 @@ public class MfrMonitoring<S, T, R> {
         return new MfrMonitorAtomic<>(atomic);
     }
 
-    private MfrMonitor<S, T, R> generateBinaryMonitor(BinaryFormula<R> f) {
+    private <K> MfrMonitor<S, T, R> generateBinaryMonitor(BinaryFormula<R> f) {
         var operator = f.getOperator();
-        var leftArg = monitor(f.getLeftArgument());
-        var rightArg = monitor(f.getRightArgument());
+        MfrMonitor<S, T, R> leftArg = monitor(f.getLeftArgument());
+        MfrMonitor<S, T, R> rightArg = monitor(f.getRightArgument());
 
         return new MfrMonitorBinary<>(operator, leftArg, rightArg);
     }
@@ -162,28 +164,28 @@ public class MfrMonitoring<S, T, R> {
 //        }
 //    }
 
-    private MfrMonitor<S, T, R> generateSinceMonitor(SinceFormula f) {
-        var leftArg = monitor(f.getFirstArgument());
-        var rightArg = monitor(f.getSecondArgument());
+    private <K> MfrMonitor<S, T, R> generateSinceMonitor(SinceFormula f) {
+        MfrMonitor<S, T, R> leftArg = monitor(f.getFirstArgument());
+        MfrMonitor<S, T, R> rightArg = monitor(f.getSecondArgument());
         var interval = f.isUnbounded() ? null : f.getInterval();
         return new MfrMonitorSince<>(leftArg, interval, rightArg, domain);
     }
 
-    private <V> MfrMonitor<S, T, R> generateReduceMonitor(ReduceFormula<V, R> f) {
+    private <V> MfrMonitor<S, T, R> generateReduceMonitor(ReduceFormula<R, R> f) {
         var aggregator = f.getAggregator();
-        MfrSetMonitor<S, T, V> argMonitor = monitorSet(f.getArgument());
+        MfrSetMonitor<S, T, R> argMonitor = monitorSet(f.getArgument());
         var distanceFunction = distanceFunctions.get(f.getDistanceFunctionId());
         return new MfrMonitorReduce<>(argMonitor, aggregator,
                 distanceFunction, locationService);
     }
 
-    private <V> MfrSetMonitor<S, T, V> generateMapMonitor(MapFormula<V> f) {
-        MfrSetMonitor<S, T, V> argMonitor = monitorSet(f.getArgument());
+    private <V> MfrSetMonitor<S, T, R> generateMapMonitor(MapFormula<R> f) {
+        MfrSetMonitor<S, T, R> argMonitor = monitorSet(f.getArgument());
         return new MfrMonitorMap<>(f.getMapper(), argMonitor);
     }
 
-    private <V> MfrSetMonitor<S, T, V> generateFilterFormula(FilterFormula<V> f) {
-        MfrSetMonitor<S, T, V> argMonitor = monitorSet(f.getArgument());
+    private <V> MfrSetMonitor<S, T, R> generateFilterFormula(FilterFormula<R> f) {
+        MfrSetMonitor<S, T, R> argMonitor = monitorSet(f.getArgument());
         return new MfrMonitorFilter<>(f.getPredicate(), argMonitor);
     }
 }

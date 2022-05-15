@@ -21,9 +21,9 @@
 package eu.quanticol.moonlight.io;
 
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
-import eu.quanticol.moonlight.offline.signal.*;
-import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
+import eu.quanticol.moonlight.offline.signal.RecordHandler;
+import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.space.StaticLocationService;
 
@@ -37,47 +37,47 @@ import java.util.Optional;
 /**
  * This class is used to read a location service in CSV  format from a string or a file. The expected structure
  * is the following.
- *
- * The first line contains the declariatio of the number of locations in the considere spatial model:
+ * <p>
+ * The first line contains the declariation of the number of locations in the
+ * considered spatial model:
  *
  * <code>LOCATIONS n</code>
- *
+ * <p>
  * where <code>n</code> is an integer.
- *
+ * <p>
  * After that we can have a line containing either
  *
  * <code>DIRECTED</code>
- *
+ * <p>
  * or
  *
  * <code>UNDIRECTED</code>
- *
+ * <p>
  * that is used to declare that the forthcoming spatial models are directed or not. If omitted, models are handled
  * as directed.
- *
+ * <p>
  * The next line can contain either a declaration of a \emph{static} location service:
  *
  * <code>STATIC</code>
- *
+ * <p>
  * or the first time in the sequence of evolving spatial models:
  *
  * <code>TIME t</code>
- *
+ * <p>
  * where <code>t</code> is a (non negative) double.
- *
+ * <p>
  * In both the cases the content of the model is expressed via a sequence of rows having the following
  * structure:
  *
  * <code>l1;l2;v_1;...;v_k</code>
- *
+ * <p>
  * where <code>l1</code> and <code>l2</code> are the indexes (indexes start from 0!) of the two connected
  * locations, while <code>v_1;...;v_k</code> is the tuple of strings of values labelling the connecting edges.
- *
+ * <p>
  * When the service is not static, another line of the form <code>TIME t'</code> indicates the beginning
  * of a new graph model at time <code>t'</code>.
- *
+ * <p>
  * Empty lines and extra spaces are ignored.
- *
  */
 public class CsvLocationServiceReader extends AbstractFileByRowReader implements LocationServiceReader {
     @Override
@@ -96,9 +96,9 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         boolean isStatic = checkStatic(rows);
         boolean isDirected = checkDirected(rows);
         if (isStatic) {
-            return loadStaticLocationService(handler,size,isDirected,rows);
+            return loadStaticLocationService(handler, size, isDirected, rows);
         } else {
-            return loadDynamicLocationService(handler,size,isDirected,rows);
+            return loadDynamicLocationService(handler, size, isDirected, rows);
         }
     }
 
@@ -109,12 +109,12 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         while (current != null) {
             double time = extractTimeFromRow(current);
             GraphModel<MoonLightRecord> model = new GraphModel<>(size);
-            current = (rowIterator.hasNext()?rowIterator.next():null);
-            while ((current != null)&&(!current.getRow().startsWith("TIME"))) {
-                addEdgeToModel(handler,model,size,isDirected,current);
-                current = (rowIterator.hasNext()?rowIterator.next():null);
+            current = (rowIterator.hasNext() ? rowIterator.next() : null);
+            while ((current != null) && (!current.getRow().startsWith("TIME"))) {
+                addEdgeToModel(handler, model, size, isDirected, current);
+                current = (rowIterator.hasNext() ? rowIterator.next() : null);
             }
-            locationService.add(time,model);
+            locationService.add(time, model);
         }
         return locationService;
     }
@@ -122,7 +122,7 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
     private double extractTimeFromRow(Row row) throws IllegalFileFormatException {
         row.split(" ");
         if (!row.isDouble(1)) {
-            throw new IllegalFileFormatException(row.getLine(),"TIME <double> is expected!");
+            throw new IllegalFileFormatException(row.getLine(), "TIME <double> is expected!");
         }
         return Double.parseDouble(row.get(1));
     }
@@ -137,7 +137,7 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
             } while (rowIterator.hasNext());
         } catch (NoSuchElementException e) {
         }
-        throw new IllegalFileFormatException(1,"Time declaration is missing!");
+        throw new IllegalFileFormatException(1, "Time declaration is missing!");
     }
 
     private boolean checkStatic(List<Row> rows) {
@@ -153,51 +153,51 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         Iterator<Row> rowIterator = rows.iterator();
         shiftToStatic(rowIterator);
         while (rowIterator.hasNext()) {
-            addEdgeToModel(handler,model,size,isDirected,rowIterator.next());
+            addEdgeToModel(handler, model, size, isDirected, rowIterator.next());
         }
         return new StaticLocationService<>(model);
     }
 
     private void addEdgeToModel(RecordHandler handler, GraphModel<MoonLightRecord> model, int size, boolean isDirected, Row row) throws IllegalFileFormatException {
         row.split(";");
-        int src = getSource(row,size);
-        int trg = getTarget(row,size);
-        MoonLightRecord record = getRecord(handler,row);
-        model.add(src,record,trg);
+        int src = getSource(row, size);
+        int trg = getTarget(row, size);
+        MoonLightRecord record = getRecord(handler, row);
+        model.add(src, record, trg);
         if (!isDirected) {
-            model.add(trg,record,src);
+            model.add(trg, record, src);
         }
     }
 
     private MoonLightRecord getRecord(RecordHandler handler, Row row) throws IllegalFileFormatException {
-        if (row.elements.length != handler.size()+2) {
-            throw new IllegalFileFormatException(row.getLine(),"Wrong number of data!");
+        if (row.elements.length != handler.size() + 2) {
+            throw new IllegalFileFormatException(row.getLine(), "Wrong number of data!");
         }
         try {
-            return handler.fromStringArray(row.elements,2,row.elements.length);
+            return handler.fromStringArray(row.elements, 2, row.elements.length);
         } catch (IllegalArgumentException e) {
-            throw new IllegalFileFormatException(row.getLine(),e.getMessage());
+            throw new IllegalFileFormatException(row.getLine(), e.getMessage());
         }
     }
 
     private int getSource(Row row, int size) throws IllegalFileFormatException {
         if (!row.isInteger(0)) {
-            throw new IllegalFileFormatException(row.getLine(),"An integer is expected for the source location!");
+            throw new IllegalFileFormatException(row.getLine(), "An integer is expected for the source location!");
         }
         int src = Integer.parseInt(row.get(0));
-        if ((src<0)||(src>=size)) {
-            throw new IllegalFileFormatException(row.getLine(),"An integer between 0 and "+size+" is expected for the source location!");
+        if ((src < 0) || (src >= size)) {
+            throw new IllegalFileFormatException(row.getLine(), "An integer between 0 and " + size + " is expected for the source location!");
         }
         return src;
     }
 
     private int getTarget(Row row, int size) throws IllegalFileFormatException {
         if (!row.isInteger(1)) {
-            throw new IllegalFileFormatException(row.getLine(),"An integer is expected for the target location!");
+            throw new IllegalFileFormatException(row.getLine(), "An integer is expected for the target location!");
         }
         int trg = Integer.parseInt(row.get(1));
-        if ((trg<0)||(trg>=size)) {
-            throw new IllegalFileFormatException(row.getLine(),"An integer between 0 and "+size+" is expected for the target location!");
+        if ((trg < 0) || (trg >= size)) {
+            throw new IllegalFileFormatException(row.getLine(), "An integer between 0 and " + size + " is expected for the target location!");
         }
         return trg;
     }
@@ -206,7 +206,7 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
             if (row.getRow().startsWith("STATIC")) {
-                return ;
+                return;
             }
         }
     }
@@ -217,11 +217,11 @@ public class CsvLocationServiceReader extends AbstractFileByRowReader implements
             Row row = locationsSizeDeclarationRow.get();
             row.split(" ");
             if (!row.isInteger(1)) {
-                throw new IllegalFileFormatException(row.getLine(),"Malformed location size declaration!");
+                throw new IllegalFileFormatException(row.getLine(), "Malformed location size declaration!");
             }
-            return Integer.parseInt( row.get(1) );
+            return Integer.parseInt(row.get(1));
         }
-        throw new IllegalFileFormatException(1,"Declaration of number of locations in the model is missing!");
+        throw new IllegalFileFormatException(1, "Declaration of number of locations in the model is missing!");
     }
 
 }

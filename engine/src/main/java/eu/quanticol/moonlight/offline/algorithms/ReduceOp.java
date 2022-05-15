@@ -74,11 +74,11 @@ public class ReduceOp<S, R, V> {
 
     private MfrSignal<R> doCompute(IntFunction<MfrSignal<V>> setSignal,
                                    int[] locations) {
-        return new MfrSignal<>(size, i -> exec(i, setSignal.apply(i)),
+        return new MfrSignal<>(size, i -> reduce(i, setSignal.apply(i)),
                 locations);
     }
 
-    private Signal<R> exec(int i, MfrSignal<V> arg) {
+    private Signal<R> reduce(int i, MfrSignal<V> arg) {
         ParallelSignalCursor<V> cursor = arg.getSignalCursor(true);
         double t = cursor.getCurrentTime();
 
