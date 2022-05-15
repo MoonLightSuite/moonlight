@@ -34,11 +34,24 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
 
     @Override
     public SpatialTemporalSignal<R> monitor(SpatialTemporalSignal<T> signal) {
-        return doMonitor(signal, allLocations(signal.size()));
+        return doMonitor(signal, allLocations(signal.getNumberOfLocations()));
     }
 
     private int[] allLocations(int size) {
         return IntStream.range(0, size).toArray();
+    }
+
+    private MfrSignal<R> doMonitor(SpatialTemporalSignal<T> signal,
+                                   int[] locations) {
+        var distance = staticGetDistance();
+        IntFunction<int[]> locs = i -> getAllWithinDistance(i,
+                signal.getNumberOfLocations(),
+                distance);
+        IntFunction<MfrSignal<V>> arg = argMonitor.monitor(signal, locs);
+        ReduceOp<S, R, V> reduce = new ReduceOp<>(signal.getNumberOfLocations(),
+                locationService,
+                distanceFunction, aggregator);
+        return reduce.computeUnary(locations, arg);
     }
 
     private DistanceStructure<S, ?> staticGetDistance() {
@@ -49,19 +62,6 @@ public class MfrMonitorReduce<S, T, R, V> implements MfrMonitor<S, T, R> {
     public IntFunction<MfrSignal<R>> monitor(SpatialTemporalSignal<T> signal,
                                              IntFunction<int[]> locations) {
         return i -> doMonitor(signal, locations.apply(i));
-    }
-
-    private MfrSignal<R> doMonitor(SpatialTemporalSignal<T> signal,
-                                   int[] locations) {
-        var distance = staticGetDistance();
-        IntFunction<int[]> locs = i -> getAllWithinDistance(i,
-                signal.size(),
-                distance);
-        IntFunction<MfrSignal<V>> arg = argMonitor.monitor(signal, locs);
-        ReduceOp<S, R, V> reduce = new ReduceOp<>(signal.size(),
-                locationService,
-                distanceFunction, aggregator);
-        return reduce.computeUnary(locations, arg);
     }
 
 }

@@ -45,12 +45,12 @@ class MultiRawTrajectoryExtractorTest {
         t.process(data_good[1]);
 
         // We expect a result list of 1 element (the space has size 2)
-        assertEquals(1,t.result().size());
+        assertEquals(1, t.result().size());
 
         MultiValuedTrace data = t.result().iterator().next();
 
         // We expect a space size of 2
-        assertEquals(2, data.size());
+        assertEquals(2, data.getNumberOfLocations());
 
         // We expect a time span of 3
         assertEquals(3, data.getSignals().get(0).getEnd());
@@ -94,8 +94,8 @@ class MultiRawTrajectoryExtractorTest {
 
         // We are trying to get the results of incomplete input data
         assertThrows(ArrayIndexOutOfBoundsException.class,
-                        () -> t.process(data_bad_2[1])
-                    );
+                () -> t.process(data_bad_2[1])
+        );
     }
 
 
@@ -111,7 +111,7 @@ class MultiRawTrajectoryExtractorTest {
 
         @Override
         public MultiValuedTrace generateSignal(Float[][] data) {
-            MultiValuedTrace signal  = new MultiValuedTrace(space, time);
+            MultiValuedTrace signal = new MultiValuedTrace(space, time);
             signal.setDimension(data, 0).initialize();
 
             return signal;

@@ -58,7 +58,7 @@ public class SpatialTemporalMonitorUntil<S, T, R>
         var left = m1.monitor(locationService, signal);
         var right = m2.monitor(locationService, signal);
         return left.applyToSignal(
-                (s1, s2) -> TemporalOp.computeUntil(domain, s1, interval, s2),
-                right);
+                right, (s1, s2) -> TemporalOp.computeUntil(domain, s1, interval, s2)
+        );
     }
 }

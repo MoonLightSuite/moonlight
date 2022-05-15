@@ -34,23 +34,23 @@ public class CsvSpatialTemporalSignalWriter implements SpatialTemporalSignalWrit
 
     @Override
     public <S> void write(DataHandler<S> handler, SpatialTemporalSignal<S> signal, File file) throws IOException {
-        Files.write(file.toPath(),stringOf(handler,signal).getBytes());
+        Files.write(file.toPath(), stringOf(handler, signal).getBytes());
     }
 
     @Override
     public <S> String stringOf(DataHandler<S> handler, SpatialTemporalSignal<S> signal) {
         double[] timePoints = signal.getTimeArray();
-        String[][] elements = new String[signal.size()][timePoints.length];
-        signal.fill(timePoints,elements,handler::stringOf);
-        return combine(signal.size(),timePoints,elements);
+        String[][] elements = new String[signal.getNumberOfLocations()][timePoints.length];
+        signal.fill(timePoints, elements, handler::stringOf);
+        return combine(signal.getNumberOfLocations(), timePoints, elements);
     }
 
     private String combine(int size, double[] timePoints, String[][] elements) {
         StringBuilder toReturn = new StringBuilder();
-        toReturn.append("LOCATIONS "+size+"\n");
-        for( int i=0 ; i<timePoints.length ; i++ ) {
+        toReturn.append("LOCATIONS " + size + "\n");
+        for (int i = 0; i < timePoints.length; i++) {
             StringBuilder row = new StringBuilder(timePoints[i] + "");
-            for( int j=0 ; j<size ; j++ ) {
+            for (int j = 0; j < size; j++) {
                 row.append(";").append(elements[j][i]);
             }
             toReturn.append(row).append("\n");

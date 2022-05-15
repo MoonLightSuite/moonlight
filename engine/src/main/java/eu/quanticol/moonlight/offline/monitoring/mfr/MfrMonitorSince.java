@@ -65,7 +65,7 @@ public class MfrMonitorSince<S, T, R> implements MfrMonitor<S, T, R> {
         var left = m1.monitor(signal);
         var right = m2.monitor(signal);
         return left.applyToSignal(
-                (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
-                right);
+                right, (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2)
+        );
     }
 }

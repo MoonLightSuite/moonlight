@@ -88,32 +88,6 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
     }
 
     /**
-     * Given some Comparable data, it performs some checks and prepares it
-     * to be later added as the index dimension of the n-dimensional signal.
-     *
-     * @param dimData data to be set as the provided dimension
-     * @param index   ith dimension of the n-dimensional signal.
-     * @return the MultiValuedSignal itself, so that the method can be chained.
-     * @see Comparable to learn more about the minimum data requirements
-     */
-    public MultiValuedTrace setDimension(
-            Comparable<?>[][] dimData,
-            int index) {
-
-        if (!data.isEmpty() && dimData.length != size())
-            throw new IllegalArgumentException("Mismatching space size ");
-
-        if (!data.isEmpty() && dimData[0].length != length)
-            throw new IllegalArgumentException("Mismatching time length");
-
-        // Perhaps we should check if all required values exist
-        data.add(dimData);
-
-        return this;
-    }
-
-
-    /**
      * It generates an n-dimensional list, for the given space-time element,
      * based on the dimensions data stored, s.t.
      * (t1, l1) |-> (x1, ..., xn)
@@ -132,6 +106,30 @@ public class MultiValuedTrace extends SpatialTemporalSignal<List<Comparable<?>>>
         return signal;
     }
 
+    /**
+     * Given some Comparable data, it performs some checks and prepares it
+     * to be later added as the index dimension of the n-dimensional signal.
+     *
+     * @param dimData data to be set as the provided dimension
+     * @param index   ith dimension of the n-dimensional signal.
+     * @return the MultiValuedSignal itself, so that the method can be chained.
+     * @see Comparable to learn more about the minimum data requirements
+     */
+    public MultiValuedTrace setDimension(
+            Comparable<?>[][] dimData,
+            int index) {
+
+        if (!data.isEmpty() && dimData.length != getNumberOfLocations())
+            throw new IllegalArgumentException("Mismatching space size ");
+
+        if (!data.isEmpty() && dimData[0].length != length)
+            throw new IllegalArgumentException("Mismatching time length");
+
+        // Perhaps we should check if all required values exist
+        data.add(dimData);
+
+        return this;
+    }
 
     /**
      * @return the number of dimensions of the signal

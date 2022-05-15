@@ -38,11 +38,13 @@ import java.util.stream.IntStream;
  *
  * @author loreti
  */
-public class SpatialTemporalSignal<T> {
+public class SpatialTemporalSignal<T> extends STSignal<T> {
 
-    private final List<Signal<T>> signals;
-    private final int size;
-
+    /**
+     * Builds an `empty` spatio-temporal signal
+     *
+     * @param size number of locations of the signal
+     */
     public SpatialTemporalSignal(int size) {
         this(size, i -> new Signal<>());
     }
@@ -50,109 +52,92 @@ public class SpatialTemporalSignal<T> {
     /**
      * Requires <code>f</code> to be defined for all i < size
      *
-     * @param size number of locations
+     * @param size number of locations of the signal
      * @param f    mapping from locations to temporal signals
      */
     public SpatialTemporalSignal(int size, IntFunction<Signal<T>> f) {
-        this.signals = new ArrayList<>(size);
-        this.size = size;
-        init(size, f);
-    }
-
-    private void init(int size, IntFunction<Signal<T>> initFunction) {
-        for (int i = 0; i < size; i++) {
-            signals.add(i, initFunction.apply(i));
-        }
-    }
-
-    public <R> SpatialTemporalSignal<R> applyToSignal(
-            BiFunction<Signal<T>, Signal<T>, Signal<R>> f,
-            SpatialTemporalSignal<T> s2) {
-        checkSize(size(), s2.size());
-        return new SpatialTemporalSignal<>(size(),
-                (i -> f.apply(signals.get(i), s2.signals.get(i))));
-    }
-
-    public int size() {
-        return size;
-    }
-
-    protected static void checkSize(int inputSize, int baseSize) {
-        if (inputSize != baseSize) {
-            throw new IllegalArgumentException("Input mismatch with signal " +
-                    "size");
-        }
-
+        super(size, f);
     }
 
     public <R> SpatialTemporalSignal<R> apply(BiFunction<T, T, R> f,
-                                              SpatialTemporalSignal<T> s2) {
-        checkSize(size(), s2.size());
-        BooleanOp<T, R> booleanOp = new BooleanOp<>();
-        return new SpatialTemporalSignal<>(size(),
-                (i -> booleanOp.applyBinary(signals.get(i), f,
-                        s2.signals.get(i))));
+                                              SpatialTemporalSignal<T> s) {
+        BooleanOp<T, R> op = new BooleanOp<>();
+        return generate(s, i -> op.applyBinary(
+                getSignalAtLocation(i),
+                f,
+                s.getSignalAtLocation(i)));
+    }
+
+    private <R> SpatialTemporalSignal<R> generate(SpatialTemporalSignal<T> s,
+                                                  IntFunction<Signal<R>> f) {
+        checkSize(s.getNumberOfLocations());
+        return new SpatialTemporalSignal<>(getNumberOfLocations(), f);
+    }
+
+    @Override
+    public Signal<T> getSignalAtLocation(int location) {
+        return getSignals().get(location);
+    }
+
+    public <R> SpatialTemporalSignal<R> applyToSignal(
+            SpatialTemporalSignal<T> s,
+            BiFunction<Signal<T>, Signal<T>, Signal<R>> f) {
+        return generate(s, i -> f.apply(
+                getSignalAtLocation(i),
+                s.getSignalAtLocation(i)));
     }
 
     public void add(double t, T[] values) {
-        checkSize(values.length, size());
+        checkSize(values.length);
         add(t, (i -> values[i]));
     }
 
     public void add(double t, IntFunction<T> f) {
-        for (int i = 0; i < size; i++) {
-            signals.get(i).add(t, f.apply(i));
+        for (int i = 0; i < getNumberOfLocations(); i++) {
+            getSignalAtLocation(i).add(t, f.apply(i));
         }
     }
 
-    public <R> SpatialTemporalSignal<R> apply(Function<T, R> f) {
-        BooleanOp<T, R> booleanOp = new BooleanOp<>();
-        return new SpatialTemporalSignal<>(size(),
-                (i -> booleanOp.applyUnary(getSignals().get(i), f)));
+    public void add(double time, List<T> values) {
+        checkSize(values.size());
+        add(time, values::get);
     }
 
-    public List<Signal<T>> getSignals() {
-        return signals;
+    @Override
+    public <R> SpatialTemporalSignal<R> apply(Function<T, R> f) {
+        BooleanOp<T, R> booleanOp = new BooleanOp<>();
+        return new SpatialTemporalSignal<>(getNumberOfLocations(),
+                i -> booleanOp.applyUnary(getSignalAtLocation(i), f));
     }
 
     public <R> MfrSignal<R> selectApply(Function<T, R> f, int[] filter) {
         BooleanOp<T, R> booleanOp = new BooleanOp<>();
         IntFunction<Signal<R>> timeSignal =
                 i -> booleanOp.applyUnary(getSignals().get(i), f);
-        return new MfrSignal<>(size(), timeSignal, filter);
-    }
-
-    public int getNumberOfLocations() {
-        return size;
-    }
-
-    public void add(double time, List<T> values) {
-        checkSize(values.size(), size());
-        add(time, values::get);
+        return new MfrSignal<>(getNumberOfLocations(), timeSignal, filter);
     }
 
     public List<T> valuesAtT(double t) {
-        List<T> spSignal = new ArrayList<>(size());
-        for (int i = 0; i < size(); i++) {
-            spSignal.add(signals.get(i).getValueAt(t));
-        }
-        return spSignal;
+        List<T> values = new ArrayList<>(getNumberOfLocations());
+        getSignals().forEach(s -> values.add(s.getValueAt(t)));
+        return values;
     }
 
     public <R> SpatialTemporalSignal<R> applyToSignal(Function<Signal<T>,
             Signal<R>> f) {
-        return new SpatialTemporalSignal<>(size(),
-                (i -> f.apply(signals.get(i))));
+        return new SpatialTemporalSignal<>(getNumberOfLocations(),
+                (i -> f.apply(getSignalAtLocation(i))));
     }
 
+    @Override
     public ParallelSignalCursor<T> getSignalCursor(boolean forward) {
-        return new ParallelSignalCursor<>(signals.size(),
-                (i -> signals.get(i).getIterator(forward)));
+        return new ParallelSignalCursor<>(getNumberOfLocations(),
+                (i -> getSignalAtLocation(i).getIterator(forward)));
     }
 
     public double start() {
         double start = Double.NEGATIVE_INFINITY;
-        for (Signal<T> signal : signals) {
+        for (Signal<T> signal : getSignals()) {
             start = Math.max(start, signal.getStart());
         }
         return start;
@@ -160,7 +145,7 @@ public class SpatialTemporalSignal<T> {
 
     public double end() {
         double end = Double.POSITIVE_INFINITY;
-        for (Signal<T> signal : signals) {
+        for (Signal<T> signal : getSignals()) {
             end = Math.min(end, signal.getEnd());
         }
         return end;
@@ -173,27 +158,26 @@ public class SpatialTemporalSignal<T> {
      * @return a 3d-double-array of [locations][time point][value]
      */
     public double[][][] toArray(ToDoubleFunction<T> f) {
+        int locs = getNumberOfLocations();
         double[] timePoints = getTimeArray();
-        double[][][] toReturn = new double[size][][];
-        IntStream.range(0, size)
+        double[][][] toReturn = new double[locs][][];
+        IntStream.range(0, locs)
                 .forEach(i ->
-                        toReturn[i] = signals.get(i).arrayOf(timePoints, f));
+                        toReturn[i] = getSignalAtLocation(i).arrayOf(timePoints, f));
         return toReturn;
     }
 
     public double[] getTimeArray() {
         Set<Double> timeSet = new HashSet<>();
-        for (Signal<T> s : this.signals) {
-            timeSet.addAll(s.getTimeSet());
-        }
+        getSignals().forEach(s -> timeSet.addAll(s.getTimeSet()));
         return timeSet.stream().sorted()
                 .distinct()
                 .mapToDouble(d -> d).toArray();
     }
 
     public <R> void fill(double[] timePoints, R[][] data, Function<T, R> f) {
-        for (int i = 0; i < size; i++) {
-            signals.get(i).fill(timePoints, data[i], f);
+        for (int i = 0; i < getNumberOfLocations(); i++) {
+            getSignalAtLocation(i).fill(timePoints, data[i], f);
         }
     }
 }
