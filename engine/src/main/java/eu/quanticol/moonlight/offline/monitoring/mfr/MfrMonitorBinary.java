@@ -24,7 +24,7 @@ public class MfrMonitorBinary<S, T, R> implements MfrMonitor<S, T, R> {
             SpatialTemporalSignal<T> signal) {
         var left = leftArg.monitor(signal);
         var right = rightArg.monitor(signal);
-        return SpatialTemporalSignal.apply(left, operator, right);
+        return left.apply(operator, right);
     }
 
     @Override

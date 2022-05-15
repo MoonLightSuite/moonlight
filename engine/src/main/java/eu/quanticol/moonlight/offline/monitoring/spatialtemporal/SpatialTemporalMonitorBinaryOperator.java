@@ -20,11 +20,11 @@
 
 package eu.quanticol.moonlight.offline.monitoring.spatialtemporal;
 
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 /**
  * Strategy to interpret binary logic operators on the signal of interest.
@@ -32,34 +32,30 @@ import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
  * @param <S> Spatial Graph Edge Type
  * @param <T> Signal Trace Type
  * @param <R> Semantic Interpretation Semiring Type
- *
  * @see SpatialTemporalMonitor
  */
 public class SpatialTemporalMonitorBinaryOperator<S, T, R>
-		implements SpatialTemporalMonitor<S, T, R>
-{
+        implements SpatialTemporalMonitor<S, T, R> {
 
-	private SpatialTemporalMonitor<S, T, R> m1;
-	private BiFunction<R, R, R> op;
-	private SpatialTemporalMonitor<S, T, R> m2;
+    private final SpatialTemporalMonitor<S, T, R> m1;
+    private final BiFunction<R, R, R> op;
+    private final SpatialTemporalMonitor<S, T, R> m2;
 
-	public SpatialTemporalMonitorBinaryOperator(
-			SpatialTemporalMonitor<S, T, R> m1,
-			BinaryOperator<R> op,
-			SpatialTemporalMonitor<S, T, R> m2)
-	{
-		this.m1 = m1;
-		this.op = op;
-		this.m2 = m2;
-	}
+    public SpatialTemporalMonitorBinaryOperator(
+            SpatialTemporalMonitor<S, T, R> m1,
+            BinaryOperator<R> op,
+            SpatialTemporalMonitor<S, T, R> m2) {
+        this.m1 = m1;
+        this.op = op;
+        this.m2 = m2;
+    }
 
-	@Override
-	public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
-											SpatialTemporalSignal<T> signal)
-	{
-		return SpatialTemporalSignal.apply(m1.monitor(locationService, signal),
-										   op,
-										   m2.monitor(locationService, signal));
-	}
+    @Override
+    public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
+                                            SpatialTemporalSignal<T> signal) {
+        var left = m1.monitor(locationService, signal);
+        var right = m2.monitor(locationService, signal);
+        return left.apply(op, right);
+    }
 
 }

@@ -62,9 +62,10 @@ public class MfrMonitorSince<S, T, R> implements MfrMonitor<S, T, R> {
 
     @Override
     public SpatialTemporalSignal<R> monitor(SpatialTemporalSignal<T> signal) {
-        return SpatialTemporalSignal.applyToSignal(
-                m1.monitor(signal),
+        var left = m1.monitor(signal);
+        var right = m2.monitor(signal);
+        return left.applyToSignal(
                 (s1, s2) -> TemporalOp.computeSince(domain, s1, interval, s2),
-                m2.monitor(signal));
+                right);
     }
 }
