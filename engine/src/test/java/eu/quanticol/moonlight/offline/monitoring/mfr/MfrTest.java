@@ -65,7 +65,8 @@ class MfrTest {
                         new MapFormula<Double>(x -> x + 10, b)),
                 domainR::conjunction);
 
-        System.out.println(m.monitor(f0).monitor(signal));
+        var output = m.monitor(f0).monitor(signal).getSignals();
+        System.out.println(output);
     }
 
     private Double sum(List<Double> values) {

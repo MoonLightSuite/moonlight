@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 public abstract class STSignal<T> {
     private final List<Signal<T>> signals;
@@ -33,7 +34,16 @@ public abstract class STSignal<T> {
     public abstract ParallelSignalCursor<T> getSignalCursor(boolean forward);
 
     public abstract Signal<T> getSignalAtLocation(int location);
-    
+
     public abstract <R> STSignal<R> apply(Function<T, R> f);
+
+    @Override
+    public String toString() {
+        var output = IntStream.range(0, getNumberOfLocations())
+                .mapToObj(loc -> "loc=" + loc +
+                        ", signals=" + signals.get(loc).toString() + "; ")
+                .reduce(String::concat);
+        return "[" + output.orElse("<Empty Signal>") + "]";
+    }
 
 }

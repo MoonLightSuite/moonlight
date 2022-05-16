@@ -37,7 +37,7 @@ import java.util.function.IntFunction;
 import static eu.quanticol.moonlight.offline.algorithms.mfr.MfrAlgorithm.getAllWithinDistance;
 
 /**
- * Algorithm for Somewhere and Everywhere Computation
+ * Algorithm for Reduce operator
  */
 public class ReduceOp<S, R, V> {
     private final Function<List<V>, R> aggregator;
@@ -53,13 +53,6 @@ public class ReduceOp<S, R, V> {
         this.locSvc = locSvc;
         this.distance = distance;
         this.aggregator = aggregator;
-    }
-
-    @SafeVarargs
-    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors) {
-        return Arrays.stream(cursors)
-                .map(c -> !c.isCompleted())
-                .reduce(true, (c1, c2) -> c1 && c2);
     }
 
     public MfrSignal<R> computeUnary(int[] locationsSet,
@@ -81,11 +74,8 @@ public class ReduceOp<S, R, V> {
     private Signal<R> reduce(int i, MfrSignal<V> arg) {
         ParallelSignalCursor<V> cursor = arg.getSignalCursor(true);
         double t = cursor.getCurrentTime();
-
         Signal<R> result = new Signal<>();
-
-        SpaceIterator<Double, S> spaceItr = new SpaceIterator<>(locSvc,
-                distance);
+        var spaceItr = new SpaceIterator<>(locSvc, distance);
         spaceItr.init(t);
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
             DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
@@ -105,6 +95,13 @@ public class ReduceOp<S, R, V> {
             t = moveSpatialModel(tNext, spaceItr);
         }
         return result;
+    }
+
+    @SafeVarargs
+    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors) {
+        return Arrays.stream(cursors)
+                .map(c -> !c.isCompleted())
+                .reduce(true, (c1, c2) -> c1 && c2);
     }
 
     private Double moveSpatialModel(@NotNull Double t, SpaceIterator<Double, S> spaceItr) {

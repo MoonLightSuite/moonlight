@@ -4,27 +4,24 @@ import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
 import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
 import eu.quanticol.moonlight.offline.signal.STSignal;
 import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SignalCursor;
 
+import java.util.Arrays;
 import java.util.function.*;
 import java.util.stream.IntStream;
 
 public class MfrSignal<T> extends STSignal<T> {
     private final int[] locations;
 
-    public MfrSignal(int size, IntFunction<Signal<T>> generator,
-                     int[] locations) {
-        super(size, partialFunction(generator, locations));
-        this.locations = locations;
+    public MfrSignal(int size, IntFunction<Signal<T>> generator) {
+        super(size, generator);
+        this.locations = IntStream.range(1, size).toArray();
     }
 
-    private static <A> IntFunction<A> partialFunction(IntFunction<A> f,
-                                                      int[] set) {
-        return i -> {
-            if (contains(i, set)) {
-                return f.apply(i);
-            }
-            return null;
-        };
+    public MfrSignal(int size, IntFunction<Signal<T>> generator,
+                     int[] locations) {
+        super(size, generator);
+        this.locations = locations;
     }
 
     private static boolean contains(int target, int[] elements) {
@@ -36,15 +33,41 @@ public class MfrSignal<T> extends STSignal<T> {
         return false;
     }
 
-    public MfrSignal(int size, IntFunction<Signal<T>> generator) {
-        super(size, generator);
-        this.locations = IntStream.range(1, size).toArray();
+    //    private static <A> IntFunction<A> partialFunction(IntFunction<A> f,
+//                                                      int[] set) {
+//        return i -> {
+//            if (contains(i, set)) {
+//                return f.apply(i);
+//            } else {
+//                var error = "Signal undefined at location " + i + "!";
+//                throw new IllegalArgumentException(error);
+//            }
+//        };
+//    }
+
+    public int[] getLocationsSet() {
+        return locations;
     }
 
     @Override
     public <R> MfrSignal<R> apply(Function<T, R> f) {
         return new MfrSignal<>(getNumberOfLocations(),
-                i -> mappedSignal(i, f), locations);
+                i -> partialFunction(i, j -> mappedSignal(j, f)), locations);
+    }
+
+    private <A> A partialFunction(int location, IntFunction<A> partialValue) {
+        if (hasLocation(location) >= 0) {
+            return partialValue.apply(location);
+        } else {
+            var error = "Signal undefined at location " + location + "!";
+            //throw new IllegalArgumentException(error);
+            // TODO: we should handle this in some way
+            return null;
+        }
+    }
+
+    private int hasLocation(int location) {
+        return Arrays.binarySearch(locations, location);
     }
 
     private <R> Signal<R> mappedSignal(int l, Function<T, R> f) {
@@ -54,12 +77,17 @@ public class MfrSignal<T> extends STSignal<T> {
 
     @Override
     public Signal<T> getSignalAtLocation(int location) {
-        return getSignals().get(locations[location]);
+        var position = hasLocation(location);
+        if (position >= 0) {
+            return getSignals().get(position);
+        }
+        var error = "The signal is not defined at the given location";
+        throw new IllegalArgumentException(error);
     }
 
     public MfrSignal<T> filter(Predicate<T> p) {
         return new MfrSignal<>(getNumberOfLocations(),
-                i -> filteredSignal(i, p), locations);
+                i -> partialFunction(i, j -> filteredSignal(i, p)), locations);
     }
 
     private Signal<T> filteredSignal(int l, Predicate<T> p) {
@@ -69,9 +97,9 @@ public class MfrSignal<T> extends STSignal<T> {
 
     @Override
     public ParallelSignalCursor<T> getSignalCursor(boolean forward) {
-        return new ParallelSignalCursor<>(locations.length,
-                i -> getSignalAtLocation(i).getIterator(forward)
-        );
+        IntFunction<SignalCursor<Double, T>> cursor =
+                l -> getSignalAtLocation(l).getIterator(forward);
+        return new MfrCursor<>(locations, cursor);
     }
 
     public MfrSignal<T> combine(
@@ -92,5 +120,4 @@ public class MfrSignal<T> extends STSignal<T> {
         return booleanOp.applyBinary(s1.getSignalAtLocation(i), f,
                 s2.getSignalAtLocation(i));
     }
-
 }
