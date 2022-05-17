@@ -14,6 +14,7 @@ class MfrCursorTest {
         var cursors = basicCursorsWithOffset();
         var parallelCursor = new MfrCursor<>(cursorLocations, cursors::get);
 
+        assertEquals(2, parallelCursor.getCursors().size());
         assertFalse(parallelCursor.areSynchronized());
     }
 
@@ -45,7 +46,7 @@ class MfrCursorTest {
         var parallelCursor = new MfrCursor<>(cursorLocations, cursors::get);
         var cursor = parallelCursor.getCursorAtLocation(1);
 
-        assertEquals(cursors.get(0), cursor);
+        assertEquals(cursors.get(1), cursor);
     }
 
 }

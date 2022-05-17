@@ -31,7 +31,7 @@ public abstract class STSignal<T> {
         return signals.size();
     }
 
-    public abstract ParallelSignalCursor<T> getSignalCursor(boolean forward);
+    public abstract ParallelSignalCursor1<T> getSignalCursor(boolean forward);
 
     public abstract Signal<T> getSignalAtLocation(int location);
 

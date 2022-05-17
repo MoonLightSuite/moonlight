@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpaceIterator;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor1;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-
-import static eu.quanticol.moonlight.offline.algorithms.mfr.MfrAlgorithm.getAllWithinDistance;
 
 /**
  * Algorithm for Reduce operator
@@ -55,40 +53,38 @@ public class ReduceOp<S, R, V> {
         this.aggregator = aggregator;
     }
 
-    public MfrSignal<R> computeUnary(int[] locationsSet,
+    public MfrSignal<R> computeUnary(int[] definitionSet,
                                      IntFunction<MfrSignal<V>> s) {
 
         if (!locSvc.isEmpty()) {
-            return doCompute(s, locationsSet);
+            return doCompute(s, definitionSet);
         }
         throw new UnsupportedOperationException("Invalid location service " +
                 "passed");
     }
 
     private MfrSignal<R> doCompute(IntFunction<MfrSignal<V>> setSignal,
-                                   int[] locations) {
-        return new MfrSignal<>(size, i -> reduce(i, setSignal.apply(i)),
-                locations);
+                                   int[] definitionSet) {
+        return new MfrSignal<>(size, i -> reduce(setSignal.apply(i)),
+                definitionSet);
     }
 
-    private Signal<R> reduce(int i, MfrSignal<V> arg) {
-        ParallelSignalCursor<V> cursor = arg.getSignalCursor(true);
+    private Signal<R> reduce(MfrSignal<V> arg) {
+        ParallelSignalCursor1<V> cursor = arg.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         Signal<R> result = new Signal<>();
         var spaceItr = new SpaceIterator<>(locSvc, distance);
         spaceItr.init(t);
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
-            DistanceStructure<S, ?> ds = spaceItr.generateDistanceStructure();
-            var locationSet = getAllWithinDistance(i, size, ds);
             IntFunction<V> spatialSignal = cursor.getCurrentValue();
-            List<V> values =
-                    Arrays.stream(locationSet).mapToObj(spatialSignal).toList();
+            var values =
+                    Arrays.stream(arg.getLocationsSet()).mapToObj(spatialSignal).toList();
             R aggregated = aggregator.apply(values);
             result.add(t, aggregated);
             double tNext = cursor.forwardTime();
             spaceItr.forEach(tNext, (itT, itDs) -> {
                 List<V> itValues =
-                        Arrays.stream(locationSet).mapToObj(spatialSignal).toList();
+                        Arrays.stream(arg.getLocationsSet()).mapToObj(spatialSignal).toList();
                 R itAggregated = aggregator.apply(itValues);
                 result.add(itT, itAggregated);
             });
@@ -98,7 +94,7 @@ public class ReduceOp<S, R, V> {
     }
 
     @SafeVarargs
-    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors) {
+    private static <C> boolean isNotCompleted(ParallelSignalCursor1<C>... cursors) {
         return Arrays.stream(cursors)
                 .map(c -> !c.isCompleted())
                 .reduce(true, (c1, c2) -> c1 && c2);

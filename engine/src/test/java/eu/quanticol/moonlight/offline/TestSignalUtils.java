@@ -23,7 +23,7 @@ public class TestSignalUtils {
         var second2 = new Segment<>(10.0, false);
         var c1 = new OfflineSignalCursor<>(forward, first1, second1);
         var c2 = new OfflineSignalCursor<>(forward, first2, second2);
-        return List.of(c1, c2);
+        return List.of(c1, c2, c1);
     }
 
 

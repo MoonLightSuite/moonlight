@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.offline.signal.mfr;
 
 import eu.quanticol.moonlight.offline.algorithms.BooleanOp;
-import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor;
+import eu.quanticol.moonlight.offline.signal.ParallelSignalCursor1;
 import eu.quanticol.moonlight.offline.signal.STSignal;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SignalCursor;
@@ -96,7 +96,7 @@ public class MfrSignal<T> extends STSignal<T> {
     }
 
     @Override
-    public ParallelSignalCursor<T> getSignalCursor(boolean forward) {
+    public ParallelSignalCursor1<T> getSignalCursor(boolean forward) {
         IntFunction<SignalCursor<Double, T>> cursor =
                 l -> getSignalAtLocation(l).getIterator(forward);
         return new MfrCursor<>(locations, cursor);
