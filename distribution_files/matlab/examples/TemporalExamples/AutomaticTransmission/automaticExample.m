@@ -85,7 +85,16 @@ time_bounds              = [   4,   8,  10,  20];
 %this object is an implementation of ScriptLoader class, please 
 %refer to the doc of this class for more details (ex. write in console 
 %"doc ScriptLoader" ) please, open multiple_spec.mls 
-moonlightScript = ScriptLoader.loadFromFile("multiple_spec");
+
+% script = [
+% "signal { real v_speed; real e_speed; int gear;}",...
+% "domain boolean;",... 
+% "formula Spec1(real omega) = globally [0, 0.2] ( e_speed < omega );",...
+% "formula Spec2(real omega, real v) = globally {( e_speed < omega ) & ( v_speed < v )} ;"
+% ];
+% moonlightScript = ScriptLoader.loadFromText(script);
+
+moonlightScript = ScriptLoader.loadFromFile("multiple_spec.mls");
 prop_name = "Spec2";
 
 moonlightScript.setBooleanDomain();

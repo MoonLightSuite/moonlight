@@ -1,3 +1,4 @@
+%%%% to run this code you need the  Optimization Toolbox for %% fmincon and  Global Optimization Toolbox for %% PSO
 tic;
 clear;       % clear all the memory
 close all;   % close all the open windows
@@ -57,36 +58,24 @@ ub = [5 90 95];  %'upper bounds time and throttle values
 
 %% Optimize the function for robustness
 
-% %% fmincon
-% x0 = [step_time0 initial_value0 final_value0];
-% options = optimoptions('fmincon','Display','iter','PlotFcns',@optimplotfval);%'OutputFcn',@outfun);
-% fun = @(x)my_objective(x, model, solver,  dt);
-% nonlconst = @(x)my_constrfunc(x, model, solver, dt);
-% [x, fval] = fmincon(fun,x0,[], [], [], [], lb, ub, nonlconst, options);
-
-% % %% PSO
-options = optimoptions('particleswarm','Display','iter','PlotFcns','pswplotbestf','OutputFcn',@outfunps);
-fun = @(x)my_objective(x, model, solver,dt);
-nvars = 3; % number of decision variables
-%options.HybridFcn = @fmincon;
-[x,fval,exitflag,output] = particleswarm(fun,nvars,lb, ub, options);
-save('OptInput','x')
-step_time = x(1);
-initial_value = (x(2));
-final_value = (x(3));
-
-% 
-% % %% Simulated annealing
-% %options = optimoptions('@simulannealbnd,'iter','PlotFcns','pswplotbestf','OutputFcn');
-% x0 = [step_time0 initial_value0 final_value0];
+%% fmincon
+x0 = [step_time0 initial_value0 final_value0];
+options = optimoptions('fmincon','Display','iter','PlotFcns',@optimplotfval);%'OutputFcn',@outfun);
+fun = @(x)my_objective(x, model, solver,  dt);
+nonlconst = @(x)my_constrfunc(x, model, solver, dt);
+[x, fval] = fmincon(fun,x0,[], [], [], [], lb, ub, nonlconst, options);
+ 
+% %% PSO
+% options = optimoptions('particleswarm','Display','iter','PlotFcns','pswplotbestf','OutputFcn',@outfunps);
 % fun = @(x)my_objective(x, model, solver,dt);
 % nvars = 3; % number of decision variables
 % %options.HybridFcn = @fmincon;
-% [x,fval,exitflag,output] = simulannealbnd(fun,x0,lb, ub);
+% [x,fval,exitflag,output] = particleswarm(fun,nvars,lb, ub, options);
 % save('OptInput','x')
 % step_time = x(1);
 % initial_value = (x(2));
 % final_value = (x(3));
+
 
 %% Save and Close
 save_system(system);

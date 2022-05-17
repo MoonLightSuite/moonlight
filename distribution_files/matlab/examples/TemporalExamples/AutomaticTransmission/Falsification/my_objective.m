@@ -58,7 +58,7 @@ time_bounds              = 4;
 
 %% Monitoring property with Moonlight
 
-moonlightScript = ScriptLoader.loadFromFile("multiple_spec");
+moonlightScript = ScriptLoader.loadFromFile("multiple_spec.mls");
 prop_name = "Spec2";
 
 moonlightScript.setMinMaxDomain();

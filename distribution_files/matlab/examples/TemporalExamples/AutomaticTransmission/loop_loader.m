@@ -1,7 +1,7 @@
 run('cartpole_main.m')
 
-open_system('cartpole')
-load_system('cartpole')
+open_system('cartpoleF')
+load_system('cartpoleF')
 
 in = Simulink.SimulationInput();
 
