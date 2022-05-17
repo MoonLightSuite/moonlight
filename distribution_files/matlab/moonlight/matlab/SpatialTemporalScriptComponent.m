@@ -44,8 +44,8 @@ classdef SpatialTemporalScriptComponent
             end
             javaGraphModel = self.toJavaGraphModel(graph);
             javaSignal = self.toJavaSignal(values);
-            result=self.ScriptComponent.monitorToObjectArrayAdjacencyList(time,javaGraphModel,time,javaSignal,parameters);
-        end
+            result=self.ScriptComponent.ScriptComponent.monitorToDoubleArrayAdjacencyList(time,javaGraphModel,time,javaSignal,parameters);
+        end 
     end
     methods (Access = private)
          function graph = toJavaGraphModel(~,diagram)
