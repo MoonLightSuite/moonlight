@@ -13,7 +13,6 @@ import eu.quanticol.moonlight.formula.mfr.ReduceFormula;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.space.ImmutableGraphModel;
 import eu.quanticol.moonlight.util.Utils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -53,19 +52,13 @@ class MfrTest {
         var a = new AtomicFormula("a");
         var b = new AtomicFormula("b");
 
-        var f0 = new BinaryFormula<>(a,
-                new ReduceFormula<>("basic",
-                        this::sum,
-                        b),
-                domainR::conjunction);
-
         var f1 = new BinaryFormula<>(a,
                 new ReduceFormula<>("basic",
                         this::sum,
                         new MapFormula<Double>(x -> x + 10, b)),
                 domainR::conjunction);
 
-        var output = m.monitor(f0).monitor(signal).getSignals();
+        var output = m.monitor(f1).monitor(signal).getSignals();
         System.out.println(output);
     }
 
