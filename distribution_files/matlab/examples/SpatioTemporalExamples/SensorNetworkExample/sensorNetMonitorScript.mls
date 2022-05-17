@@ -13,7 +13,7 @@ formula Pnest = everywhere(dist)[0, inf]P3;
 formula ReachQ = (temperature > 10)reach(hop)[0, 10] (battery > 0.5);
 formula SensNetk = somewhere(hop)[0, 3] (battery > 0.5);
 formula SensBool = everywhere(hop)[0, 5] (nodeType==2);
-/* formula Pbattery = {!atom} => {!atom reach (hop)[0, 2] (battery > 0.5)}; */
+formula Pbattery = {!atom} -> {!atom reach (hop)[0, 2] (battery > 0.5)};
 formula P6 = eventually(battery > 0.5);
 formula PT1 = globally P4;
 formula PT2 = everywhere(dist)[0, inf]{eventually[0,5](battery > 0.5)};
