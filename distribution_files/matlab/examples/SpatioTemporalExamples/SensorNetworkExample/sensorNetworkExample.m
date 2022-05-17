@@ -28,11 +28,24 @@ inputModel =spatialModelv;
 
 
 %% monitor
+
+script= [
+"signal { int nodeType; real battery; real temperature; }",...
+"space {edges { int hop; real dist; }}",...
+"domain boolean;",... 
+"formula P1 = ( nodeType==3 ) reach (hop)[0, 1] (( nodeType==1) | (nodeType==2 ));",...
+"formula Ppar (int k) = ( nodeType==3 ) reach (hop)[0, k] ( nodeType== 1);",...
+"formula P2 = escape(hop)[5,inf] (battery > 0.5) ;",...
+"formula P3 = somewhere(dist)[0,250] (battery > 0.5);"
+];
+
 % loading of the script
 %generate a moonlightScript object from the script file multipleMonitors.mls (contained in this folder)
 %this object is an implementation of ScriptLoader class, please refer to 
 %the doc of this class for more details (ex. write in console "doc ScriptLoader" )
+
 moonlightScript = ScriptLoader.loadFromFile("sensorNetMonitorScript.mls");
+%moonlightScript = ScriptLoader.loadFromText(script);
 
 % list of formulas in the monitor object
 moonlightScript.getMonitors()
