@@ -13,6 +13,7 @@ import eu.quanticol.moonlight.formula.mfr.ReduceFormula;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.space.ImmutableGraphModel;
 import eu.quanticol.moonlight.util.Utils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

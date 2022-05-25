@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import static eu.quanticol.moonlight.offline.TestSignalUtils.basicSignal;
+import static eu.quanticol.moonlight.offline.TestSignalUtils.basicSetSignal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -16,7 +16,7 @@ class MfrAlgorithmsTest {
 
     @Test
     void basicMapWorksCorrectly() {
-        MfrSignal<Integer> signal = basicSignal(TOTAL_LOCATIONS, locationsSet);
+        MfrSignal<Integer> signal = basicSetSignal(TOTAL_LOCATIONS, locationsSet);
         UnaryOperator<Integer> even = x -> x % 2;
         MfrAlgorithm<Integer> sp = new MfrAlgorithm<>(false);
 
@@ -32,7 +32,7 @@ class MfrAlgorithmsTest {
 
     @Test
     void basicFilterWorksCorrectly() {
-        MfrSignal<Integer> signal = basicSignal(TOTAL_LOCATIONS, locationsSet);
+        MfrSignal<Integer> signal = basicSetSignal(TOTAL_LOCATIONS, locationsSet);
         Predicate<Integer> even = x -> x % 2 == 0;
         MfrAlgorithm<Integer> sp = new MfrAlgorithm<>(false);
 

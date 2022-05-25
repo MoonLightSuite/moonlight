@@ -54,14 +54,6 @@ public class SpatialOp<S, R> {
         spaceItr = new SpaceIterator<>(l, distance);
     }
 
-    @SafeVarargs
-    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors) {
-        return
-                Arrays.stream(cursors)
-                        .map(c -> !c.isCompleted())
-                        .reduce(true, (c1, c2) -> c1 && c2);
-    }
-
     public SpatialTemporalSignal<R> computeUnary(SpatialTemporalSignal<R> s) {
         outputInit(s.getNumberOfLocations());
         if (!spaceItr.isLocationServiceEmpty()) {
@@ -89,6 +81,14 @@ public class SpatialOp<S, R> {
             );
             t = moveSpatialModel(tNext);
         }
+    }
+
+    @SafeVarargs
+    private static <C> boolean isNotCompleted(ParallelSignalCursor<C>... cursors) {
+        return
+                Arrays.stream(cursors)
+                        .map(c -> !c.isCompleted())
+                        .reduce(true, (c1, c2) -> c1 && c2);
     }
 
     private Double moveSpatialModel(@NotNull Double t) {
@@ -123,29 +123,29 @@ public class SpatialOp<S, R> {
             double t = Math.max(s1.start(), s2.start());
 
             spaceItr.init(t);
+            c1.move(t);
+            c2.move(t);
 
             //Loop invariant: (current.getFirst() <= time) &&
             //                ((next == null) || (time < next.getFirst()))
-            c1.move(t);
-            c2.move(t);
             while (!Double.isNaN(t) && isNotCompleted(c1, c2)) {
-                DistanceStructure<S, ?> f = spaceItr.generateDistanceStructure();
-                IntFunction<R> spatialSignal1 = c1.getCurrentValue();
-                IntFunction<R> spatialSignal2 = c2.getCurrentValue();
+                var ds = spaceItr.generateDistanceStructure();
+                var spatialSignal1 = c1.getCurrentValue();
+                var spatialSignal2 = c2.getCurrentValue();
 
-                result.add(t,
-                        reach(domain, spatialSignal1, spatialSignal2, f));
-                double tNext = Math.min(c1.nextTime(), c2.nextTime());
-                c1.move(tNext);
-                c2.move(tNext);
+                result.add(t, reach(domain, spatialSignal1, spatialSignal2,
+                        ds));
 
-                spaceItr.forEach(tNext, (itT, itDs) -> {
+                spaceItr.forEach(t, (itT, itDs) -> {
                     //result.add(t, escape(domain, values, f));
                     result.add(itT,
-                            reach(domain, spatialSignal1, spatialSignal2, f));
+                            reach(domain, spatialSignal1, spatialSignal2,
+                                    itDs));
                 });
 
-                t = tNext;
+                t = Math.min(c1.nextTime(), c2.nextTime());
+                c1.move(t);
+                c2.move(t);
                 if (spaceItr.isNextSpaceModelMeaningful()) {
                     spaceItr.shiftSpatialModel();
                 }

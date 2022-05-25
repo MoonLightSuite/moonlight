@@ -43,6 +43,7 @@ class ParallelSignalCursorTest {
     void requestingCursorAtValidLocation() {
         var cursors = basicCursorsWithOffset();
         var parallelCursor = new ParallelSignalCursor<>(2, cursors::get);
+
         var cursor = parallelCursor.getCursorAtLocation(1);
 
         assertEquals(cursors.get(1), cursor);
@@ -91,10 +92,6 @@ class ParallelSignalCursorTest {
 
     @Test
     void getCurrentValue() {
-    }
-
-    @Test
-    void getCursorAtLocation() {
     }
 
     @Test

@@ -78,10 +78,13 @@ public class SpatialOp
         results = new ArrayList<>();
         addResult(t, tNext, op.apply(value::get, f));
         T finalTNext = tNext;
-        spaceIterator.forEach(tNext, (itT, itDs) -> {
-            addResult(itT, finalTNext, op.apply(value::get, itDs));
-        });
-        //spaceIterator.computeOp(t, tNext, f, value::get);
+        spaceIterator.forEach(tNext, (itT, itDs) ->
+                addResult(itT, finalTNext, op.apply(value::get, itDs))
+        );
+    }
+
+    protected void addResult(T start, T end, IntFunction<R> value) {
+        results.add(new Update<>(start, end, computeSS(value, locations)));
     }
 
     private List<R> computeSS(IntFunction<R> spatialSignal, int size) {
@@ -89,10 +92,6 @@ public class SpatialOp
                 .boxed()
                 .map(spatialSignal::apply)
                 .toList();
-    }
-
-    protected void addResult(T start, T end, IntFunction<R> value) {
-        results.add(new Update<>(start, end, computeSS(value, locations)));
     }
 
     public TimeChain<T, List<R>> computeUnaryChain(TimeChain<T, List<R>> ups) {

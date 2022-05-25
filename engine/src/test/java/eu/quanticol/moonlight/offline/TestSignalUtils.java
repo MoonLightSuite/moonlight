@@ -1,9 +1,6 @@
 package eu.quanticol.moonlight.offline;
 
-import eu.quanticol.moonlight.offline.signal.OfflineSignalCursor;
-import eu.quanticol.moonlight.offline.signal.Segment;
-import eu.quanticol.moonlight.offline.signal.Signal;
-import eu.quanticol.moonlight.offline.signal.SignalCursor;
+import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
 import java.util.List;
@@ -27,8 +24,8 @@ public class TestSignalUtils {
     }
 
 
-    public static MfrSignal<Integer> basicSignal(int totalLocations,
-                                                 int[] locationsSet) {
+    public static MfrSignal<Integer> basicSetSignal(int totalLocations,
+                                                    int[] locationsSet) {
         var timeSignals = someTimeSignals(totalLocations);
         return new MfrSignal<>(totalLocations, timeSignals::get, locationsSet);
     }
@@ -41,5 +38,10 @@ public class TestSignalUtils {
         IntStream.range(0, totalLocations)
                 .forEach(i -> when(stSignal.get(i)).thenReturn(signal));
         return stSignal;
+    }
+
+    public static SpatialTemporalSignal<Integer> basicSignal(int totalLocations) {
+        var timeSignals = someTimeSignals(totalLocations);
+        return new SpatialTemporalSignal<>(totalLocations, timeSignals::get);
     }
 }

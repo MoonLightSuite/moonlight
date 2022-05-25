@@ -33,17 +33,23 @@ public class MfrSignal<T> extends STSignal<T> {
         return false;
     }
 
-    //    private static <A> IntFunction<A> partialFunction(IntFunction<A> f,
-//                                                      int[] set) {
-//        return i -> {
-//            if (contains(i, set)) {
-//                return f.apply(i);
-//            } else {
-//                var error = "Signal undefined at location " + i + "!";
-//                throw new IllegalArgumentException(error);
-//            }
-//        };
-//    }
+    public T getValueAt(int location, double time) {
+        return getSignalAtLocation(location).getValueAt(time);
+    }
+
+    @Override
+    public Signal<T> getSignalAtLocation(int location) {
+        var position = hasLocation(location);
+        if (position >= 0) {
+            return getSignals().get(position);
+        }
+        var error = "The signal is not defined at the given location";
+        throw new IllegalArgumentException(error);
+    }
+
+    private int hasLocation(int location) {
+        return Arrays.binarySearch(locations, location);
+    }
 
     public int[] getLocationsSet() {
         return locations;
@@ -66,23 +72,9 @@ public class MfrSignal<T> extends STSignal<T> {
         }
     }
 
-    private int hasLocation(int location) {
-        return Arrays.binarySearch(locations, location);
-    }
-
     private <R> Signal<R> mappedSignal(int l, Function<T, R> f) {
         BooleanOp<T, R> booleanOp = new BooleanOp<>();
         return booleanOp.applyUnary(getSignalAtLocation(l), f);
-    }
-
-    @Override
-    public Signal<T> getSignalAtLocation(int location) {
-        var position = hasLocation(location);
-        if (position >= 0) {
-            return getSignals().get(position);
-        }
-        var error = "The signal is not defined at the given location";
-        throw new IllegalArgumentException(error);
     }
 
     public MfrSignal<T> filter(Predicate<T> p) {

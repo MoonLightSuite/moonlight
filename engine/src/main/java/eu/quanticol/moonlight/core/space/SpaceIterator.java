@@ -41,6 +41,31 @@ public class SpaceIterator<T extends Comparable<T>, S> {
         nextSpace = moveNext();
     }
 
+    private boolean isNextSpaceBeforeTime(T time) {
+        return nextSpace != null &&
+                (isBeforeTime(time) || !isModelAtSameTime(currSpace, time));
+    }
+
+    private boolean isBeforeTime(T time) {
+        return getNextT().compareTo(time) < 0;
+    }
+
+    public T getNextT() {
+        return nextSpace.getFirst();
+    }
+
+    private boolean isModelAtSameTime(Pair<T, SpatialModel<S>> model, T time) {
+        return model.getFirst().equals(time);
+    }
+
+    private Pair<T, SpatialModel<S>> moveNext() {
+        return spaceItr.hasNext() ? spaceItr.next() : null;
+    }
+
+    private Iterator<Pair<T, SpatialModel<S>>> getSpaceIterator() {
+        return locSvc.times();
+    }
+
     public boolean isLocationServiceEmpty() {
         return locSvc.isEmpty();
     }
@@ -63,10 +88,6 @@ public class SpaceIterator<T extends Comparable<T>, S> {
         return currSpace.getFirst();
     }
 
-    public T getNextT() {
-        return nextSpace.getFirst();
-    }
-
     public DistanceStructure<S, ?> generateDistanceStructure() {
         SpatialModel<S> sm = currSpace.getSecond();
         return dist.apply(sm);
@@ -80,34 +101,13 @@ public class SpaceIterator<T extends Comparable<T>, S> {
         return nextSpace != null && !isModelAtSameTime(currSpace, getNextT());
     }
 
-    private boolean isNextSpaceBeforeTime(T time) {
-        return nextSpace != null &&
-                (isBeforeTime(time) || !isModelAtSameTime(currSpace, time));
-    }
-
     public boolean isNextSpaceModelAtSameTime(T time) {
         return nextSpace != null && isModelAtSameTime(nextSpace, time);
-    }
-
-    private boolean isBeforeTime(T time) {
-        return getNextT().compareTo(time) < 0;
-    }
-
-    private boolean isModelAtSameTime(Pair<T, SpatialModel<S>> model, T time) {
-        return model.getFirst().equals(time);
     }
 
     public T fromNextSpaceOrFallback(T fallback) {
         if (nextSpace != null)
             return getNextT();
         return fallback;
-    }
-
-    private Iterator<Pair<T, SpatialModel<S>>> getSpaceIterator() {
-        return locSvc.times();
-    }
-
-    private Pair<T, SpatialModel<S>> moveNext() {
-        return spaceItr.hasNext() ? spaceItr.next() : null;
     }
 }

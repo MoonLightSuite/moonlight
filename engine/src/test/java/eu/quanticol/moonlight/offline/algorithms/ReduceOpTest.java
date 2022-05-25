@@ -2,16 +2,18 @@ package eu.quanticol.moonlight.offline.algorithms;
 
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
+import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.IntegerDomain;
 import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.StaticLocationService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
+import static eu.quanticol.moonlight.offline.TestSignalUtils.basicSetSignal;
 import static eu.quanticol.moonlight.offline.TestSignalUtils.basicSignal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,21 +21,18 @@ class ReduceOpTest {
 
     @Test
     void reduceWorksOnTheTrivialSystem() {
-        var locSet = new int[]{0};
-        var locSvc = new StaticLocationService<>(trivialModel());
-        var r = new ReduceOp<>(1, locSvc, anyLocation(), this::sum);
+        int size = 1;
+        var locSet = allLocations(size);
+        var r = new ReduceOp<>(size, basicLocSvc(size), anywhere(), this::sum);
 
-        var result = r.computeUnary(locSet, l -> basicSignal(1, locSet));
-        System.out.println(result);
+        var result = r.computeUnary(locSet, l -> basicSetSignal(size, locSet));
 
-        var firstValue = result.getSignalAtLocation(0).getValueAt(0.0);
-        var secondValue = result.getSignalAtLocation(0).getValueAt(2.0);
-        assertEquals(2, firstValue);
-        assertEquals(3, secondValue);
+        assertEquals(2, result.getValueAt(0, 0.0));
+        assertEquals(3, result.getValueAt(0, 2.0));
     }
 
     private static Function<SpatialModel<Integer>,
-            DistanceStructure<Integer, ?>> anyLocation() {
+            DistanceStructure<Integer, ?>> anywhere() {
         return x -> trivialDistance(x, Integer.MAX_VALUE);
     }
 
@@ -44,58 +43,69 @@ class ReduceOpTest {
                 model);
     }
 
+    private static int[] allLocations(int amount) {
+        return IntStream.range(0, amount).toArray();
+    }
+
+    private static LocationService<Double, Integer> basicLocSvc(int locations) {
+        return new StaticLocationService<>(model(locations));
+    }
+
+    private static SpatialModel<Integer> model(int locations) {
+        return new GraphModel<>(locations);
+    }
+
     private Integer sum(List<Integer> values) {
         return values.stream().reduce(0, Integer::sum);
     }
 
-    private SpatialModel<Integer> trivialModel() {
-        return new GraphModel<>(1);
-    }
-
     @Test
     void reduceWorksOnSimpleTotalSystem() {
-        var locSet = new int[]{0, 1, 2};
-        var locSvc = new StaticLocationService<>(trivialModel());
-        var r = new ReduceOp<>(3, locSvc, anyLocation(), this::sum);
+        int size = 3;
+        var all = allLocations(size);
+        var r = new ReduceOp<>(size, basicLocSvc(size), anywhere(), this::sum);
 
-        var result = r.computeUnary(locSet, l -> basicSignal(3, locSet));
-        System.out.println(result);
+        var result = r.computeUnary(all, l -> basicSetSignal(size, all));
 
-        var firstValue = result.getSignalAtLocation(0).getValueAt(0.0);
-        var secondValue = result.getSignalAtLocation(0).getValueAt(2.0);
-        assertEquals(6, firstValue);
-        assertEquals(9, secondValue);
+        assertEquals(6, result.getValueAt(0, 0.0));
+        assertEquals(9, result.getValueAt(0, 2.0));
     }
 
     @Test
     void reduceWorkOnSimpleSystemWithSubsetOfLocations() {
-        var locSet = new int[]{0, 2};
-        var locSvc = new StaticLocationService<>(trivialModel());
-        var r = new ReduceOp<>(3, locSvc, anyLocation(), this::sum);
+        int size = 3;
+        var all = allLocations(size);
+        var locSet = onlyLocations(0, 2);
+        var r = new ReduceOp<>(size, basicLocSvc(size), anywhere(), this::sum);
 
-        var result = r.computeUnary(locSet, l -> basicSignal(3, locSet));
-        System.out.println(result);
+        var result = r.computeUnary(all, l -> basicSetSignal(size, locSet));
 
-        var firstValue = result.getSignalAtLocation(0).getValueAt(0.0);
-        var secondValue = result.getSignalAtLocation(0).getValueAt(2.0);
-        assertEquals(4, firstValue);
-        assertEquals(6, secondValue);
+        assertEquals(4, result.getValueAt(0, 0.0));
+        assertEquals(6, result.getValueAt(0, 2.0));
     }
 
-    @Disabled
+    private int[] onlyLocations(int... locations) {
+        return locations;
+    }
+
     @Test
-    void reduceWorkOnSimpleSystemWithSubsetOfLocations2() {
-        var locSet = new int[]{0, 2};
-        var locSvc = new StaticLocationService<>(trivialModel());
-        var r = new ReduceOp<>(3, locSvc, anyLocation(), this::sum);
+    void nestedReduceWorksAsExpected() {
+        int size = 3;
+        var all = allLocations(size);
+        var locSet = onlyLocations(0, 2);
+        var r1 = new ReduceOp<>(size, basicLocSvc(size), anywhere(), this::sum);
+        var r2 = new ReduceOp<>(size, basicLocSvc(size), nowhere(), this::sum);
 
-        var result = r.computeUnary(locSet, l -> basicSignal(3, locSet));
-        System.out.println(result);
+        var innerResult = r2.computeUnary(locSet, l -> basicSignal(size));
+        var result = r1.computeUnary(all, l -> innerResult);
 
-        var firstValue = result.getSignalAtLocation(0).getValueAt(0.0);
-        var secondValue = result.getSignalAtLocation(0).getValueAt(2.0);
-        assertEquals(4, firstValue);
-        assertEquals(6, secondValue);
+        assertEquals(6, result.getValueAt(0, 0.0));
+        assertEquals(9, result.getValueAt(0, 2.0));
+    }
+
+    private static Function<SpatialModel<Integer>,
+            DistanceStructure<Integer, ?>> nowhere() {
+        return x -> trivialDistance(x, 0);
     }
 
 }

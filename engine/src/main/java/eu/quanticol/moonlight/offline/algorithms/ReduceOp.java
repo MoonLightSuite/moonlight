@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 /**
  * Algorithm for Reduce operator
@@ -70,34 +71,43 @@ public class ReduceOp<S, R, V> {
     }
 
     private Signal<R> reduce(MfrSignal<V> arg) {
-        ParallelSignalCursor1<V> cursor = arg.getSignalCursor(true);
+        var cursor = arg.getSignalCursor(true);
         double t = cursor.getCurrentTime();
         Signal<R> result = new Signal<>();
         var spaceItr = new SpaceIterator<>(locSvc, distance);
+
         spaceItr.init(t);
         while (!Double.isNaN(t) && isNotCompleted(cursor)) {
-            IntFunction<V> spatialSignal = cursor.getCurrentValue();
-            var values =
-                    Arrays.stream(arg.getLocationsSet()).mapToObj(spatialSignal).toList();
-            R aggregated = aggregator.apply(values);
-            result.add(t, aggregated);
-            double tNext = cursor.forwardTime();
-            spaceItr.forEach(tNext, (itT, itDs) -> {
-                List<V> itValues =
-                        Arrays.stream(arg.getLocationsSet()).mapToObj(spatialSignal).toList();
-                R itAggregated = aggregator.apply(itValues);
-                result.add(itT, itAggregated);
-            });
-            t = moveSpatialModel(tNext, spaceItr);
+            t = aggregateArg(arg, cursor, t, result, spaceItr);
         }
+
         return result;
     }
 
-    @SafeVarargs
-    private static <C> boolean isNotCompleted(ParallelSignalCursor1<C>... cursors) {
-        return Arrays.stream(cursors)
-                .map(c -> !c.isCompleted())
-                .reduce(true, (c1, c2) -> c1 && c2);
+    private double aggregateArg(MfrSignal<V> arg,
+                                ParallelSignalCursor1<V> cursor,
+                                double t,
+                                Signal<R> result,
+                                SpaceIterator<Double, S> spaceItr) {
+        var spatialSignal = cursor.getCurrentValue();
+        aggregate(t, arg, result, spatialSignal);
+        double tNext = cursor.forwardTime();
+        spaceItr.forEach(tNext, (itT, itDs) ->
+                aggregate(itT, arg, result, spatialSignal)
+        );
+        t = moveSpatialModel(tNext, spaceItr);
+        return t;
+    }
+
+    private void aggregate(Double t, MfrSignal<V> arg,
+                           Signal<R> result, IntFunction<V> spatialSignal) {
+        var values = locationStream(arg).mapToObj(spatialSignal).toList();
+        R aggregated = aggregator.apply(values);
+        result.add(t, aggregated);
+    }
+
+    private IntStream locationStream(MfrSignal<V> signal) {
+        return Arrays.stream(signal.getLocationsSet());
     }
 
     private Double moveSpatialModel(@NotNull Double t, SpaceIterator<Double, S> spaceItr) {
@@ -105,5 +115,12 @@ public class ReduceOp<S, R, V> {
             spaceItr.shiftSpatialModel();
         }
         return t;
+    }
+
+    @SafeVarargs
+    private static <C> boolean isNotCompleted(ParallelSignalCursor1<C>... cursors) {
+        return Arrays.stream(cursors)
+                .map(c -> !c.isCompleted())
+                .reduce(true, (c1, c2) -> c1 && c2);
     }
 }
