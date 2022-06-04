@@ -4,6 +4,7 @@
 dependency-reduced-pom.xml
 .project
 .classpath
+.run
 .DS_Store
 build/
 .gradle
