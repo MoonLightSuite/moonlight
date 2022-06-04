@@ -5,8 +5,8 @@ import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.IntegerDomain;
-import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.StaticLocationService;
+import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -52,7 +52,7 @@ class ReduceOpTest {
     }
 
     private static SpatialModel<Integer> model(int locations) {
-        return new GraphModel<>(locations);
+        return Utils.createGridModel(locations / 2, locations / 2, false, 1);
     }
 
     private Integer sum(List<Integer> values) {
@@ -90,17 +90,18 @@ class ReduceOpTest {
 
     @Test
     void nestedReduceWorksAsExpected() {
-        int size = 3;
+        int size = 4;
         var all = allLocations(size);
         var locSet = onlyLocations(0, 2);
-        var r1 = new ReduceOp<>(size, basicLocSvc(size), anywhere(), this::sum);
-        var r2 = new ReduceOp<>(size, basicLocSvc(size), nowhere(), this::sum);
+        var locSvc = basicLocSvc(size);
+        var r1 = new ReduceOp<>(size, locSvc, anywhere(), this::sum);
+        var r2 = new ReduceOp<>(size, locSvc, nowhere(), this::sum);
 
         var innerResult = r2.computeUnary(locSet, l -> basicSignal(size));
         var result = r1.computeUnary(all, l -> innerResult);
 
-        assertEquals(6, result.getValueAt(0, 0.0));
-        assertEquals(9, result.getValueAt(0, 2.0));
+        assertEquals(12, result.getValueAt(0, 0.0));
+        assertEquals(18, result.getValueAt(0, 2.0));
     }
 
     private static Function<SpatialModel<Integer>,
