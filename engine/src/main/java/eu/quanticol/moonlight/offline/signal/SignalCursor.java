@@ -19,31 +19,49 @@
  *******************************************************************************/
 package eu.quanticol.moonlight.offline.signal;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
- * A <code>SignalCursor</code> is used to scan values in a signal. 
+ * A <code>SignalCursor</code> is used to scan values in a signal.
  */
 public interface SignalCursor<T, V> {
 
-	T getCurrentTime();
-	
-	V getCurrentValue();
-	
-	void forward();
+    static <C> boolean isNotCompleted(List<SignalCursor<Double, C>> cursors) {
+        return isNotCompleted(cursors.stream());
+    }
 
-	void backward();
+    private static <C> boolean isNotCompleted(Stream<SignalCursor<Double, C>> cursors) {
+        return cursors.map(c -> !c.isCompleted())
+                .reduce(true, (c1, c2) -> c1 && c2);
+    }
 
-	void revert();
+    boolean isCompleted();
 
-	void move(T t);
+    @SafeVarargs
+    static <C> boolean isNotCompleted(SignalCursor<Double, C>... cursors) {
+        return isNotCompleted(Arrays.stream(cursors));
+    }
 
-	T nextTime();
+    T getCurrentTime();
 
-	T previousTime();
+    V getCurrentValue();
 
-	boolean hasNext();
-	
-	boolean hasPrevious();
+    void forward();
 
-	boolean isCompleted();
-	
+    void backward();
+
+    void revert();
+
+    void move(T t);
+
+    T nextTime();
+
+    T previousTime();
+
+    boolean hasNext();
+
+    boolean hasPrevious();
+
 }

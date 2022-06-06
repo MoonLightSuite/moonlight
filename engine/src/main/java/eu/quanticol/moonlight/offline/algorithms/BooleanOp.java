@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import static eu.quanticol.moonlight.offline.signal.SignalCursor.isNotCompleted;
+
 public class BooleanOp<T, R> {
     private static final String
             ERROR = "signal data structure failed irreparably";
@@ -77,7 +79,7 @@ public class BooleanOp<T, R> {
     private <K> void applyFilter(List<SignalCursor<Double, K>> cursors,
                                  Predicate<K> p,
                                  Supplier<R> value) {
-        while (isNotCompleted(cursors.stream())) {
+        while (isNotCompleted(cursors)) {
             addResult(p.test((K) value.get()) ? value.get() : null);
             moveCursorsForward(cursors);
         }
@@ -113,7 +115,7 @@ public class BooleanOp<T, R> {
 
     private <K> void apply(List<SignalCursor<Double, K>> cursors,
                            Supplier<R> value) {
-        while (isNotCompleted(cursors.stream())) {
+        while (isNotCompleted(cursors)) {
             addResult(value.get());
             moveCursorsForward(cursors);
         }
@@ -135,11 +137,6 @@ public class BooleanOp<T, R> {
         } else {
             output.addBefore(time, value);
         }
-    }
-
-    private <K> boolean isNotCompleted(Stream<SignalCursor<Double, K>> cursors) {
-        return cursors.map(c -> !c.isCompleted())
-                .reduce(true, (c1, c2) -> c1 && c2);
     }
 
     private <K> void moveCursorsForward(List<SignalCursor<Double, K>> cursors) {

@@ -60,8 +60,9 @@ public class SpatialTemporalMonitorReach<S, T, R>
     @Override
     public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal) {
-        SpatialOp<S, R> sp = new SpatialOp<>(locationService, distance, null);
-        return sp.computeDynamic(domain,
+        SpatialOp<S, R> sp = new SpatialOp<>(locationService, distance,
+                null);
+        return sp.computeReach(domain,
                 m1.monitor(locationService, signal),
                 m2.monitor(locationService, signal));
     }
