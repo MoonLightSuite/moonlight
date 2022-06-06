@@ -136,16 +136,20 @@ public class SpatialOp<S, R> {
                 result.add(t, reach(domain, spatialSignal1, spatialSignal2,
                         ds));
 
-                spaceItr.forEach(t, (itT, itDs) -> {
+                double tNext = Math.min(c1.nextTime(), c2.nextTime());
+                c1.move(tNext);
+                c2.move(tNext);
+
+                spaceItr.forEach(tNext, (itT, itDs) -> {
                     //result.add(t, escape(domain, values, f));
                     result.add(itT,
                             reach(domain, spatialSignal1, spatialSignal2,
                                     itDs));
                 });
 
-                t = Math.min(c1.nextTime(), c2.nextTime());
-                c1.move(t);
-                c2.move(t);
+                t = tNext;
+//                c1.move(t);
+//                c2.move(t);
                 if (spaceItr.isNextSpaceModelMeaningful()) {
                     spaceItr.shiftSpatialModel();
                 }
