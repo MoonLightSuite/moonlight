@@ -20,7 +20,6 @@
 
 package eu.quanticol.moonlight.offline.algorithms;
 
-import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpaceIterator;
@@ -33,7 +32,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms.reach;
 import static eu.quanticol.moonlight.offline.signal.SignalCursor.isNotCompleted;
 
 /**
@@ -94,63 +92,5 @@ public class SpatialOp<S, R> {
         result.add(start, value);
     }
 
-
-    public SpatialTemporalSignal<R> computeBinary(SpatialTemporalSignal<R> s) {
-        outputInit(s.getNumberOfLocations());
-        if (!spaceItr.isLocationServiceEmpty()) {
-            doCompute(s);
-        }
-        return result;
-    }
-
-
-    public SpatialTemporalSignal<R> computeReach(
-            SignalDomain<R> domain,
-            SpatialTemporalSignal<R> s1,
-            SpatialTemporalSignal<R> s2) {
-        outputInit(s1.getNumberOfLocations());
-        if (!spaceItr.isLocationServiceEmpty()) {
-            ParallelSignalCursor<R> c1 = s1.getSignalCursor(true);
-            ParallelSignalCursor<R> c2 = s2.getSignalCursor(true);
-            double t = Math.max(s1.start(), s2.start());
-
-            spaceItr.init(t);
-            c1.move(t);
-            c2.move(t);
-
-            //Loop invariant: (current.getFirst() <= time) &&
-            //                ((next == null) || (time < next.getFirst()))
-            while (!Double.isNaN(t) && isNotCompleted(c1, c2)) {
-                var ds = spaceItr.generateDistanceStructure();
-                var spatialSignal1 = c1.getCurrentValue();
-                var spatialSignal2 = c2.getCurrentValue();
-
-                result.add(t, reach(domain, spatialSignal1, spatialSignal2,
-                        ds));
-
-                t = getTNext(domain, c1, c2, spatialSignal1, spatialSignal2);
-                if (spaceItr.isNextSpaceModelMeaningful()) {
-                    spaceItr.shiftSpatialModel();
-                }
-            }
-        }
-        return result;
-    }
-
-    private double getTNext(SignalDomain<R> domain,
-                            ParallelSignalCursor<R> c1,
-                            ParallelSignalCursor<R> c2,
-                            IntFunction<R> spatialSignal1,
-                            IntFunction<R> spatialSignal2) {
-        double tNext = Math.min(c1.nextTime(), c2.nextTime());
-        c1.move(tNext);
-        c2.move(tNext);
-        spaceItr.forEach(tNext, (itT, itDs) -> {
-            //result.add(t, escape(domain, values, f));
-            var output = reach(domain, spatialSignal1, spatialSignal2, itDs);
-            result.add(itT, output);
-        });
-        return tNext;
-    }
 
 }

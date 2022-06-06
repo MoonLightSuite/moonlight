@@ -25,7 +25,6 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.offline.algorithms.SpatialOp;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 import java.util.function.Function;
@@ -60,10 +59,10 @@ public class SpatialTemporalMonitorReach<S, T, R>
     @Override
     public SpatialTemporalSignal<R> monitor(LocationService<Double, S> locationService,
                                             SpatialTemporalSignal<T> signal) {
-        SpatialOp<S, R> sp = new SpatialOp<>(locationService, distance,
-                null);
-        return sp.computeReach(domain,
-                m1.monitor(locationService, signal),
+        SpatialBinaryOp<S, R> sp = new SpatialBinaryOp<>(locationService,
+                distance,
+                domain);
+        return sp.computeReach(m1.monitor(locationService, signal),
                 m2.monitor(locationService, signal));
     }
 
