@@ -21,7 +21,7 @@ public class MfrMonitorFilter<S, T, V> implements MfrSetMonitor<S, T, V> {
     @Override
     public IntFunction<MfrSignal<V>> monitor(SpatialTemporalSignal<T> signal,
                                              IntFunction<int[]> locations) {
-        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
+        MfrAlgorithm<V> sp = new MfrAlgorithm<>();
         var arg = argMonitor.monitor(signal, locations);
         return i -> sp.filterAlgorithm(predicate, arg.apply(i));
     }

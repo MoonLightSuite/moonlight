@@ -76,7 +76,7 @@ public class MfrMonitoring<S, T, R> {
      * @param f the formula to monitor
      * @return the result of the monitoring process.
      */
-    public <K> MfrMonitor<S, T, R> monitor(Formula f) {
+    public MfrMonitor<S, T, R> monitor(Formula f) {
         return switch (f) {
             // Classic operators
             case AtomicFormula atomic -> generateAtomicMonitor(atomic);

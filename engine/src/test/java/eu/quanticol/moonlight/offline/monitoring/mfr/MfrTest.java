@@ -10,6 +10,7 @@ import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.mfr.BinaryFormula;
 import eu.quanticol.moonlight.formula.mfr.MapFormula;
 import eu.quanticol.moonlight.formula.mfr.ReduceFormula;
+import eu.quanticol.moonlight.offline.algorithms.mfr.MfrAlgorithm;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.space.ImmutableGraphModel;
 import eu.quanticol.moonlight.util.Utils;
@@ -20,7 +21,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 class MfrTest {
+    private static final int[] locationsSet = new int[]{0, 1, 2, 3, 4};
+
+    @Test
+    void fetchCloseLocationsFromDistanceBound() {
+        var ds = getDistanceStructure(1.0);
+
+        var locations = MfrAlgorithm.getAllWithinDistance(0,
+                locationsSet.length,
+                ds);
+
+        assertArrayEquals(new int[]{0, 1, 2}, locations);
+    }
+
+    private DistanceStructure<Double, Double> getDistanceStructure(
+            double upperBound) {
+        var domain = new DoubleDomain();
+        Function<Double, Double> distFunId = (i) -> 1.0;
+        return new DefaultDistanceStructure<>(distFunId, domain,
+                0.0, upperBound, basicGraph());
+    }
+
+    /**
+     * 0 - 1
+     * | /
+     * 2 - 3
+     * | /
+     * 4
+     */
+    private SpatialModel<Double> basicGraph() {
+        ImmutableGraphModel<Double> model =
+                new ImmutableGraphModel<>(locationsSet.length);
+        double d = 1;
+        // 0 <-> 1
+        model = model.add(0, d, 1);
+        model = model.add(1, d, 0);
+        // 0 <-> 2
+        model = model.add(0, d, 2);
+        model = model.add(2, d, 0);
+        // 1 <-> 2
+        model = model.add(1, d, 2);
+        model = model.add(2, d, 1);
+        // 2 <-> 3
+        model = model.add(3, d, 2);
+        model = model.add(2, d, 3);
+        // 2 <-> 4
+        model = model.add(4, d, 2);
+        model = model.add(2, d, 4);
+        // 3 <-> 4
+        model = model.add(3, d, 4);
+        model = model.add(4, d, 3);
+        return model;
+    }
 
     @Disabled("working on it")
     @Test
@@ -65,29 +120,5 @@ class MfrTest {
 
     private Double sum(List<Double> values) {
         return values.stream().reduce(0.0, Double::sum);
-    }
-
-    private SpatialModel<Double> basicGraph() {
-        ImmutableGraphModel<Double> model = new ImmutableGraphModel<>(5);
-        double d = 1;
-        // 0 <-> 1
-        model.add(0, d, 1);
-        model.add(1, d, 0);
-        // 0 <-> 2
-        model.add(0, d, 2);
-        model.add(2, d, 0);
-        // 1 <-> 2
-        model.add(1, d, 2);
-        model.add(2, d, 1);
-        // 2 <-> 3
-        model.add(3, d, 2);
-        model.add(2, d, 3);
-        // 2 <-> 4
-        model.add(4, d, 2);
-        model.add(2, d, 4);
-        // 3 <-> 4
-        model.add(3, d, 4);
-        model.add(4, d, 3);
-        return model;
     }
 }

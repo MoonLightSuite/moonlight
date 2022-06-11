@@ -18,7 +18,7 @@ class MfrAlgorithmsTest {
     void basicMapWorksCorrectly() {
         MfrSignal<Integer> signal = basicSetSignal(TOTAL_LOCATIONS, locationsSet);
         UnaryOperator<Integer> even = x -> x % 2;
-        MfrAlgorithm<Integer> sp = new MfrAlgorithm<>(false);
+        MfrAlgorithm<Integer> sp = new MfrAlgorithm<>();
 
         var result = sp.mapAlgorithm(even, signal);
 
@@ -34,7 +34,7 @@ class MfrAlgorithmsTest {
     void basicFilterWorksCorrectly() {
         MfrSignal<Integer> signal = basicSetSignal(TOTAL_LOCATIONS, locationsSet);
         Predicate<Integer> even = x -> x % 2 == 0;
-        MfrAlgorithm<Integer> sp = new MfrAlgorithm<>(false);
+        MfrAlgorithm<Integer> sp = new MfrAlgorithm<>();
 
         var result = sp.filterAlgorithm(even, signal);
 

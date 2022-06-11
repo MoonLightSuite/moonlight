@@ -21,7 +21,7 @@ public class MfrMonitorMap<S, T, V> implements MfrSetMonitor<S, T, V> {
     public IntFunction<MfrSignal<V>> monitor(SpatialTemporalSignal<T> signal,
                                              IntFunction<int[]> locations) {
         IntFunction<MfrSignal<V>> arg = argMonitor.monitor(signal, locations);
-        MfrAlgorithm<V> sp = new MfrAlgorithm<>(false);
-        return i -> sp.mapAlgorithm(mapper, arg.apply(i));
+        MfrAlgorithm<V> algorithm = new MfrAlgorithm<>();
+        return i -> algorithm.mapAlgorithm(mapper, arg.apply(i));
     }
 }
