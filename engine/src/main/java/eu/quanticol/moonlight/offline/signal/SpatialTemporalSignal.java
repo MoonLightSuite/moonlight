@@ -50,7 +50,7 @@ public class SpatialTemporalSignal<T> extends MfrSignal<T> {
     }
 
     /**
-     * Requires <code>f</code> to be defined for all i < size
+     * Requires <code>f</code> to be defined for all i &lt; size
      *
      * @param size number of locations of the signal
      * @param f    mapping from locations to temporal signals

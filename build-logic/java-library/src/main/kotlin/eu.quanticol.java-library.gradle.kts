@@ -22,6 +22,13 @@ tasks.withType<JavaCompile> {
     options.compilerArgs.add("--enable-preview")
 }
 
+tasks.withType<Javadoc> {
+    // Needed by pattern matching on switches:
+    val javadocOptions = options as CoreJavadocOptions
+    javadocOptions.addStringOption("source", "17")
+    javadocOptions.addBooleanOption("-enable-preview", true)
+}
+
 tasks {
     // to allow UTF-8 characters in comments
     compileJava { options.encoding = "UTF-8" }
@@ -52,7 +59,10 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
 
-        property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
 
 //        //TODO: these properties are workarounds to pass multi-project sources to sonarqube
 //        property("sonar.java.sources", "core/src/main/java")
