@@ -21,11 +21,13 @@
 package eu.quanticol.moonlight.util;
 
 import eu.quanticol.moonlight.core.base.Pair;
-import eu.quanticol.moonlight.offline.signal.*;
-import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.offline.signal.Signal;
+import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.LocationServiceList;
+import eu.quanticol.moonlight.space.RegularGridModel;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -64,18 +66,26 @@ public class Utils {
         return s;
     }
 
-    public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignalFromGrid(int rowLength, int columnLength, double start, double dt, double end, BiFunction<Double, Pair<Integer,Integer>, T> f) {
-        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(rowLength*columnLength);
+    public static <T> SpatialTemporalSignal<T> createSpatioTemporalSignalFromGrid(int rowLength, int columnLength, double start, double dt, double end, BiFunction<Double, Pair<Integer, Integer>, T> f) {
+        SpatialTemporalSignal<T> s = new SpatialTemporalSignal<>(rowLength * columnLength);
         double time = start;
         while (time < end) {
             double current = time;
-            s.add(time, (i -> f.apply(current, gridLocationOf(i,rowLength,columnLength))));
+            s.add(time, (i -> f.apply(current, gridLocationOf(i, rowLength, columnLength))));
             time += dt;
         }
-        s.add(end, (i -> f.apply(end, gridLocationOf(i,rowLength,columnLength))));
+        s.add(end, (i -> f.apply(end, gridLocationOf(i, rowLength, columnLength))));
         return s;
     }
 
+    public static Pair<Integer, Integer> gridLocationOf(int i, int rows, int columns) {
+        int r = i / columns;
+        int c = i % columns;
+        if ((r >= rows) || (c >= columns)) {
+            throw new IllegalArgumentException();
+        }
+        return new Pair<>(r, c);
+    }
 
     public static <T> SpatialModel<T> createSpatialModel(int size, Map<Pair<Integer, Integer>, T> edges) {
         return createSpatialModel(size, (i, j) -> edges.get(new Pair<>(i, j)));
@@ -94,7 +104,7 @@ public class Utils {
         return model;
     }
 
-    public static <T> SpatialModel<T> createGridModel(int rows, int columns, boolean directed, T w) {
+    public static <T> SpatialModel<T> createGridModelAsGraph(int rows, int columns, boolean directed, T w) {
         int size = rows * columns;
         GraphModel<T> model = new GraphModel<>(size);
         for (int i = 0; i < rows; i++) {
@@ -116,55 +126,45 @@ public class Utils {
         return model;
     }
 
-
     public static int gridIndexOf(int r, int c, int columns) {
         return r * columns + c;
     }
 
-
-    public static Pair<Integer, Integer> gridLocationOf(int i, int rows, int columns) {
-        int r = i / columns;
-        int c = i % columns;
-        if ((r >= rows) || (c >= columns)) {
-            throw new IllegalArgumentException();
-        }
-        return new Pair<>(r, c);
+    public static <T> RegularGridModel<T> createGridModel(int rows, int cols, T w) {
+        return new RegularGridModel<>(rows, cols, w);
     }
 
-    public static<T> GraphModel<T> createGraphFromMatlabData(int nodes,
-                                             int[][] edges,
-                                             T[] weights)
-    {
+    public static <T> GraphModel<T> createGraphFromMatlabData(int nodes,
+                                                              int[][] edges,
+                                                              T[] weights) {
         final int SOURCE = 0;
         final int DESTINATION = 1;
         GraphModel<T> space = new GraphModel<>(nodes);
-        if(edges.length != weights.length)
+        if (edges.length != weights.length)
             throw new IllegalArgumentException("Mismatching edges provided");
 
-        for(int i= 0; i < edges.length; i++) {
+        for (int i = 0; i < edges.length; i++) {
             space.add(edges[i][SOURCE] - 1,     //Matlab indices fix
-                      weights[i],
-                      edges[i][DESTINATION] - 1); //Matlab indices fix
+                    weights[i],
+                    edges[i][DESTINATION] - 1); //Matlab indices fix
         }
 
         return space;
     }
 
-    public static<T> LocationService<Double, T>
+    public static <T> LocationService<Double, T>
     createLocationServiceFromTimesAndModels(double[] times,
-                                            SpatialModel<T>[] models)
-    {
+                                            SpatialModel<T>[] models) {
         LocationServiceList<T> locSvc = new LocationServiceList<>();
-        if(times.length != models.length)
+        if (times.length != models.length)
             throw new IllegalArgumentException("Mismatched arguments provided");
 
-        for(int i = 0; i < times.length; i++) {
+        for (int i = 0; i < times.length; i++) {
             locSvc.add(times[i], models[i]);
         }
 
         return locSvc;
     }
-
 
 
     public static LocationService<Double, Double> createLocServiceFromSetMatrix(Object[] cgraph1) {
@@ -194,14 +194,13 @@ public class Utils {
             locService.add(time, graph);
             time += dt;
         }
-        locService.add(end,graph);
+        locService.add(end, graph);
         return locService;
     }
 
     public static LocationService<Double, Double>
-    createLocServiceStaticFromTimeTraj(double [] time ,
-                                       SpatialModel<Double> graph)
-    {
+    createLocServiceStaticFromTimeTraj(double[] time,
+                                       SpatialModel<Double> graph) {
         LocationServiceList<Double> locService = new LocationServiceList<>();
         for (double v : time) {
             locService.add(v, graph);

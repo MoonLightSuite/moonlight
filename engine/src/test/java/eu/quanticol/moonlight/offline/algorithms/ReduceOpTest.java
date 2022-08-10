@@ -52,7 +52,7 @@ class ReduceOpTest {
     }
 
     private static SpatialModel<Integer> model(int locations) {
-        return Utils.createGridModel(locations / 2, locations / 2, false, 1);
+        return Utils.createGridModelAsGraph(locations / 2, locations / 2, false, 1);
     }
 
     private Integer sum(List<Integer> values) {

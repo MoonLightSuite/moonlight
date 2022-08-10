@@ -1,10 +1,10 @@
 package grid;
 
-import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.core.space.SpatialModel;
+import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
+import eu.quanticol.moonlight.space.LocationServiceList;
 import eu.quanticol.moonlight.util.Utils;
 
 import java.text.DecimalFormat;
@@ -46,7 +46,7 @@ public class Experiment {
     }
 
     private void execute(int n, Supplier<SpatialTemporalMonitor> function, int sizeGrid, int tLength) {
-        SpatialModel<Double> grid = Utils.createGridModel(sizeGrid, sizeGrid, false, 1.0);
+        SpatialModel<Double> grid = Utils.createGridModelAsGraph(sizeGrid, sizeGrid, false, 1.0);
         double[] times = IntStream.range(0, n).sequential().mapToDouble(i -> execTime(function.get(), grid, sizeGrid, tLength)).toArray();
         double mean = Arrays.stream(times).summaryStatistics().getAverage();
         double variance = Arrays.stream(times).map(time -> (time - mean) * (time - mean)).sum() / (n - 1);
@@ -58,7 +58,7 @@ public class Experiment {
         SpatialTemporalSignal<Double> signal = createSpatioTemporalSignal(sizeGrid * sizeGrid, 0, 1, tLength, (t, l) -> rand.nextDouble());
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, tLength, grid);
         LocationServiceList<Double> staticLocService = new LocationServiceList<Double>();
-        staticLocService.add(0,grid);
+        staticLocService.add(0, grid);
         long startingTime = System.currentTimeMillis();
         monitor.monitor(locService, signal);
         long endingTime = System.currentTimeMillis();

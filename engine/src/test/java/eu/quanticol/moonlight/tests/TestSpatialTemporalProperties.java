@@ -39,7 +39,7 @@ class TestSpatialTemporalProperties {
 
     void testSPTGridBuild() throws ClassNotFoundException, IOException {
         int size = 32;
-        SpatialModel<Double> grid = Utils.createGridModel(size, size, false, 1.0);
+        SpatialModel<Double> grid = Utils.createGridModelAsGraph(size, size, false, 1.0);
         String trajectoryPath = TestSpatialTemporalProperties.class.getResource("trajectory.storage").getPath();
         double[][][] trajectory = ObjectSerializer.deserialize(trajectoryPath, double[][][].class);
 

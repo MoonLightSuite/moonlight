@@ -39,7 +39,7 @@ public class Pattern {
         // %%%%%%%%%%  GRAPH  %%%%%%%%% //
 
         // Designing the grid
-        SpatialModel<Double> gridModel = Utils.createGridModel(32, 32, false, 1.0);
+        SpatialModel<Double> gridModel = Utils.createGridModelAsGraph(32, 32, false, 1.0);
 
 
         // %%%%%%%%%%%%% Connection with Matlab %%%%%%%%%%%%/////////

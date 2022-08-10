@@ -20,7 +20,10 @@ import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.ManhattanDistanceStructure;
+import eu.quanticol.moonlight.space.RegularGridModel;
 import eu.quanticol.moonlight.util.Utils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -131,8 +134,10 @@ class TestSpatialProperties {
     void testDistanceOnGrid() {
         int rows = 40;
         int columns = 40;
-        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, 20.0, model);
+        RegularGridModel<Double> model = Utils.createGridModel(rows, columns, 1.0);
+        DistanceStructure<Double, Double> ds =
+                new ManhattanDistanceStructure<>(x -> x, new DoubleDomain(),
+                        0.0, 20.0, model);
         for (int i1 = 0; i1 < rows; i1++) {
             for (int j1 = 0; j1 < columns; j1++) {
                 for (int i2 = 0; i2 < rows; i2++) {
@@ -155,7 +160,7 @@ class TestSpatialProperties {
         double range = 10.0;
         int relevantC = 5;
         int relevantR = 5;
-        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
         DistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> 1.0, new DoubleDomain(), 0.0, range, model);
         IntFunction<Boolean> f = (i) -> i == Utils.gridIndexOf(relevantR, relevantC, columns);
         var result =
@@ -176,7 +181,7 @@ class TestSpatialProperties {
         double range = 10.0;
         int relevantC = 5;
         int relevantR = 5;
-        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
         IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
         var result = new SpatialAlgorithms<>(ds,
@@ -191,15 +196,44 @@ class TestSpatialProperties {
         }
     }
 
+    @Disabled("The version below uses the new Manhattan Distance")
     @Test
-    void testEscapeOnGrid() {
+    void testEscapeOnGridGraph() {
         int rows = 35;
         int columns = 35;
         double range = 2.1;
         int wallC = 2;
         int wallR = 2;
-        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), range, Double.POSITIVE_INFINITY, model);
+        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
+        DistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), range, Double.POSITIVE_INFINITY, model);
+        IntFunction<Boolean> f = (i) -> {
+            Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
+            return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
+                    || ((p.getFirst() <= wallC) && (p.getSecond().equals(wallR))));
+        };
+        var result = new EscapeAlgorithm<>(ds, new BooleanDomain(),
+                f).compute();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                assertEquals((i > wallR) || (j > wallC),
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
+            }
+        }
+    }
+
+    @Test
+    void testEscapeOnRegularGrid() {
+        int rows = 35;
+        int columns = 35;
+        double range = 2.1;
+        int wallC = 2;
+        int wallR = 2;
+        RegularGridModel<Double> model = Utils.createGridModel(rows, columns, 1.0);
+        DistanceStructure<Double, Double> ds =
+                new ManhattanDistanceStructure<>(x -> x,
+                        new DoubleDomain(),
+                        range, Double.POSITIVE_INFINITY, model);
         IntFunction<Boolean> f = (i) -> {
             Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
             return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
@@ -222,7 +256,7 @@ class TestSpatialProperties {
         int rows = 5;
         int columns = 5;
         double range = 10.0;
-        SpatialModel<Double> model = Utils.createGridModel(rows, columns, false, 1.0);
+        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
         DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
         IntFunction<Boolean> f1 = (i) -> {
             Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);

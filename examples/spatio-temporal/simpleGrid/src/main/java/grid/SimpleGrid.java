@@ -32,7 +32,7 @@ public class SimpleGrid {
 
     private static float execTime(int sizeGrid, int tLength) {
         Random rand = new Random();
-        SpatialModel<Double> grid = Utils.createGridModel(sizeGrid, sizeGrid, false, 1.0);
+        SpatialModel<Double> grid = Utils.createGridModelAsGraph(sizeGrid, sizeGrid, false, 1.0);
         SpatialTemporalSignal<Double> signal = createSpatioTemporalSignal(sizeGrid * sizeGrid, 0, 1, tLength, (t, l) -> rand.nextDouble());
         LocationService<Double, Double> locService = Utils.createLocServiceStatic(0, 1, tLength, grid);
 

@@ -31,25 +31,36 @@ public class SpatialAlgorithms<E, M, R> {
 
     public IntFunction<R> somewhere(IntFunction<R> s) {
         return unaryOperation(allLocations(), this::neighbourhood,
-                domain::disjunction, domain.min(), s);
-    }
-
-
-    public IntFunction<R> everywhere(IntFunction<R> s) {
-        return unaryOperation(allLocations(), this::neighbourhood,
-                domain::conjunction, domain.max(), s);
+                domain::disjunction, domain.min(), domain.max(), s);
     }
 
     public IntFunction<R> unaryOperation(Box<Integer> range,
                                          IntFunction<IntPredicate> filter,
                                          BinaryOperator<R> domainOp,
                                          R identity,
+                                         R bound,
                                          IntFunction<R> spatialSignal) {
         Function<Integer, R> algorithm = filterReduce(filter, domainOp,
-                identity, spatialSignal);
+                identity, bound, spatialSignal);
         return i -> locationStream(range).boxed()
                 .map(algorithm)
                 .toList().get(i);
+    }
+
+    private Function<Integer, R> filterReduce(IntFunction<IntPredicate> filter,
+                                              BinaryOperator<R> op,
+                                              R id,
+                                              R bound,
+                                              IntFunction<R> s) {
+        IntFunction<IntStream> allLocs = i -> locationStream(allLocations());
+        IntFunction<IntStream> locStream =
+                i -> allLocs.apply(i).filter(filter.apply(i));
+        IntFunction<int[]> locs = i -> locStream.apply(i).toArray();
+
+        return i -> reduceToBound(locs.apply(i), s, id, bound, op);
+//        return i -> locationStream(allLocations()).filter(filter.apply(i))
+//                .boxed()
+//                .reduce(id, accumulator(s, op), op);
     }
 
     private IntStream locationStream(Box<Integer> range) {
@@ -58,17 +69,23 @@ public class SpatialAlgorithms<E, M, R> {
         return IntStream.range(range.getStart(), range.getEnd());
     }
 
-    private Function<Integer, R> filterReduce(IntFunction<IntPredicate> filter,
-                                              BinaryOperator<R> op,
-                                              R id,
-                                              IntFunction<R> s) {
-        return i -> locationStream(allLocations()).filter(filter.apply(i))
-                .boxed()
-                .reduce(id, accumulator(s, op), op);
-    }
-
     private Box<Integer> allLocations() {
         return new Box<>(0, ds.getModel().size());
+    }
+
+    private R reduceToBound(int[] locations, IntFunction<R> signal,
+                            R start, R toBound, BinaryOperator<R> op) {
+        R result = start;
+        for (int element : locations) {
+            result = op.apply(result, signal.apply(element));
+            if (result.equals(toBound))
+                break;
+        }
+        return result;
+    }
+
+    private IntPredicate neighbourhood(int i) {
+        return j -> ds.areWithinBounds(i, j);
     }
 
     private BiFunction<R, Integer, R> accumulator(IntFunction<R> s,
@@ -76,7 +93,8 @@ public class SpatialAlgorithms<E, M, R> {
         return (acc, j) -> op.apply(acc, s.apply(j));
     }
 
-    private IntPredicate neighbourhood(int i) {
-        return j -> ds.areWithinBounds(i, j);
+    public IntFunction<R> everywhere(IntFunction<R> s) {
+        return unaryOperation(allLocations(), this::neighbourhood,
+                domain::conjunction, domain.max(), domain.min(), s);
     }
 }
