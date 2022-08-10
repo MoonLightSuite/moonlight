@@ -23,7 +23,6 @@ import eu.quanticol.moonlight.space.GraphModel;
 import eu.quanticol.moonlight.space.ManhattanDistanceStructure;
 import eu.quanticol.moonlight.space.RegularGridModel;
 import eu.quanticol.moonlight.util.Utils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -190,32 +189,6 @@ class TestSpatialProperties {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
-                        result.apply(Utils.gridIndexOf(i, j, columns)),
-                        "<" + i + "," + j + ">:");
-            }
-        }
-    }
-
-    @Disabled("The version below uses the new Manhattan Distance")
-    @Test
-    void testEscapeOnGridGraph() {
-        int rows = 35;
-        int columns = 35;
-        double range = 2.1;
-        int wallC = 2;
-        int wallR = 2;
-        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
-        DistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), range, Double.POSITIVE_INFINITY, model);
-        IntFunction<Boolean> f = (i) -> {
-            Pair<Integer, Integer> p = Utils.gridLocationOf(i, rows, columns);
-            return !(((p.getFirst().equals(wallC)) && (p.getSecond() <= wallR))
-                    || ((p.getFirst() <= wallC) && (p.getSecond().equals(wallR))));
-        };
-        var result = new EscapeAlgorithm<>(ds, new BooleanDomain(),
-                f).compute();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                assertEquals((i > wallR) || (j > wallC),
                         result.apply(Utils.gridIndexOf(i, j, columns)),
                         "<" + i + "," + j + ">:");
             }
