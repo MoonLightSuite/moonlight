@@ -20,9 +20,9 @@
 
 package eu.quanticol.moonlight.domain;
 
+import eu.quanticol.moonlight.core.io.DataHandler;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceDomain;
-import eu.quanticol.moonlight.core.io.DataHandler;
 
 /**
  * Signal domain to support doubles (i.e. classical robustness).
@@ -30,108 +30,112 @@ import eu.quanticol.moonlight.core.io.DataHandler;
  * @see SignalDomain
  */
 public class DoubleDomain implements
-		SignalDomain<Double>, DistanceDomain<Double>
-{
-	private static final double TOLERANCE = 1E-12;
+        SignalDomain<Double>, DistanceDomain<Double> {
+    private static final double TOLERANCE = 1E-12;
 
-	@Override
-	public Double any() {
-		return 0.0;
-	}
+    @Override
+    public Double any() {
+        return 0.0;
+    }
 
-	@Override
-	public Double conjunction(Double x, Double y) {
-		return Math.min(x, y);
-	}
+    @Override
+    public Double conjunction(Double x, Double y) {
+        return Math.min(x, y);
+    }
 
-	@Override
-	public Double disjunction(Double x, Double y) {
-		return Math.max(x, y);
-	}
+    @Override
+    public Double disjunction(Double x, Double y) {
+        return Math.max(x, y);
+    }
 
-	@Override
-	public Double negation(Double x) {
-		return -x;
-	}
+    @Override
+    public Double negation(Double x) {
+        return -x;
+    }
 
-	@Override
-	public boolean equalTo(Double x, Double y) {
-		return Math.abs(x - y) < TOLERANCE;
-	}
+    @Override
+    public Double min() {
+        return Double.NEGATIVE_INFINITY;
+    }
 
-	@Override
-	public Double min() {
-		return Double.NEGATIVE_INFINITY;
-	}
+    @Override
+    public Double max() {
+        return Double.POSITIVE_INFINITY;
+    }
 
-	@Override
-	public Double max() {
-		return Double.POSITIVE_INFINITY;
-	}
+    @Override
+    public Double zero() {
+        return 0.0;
+    }
 
-	@Override
-	public Double zero() {
-		return 0.0;
-	}
+    @Override
+    public Double infinity() {
+        return Double.POSITIVE_INFINITY;
+    }
 
-	@Override
-	public Double infinity() {
-		return Double.POSITIVE_INFINITY;
-	}
+    @Override
+    public boolean lessOrEqual(Double x, Double y) {
+        return x < y || equalTo(x, y);
+    }
 
-	@Override
-	public boolean lessOrEqual(Double x, Double y) {
-		return x < y || equalTo(x, y);
-	}
+    @Override
+    public boolean equalTo(Double x, Double y) {
+        return Math.abs(x - y) < TOLERANCE;
+    }
 
-	@Override
-	public Double sum(Double x, Double y) {
-		return x + y;
-	}
+    @Override
+    public Double multiply(Double x, int factor) {
+        return x * factor;
+    }
 
-	@Override
-	public boolean less(Double x, Double y) {
-		return x < y;
-	}
+    @Override
+    public Double sum(Double x, Double y) {
+        return x + y;
+    }
 
-	@Override
-	public Double valueOf(boolean b) {
-		return (b ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY);
-	}
+    @Override
+    public boolean less(Double x, Double y) {
+        return x < y;
+    }
 
-	@Override
-	public Double valueOf(double v) {
-		return v;
-	}
+    @Override
+    public Double valueOf(boolean b) {
+        return (b ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY);
+    }
 
-	@Override
-	public Double computeLessThan(double v1, double v2) {
-		return v2 - v1;
-	}
+    @Override
+    public Double valueOf(double v) {
+        return v;
+    }
 
-	@Override
-	public Double computeLessOrEqualThan(double v1, double v2) {
-		return v2 - v1;
-	}
+    @Override
+    public Double computeLessThan(double v1, double v2) {
+        return v2 - v1;
+    }
 
-	@Override
-	public Double computeEqualTo(double v1, double v2) {
-		return - Math.abs(v1 - v2);
-	}
+    @Override
+    public Double computeLessOrEqualThan(double v1, double v2) {
+        return v2 - v1;
+    }
 
-	@Override
-	public Double computeGreaterThan(double v1, double v2) {
-		return v1 - v2;
-	}
+    @Override
+    public Double computeEqualTo(double v1, double v2) {
+        return -Math.abs(v1 - v2);
+    }
 
-	@Override
-	public Double computeGreaterOrEqualThan(double v1, double v2) {
-		return v1 - v2;
-	}
+    @Override
+    public Double computeGreaterThan(double v1, double v2) {
+        return v1 - v2;
+    }
 
-	@Override
-	public DataHandler<Double> getDataHandler() {
-		return DataHandler.REAL;
-	}
+    @Override
+    public Double computeGreaterOrEqualThan(double v1, double v2) {
+        return v1 - v2;
+    }
+
+    @Override
+    public DataHandler<Double> getDataHandler() {
+        return DataHandler.REAL;
+    }
 
 }

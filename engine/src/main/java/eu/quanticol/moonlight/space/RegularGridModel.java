@@ -1,7 +1,7 @@
 package eu.quanticol.moonlight.space;
 
-import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.core.base.Pair;
+import eu.quanticol.moonlight.core.space.SpatialModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 
 public class RegularGridModel<E> implements SpatialModel<E> {
     private final int columns;
+    private final int rows;
     private final int size;
     private final E weight;
 
     public RegularGridModel(int rows, int columns, E weight) {
+        this.rows = rows;
         this.columns = columns;
         this.size = rows * columns;
         this.weight = weight;
@@ -23,11 +25,20 @@ public class RegularGridModel<E> implements SpatialModel<E> {
         return weight;
     }
 
-    public Pair<Integer, Integer> toCoordinates(int location) {
-        checkLegalLocation(location);
+    public int[] toCoordinates(int location) {
+        if (location >= 0 && location <= size) {
+            int column = location % columns;
+            int row = location / columns;
+            return new int[]{column, row};
+        } else {
+            throw new IllegalArgumentException("invalid location passed");
+        }
+    }
+
+    public int[] unsafeToCoordinates(int location) {
         int column = location % columns;
         int row = location / columns;
-        return new Pair<>(column, row);
+        return new int[]{column, row};
     }
 
     @Override
@@ -37,31 +48,14 @@ public class RegularGridModel<E> implements SpatialModel<E> {
 
     @Override
     public E get(int source, int target) {
-        checkLegalLocation(source);
-        checkLegalLocation(target);
+        checkLocationIsLegal(source);
+        checkLocationIsLegal(target);
         return !getNeighbours(source).contains(target) ? null : weight;
     }
 
-    @Override
-    public List<Pair<Integer, E>> next(int location) {
-        checkLegalLocation(location);
-        return listToWeighted(getNeighbours(location));
-    }
-
-    @Override
-    public List<Pair<Integer, E>> previous(int location) {
-        return next(location);
-    }
-
-    private void checkLegalLocation(int location) {
-        if(location > size || location < 0)
+    private void checkLocationIsLegal(int location) {
+        if (location > size || location < 0)
             throw new IllegalArgumentException("invalid location passed");
-    }
-
-    private List<Pair<Integer, E>> listToWeighted(List<Integer> list) {
-        return list.stream()
-                   .map(x -> new Pair<>(x, weight))
-                   .collect(Collectors.toList());
     }
 
     @NotNull
@@ -86,6 +80,35 @@ public class RegularGridModel<E> implements SpatialModel<E> {
         }
 
         return neighbours;
+    }
+
+    @Override
+    public List<Pair<Integer, E>> previous(int location) {
+        return next(location);
+    }
+
+    @Override
+    public List<Pair<Integer, E>> next(int location) {
+        checkLocationIsLegal(location);
+        return listToWeighted(getNeighbours(location));
+    }
+
+    private List<Pair<Integer, E>> listToWeighted(List<Integer> list) {
+        return list.stream()
+                .map(x -> new Pair<>(x, weight))
+                .collect(Collectors.toList());
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
+    public int fromCoordinates(int x, int y) {
+        return y * columns + x;
     }
 }
 

@@ -11,6 +11,7 @@ import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.BooleanDomain;
 import eu.quanticol.moonlight.domain.DoubleDomain;
+import eu.quanticol.moonlight.domain.IntegerDomain;
 import eu.quanticol.moonlight.formula.AtomicFormula;
 import eu.quanticol.moonlight.formula.Parameters;
 import eu.quanticol.moonlight.formula.spatial.ReachFormula;
@@ -20,9 +21,11 @@ import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 import eu.quanticol.moonlight.space.GraphModel;
+import eu.quanticol.moonlight.space.IntManhattanDistanceStructure;
 import eu.quanticol.moonlight.space.ManhattanDistanceStructure;
 import eu.quanticol.moonlight.space.RegularGridModel;
 import eu.quanticol.moonlight.util.Utils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -186,6 +189,84 @@ class TestSpatialProperties {
         var result = new SpatialAlgorithms<>(ds,
                 new BooleanDomain(),
                 false).everywhere(f);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
+            }
+        }
+    }
+
+
+    @Disabled
+    @Test
+    void testEverywhereOnLargeGrid() {
+        int rows = 50;
+        int columns = 50;
+        int range = 10;
+        int relevantC = 5;
+        int relevantR = 5;
+        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
+                1);
+        DistanceStructure<Integer, Integer> ds =
+                new ManhattanDistanceStructure<>(x -> x,
+                        new IntegerDomain(), 0, range, model);
+        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
+        var result = new SpatialAlgorithms<>(ds,
+                new BooleanDomain(),
+                false).everywhere(f);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
+            }
+        }
+    }
+
+    @Disabled
+    @Test
+    void testEverywhereOnLargeGridInt() {
+        int rows = 50;
+        int columns = 50;
+        int range = 10;
+        int relevantC = 5;
+        int relevantR = 5;
+        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
+                1);
+        IntManhattanDistanceStructure ds =
+                new IntManhattanDistanceStructure(0, range, model);
+        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
+        var result = new SpatialAlgorithms<>(ds,
+                new BooleanDomain(),
+                false).everywhere(f);
+//        IntStream.range(0, model.size()).forEach(result::apply);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
+                        result.apply(Utils.gridIndexOf(i, j, columns)),
+                        "<" + i + "," + j + ">:");
+            }
+        }
+    }
+
+    @Disabled
+    @Test
+    void testEverywhereOnLargeGridIntParallel() {
+        int rows = 100;
+        int columns = 100;
+        int range = 10;
+        int relevantC = 5;
+        int relevantR = 5;
+        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
+                1);
+        IntManhattanDistanceStructure ds =
+                new IntManhattanDistanceStructure(0, range, model);
+        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
+        var result = new SpatialAlgorithms<>(ds,
+                new BooleanDomain(),
+                true).everywhere(f);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,

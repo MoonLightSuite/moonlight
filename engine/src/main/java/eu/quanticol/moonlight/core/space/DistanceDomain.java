@@ -23,24 +23,43 @@ package eu.quanticol.moonlight.core.space;
 /**
  * Interface that must be implemented by a distance metric
  * to be used with the spatial operators and models of Moonlight.
+ *
  * @param <M> The metric type of the distance
  */
 public interface DistanceDomain<M> {
 
     /**
-     * Minimal allowed distance
-     * @return the minimal possible distance
-     */
-    M zero();
-
-    /**
      * Maximal allowed distance
+     *
      * @return the maximal possible distance
      */
     M infinity();
 
     /**
+     * Method to combine the metric `x`, `factor` times
+     *
+     * @param x      metric
+     * @param factor times of the combination
+     * @return multiplication of the metric times the factor
+     */
+    default M multiply(M x, int factor) {
+        M accumul = zero();
+        for (int i = 0; i < factor; i++) {
+            accumul = sum(x, accumul);
+        }
+        return accumul;
+    }
+
+    /**
+     * Minimal allowed distance
+     *
+     * @return the minimal possible distance
+     */
+    M zero();
+
+    /**
      * Method to combine two distances
+     *
      * @param x first distance to combine
      * @param y second distance to combine
      * @return the resulting distance
@@ -48,45 +67,34 @@ public interface DistanceDomain<M> {
     M sum(M x, M y);
 
     /**
-     * Method to combine a metric n times
-     * @param x metric
-     * @param factor times of the combination
-     * @return multiplication of the metric times the factor
-     */
-    default M multiply(M x, int factor) {
-        M accumul = zero();
-        for(int i = 0; i < factor; i++) {
-            accumul = sum(x, accumul);
-        }
-        return accumul;
-    }
-
-    /**
      * Tells whether the first distance is smaller than the second
+     *
      * @param x the first distance to be analyzed
      * @param y the second distance to be analyzed
      * @return <code>true</code> if <code>x</code> is smaller than
-     *         <code>y</code>. <code>False</code> otherwise.
+     * <code>y</code>. <code>False</code> otherwise.
      */
     boolean less(M x, M y);
 
     /**
      * Tells whether the first distance is equivalent to the second
+     *
      * @param x the first distance to be analyzed
      * @param y the second distance to be analyzed
      * @return <code>true</code> if <code>x</code> and <code>y</code>
-     *         are equals. <code>False</code> otherwise.
+     * are equals. <code>False</code> otherwise.
      */
     boolean equalTo(M x, M y);
 
     /**
      * Tells whether the first distance is smaller or equal to
      * the second.
+     *
      * @param x the first distance to be analyzed
      * @param y the second distance to be analyzed
      * @return <code>true</code> if <code>x</code> is smaller
-     *         or equal than <code>y</code>.
-     *         <code>False</code> otherwise.
+     * or equal than <code>y</code>.
+     * <code>False</code> otherwise.
      */
     boolean lessOrEqual(M x, M y);
 }

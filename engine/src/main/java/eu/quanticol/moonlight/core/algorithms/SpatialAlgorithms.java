@@ -1,10 +1,11 @@
 package eu.quanticol.moonlight.core.algorithms;
 
-import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 
-import java.util.function.*;
+import java.util.function.BinaryOperator;
+import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 public class SpatialAlgorithms<E, M, R> {
@@ -34,43 +35,39 @@ public class SpatialAlgorithms<E, M, R> {
                 domain::disjunction, domain.min(), domain.max(), s);
     }
 
-    public IntFunction<R> unaryOperation(Box<Integer> range,
+    public IntFunction<R> unaryOperation(int[] range,
                                          IntFunction<IntPredicate> filter,
                                          BinaryOperator<R> domainOp,
                                          R identity,
                                          R bound,
                                          IntFunction<R> spatialSignal) {
-        Function<Integer, R> algorithm = filterReduce(filter, domainOp,
+        IntFunction<R> algorithm = filterReduce(filter, domainOp,
                 identity, bound, spatialSignal);
-        return i -> locationStream(range).boxed()
-                .map(algorithm)
+        return i -> locationStream(range[0], range[1])
+                .mapToObj(algorithm)
                 .toList().get(i);
     }
 
-    private Function<Integer, R> filterReduce(IntFunction<IntPredicate> filter,
-                                              BinaryOperator<R> op,
-                                              R id,
-                                              R bound,
-                                              IntFunction<R> s) {
-        IntFunction<IntStream> allLocs = i -> locationStream(allLocations());
+    private IntFunction<R> filterReduce(IntFunction<IntPredicate> neighbourhood,
+                                        BinaryOperator<R> op,
+                                        R id,
+                                        R bound,
+                                        IntFunction<R> s) {
+        IntFunction<IntStream> closeEnoughLocs = i -> {
+            int[] range = ds.getBoundingBox(i);
+            return locationStream(range[0], range[1]);
+        };
         IntFunction<IntStream> locStream =
-                i -> allLocs.apply(i).filter(filter.apply(i));
-        IntFunction<int[]> locs = i -> locStream.apply(i).toArray();
+                i -> closeEnoughLocs.apply(i).filter(neighbourhood.apply(i));
+        IntFunction<int[]> inRangeLocs = i -> locStream.apply(i).toArray();
 
-        return i -> reduceToBound(locs.apply(i), s, id, bound, op);
-//        return i -> locationStream(allLocations()).filter(filter.apply(i))
-//                .boxed()
-//                .reduce(id, accumulator(s, op), op);
+        return i -> reduceToBound(inRangeLocs.apply(i), s, id, bound, op);
     }
 
-    private IntStream locationStream(Box<Integer> range) {
+    private IntStream locationStream(int start, int end) {
         if (parallel)
-            return IntStream.range(range.getStart(), range.getEnd()).parallel();
-        return IntStream.range(range.getStart(), range.getEnd());
-    }
-
-    private Box<Integer> allLocations() {
-        return new Box<>(0, ds.getModel().size());
+            return IntStream.range(start, end).parallel();
+        return IntStream.range(start, end);
     }
 
     private R reduceToBound(int[] locations, IntFunction<R> signal,
@@ -84,13 +81,12 @@ public class SpatialAlgorithms<E, M, R> {
         return result;
     }
 
-    private IntPredicate neighbourhood(int i) {
-        return j -> ds.areWithinBounds(i, j);
+    private int[] allLocations() {
+        return new int[]{0, ds.getModel().size()};
     }
 
-    private BiFunction<R, Integer, R> accumulator(IntFunction<R> s,
-                                                  BinaryOperator<R> op) {
-        return (acc, j) -> op.apply(acc, s.apply(j));
+    private IntPredicate neighbourhood(int i) {
+        return j -> ds.areWithinBounds(i, j);
     }
 
     public IntFunction<R> everywhere(IntFunction<R> s) {

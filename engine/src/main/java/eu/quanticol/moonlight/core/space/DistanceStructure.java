@@ -25,6 +25,7 @@ import java.util.function.Function;
 /**
  * This interface abstracts the computation of the distance
  * for spatial algorithms.
+ *
  * @param <E> Type of edge labels of the spatial model.
  * @param <M> Type of the distance metric
  */
@@ -35,9 +36,9 @@ public interface DistanceStructure<E, M> {
      * The operation can be commutative or not, depending on the implementation.
      *
      * @param from source form which the computation starts
-     * @param to destination to which to look for computing the distance
+     * @param to   destination to which to look for computing the distance
      * @return the aggregated distance to reach <code>to</code>
-     *         starting at <code>from</code>.
+     * starting at <code>from</code>.
      */
     M getDistance(int from, int to);
 
@@ -47,25 +48,21 @@ public interface DistanceStructure<E, M> {
      * if it makes sense for the current distance structure.
      *
      * @param from source form which the computation starts
-     * @param to destination to which to look for the analysis
+     * @param to   destination to which to look for the analysis
      * @return <code>true</code> when <code>to</code> can be reached.
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     boolean areWithinBounds(int from, int to);
 
     /**
      * Method to assess whether one location is within the bounds of the
      * spatial structure
+     *
      * @param d distance
      * @return <code>true</code> when <code>d</code> is within bounds.
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     boolean isWithinBounds(M d);
-
-    /**
-     * @return the spatial model on which the distance structure is defined.
-     */
-    SpatialModel<E> getModel();
 
     /**
      * @return the distance function used to compute the distance.
@@ -76,4 +73,17 @@ public interface DistanceStructure<E, M> {
      * @return the distance domain used to compute the distance.
      */
     DistanceDomain<M> getDistanceDomain();
+
+    /**
+     * @return an approximation of the locations that are close
+     * enough to the current one (to optimize analysis).
+     */
+    default int[] getBoundingBox(int i) {
+        return new int[]{0, getModel().size()};
+    }
+
+    /**
+     * @return the spatial model on which the distance structure is defined.
+     */
+    SpatialModel<E> getModel();
 }
