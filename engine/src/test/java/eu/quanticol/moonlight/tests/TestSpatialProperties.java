@@ -5,6 +5,7 @@ import eu.quanticol.moonlight.core.algorithms.SpatialAlgorithms;
 import eu.quanticol.moonlight.core.base.Pair;
 import eu.quanticol.moonlight.core.formula.Formula;
 import eu.quanticol.moonlight.core.io.DataHandler;
+import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
@@ -20,10 +21,7 @@ import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporal
 import eu.quanticol.moonlight.offline.signal.RecordHandler;
 import eu.quanticol.moonlight.offline.signal.Signal;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.space.GraphModel;
-import eu.quanticol.moonlight.space.IntManhattanDistanceStructure;
-import eu.quanticol.moonlight.space.ManhattanDistanceStructure;
-import eu.quanticol.moonlight.space.RegularGridModel;
+import eu.quanticol.moonlight.space.*;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,6 +41,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author loreti
  */
 class TestSpatialProperties {
+    SignalDomain<Boolean> BOOLEAN_DOMAIN = new BooleanDomain();
+    int TO_TEN = 10;
+    int FROM_HERE = 0;
+    boolean PARALLEL = true;
+    boolean NOT_PARALLEL = false;
 
     @Test
     void testGraphBuild() {
@@ -177,15 +180,17 @@ class TestSpatialProperties {
     }
 
     @Test
-    void testEverywhereOnGrid() {
+    void testEverywhereOnGraphAsGrid() {
         int rows = 9;
         int columns = 12;
         double range = 10.0;
         int relevantC = 5;
         int relevantR = 5;
-        SpatialModel<Double> model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
-        DefaultDistanceStructure<Double, Double> ds = new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), 0.0, range, model);
-        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
+        var model = Utils.createGridModelAsGraph(rows, columns, false, 1.0);
+        var ds = new DefaultDistanceStructure<>(x -> x,
+                new DoubleDomain(), 0.0, range, model);
+        IntFunction<Boolean> f = (i) ->
+                i != Utils.gridIndexOf(relevantR, relevantC, columns);
         var result = new SpatialAlgorithms<>(ds,
                 new BooleanDomain(),
                 false).everywhere(f);
@@ -197,83 +202,85 @@ class TestSpatialProperties {
             }
         }
     }
-
 
     @Disabled
     @Test
     void testEverywhereOnLargeGrid() {
         int rows = 50;
         int columns = 50;
-        int range = 10;
-        int relevantC = 5;
-        int relevantR = 5;
-        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
-                1);
-        DistanceStructure<Integer, Integer> ds =
-                new ManhattanDistanceStructure<>(x -> x,
-                        new IntegerDomain(), 0, range, model);
-        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
-        var result = new SpatialAlgorithms<>(ds,
-                new BooleanDomain(),
-                false).everywhere(f);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
-                        result.apply(Utils.gridIndexOf(i, j, columns)),
-                        "<" + i + "," + j + ">:");
+        var model = Utils.createGridModel(rows, columns, 1);
+        var signal = defaultSignal(model);
+
+        var ds = new ManhattanDistanceStructure<>(x -> x,
+                new IntegerDomain(), FROM_HERE, TO_TEN, model);
+        var result = new SpatialAlgorithms<>(ds, BOOLEAN_DOMAIN)
+                .everywhere(signal);
+
+        checkMatrix(model, result);
+    }
+
+    private IntFunction<Boolean> defaultSignal(RegularGridModel<?> model) {
+        int targetColumn = 5;
+        int targetRow = 5;
+        return (cell) -> cell != model.fromCoordinates(targetColumn, targetRow);
+    }
+
+    private void checkMatrix(RegularGridModel<?> model,
+                             IntFunction<Boolean> result) {
+        for (int i = 0; i < model.getRows(); i++) {
+            for (int j = 0; j < model.getColumns(); j++) {
+                var currentValue = Math.abs(i - 5) + Math.abs(j - 5);
+                assertEquals(currentValue > TO_TEN,
+                        result.apply(model.fromCoordinates(i, j)),
+                        String.format("<%d, %d>:", i, j));
             }
         }
     }
 
-    @Disabled
+    //@Disabled
     @Test
     void testEverywhereOnLargeGridInt() {
-        int rows = 50;
-        int columns = 50;
-        int range = 10;
-        int relevantC = 5;
-        int relevantR = 5;
-        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
-                1);
-        IntManhattanDistanceStructure ds =
-                new IntManhattanDistanceStructure(0, range, model);
-        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
-        var result = new SpatialAlgorithms<>(ds,
-                new BooleanDomain(),
-                false).everywhere(f);
-//        IntStream.range(0, model.size()).forEach(result::apply);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
-                        result.apply(Utils.gridIndexOf(i, j, columns)),
-                        "<" + i + "," + j + ">:");
-            }
-        }
-    }
-
-    @Disabled
-    @Test
-    void testEverywhereOnLargeGridIntParallel() {
         int rows = 100;
         int columns = 100;
-        int range = 10;
-        int relevantC = 5;
-        int relevantR = 5;
-        RegularGridModel<Integer> model = Utils.createGridModel(rows, columns,
-                1);
-        IntManhattanDistanceStructure ds =
-                new IntManhattanDistanceStructure(0, range, model);
-        IntFunction<Boolean> f = (i) -> i != Utils.gridIndexOf(relevantR, relevantC, columns);
-        var result = new SpatialAlgorithms<>(ds,
-                new BooleanDomain(),
-                true).everywhere(f);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                assertEquals(Math.abs(i - 5) + Math.abs(j - 5) > range,
-                        result.apply(Utils.gridIndexOf(i, j, columns)),
-                        "<" + i + "," + j + ">:");
-            }
-        }
+        var model = Utils.createGridModel(rows, columns, 1);
+        var signal = defaultSignal(model);
+
+        var ds = new IntManhattanDistanceStructure(FROM_HERE, TO_TEN, model);
+        var result = new SpatialAlgorithms<>(ds, BOOLEAN_DOMAIN)
+                .everywhere(signal);
+
+        checkMatrix(model, result);
+    }
+
+
+    @Test
+    void testEverywhereOnLargeGridIntParallel() {
+        int rows = 300;
+        int columns = 300;
+        var model = Utils.createGridModel(rows, columns, 1);
+        var signal = defaultSignal(model);
+
+        var ds = new IntManhattanDistanceStructure(PARALLEL,
+                FROM_HERE, TO_TEN, model);
+        var result = new SpatialAlgorithms<>(ds, BOOLEAN_DOMAIN, PARALLEL)
+                .everywhere(signal);
+
+        checkMatrix(model, result);
+    }
+
+
+    @Test
+    void testEverywhereOnLargeGridIntOld() {
+        int rows = 50;
+        int columns = 50;
+        var model = Utils.createGridModel(rows, columns, 1);
+        var signal = defaultSignal(model);
+
+        var ds = new IntManhattanDistanceStructure1(FROM_HERE, TO_TEN, model);
+        var result = new SpatialAlgorithms<>(ds, BOOLEAN_DOMAIN)
+                .everywhere(signal);
+
+        checkMatrix(model, result);
     }
 
     @Test

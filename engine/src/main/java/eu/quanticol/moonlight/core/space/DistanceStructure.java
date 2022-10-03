@@ -86,4 +86,13 @@ public interface DistanceStructure<E, M> {
      * @return the spatial model on which the distance structure is defined.
      */
     SpatialModel<E> getModel();
+
+    /**
+     * @return an approximation of the locations that are close
+     * enough to the current one (to optimize analysis).
+     */
+    default int[] getNeighbourhood(int i) {
+        throw new UnsupportedOperationException("Not supported by current " +
+                "distance structure");
+    }
 }

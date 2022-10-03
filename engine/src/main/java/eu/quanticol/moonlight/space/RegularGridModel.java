@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RegularGridModel<E> implements SpatialModel<E> {
     private final int columns;
@@ -82,6 +81,10 @@ public class RegularGridModel<E> implements SpatialModel<E> {
         return neighbours;
     }
 
+    public int[] getNeighboursArray(int node) {
+        return getNeighbours(node).stream().mapToInt(i -> i).toArray();
+    }
+
     @Override
     public List<Pair<Integer, E>> previous(int location) {
         return next(location);
@@ -96,7 +99,7 @@ public class RegularGridModel<E> implements SpatialModel<E> {
     private List<Pair<Integer, E>> listToWeighted(List<Integer> list) {
         return list.stream()
                 .map(x -> new Pair<>(x, weight))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public int getRows() {
