@@ -190,7 +190,16 @@ public interface SpatialTemporalMonitor<S, T, R> {
 					 DistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
-		return new SpatialTemporalMonitorSomewhere<>(m,distance,domain);
+		return somewhereMonitor(m, distance, domain, false);
+	}
+
+	static <S, T, R> SpatialTemporalMonitor<S, T, R> somewhereMonitor(
+			SpatialTemporalMonitor<S, T, R> m ,
+			Function<SpatialModel<S>,
+					DistanceStructure<S, ?>> distance,
+			SignalDomain<R> domain, boolean isParallel)
+	{
+		return new SpatialTemporalMonitorSomewhere<>(m,distance,domain, isParallel);
 	}
 
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> everywhereMonitor(
@@ -199,7 +208,17 @@ public interface SpatialTemporalMonitor<S, T, R> {
 					 DistanceStructure<S, ?>> distance,
 			SignalDomain<R> domain)
 	{
-		return new SpatialTemporalMonitorEverywhere<>(m, distance, domain);
+		return everywhereMonitor(m, distance, domain, false);
+	}
+
+	static <S, T, R> SpatialTemporalMonitor<S, T, R> everywhereMonitor(
+			SpatialTemporalMonitor<S, T, R> m,
+			Function<SpatialModel<S>,
+					DistanceStructure<S, ?>> distance,
+			SignalDomain<R> domain, boolean isParallel)
+	{
+		return new SpatialTemporalMonitorEverywhere<>(m, distance, domain,
+				isParallel);
 	}
 
 	static <S, T, R> SpatialTemporalMonitor<S, T, R> escapeMonitor(

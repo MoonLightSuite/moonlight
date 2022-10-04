@@ -44,14 +44,17 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
     private final SpatialTemporalMonitor<S, T, R> m;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
     private final SignalDomain<R> domain;
+    private final boolean parallel;
 
     public SpatialTemporalMonitorEverywhere(SpatialTemporalMonitor<S, T, R> m,
                                             Function<SpatialModel<S>,
                                                     DistanceStructure<S, ?>> distance,
-                                            SignalDomain<R> domain) {
+                                            SignalDomain<R> domain,
+                                            boolean isParallel) {
         this.m = m;
         this.distance = distance;
         this.domain = domain;
+        this.parallel = isParallel;
     }
 
     @Override
@@ -64,6 +67,7 @@ public class SpatialTemporalMonitorEverywhere<S, T, R>
 
     private IntFunction<R> everywhereOp(IntFunction<R> spatialSignal,
                                         DistanceStructure<S, ?> ds) {
-        return new SpatialAlgorithms<>(ds, domain, false).everywhere(spatialSignal);
+        return new SpatialAlgorithms<>(ds, domain, parallel)
+                .everywhere(spatialSignal);
     }
 }

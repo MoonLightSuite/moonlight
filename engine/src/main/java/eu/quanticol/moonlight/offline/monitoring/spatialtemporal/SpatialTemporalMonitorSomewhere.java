@@ -44,13 +44,16 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
     private final SpatialTemporalMonitor<S, T, R> m;
     private final Function<SpatialModel<S>, DistanceStructure<S, ?>> distance;
     private final SignalDomain<R> domain;
+    private final boolean parallel;
 
     public SpatialTemporalMonitorSomewhere(SpatialTemporalMonitor<S, T, R> m,
                                            Function<SpatialModel<S>, DistanceStructure<S, ?>> distance,
-                                           SignalDomain<R> domain) {
+                                           SignalDomain<R> domain,
+                                           boolean parallel) {
         this.m = m;
         this.distance = distance;
         this.domain = domain;
+        this.parallel = parallel;
     }
 
     @Override
@@ -63,6 +66,7 @@ public class SpatialTemporalMonitorSomewhere<S, T, R> implements SpatialTemporal
 
     private IntFunction<R> somewhereOp(IntFunction<R> spatialSignal,
                                        DistanceStructure<S, ?> ds) {
-        return new SpatialAlgorithms<>(ds, domain, false).somewhere(spatialSignal);
+        return new SpatialAlgorithms<>(ds, domain, parallel)
+                .somewhere(spatialSignal);
     }
 }

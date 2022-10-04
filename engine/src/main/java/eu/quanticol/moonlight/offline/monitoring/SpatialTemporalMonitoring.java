@@ -59,17 +59,27 @@ public class SpatialTemporalMonitoring<S, T, R> {
     private final Map<String, Function<Parameters, Function<T, R>>> atoms;
     private final Map<String, Function<SpatialModel<S>, DistanceStructure<S, ?>>> distanceFunctions;
     private final SignalDomain<R> module;
+    private final boolean parallel;
 
 
     public SpatialTemporalMonitoring(
             Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
             Map<String, Function<SpatialModel<S>,
                     DistanceStructure<S, ?>>> distanceFunctions,
-            SignalDomain<R> module) {
+            SignalDomain<R> module, boolean parallelize) {
         super();
         this.atoms = atomicPropositions;
         this.module = module;
         this.distanceFunctions = distanceFunctions;
+        this.parallel = parallelize;
+    }
+
+    public SpatialTemporalMonitoring(
+            Map<String, Function<Parameters, Function<T, R>>> atomicPropositions,
+            Map<String, Function<SpatialModel<S>,
+                    DistanceStructure<S, ?>>> distanceFunctions,
+            SignalDomain<R> module) {
+        this(atomicPropositions, distanceFunctions, module, false);
     }
 
     private SpatialTemporalMonitor<S, T, R> generateMonitor(AtomicFormula f) {
@@ -220,14 +230,15 @@ public class SpatialTemporalMonitoring<S, T, R> {
         var argMonitor = monitor(f.getArgument());
 
         var distanceFunction = distanceFunctions.get(f.getDistanceFunctionId());
-        return somewhereMonitor(argMonitor, distanceFunction, module);
+        return somewhereMonitor(argMonitor, distanceFunction, module, parallel);
     }
 
     private SpatialTemporalMonitor<S, T, R> generateMonitor(EverywhereFormula f) {
         var argMonitor = monitor(f.getArgument());
 
         var distanceFunction = distanceFunctions.get(f.getDistanceFunctionId());
-        return everywhereMonitor(argMonitor, distanceFunction, module);
+        return everywhereMonitor(argMonitor, distanceFunction, module,
+                parallel);
     }
 
     private SpatialTemporalMonitor<S, T, R> generateMonitor(EscapeFormula f) {

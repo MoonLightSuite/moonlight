@@ -86,4 +86,24 @@ class ManhattanDistanceStructureTest {
         assertArrayEquals(new int[]{4, 6, 7, 8}, neighbourhood(7, dist));
         assertArrayEquals(new int[]{5, 7, 8}, neighbourhood(8, dist));
     }
+
+    @Test
+    void fullNeighbourhoodTwoStepsCheck() {
+        var dist = new IntManhattanDistanceStructure(1, 2, MODEL);
+
+        assertArrayEquals(new int[]{0, 1, 2, 3, 4, 6}, neighbourhood(0, dist));
+        assertArrayEquals(new int[]{0, 1, 2, 3, 4, 5, 7}, neighbourhood(1,
+                dist));
+        assertArrayEquals(new int[]{0, 1, 2, 4, 5, 8}, neighbourhood(2, dist));
+        assertArrayEquals(new int[]{0, 1, 3, 4, 5, 6, 7}, neighbourhood(3,
+                dist));
+        assertArrayEquals(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8}, neighbourhood(4
+                , dist));
+        assertArrayEquals(new int[]{1, 2, 3, 4, 5, 7, 8}, neighbourhood(5,
+                dist));
+        assertArrayEquals(new int[]{0, 3, 4, 6, 7, 8}, neighbourhood(6, dist));
+        assertArrayEquals(new int[]{1, 3, 4, 5, 6, 7, 8}, neighbourhood(7,
+                dist));
+        assertArrayEquals(new int[]{2, 4, 5, 6, 7, 8}, neighbourhood(8, dist));
+    }
 }

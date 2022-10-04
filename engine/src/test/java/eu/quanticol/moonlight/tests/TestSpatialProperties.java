@@ -45,7 +45,6 @@ class TestSpatialProperties {
     int TO_TEN = 10;
     int FROM_HERE = 0;
     boolean PARALLEL = true;
-    boolean NOT_PARALLEL = false;
 
     @Test
     void testGraphBuild() {
