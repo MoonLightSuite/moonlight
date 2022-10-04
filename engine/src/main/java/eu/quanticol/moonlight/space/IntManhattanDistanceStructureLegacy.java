@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public class IntManhattanDistanceStructure1
+public class IntManhattanDistanceStructureLegacy
         implements DistanceStructure<Integer, Integer> {
     private final int lowerBound;
     private final int upperBound;
@@ -16,7 +16,7 @@ public class IntManhattanDistanceStructure1
 
     private boolean[][] distanceMatrix;
 
-    public IntManhattanDistanceStructure1(
+    public IntManhattanDistanceStructureLegacy(
             int lowerBound,
             int upperBound,
             @NotNull RegularGridModel<Integer> model) {

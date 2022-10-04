@@ -5,7 +5,9 @@ import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.space.IntManhattanDistanceStructure;
 
-import java.util.function.*;
+import java.util.function.BinaryOperator;
+import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 public class SpatialAlgorithms<E, M, R> {
@@ -60,36 +62,19 @@ public class SpatialAlgorithms<E, M, R> {
                                         R id,
                                         R bound,
                                         IntFunction<R> s) {
-
         IntFunction<int[]> inRangeLocs;
 
         if (ds instanceof IntManhattanDistanceStructure) {
             inRangeLocs = ds::getNeighbourhood;
         } else {
-            IntFunction<IntStream> closeEnoughLocs = i -> {
-                int[] range = ds.getBoundingBox(i);
-                return locationStream(range[0], range[1]);
-            };
-            IntFunction<IntStream> locStream = i -> closeEnoughLocs.apply(i)
-                    .filter(neighbourhood.apply(i));
-            inRangeLocs = i -> locStream.apply(i).toArray();
+            inRangeLocs = genericNeighbourhood(neighbourhood);
         }
 
         return i -> reduceToBound(inRangeLocs.apply(i), s, id, bound, op);
     }
 
-    private IntStream locationStream(int start, int end) {
-        if (parallel)
-            return IntStream.range(start, end).parallel();
-        return IntStream.range(start, end);
-    }
-
     private R reduceToBound(int[] locations, IntFunction<R> signal,
                             R start, R toBound, BinaryOperator<R> op) {
-//        return Arrays.stream(locations).boxed().reduce(start, (acc, elem) -> {
-//            R s = signal.apply(elem);
-//            return op.apply(acc, s);
-//        }, op);
         R result = start;
         for (int element : locations) {
             result = op.apply(result, signal.apply(element));
@@ -97,6 +82,23 @@ public class SpatialAlgorithms<E, M, R> {
                 break;
         }
         return result;
+    }
+
+    private IntFunction<int[]> genericNeighbourhood(
+            IntFunction<IntPredicate> neighbourhood) {
+        IntFunction<IntStream> closeEnoughLocs = i -> {
+            int[] range = ds.getBoundingBox(i);
+            return locationStream(range[0], range[1]);
+        };
+        IntFunction<IntStream> locStream = i -> closeEnoughLocs.apply(i)
+                .filter(neighbourhood.apply(i));
+        return i -> locStream.apply(i).toArray();
+    }
+
+    private IntStream locationStream(int start, int end) {
+        if (parallel)
+            return IntStream.range(start, end).parallel();
+        return IntStream.range(start, end);
     }
 
     private Box<Integer> allLocations() {
@@ -107,33 +109,8 @@ public class SpatialAlgorithms<E, M, R> {
         return j -> ds.areWithinBounds(i, j);
     }
 
-    private Supplier<R> baseValue(R start) {
-        return () -> start;
-
-    }
-
     public IntFunction<R> everywhere(IntFunction<R> s) {
         return unaryOperation(allLocations(), this::neighbourhood,
                 domain::conjunction, domain.max(), domain.min(), s);
-    }
-
-    private class AccumulatedValue implements ObjIntConsumer<R> {
-        private final IntFunction<R> signal;
-        private final BinaryOperator<R> op;
-        private R value;
-
-        public AccumulatedValue(BinaryOperator<R> op, IntFunction<R> signal) {
-            this.op = op;
-            this.signal = signal;
-        }
-
-        public R getValue() {
-            return value;
-        }
-
-        @Override
-        public void accept(R r, int value) {
-            this.value = op.apply(r, signal.apply(value));
-        }
     }
 }

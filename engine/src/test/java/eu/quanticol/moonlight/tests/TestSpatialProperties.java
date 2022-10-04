@@ -203,7 +203,8 @@ class TestSpatialProperties {
         }
     }
 
-    @Disabled
+
+    @Disabled("Only useful for profiling")
     @Test
     void testEverywhereOnLargeGrid() {
         int rows = 50;
@@ -237,7 +238,8 @@ class TestSpatialProperties {
         }
     }
 
-    //@Disabled
+
+    @Disabled("Only useful for profiling")
     @Test
     void testEverywhereOnLargeGridInt() {
         int rows = 100;
@@ -252,7 +254,7 @@ class TestSpatialProperties {
         checkMatrix(model, result);
     }
 
-
+    @Disabled("Only useful for profiling")
     @Test
     void testEverywhereOnLargeGridIntParallel() {
         int rows = 300;
@@ -268,7 +270,7 @@ class TestSpatialProperties {
         checkMatrix(model, result);
     }
 
-
+    @Disabled("Only useful for profiling")
     @Test
     void testEverywhereOnLargeGridIntOld() {
         int rows = 50;
@@ -276,7 +278,8 @@ class TestSpatialProperties {
         var model = Utils.createGridModel(rows, columns, 1);
         var signal = defaultSignal(model);
 
-        var ds = new IntManhattanDistanceStructure1(FROM_HERE, TO_TEN, model);
+        var ds = new IntManhattanDistanceStructureLegacy(FROM_HERE, TO_TEN,
+                model);
         var result = new SpatialAlgorithms<>(ds, BOOLEAN_DOMAIN)
                 .everywhere(signal);
 
