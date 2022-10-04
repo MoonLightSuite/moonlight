@@ -55,7 +55,6 @@ public class IntManhattanDistanceStructure
         distanceMatrix = new int[model.size()][0];
         prepareOneStepDistanceMatrix();
         computeReachableSets();
-        //cleanDuplicatesInReachabilitySet();
     }
 
     private void prepareOneStepDistanceMatrix() {
@@ -67,8 +66,12 @@ public class IntManhattanDistanceStructure
     }
 
     private void computeReachableSets() {
-        IntStream.range(0, model.size())
-                .forEach(this::computeLocationReachableSet);
+        if (parallel)
+            IntStream.range(0, model.size()).parallel()
+                    .forEach(this::computeLocationReachableSet);
+        else
+            IntStream.range(0, model.size())
+                    .forEach(this::computeLocationReachableSet);
     }
 
     private void computeLocationReachableSet(int location) {
@@ -102,22 +105,10 @@ public class IntManhattanDistanceStructure
         distanceMatrix[target] = result;
     }
 
-    private void cleanDuplicatesInReachabilitySet() {
-        IntStream.range(0, model.size()).forEach(i ->
-                distanceMatrix[i] =
-                        Arrays.stream(distanceMatrix[i]).distinct().toArray());
-    }
-
+    @Override
     public int[] getNeighbourhood(int location) {
         return distanceMatrix[location];
     }
-
-//    private void extendDistanceMatrix(int location) {
-//        int[] oldNeighbours = distanceMatrix[location];
-//        int[] result = Arrays.copyOf(oldNeighbours,
-//                oldNeighbours.length + neighbours.length);
-//        distanceMatrix[location] = result;
-//    }
 
     @Override
     public boolean areWithinBounds(int from, int to) {
@@ -134,20 +125,6 @@ public class IntManhattanDistanceStructure
         int[] tPair = model.unsafeToCoordinates(to);
         return computeManhattanDistance(fPair, tPair);
     }
-
-//    @Override
-//    public int[] getBoundingBox(int location) {
-//        int[] pair = model.unsafeToCoordinates(location);
-//        int x = pair[0];
-//        int y = pair[1];
-//        int xMin = Math.max(0, x - upperBound);
-//        int xMax = Math.min(model.getColumns() - 1, x + upperBound);
-//        int yMin = Math.max(0, y - upperBound);
-//        int yMax = Math.min(model.getRows() - 1, y + upperBound);
-//        int jMin = model.fromCoordinates(xMin, yMin);
-//        int jMax = model.fromCoordinates(xMax, yMax);
-//        return new int[]{jMin, jMax};
-//    }
 
     private int computeManhattanDistance(int[] from,
                                          int[] to) {
