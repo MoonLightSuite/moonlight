@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 rootProject.name = "build-logic"    // the component name
 // We aggregate all the build logic in a single project
 include("java-library")
-include("report-aggregation")
+include("code-info")

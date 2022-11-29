@@ -37,3 +37,6 @@ distribution_files/console/
 
 # log4j log file
 jsbml.log
+
+# generated docs directory
+docs/

@@ -3,6 +3,7 @@ plugins {
     java
     jacoco
     id("org.sonarqube")
+    id("org.jetbrains.dokka")
 }
 
 group = "eu.quanticol.moonlight"
@@ -46,9 +47,15 @@ tasks.test {
     jvmArgs("--enable-preview")
 }
 
-// Do not generate reports for individual projects
+
 tasks.jacocoTestReport.configure {
+    // Do not generate reports for individual projects
     enabled = false
+}
+
+// == HTML javadoc settings ==
+tasks.dokkaHtml.configure {
+    outputDirectory.set(projectDir.resolve("../docs"))
 }
 
 // == Sonarqube settings ==

@@ -12,10 +12,14 @@ dependencyResolutionManagement {
     }
 }
 
+pluginManagement {
+    includeBuild("build-logic")
+}
+
 // We include all the "sub"-projects in the build process:
 
 // == Common scripts ==
-includeBuild("build-logic")
+//include("build-logic")
 
 // == Moonlight Core ==
 includeBuild("engine")
