@@ -28,5 +28,6 @@ include("spatio-temporal:pollution")
 // temporal examples:
 include ("temporal:afc")
 include ("temporal:amt")
+include ("temporal:fromscript")
 include ("temporal:matlab")
 include ("temporal:simpleTemporal")

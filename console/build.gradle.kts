@@ -14,30 +14,44 @@ application {
     applicationName = "mlconsole"
 }
 
-tasks.jar {
-    archiveFileName.set("moonlight.jar")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    manifest {
-        attributes(mapOf("Main-Class" to application.mainClass))
+//tasks.jar {
+//    archiveFileName.set("moonlight.jar")
+//    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//    manifest {
+//        attributes(mapOf("Main-Class" to application.mainClass))
+//    }
+//    doFirst {
+//        from({
+//            configurations.compileClasspath.get().map {
+//                if (it.isDirectory) it else zipTree(it)
+//            }
+//        })
+//    }
+//    exclude ("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
+//}
+
+tasks.register("distribute-python") {
+    dependsOn("build")
+
+    dependsOn(project(":shared").tasks["build"])
+    copy {
+        from("$buildDir/libs/")
+        into(rootProject.file("$rootDir/../release/python"))
     }
-    doFirst {
-        from({
-            configurations.compileClasspath.get().map {
-                if (it.isDirectory) it else zipTree(it)
-            }
-        })
+    copy {
+        from("$buildDir/resources/main/python")
+        into(rootProject.file("$rootDir/../release/python"))
     }
-    exclude ("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
 }
 
-//val DEPRECATED = "Dangerous copying strategy adopted for legacy code, should be refactored. " +
-//                 "See https://docs.gradle.org/current/userguide/upgrading_version_5.html#implicit_duplicate_strategy_for_copy_or_archive_tasks_has_been_deprecated"
-//
-//tasks.matching{it.name in listOf("installDist", "distTar", "distZip")}
-//    .configureEach {
-//    logger.warn(DEPRECATED)
-//    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
-//}
+fun copyAuxiliaryFiles(source: String, destination: String) {
+    copy {
+        from("$buildDir/resources/main/$source")
+        into(rootProject.file("$rootDir/../release/$destination"))
+    }
+}
+
+
 
 tasks.register("distribution") {
     logger.info("exec distribution Task!")

@@ -45,6 +45,6 @@ dependencies {
     jacocoAggregation("eu.quanticol.moonlight:console")
     jacocoAggregation("eu.quanticol.moonlight:engine")
     jacocoAggregation("eu.quanticol.moonlight:script")
-    
+
     // TODO: add examples, etc.
 }
