@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2021
  *
  * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership.  
+ * regarding copyright ownership.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
         return fromDoubleArray(values,0, values.length);
     }
 
-    public MoonLightRecord fromDoubleArray(double ... values) {
+    public MoonLightRecord fromDoubleArray(double... values) {
         return fromDoubleArray(values,0,values.length);
     }
 

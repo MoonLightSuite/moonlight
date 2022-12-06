@@ -27,19 +27,19 @@ import eu.quanticol.moonlight.core.signal.Sample;
  *
  */
 public class Segment<T> implements Sample<Double, T> {
-	
+
 	private double time;
-	private final T value;
+	private T value;
 	private Segment<T> next;
 	private Segment<T> previous;
 	private double end = Double.NaN;
-	
+
 	public Segment( double time , T value ) {
 		this.time = time;
 		this.value = value;
 		this.previous = null;
 	}
-	
+
 	private Segment(Segment<T> previous, double time, T value) {
 		this.previous = previous;
 		this.time = time;
@@ -54,15 +54,15 @@ public class Segment<T> implements Sample<Double, T> {
 	public T getValue() {
 		return value;
 	}
-	
+
 	public Segment<T> getNext() {
 		return next;
 	}
-	
+
 	public Segment<T> getPrevious() {
 		return previous;
 	}
-	
+
 	public void setNext( Segment<T> next ) {
 		this.next = next;
 	}
@@ -71,7 +71,7 @@ public class Segment<T> implements Sample<Double, T> {
 		Segment<T> selected = jump( t );
 		return (selected==null?null:selected.value);
 	}
-	
+
 	public Segment<T> jump(double t ) {
 		if (t<time) {
 			return backwardTo( this, t );
@@ -79,16 +79,16 @@ public class Segment<T> implements Sample<Double, T> {
 			return forwardTo( this, t );
 		}
 	}
-	
+
 	public static <T> Segment<T> forwardTo(Segment<T> segment, double t) {
 		Segment<T> cursor = segment;
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
-			} 
+			}
 			cursor = cursor.next;
 		}
-		return null;	
+		return null;
 	}
 
 	public static <T> Segment<T> backwardTo(Segment<T> segment, double t) {
@@ -96,10 +96,10 @@ public class Segment<T> implements Sample<Double, T> {
 		while (cursor != null) {
 			if (cursor.contains(t)) {
 				return cursor;
-			} 
+			}
 			cursor = cursor.previous;
 		}
-		return null;	
+		return null;
 	}
 
 	public boolean contains(double t) {
@@ -111,18 +111,22 @@ public class Segment<T> implements Sample<Double, T> {
 	}
 
 	public Segment<T> addAfter(double time, T value) {
-		if (this.time >= time) {
+		if (this.time > time) {
 			throw new IllegalArgumentException("Trying to add time: " + time +
-											   ". Expected: >= " + this.time);
-		}
-		if (!this.value.equals(value)) {
-			this.next = new Segment<>(this, time, value);
-			this.end = Double.NaN;
-			return this.next;
-		} else {
-			this.end = time;
-			this.next = null;
+											   ". Expected > " + this.time);
+		} else if (this.time == time) {
+			this.value = value;
 			return this;
+		} else {
+			if (!this.value.equals(value)) {
+				this.next = new Segment<>(this, time, value);
+				this.end = Double.NaN;
+				return this.next;
+			} else {
+				this.end = time;
+				this.next = null;
+				return this;
+			}
 		}
 	}
 
@@ -163,7 +167,7 @@ public class Segment<T> implements Sample<Double, T> {
 		}
 		return previous.getStart();
 	}
-	
+
 	@Override
 	public String toString() {
 		return (previous!=null?"<":"[")+time+":"+value+(next!=null?">":"]");
@@ -217,5 +221,5 @@ public class Segment<T> implements Sample<Double, T> {
 	public boolean isAPoint() {
 		return (this.next==null)&&(Double.isNaN(this.end)||(this.time==this.end));
 	}
-	
+
 }

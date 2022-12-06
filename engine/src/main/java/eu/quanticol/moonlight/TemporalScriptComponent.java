@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * An instance of this class an be used to instantiate a monitor of given property.
+ * An instance of this class can be used to instantiate a monitor of given property.
  */
 public class TemporalScriptComponent<S> {
 
