@@ -5,7 +5,7 @@
 // - publishing maven packages
 plugins {
     `kotlin-dsl`
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.5.0.2730"
     id("org.jetbrains.dokka") version "1.7.20"
 }
 
