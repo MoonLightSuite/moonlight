@@ -53,10 +53,6 @@ tasks.jacocoTestReport.configure {
     enabled = false
 }
 
-// == HTML javadoc settings ==
-tasks.dokkaHtml.configure {
-    outputDirectory.set(projectDir.resolve("../docs"))
-}
 
 // == Sonarqube settings ==
 sonarqube {

@@ -6,8 +6,8 @@ group = "${group}.api"
 
 
 dependencies {
-    implementation("eu.quanticol.moonlight:engine")
-    implementation("eu.quanticol.moonlight:script")
+    implementation(project(":engine"))
+    implementation(project(":script"))
     //implementation fileTree(dir: "lib", include: "engine.jar")
     //implementation fileTree(dir: "lib", include: "engine2019.jar")
     implementation(fileTree(mapOf("dir" to "lib", "include" to "engine2021.jar")))

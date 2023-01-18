@@ -1,7 +1,6 @@
 // == Main project ==
 // This is an empty umbrella build including all the component builds.
 // This build is not necessarily needed: component builds work independently.
-
 // == Main project's name ==
 rootProject.name = "moonlight" // the component name
 
@@ -14,7 +13,12 @@ dependencyResolutionManagement {
 
 pluginManagement {
     includeBuild("build-logic")
+    plugins {
+        kotlin("jvm") version "1.7.21" apply false         // for compiling the docs
+        id("org.jetbrains.dokka") version "1.7.20" apply false
+    }
 }
+
 
 // We include all the "sub"-projects in the build process:
 
@@ -22,17 +26,17 @@ pluginManagement {
 //include("build-logic")
 
 // == Moonlight Core ==
-includeBuild("engine")
+include("engine")
 //includeBuild("utility")  // -> removed: moved into api
 
 // == MoonlightScript ==
-includeBuild("script")
+include("script")
 
 // == Legacy Moonlight APIs for Matlab == // TODO: refactor
-includeBuild("api")
+include("api")
 
 // == CLI project ==
-includeBuild("console")
+include("console")
 
 // == Examples ==
-includeBuild("examples")
+include("examples")

@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation("eu.quanticol.moonlight:engine")
-    implementation("eu.quanticol.moonlight:script")
+    implementation(project(":engine"))
+    implementation(project(":script"))
 }

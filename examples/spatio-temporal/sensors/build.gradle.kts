@@ -5,9 +5,9 @@ plugins {
 val libDir = "../../lib"
 
 dependencies {
-    implementation("eu.quanticol.moonlight:engine")
+    implementation(project(":engine"))
     implementation("eu.quanticol.moonlight.api:matlab")
-    implementation("eu.quanticol.moonlight:script")
+    implementation(project(":script"))
 
     implementation(fileTree(mapOf("dir" to libDir, "include" to listOf("*.jar"))))
 }
