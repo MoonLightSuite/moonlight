@@ -2,10 +2,14 @@
 // We collect here umbrella tasks that aggregate
 // for convenience the tasks of the "sub"-projects
 plugins {
-    id("eu.quanticol.code-info")   // for combining JaCoCo reports
+    // for combining JaCoCo reports:
+    id("eu.quanticol.code-info")
+
+    // for docs generation:
     kotlin("jvm")
     id("org.jetbrains.dokka")
 }
+
 
 // == Umbrella task to publishing all publishable packages ==
 // TODO: ideally we should have three separate packages:
