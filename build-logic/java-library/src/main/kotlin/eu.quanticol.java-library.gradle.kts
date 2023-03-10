@@ -38,7 +38,7 @@ tasks {
 
 // == Testing settings ==
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 tasks.test {
@@ -48,14 +48,14 @@ tasks.test {
 }
 
 
-//tasks.jacocoTestReport.configure {
-//    // Do not generate reports for individual projects
-//    enabled = false
-//}
+tasks.jacocoTestReport.configure {
+    // Do not generate reports for individual projects
+    enabled = false
+}
 
 
 // == Sonarqube settings ==
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "MoonLightSuite_MoonLight")
         property("sonar.organization", "moonlightsuite")
