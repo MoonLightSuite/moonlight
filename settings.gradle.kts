@@ -14,7 +14,7 @@ dependencyResolutionManagement {
 pluginManagement {
     includeBuild("build-logic")
     plugins {
-        kotlin("jvm") version "1.7.21" apply false         // for compiling the docs
+        kotlin("jvm") version "1.8.10" apply false         // for compiling the docs
         id("org.jetbrains.dokka") version "1.7.20" apply false
     }
 }

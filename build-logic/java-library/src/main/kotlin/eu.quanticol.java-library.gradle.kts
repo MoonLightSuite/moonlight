@@ -48,10 +48,10 @@ tasks.test {
 }
 
 
-tasks.jacocoTestReport.configure {
-    // Do not generate reports for individual projects
-    enabled = false
-}
+//tasks.jacocoTestReport.configure {
+//    // Do not generate reports for individual projects
+//    enabled = false
+//}
 
 
 // == Sonarqube settings ==
