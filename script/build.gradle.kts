@@ -17,6 +17,10 @@ dependencies {
     antlr("org.antlr:antlr4:4.8")
 }
 
+tasks.sourcesJar {
+    dependsOn(tasks.generateGrammarSource)
+}
+
 tasks.generateGrammarSource {
     arguments.addAll(listOf("-visitor", "-long-messages"))
 }
