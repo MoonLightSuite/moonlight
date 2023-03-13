@@ -8,6 +8,8 @@ plugins {
     // for docs generation:
     kotlin("jvm")
     id("org.jetbrains.dokka")
+
+    id("eu.quanticol.java-library")
 }
 
 
@@ -44,8 +46,9 @@ tasks.register("publish") {
 
 tasks.register("analyze") {
     dependsOn(tasks.named("check"))
-    dependsOn("engine:sonarqube")
-    dependsOn("script:sonarqube")
+    dependsOn(tasks.named("sonar"))
+//    dependsOn("engine:sonarqube")
+//    dependsOn("script:sonarqube")
     //dependsOn(gradle.includedBuild("console").task(":sonarqube"))
     //dependsOn(gradle.includedBuild("script").task(":sonarqube"))
 }
