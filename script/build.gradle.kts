@@ -17,6 +17,10 @@ dependencies {
     antlr("org.antlr:antlr4:4.8")
 }
 
+tasks.build {
+    dependsOn(tasks.generateGrammarSource)
+}
+
 tasks.sourcesJar {
     dependsOn(tasks.generateGrammarSource)
 }

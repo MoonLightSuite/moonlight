@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "moonlight"
-version = "0.0.3"
+version = "0.0.8"
 description = "Moonlight python wrapper"
 authors = ["Ennio Visconti <ennio.visconti@gmail.com>"]
 readme = "README.md"
+include = ["src/moonlight/jar/*"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
