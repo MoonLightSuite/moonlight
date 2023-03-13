@@ -58,6 +58,7 @@ tasks.jacocoTestReport.configure {
 sonar {
     properties {
         property("sonar.projectKey", "MoonLightSuite_MoonLight")
+        property("sonar.projectName", "Moonlight")
         property("sonar.organization", "moonlightsuite")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
