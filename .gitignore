@@ -40,3 +40,7 @@ jsbml.log
 
 # generated docs directory
 docs/
+
+python/dist/
+python/src/moonlight/jar/
+
