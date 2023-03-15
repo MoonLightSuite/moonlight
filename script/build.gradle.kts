@@ -1,10 +1,8 @@
 plugins {
     id("eu.quanticol.java-library")
-    id("antlr")
+    antlr
     kotlin("jvm") version "1.8.10"          // for compiling the docs
 }
-
-//version("unspecified")
 
 dependencies {
     implementation(project(":engine"))
@@ -15,6 +13,8 @@ dependencies {
 
     // use ANTLR version 4
     antlr("org.antlr:antlr4:4.8")
+    implementation("org.antlr:antlr4-runtime:4.8")
+
 }
 
 tasks.build {
