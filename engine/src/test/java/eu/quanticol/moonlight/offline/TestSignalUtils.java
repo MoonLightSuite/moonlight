@@ -3,9 +3,12 @@ package eu.quanticol.moonlight.offline;
 import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static eu.quanticol.moonlight.TestUtils.listOf;
+import static eu.quanticol.moonlight.util.SignalGenerator.createSignal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,5 +46,10 @@ public class TestSignalUtils {
     public static SpatialTemporalSignal<Integer> basicSignal(int totalLocations) {
         var timeSignals = someTimeSignals(totalLocations);
         return new SpatialTemporalSignal<>(totalLocations, timeSignals::get);
+    }
+
+    public static Signal<Double> basicTemporalSignal() {
+        double[] values = new double[]{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+        return createSignal(values, Arrays.stream(values).boxed().toArray(Double[]::new));
     }
 }

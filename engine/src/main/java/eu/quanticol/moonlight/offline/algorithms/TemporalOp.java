@@ -95,7 +95,7 @@ public class TemporalOp {
         if (interval == null) {
             BooleanOp<T, T> booleanOp = new BooleanOp<>(false);
             return booleanOp.applyUnary(signal, x -> op.apply(x, init));
-            //return signal.iterateBackward(op, init);
+            return signal.iterateBackward(op, init);
         } else {
             SlidingWindow<T> sw = new SlidingWindow<>(interval.getStart(),
                                                       interval.getEnd(),
