@@ -34,6 +34,12 @@ public class BooleanOp<T, R> {
                 op.apply(cursors.get(0).getCurrentValue()), s);
     }
 
+    public Signal<R> applyUnaryWithBound(Signal<T> s, BiFunction<T, R, R> op, R init) {
+        return applyOpWith1StepMemory(
+                (cursors, prev) -> op.apply(cursors.get(0).getCurrentValue(), prev),
+                init, s);
+    }
+
     public Signal<R> applyBinary(Signal<T> s1,
                                  BiFunction<T, T, R> op,
                                  Signal<T> s2) {
@@ -54,33 +60,45 @@ public class BooleanOp<T, R> {
         return output;
     }
 
-    public <K> Signal<K> filterUnary(Signal<K> s, Predicate<K> p) {
+    @SafeVarargs
+    private Signal<R> applyOpWith1StepMemory(
+            BiFunction<List<SignalCursor<Double, T>>, R, R> op,
+            R init,
+            Signal<T>... signals) {
+        output = new Signal<>();
+        setStartingTime(signals);
+        List<SignalCursor<Double, T>> cs = prepareCursors(signals);
+        applyWithOneStepMemory(cs, prev -> op.apply(cs, prev), init);
+        setEndingTime(signals);
+        return output;
+    }
+
+
+
+    public Signal<R> filterUnary(Signal<R> s, Predicate<R> p) {
         return filterOp(cursors -> cursors.get(0).getCurrentValue(), p, s);
     }
 
-    //TODO: unsafe castings that are fine as long as T == R, 
-    // but should be refactored asap!!
     @SafeVarargs
-    private <K> Signal<K> filterOp(
-            Function<List<SignalCursor<Double, K>>, K> op,
-            Predicate<K> p,
-            Signal<K>... signals) {
+    private Signal<R> filterOp(
+            Function<List<SignalCursor<Double, R>>, R> op,
+            Predicate<R> p,
+            Signal<R>... signals) {
         output = new Signal<>();
         setStartingTime(signals);
-        List<SignalCursor<Double, K>> cs = prepareCursors(signals);
+        List<SignalCursor<Double, R>> cs = prepareCursors(signals);
 
-        applyFilter(cs, p, () -> (R) op.apply(cs));
+        applyFilter(cs, p, () -> op.apply(cs));
 
         setEndingTime(signals);
-        return (Signal<K>) output;
+        return output;
     }
 
-    //TODO: refactor to remove cast
-    private <K> void applyFilter(List<SignalCursor<Double, K>> cursors,
-                                 Predicate<K> p,
+    private void applyFilter(List<SignalCursor<Double, R>> cursors,
+                                 Predicate<R> p,
                                  Supplier<R> value) {
         while (isNotCompleted(cursors)) {
-            addResult(p.test((K) value.get()) ? value.get() : null);
+            addResult(p.test(value.get()) ? value.get() : null);
             moveCursorsForward(cursors);
         }
     }
@@ -117,6 +135,16 @@ public class BooleanOp<T, R> {
                            Supplier<R> value) {
         while (isNotCompleted(cursors)) {
             addResult(value.get());
+            moveCursorsForward(cursors);
+        }
+    }
+
+    private <K> void applyWithOneStepMemory(List<SignalCursor<Double, K>> cursors,
+                                            UnaryOperator<R> value, R init) {
+        R prev = init;
+        while (isNotCompleted(cursors)) {
+            prev = value.apply(prev);
+            addResult(prev);
             moveCursorsForward(cursors);
         }
     }

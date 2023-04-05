@@ -83,7 +83,7 @@ public class MfrSignal<T> extends STSignal<T> {
     }
 
     private Signal<T> filteredSignal(int l, Predicate<T> p) {
-        var booleanOp = new BooleanOp<>();
+        BooleanOp<T, T> booleanOp = new BooleanOp<>();
         return booleanOp.filterUnary(getSignalAtLocation(l), p);
     }
 

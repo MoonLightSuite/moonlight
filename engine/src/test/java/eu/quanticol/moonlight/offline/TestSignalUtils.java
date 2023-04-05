@@ -4,6 +4,7 @@ import eu.quanticol.moonlight.offline.signal.*;
 import eu.quanticol.moonlight.offline.signal.mfr.MfrSignal;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -50,6 +51,6 @@ public class TestSignalUtils {
 
     public static Signal<Double> basicTemporalSignal() {
         double[] values = new double[]{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
-        return createSignal(values, Arrays.stream(values).boxed().toArray(Double[]::new));
+        return createSignal(values, Arrays.stream(values).boxed().sorted(Comparator.reverseOrder()).toArray(Double[]::new));
     }
 }
