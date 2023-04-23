@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight.util;
+package eu.quanticol.moonlight.plotting;
 
 import eu.quanticol.moonlight.core.base.Box;
 import eu.quanticol.moonlight.online.signal.TimeChain;
@@ -49,7 +49,7 @@ public class Plotter {
                                             "unexpectedly");
         }
     }
-    
+
     public void plot(List<Double> data, String name, String label) {
         if(isAsync)
             asyncShow(() -> plotSingle(data, name, label));

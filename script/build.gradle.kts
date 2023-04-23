@@ -1,7 +1,7 @@
 plugins {
     id("eu.quanticol.java-library")
     antlr
-    kotlin("jvm") version "1.8.10"          // for compiling the docs
+    kotlin("jvm") version "1.8.20"          // for compiling the docs
 }
 
 dependencies {

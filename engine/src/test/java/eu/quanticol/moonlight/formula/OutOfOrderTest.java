@@ -13,7 +13,6 @@ import eu.quanticol.moonlight.core.signal.Sample;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
-import eu.quanticol.moonlight.util.Plotter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OutOfOrderTest {
     private static final String POSITIVE_X = "x > 0";
-    private static final Plotter plt = new Plotter(10.0);
 
     private static final boolean PLOTTING = false;
     private static final int RND_SEED = 1;  // TODO: vary seeds
@@ -43,7 +41,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -62,7 +59,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -101,7 +97,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -120,7 +115,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -139,7 +133,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -158,7 +151,6 @@ class OutOfOrderTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitor(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -204,17 +196,6 @@ class OutOfOrderTest {
         List<Update<Double, Double>> result = new ArrayList<>(data);
         Collections.shuffle(result, new Random(RND_SEED));
         return result;
-    }
-
-    private static void plotWhenEnabled(
-            @NotNull TimeChain<Double, Box<Double>> inOrder,
-            @NotNull TimeChain<Double, Box<Double>> outOfOrder)
-    {
-        if(PLOTTING) {
-            plt.plot(inOrder, "In order");
-            plt.plot(outOfOrder, "Out of order");
-            plt.waitActivePlots(0);
-        }
     }
 
     private TimeChain<Double, Box<Double>> monitor(

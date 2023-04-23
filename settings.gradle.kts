@@ -14,8 +14,8 @@ dependencyResolutionManagement {
 pluginManagement {
     includeBuild("build-logic")
     plugins {
-        kotlin("jvm") version "1.8.10" apply false         // for compiling the docs
-        id("org.jetbrains.dokka") version "1.7.20" apply false
+        kotlin("jvm") version "1.8.20" apply false         // for compiling the docs
+        id("org.jetbrains.dokka") version "1.8.10" apply false
     }
 }
 
@@ -31,6 +31,9 @@ include("engine")
 
 // == MoonlightScript ==
 include("script")
+
+// == Plotting ==
+include("plotting")
 
 // == Legacy Moonlight APIs for Matlab == // TODO: refactor
 include("api")

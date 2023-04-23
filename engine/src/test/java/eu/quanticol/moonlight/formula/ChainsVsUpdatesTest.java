@@ -13,7 +13,6 @@ import eu.quanticol.moonlight.online.monitoring.OnlineTimeMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.core.signal.TimeSignal;
 import eu.quanticol.moonlight.online.signal.Update;
-import eu.quanticol.moonlight.util.Plotter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ChainsVsUpdatesTest {
     private static final String POSITIVE_X = "x > 0";
-    private static final Plotter plt = new Plotter(10.0);
 
     private static final boolean PLOTTING = false;
     private static final int RND_SEED = 1;  // TODO: vary seeds
@@ -37,7 +35,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r1 = monitor(formula, updates);
         TimeChain<Double, Box<Double>> r2 = monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -56,7 +53,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -74,7 +70,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -92,7 +87,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -111,7 +105,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -130,7 +123,6 @@ class ChainsVsUpdatesTest {
         TimeChain<Double, Box<Double>> r2 =
                 monitorChains(formula, updates);
 
-        plotWhenEnabled(r1, r2);
         assertEquals(r1, r2);
     }
 
@@ -175,17 +167,6 @@ class ChainsVsUpdatesTest {
         List<Update<Double, Double>> result = new ArrayList<>(data);
         Collections.shuffle(result, new Random(RND_SEED));
         return result;
-    }
-
-    private static void plotWhenEnabled(
-            @NotNull TimeChain<Double, Box<Double>> inOrder,
-            @NotNull TimeChain<Double, Box<Double>> outOfOrder)
-    {
-        if(PLOTTING) {
-            plt.plot(inOrder, "As Updates");
-            plt.plot(outOfOrder, "As Chains");
-            plt.waitActivePlots(0);
-        }
     }
 
     private TimeChain<Double, Box<Double>> monitor(

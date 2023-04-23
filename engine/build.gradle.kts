@@ -1,7 +1,7 @@
 plugins {
     id("eu.quanticol.java-library")
     id("eu.quanticol.publish")              // for publishing the JAR online
-    kotlin("jvm") version "1.8.10"          // for compiling the docs
+    kotlin("jvm") version "1.8.20"          // for compiling the docs
 }
 
 dependencies {
