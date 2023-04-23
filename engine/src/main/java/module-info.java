@@ -12,4 +12,5 @@ module moonlight.engine {
     exports eu.quanticol.moonlight.core.space;
     exports eu.quanticol.moonlight.core.io;
     exports eu.quanticol.moonlight.offline.signal;
+    exports eu.quanticol.moonlight.space;
 }

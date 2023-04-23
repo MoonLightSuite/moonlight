@@ -1,5 +1,6 @@
-package eu.quanticol.moonlight;
+package eu.quanticol.moonlight.console;
 
+import eu.quanticol.moonlight.*;
 import eu.quanticol.moonlight.core.base.MoonLightRecord;
 import eu.quanticol.moonlight.core.signal.SignalDomain;
 import eu.quanticol.moonlight.core.space.LocationService;

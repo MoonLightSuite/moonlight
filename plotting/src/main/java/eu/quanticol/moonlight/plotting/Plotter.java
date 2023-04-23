@@ -36,6 +36,7 @@ public class Plotter {
 
     /**
      * Required for actually showing async plots
+     * @param seconds time to wait for plots to finish
      */
     public void waitActivePlots(long seconds) {
         try {
@@ -50,6 +51,12 @@ public class Plotter {
         }
     }
 
+    /**
+     * Plots a sequence of values
+     * @param data list of values to plot
+     * @param name name of the plot
+     * @param label label of the plot
+     */
     public void plot(List<Double> data, String name, String label) {
         if(isAsync)
             asyncShow(() -> plotSingle(data, name, label));
@@ -57,6 +64,12 @@ public class Plotter {
             plotSingle(data, name, label);
     }
 
+    /**
+     * Plots a sequence of interval values
+     * @param dataDown lower bound of the interval
+     * @param dataUp upper bound of the interval
+     * @param name name of the plot
+     */
     public void plot(List<Double> dataDown, List<Double> dataUp, String name) {
         List<Double> down = replaceInfinite(dataDown);
         List<Double> up = replaceInfinite(dataUp);
@@ -67,6 +80,11 @@ public class Plotter {
             plotInterval(down, up, name);
     }
 
+    /**
+     * Plots a time chain of values
+     * @param data list of values to plot
+     * @param name name of the plot
+     */
     public void plot(TimeChain<Double, Box<Double>> data,
                      String name)
     {

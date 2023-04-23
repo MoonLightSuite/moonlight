@@ -1,4 +1,4 @@
-package eu.quanticol.moonlight;
+package eu.quanticol.moonlight.console;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import eu.quanticol.moonlight.MoonLightScript;
+import eu.quanticol.moonlight.MoonLightSpatialTemporalScript;
+import eu.quanticol.moonlight.SpatialTemporalScriptComponent;
 import eu.quanticol.moonlight.script.MoonLightScriptLoaderException;
 import eu.quanticol.moonlight.script.ScriptLoader;
 import org.junit.jupiter.api.Disabled;
@@ -22,16 +25,16 @@ import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
 
 class TestSensorScript {
-	
+
 	private static RecordHandler edgeRecordHandler = new RecordHandler(DataHandler.INTEGER);
 	private static RecordHandler signalRecordHandkler = new RecordHandler(DataHandler.INTEGER);
-	
-	
+
+
 	private static String code = "signal { int nodeType; }\n" +
-			"             	space {\n" + 
-			"             	edges { int hop;}\n" + 
-			"             	}\n" + 
-			"             	domain boolean;\n" + 
+			"             	space {\n" +
+			"             	edges { int hop;}\n" +
+			"             	}\n" +
+			"             	domain boolean;\n" +
 			"             	formula aFormula = somewhere [0, 1] ( nodeType==1 );";
 
 	private static String code2 = "signal { int nodeType; }\n" +
@@ -59,7 +62,7 @@ class TestSensorScript {
         SpatialTemporalSignal<MoonLightRecord> signal = createSpatioTemporalSignal(typeNode.size(), 0, 1, 20.0,
                 (t, l) -> signalRecordHandkler.fromObjectArray(typeNode.get(l)));
         SpatialTemporalSignal<?> res = stc.monitorFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
-        assertEquals(true, res.getSignals().get(0).getValueAt(0.0));        
+        assertEquals(true, res.getSignals().get(0).getValueAt(0.0));
         double[][][] oArray = stc.monitorToArrayFromDouble(createLocService(0.0, 1, 20.0, getGraphModel()), signal);
         assertEquals(1.0, oArray[0][0][1]);
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
@@ -142,7 +145,7 @@ class TestSensorScript {
 		assertEquals(1.0, oArray[0][0][1]);
 //		stc.monitorToObjectArray(graph, signalTimeArray, signalValues, parameters)
 	}
-	
+
 	private LocationService<Double, MoonLightRecord> createLocService(double start, double dt, double end, SpatialModel<MoonLightRecord> graph) {
         LocationServiceList<MoonLightRecord> locService = new LocationServiceList<MoonLightRecord>();
         double time = start;
@@ -154,7 +157,7 @@ class TestSensorScript {
         locService.add(end,graph);
         return locService;
     }
-	
+
 	private SpatialModel<MoonLightRecord> getGraphModel() { //metto alla fine tutti i metodi privati di servizio.
 		GraphModel<MoonLightRecord> m = new GraphModel<>(5);
 		m.add(0, edgeRecordHandler.fromDoubleArray(1.0), 2);
@@ -212,5 +215,5 @@ class TestSensorScript {
         return s;
     }
 
-	
+
 }
