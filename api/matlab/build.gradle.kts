@@ -6,7 +6,7 @@ group = "${group}.api"
 
 
 dependencies {
-    implementation(project(":engine"))
+//    implementation(project(":engine"))
     implementation(project(":script"))
     //implementation fileTree(dir: "lib", include: "engine.jar")
     //implementation fileTree(dir: "lib", include: "engine2019.jar")
