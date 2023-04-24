@@ -32,7 +32,6 @@ tasks.register("docs") {
     dependsOn(":dokkaHtmlMultiModule")
 }
 
-
 // == HTML javadoc settings ==
 tasks.dokkaHtmlMultiModule.configure {
     outputDirectory.set(projectDir.resolve("docs"))

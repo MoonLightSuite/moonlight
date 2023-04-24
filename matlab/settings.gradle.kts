@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 }
 
 // == Define the inner structure of this component ==
-rootProject.name = "api" // the component name
-include("matlab")
+rootProject.name = "matlab" // the component name

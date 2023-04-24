@@ -36,7 +36,7 @@ include("script")
 include("plotting")
 
 // == Legacy Moonlight APIs for Matlab == // TODO: refactor
-include("api")
+include("matlab")
 
 // == CLI project ==
 include("console")
