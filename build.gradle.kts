@@ -1,17 +1,15 @@
 // == Main project tasks ==
 // We collect here umbrella tasks that aggregate
-// for convenience the tasks of the "sub"-projects
+// for convenience the tasks of the sub-projects
 plugins {
-    // for combining JaCoCo reports:
-    id("eu.quanticol.code-info")
+    id("eu.quanticol.code-info") // for combining JaCoCo reports
 
     // for docs generation:
     kotlin("jvm")
     id("org.jetbrains.dokka")
 
-    id("eu.quanticol.java-library")
+    id("eu.quanticol.java-library") // For java artifacts generation
 }
-
 
 // == Umbrella task to publishing all publishable packages ==
 // TODO: ideally we should have three separate packages:
@@ -20,12 +18,6 @@ plugins {
 //          3. script
 tasks.register<Copy>("release") {
     dependsOn("console:release")
-}
-
-// == Umbrella task to clean all ==
-// TODO: still wip, for now cleans important stuff
-tasks.named("clean") {
-    dependsOn("console:clean")
 }
 
 tasks.register("docs") {
@@ -44,8 +36,8 @@ tasks.register("publish") {
 }
 
 tasks.register("analyze") {
-    dependsOn(tasks.named("check"))
-    dependsOn(tasks.named("sonar"))
+    dependsOn("check")
+    dependsOn("sonar")
 //    dependsOn("engine:sonarqube")
 //    dependsOn("script:sonarqube")
     //dependsOn(gradle.includedBuild("console").task(":sonarqube"))
@@ -61,4 +53,21 @@ dependencies {
     jacocoAggregation(project(":script"))
 
     // TODO: add examples, etc.
+}
+
+tasks.named<Copy>("copyDependencies") {
+    copyModulesUpwards()
+}
+
+tasks.named<Copy>("copyJar") {
+    copyModulesUpwards()
+}
+
+fun AbstractCopyTask.copyModulesUpwards() {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    subprojects.filter { it.name in listOf("engine", "script") }.forEach { project ->
+        dependsOn(":${project.name}:$name")
+        from("${project.buildDir}/jmods")
+        into("$buildDir/jmods")
+    }
 }

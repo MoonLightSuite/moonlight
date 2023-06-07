@@ -53,6 +53,13 @@ tasks.jacocoTestReport.configure {
     enabled = false
 }
 
+tasks.register<Copy>("copyDependencies") {
+    from(configurations.runtimeClasspath).into("$buildDir/jmods")
+}
+
+tasks.register<Copy>("copyJar") {
+    from(tasks.jar).into("$buildDir/jmods")
+}
 
 // == Sonarqube settings ==
 sonar {

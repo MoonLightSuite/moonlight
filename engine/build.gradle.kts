@@ -13,6 +13,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.17.2")
     testImplementation("org.mockito:mockito-core:4.8.0")
 }
+
 repositories {
     mavenCentral()
 }
