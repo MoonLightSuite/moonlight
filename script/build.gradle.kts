@@ -3,7 +3,6 @@ plugins {
     antlr
     kotlin("jvm") version "1.8.20"          // for compiling the docs
 }
-
 dependencies {
     implementation(project(":engine"))
 //    implementation("org.antlr:ST4:4.3")
@@ -13,8 +12,7 @@ dependencies {
 
     // use ANTLR version 4
     antlr("org.antlr:antlr4:4.8")
-    runtimeOnly("org.antlr:antlr4-runtime:4.8")
-
+    implementation("org.antlr:antlr4-runtime:4.8")
 }
 
 tasks.build {
