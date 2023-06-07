@@ -1,6 +1,6 @@
 // == Main project tasks ==
 // We collect here umbrella tasks that aggregate
-// for convenience the tasks of the sub-projects
+// for convenience the tasks of the subprojects
 plugins {
     id("eu.quanticol.code-info") // for combining JaCoCo reports
 
