@@ -32,6 +32,16 @@ jobs:
         run: |
           mv engine/build/libs/engine-1.0-SNAPSHOT.jar python/src/moonlight/jar/engine.jar
           mv script/build/libs/script-1.0-SNAPSHOT.jar python/src/moonlight/jar/script.jar
+        uses: canastro/copy-file-action@master
+        with:
+          source: "engine/build/libs/engine-1.0-SNAPSHOT.jar"
+          target: "python/src/moonlight/jar/engine.jar"
+
+      - name: Move artifacts to python folder
+        uses: canastro/copy-file-action@master
+        with:
+          source: "script/build/libs/script-1.0-SNAPSHOT.jar"
+          target: "python/src/moonlight/jar/script.jar"
 
       - run: cd python
       - uses: actions/setup-python@v4
