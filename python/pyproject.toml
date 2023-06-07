@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "moonlight"
-version = "0.0.13"
+version = "0.0.14"
 description = "Moonlight python wrapper"
 authors = ["Ennio Visconti <ennio.visconti@gmail.com>"]
 readme = "README.md"
