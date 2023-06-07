@@ -1,9 +1,7 @@
 import os
 library_dir = os.path.dirname(os.path.abspath(__file__))
 import jnius_config
-jnius_config.add_classpath(f'{library_dir}/jar/engine.jar')
-jnius_config.add_classpath(f'{library_dir}/jar/antlr4-runtime.jar')
-jnius_config.add_classpath(f'{library_dir}/jar/script.jar')
+jnius_config.add_classpath(f'{library_dir}/jar/python-all.jar')
 from jnius import autoclass
 
 
