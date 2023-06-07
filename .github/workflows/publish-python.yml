@@ -1,6 +1,7 @@
 # Publish package to GitHub Packages
 name: publish on pypi
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
