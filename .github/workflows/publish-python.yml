@@ -28,7 +28,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: cd python
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
@@ -36,9 +35,11 @@ jobs:
 
       - name: Publishing setup
         run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+        working-directory: ./python
 
       - name: Build & deploy package
         run: poetry publish --build
+        working-directory: ./python
 
 #      - name: Publish a Python distribution to PyPI
 #        uses: pypa/gh-action-pypi-publish@release/v1
