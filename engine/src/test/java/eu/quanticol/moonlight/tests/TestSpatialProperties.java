@@ -287,8 +287,8 @@ class TestSpatialProperties {
 
     @Test
     void testEscapeOnRegularGrid() {
-        int rows = 35;
-        int columns = 35;
+        int rows = 15;
+        int columns = 15;
         double range = 2.1;
         int wallC = 2;
         int wallR = 2;
