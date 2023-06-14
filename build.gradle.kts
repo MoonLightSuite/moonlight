@@ -63,7 +63,7 @@ tasks.named<Copy>("copyJar") {
     copyModulesUpwards()
 }
 
-fun AbstractCopyTask.copyModulesUpwards() {
+fun Copy.copyModulesUpwards() {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     subprojects.filter { it.name in listOf("engine", "script") }.forEach { project ->
         dependsOn(":${project.name}:$name")
