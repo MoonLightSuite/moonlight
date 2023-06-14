@@ -12,7 +12,7 @@ dependencyResolutionManagement {
 }
 
 pluginManagement {
-    includeBuild("build-logic")
+    includeBuild("build-logic") // this project contains the advanced gradle scripts
 }
 
 // We include all the "sub"-projects in the build process:

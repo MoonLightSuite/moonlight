@@ -15,8 +15,3 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.8.0")
     testImplementation("org.jgrapht:jgrapht-core:1.5.1")
 }
-
-repositories {
-    mavenCentral()
-}
-
