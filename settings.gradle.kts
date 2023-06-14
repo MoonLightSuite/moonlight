@@ -1,5 +1,5 @@
 // == Main project ==
-// This is an empty umbrella build including all the component builds.
+// This is an empty umbrella project including all the component builds.
 // This build is not necessarily needed: component builds work independently.
 // == Main project's name ==
 rootProject.name = "moonlight" // the component name
@@ -13,17 +13,9 @@ dependencyResolutionManagement {
 
 pluginManagement {
     includeBuild("build-logic")
-    plugins {
-        kotlin("jvm") version "1.8.20" apply false         // for compiling the docs
-        id("org.jetbrains.dokka") version "1.8.10" apply false
-    }
 }
 
-
 // We include all the "sub"-projects in the build process:
-
-// == Common scripts ==
-//include("build-logic")
 
 // == Moonlight Core ==
 include("engine")

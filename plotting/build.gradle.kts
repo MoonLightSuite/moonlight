@@ -1,6 +1,6 @@
 plugins {
     id("eu.quanticol.java-library")
-    kotlin("jvm") version "1.8.20"          // for compiling the docs
+    id("eu.quanticol.generate-docs")
 }
 
 dependencies {

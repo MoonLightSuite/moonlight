@@ -2,31 +2,19 @@
 // We collect here umbrella tasks that aggregate
 // for convenience the tasks of the subprojects
 plugins {
-    id("eu.quanticol.code-info") // for combining JaCoCo reports
-
-    // for docs generation:
-    kotlin("jvm")
-    id("org.jetbrains.dokka")
-
     id("eu.quanticol.java-library") // For java artifacts generation
+    id("eu.quanticol.code-info") // for combining JaCoCo reports
+    id("eu.quanticol.generate-docs") // For docs generation
 }
 
 // == Umbrella task to publishing all publishable packages ==
-// TODO: ideally we should have three separate packages:
+// TODO: ideally we should have separate packages:
 //          1. api/console
 //          2. engine/core
 //          3. script
+//          4. matlab
 tasks.register<Copy>("release") {
     dependsOn("console:release")
-}
-
-tasks.register("docs") {
-    dependsOn(":dokkaHtmlMultiModule")
-}
-
-// == HTML javadoc settings ==
-tasks.dokkaHtmlMultiModule.configure {
-    outputDirectory.set(projectDir.resolve("docs"))
 }
 
 // == Umbrella task to publish all ==
@@ -38,13 +26,7 @@ tasks.register("publish") {
 tasks.register("analyze") {
     dependsOn("check")
     dependsOn("sonar")
-//    dependsOn("engine:sonarqube")
-//    dependsOn("script:sonarqube")
-    //dependsOn(gradle.includedBuild("console").task(":sonarqube"))
-    //dependsOn(gradle.includedBuild("script").task(":sonarqube"))
 }
-
-
 
 dependencies {
     // Transitively collect coverage data from all features and their dependencies

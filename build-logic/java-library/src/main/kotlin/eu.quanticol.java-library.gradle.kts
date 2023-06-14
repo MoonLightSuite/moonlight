@@ -3,7 +3,6 @@ plugins {
     java
     jacoco
     id("org.sonarqube")
-    id("org.jetbrains.dokka")
 }
 
 group = "eu.quanticol.moonlight"
