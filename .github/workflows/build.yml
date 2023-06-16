@@ -31,7 +31,7 @@ jobs:
     - name: Codecov update
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }} #"d76dfcb2-9baa-40e4-b07a-4b2647bcf3c4"
+        token: "d76dfcb2-9baa-40e4-b07a-4b2647bcf3c4" # should be moved to ${{ secrets.CODECOV_TOKEN }}
         files: "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         flags: unittests # optional
         name: codecov-umbrella # optional
