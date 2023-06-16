@@ -4,7 +4,7 @@
 // - java version, jvm settings
 // - publishing maven packages
 plugins {
-    `kotlin-dsl`
+    `kotlin-dsl`    // To compile the plugin code
     id("org.sonarqube") version "4.0.0.2929"
 }
 

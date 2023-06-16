@@ -62,6 +62,7 @@ tasks.register<Copy>("copyJar") {
 
 // == Sonarqube settings ==
 sonar {
+    // TODO: change project key with `project.name` when sonarcloud is properly configured
     properties {
         property("sonar.projectKey", "MoonLightSuite_MoonLight")
         property("sonar.projectName", "Moonlight")
@@ -73,12 +74,5 @@ sonar {
             "sonar.coverage.jacoco.xmlReportPaths",
             "../build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         )
-
-//        //TODO: these properties are workarounds to pass multi-project sources to sonarqube
-//        property("sonar.java.sources", "core/src/main/java")
-//        property("sonar.java.tests", "core/src/test/java")
-//        property("sonar.java.binaries", "core/build/classes/java/main")
-        //property("sonar.inclusions", "core/src/main/java/*.java")
-        //property("sonar.java.sources", "core/src/main/java/**/.java")
     }
 }

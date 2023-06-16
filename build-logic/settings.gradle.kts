@@ -9,7 +9,6 @@ pluginManagement {
     }
 
     plugins {
-        `kotlin-dsl` apply false
         kotlin("jvm") version "1.8.10" apply false         // for compiling the docs
         id("org.jetbrains.dokka") version "1.8.20" apply false
     }
@@ -21,6 +20,11 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+}
+
+// Required to remove annoying warning in subprojects
+plugins {
+    `kotlin-dsl` apply false
 }
 
 // We aggregate all the build logic in a single project
