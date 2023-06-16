@@ -1,5 +1,5 @@
 # Publish package to GitHub Packages
-name: publish on pypi
+name: Publish on PyPi
 on:
   workflow_dispatch:
   release:
