@@ -29,8 +29,8 @@ import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.TimeSegment;
 import eu.quanticol.moonlight.online.signal.Update;
+import eu.quanticol.moonlight.plotting.Plotter;
 import eu.quanticol.moonlight.util.Logger;
-import eu.quanticol.moonlight.util.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.net.URISyntaxException;
@@ -45,7 +45,7 @@ import static eu.quanticol.moonlight.util.Utils.createGraphFromMatlabData;
 import static eu.quanticol.moonlight.util.Utils.createLocationServiceFromTimesAndModels;
 
 /**
- * Note: requires Matlab R2020a+ & Machine Learning toolbox plugin
+ * Note: requires Matlab R2020a+ &amp; Machine Learning toolbox plugin
  * in running environment
  */
 public class SensorsOnline {

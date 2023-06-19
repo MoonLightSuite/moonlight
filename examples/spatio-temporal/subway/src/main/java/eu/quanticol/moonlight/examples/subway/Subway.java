@@ -34,9 +34,9 @@ import java.util.function.Function;
  * let D represent the distance threshold to express the spatial reachability,
  * and let O represent the departure offset, and T the time horizon of interest
  * We can say that, in a given Station i...
- * (G_[0,T] ((SW_D (People >= P)) ∧ (Station = i)))
+ * (G_[0,T] ((SW_D (People &gt;= P)) &and; (Station = i)))
  * U_[0,M]
- * ( (SW_D(Train > 1)) ∧ (Station = i)) ∧ (F_[0,O] (People < P) )
+ * ( (SW_D(Train &gt; 1)) &and; (Station = i)) &and; (F_[0,O] (People &lt; P) )
  *
  * @see #peakManagement for the implementation of the formula
  */

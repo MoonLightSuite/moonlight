@@ -24,7 +24,7 @@ import eu.quanticol.moonlight.online.monitoring.OnlineSpatialTemporalMonitor;
 import eu.quanticol.moonlight.online.signal.TimeChain;
 import eu.quanticol.moonlight.online.signal.Update;
 import eu.quanticol.moonlight.space.StaticLocationService;
-import eu.quanticol.moonlight.util.Plotter;
+import eu.quanticol.moonlight.plotting.Plotter;
 import eu.quanticol.moonlight.util.Stopwatch;
 
 import java.io.InputStream;

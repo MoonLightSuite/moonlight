@@ -21,7 +21,7 @@
 package eu.quanticol.moonlight.examples.temporal.afc;
 
 import eu.quanticol.moonlight.util.Logger;
-import eu.quanticol.moonlight.util.Plotter;
+import eu.quanticol.moonlight.plotting.Plotter;
 
 import java.io.IOException;
 import java.io.InputStream;
