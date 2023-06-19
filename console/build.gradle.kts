@@ -50,13 +50,15 @@ tasks.register("release") {
 }
 
 tasks.named<Delete>("clean") {
-    doFirst {
-        delete("$rootDir/distribution/")
-        println("jars in $rootDir/distribution/ deleted")
-        delete("$rootDir/distribution_files/matlab/moonlight/jar/")
-        println("jars in $rootDir/distribution_files/matlab/ deleted")
-        delete("$rootDir/distribution_files/console/")
-        println("jars in $rootDir/distribution_files/console/ deleted")
-    }
+    dependsOn("removeFiles")
+}
+
+tasks.register("removeFiles") {
+    delete("$rootDir/distribution/")
+    println("jars in $rootDir/distribution/ deleted")
+    delete("$rootDir/distribution_files/matlab/moonlight/jar/")
+    println("jars in $rootDir/distribution_files/matlab/ deleted")
+    delete("$rootDir/distribution_files/console/")
+    println("jars in $rootDir/distribution_files/console/ deleted")
 }
 
