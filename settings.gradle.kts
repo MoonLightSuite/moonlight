@@ -37,4 +37,11 @@ include("matlab")
 include("console")
 
 // == Examples ==
-include("examples")
+val categories = listOf("temporal", "spatio-temporal")
+categories.forEach { category ->
+    File("examples/$category").listFiles()?.forEach { example ->
+        if(example.isDirectory) {
+            include("examples:$category:${example.name}")
+        }
+    }
+}

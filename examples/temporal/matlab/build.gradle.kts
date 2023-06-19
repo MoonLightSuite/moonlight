@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":engine"))
-    implementation("eu.quanticol.moonlight.api:matlab")
+    implementation(project(":matlab"))
     implementation("org.n52.matlab:matlab-control:5.0.0")
 }
