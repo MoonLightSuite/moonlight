@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20")
 }
 
 tasks.register("docs") {
@@ -14,6 +15,7 @@ tasks.register("docs") {
 // == HTML javadoc settings ==
 tasks.withType<org.jetbrains.dokka.gradle.DokkaMultiModuleTask> {
     outputDirectory.set(rootDir.resolve("docs"))
+
 }
 
 tasks.named("docs") {
