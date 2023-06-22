@@ -1,5 +1,5 @@
 # Building workflow for moonlight
-name: Build, Test & Analyze
+name: Build & Test & Analyze
 on: [push, pull_request]
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: .
-        key: ${{ github.sha }}-${{ github.workflow }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}
 
   # Tests running and static code analysis
   test:
@@ -43,14 +43,14 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: .
-        key: ${{ github.sha }}-${{ github.workflow }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}
     - name: Gradle check
       run: ./gradlew check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
         path: .
-        key: ${{ github.sha }}-${{ github.workflow }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}
 
   analyze:
     name: Static code analysis
@@ -63,7 +63,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: .
-        key: ${{ github.sha }}-${{ github.workflow }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}
     - name: Codecov update
       uses: codecov/codecov-action@v3
       with:
