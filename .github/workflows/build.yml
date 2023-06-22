@@ -25,6 +25,7 @@ jobs:
     - name: Save build cache
       uses: actions/cache/save@v3
       with:
+        path: .
         key: ${{ github.sha }}-${{ github.workflow }}
 
   # Tests running and static code analysis
@@ -41,12 +42,14 @@ jobs:
     - name: Restore build cache
       uses: actions/cache/restore@v3
       with:
+        path: .
         key: ${{ github.sha }}-${{ github.workflow }}
     - name: Gradle check
       run: ./gradlew check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
+        path: .
         key: ${{ github.sha }}-${{ github.workflow }}
 
   analyze:
@@ -59,6 +62,7 @@ jobs:
     - name: Restore tests cache
       uses: actions/cache/restore@v3
       with:
+        path: .
         key: ${{ github.sha }}-${{ github.workflow }}
     - name: Codecov update
       uses: codecov/codecov-action@v3
