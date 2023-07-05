@@ -1,10 +1,10 @@
-# Building workflow for moonlight
-name: Build & Test & Analyze
+# ./building workflow for moonlight
+name: ./build & Test & Analyze
 on: [push, pull_request]
 
 jobs:
-  build:
-    name: Java Build
+  ./build:
+    name: Java ./build
     strategy:
       matrix:
         os: [
@@ -23,19 +23,19 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: gradle
-    - name: Build with Gradle
-      run: ./gradlew compileJava
+    - name: ./build with Gradle
+      run: ./gradlew ./build
 
-    - name: Save build cache
+    - name: Save ./build cache
       uses: actions/cache/save@v3
       with:
-        path: build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   # Tests running and static code analysis
   test:
     name: Run Tests
-    needs: build
+    needs: ./build
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -49,17 +49,17 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: gradle
-    - name: Restore build cache
+    - name: Restore ./build cache
       uses: actions/cache/restore@v3
       with:
-        path: build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Gradle check
       run: ./gradlew check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
-        path: build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   analyze:
@@ -78,7 +78,7 @@ jobs:
     - name: Restore tests cache
       uses: actions/cache/restore@v3
       with:
-        path: build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
     - name: Cache SonarCloud packages
@@ -96,7 +96,7 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         token: "d76dfcb2-9baa-40e4-b07a-4b2647bcf3c4" # should be moved to ${{ secrets.CODECOV_TOKEN }}
-        files: "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        files: "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         flags: unittests # optional
         name: codecov-umbrella # optional
         fail_ci_if_error: true # optional (default = false)
