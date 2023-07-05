@@ -7,7 +7,11 @@ jobs:
     name: Java Build
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [
+#          macos-latest,
+#          windows-latest,
+          ubuntu-latest
+        ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -25,7 +29,7 @@ jobs:
     - name: Save build cache
       uses: actions/cache/save@v3
       with:
-        path: ~/**/build
+        path: ~/build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   # Tests running and static code analysis
@@ -48,14 +52,14 @@ jobs:
     - name: Restore build cache
       uses: actions/cache/restore@v3
       with:
-        path: ~/**/build
+        path: ~/build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Gradle check
       run: ./gradlew check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
-        path: ~/**/build
+        path: ~/build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   analyze:
@@ -74,7 +78,7 @@ jobs:
     - name: Restore tests cache
       uses: actions/cache/restore@v3
       with:
-        path: ~/**/build
+        path: ~/build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Codecov update
       uses: codecov/codecov-action@v3

@@ -33,7 +33,7 @@ jobs:
           distribution: adopt
           cache: gradle
       - name: Build documentation
-        run: ./gradlew docs
+        run: ./gradlew docs # --no-configuration-cache
       - name: Save built docs
         uses: actions/cache/save@v3
         with:
