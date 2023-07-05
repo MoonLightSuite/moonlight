@@ -29,7 +29,7 @@ jobs:
     - name: Save build cache
       uses: actions/cache/save@v3
       with:
-        path: ~/build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   # Tests running and static code analysis
@@ -52,14 +52,14 @@ jobs:
     - name: Restore build cache
       uses: actions/cache/restore@v3
       with:
-        path: ~/build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Gradle check
       run: ./gradlew check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
-        path: ~/build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   analyze:
@@ -78,7 +78,7 @@ jobs:
     - name: Restore tests cache
       uses: actions/cache/restore@v3
       with:
-        path: ~/build
+        path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Codecov update
       uses: codecov/codecov-action@v3
@@ -92,7 +92,7 @@ jobs:
     - name: Cache SonarCloud packages
       uses: actions/cache@v3
       with:
-        path: ~/.sonar/cache
+        path: ./.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Sonar analyze
