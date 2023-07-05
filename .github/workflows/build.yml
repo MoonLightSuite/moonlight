@@ -1,5 +1,5 @@
-# ./building workflow for moonlight
-name: ./build & Test & Analyze
+# Building workflow for moonlight
+name: Build & Test & Analyze
 on: [push, pull_request]
 
 jobs:
@@ -23,10 +23,10 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: gradle
-    - name: ./build with Gradle
-      run: ./gradlew ./build
+    - name: build with Gradle
+      run: ./gradlew build
 
-    - name: Save ./build cache
+    - name: Save build cache
       uses: actions/cache/save@v3
       with:
         path: ./build
@@ -49,7 +49,7 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: gradle
-    - name: Restore ./build cache
+    - name: Restore build cache
       uses: actions/cache/restore@v3
       with:
         path: ./build
