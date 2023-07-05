@@ -16,6 +16,7 @@ xtext-gen
 *.asv
 output/
 api_resources/
+.ipynb_checkpoints/
 
 # Matlab & Simulink caches
 slprj

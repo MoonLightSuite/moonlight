@@ -20,7 +20,7 @@ class MoonlightScript:
 
     def isSpatialTemporal(self):
         '''returns if this is a spatial-temporal script'''
-        return self.Script.isSpatialTemporal()
+        return self.script.isSpatialTemporal()
 
     def getMonitor(self, formulaName):
         '''gets the monitor associated to a target the fomula'''
