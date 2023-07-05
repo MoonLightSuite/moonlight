@@ -3,8 +3,8 @@ name: ./build & Test & Analyze
 on: [push, pull_request]
 
 jobs:
-  ./build:
-    name: Java ./build
+  build:
+    name: Java build
     strategy:
       matrix:
         os: [
@@ -35,7 +35,7 @@ jobs:
   # Tests running and static code analysis
   test:
     name: Run Tests
-    needs: ./build
+    needs: build
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
