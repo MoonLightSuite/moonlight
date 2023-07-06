@@ -74,7 +74,7 @@ public class RecordHandler implements DataHandler<MoonLightRecord> {
     }
 
     public MoonLightRecord fromDoubleArray(double... values) {
-        return fromDoubleArray(values,0,values.length);
+        return fromDoubleArray(values,0, values.length);
     }
 
     public MoonLightRecord fromDoubleArray(double[] values, int from, int to) {

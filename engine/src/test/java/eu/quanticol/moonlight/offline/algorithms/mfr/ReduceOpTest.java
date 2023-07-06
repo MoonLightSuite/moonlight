@@ -1,10 +1,11 @@
-package eu.quanticol.moonlight.offline.algorithms;
+package eu.quanticol.moonlight.offline.algorithms.mfr;
 
 import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
 import eu.quanticol.moonlight.core.space.DistanceStructure;
 import eu.quanticol.moonlight.core.space.LocationService;
 import eu.quanticol.moonlight.core.space.SpatialModel;
 import eu.quanticol.moonlight.domain.IntegerDomain;
+import eu.quanticol.moonlight.offline.algorithms.ReduceOp;
 import eu.quanticol.moonlight.space.StaticLocationService;
 import eu.quanticol.moonlight.util.Utils;
 import org.junit.jupiter.api.Test;

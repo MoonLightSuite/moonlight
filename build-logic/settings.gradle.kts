@@ -9,7 +9,7 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version "1.8.10" apply false         // for compiling the docs
+        kotlin("jvm") version "1.9.0" apply false         // for compiling the docs
         id("org.jetbrains.dokka") version "1.8.20" apply false
     }
 }

@@ -66,12 +66,12 @@ public class TemporalScriptComponent<S> {
     }
 
     /**
-     * Creates a monitor given a list of parameters as an array of doulbe.
-     * @param values parameters.
+     * Creates a monitor given a list of parameters as an array of double.
+     * @param params parameters.
      * @return a monitor.
      */
-    public TemporalMonitor<MoonLightRecord, S> getMonitorFromDouble(double ... values) {
-        return definition.getMonitorFromDouble(domain, values);
+    public TemporalMonitor<MoonLightRecord, S> getMonitorFromDouble(double ... params) {
+        return definition.getMonitorFromDouble(domain, params);
     }
 
     /**

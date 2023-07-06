@@ -33,6 +33,7 @@ dependencies {
     jacocoAggregation(project(":console"))
     jacocoAggregation(project(":engine"))
     jacocoAggregation(project(":script"))
+    jacocoAggregation(project(":matlab"))
 
     // TODO: add examples, etc.
 }

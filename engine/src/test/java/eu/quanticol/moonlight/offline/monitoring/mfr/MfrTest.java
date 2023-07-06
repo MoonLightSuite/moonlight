@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -94,8 +95,8 @@ class MfrTest {
         atoms.put("b", p -> (x -> x + 10));
 
 
-        HashMap<String, Function<SpatialModel<Double>,
-                DistanceStructure<Double, ?>>> distF = new HashMap<>();
+        Map<String, Function<SpatialModel<Double>,
+                        DistanceStructure<Double, ?>>> distF = new HashMap<>();
         DistanceStructure<Double, Double> basic =
                 new DefaultDistanceStructure<>(x -> x, new DoubleDomain(),
                         0.0, 1.0, basicGraph());

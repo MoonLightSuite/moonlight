@@ -32,7 +32,7 @@ public class MoonLightTemporalScript implements MoonLightScript {
 
     public TemporalScriptComponent<?> selectTemporalComponent(String name) {
         if (monitors.containsKey(name)) {
-            return new TemporalScriptComponent<>(monitors.get(name),domain);
+            return new TemporalScriptComponent<>(monitors.get(name), domain);
         }
         throw new IllegalArgumentException(String.format("Monitor %s is unknown.",name));
     }

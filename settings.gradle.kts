@@ -38,10 +38,11 @@ include("console")
 
 // == Examples ==
 val categories = listOf("temporal", "spatio-temporal")
-categories.forEach { category ->
-    File("examples/$category").listFiles()?.forEach { example ->
-        if(example.isDirectory) {
-            include("examples:$category:${example.name}")
-        }
-    }
-}
+val examples = categories.map { category ->
+    File("examples/$category").listFiles()?.map {
+        example -> "examples:$category:${example.name}"
+    } ?: listOf()
+}.flatten()
+include(examples)
+
+//include("examples:temporal:matlab-simple")
