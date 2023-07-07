@@ -1,5 +1,5 @@
 classdef ScriptLoader
-    % This class contains methods to load the MoonLight scripts  
+    % This class contains methods to load the MoonLight scripts
     methods(Static)
         function  moonlightScript = loadFromFile(filename)
             % loadFromFile  load a moonLightScript from file.
@@ -8,7 +8,7 @@ classdef ScriptLoader
             % ScriptLoader.loadInnerFromFile(filename);
             warning('off','all');
             % moonlightScript=MoonlightScript(eval("moonlight.script.Script"+filename));
-            moonlightScript=MoonlightScript(eu.quanticol.moonlight.script.ScriptLoader.loadFromFile(which(filename)));
+            moonlightScript=MoonlightScript(io.github.moonlightsuite.moonlight.script.ScriptLoader.loadFromFile(which(filename)));
             warning('on','all');
         end
         function moonlightScript = loadFromText(stringArray)
@@ -18,11 +18,11 @@ classdef ScriptLoader
             %
             %   stringArray = [
             %   "signal { real x; real y}",...
-            %   "domain minmax;",... 
+            %   "domain minmax;",...
             %   "formula future = globally [0, 0.2]  (x > y);"...
             %   "formula past = historically [0, 0.2]  (x > y);"
             %   ];
-            moonlightScript=MoonlightScript(eu.quanticol.moonlight.script.ScriptLoader.loadFromCode(strjoin(stringArray,'\n')));
+            moonlightScript=MoonlightScript(io.github.moonlightsuite.moonlight.script.ScriptLoader.loadFromCode(strjoin(stringArray,'\n')));
 
             % fileName = strcat("moonlight",extractBefore(char(java.util.UUID.randomUUID),"-"));
             % monlightScriptPath=fullfile(tempdir,"moonlight",fileName+".mls");

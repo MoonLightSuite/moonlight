@@ -1,11 +1,11 @@
 package grid;
 
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.space.LocationServiceList;
-import eu.quanticol.moonlight.util.Utils;
+import io.github.moonlightsuite.moonlight.core.space.LocationService;
+import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
+import io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import io.github.moonlightsuite.moonlight.offline.signal.SpatialTemporalSignal;
+import io.github.moonlightsuite.moonlight.space.LocationServiceList;
+import io.github.moonlightsuite.moonlight.util.Utils;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import static eu.quanticol.moonlight.util.Utils.createSpatioTemporalSignal;
+import static io.github.moonlightsuite.moonlight.util.Utils.createSpatioTemporalSignal;
 
 public class Experiment {
 

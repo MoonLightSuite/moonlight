@@ -2,9 +2,9 @@
 // We collect here umbrella tasks that aggregate
 // for convenience the tasks of the subprojects
 plugins {
-    id("eu.quanticol.java-library") // For java artifacts generation
-    id("eu.quanticol.code-info") // for combining JaCoCo reports
-    id("eu.quanticol.generate-docs") // For docs generation
+    id("io.github.moonlightsuite.java-library") // For java artifacts generation
+    id("io.github.moonlightsuite.code-info") // for combining JaCoCo reports
+    id("io.github.moonlightsuite.generate-docs") // For docs generation
 }
 
 // == Umbrella task to publishing all publishable packages ==

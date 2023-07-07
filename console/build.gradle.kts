@@ -1,5 +1,5 @@
 plugins {
-    id("eu.quanticol.java-library")
+    id("io.github.moonlightsuite.java-library")
     id("application") // plugin to add support for building a CLI application.
 }
 
@@ -10,7 +10,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("eu.quanticol.moonlight.MoonLightConsole")
+    mainClass.set("io.github.moonlightsuite.moonlight.MoonLightConsole")
     applicationName = "mlconsole"
 }
 

@@ -4,14 +4,14 @@ module moonlight.engine {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
 
-    exports eu.quanticol.moonlight;
-    exports eu.quanticol.moonlight.domain;
-    exports eu.quanticol.moonlight.core.base;
-    exports eu.quanticol.moonlight.core.formula;
-    exports eu.quanticol.moonlight.core.signal;
-    exports eu.quanticol.moonlight.core.space;
-    exports eu.quanticol.moonlight.core.io;
-    exports eu.quanticol.moonlight.offline.signal;
-    exports eu.quanticol.moonlight.space;
-    exports eu.quanticol.moonlight.io;
+    exports io.github.moonlightsuite.moonlight;
+    exports io.github.moonlightsuite.moonlight.domain;
+    exports io.github.moonlightsuite.moonlight.core.base;
+    exports io.github.moonlightsuite.moonlight.core.formula;
+    exports io.github.moonlightsuite.moonlight.core.signal;
+    exports io.github.moonlightsuite.moonlight.core.space;
+    exports io.github.moonlightsuite.moonlight.core.io;
+    exports io.github.moonlightsuite.moonlight.offline.signal;
+    exports io.github.moonlightsuite.moonlight.space;
+    exports io.github.moonlightsuite.moonlight.io;
 }

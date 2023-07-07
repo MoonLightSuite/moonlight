@@ -24,7 +24,7 @@ class MoonlightScript:
 
     def getMonitor(self, formulaName):
         '''gets the monitor associated to a target the fomula'''
-        loader = autoclass('eu.quanticol.moonlight.MoonlightScriptFactory')()
+        loader = autoclass('io.github.moonlightsuite.moonlight.MoonlightScriptFactory')()
         if(self.isTemporal()):
             return TemporalScriptComponent(loader.getTemporalScript(self.script).selectTemporalComponent(formulaName))
         else:
@@ -44,19 +44,19 @@ class ScriptLoader:
     @staticmethod
     def loadFromText(script):
         '''load the script from a string-variable'''
-        # moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
+        # moonlightScript = autoclass('io.github.moonlightsuite.moonlight.xtext.ScriptLoader')()
         # return MoonlightScript(moonlightScript.compileScript(script))
-        ScriptLoader = autoclass('eu.quanticol.moonlight.script.ScriptLoader')
+        ScriptLoader = autoclass('io.github.moonlightsuite.moonlight.script.ScriptLoader')
         return MoonlightScript(ScriptLoader.loadFromCode(script))
 
     @staticmethod
     def loadFromFile(script):
         '''load the script from a file'''
-        # moonlightScript = autoclass('eu.quanticol.moonlight.xtext.ScriptLoader')()
+        # moonlightScript = autoclass('io.github.moonlightsuite.moonlight.xtext.ScriptLoader')()
         # with open(path) as file:
         #     script = file.read()
         #return MoonlightScript(moonlightScript.compileScript(script))
-        ScriptLoader = autoclass('eu.quanticol.moonlight.script.ScriptLoader')
+        ScriptLoader = autoclass('io.github.moonlightsuite.moonlight.script.ScriptLoader')
         return MoonlightScript(ScriptLoader.loadFromFile(script))
 
 

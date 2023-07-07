@@ -1,18 +1,18 @@
 package grid;
 
-import eu.quanticol.moonlight.core.formula.Formula;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.core.space.LocationService;
-import eu.quanticol.moonlight.core.space.SpatialModel;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.formula.AtomicFormula;
-import eu.quanticol.moonlight.formula.Parameters;
-import eu.quanticol.moonlight.formula.spatial.SomewhereFormula;
-import eu.quanticol.moonlight.offline.monitoring.SpatialTemporalMonitoring;
-import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.offline.signal.SpatialTemporalSignal;
-import eu.quanticol.moonlight.util.Utils;
+import io.github.moonlightsuite.moonlight.core.formula.Formula;
+import io.github.moonlightsuite.moonlight.core.space.DefaultDistanceStructure;
+import io.github.moonlightsuite.moonlight.core.space.DistanceStructure;
+import io.github.moonlightsuite.moonlight.core.space.LocationService;
+import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
+import io.github.moonlightsuite.moonlight.domain.DoubleDomain;
+import io.github.moonlightsuite.moonlight.formula.AtomicFormula;
+import io.github.moonlightsuite.moonlight.formula.Parameters;
+import io.github.moonlightsuite.moonlight.formula.spatial.SomewhereFormula;
+import io.github.moonlightsuite.moonlight.offline.monitoring.SpatialTemporalMonitoring;
+import io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import io.github.moonlightsuite.moonlight.offline.signal.SpatialTemporalSignal;
+import io.github.moonlightsuite.moonlight.util.Utils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -1,5 +1,5 @@
 plugins {
-    id("eu.quanticol.java-library")
+    id("io.github.moonlightsuite.java-library")
 }
 
 val libDir = "../../lib"

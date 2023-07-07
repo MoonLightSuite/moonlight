@@ -1,11 +1,11 @@
 package grid;
 
-import eu.quanticol.moonlight.core.space.DistanceStructure;
-import eu.quanticol.moonlight.domain.BooleanDomain;
-import eu.quanticol.moonlight.domain.DoubleDomain;
-import eu.quanticol.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.core.space.DefaultDistanceStructure;
-import eu.quanticol.moonlight.core.space.SpatialModel;
+import io.github.moonlightsuite.moonlight.core.space.DistanceStructure;
+import io.github.moonlightsuite.moonlight.domain.BooleanDomain;
+import io.github.moonlightsuite.moonlight.domain.DoubleDomain;
+import io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import io.github.moonlightsuite.moonlight.core.space.DefaultDistanceStructure;
+import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
 
 import java.util.Arrays;
 import java.util.List;

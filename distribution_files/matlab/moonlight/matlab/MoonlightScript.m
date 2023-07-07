@@ -1,6 +1,6 @@
 classdef MoonlightScript
-    % This is a wrapper around the Java interface eu.quanticol.moonlight.MoonLightScript
-    % 
+    % This is a wrapper around the Java interface io.github.moonlightsuite.moonlight.MoonLightScript
+    %
     % This class contains all the useful methods to get monitor associated
     % to formulas defined in the script. There are also methods to change
     % the domain of the script on the fly.
@@ -31,7 +31,7 @@ classdef MoonlightScript
             else
                 monitor = SpatialTemporalScriptComponent(self.Script.spatialTemporal().selectSpatialTemporalComponent(formulaName));
             end
-        end      
+        end
         function self = setBooleanDomain(self)
             %setBooleanDomain set the Boolean domain to this script
             self.Script.setBooleanDomain();
@@ -49,4 +49,4 @@ classdef MoonlightScript
             monitor = SpatialTemporalScriptComponent(self.Script.spatialTemporal());
         end
     end
-end  
+end

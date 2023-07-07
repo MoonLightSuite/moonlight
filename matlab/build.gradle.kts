@@ -1,6 +1,6 @@
 plugins {
-    id("eu.quanticol.java-library")
-    id("eu.quanticol.generate-docs")
+    id("io.github.moonlightsuite.java-library")
+    id("io.github.moonlightsuite.generate-docs")
 }
 
 // Retrocompatibility, as Matlab only supports up to Java 11.

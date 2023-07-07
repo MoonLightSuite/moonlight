@@ -1,6 +1,6 @@
 classdef SpatialTemporalScriptComponent
-    % This is a wrapper around the Java class eu.quanticol.moonlight.SpatialTemporalScriptComponent
-    % 
+    % This is a wrapper around the Java class io.github.moonlightsuite.moonlight.SpatialTemporalScriptComponent
+    %
     % This class contains a method (i.e., monitor(...)) that can be used to
     % monitor a specific spatial-temporal trajectory.
     properties
@@ -45,7 +45,7 @@ classdef SpatialTemporalScriptComponent
             javaGraphModel = self.toJavaGraphModel(graph);
             javaSignal = self.toJavaSignal(values);
             result=self.ScriptComponent.ScriptComponent.monitorToDoubleArrayAdjacencyList(time,javaGraphModel,time,javaSignal,parameters);
-        end 
+        end
     end
     methods (Access = private)
          function graph = toJavaGraphModel(~,diagram)

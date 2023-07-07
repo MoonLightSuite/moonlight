@@ -1,6 +1,6 @@
 classdef TemporalScriptComponent
-    % This is a wrapper around the Java class eu.quanticol.moonlight.TemporalScriptComponent
-    % 
+    % This is a wrapper around the Java class io.github.moonlightsuite.moonlight.TemporalScriptComponent
+    %
     % This class contains a method (i.e., monitor(...)) that can be used to
     % monitor a specific temporal trajectory.
     properties
