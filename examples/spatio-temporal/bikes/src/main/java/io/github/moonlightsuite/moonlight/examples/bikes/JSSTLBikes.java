@@ -2,10 +2,10 @@ package io.github.moonlightsuite.moonlight.examples.bikes;
 
 import io.github.moonlightsuite.moonlight.examples.bikes.utilities.SStats;
 import io.github.moonlightsuite.moonlight.examples.bikes.utilities.SpatialTemporalSimHyA;
-import io.github.moonlightsuite.jsstl.core.formula.*;
-import io.github.moonlightsuite.jsstl.core.monitor.*;
-import io.github.moonlightsuite.jsstl.core.space.GraphModel;
-import io.github.moonlightsuite.jsstl.core.signal.BooleanSignal;
+import eu.quanticol.jsstl.core.formula.*;
+import eu.quanticol.jsstl.core.monitor.*;
+import eu.quanticol.jsstl.core.space.GraphModel;
+import eu.quanticol.jsstl.core.signal.BooleanSignal;
 
 import java.util.Objects;
 

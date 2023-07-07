@@ -1,7 +1,7 @@
 package io.github.moonlightsuite.moonlight.examples.bikes;
 
-import io.github.moonlightsuite.jsstl.core.io.SyntaxErrorExpection;
-import io.github.moonlightsuite.jsstl.core.io.TraGraphModelReader;
+import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
+import eu.quanticol.jsstl.core.io.TraGraphModelReader;
 import io.github.moonlightsuite.moonlight.core.base.Pair;
 import io.github.moonlightsuite.moonlight.core.formula.Formula;
 import io.github.moonlightsuite.moonlight.core.formula.Interval;
@@ -185,7 +185,7 @@ public class Bikes {
     private static GraphModel<Double> loadSpatialGraph() {
         try {
             String graphPath = Bikes.class.getResource(GRAPH_FILE).getPath();
-            io.github.moonlightsuite.jsstl.core.space.GraphModel graph =
+            eu.quanticol.jsstl.core.space.GraphModel graph =
                     new TraGraphModelReader().read(graphPath);
             graph.dMcomputation();
             GraphModel<Double> newGraphModel =

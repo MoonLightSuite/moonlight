@@ -1,9 +1,9 @@
 package io.github.moonlightsuite.moonlight.examples.bikes.utilities;
 
-import io.github.moonlightsuite.jsstl.core.formula.Signal;
-import io.github.moonlightsuite.jsstl.core.io.SyntaxErrorExpection;
-import io.github.moonlightsuite.jsstl.core.io.TraGraphModelReader;
-import io.github.moonlightsuite.jsstl.core.space.GraphModel;
+import eu.quanticol.jsstl.core.formula.Signal;
+import eu.quanticol.jsstl.core.io.SyntaxErrorExpection;
+import eu.quanticol.jsstl.core.io.TraGraphModelReader;
+import eu.quanticol.jsstl.core.space.GraphModel;
 import io.github.moonlightsuite.moonlight.examples.bikes.utilities.SimHyAWrapper;
 
 import java.io.IOException;
