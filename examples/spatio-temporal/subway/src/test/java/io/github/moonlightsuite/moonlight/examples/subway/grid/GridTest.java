@@ -3,6 +3,7 @@ package io.github.moonlightsuite.moonlight.examples.subway.grid;
 import io.github.moonlightsuite.moonlight.domain.DoubleDomain;
 import io.github.moonlightsuite.moonlight.core.space.DefaultDistanceStructure;
 import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
+import io.github.moonlightsuite.moonlight.examples.subway.Subway;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;

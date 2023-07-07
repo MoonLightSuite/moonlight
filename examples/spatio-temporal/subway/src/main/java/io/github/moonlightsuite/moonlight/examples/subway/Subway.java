@@ -1,4 +1,4 @@
-package io.github.moonlightsuite.moonlight.examples.subway.grid;
+package io.github.moonlightsuite.moonlight.examples.subway;
 
 import io.github.moonlightsuite.moonlight.core.base.Triple;
 import io.github.moonlightsuite.moonlight.core.formula.Interval;
@@ -8,6 +8,7 @@ import io.github.moonlightsuite.moonlight.core.space.LocationService;
 import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
 import io.github.moonlightsuite.moonlight.domain.BooleanDomain;
 import io.github.moonlightsuite.moonlight.domain.DoubleDomain;
+import io.github.moonlightsuite.moonlight.examples.subway.grid.Grid;
 import io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
 import io.github.moonlightsuite.moonlight.offline.signal.Signal;
 import io.github.moonlightsuite.moonlight.offline.signal.SpatialTemporalSignal;
