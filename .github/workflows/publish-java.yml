@@ -1,8 +1,9 @@
 # Publish package to GitHub Packages
 name: publish package
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+#   release:
+#     types: [created]
     
 jobs:
   publish:
