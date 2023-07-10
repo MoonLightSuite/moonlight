@@ -19,8 +19,9 @@ tasks.register<Copy>("release") {
 
 // == Umbrella task to publish all ==
 // TODO: still wip, for now publishes important stuff
-tasks.register("publish") {
+tasks.register("publishPackages") {
     dependsOn("engine:publish")
+    dependsOn("script:publish")
 }
 
 tasks.register("analyze") {

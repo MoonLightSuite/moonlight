@@ -1,43 +1,61 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id("io.github.moonlightsuite.java-library")
-    `maven-publish`
+    id("com.vanniktech.maven.publish")
 }
 
-publishing {
-    publications {
-        // We define a Maven Package for publication
-        create<MavenPublication>("mavenJava") {
-            artifactId = rootProject.name
-            groupId = "$group"
-            version = "1.0-SNAPSHOT"
-            from(components["java"])
-            versionMapping {
-                usage("java-api") {
-                    fromResolutionOf("runtimeClasspath")
-                }
-                usage("java-runtime") {
-                    fromResolutionResult()
-                }
-            }
+val projectVersion: String = try {
+    providers.gradleProperty("projectVersion").get()
+} catch (e: IllegalStateException) {
+    println("ERROR - Unable to find version: ${e.message}")
+    "0.1.0-SNAPSHOT"
+}
 
-        }
-    }
-    repositories {
-        // We define the repository for GitHub Packages
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/MoonlightSuite/MoonLight")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+val projectGroup: String = providers.gradleProperty("project.group").get()
+
+mavenPublishing {
+    coordinates(projectGroup, "${rootProject.name}-${project.name}", projectVersion)
+
+    publishToMavenCentral(SonatypeHost.S01, automaticRelease = true)
+
+    signAllPublications()
+
+    pom {
+        name.set("${rootProject.name}-${project.name}")
+        description.set("MoonLight is a light-weight Java-tool for monitoring temporal, spatial and spatio-temporal properties of distributed complex systems, such as Cyber-Physical Systems and Collective Adaptive Systems.")
+        url.set("https://github.com/moonlightsuite/moonlight")
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://raw.githubusercontent.com/MoonLightSuite/MoonLight/master/LICENSE")
             }
         }
-
-//        maven {
-//            // change URLs to point to your repos, e.g. http://my.org/repo
-//            val releasesRepoUrl = uri(layout.buildDirectory.dir("repos/releases"))
-//            val snapshotsRepoUrl = uri(layout.buildDirectory.dir("repos/snapshots"))
-//            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-//        }
+        developers {
+            developer {
+                id.set("michele-loreti")
+                name.set("Michele Loreti")
+                email.set("michele.loreti@unicam.it")
+            }
+            developer {
+                id.set("lauranenzi")
+                name.set("Laura Nenzi")
+                email.set("lnenzi@units.it")
+            }
+            developer {
+                id.set("ennioVisco")
+                name.set("Ennio Visconti")
+                email.set("ennio.visconti@gmail.com")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/moonlightsuite/moonlight.git")
+            developerConnection.set("scm:git:ssh://github.com/moonlightsuite/moonlight.git")
+            url.set("https://github.com/moonlightsuite/moonlight")
+        }
     }
+}
+
+tasks.withType<GenerateModuleMetadata> {
+    dependsOn("dokkaJavadocJar")
 }

@@ -13,8 +13,8 @@ description = "MoonLight: a light-weight framework for runtime monitoring"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    withJavadocJar()
-    withSourcesJar()
+//    withJavadocJar()
+//    withSourcesJar()
 }
 
 tasks.withType<JavaCompile> {

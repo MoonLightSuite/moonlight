@@ -1,8 +1,10 @@
 plugins {
+    antlr
     id("io.github.moonlightsuite.java-library")
     id("io.github.moonlightsuite.generate-docs")
-    antlr
+    id("io.github.moonlightsuite.publish")
 }
+
 dependencies {
     implementation(project(":engine"))
 //    implementation("org.antlr:ST4:4.3")
@@ -19,9 +21,9 @@ tasks.build {
     dependsOn(tasks.generateGrammarSource)
 }
 
-tasks.sourcesJar {
-    dependsOn(tasks.generateGrammarSource)
-}
+//tasks.sourcesJar {
+//    dependsOn(tasks.generateGrammarSource)
+//}
 
 tasks.generateGrammarSource {
     arguments.addAll(listOf("-visitor", "-long-messages"))
