@@ -1,0 +1,124 @@
+name: Publish on Github & Maven Central
+on: [ push ]
+
+jobs:
+  infer-version:
+    name: Computing a new version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.nyx-infer.outputs.version }}
+      newRelease: ${{ steps.nyx-infer.outputs.newRelease }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run nyx Infer
+        id: nyx-infer
+        uses: mooltiverse/nyx-github-action@main
+        with:
+          command: 'infer'
+          configurationFile: 'build-logic/releases/.nyx.json'
+          resume: 'true'
+      - name: Run nyx Make
+        uses: mooltiverse/nyx-github-action@main
+        with:
+          command: 'make'
+          configurationFile: 'build-logic/releases/.nyx.json'
+          resume: 'true'
+
+  publish-version:
+    if: needs.infer-version.outputs.newRelease == 'true'
+    name: Publishing a new version
+    runs-on: ubuntu-latest
+    needs: infer-version
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: adopt
+          cache: gradle
+      - name: Run gradle publish
+        run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
+        env:
+          ORG_GRADLE_PROJECT_projectVersion: ${{ needs.infer-version.outputs.version }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+      - name: Nyx publish
+        uses: mooltiverse/nyx-github-action@main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NYX_RELEASE_TYPES_PUBLICATION_SERVICES: 'GITHUB'
+          NYX_SERVICES_GITHUB_NAME: 'GITHUB'
+          NYX_SERVICES_GITHUB_TYPE: 'GITHUB'
+          NYX_SERVICES_GITHUB_OPTIONS_AUTHENTICATION_TOKEN: "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}"
+          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_NAME: 'webmonitor'
+          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_OWNER: 'ennioVisco'
+        with:
+          command: 'publish'
+          configurationFile: 'build-logic/releases/.nyx.json'
+          resume: 'true'
+
+  publish-python:
+    runs-on: ubuntu-latest
+    needs: infer-version
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: version = "\d+.\d+.\d+(-.+)?"
+          replace: version = "${{ needs.infer-version.outputs.version }}"
+          include: "python/pyproject.toml"
+
+      - name: Build releasable python package
+        run: ./gradlew :python:distribute
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - run: pipx install poetry
+
+      - name: Publishing setup
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+        working-directory: ./python
+
+      - name: Build & deploy package
+        run: poetry publish --build
+        working-directory: ./python
+
+  update-readme:
+    if: github.ref_name == 'master'
+    name: Updating README.md
+    runs-on: ubuntu-latest
+    needs: [ publish-version, infer-version ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: io.github.moonlightsuite:moonlight-engine:\d+.\d+.\d+(-SNAPSHOT)?
+          replace: io.github.moonlightsuite:moonlight-engine:${{ needs.infer-version.outputs.version }}
+          include: "README.md"
+      - uses: fregante/setup-git-user@v2
+      - name: Push changes
+        run: |
+          git add README.md
+          git commit -m "Updated README.md instructions with new package version" || true
+          git push || true

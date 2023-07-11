@@ -17,14 +17,18 @@ dependencies {
     runtimeOnly("org.antlr:antlr4-runtime:4.8")
 }
 
+tasks.generateGrammarSource {
+    arguments.addAll(listOf("-visitor", "-long-messages"))
+}
+
 tasks.build {
     dependsOn(tasks.generateGrammarSource)
 }
 
-//tasks.sourcesJar {
-//    dependsOn(tasks.generateGrammarSource)
-//}
+tasks.kotlinSourcesJar {
+    dependsOn(tasks.generateGrammarSource)
+}
 
-tasks.generateGrammarSource {
-    arguments.addAll(listOf("-visitor", "-long-messages"))
+tasks.dokkaHtml {
+    dependsOn(tasks.generateGrammarSource)
 }

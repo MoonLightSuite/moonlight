@@ -1,0 +1,87 @@
+{
+  "preset": "simple",
+  "changelog": {
+    "path": "build-logic/releases/CHANGELOG.md",
+    "template": "build-logic/releases/changelog.hbs",
+    "sections": {
+      ":sparkles: Added": "^feat$",
+      ":bug: Fixed": "^fix$",
+      ":zap: Improved": "^perf$",
+      ":hammer: Tooling": "^(build|ci)$",
+      ":memo: Documentation": "^docs$"
+    },
+    "substitutions": {
+      "(?m)#([0-9]+)(?s)": "[#%s](https://github.com/enniovisco/webmonitor/issues/%s)"
+    }
+  },
+  "git": {
+    "remotes": {
+      "origin": {
+        "authenticationMethod": "USER_PASSWORD",
+        "user": "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}",
+        "password": "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}"
+      }
+    }
+  },
+  "initialVersion": "0.2.0",
+  "releasePrefix": "v",
+  "releaseTypes": {
+    "enabled": [
+      "mainline",
+      "internal"
+    ],
+    "publicationServices": [
+      "github"
+    ],
+    "remoteRepositories": [
+      "origin"
+    ],
+    "items": {
+      "mainline": {
+        "collapseVersions": false,
+        "filterTags": "^({{configuration.releasePrefix}})?([0-9]\\d*)\\.([0-9]\\d*)\\.([0-9]\\d*)$",
+        "gitCommit": "false",
+        "gitCommitMessage": "Release version {{version}}",
+        "gitPush": "true",
+        "gitTag": "true",
+        "gitTagMessage": "Tag version {{version}}",
+        "matchBranches": "^(master|main)$",
+        "matchEnvironmentVariables": {
+          "CI": "^true$"
+        },
+        "matchWorkspaceStatus": "CLEAN",
+        "publish": "true",
+        "versionRangeFromBranchName": false
+      },
+      "internal": {
+        "collapseVersions": true,
+        "collapsedVersionQualifier": "beta",
+        "description": "{{#replace from=\"# Changelog\" to=\"\"}}{{#fileContent}}CHANGELOG.md{{/fileContent}}{{/replace}}",
+        "gitCommit": "false",
+        "gitPush": "false",
+        "gitTag": "false",
+        "publish": "true",
+        "identifiers": [
+          {
+            "position": "PRE_RELEASE",
+            "qualifier": "beta"
+          }
+        ],
+        "versionRangeFromBranchName": false
+      }
+    }
+  },
+  "services": {
+    "github": {
+      "type": "GITHUB",
+      "options": {
+        "AUTHENTICATION_TOKEN": "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}",
+        "REPOSITORY_NAME": "webmonitor",
+        "REPOSITORY_OWNER": "enniovisco"
+      }
+    }
+  },
+  "summaryFile": "build-logic/releases/.nyx-summary.txt",
+  "stateFile": "build-logic/releases/.nyx-state.json",
+  "verbosity": "INFO"
+}

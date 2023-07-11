@@ -9,4 +9,15 @@ The tool supports two type of semantics (satisfaction), the Boolean and the quan
 Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, that tells at each time in each location if the trajectory satisfies or not the property, choosing instead the Quantitative semantics the tool returns a real-value signal that corresponds to the value of satisfaction of the property.
 -->
 
+### Usage as Maven package
+
+To use it as a maven package, just include the following line in your `build.gradle.kts`:
+
+```kts
+implementation("io.github.moonlightsuite:moonlight-engine:0.2.0")
+```
+
+Check on [Maven Central](https://central.sonatype.com/artifact/io.github.moonlightsuite/moonlight-engine/) for alternative build tools (
+e.g. Maven).
+
 For more information, please visit our [Wiki](https://github.com/MoonLightSuite/MoonLight/wiki) 
