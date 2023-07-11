@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: ./build
-        key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}-tests
 
   analyze:
     name: Static code analysis
@@ -75,7 +75,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: ./build
-        key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
+        key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}-tests
 
     - name: Cache SonarCloud packages
       uses: actions/cache@v3
