@@ -4,6 +4,7 @@
 dependency-reduced-pom.xml
 .project
 .classpath
+.run
 .DS_Store
 build/
 .gradle
@@ -15,6 +16,12 @@ xtext-gen
 *.asv
 output/
 api_resources/
+.ipynb_checkpoints/
+
+# Matlab & Simulink caches
+slprj
+*.mexw64
+*.slxc
 
 distribution/**/**
 distribution_files/matlab/moonlight/jar
@@ -25,3 +32,16 @@ distribution_files/java/build
 distribution_files/java/lib/moonlight.jar
 distribution_files/console/
 !distribution_files/matlab/moonlight/script/.placeHolder
+/examples/temporal/amt/lib/gamt.jar!/grammars/VcdDraftLexer.tokens
+distribution_files/console/
+!distribution_files/matlab/moonlight/script/.placeHolder
+
+# log4j log file
+jsbml.log
+
+# generated docs directory
+docs/
+
+python/dist/
+python/src/moonlight/jar/
+

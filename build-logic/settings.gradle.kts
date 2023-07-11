@@ -7,7 +7,13 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    plugins {
+        kotlin("jvm") version "1.9.0" apply false         // for compiling the docs
+        id("org.jetbrains.dokka") version "1.8.20" apply false
+    }
 }
+
 // == Define fetching locations for libraries and dependencies ==
 dependencyResolutionManagement {
     repositories {
@@ -16,8 +22,12 @@ dependencyResolutionManagement {
     }
 }
 
-// == Define the inner structure of this component ==
-rootProject.name = "build-logic"    // the component name
+// Required to remove annoying warning in subprojects
+plugins {
+    `kotlin-dsl` apply false
+}
+
 // We aggregate all the build logic in a single project
 include("java-library")
-include("report-aggregation")
+include("code-info")
+include("generate-docs")

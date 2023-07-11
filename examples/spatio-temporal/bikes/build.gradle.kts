@@ -1,13 +1,13 @@
 plugins {
-    id("eu.quanticol.java-library")
+    id("io.github.moonlightsuite.java-library")
 }
 
 val libDir = "../../lib"
 val deps = listOf("jsstl.core.jar", "SimHyA.jar")
 
 dependencies {
-    implementation("eu.quanticol.moonlight:core")
-    implementation("eu.quanticol.moonlight:script")
+    implementation(project(":engine"))
+    implementation(project(":script"))
 
     implementation(fileTree(mapOf("dir" to libDir, "include" to deps)))
 

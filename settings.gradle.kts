@@ -1,7 +1,6 @@
 // == Main project ==
-// This is an empty umbrella build including all the component builds.
+// This is an empty umbrella project including all the component builds.
 // This build is not necessarily needed: component builds work independently.
-
 // == Main project's name ==
 rootProject.name = "moonlight" // the component name
 
@@ -12,23 +11,38 @@ dependencyResolutionManagement {
     }
 }
 
+pluginManagement {
+    includeBuild("build-logic") // this project contains the advanced gradle scripts
+}
+
 // We include all the "sub"-projects in the build process:
 
-// == Common scripts ==
-includeBuild("build-logic")
-
 // == Moonlight Core ==
-includeBuild("core")
+include("engine")
 //includeBuild("utility")  // -> removed: moved into api
 
 // == MoonlightScript ==
-includeBuild("script")
+include("script")
+
+// == Plotting ==
+include("plotting")
+
+// == Python ==
+include("python")
 
 // == Legacy Moonlight APIs for Matlab == // TODO: refactor
-includeBuild("api")
+include("matlab")
 
 // == CLI project ==
-includeBuild("console")
+include("console")
 
 // == Examples ==
-includeBuild("examples")
+val categories = listOf("temporal", "spatio-temporal")
+val examples = categories.map { category ->
+    File("examples/$category").listFiles()?.map {
+        example -> "examples:$category:${example.name}"
+    } ?: listOf()
+}.flatten()
+include(examples)
+
+//include("examples:temporal:matlab-simple")

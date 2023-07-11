@@ -1,7 +1,7 @@
 plugins {
-    id("eu.quanticol.java-library")
+    id("io.github.moonlightsuite.java-library")
 }
 
 dependencies {
-    implementation("eu.quanticol.moonlight:core")
+    implementation(project(":engine"))
 }

@@ -4,11 +4,12 @@
 // - java version, jvm settings
 // - publishing maven packages
 plugins {
-    `kotlin-dsl`
-    id("org.sonarqube") version "3.3"
+    `kotlin-dsl`    // To compile the plugin code
+    id("org.sonarqube") version "4.0.0.2929"
+    id("com.vanniktech.maven.publish") version "0.25.3"
 }
 
 dependencies {
-    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3")
+    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.0.0.2929")
+    implementation("com.vanniktech:gradle-maven-publish-plugin:0.25.3")
 }
-

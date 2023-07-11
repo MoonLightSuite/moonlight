@@ -1,11 +1,11 @@
 package grid;
 
-import eu.quanticol.moonlight.formula.BooleanDomain;
-import eu.quanticol.moonlight.formula.DoubleDistance;
-import eu.quanticol.moonlight.formula.DoubleDomain;
-import eu.quanticol.moonlight.monitoring.spatialtemporal.SpatialTemporalMonitor;
-import eu.quanticol.moonlight.signal.DistanceStructure;
-import eu.quanticol.moonlight.signal.SpatialModel;
+import io.github.moonlightsuite.moonlight.core.space.DistanceStructure;
+import io.github.moonlightsuite.moonlight.domain.BooleanDomain;
+import io.github.moonlightsuite.moonlight.domain.DoubleDomain;
+import io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal.SpatialTemporalMonitor;
+import io.github.moonlightsuite.moonlight.core.space.DefaultDistanceStructure;
+import io.github.moonlightsuite.moonlight.core.space.SpatialModel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +99,7 @@ public class RunExperiment {
     }
 
     private static Function<SpatialModel<Double>, DistanceStructure<Double, ?>> distance(double from, double to) {
-        return g -> new DistanceStructure<>(x -> x, new DoubleDistance(), from, to, g);
+        return g -> new DefaultDistanceStructure<>(x -> x, new DoubleDomain(), from, to, g);
     }
 
     private static SpatialTemporalMonitor firstExp(){

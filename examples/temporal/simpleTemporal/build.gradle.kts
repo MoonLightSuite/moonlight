@@ -1,10 +1,10 @@
 plugins {
-    id("eu.quanticol.java-library")
+    id("io.github.moonlightsuite.java-library")
 }
 
 val libDir = "../../lib"
 
 dependencies {
-    implementation("eu.quanticol.moonlight:core")
-    implementation("eu.quanticol.moonlight:script")
+    implementation(project(":engine"))
+    implementation(project(":script"))
 }

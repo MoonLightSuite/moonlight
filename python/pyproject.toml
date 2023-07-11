@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "moonlight"
+version = "0.0.14"
+description = "Moonlight python wrapper"
+authors = ["Ennio Visconti <ennio.visconti@gmail.com>"]
+readme = "README.md"
+include = ["src/moonlight/jar/*"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyjnius = "^1.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
