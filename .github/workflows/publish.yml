@@ -1,5 +1,9 @@
 name: Publish on Github & Maven Central & Python
-on: [ push ]
+on:
+  workflow_run:
+    workflows: [build]
+    types:
+      - completed
 
 jobs:
   infer-version:

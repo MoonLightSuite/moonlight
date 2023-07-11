@@ -60,7 +60,7 @@
         "gitCommit": "false",
         "gitPush": "false",
         "gitTag": "false",
-        "publish": "true",
+        "publish": "false",
         "identifiers": [
           {
             "position": "PRE_RELEASE",
