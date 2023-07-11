@@ -1,7 +1,7 @@
 {
   "preset": "simple",
   "changelog": {
-    "path": "build-logic/releases/CHANGELOG.md",
+    "path": "CHANGELOG.md",
     "template": "build-logic/releases/changelog.hbs",
     "sections": {
       ":sparkles: Added": "^feat$",
