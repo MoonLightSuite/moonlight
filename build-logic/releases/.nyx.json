@@ -11,7 +11,7 @@
       ":memo: Documentation": "^docs$"
     },
     "substitutions": {
-      "(?m)#([0-9]+)(?s)": "[#%s](https://github.com/enniovisco/webmonitor/issues/%s)"
+      "(?m)#([0-9]+)(?s)": "[#%s](https://github.com/moonlightsuite/moonlight/issues/%s)"
     }
   },
   "git": {
@@ -76,8 +76,8 @@
       "type": "GITHUB",
       "options": {
         "AUTHENTICATION_TOKEN": "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}",
-        "REPOSITORY_NAME": "webmonitor",
-        "REPOSITORY_OWNER": "enniovisco"
+        "REPOSITORY_NAME": "moonlight",
+        "REPOSITORY_OWNER": "moonlightsuite"
       }
     }
   },

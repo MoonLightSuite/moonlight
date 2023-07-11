@@ -58,8 +58,8 @@ jobs:
           NYX_SERVICES_GITHUB_NAME: 'GITHUB'
           NYX_SERVICES_GITHUB_TYPE: 'GITHUB'
           NYX_SERVICES_GITHUB_OPTIONS_AUTHENTICATION_TOKEN: "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}"
-          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_NAME: 'webmonitor'
-          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_OWNER: 'ennioVisco'
+          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_NAME: 'moonlight'
+          NYX_SERVICES_GITHUB_OPTIONS_REPOSITORY_OWNER: 'moonlightsuite'
         with:
           command: 'publish'
           configurationFile: 'build-logic/releases/.nyx.json'
