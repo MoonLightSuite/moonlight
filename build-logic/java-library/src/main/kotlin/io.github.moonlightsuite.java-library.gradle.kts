@@ -72,7 +72,7 @@ sonar {
 
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+            "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
         )
     }
 }
