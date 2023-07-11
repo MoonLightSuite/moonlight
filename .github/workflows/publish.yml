@@ -1,4 +1,4 @@
-name: Publish on Github & Maven Central
+name: Publish on Github & Maven Central & Python
 on: [ push ]
 
 jobs:
@@ -27,6 +27,7 @@ jobs:
           resume: 'true'
 
   publish-version:
+    permissions: write-all
     if: needs.infer-version.outputs.newRelease == 'true'
     name: Publishing a new version
     runs-on: ubuntu-latest
