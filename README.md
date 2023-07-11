@@ -14,7 +14,7 @@ Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, t
 To use it as a maven package, just include the following line in your `build.gradle.kts`:
 
 ```kts
-implementation("io.github.moonlightsuite:moonlight-engine:0.2.0")
+implementation("io.github.moonlightsuite:moonlight-engine:v0.2.0")
 ```
 
 Check on [Maven Central](https://central.sonatype.com/artifact/io.github.moonlightsuite/moonlight-engine/) for alternative build tools (
