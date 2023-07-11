@@ -54,6 +54,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NYX_RELEASE_TYPES_PUBLICATION_SERVICES: 'GITHUB'
+          NYX_SERVICES_GITHUB_NAME: 'GITHUB'
+          NYX_SERVICES_GITHUB_TYPE: 'GITHUB'
           NYX_SERVICES_GITHUB_OPTIONS_AUTHENTICATION_TOKEN: "{{#environmentVariable}}GH_TOKEN{{/environmentVariable}}"
         with:
           command: 'publish'
