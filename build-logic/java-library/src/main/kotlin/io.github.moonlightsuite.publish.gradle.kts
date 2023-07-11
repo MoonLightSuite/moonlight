@@ -6,7 +6,11 @@ plugins {
 }
 
 val projectVersion: String = try {
-    providers.gradleProperty("projectVersion").get()
+    val ver = providers.gradleProperty("projectVersion").get()
+    if (ver.contains("-")) {
+        println("WARNING: publishing snapshot version")
+        "${ver.split("-")[0]}-SNAPSHOT"
+    } else ver
 } catch (e: IllegalStateException) {
     println("ERROR - Unable to find version: ${e.message}")
     "0.1.0-SNAPSHOT"
