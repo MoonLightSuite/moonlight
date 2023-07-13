@@ -8,11 +8,6 @@ plugins {
 }
 
 // == Umbrella task to publishing all publishable packages ==
-// TODO: ideally we should have separate packages:
-//          1. api/console
-//          2. engine/core
-//          3. script
-//          4. matlab
 tasks.register<Copy>("release") {
     dependsOn("console:release")
 }
@@ -29,12 +24,16 @@ tasks.register("analyze") {
     dependsOn("sonar")
 }
 
+tasks.check {
+    dependsOn("engine:check")
+}
+
 dependencies {
     // Transitively collect coverage data from all features and their dependencies
-    jacocoAggregation(project(":console"))
-    jacocoAggregation(project(":engine"))
-    jacocoAggregation(project(":script"))
-    jacocoAggregation(project(":matlab"))
+//    jacocoAggregation(project(":console"))
+//    jacocoAggregation(project(":engine"))
+//    jacocoAggregation(project(":script"))
+//    jacocoAggregation(project(":matlab"))
 
     // TODO: add examples, etc.
 }
