@@ -46,7 +46,7 @@ jobs:
           distribution: adopt
           cache: gradle
       - name: Run gradle publish
-        run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
+        run: ./gradlew --no-daemon publishAllPublicationsToMavenCentralRepository --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ needs.infer-version.outputs.version }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
@@ -92,7 +92,7 @@ jobs:
           include: "python/pyproject.toml"
 
       - name: Build releasable python package
-        run: ./gradlew :python:distribute
+        run: ./gradlew --no-daemon :python:distribute
 
       - uses: actions/setup-python@v4
         with:
