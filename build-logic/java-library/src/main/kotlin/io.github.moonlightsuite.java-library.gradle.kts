@@ -2,7 +2,6 @@ plugins {
     `java-library`
     java
     jacoco
-    `jacoco-report-aggregation`
     id("org.sonarqube")
 }
 
@@ -50,7 +49,7 @@ tasks.test {
 
 tasks.jacocoTestReport.configure {
     // Do not generate reports for individual projects
-    enabled = true
+    enabled = false
 }
 
 tasks.register<Copy>("copyDependencies") {
@@ -59,11 +58,6 @@ tasks.register<Copy>("copyDependencies") {
 
 tasks.register<Copy>("copyJar") {
     from(tasks.jar).into("$buildDir/jmods")
-}
-
-// Make JaCoCo report generation part of the 'check' lifecycle phase
-tasks.check {
-    dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
 }
 
 // == Sonarqube settings ==
