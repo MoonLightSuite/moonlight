@@ -83,6 +83,7 @@ jobs:
         path: ./.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
+    - run: ./gradlew --no-daemon check
     - name: Sonar analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
