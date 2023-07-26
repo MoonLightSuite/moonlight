@@ -50,3 +50,20 @@ fun Copy.copyModulesUpwards() {
         into("$buildDir/jmods")
     }
 }
+
+// == Sonarqube settings ==
+sonar {
+    // TODO: change project key with `project.name` when sonarcloud is properly configured
+    properties {
+        property("sonar.projectKey", "MoonLightSuite_MoonLight")
+        property("sonar.projectName", "Moonlight")
+        property("sonar.organization", "moonlightsuite")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
+    }
+}
