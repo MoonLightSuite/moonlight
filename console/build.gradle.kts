@@ -16,12 +16,12 @@ application {
 
 fun copyAuxiliaryFiles(source: String, destination: String) {
     copy {
-        from("$buildDir/resources/main/$source")
-        into(rootProject.file("$rootDir/release/$destination"))
+        from(layout.buildDirectory.file("resources/main/$source"))
+        into(rootProject.layout.buildDirectory.file("$rootDir/release/$destination"))
     }
 }
 
-fun copyFromTo(source: String, destination: String) =
+fun copyFromTo(source: Provider<Directory>, destination: Provider<Directory>) =
         copy {
             println("Copying: ${file(source).listFiles()?.map{ it.name }} to $destination")
             from(file(source))
@@ -34,8 +34,11 @@ tasks.register("distribution") {
     dependsOn("installDist")
 
     doLast {
-        copyFromTo("$buildDir/libs/", "$rootDir/distribution_files/matlab/moonlight/jar/")
-        copyFromTo("$buildDir/libs/", "$rootDir/distribution_files/console/")
+        val libs = layout.buildDirectory.dir("libs")
+        val moonlightJar = rootProject.layout.buildDirectory.dir("distribution_files/matlab/moonlight/jar")
+        val console = rootProject.layout.buildDirectory.dir("distribution_files/console")
+        copyFromTo(libs, moonlightJar)
+        copyFromTo(libs, console)
     }
 }
 
@@ -44,8 +47,9 @@ tasks.register("release") {
     dependsOn("distribution")
 
     doLast {
-        val source = rootProject.file("$rootDir/distribution_files/").path
-        copyFromTo(source, "$rootDir/distribution/")
+        val distributionFiles = rootProject.layout.buildDirectory.dir("distribution_files")
+        val distribution = rootProject.layout.buildDirectory.dir("distribution_files")
+        copyFromTo(distributionFiles, distribution)
     }
 }
 

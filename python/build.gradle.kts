@@ -11,16 +11,18 @@ dependencies {
 
 fun updateExecutableJar() {
     copy {
-        println("From: $buildDir/libs/${project.name}-all.jar")
-        println("To: $projectDir/src/moonlight/jar")
-        from("$buildDir/libs/${project.name}-all.jar")
-        into("$projectDir/src/moonlight/jar")
+        val buildJar = layout.buildDirectory.file("libs/${project.name}-all.jar")
+        val projectJarDir = layout.projectDirectory.dir("src/moonlight/jar")
+        println("From: $buildJar")
+        println("To: $projectJarDir")
+        from(buildJar)
+        into(projectJarDir)
     }
 }
 
 tasks.create<Delete>("clearArtifacts") {
-    project.delete("$projectDir/src/moonlight/jar")
-    project.delete("$buildDir/libs/")
+    project.delete(layout.projectDirectory.dir("src/moonlight/jar"))
+    project.delete(layout.buildDirectory.dir("libs"))
     project.delete("dist")
 }
 
