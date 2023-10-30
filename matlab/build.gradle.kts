@@ -11,11 +11,6 @@ java {
     withSourcesJar()
 }
 
-tasks.withType<JavaCompile> {
-    // Needed by pattern matching on switches:
-    options.compilerArgs.remove("--enable-preview")
-}
-
 dependencies {
     //implementation fileTree(dir: "lib", include: "engine.jar")
     //implementation fileTree(dir: "lib", include: "engine2019.jar")
