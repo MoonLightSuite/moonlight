@@ -7,11 +7,12 @@ on:
 
 jobs:
   infer-version:
-    name: Computing a new version
+    name: Compute version
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.nyx-infer.outputs.version }}
-      newRelease: ${{ steps.nyx-infer.outputs.newRelease }}
+      newRelease: ${{ steps.nyx-infer.outputs.newVersion }}
+      newVersion: ${{ steps.nyx-infer.outputs.newRelease }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,8 +32,8 @@ jobs:
           resume: 'true'
 
   publish-version:
-    if: needs.infer-version.outputs.newRelease == 'true'
-    name: Publishing a new version
+    if: needs.infer-version.outputs.newRelease == 'true' || needs.infer-version.outputs.newVersion == 'true'
+    name: Publish new release on Github & Maven Central
     runs-on: ubuntu-latest
     needs: infer-version
     steps:
@@ -69,6 +70,7 @@ jobs:
           resume: 'true'
 
   publish-python:
+    name: Publish new release on PyPI
     runs-on: ubuntu-latest
     needs: infer-version
     permissions:
@@ -109,7 +111,7 @@ jobs:
 
   update-readme:
     if: github.ref_name == 'master'
-    name: Updating README.md
+    name: Update README.md
     runs-on: ubuntu-latest
     needs: [ publish-version, infer-version ]
     steps:
