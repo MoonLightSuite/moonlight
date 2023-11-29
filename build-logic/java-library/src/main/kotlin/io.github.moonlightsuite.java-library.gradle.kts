@@ -11,22 +11,13 @@ description = "MoonLight: a light-weight framework for runtime monitoring"
 
 // == General Java settings ==
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 //    withJavadocJar()
 //    withSourcesJar()
-}
-
-tasks.withType<JavaCompile> {
-    // Needed by pattern matching on switches:
-    options.compilerArgs.add("--enable-preview")
-}
-
-tasks.withType<Javadoc> {
-    // Needed by pattern matching on switches:
-    val javadocOptions = options as CoreJavadocOptions
-    javadocOptions.addStringOption("source", "17")
-    javadocOptions.addBooleanOption("-enable-preview", true)
 }
 
 tasks {
@@ -42,8 +33,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // Needed by pattern matching on switches:
-    jvmArgs("--enable-preview")
 }
 
 
@@ -53,11 +42,11 @@ tasks.jacocoTestReport.configure {
 }
 
 tasks.register<Copy>("copyDependencies") {
-    from(configurations.runtimeClasspath).into("$buildDir/jmods")
+    from(configurations.runtimeClasspath).into(layout.buildDirectory.dir("jmods"))
 }
 
 tasks.register<Copy>("copyJar") {
-    from(tasks.jar).into("$buildDir/jmods")
+    from(tasks.jar).into(layout.buildDirectory.dir("jmods"))
 }
 
 // == Sonarqube settings ==
