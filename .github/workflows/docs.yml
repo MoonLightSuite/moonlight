@@ -2,7 +2,7 @@ name: Generate Docs
 
 on:
   push:
-    branches: ["master", "mfr-logic"]
+    branches: ["master"]
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
