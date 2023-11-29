@@ -1,7 +1,7 @@
 name: Publish on Github & Maven Central & Python
 on:
   workflow_run:
-    workflows: [build]
+    workflows: ["Build & Test & Analyze"]
     types:
       - completed
 
