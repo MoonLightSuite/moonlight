@@ -46,8 +46,8 @@ fun Copy.copyModulesUpwards() {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     subprojects.filter { it.name in listOf("engine", "script") }.forEach { project ->
         dependsOn(":${project.name}:$name")
-        from("${project.buildDir}/jmods")
-        into("$buildDir/jmods")
+        from(project.layout.buildDirectory.dir("jmods"))
+        into(layout.buildDirectory.dir("jmods"))
     }
 }
 

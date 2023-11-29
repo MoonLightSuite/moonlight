@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.10")
 }
