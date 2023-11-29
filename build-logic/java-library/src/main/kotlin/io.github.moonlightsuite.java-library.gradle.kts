@@ -2,7 +2,6 @@ plugins {
     `java-library`
     java
     jacoco
-    id("org.sonarqube")
 }
 
 group = "io.github.moonlightsuite.moonlight"
@@ -47,21 +46,4 @@ tasks.register<Copy>("copyDependencies") {
 
 tasks.register<Copy>("copyJar") {
     from(tasks.jar).into(layout.buildDirectory.dir("jmods"))
-}
-
-// == Sonarqube settings ==
-sonar {
-    // TODO: change project key with `project.name` when sonarcloud is properly configured
-    properties {
-        property("sonar.projectKey", "MoonLightSuite_MoonLight")
-        property("sonar.projectName", "Moonlight")
-        property("sonar.organization", "moonlightsuite")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
-
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
-        )
-    }
 }

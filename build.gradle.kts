@@ -8,11 +8,6 @@ plugins {
 }
 
 // == Umbrella task to publishing all publishable packages ==
-// TODO: ideally we should have separate packages:
-//          1. api/console
-//          2. engine/core
-//          3. script
-//          4. matlab
 tasks.register<Copy>("release") {
     dependsOn("console:release")
 }
@@ -53,5 +48,22 @@ fun Copy.copyModulesUpwards() {
         dependsOn(":${project.name}:$name")
         from(project.layout.buildDirectory.dir("jmods"))
         into(layout.buildDirectory.dir("jmods"))
+    }
+}
+
+// == Sonarqube settings ==
+sonar {
+    // TODO: change project key with `project.name` when sonarcloud is properly configured
+    properties {
+        property("sonar.projectKey", "MoonLightSuite_MoonLight")
+        property("sonar.projectName", "Moonlight")
+        property("sonar.organization", "moonlightsuite")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
     }
 }

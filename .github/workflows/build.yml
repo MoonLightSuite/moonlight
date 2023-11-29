@@ -20,7 +20,7 @@ jobs:
         distribution: adopt
         cache: gradle
     - name: build with Gradle
-      run: ./gradlew build
+      run: ./gradlew --no-daemon build
 
     - name: Save build cache
       uses: actions/cache/save@v3
@@ -51,7 +51,7 @@ jobs:
         path: ./build
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Gradle check
-      run: ./gradlew check
+      run: ./gradlew --no-daemon check
     - name: Save tests cache
       uses: actions/cache/save@v3
       with:
@@ -65,6 +65,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Shallow clones
     - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
@@ -83,11 +85,12 @@ jobs:
         path: ./.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
+    - run: ./gradlew --no-daemon check
     - name: Sonar analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew analyze
+      run: ./gradlew --no-daemon analyze
     - name: Codecov update
       uses: codecov/codecov-action@v3
       with:
