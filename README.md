@@ -9,6 +9,9 @@ The tool supports two type of semantics (satisfaction), the Boolean and the quan
 Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, that tells at each time in each location if the trajectory satisfies or not the property, choosing instead the Quantitative semantics the tool returns a real-value signal that corresponds to the value of satisfaction of the property.
 -->
 
+### Prerequisites
+It requires Java 21+ to run.
+
 ### Usage as Maven package
 
 To use it as a maven package, just include the following line in your `build.gradle.kts`:
