@@ -17,7 +17,7 @@ It requires Java 21+ in the running environment
 To use it as a maven package, just include the following line in your `build.gradle.kts`:
 
 ```kts
-implementation("io.github.moonlightsuite:moonlight-engine:v0.2.0")
+implementation("io.github.moonlightsuite:moonlight-engine:v0.3.0")
 ```
 
 Check on [Maven Central](https://central.sonatype.com/artifact/io.github.moonlightsuite/moonlight-engine/) for alternative build tools (
