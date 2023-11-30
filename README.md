@@ -10,7 +10,7 @@ Choosing the Boolean semantics the tool returns a Boolean satisfaction signal, t
 -->
 
 ### Prerequisites
-It requires Java 21+ to run.
+It requires Java 21+ in the running environment
 
 ### Usage as Maven package
 
@@ -24,3 +24,11 @@ Check on [Maven Central](https://central.sonatype.com/artifact/io.github.moonlig
 e.g. Maven).
 
 For more information, please visit our [Wiki](https://github.com/MoonLightSuite/MoonLight/wiki) 
+
+
+### Usage as Python Package
+You can install MoonLight as a Python package using pip:
+
+```shell
+pip install moonlight
+```
