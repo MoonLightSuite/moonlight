@@ -29,9 +29,13 @@ tasks.generateGrammarSource {
     arguments.addAll(listOf("-visitor", "-long-messages"))
 }
 
-tasks.build {
-    dependsOn(tasks.generateGrammarSource)
+tasks.withType<Jar>().configureEach {
+    dependsOn(tasks.withType<AntlrTask>())
 }
+
+//tasks.named("sourcesJar") {
+//    dependsOn(tasks.generateGrammarSource)
+//}
 //
 //tasks.kotlinSourcesJar {
 //    dependsOn(tasks.generateGrammarSource)
