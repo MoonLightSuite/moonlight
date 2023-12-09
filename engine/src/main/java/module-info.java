@@ -1,5 +1,5 @@
 module moonlight.engine {
-    requires org.jetbrains.annotations;
+    requires static org.jetbrains.annotations;
     requires com.google.gson;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;

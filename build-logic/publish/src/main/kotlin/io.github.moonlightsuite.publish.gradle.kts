@@ -1,8 +1,20 @@
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
-    id("io.github.moonlightsuite.java-library")
+    `java-library`
+//    id("io.github.moonlightsuite.java-library")
     id("com.vanniktech.maven.publish")
+}
+
+// == General Java settings ==
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+//    withJavadocJar()
+//    withSourcesJar()
 }
 
 val projectVersion: String = try {

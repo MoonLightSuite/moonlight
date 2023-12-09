@@ -1,8 +1,16 @@
 plugins {
     antlr
     id("io.github.moonlightsuite.java-library")
-    id("io.github.moonlightsuite.generate-docs")
+//    id("io.github.moonlightsuite.generate-docs")
     id("io.github.moonlightsuite.publish")
+    id("org.beryx.jlink") version "3.0.1"
+}
+
+jlink {
+    launcher {
+        name = "moonlight"
+        jvmArgs = listOf("-Dlogback.configurationFile=./logback.xml")
+    }
 }
 
 dependencies {
@@ -24,11 +32,11 @@ tasks.generateGrammarSource {
 tasks.build {
     dependsOn(tasks.generateGrammarSource)
 }
-
-tasks.kotlinSourcesJar {
-    dependsOn(tasks.generateGrammarSource)
-}
-
-tasks.dokkaHtml {
-    dependsOn(tasks.generateGrammarSource)
-}
+//
+//tasks.kotlinSourcesJar {
+//    dependsOn(tasks.generateGrammarSource)
+//}
+//
+//tasks.dokkaHtml {
+//    dependsOn(tasks.generateGrammarSource)
+//}

@@ -9,7 +9,7 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version "1.9.21" apply false         // for compiling the docs
+//        kotlin("jvm") version "1.9.21" apply false         // for compiling the docs
         id("org.jetbrains.dokka") version "1.9.10" apply false
     }
 }
@@ -26,10 +26,11 @@ dependencyResolutionManagement {
 plugins {
     `kotlin-dsl` apply false
 
-    kotlin("jvm") version "1.9.20-RC2" apply false // TODO: remove when 1.9.20 is released
+//    kotlin("jvm") version "1.9.21" apply false // TODO: remove when 1.9.20 is released
 }
 
 // We aggregate all the build logic in a single project
 include("java-library")
+include("publish")
 include("code-info")
 include("generate-docs")
