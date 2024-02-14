@@ -24,7 +24,7 @@
     }
   },
   "initialVersion": "0.2.0",
-  "releasePrefix": "v",
+  "releasePrefix": "",
   "releaseTypes": {
     "enabled": [
       "mainline",
@@ -41,10 +41,10 @@
         "collapseVersions": false,
         "filterTags": "^({{configuration.releasePrefix}})?([0-9]\\d*)\\.([0-9]\\d*)\\.([0-9]\\d*)$",
         "gitCommit": "false",
-        "gitCommitMessage": "Release version {{version}}",
+        "gitCommitMessage": "Release version v.{{version}}",
         "gitPush": "true",
         "gitTag": "true",
-        "gitTagMessage": "Tag version {{version}}",
+        "gitTagMessage": "Tag version v.{{version}}",
         "matchBranches": "^(master|main)$",
         "matchEnvironmentVariables": {
           "CI": "^true$"

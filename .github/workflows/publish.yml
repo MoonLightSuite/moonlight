@@ -31,7 +31,7 @@ jobs:
           configurationFile: 'build-logic/releases/.nyx.json'
           resume: 'true'
 
-  publish-version:
+  publish-jvm:
     if: needs.infer-version.outputs.newRelease == 'true' || needs.infer-version.outputs.newVersion == 'true'
     name: Publish new release on Github & Maven Central
     runs-on: ubuntu-latest
@@ -70,6 +70,7 @@ jobs:
           resume: 'true'
 
   publish-python:
+    if: needs.infer-version.outputs.newRelease == 'true' || needs.infer-version.outputs.newVersion == 'true'
     name: Publish new release on PyPI
     runs-on: ubuntu-latest
     needs: infer-version
@@ -113,7 +114,7 @@ jobs:
     if: github.ref_name == 'master'
     name: Update README.md
     runs-on: ubuntu-latest
-    needs: [ publish-version, infer-version ]
+    needs: [ publish-jvm, infer-version ]
     steps:
       - uses: actions/checkout@v3
       - name: Find and Replace
