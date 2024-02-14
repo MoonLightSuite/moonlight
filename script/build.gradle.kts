@@ -1,14 +1,14 @@
 plugins {
     antlr
     id("io.github.moonlightsuite.java-library")
-//    id("io.github.moonlightsuite.generate-docs")
+    id("io.github.moonlightsuite.generate-docs")
     id("io.github.moonlightsuite.publish")
     id("org.beryx.jlink") version "3.0.1"
 }
 
 jlink {
     launcher {
-        name = "moonlight"
+        name = "moonlight.script"
         jvmArgs = listOf("-Dlogback.configurationFile=./logback.xml")
     }
 }
@@ -29,14 +29,10 @@ tasks.generateGrammarSource {
     arguments.addAll(listOf("-visitor", "-long-messages"))
 }
 
-tasks.build {
+tasks.withType<Jar>().configureEach {
+    dependsOn(tasks.withType<AntlrTask>())
+}
+
+tasks.dokkaHtml {
     dependsOn(tasks.generateGrammarSource)
 }
-//
-//tasks.kotlinSourcesJar {
-//    dependsOn(tasks.generateGrammarSource)
-//}
-//
-//tasks.dokkaHtml {
-//    dependsOn(tasks.generateGrammarSource)
-//}

@@ -1,6 +1,6 @@
 plugins {
     id("io.github.moonlightsuite.java-library")
-//    id("io.github.moonlightsuite.generate-docs")
+    id("io.github.moonlightsuite.generate-docs")
     id("io.github.moonlightsuite.publish")
 }
 

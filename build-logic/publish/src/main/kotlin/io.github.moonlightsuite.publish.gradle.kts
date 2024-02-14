@@ -6,17 +6,6 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-// == General Java settings ==
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-//    withJavadocJar()
-//    withSourcesJar()
-}
-
 val projectVersion: String = try {
     val ver = providers.gradleProperty("projectVersion").get()
     if (ver.contains("-")) {
