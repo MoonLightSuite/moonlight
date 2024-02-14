@@ -16,6 +16,9 @@ module moonlight.engine {
     exports io.github.moonlightsuite.moonlight.formula.spatial;
     exports io.github.moonlightsuite.moonlight.formula.temporal;
     exports io.github.moonlightsuite.moonlight.offline.signal;
+    exports io.github.moonlightsuite.moonlight.offline.monitoring;
+    exports io.github.moonlightsuite.moonlight.offline.monitoring.temporal;
+    exports io.github.moonlightsuite.moonlight.offline.monitoring.spatialtemporal;
     exports io.github.moonlightsuite.moonlight.space;
     exports io.github.moonlightsuite.moonlight.io;
 }
