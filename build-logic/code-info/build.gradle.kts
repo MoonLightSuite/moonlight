@@ -3,9 +3,9 @@
 // regardless of the specific projects and languages
 plugins {
     `kotlin-dsl`    // To compile the plugin code
-    id("org.sonarqube") version "4.4.1.3373"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 dependencies {
-    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.0.0.2929")
+    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:5.0.0.4638")
 }
