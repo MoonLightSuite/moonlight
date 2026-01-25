@@ -70,7 +70,7 @@ class TemporalScriptComponent:
                    - time: an array containing the trajectory timesteps
                    - values: a matrix containing the trajectory values
                    - parameters: (optional) an array containing the values
-                                  of the formula paramters
+                                  of the formula parameters
         """
         monitor = self.scriptComponent
         if not parameters:

@@ -20,7 +20,7 @@ fun updateExecutableJar() {
     }
 }
 
-tasks.create<Delete>("clearArtifacts") {
+tasks.register<Delete>("clearArtifacts") {
     project.delete(layout.projectDirectory.dir("src/moonlight/jar"))
     project.delete(layout.buildDirectory.dir("libs"))
     project.delete("dist")

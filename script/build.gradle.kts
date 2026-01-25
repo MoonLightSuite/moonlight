@@ -25,10 +25,6 @@ tasks.build {
     dependsOn(tasks.generateGrammarSource)
 }
 
-tasks.kotlinSourcesJar {
-    dependsOn(tasks.generateGrammarSource)
-}
-
-tasks.dokkaHtml {
+tasks.named("dokkaGeneratePublicationHtml") {
     dependsOn(tasks.generateGrammarSource)
 }
