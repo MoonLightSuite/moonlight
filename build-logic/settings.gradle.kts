@@ -9,8 +9,8 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version "1.9.21" apply false         // for compiling the docs
-        id("org.jetbrains.dokka") version "1.9.10" apply false
+        kotlin("jvm") version "2.2.21" apply false         // for compiling the docs
+        id("org.jetbrains.dokka") version "2.1.0" apply false
     }
 }
 
@@ -25,8 +25,6 @@ dependencyResolutionManagement {
 // Required to remove annoying warning in subprojects
 plugins {
     `kotlin-dsl` apply false
-
-    kotlin("jvm") version "1.9.20-RC2" apply false // TODO: remove when 1.9.20 is released
 }
 
 // We aggregate all the build logic in a single project
