@@ -19,13 +19,13 @@ jobs:
           fetch-depth: 0
       - name: Run nyx Infer
         id: nyx-infer
-        uses: mooltiverse/nyx@main
+        uses: mooltiverse/nyx@v3
         with:
           command: 'infer'
           configurationFile: 'build-logic/releases/.nyx.json'
           resume: 'true'
       - name: Run nyx Make
-        uses: mooltiverse/nyx@main
+        uses: mooltiverse/nyx@v3
         with:
           command: 'make'
           configurationFile: 'build-logic/releases/.nyx.json'
@@ -55,7 +55,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Nyx publish
-        uses: mooltiverse/nyx@main
+        uses: mooltiverse/nyx@v3
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NYX_RELEASE_TYPES_PUBLICATION_SERVICES: 'GITHUB'

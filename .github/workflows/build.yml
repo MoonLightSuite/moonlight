@@ -52,11 +52,6 @@ jobs:
         key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
     - name: Gradle check
       run: ./gradlew --no-daemon check
-    - name: Save tests cache
-      uses: actions/cache/save@v5
-      with:
-        path: ./build
-        key: ${{ github.sha }}-${{ github.workflow_id }}-${{ runner.os }}
 
   analyze:
     name: Static code analysis
