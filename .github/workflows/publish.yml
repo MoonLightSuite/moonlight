@@ -14,18 +14,18 @@ jobs:
       newRelease: ${{ steps.nyx-infer.outputs.newVersion }}
       newVersion: ${{ steps.nyx-infer.outputs.newRelease }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Run nyx Infer
         id: nyx-infer
-        uses: mooltiverse/nyx-github-action@main
+        uses: mooltiverse/nyx
         with:
           command: 'infer'
           configurationFile: 'build-logic/releases/.nyx.json'
           resume: 'true'
       - name: Run nyx Make
-        uses: mooltiverse/nyx-github-action@main
+        uses: mooltiverse/nyx
         with:
           command: 'make'
           configurationFile: 'build-logic/releases/.nyx.json'
@@ -37,11 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: infer-version
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: adopt
@@ -55,7 +55,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Nyx publish
-        uses: mooltiverse/nyx-github-action@main
+        uses: mooltiverse/nyx@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NYX_RELEASE_TYPES_PUBLICATION_SERVICES: 'GITHUB'
@@ -78,10 +78,10 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: adopt
@@ -97,7 +97,7 @@ jobs:
       - name: Build releasable python package
         run: ./gradlew --no-daemon :python:distribute
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.8'
       - run: pipx install poetry
@@ -116,7 +116,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ publish-jvm, infer-version ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Find and Replace
         uses: jacobtomlinson/gha-find-replace@v3
         with:
