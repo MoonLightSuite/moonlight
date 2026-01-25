@@ -55,7 +55,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Nyx publish
-        uses: mooltiverse/nyx@main@main
+        uses: mooltiverse/nyx@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NYX_RELEASE_TYPES_PUBLICATION_SERVICES: 'GITHUB'
