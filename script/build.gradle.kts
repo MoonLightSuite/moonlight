@@ -25,6 +25,6 @@ tasks.build {
     dependsOn(tasks.generateGrammarSource)
 }
 
-tasks.named("dokkaGeneratePublicationHtml") {
+tasks.named("dokkaHtmlPartial") {
     dependsOn(tasks.generateGrammarSource)
 }
